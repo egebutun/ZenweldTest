@@ -24,9 +24,10 @@ function hash(a: string, b: string): number {
   return h;
 }
 
-function slugForUrl(retailerUrl: string, productSlug: string): string {
+function slugForUrl(retailerUrl: string, productSlug: string, isOwnStore = false): string {
   const base = retailerUrl.replace(/\/$/, "");
-  return `${base}/urun/${productSlug}`;
+  // Kendi bayi magazamiz dil on eki kullanir: /tr/urun/<slug>
+  return isOwnStore ? `${base}/tr/urun/${productSlug}` : `${base}/urun/${productSlug}`;
 }
 
 export const retailerStock: RetailerStock[] = [];
@@ -50,9 +51,7 @@ products.forEach((product) => {
             (product.priceExVat * (1 + product.vatRate / 100) * (0.96 + ((h % 9) / 100))) / 10,
           ) * 10
         : undefined,
-      productUrl: retailer.isOwnStore
-        ? `/urun/${product.slug}`
-        : slugForUrl(retailer.websiteUrl, product.slug),
+      productUrl: slugForUrl(retailer.websiteUrl, product.slug, retailer.isOwnStore),
       updatedAt: STAMP,
     });
   });

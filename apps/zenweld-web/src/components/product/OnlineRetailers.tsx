@@ -46,8 +46,8 @@ export function OnlineRetailers({ product }: { product: Product }) {
           <a
             key={retailer.id}
             href={stock.productUrl}
-            target={retailer.isOwnStore ? undefined : "_blank"}
-            rel={retailer.isOwnStore ? undefined : "noopener noreferrer"}
+            target="_blank"
+            rel="noopener noreferrer"
             className="group relative flex h-24 flex-col items-center justify-center gap-1 rounded-[4px] border border-zw-grey-200 bg-white px-3 py-2 text-center transition-all hover:border-zw-ink hover:shadow-md"
             title={`${retailer.name} — ${t.product.goToStore}`}
           >
