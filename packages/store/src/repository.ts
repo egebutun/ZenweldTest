@@ -171,7 +171,7 @@ export function setRetailerStock(
         productUrl:
           patch.productUrl ??
           (retailer?.isOwnStore
-            ? `/urun/${product?.slug ?? ""}`
+            ? `${(retailer?.websiteUrl ?? "").replace(/\/$/, "")}/tr/urun/${product?.slug ?? ""}`
             : `${(retailer?.websiteUrl ?? "").replace(/\/$/, "")}/urun/${product?.slug ?? ""}`),
         updatedAt: nowIso(),
       });
