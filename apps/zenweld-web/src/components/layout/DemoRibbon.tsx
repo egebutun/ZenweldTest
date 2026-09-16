@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { useT } from "@/lib/i18n-client";
 
 /** Bu calismanin bir sunum/demo oldugunu belirten ust serit. */
 export function DemoRibbon() {
   const t = useT();
+  const pathname = usePathname();
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     setHidden(window.sessionStorage.getItem("zw.demoRibbon") === "hidden");
   }, []);
 
-  if (hidden) return null;
+  if (hidden || pathname.includes("/admin")) return null;
 
   return (
     <div className="bg-zw-ink px-4 py-2 text-center text-[11px] font-medium tracking-wide text-white sm:text-xs">

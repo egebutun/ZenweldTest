@@ -18,6 +18,9 @@ export function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
+  // Yonetim paneli kendi duzenini kullanir.
+  if (pathname.includes("/admin")) return null;
+
   return (
     <footer className="mt-16 border-t border-zw-grey-200 bg-white">
       <div className="zw-container py-14">
