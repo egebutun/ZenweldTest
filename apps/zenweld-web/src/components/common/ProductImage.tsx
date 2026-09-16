@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Urun gorseli.
@@ -45,10 +45,25 @@ export function ProductImage({
 }) {
   const fallback = placeholderDataUri(label ?? alt);
   const [current, setCurrent] = useState(src && src.length > 0 ? src : fallback);
+  const ref = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    setCurrent(src && src.length > 0 ? src : fallback);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [src]);
+
+  // Gorsel, React hydration tamamlanmadan once hata verdiyse onError tetiklenmez;
+  // bu yuzden mount sonrasi durumu elle kontrol ediyoruz.
+  useEffect(() => {
+    const img = ref.current;
+    if (img && img.complete && img.naturalWidth === 0) setCurrent(fallback);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current]);
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
+      ref={ref}
       src={current}
       alt={alt}
       loading={priority ? "eager" : "lazy"}

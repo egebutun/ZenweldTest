@@ -44,6 +44,8 @@ export function Header() {
     setAccountOpen(false);
   }, [pathname]);
 
+  const isAdminArea = pathname.includes("/admin");
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -58,6 +60,9 @@ export function Header() {
   const changeLocale = (next: Locale) => {
     router.push(switchLocaleInPath(pathname, next));
   };
+
+  // Yonetim paneli kendi basligini kullanir.
+  if (isAdminArea) return null;
 
   return (
     <>
@@ -84,7 +89,7 @@ export function Header() {
                 key={menu.id}
                 onMouseEnter={() => setOpenMenu(menu.id)}
                 onClick={() => setOpenMenu(openMenu === menu.id ? null : menu.id)}
-                className={`flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold transition-colors zw-focus ${
+                className={`flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-colors zw-focus ${
                   openMenu === menu.id
                     ? "bg-zw-grey-100 text-zw-ink"
                     : "text-zw-grey-700 hover:text-zw-ink"
@@ -99,7 +104,7 @@ export function Header() {
             ))}
             <LocaleLink
               href="/destek"
-              className="rounded-full px-3 py-2 text-sm font-semibold text-zw-grey-700 transition-colors hover:text-zw-ink"
+              className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-zw-grey-700 transition-colors hover:text-zw-ink"
             >
               {t.nav.support}
             </LocaleLink>
@@ -108,7 +113,7 @@ export function Header() {
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex h-10 items-center gap-2 rounded-[4px] border border-zw-grey-300 px-3 text-sm text-zw-grey-500 transition-colors hover:border-zw-ink md:w-64 zw-focus"
+              className="flex h-10 items-center gap-2 rounded-[4px] border border-zw-grey-300 px-3 text-sm text-zw-grey-500 transition-colors hover:border-zw-ink md:w-44 xl:w-60 zw-focus"
               aria-label={t.common.search}
             >
               <Search size={18} />
@@ -149,7 +154,7 @@ export function Header() {
               >
                 <UserIcon size={20} />
                 {user && (
-                  <span className="hidden max-w-24 truncate text-sm font-semibold sm:inline">
+                  <span className="hidden max-w-24 truncate text-sm font-semibold sm:inline lg:hidden xl:inline">
                     {user.firstName}
                   </span>
                 )}
