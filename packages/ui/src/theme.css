@@ -1,0 +1,92 @@
+/* Zenweld tasarim sistemi — kirmizi + gri tema (Tailwind v4 CSS-first) */
+
+@theme {
+  /* Marka kirmizisi */
+  --color-zw-red-50: #fdf2f2;
+  --color-zw-red-100: #fbe0e1;
+  --color-zw-red-200: #f5b8bb;
+  --color-zw-red-400: #e8474e;
+  --color-zw-red-500: #de2b33;
+  --color-zw-red-600: #d62027;
+  --color-zw-red-700: #a8171c;
+  --color-zw-red-800: #7d1216;
+
+  /* Gri skala */
+  --color-zw-ink: #141619;
+  --color-zw-grey-900: #1d2024;
+  --color-zw-grey-800: #2b2f33;
+  --color-zw-grey-700: #3d4348;
+  --color-zw-grey-600: #545b62;
+  --color-zw-grey-500: #6b7178;
+  --color-zw-grey-400: #949aa1;
+  --color-zw-grey-300: #c9cdd2;
+  --color-zw-grey-200: #e2e5e8;
+  --color-zw-grey-100: #f1f2f4;
+  --color-zw-grey-50: #f8f9fa;
+
+  --color-zw-success: #167a4b;
+  --color-zw-warning: #b8791a;
+
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-zw: 4px;
+}
+
+:root {
+  --zw-header-height: 76px;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-zw-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+/* Yardimci siniflar */
+.zw-container {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+@media (min-width: 768px) {
+  .zw-container { padding-inline: 32px; }
+}
+
+@media (min-width: 1280px) {
+  .zw-container { padding-inline: 48px; }
+}
+
+.zw-section {
+  padding-block: 48px;
+}
+
+@media (min-width: 1024px) {
+  .zw-section { padding-block: 80px; }
+}
+
+.zw-focus:focus-visible {
+  outline: 2px solid var(--color-zw-red-600);
+  outline-offset: 2px;
+}
+
+/* Leaflet harita — varsayilan z-index'i header'in altina cek */
+.leaflet-container {
+  z-index: 0;
+  font-family: var(--font-sans);
+}
+
+/* Yatay kaydirma olmasin */
+body { overflow-x: hidden; }
