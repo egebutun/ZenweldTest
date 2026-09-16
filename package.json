@@ -1,0 +1,20 @@
+{
+  "name": "zenweld-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@zenweld/web",
+    "dev:web": "npm run dev --workspace=@zenweld/web",
+    "dev:bayi": "npm run dev --workspace=@zenweld/bayi-shop",
+    "build": "npm run build --workspace=@zenweld/web && npm run build --workspace=@zenweld/bayi-shop",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
