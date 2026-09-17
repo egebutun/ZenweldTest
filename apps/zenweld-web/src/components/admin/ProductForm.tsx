@@ -448,7 +448,7 @@ export function ProductForm({ product }: { product?: Product }) {
                     src={img.url}
                     alt={img.alt.tr}
                     label={draft.name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain p-1"
                   />
                   {i === 0 && (
                     <Badge tone="red" className="absolute left-1.5 top-1.5">

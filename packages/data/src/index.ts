@@ -18,7 +18,7 @@ import { users, addresses } from "./seed/users.seed";
 import { blogPosts, faqs, quotes, orders, warranties } from "./seed/content.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(

@@ -34,7 +34,7 @@ export function ProductGallery({ product }: { product: Product }) {
           alt={text(images[active]?.alt) || product.name}
           label={product.name}
           priority
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain p-6"
         />
       </div>
 
@@ -52,7 +52,7 @@ export function ProductGallery({ product }: { product: Product }) {
                 src={img.url}
                 alt={text(img.alt) || product.name}
                 label={product.name}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain p-2"
               />
             </button>
           ))}
