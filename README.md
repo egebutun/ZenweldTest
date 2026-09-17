@@ -7,6 +7,17 @@ Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur.
 > gerçek bir sunucu tarafı kimlik doğrulaması olmadan çalışır. Canlıya çıkmadan
 > önce [Canlıya Çıkış](#canlıya-çıkış-notları) bölümünü okuyun.
 
+## Yayındaki adresler
+
+| Site | Adres |
+|---|---|
+| Ana Zenweld sitesi | https://zenweld-test-zenweld-web.vercel.app |
+| ZENWELD-BAYİ-A mağazası | https://zenweld-test-bayi-shop.vercel.app |
+
+İki site birbirine Vercel ortam değişkenleriyle bağlıdır:
+`NEXT_PUBLIC_BAYI_SHOP_URL` (ana sitede) ve `NEXT_PUBLIC_ZENWELD_URL` (bayi mağazasında).
+Bu değişkenler derleme sırasında koda gömülür; değiştirdikten sonra yeniden deploy gerekir.
+
 ---
 
 ## İçindekiler
