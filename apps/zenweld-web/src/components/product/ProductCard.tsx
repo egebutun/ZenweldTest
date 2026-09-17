@@ -34,7 +34,7 @@ export function ProductCard({ product }: { product: Product }) {
             src={product.images[0]?.url}
             alt={text(product.images[0]?.alt) || product.name}
             label={product.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute left-2 top-2 flex flex-col gap-1">
             {product.isNew && <Badge tone="red">{t.product.new}</Badge>}

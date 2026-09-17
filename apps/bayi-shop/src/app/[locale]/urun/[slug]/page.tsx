@@ -79,7 +79,7 @@ export default function ShopProductPage({
                 alt={text(images[activeImage]?.alt) || product.name}
                 label={product.name}
                 priority
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain p-6"
               />
             </div>
             {images.length > 1 && (
@@ -96,7 +96,7 @@ export default function ShopProductPage({
                       src={img.url}
                       alt={text(img.alt)}
                       label={product.name}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain p-2"
                     />
                   </button>
                 ))}
