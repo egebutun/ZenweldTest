@@ -12,6 +12,15 @@ import { stockPhotos } from "./images";
 
 const now = "2026-09-16T08:00:00+03:00";
 
+/**
+ * Tum urunlerde kullanilan Zenweld urun fotografi.
+ *
+ * Dosya her iki uygulamanin public/images/products/ klasorunde bulunur.
+ * Farkli urunlere farkli fotograf vermek icin: Yonetim Paneli > Urunler >
+ * Duzenle > Gorseller sekmesinden URL girin veya dosya yukleyin.
+ */
+const PRODUCT_PHOTO = "/images/products/zenweld-urun.jpg";
+
 const lorem = {
   tr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
   en: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
@@ -39,12 +48,7 @@ export const products: Product[] = [
     priceExVat: 41500,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.weldingSparks, alt: { tr: "Zenweld Ultimate 250 MTC ön görünüm", en: "Zenweld Ultimate 250 MTC front view" } },
-      { url: stockPhotos.industrialShop, alt: { tr: "Ultimate 250 MTC yan panel", en: "Ultimate 250 MTC side panel" } },
-      { url: stockPhotos.welderAtWork, alt: { tr: "Kullanım görseli", en: "In use" } },
-      { url: stockPhotos.workshop, alt: { tr: "Atölye kullanımı", en: "Workshop use" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "MIG / MAG / MMA / TIG DC", en: "MIG / MAG / MMA / TIG DC" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -104,11 +108,7 @@ export const products: Product[] = [
     priceExVat: 48900,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.industrialShop, alt: { tr: "Zenweld Ultimate 255 MTC", en: "Zenweld Ultimate 255 MTC" } },
-      { url: stockPhotos.metalWork, alt: { tr: "Kaynak uygulaması", en: "Welding application" } },
-      { url: stockPhotos.factoryLine, alt: { tr: "Üretim hattı", en: "Production line" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "MIG / MAG / MMA / TIG DC", en: "MIG / MAG / MMA / TIG DC" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -162,10 +162,7 @@ export const products: Product[] = [
     priceExVat: 96500,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.factoryLine, alt: { tr: "Zenweld Ultimate 355 MTC", en: "Zenweld Ultimate 355 MTC" } },
-      { url: stockPhotos.industrialShop, alt: { tr: "Endüstriyel kullanım", en: "Industrial use" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "MIG / MAG / MMA", en: "MIG / MAG / MMA" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "380 V ± %15, 3 faz", en: "380 V ±15%, 3-phase" } },
@@ -218,10 +215,7 @@ export const products: Product[] = [
     priceExVat: 28900,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.toolsFlatlay, alt: { tr: "Zenweld Ultimate 205 MTE Pro", en: "Zenweld Ultimate 205 MTE Pro" } },
-      { url: stockPhotos.workshop, alt: { tr: "Atölye kullanımı", en: "Workshop use" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "MIG / MAG / MMA / TIG DC", en: "MIG / MAG / MMA / TIG DC" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -273,11 +267,7 @@ export const products: Product[] = [
     priceExVat: 64900,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.engineer, alt: { tr: "Zenweld Evomig 205 P", en: "Zenweld Evomig 205 P" } },
-      { url: stockPhotos.metalWork, alt: { tr: "Pulse MIG dikişi", en: "Pulse MIG bead" } },
-      { url: stockPhotos.sparksDark, alt: { tr: "Kaynak anı", en: "Welding in action" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "Pulse MIG / Double Pulse / MIG / MAG / TIG / MMA", en: "Pulse MIG / Double Pulse / MIG / MAG / TIG / MMA" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -332,10 +322,7 @@ export const products: Product[] = [
     priceExVat: 52900,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.welderAtWork, alt: { tr: "Zenweld Ultimate 205 AC/DC TIG", en: "Zenweld Ultimate 205 AC/DC TIG" } },
-      { url: stockPhotos.metalWork, alt: { tr: "TIG kaynağı", en: "TIG welding" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "AC/DC TIG / MMA", en: "AC/DC TIG / MMA" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -391,10 +378,7 @@ export const products: Product[] = [
     priceExVat: 24500,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.workshop, alt: { tr: "Zenweld Ultimate TH 200", en: "Zenweld Ultimate TH 200" } },
-      { url: stockPhotos.toolsFlatlay, alt: { tr: "Ekipman seti", en: "Equipment set" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "DC TIG / MMA", en: "DC TIG / MMA" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -447,10 +431,7 @@ export const products: Product[] = [
     priceExVat: 9900,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.sparksDark, alt: { tr: "Zenweld ARC 200", en: "Zenweld ARC 200" } },
-      { url: stockPhotos.welderAtWork, alt: { tr: "Elektrot kaynağı", en: "Stick welding" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "MMA (Örtülü Elektrot)", en: "MMA (Stick)" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -503,9 +484,7 @@ export const products: Product[] = [
     priceExVat: 5900,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.toolsFlatlay, alt: { tr: "Zenweld ARC 120", en: "Zenweld ARC 120" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "MMA (Örtülü Elektrot)", en: "MMA (Stick)" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -556,10 +535,7 @@ export const products: Product[] = [
     priceExVat: 14900,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.industrialShop, alt: { tr: "Zenweld Ultimate ARC 200 S", en: "Zenweld Ultimate ARC 200 S" } },
-      { url: stockPhotos.sparksDark, alt: { tr: "Kaynak uygulaması", en: "Welding application" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kaynak Yöntemi", en: "Process" }, value: { tr: "MMA / Lift TIG", en: "MMA / Lift TIG" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -612,11 +588,7 @@ export const products: Product[] = [
     priceExVat: 32900,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.metalWork, alt: { tr: "Zenweld Multicut 40 CNC", en: "Zenweld Multicut 40 CNC" } },
-      { url: stockPhotos.factoryLine, alt: { tr: "CNC plazma kesim", en: "CNC plasma cutting" } },
-      { url: stockPhotos.blueprint, alt: { tr: "Kesim planı", en: "Cutting plan" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kesme Yöntemi", en: "Process" }, value: { tr: "Plazma Kesme", en: "Plasma Cutting" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "220 V ± %15, 1 faz", en: "220 V ±15%, 1-phase" } },
@@ -674,10 +646,7 @@ export const products: Product[] = [
     priceExVat: 58900,
     vatRate: 20,
     currency: "TRY",
-    images: [
-      { url: stockPhotos.factoryLine, alt: { tr: "Zenweld Multicut 60 S", en: "Zenweld Multicut 60 S" } },
-      { url: stockPhotos.metalWork, alt: { tr: "Plazma kesim", en: "Plasma cutting" } },
-    ],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: "Zenweld ürün görseli", en: "Zenweld product image" } }],
     specs: [
       { label: { tr: "Kesme Yöntemi", en: "Process" }, value: { tr: "Plazma Kesme", en: "Plasma Cutting" } },
       { label: { tr: "Şebeke Gerilimi", en: "Input Voltage" }, value: { tr: "380 V ± %15, 3 faz", en: "380 V ±15%, 3-phase" } },
@@ -759,7 +728,7 @@ accessorySeeds.forEach((a, i) => {
     priceExVat: a.price,
     vatRate: 20,
     currency: "TRY",
-    images: [{ url: a.photo, alt: { tr: a.name, en: a.name } }],
+    images: [{ url: PRODUCT_PHOTO, alt: { tr: a.name, en: a.name } }],
     specs: [
       { label: { tr: "Marka", en: "Brand" }, value: { tr: "Zenweld", en: "Zenweld" } },
       { label: { tr: "Ürün Kodu", en: "Product Code" }, value: { tr: a.sku, en: a.sku } },
