@@ -4,17 +4,15 @@ import { getSiteUrl, isNoIndex } from "@/lib/seo";
 /**
  * /robots.txt
  *
- * Demo ortaminda arama motorlarina kapatmak icin Vercel'de
- * NEXT_PUBLIC_NOINDEX=1 ortam degiskenini tanimlayin.
+ * NEXT_PUBLIC_NOINDEX=1 iken sayfalar taramaya ACIK kalir ama her sayfaya
+ * <meta name="robots" content="noindex"> eklenir. Sebep: robots.txt ile
+ * taramayi engellersek Google sayfayi okuyamaz, dolayisiyla noindex etiketini
+ * de goremez ve URL'yi baska kaynaklardan indeksleyebilir. Indekslemeyi
+ * durdurmanin dogru yolu, taramaya izin verip noindex etiketi koymaktir.
+ * Bu durumda yalnizca site haritasi bildirilmez.
  */
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
-
-  if (isNoIndex()) {
-    return {
-      rules: [{ userAgent: "*", disallow: "/" }],
-    };
-  }
 
   return {
     rules: [
@@ -25,7 +23,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/tr/admin", "/en/admin", "/tr/hesabim", "/en/hesabim", "/api/"],
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
+    ...(isNoIndex() ? {} : { sitemap: `${siteUrl}/sitemap.xml` }),
     host: siteUrl,
   };
 }
