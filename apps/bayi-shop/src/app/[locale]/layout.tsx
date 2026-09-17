@@ -11,15 +11,49 @@ import { Providers } from "./providers";
 import { ShopHeader } from "@/components/ShopHeader";
 import { ShopFooter } from "@/components/ShopFooter";
 import { STORE } from "@/lib/store-config";
+import { getSiteUrl, isNoIndex, languageAlternates } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: {
-    default: `${STORE.name} — Yetkili Zenweld Bayisi`,
-    template: `%s | ${STORE.name}`,
-  },
-  description:
-    "Yetkili Zenweld bayisi. Kaynak makineleri, plazma kesme sistemleri ve kaynak ekipmanlarını online satın alın.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const lang = isLocale(locale) ? locale : "tr";
+  const title =
+    lang === "tr"
+      ? `${STORE.name} — Yetkili Zenweld Bayisi`
+      : `${STORE.name} — Authorised Zenweld Dealer`;
+  const description =
+    lang === "tr"
+      ? "Yetkili Zenweld bayisi. Kaynak makineleri, plazma kesme sistemleri ve kaynak ekipmanlarını online satın alın. Hızlı kargo, orijinal ürün garantisi."
+      : "Authorised Zenweld dealer. Buy welding machines, plasma cutters and welding equipment online. Fast shipping, genuine product warranty.";
+
+  return {
+    metadataBase: new URL(getSiteUrl()),
+    title: { default: title, template: `%s | ${STORE.name}` },
+    description,
+    alternates: languageAlternates("/", lang),
+    robots: isNoIndex() ? { index: false, follow: false } : { index: true, follow: true },
+    openGraph: {
+      type: "website",
+      siteName: STORE.name,
+      locale: lang === "tr" ? "tr_TR" : "en_US",
+      title,
+      description,
+      url: `/${lang}`,
+      images: [
+        { url: "/images/products/zenweld-urun.png", width: 748, height: 1064, alt: STORE.name },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/images/products/zenweld-urun.png"],
+    },
+  };
+}
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));

@@ -315,6 +315,35 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
 
 ---
 
+## SEO
+
+Her iki sitede de aşağıdakiler hazırdır:
+
+- **Sayfa başlıkları ve açıklamaları** — ürün, kategori, blog ve içerik sayfalarının
+  her biri kendi başlığını ve açıklamasını üretir (TR/EN ayrı)
+- **`/sitemap.xml`** — ürün, kategori ve blog sayfaları `packages/data` içindeki
+  veriden otomatik üretilir; yeni ürün eklendiğinde kendiliğinden güncellenir
+- **`/robots.txt`** — yönetim paneli, hesap, sepet ve ödeme sayfaları taramaya kapalı
+- **`hreflang` + `canonical`** — TR ve EN sayfalar birbirinin karşılığı olarak işaretlenir
+- **Open Graph / Twitter Card** — WhatsApp, LinkedIn ve X'te paylaşınca başlık,
+  açıklama ve görselle düzgün önizleme çıkar
+- **Yapısal veri (schema.org JSON-LD)** — `Product` (fiyat, SKU, stok durumu, marka,
+  teknik özellikler), `BreadcrumbList`, `Organization`; bayi mağazasında ayrıca
+  `Store` ve kargo bilgisi içeren `Offer`
+
+### Site adresi
+
+Adres sırasıyla `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik değişkeni →
+`localhost` olarak çözülür. Kendi alan adınıza geçince `NEXT_PUBLIC_SITE_URL`
+tanımlamanız yeterlidir.
+
+### Demoyu aramaya kapatmak
+
+Vercel'de `NEXT_PUBLIC_NOINDEX=1` tanımlarsanız `robots.txt` her şeyi engeller ve
+tüm sayfalara `noindex` eklenir. Demo bir `vercel.app` adresindeyken bu önerilir.
+
+---
+
 ## Teknoloji
 
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·

@@ -1,3 +1,6 @@
+import { isLocale, type Locale } from "@zenweld/i18n";
+import { JsonLd } from "@/components/common/JsonLd";
+import { organizationJsonLd } from "@/lib/seo";
 import {
   BlogTeaser,
   CategoryTiles,
@@ -8,9 +11,17 @@ import {
   WhyZenweld,
 } from "@/components/home/HomeSections";
 
-export default function HomePage() {
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const lang = (isLocale(locale) ? locale : "tr") as Locale;
+
   return (
     <>
+      <JsonLd data={organizationJsonLd(lang)} />
       <Hero />
       <CategoryTiles />
       <FeaturedProducts />

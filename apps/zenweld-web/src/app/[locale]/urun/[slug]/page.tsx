@@ -1,199 +1,112 @@
-"use client";
-
-import { use, useMemo, useState } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ChevronRight, FileText } from "lucide-react";
-import { findProductBySlug, useDatabase } from "@zenweld/store";
-import { Accordion, Tabs } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
-import { OnlineRetailers } from "@/components/product/OnlineRetailers";
+import { categories, products } from "@zenweld/data";
+import { isLocale, type Locale } from "@zenweld/i18n";
+import { JsonLd } from "@/components/common/JsonLd";
 import {
-  AddToQuoteButton,
-  InTheBoxList,
-  PriceBlock,
-  ProductGallery,
-  ProductHighlights,
-  ProductMeta,
-  SpecTable,
-  SupportCta,
-  TrustBadges,
-  WhereToBuyButton,
-} from "@/components/product/ProductDetailParts";
-import { ProductCard } from "@/components/product/ProductCard";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+  SITE_NAME,
+  breadcrumbJsonLd,
+  languageAlternates,
+  productJsonLd,
+} from "@/lib/seo";
+import { ProductPageClient } from "./ProductPageClient";
 
-export default function ProductPage({
+/**
+ * Urun sayfasi — sunucu bileseni.
+ *
+ * Sayfa basligi, aciklamasi, sosyal medya onizlemesi ve yapisal veri burada
+ * uretilir; etkilesimli kisim ProductPageClient bileseninde calisir.
+ */
+
+export function generateStaticParams() {
+  return products
+    .filter((product) => product.active)
+    .map((product) => ({ slug: product.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const lang = (isLocale(locale) ? locale : "tr") as Locale;
+  const product = products.find((p) => p.slug === slug);
+
+  if (!product) {
+    return { title: lang === "tr" ? "Ürün bulunamadı" : "Product not found" };
+  }
+
+  const category = categories.find((c) => c.slug === product.categorySlug);
+  const title = category
+    ? `${product.name} — ${category.name[lang]}`
+    : product.name;
+  const description = product.shortDescription[lang];
+  const image = product.images[0]?.url ?? "/images/products/zenweld-urun.png";
+
+  return {
+    title,
+    description,
+    alternates: languageAlternates(`/urun/${product.slug}`, lang),
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      url: `/${lang}/urun/${product.slug}`,
+      images: [{ url: image, alt: product.name }],
+      locale: lang === "tr" ? "tr_TR" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      images: [image],
+    },
+    other: {
+      "product:brand": "Zenweld",
+      "product:retailer_item_id": product.sku,
+    },
+  };
+}
+
+export default async function ProductPage({
   params,
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = use(params);
-  const t = useT();
-  const locale = useLocale();
-  const text = useText();
-  const db = useDatabase();
-  const [tab, setTab] = useState("specs");
+  const { locale, slug } = await params;
+  const lang = (isLocale(locale) ? locale : "tr") as Locale;
+  const product = products.find((p) => p.slug === slug);
 
-  const product = useMemo(() => findProductBySlug(slug, db), [slug, db]);
+  // Yonetim panelinden eklenen urunler yalnizca tarayicida bulunur; onlar icin
+  // yapisal veri uretmeden istemci bilesenini calistiriyoruz.
+  if (!product) {
+    return <ProductPageClient slug={slug} />;
+  }
 
-  const related = useMemo(() => {
-    if (!product) return [];
-    return db.products
-      .filter((p) => p.active && p.id !== product.id && p.categorySlug === product.categorySlug)
-      .slice(0, 4);
-  }, [product, db]);
-
-  const category = useMemo(
-    () => db.categories.find((c) => c.slug === product?.categorySlug),
-    [product, db],
-  );
-
-  if (!product) notFound();
-
-  const tabs = [
-    { id: "specs", label: t.product.specs },
-    { id: "description", label: t.product.description },
-    { id: "warranty", label: t.product.warranty },
-    { id: "faq", label: t.product.faq },
-  ];
+  const category = categories.find((c) => c.slug === product.categorySlug);
+  const sectionLabel = product.section.replace("-", " ");
 
   return (
     <>
-      {/* Breadcrumb */}
-      <div className="border-b border-zw-grey-200 bg-zw-grey-50">
-        <div className="zw-container flex items-center gap-1.5 overflow-x-auto py-3 text-xs text-zw-grey-500">
-          <LocaleLink href="/" className="shrink-0 hover:text-zw-ink">
-            {t.common.brand}
-          </LocaleLink>
-          <ChevronRight size={13} className="shrink-0" />
-          <LocaleLink href={`/${product.section}`} className="shrink-0 capitalize hover:text-zw-ink">
-            {product.section.replace("-", " ")}
-          </LocaleLink>
-          {category && (
-            <>
-              <ChevronRight size={13} className="shrink-0" />
-              <LocaleLink
-                href={`/${product.section}/${category.slug}`}
-                className="shrink-0 hover:text-zw-ink"
-              >
-                {category.name[locale]}
-              </LocaleLink>
-            </>
-          )}
-          <ChevronRight size={13} className="shrink-0" />
-          <span className="shrink-0 font-semibold text-zw-ink">{product.name}</span>
-        </div>
-      </div>
-
-      <div className="zw-container py-8 lg:py-12">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-          <ProductGallery product={product} />
-
-          <div>
-            <h1 className="font-display text-3xl font-bold uppercase leading-tight sm:text-4xl">
-              {product.name}
-            </h1>
-            <p className="mt-3 text-zw-grey-600">{text(product.shortDescription)}</p>
-
-            <div className="mt-4">
-              <ProductMeta product={product} />
-            </div>
-
-            <PriceBlock product={product} />
-            <ProductHighlights product={product} />
-            <InTheBoxList product={product} />
-
-            <div className="mt-8">
-              <WhereToBuyButton product={product} />
-              <AddToQuoteButton product={product} />
-            </div>
-
-            <OnlineRetailers product={product} />
-            <TrustBadges />
-            <SupportCta />
-          </div>
-        </div>
-
-        {/* Sekmeler */}
-        <div className="mt-14">
-          <Tabs tabs={tabs} active={tab} onChange={setTab} />
-          <div className="py-8">
-            {tab === "specs" && <SpecTable product={product} />}
-
-            {tab === "description" && (
-              <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-zw-grey-700">
-                <p>{text(product.description)}</p>
-                {product.manualUrl && (
-                  <a
-                    href={product.manualUrl}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-zw-red-600 hover:underline"
-                  >
-                    <FileText size={16} />
-                    {t.product.manual} (PDF)
-                  </a>
-                )}
-              </div>
-            )}
-
-            {tab === "warranty" && (
-              <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-zw-grey-700">
-                <p>
-                  <strong>
-                    {t.product.warrantyMonths.replace(
-                      "{months}",
-                      String(product.warrantyMonths),
-                    )}
-                  </strong>
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                  nostrud exercitation ullamco laboris.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <LocaleLink
-                    href="/kesfet/garanti-kayit"
-                    className="text-sm font-semibold text-zw-red-600 hover:underline"
-                  >
-                    {t.explore.registerWarranty} →
-                  </LocaleLink>
-                  <LocaleLink
-                    href="/kesfet/garanti-sorgula"
-                    className="text-sm font-semibold text-zw-red-600 hover:underline"
-                  >
-                    {t.explore.checkWarranty} →
-                  </LocaleLink>
-                </div>
-              </div>
-            )}
-
-            {tab === "faq" && (
-              <div className="max-w-3xl">
-                <Accordion
-                  items={db.faqs.slice(0, 6).map((f) => ({
-                    id: f.id,
-                    title: text(f.question),
-                    content: text(f.answer),
-                  }))}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {related.length > 0 && (
-          <div className="mt-8">
-            <h2 className="mb-6 font-display text-3xl font-bold uppercase">
-              {t.product.related}
-            </h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {related.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      <JsonLd data={productJsonLd(product, lang, category)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: SITE_NAME, path: `/${lang}` },
+          { name: sectionLabel, path: `/${lang}/${product.section}` },
+          ...(category
+            ? [
+                {
+                  name: category.name[lang],
+                  path: `/${lang}/${product.section}/${category.slug}`,
+                },
+              ]
+            : []),
+          { name: product.name, path: `/${lang}/urun/${product.slug}` },
+        ])}
+      />
+      <ProductPageClient slug={slug} />
     </>
   );
 }
