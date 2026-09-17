@@ -5,10 +5,14 @@ import type { Retailer } from "../types";
  * bolumunde listelenen e-ticaret siteleri.
  *
  * isOwnStore = true olan kayit, bu monorepo icindeki bayi-shop uygulamasidir.
+ * Adresi NEXT_PUBLIC_BAYI_SHOP_URL ortam degiskeninden okunur; tanimli degilse
+ * yerel gelistirme adresi kullanilir.
  */
+const BAYI_SHOP_URL =
+  process.env.NEXT_PUBLIC_BAYI_SHOP_URL?.replace(/\/$/, "") || "http://localhost:3001";
 export const retailers: Retailer[] = [
   { id: "r-basak-hirdavat", name: "Başak Hırdavat", websiteUrl: "https://www.basakhirdavat.com/", logoText: "BAŞAK HIRDAVAT", isOwnStore: false, city: "İstanbul", active: true },
-  { id: "r-zenweld-bayi-a", name: "ZENWELD-BAYİ-A", websiteUrl: "http://localhost:3001", logoText: "ZENWELD-BAYİ-A", isOwnStore: true, city: "İstanbul", active: true },
+  { id: "r-zenweld-bayi-a", name: "ZENWELD-BAYİ-A", websiteUrl: BAYI_SHOP_URL, logoText: "ZENWELD-BAYİ-A", isOwnStore: true, city: "İstanbul", active: true },
   { id: "r-ostim-online", name: "Ostim Kaynak Online", websiteUrl: "https://example.com/ostim-kaynak", logoText: "OSTİM KAYNAK", isOwnStore: false, city: "Ankara", active: true },
   { id: "r-ege-kaynak", name: "Ege Kaynak Store", websiteUrl: "https://example.com/ege-kaynak", logoText: "EGE KAYNAK", isOwnStore: false, city: "İzmir", active: true },
   { id: "r-konya-teknik", name: "Konya Teknik Online", websiteUrl: "https://example.com/konya-teknik", logoText: "KONYA TEKNİK", isOwnStore: false, city: "Konya", active: true },
