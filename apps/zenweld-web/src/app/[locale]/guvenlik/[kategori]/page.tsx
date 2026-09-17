@@ -1,13 +1,48 @@
-"use client";
-
-import { use } from "react";
+import type { Metadata } from "next";
+import { categories } from "@zenweld/data";
+import { isLocale, type Locale } from "@zenweld/i18n";
 import { CategoryListing } from "@/components/product/CategoryListing";
+import { languageAlternates } from "@/lib/seo";
 
-export default function CategoryPage({
+export function generateStaticParams() {
+  return categories
+    .filter((category) => category.section === "guvenlik")
+    .map((category) => ({ kategori: category.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; kategori: string }>;
+}): Promise<Metadata> {
+  const { locale, kategori } = await params;
+  const lang = (isLocale(locale) ? locale : "tr") as Locale;
+  const category = categories.find((c) => c.slug === kategori);
+
+  if (!category) {
+    return { title: lang === "tr" ? "Kategori" : "Category" };
+  }
+
+  const title = category.name[lang];
+  const description = category.description[lang];
+
+  return {
+    title,
+    description,
+    alternates: languageAlternates(`/guvenlik/${category.slug}`, lang),
+    openGraph: {
+      title,
+      description,
+      url: `/${lang}/guvenlik/${category.slug}`,
+    },
+  };
+}
+
+export default async function CategoryPage({
   params,
 }: {
   params: Promise<{ locale: string; kategori: string }>;
 }) {
-  const { kategori } = use(params);
+  const { kategori } = await params;
   return <CategoryListing section="guvenlik" categorySlug={kategori} />;
 }
