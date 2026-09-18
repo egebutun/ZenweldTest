@@ -70,6 +70,14 @@ export const dictionaries = {
       guide: "Ultimate Kaynak Rehberi",
       guideDesc: "Ücretsiz dijital kopyayı edinin veya basılı sürümü sipariş edin",
     },
+    welcome: {
+      eyebrow: "Hoş Geldiniz",
+      title: "Zenweld'e Hoş Geldiniz",
+      text: "Türkiye'nin kaynak teknolojileri markası. Kaynak makineleri, plazma kesme sistemleri ve ekipmanları için doğru yerdesiniz.",
+      cta: "Keşfetmeye Başla",
+      secondary: "Bayi Bul",
+      skip: "Kapat",
+    },
     home: {
       // H1 — arama motorunun sayfayi anlamasi icin en guclu sinyal
       heroTitle: "Zenweld Kaynak Makineleri ve Plazma Kesme Sistemleri",
@@ -448,6 +456,14 @@ export const dictionaries = {
       productSelectorDesc: "Easily find the perfect machine for your welding needs",
       guide: "The Ultimate Welding Guide",
       guideDesc: "Get the free digital copy or order a printed edition",
+    },
+    welcome: {
+      eyebrow: "Welcome",
+      title: "Welcome to Zenweld",
+      text: "Türkiye's welding technology brand. You are in the right place for welding machines, plasma cutting systems and equipment.",
+      cta: "Start Exploring",
+      secondary: "Find a Dealer",
+      skip: "Close",
     },
     home: {
       // H1 — the strongest signal for search engines
