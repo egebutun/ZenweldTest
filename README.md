@@ -324,7 +324,13 @@ Her iki sitede de aşağıdakiler hazırdır:
 - **`/sitemap.xml`** — ürün, kategori ve blog sayfaları `packages/data` içindeki
   veriden otomatik üretilir; yeni ürün eklendiğinde kendiliğinden güncellenir
 - **`/robots.txt`** — yönetim paneli, hesap, sepet ve ödeme sayfaları taramaya kapalı
-- **`hreflang` + `canonical`** — TR ve EN sayfalar birbirinin karşılığı olarak işaretlenir
+- **Dile göre adresler** — İngilizce sayfalar İngilizce adres kullanır:
+  `/tr/urun/arc-200` ↔ `/en/products/arc-200`,
+  `/tr/ekipmanlar/mig-gmaw` ↔ `/en/equipment/mig-gmaw`.
+  Çeviri tablosu `packages/i18n/src/pathnames.ts` dosyasındadır; uygulamanın iç
+  rota ağacı Türkçe kalır, `middleware.ts` İngilizce adresi iç rotaya bağlar.
+  Bileşenlerde her zaman Türkçe yol yazılır, çeviriyi `useHref()` yapar.
+- **`hreflang` + `canonical`** — her dil kendi adres yazımıyla işaretlenir
 - **Open Graph / Twitter Card** — WhatsApp, LinkedIn ve X'te paylaşınca başlık,
   açıklama ve görselle düzgün önizleme çıkar
 - **Yapısal veri (schema.org JSON-LD)** — `Product` (fiyat, SKU, stok durumu, marka,

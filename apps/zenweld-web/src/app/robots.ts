@@ -20,7 +20,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         // Yonetim paneli ve hesap sayfalari aramada cikmasin
-        disallow: ["/tr/admin", "/en/admin", "/tr/hesabim", "/en/hesabim", "/api/"],
+        disallow: ["/tr/admin", "/en/admin", "/tr/hesabim", "/en/account", "/api/"],
       },
     ],
     ...(isNoIndex() ? {} : { sitemap: `${siteUrl}/sitemap.xml` }),
