@@ -38,10 +38,13 @@ export function Hero() {
           <div className="mb-4 inline-block border-l-4 border-zw-red-600 pl-3 text-xs font-bold uppercase tracking-[0.2em] text-zw-red-500">
             {t.common.tagline}
           </div>
-          <h1 className="font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="font-display text-4xl font-bold uppercase leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl">
             {t.home.heroTitle}
           </h1>
-          <p className="mt-5 max-w-xl text-zw-grey-300">{t.home.heroSubtitle}</p>
+          <p className="mt-4 font-display text-2xl font-semibold uppercase tracking-tight text-zw-red-500 sm:text-3xl">
+            {t.home.heroSlogan}
+          </p>
+          <p className="mt-4 max-w-xl text-zw-grey-300">{t.home.heroSubtitle}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <LocaleLink href="/ekipmanlar">
               <Button size="lg" rightIcon={<ArrowRight size={18} />}>

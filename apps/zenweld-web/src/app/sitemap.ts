@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { categories, products, blogPosts } from "@zenweld/data";
-import { locales } from "@zenweld/i18n";
+import { locales, localizePath } from "@zenweld/i18n";
 import { getSiteUrl } from "@/lib/seo";
 
 /**
@@ -46,7 +46,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ) => {
     locales.forEach((locale) => {
       entries.push({
-        url: `${base}/${locale}${path}`,
+        url: `${base}/${locale}${localizePath(path, locale)}`,
         lastModified,
         changeFrequency: freq,
         priority,
@@ -54,7 +54,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
           languages: Object.fromEntries(
             locales.map((alt) => [
               alt === "tr" ? "tr-TR" : "en-US",
-              `${base}/${alt}${path}`,
+              `${base}/${alt}${localizePath(path, alt)}`,
             ]),
           ),
         },

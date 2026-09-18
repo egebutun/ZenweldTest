@@ -5,6 +5,7 @@ import {
   defaultLocale,
   getDictionary,
   interpolate,
+  localizePath,
   type Dictionary,
   type Locale,
 } from "@zenweld/i18n";
@@ -52,18 +53,26 @@ export function useFormatMessage() {
     interpolate(template, values);
 }
 
-/** Locale on ekli link uretir: href("/urun/arc-200") -> "/tr/urun/arc-200" */
+/**
+ * Locale on ekli, dile cevrilmis link uretir.
+ *   href("/urun/arc-200")  ->  "/tr/urun/arc-200"      (TR)
+ *   href("/urun/arc-200")  ->  "/en/products/arc-200"  (EN)
+ *
+ * Bilesenlerde her zaman Turkce ic rota yazilir; cevirme burada olur.
+ */
 export function useHref() {
   const locale = useLocale();
   return (path: string) => {
     if (path.startsWith("http") || path.startsWith("#") || path.startsWith("mailto:")) {
       return path;
     }
-    return `/${locale}${path.startsWith("/") ? path : `/${path}`}`;
+    const clean = path.startsWith("/") ? path : `/${path}`;
+    return `/${locale}${localizePath(clean, locale)}`;
   };
 }
 
 export function localeHref(locale: Locale, path: string): string {
   if (path.startsWith("http") || path.startsWith("#")) return path;
-  return `/${locale}${path.startsWith("/") ? path : `/${path}`}`;
+  const clean = path.startsWith("/") ? path : `/${path}`;
+  return `/${locale}${localizePath(clean, locale)}`;
 }

@@ -47,8 +47,8 @@ export function ShopHomeContent() {
             <div className="mb-3 inline-block border-l-4 border-zw-red-600 pl-3 text-xs font-bold uppercase tracking-[0.2em] text-zw-red-500">
               {t.shop.authorizedDealer}
             </div>
-            <h1 className="font-display text-4xl font-bold uppercase leading-[1] sm:text-6xl">
-              Zenweld ürünleri stoktan teslim
+            <h1 className="font-display text-3xl font-bold uppercase leading-[1.05] sm:text-5xl">
+              Zenweld Kaynak Makineleri ve Ekipmanları — Stoktan Teslim
             </h1>
             <p className="mt-4 text-zw-grey-300">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor

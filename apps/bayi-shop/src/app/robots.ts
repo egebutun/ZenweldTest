@@ -9,7 +9,14 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/tr/sepet", "/en/sepet", "/tr/odeme", "/en/odeme", "/tr/hesabim", "/en/hesabim"],
+        disallow: [
+          "/tr/sepet",
+          "/en/cart",
+          "/tr/odeme",
+          "/en/checkout",
+          "/tr/hesabim",
+          "/en/account",
+        ],
       },
     ],
     ...(isNoIndex() ? {} : { sitemap: `${siteUrl}/sitemap.xml` }),

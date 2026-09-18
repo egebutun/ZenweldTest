@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { products, retailerStock } from "@zenweld/data";
-import { locales } from "@zenweld/i18n";
+import { locales, localizePath } from "@zenweld/i18n";
 import { getSiteUrl } from "@/lib/seo";
 import { STORE } from "@/lib/store-config";
 
@@ -19,13 +19,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const push = (path: string, priority: number, freq: MetadataRoute.Sitemap[number]["changeFrequency"]) => {
     locales.forEach((locale) => {
       entries.push({
-        url: `${base}/${locale}${path}`,
+        url: `${base}/${locale}${localizePath(path, locale)}`,
         lastModified: now,
         changeFrequency: freq,
         priority,
         alternates: {
           languages: Object.fromEntries(
-            locales.map((alt) => [alt === "tr" ? "tr-TR" : "en-US", `${base}/${alt}${path}`]),
+            locales.map((alt) => [
+              alt === "tr" ? "tr-TR" : "en-US",
+              `${base}/${alt}${localizePath(path, alt)}`,
+            ]),
           ),
         },
       });

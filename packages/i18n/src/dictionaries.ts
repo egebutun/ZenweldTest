@@ -71,7 +71,9 @@ export const dictionaries = {
       guideDesc: "Ücretsiz dijital kopyayı edinin veya basılı sürümü sipariş edin",
     },
     home: {
-      heroTitle: "Kaynakta bir üst seviye",
+      // H1 — arama motorunun sayfayi anlamasi icin en guclu sinyal
+      heroTitle: "Zenweld Kaynak Makineleri ve Plazma Kesme Sistemleri",
+      heroSlogan: "Kaynakta bir üst seviye",
       heroSubtitle:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       heroCta: "Ürünleri Keşfet",
@@ -448,7 +450,9 @@ export const dictionaries = {
       guideDesc: "Get the free digital copy or order a printed edition",
     },
     home: {
-      heroTitle: "The next level of welding performance",
+      // H1 — the strongest signal for search engines
+      heroTitle: "Zenweld Welding Machines and Plasma Cutting Systems",
+      heroSlogan: "The next level of welding performance",
       heroSubtitle:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       heroCta: "Explore Products",

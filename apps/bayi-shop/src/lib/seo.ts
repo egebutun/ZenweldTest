@@ -1,4 +1,4 @@
-import type { Locale } from "@zenweld/i18n";
+import { localizePath, type Locale } from "@zenweld/i18n";
 import type { Product, RetailerStock } from "@zenweld/data";
 import { STORE } from "./store-config";
 
@@ -22,12 +22,16 @@ export function absoluteUrl(path: string): string {
 
 export function languageAlternates(path: string, locale: Locale = "tr") {
   const clean = path.startsWith("/") ? path : `/${path}`;
+  // Her dil kendi adres yazimini kullanir: /tr/urun/... ve /en/products/...
+  const forLocale = (target: Locale) =>
+    absoluteUrl(`/${target}${clean === "/" ? "" : localizePath(clean, target)}`);
+
   return {
-    canonical: absoluteUrl(`/${locale}${clean === "/" ? "" : clean}`),
+    canonical: forLocale(locale),
     languages: {
-      "tr-TR": absoluteUrl(`/tr${clean === "/" ? "" : clean}`),
-      "en-US": absoluteUrl(`/en${clean === "/" ? "" : clean}`),
-      "x-default": absoluteUrl(`/tr${clean === "/" ? "" : clean}`),
+      "tr-TR": forLocale("tr"),
+      "en-US": forLocale("en"),
+      "x-default": forLocale("tr"),
     },
   };
 }
