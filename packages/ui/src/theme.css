@@ -90,3 +90,101 @@ h1, h2, h3, h4, .font-display {
 
 /* Yatay kaydirma olmasin */
 body { overflow-x: hidden; }
+
+/* ------------------------------------------------------------------ */
+/* Kaynakçı animasyonu                                                 */
+/* ------------------------------------------------------------------ */
+
+.zw-welder svg {
+  display: block;
+}
+
+@keyframes zw-arc-flicker {
+  0%, 100% { opacity: 1; }
+  8%   { opacity: 0.35; }
+  14%  { opacity: 1; }
+  22%  { opacity: 0.6; }
+  30%  { opacity: 1; }
+  47%  { opacity: 0.25; }
+  52%  { opacity: 0.95; }
+  68%  { opacity: 0.5; }
+  74%  { opacity: 1; }
+  88%  { opacity: 0.7; }
+}
+
+@keyframes zw-arc-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.25); }
+}
+
+@keyframes zw-spark-fly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  70% { opacity: 0.9; }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+@keyframes zw-bead-grow {
+  0%   { stroke-dashoffset: 88; opacity: 0.9; }
+  85%  { stroke-dashoffset: 0; opacity: 0.9; }
+  100% { stroke-dashoffset: 0; opacity: 0.35; }
+}
+
+@keyframes zw-torch-work {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-2px, 1.5px); }
+}
+
+@keyframes zw-smoke-rise {
+  0%   { transform: translate(0, 10px) scale(0.6); opacity: 0; }
+  25%  { opacity: 0.18; }
+  100% { transform: translate(14px, -60px) scale(1.7); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .zw-welder .zw-flicker {
+    animation: zw-arc-flicker 1.4s steps(1, end) infinite;
+  }
+
+  .zw-welder .zw-arc-core {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation:
+      zw-arc-flicker 1.4s steps(1, end) infinite,
+      zw-arc-pulse 0.5s ease-in-out infinite;
+  }
+
+  .zw-welder .zw-spark {
+    animation-name: zw-spark-fly;
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
+    animation-iteration-count: infinite;
+  }
+
+  .zw-welder .zw-bead {
+    stroke-dasharray: 88;
+    animation: zw-bead-grow 4s ease-in-out infinite;
+  }
+
+  .zw-welder .zw-torch,
+  .zw-welder .zw-arc-group,
+  .zw-welder .zw-sparks {
+    animation: zw-torch-work 2.4s ease-in-out infinite;
+  }
+
+  .zw-welder .zw-smoke circle {
+    animation: zw-smoke-rise 3.4s ease-out infinite;
+  }
+  .zw-welder .zw-smoke-2 { animation-delay: 1.1s; }
+  .zw-welder .zw-smoke-3 { animation-delay: 2.2s; }
+}
+
+/* Hareket azaltma tercihi açıksa sahne sabit ama okunaklı kalsın */
+@media (prefers-reduced-motion: reduce) {
+  .zw-welder .zw-spark { opacity: 0.6; }
+  .zw-welder .zw-bead { stroke-dasharray: none; }
+}

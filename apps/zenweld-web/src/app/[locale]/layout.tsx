@@ -18,6 +18,7 @@ import { Providers } from "./providers";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { DemoRibbon } from "@/components/layout/DemoRibbon";
+import { WelcomeGate } from "@/components/layout/WelcomeGate";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -86,6 +87,7 @@ export default async function LocaleLayout({
       <body className="min-h-screen bg-white antialiased">
         <Providers locale={locale as Locale}>
           <DemoRibbon />
+          <WelcomeGate />
           <Header />
           <main className="min-h-[60vh]">{children}</main>
           <Footer />
