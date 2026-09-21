@@ -4,12 +4,11 @@ import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, ExternalLink, MapPin, Store } from "lucide-react";
 import { useDatabase } from "@zenweld/store";
-import { Badge } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
-import { EventCard } from "./EventCard";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatDate } from "@/lib/format";
+import { countryName } from "@/lib/country";
 
 export function EventDetail({ slug }: { slug: string }) {
   const t = useT();
@@ -19,19 +18,7 @@ export function EventDetail({ slug }: { slug: string }) {
 
   const event = useMemo(() => db.events.find((e) => e.slug === slug), [db, slug]);
 
-  const others = useMemo(
-    () => db.events.filter((e) => e.active && e.slug !== slug).slice(0, 3),
-    [db, slug],
-  );
-
   if (!event) notFound();
-
-  const typeLabel = {
-    fuar: t.events.typeFuar,
-    sponsorluk: t.events.typeSponsorluk,
-    egitim: t.events.typeEgitim,
-    etkinlik: t.events.typeEtkinlik,
-  }[event.category];
 
   return (
     <>
@@ -47,8 +34,7 @@ export function EventDetail({ slug }: { slug: string }) {
 
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="max-w-2xl">
-              <Badge tone="grey">{typeLabel}</Badge>
-              <h1 className="mt-3 font-display text-4xl font-bold uppercase leading-tight sm:text-5xl">
+              <h1 className="font-display text-4xl font-bold uppercase leading-tight sm:text-5xl">
                 {text(event.title)}
               </h1>
               <p className="mt-3 text-zw-grey-600">{text(event.summary)}</p>
@@ -117,7 +103,7 @@ export function EventDetail({ slug }: { slug: string }) {
                 </dt>
                 <dd className="mt-1 font-semibold">{text(event.venue)}</dd>
                 <dd className="text-zw-grey-500">
-                  {event.city} · {event.country}
+                  {event.city} · {countryName(event.country, locale)}
                 </dd>
               </div>
               {event.booth && (
@@ -143,19 +129,6 @@ export function EventDetail({ slug }: { slug: string }) {
             </dl>
           </aside>
         </div>
-
-        {others.length > 0 && (
-          <div className="mt-14">
-            <h2 className="mb-6 font-display text-2xl font-bold uppercase">
-              {t.events.title}
-            </h2>
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {others.map((e) => (
-                <EventCard key={e.id} event={e} />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </>
   );

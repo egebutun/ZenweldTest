@@ -7,7 +7,7 @@ import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 
-/** Tarih bloğu: yıl üstte, ay ortada, gün aralığı altta. */
+/** Tarih bloğu: gün aralığı üstte, ay ortada, yıl altta. */
 function DateBlock({ event, locale }: { event: ZenweldEvent; locale: "tr" | "en" }) {
   const start = new Date(event.startDate);
   const end = new Date(event.endDate);
@@ -23,13 +23,13 @@ function DateBlock({ event, locale }: { event: ZenweldEvent; locale: "tr" | "en"
 
   return (
     <div className="flex h-[92px] w-[120px] shrink-0 flex-col items-center justify-center rounded-[4px] bg-zw-ink px-3 text-white">
-      <span className="font-display text-lg font-bold leading-none">
-        {start.getFullYear()}
-      </span>
-      <span className="mt-0.5 text-[13px] capitalize leading-none text-zw-grey-300">
+      <span className="font-display text-xl font-bold leading-none">{days}</span>
+      <span className="mt-1 text-[13px] capitalize leading-none text-zw-grey-300">
         {month}
       </span>
-      <span className="mt-1.5 font-display text-xl font-bold leading-none">{days}</span>
+      <span className="mt-1 font-display text-lg font-bold leading-none">
+        {start.getFullYear()}
+      </span>
     </div>
   );
 }
