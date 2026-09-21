@@ -3,10 +3,12 @@
 import { usePathname } from "next/navigation";
 import {
   Boxes,
+  CalendarDays,
   Database,
   FileText,
   LayoutDashboard,
   MapPin,
+  Newspaper,
   Package,
   ShoppingCart,
   Store,
@@ -34,6 +36,8 @@ const NAV = [
   { href: "/admin/saticilar", label: "Online Satıcılar", Icon: Store },
   { href: "/admin/bayiler", label: "Bayiler", Icon: MapPin },
   { href: "/admin/uyeler", label: "Üyeler", Icon: Users },
+  { href: "/admin/etkinlikler", label: "Etkinlikler", Icon: CalendarDays },
+  { href: "/admin/haberler", label: "Haberler", Icon: Newspaper },
   { href: "/admin/teklifler", label: "Teklifler", Icon: FileText },
   { href: "/admin/siparisler", label: "Siparişler", Icon: ShoppingCart },
   { href: "/admin/veri", label: "Veri Yönetimi", Icon: Database },

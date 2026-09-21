@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { events } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { JsonLd } from "@/components/common/JsonLd";
@@ -48,7 +47,10 @@ export default async function EventDetailPage({
   const lang = (isLocale(locale) ? locale : "tr") as Locale;
   const event = events.find((e) => e.slug === slug);
 
-  if (!event) notFound();
+  // Tohum verisinde olmayan slug'lar yonetim panelinden eklenmis olabilir;
+  // bu kayitlar yalnizca tarayici deposunda oldugu icin sunucuda bulunamaz.
+  // Sayfayi istemci bilesenine birakiyoruz, gercekten yoksa o notFound() atar.
+  if (!event) return <EventDetail slug={slug} />;
 
   return (
     <>

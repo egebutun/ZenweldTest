@@ -3,6 +3,7 @@
 import type {
   Dealer,
   DealerStock,
+  NewsItem,
   Order,
   Product,
   Quote,
@@ -10,6 +11,7 @@ import type {
   RetailerStock,
   User,
   ZenweldDatabase,
+  ZenweldEvent,
 } from "@zenweld/data";
 import { getSnapshot, mutate } from "./database";
 
@@ -435,4 +437,146 @@ export function findWarranty(serialNumber: string, db: ZenweldDatabase = getSnap
   return db.warranties.find(
     (w) => w.serialNumber.toLowerCase() === serialNumber.toLowerCase().trim(),
   );
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Etkinlikler                                                         */
+/* ------------------------------------------------------------------ */
+
+export function listEvents(db: ZenweldDatabase = getSnapshot()): ZenweldEvent[] {
+  return db.events.filter((e) => e.active);
+}
+
+export function listAllEvents(db: ZenweldDatabase = getSnapshot()): ZenweldEvent[] {
+  return db.events;
+}
+
+export function findEventById(
+  id: string,
+  db: ZenweldDatabase = getSnapshot(),
+): ZenweldEvent | undefined {
+  return db.events.find((e) => e.id === id);
+}
+
+export function findEventBySlug(
+  slug: string,
+  db: ZenweldDatabase = getSnapshot(),
+): ZenweldEvent | undefined {
+  return db.events.find((e) => e.slug === slug);
+}
+
+/** Baslangic tarihine gore yeniden eskiye siralar. */
+function sortEvents(list: ZenweldEvent[]): void {
+  list.sort((a, b) => b.startDate.localeCompare(a.startDate));
+}
+
+export function saveEvent(event: ZenweldEvent): void {
+  mutate((db) => {
+    const idx = db.events.findIndex((e) => e.id === event.id);
+    if (idx >= 0) db.events[idx] = event;
+    else db.events.unshift(event);
+    sortEvents(db.events);
+  });
+}
+
+export function createEvent(partial: Partial<ZenweldEvent>): ZenweldEvent {
+  const id = partial.id ?? uid("e");
+  const today = nowIso().slice(0, 10);
+  const event: ZenweldEvent = {
+    id,
+    slug: partial.slug ?? id,
+    title: partial.title ?? { tr: "", en: "" },
+    summary: partial.summary ?? { tr: "", en: "" },
+    description: partial.description ?? { tr: "", en: "" },
+    startDate: partial.startDate ?? today,
+    endDate: partial.endDate ?? partial.startDate ?? today,
+    venue: partial.venue ?? { tr: "", en: "" },
+    city: partial.city ?? "",
+    country: partial.country ?? "Türkiye",
+    logoUrl: partial.logoUrl ?? "",
+    images: partial.images ?? [],
+    websiteUrl: partial.websiteUrl,
+    booth: partial.booth,
+    featured: partial.featured ?? false,
+    active: partial.active ?? true,
+  };
+  mutate((db) => {
+    db.events.unshift(event);
+    sortEvents(db.events);
+  });
+  return event;
+}
+
+export function deleteEvent(id: string): void {
+  mutate((db) => {
+    db.events = db.events.filter((e) => e.id !== id);
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Haberler                                                            */
+/* ------------------------------------------------------------------ */
+
+export function listNews(db: ZenweldDatabase = getSnapshot()): NewsItem[] {
+  return db.news.filter((n) => n.active);
+}
+
+export function listAllNews(db: ZenweldDatabase = getSnapshot()): NewsItem[] {
+  return db.news;
+}
+
+export function findNewsById(
+  id: string,
+  db: ZenweldDatabase = getSnapshot(),
+): NewsItem | undefined {
+  return db.news.find((n) => n.id === id);
+}
+
+export function findNewsBySlug(
+  slug: string,
+  db: ZenweldDatabase = getSnapshot(),
+): NewsItem | undefined {
+  return db.news.find((n) => n.slug === slug);
+}
+
+/** Yayin tarihine gore yeniden eskiye siralar. */
+function sortNews(list: NewsItem[]): void {
+  list.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+}
+
+export function saveNews(item: NewsItem): void {
+  mutate((db) => {
+    const idx = db.news.findIndex((n) => n.id === item.id);
+    if (idx >= 0) db.news[idx] = item;
+    else db.news.unshift(item);
+    sortNews(db.news);
+  });
+}
+
+export function createNews(partial: Partial<NewsItem>): NewsItem {
+  const id = partial.id ?? uid("n");
+  const item: NewsItem = {
+    id,
+    slug: partial.slug ?? id,
+    title: partial.title ?? { tr: "", en: "" },
+    summary: partial.summary ?? { tr: "", en: "" },
+    body: partial.body ?? { tr: "", en: "" },
+    coverUrl: partial.coverUrl ?? "",
+    category: partial.category ?? { tr: "Kurumsal", en: "Corporate" },
+    publishedAt: partial.publishedAt ?? nowIso(),
+    featured: partial.featured ?? false,
+    active: partial.active ?? true,
+  };
+  mutate((db) => {
+    db.news.unshift(item);
+    sortNews(db.news);
+  });
+  return item;
+}
+
+export function deleteNews(id: string): void {
+  mutate((db) => {
+    db.news = db.news.filter((n) => n.id !== id);
+  });
 }

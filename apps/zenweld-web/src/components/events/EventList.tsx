@@ -8,18 +8,21 @@ import { EventCard } from "./EventCard";
 import { useLocale, useT } from "@/lib/i18n-client";
 import { countryName } from "@/lib/country";
 
+type StatusFilter = "" | "upcoming" | "past";
+
 /**
  * Etkinlik listesi.
  *
- * Yaklasan ve gecmis etkinlikler ayri bolumlerde gosterilir. Varsayilan
- * siralama her iki bolumde de tarihe gore yeniden eskiye dogrudur.
- * Filtreler: ulke ve siralama yonu.
+ * Tum etkinlikler tek bir izgarada listelenir; yaklasan/gecmis ayrimi
+ * baslik yerine filtre olarak sunulur. Varsayilan siralama tarihe gore
+ * yeniden eskiye dogrudur.
  */
 export function EventList() {
   const t = useT();
   const locale = useLocale();
   const db = useDatabase();
 
+  const [status, setStatus] = useState<StatusFilter>("");
   const [country, setCountry] = useState("");
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
 
@@ -33,28 +36,29 @@ export function EventList() {
     [all, locale],
   );
 
-  const filtered = useMemo(
-    () => (country ? all.filter((e) => e.country === country) : all),
-    [all, country],
-  );
-
-  const { upcoming, past } = useMemo(() => {
+  const events = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Iki bolum de ayni yonde siralanir: varsayilan gunumuzden geriye dogru.
-    const byDate = (a: { startDate: string }, b: { startDate: string }) =>
-      sort === "newest"
-        ? b.startDate.localeCompare(a.startDate)
-        : a.startDate.localeCompare(b.startDate);
+    return all
+      .filter((e) => {
+        if (country && e.country !== country) return false;
+        if (status === "upcoming") return new Date(e.endDate) >= today;
+        if (status === "past") return new Date(e.endDate) < today;
+        return true;
+      })
+      .sort((a, b) =>
+        sort === "newest"
+          ? b.startDate.localeCompare(a.startDate)
+          : a.startDate.localeCompare(b.startDate),
+      );
+  }, [all, country, status, sort]);
 
-    return {
-      upcoming: filtered.filter((e) => new Date(e.endDate) >= today).sort(byDate),
-      past: filtered.filter((e) => new Date(e.endDate) < today).sort(byDate),
-    };
-  }, [filtered, sort]);
-
-  const hasFilter = Boolean(country);
+  const hasFilter = Boolean(status || country);
+  const clearFilters = () => {
+    setStatus("");
+    setCountry("");
+  };
 
   return (
     <div className="zw-container py-10">
@@ -64,7 +68,17 @@ export function EventList() {
       <p className="mt-3 max-w-3xl text-zw-grey-600">{t.events.subtitle}</p>
 
       {/* Filtreler */}
-      <div className="mt-8 grid gap-3 sm:grid-cols-2">
+      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
+            {t.events.status}
+          </label>
+          <Select value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)}>
+            <option value="">{t.events.allStatus}</option>
+            <option value="upcoming">{t.events.upcoming}</option>
+            <option value="past">{t.events.past}</option>
+          </Select>
+        </div>
         <div>
           <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
             {t.events.country}
@@ -91,11 +105,11 @@ export function EventList() {
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <span className="rounded-[4px] bg-zw-grey-100 px-3 py-1.5 text-sm text-zw-grey-600">
-          {t.events.count.replace("{count}", String(filtered.length))}
+          {t.events.count.replace("{count}", String(events.length))}
         </span>
         {hasFilter && (
           <button
-            onClick={() => setCountry("")}
+            onClick={clearFilters}
             className="text-sm font-semibold uppercase text-zw-red-600 hover:underline"
           >
             {t.events.clear}
@@ -103,57 +117,22 @@ export function EventList() {
         )}
       </div>
 
-      {filtered.length === 0 && (
+      {events.length === 0 ? (
         <div className="mt-10">
           <EmptyState
             icon={<CalendarDays size={40} />}
-            title={t.events.empty}
-            action={
-              hasFilter ? (
-                <Button onClick={() => setCountry("")}>{t.events.clear}</Button>
-              ) : undefined
-            }
+            title={status === "upcoming" ? t.events.emptyUpcoming : t.events.empty}
+            text={status === "upcoming" ? t.events.emptyUpcomingText : undefined}
+            action={hasFilter ? <Button onClick={clearFilters}>{t.events.clear}</Button> : undefined}
           />
         </div>
-      )}
-
-      {upcoming.length > 0 && (
-        <Section title={t.events.upcoming}>
-          <Grid>
-            {upcoming.map((e) => (
-              <EventCard key={e.id} event={e} />
-            ))}
-          </Grid>
-        </Section>
-      )}
-
-      {past.length > 0 && (
-        <Section title={t.events.past}>
-          <Grid>
-            {past.map((e) => (
-              <EventCard key={e.id} event={e} />
-            ))}
-          </Grid>
-        </Section>
+      ) : (
+        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {events.map((e) => (
+            <EventCard key={e.id} event={e} />
+          ))}
+        </div>
       )}
     </div>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="mt-12">
-      <div className="mb-6 flex items-center gap-4">
-        <h2 className="shrink-0 font-display text-xl font-bold text-zw-ink">{title}</h2>
-        <span className="h-px flex-1 bg-zw-grey-200" />
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function Grid({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">{children}</div>
   );
 }

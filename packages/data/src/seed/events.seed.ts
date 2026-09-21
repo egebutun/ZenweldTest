@@ -212,59 +212,6 @@ export const events: ZenweldEvent[] = [
     featured: false,
     active: true,
   },
-
-  /* ---- Yaklasan etkinlikler (ornek — tarihler dogrulanmalidir) ---- */
-  {
-    id: "e-win-eurasia-2027",
-    slug: "win-eurasia-2027",
-    title: {
-      tr: "WIN EURASIA 2027 Otomasyon ve Makine Teknolojileri Fuarı",
-      en: "WIN EURASIA 2027 Automation and Machine Technologies Fair",
-    },
-    summary: {
-      tr: "Avrasya'nın lider endüstri fuarında yeni nesil pulse MIG ve plazma kesme sistemlerimizi tanıtacağız.",
-      en: "We will introduce our new generation pulse MIG and plasma cutting systems at Eurasia's leading industrial fair.",
-    },
-    description: {
-      tr: "Avrasya'nın lider endüstri fuarında yeni nesil pulse MIG ve plazma kesme sistemlerimizi tanıtacağız. Standımızda canlı kaynak demoları ve teknik ekibimizle birebir görüşme imkânı olacak. /* DOĞRULANMALI — tarih ve stant bilgisi kesinleşmedi */",
-      en: "We will introduce our new generation pulse MIG and plasma cutting systems at Eurasia's leading industrial fair, with live welding demonstrations and one-to-one meetings with our technical team.",
-    },
-    startDate: "2027-05-26",
-    endDate: "2027-05-29",
-    venue: { tr: "İstanbul Fuar Merkezi", en: "Istanbul Expo Center" },
-    city: "İstanbul",
-    country: "Türkiye",
-    logoUrl: logo("win-eurasia-2027"),
-    images: [stockPhotos.factoryLine, stockPhotos.engineer],
-    booth: "Hall 9 / B-14",
-    featured: true,
-    active: true,
-  },
-  {
-    id: "e-imatech-2027",
-    slug: "imatech-2027",
-    title: {
-      tr: "İmatech 2027 — Endüstriyel Üretim Teknolojileri Fuarı",
-      en: "İmatech 2027 — Industrial Production Technologies Fair",
-    },
-    summary: {
-      tr: "Fuar İzmir'de düzenlenecek İmatech 2027'de bayilerimiz ve müşterilerimizle buluşuyoruz.",
-      en: "We meet our dealers and customers at İmatech 2027, held at Fuar İzmir.",
-    },
-    description: {
-      tr: "Fuar İzmir'de düzenlenecek İmatech 2027'de bayilerimiz ve müşterilerimizle buluşuyoruz. /* DOĞRULANMALI — tarih kesinleşmedi */",
-      en: "We meet our dealers and customers at İmatech 2027, held at Fuar İzmir.",
-    },
-    startDate: "2027-02-17",
-    endDate: "2027-02-20",
-    venue: { tr: "Fuar İzmir", en: "Fuar İzmir" },
-    city: "İzmir",
-    country: "Türkiye",
-    logoUrl: logo("imatech-2027"),
-    images: [stockPhotos.metalWork],
-    featured: false,
-    active: true,
-  },
 ];
 
 /* ------------------------------------------------------------------ */

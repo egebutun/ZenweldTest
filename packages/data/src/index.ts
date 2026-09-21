@@ -20,7 +20,7 @@ import { blogPosts, faqs, quotes, orders, warranties } from "./seed/content.seed
 import { events, news } from "./seed/events.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 6;
+export const DB_VERSION = 7;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(
