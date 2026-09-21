@@ -199,7 +199,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
             </FormRow>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             <FormRow label="Şehir">
               <Input value={draft.city} onChange={(e) => set("city", e.target.value)} />
             </FormRow>
@@ -214,13 +214,6 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
                   <option key={c} value={c} />
                 ))}
               </datalist>
-            </FormRow>
-            <FormRow label="Stant No">
-              <Input
-                value={draft.booth ?? ""}
-                onChange={(e) => set("booth", e.target.value || undefined)}
-                placeholder="Hall 9 / B-14"
-              />
             </FormRow>
           </div>
 
@@ -252,7 +245,9 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
         <div className="space-y-5 rounded-[4px] border border-zw-grey-200 bg-white p-5">
           <Alert tone="info">
             Kısa açıklama etkinlik kartında, detaylı açıklama etkinlik sayfasında görünür.
-            Detaylı açıklamada boş satır bırakarak paragraf oluşturabilirsiniz.
+            Detaylı açıklamada boş satır bırakarak paragraf oluşturabilirsiniz. Biçimlendirme
+            için: satır başına <code>## </code> koyarsanız ara başlık, <code>- </code> koyarsanız
+            madde olur; <code>**kelime**</code> yazarsanız kalın görünür.
           </Alert>
           {(["tr", "en"] as const).map((lang) => (
             <div key={lang} className="space-y-4">
