@@ -146,12 +146,21 @@ export function ZenweldBayiLogo({
     );
   }
 
+  // Logo + bayi adi kilidi: aralarinda ince ayirac, yazi logonun optik
+  // merkezine hizali (kelime markasi gorsel icinde biraz asagida duruyor).
   return (
-    <span className={`inline-flex items-center gap-2 ${className}`}>
+    <span className={`inline-flex items-center gap-2.5 ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={`Zenweld ${suffix}`} className="h-full w-auto" />
       <span
-        className="font-display text-[0.8em] font-bold uppercase leading-none tracking-tight"
+        aria-hidden
+        className="h-[62%] w-px shrink-0 self-center"
+        style={{
+          backgroundColor: variant === "light" ? "rgba(255,255,255,0.35)" : "rgba(20,22,25,0.22)",
+        }}
+      />
+      <span
+        className="translate-y-[0.06em] font-display text-[0.62em] font-bold uppercase leading-none tracking-[0.08em]"
         style={{ color: variant === "light" ? "#FFFFFF" : "#141619" }}
       >
         {suffix}
