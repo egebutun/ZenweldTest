@@ -301,6 +301,56 @@ export interface FaqItem {
   topic: "genel" | "garanti" | "siparis" | "teknik";
 }
 
+/* ------------------------------------------------------------------ */
+/* Etkinlikler (fuarlar, sponsorluklar)                                */
+/* ------------------------------------------------------------------ */
+
+export type EventCategory = "fuar" | "sponsorluk" | "egitim" | "etkinlik";
+
+export interface ZenweldEvent {
+  id: string;
+  slug: string;
+  title: I18nText;
+  /** Kart uzerinde gorunen kisa aciklama */
+  summary: I18nText;
+  /** Detay sayfasindaki uzun metin */
+  description: I18nText;
+  /** ISO tarih: "2025-06-16" */
+  startDate: string;
+  endDate: string;
+  /** Etkinlik mekani, orn. "Istanbul Fuar Merkezi" */
+  venue: I18nText;
+  city: string;
+  country: string;
+  /** Kart basligindaki etkinlik logosu */
+  logoUrl: string;
+  /** Detay sayfasindaki fotograf galerisi */
+  images: string[];
+  websiteUrl?: string;
+  /** Zenweld stant numarasi */
+  booth?: string;
+  category: EventCategory;
+  featured: boolean;
+  active: boolean;
+}
+
+/* ------------------------------------------------------------------ */
+/* Haberler                                                            */
+/* ------------------------------------------------------------------ */
+
+export interface NewsItem {
+  id: string;
+  slug: string;
+  title: I18nText;
+  summary: I18nText;
+  body: I18nText;
+  coverUrl: string;
+  category: I18nText;
+  publishedAt: string;
+  featured: boolean;
+  active: boolean;
+}
+
 export interface WarrantyRecord {
   id: string;
   serialNumber: string;
@@ -333,6 +383,8 @@ export interface ZenweldDatabase {
   quotes: Quote[];
   orders: Order[];
   blogPosts: BlogPost[];
+  events: ZenweldEvent[];
+  news: NewsItem[];
   faqs: FaqItem[];
   warranties: WarrantyRecord[];
 }

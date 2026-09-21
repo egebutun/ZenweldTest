@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { categories, products, blogPosts } from "@zenweld/data";
+import { categories, products, blogPosts, events, news } from "@zenweld/data";
 import { locales, localizePath } from "@zenweld/i18n";
 import { getSiteUrl } from "@/lib/seo";
 
@@ -27,6 +27,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/kesfet/garanti-sorgula", priority: 0.6, freq: "yearly" },
     { path: "/kesfet/garanti-kayit", priority: 0.6, freq: "yearly" },
     { path: "/kesfet/blog", priority: 0.6, freq: "weekly" },
+    { path: "/kesfet/etkinlikler", priority: 0.7, freq: "weekly" },
+    { path: "/kesfet/haberler", priority: 0.7, freq: "weekly" },
     { path: "/kesfet/urun-secici", priority: 0.6, freq: "monthly" },
     { path: "/kesfet/msds", priority: 0.4, freq: "yearly" },
     { path: "/kesfet/parti-sertifikalari", priority: 0.4, freq: "yearly" },
@@ -77,6 +79,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
   blogPosts.forEach((post) => {
     push(`/kesfet/blog/${post.slug}`, 0.5, "monthly", new Date(post.publishedAt));
   });
+
+  events
+    .filter((event) => event.active)
+    .forEach((event) => {
+      push(`/kesfet/etkinlikler/${event.slug}`, 0.6, "monthly", new Date(event.startDate));
+    });
+
+  news
+    .filter((item) => item.active)
+    .forEach((item) => {
+      push(`/kesfet/haberler/${item.slug}`, 0.5, "monthly", new Date(item.publishedAt));
+    });
 
   return entries;
 }

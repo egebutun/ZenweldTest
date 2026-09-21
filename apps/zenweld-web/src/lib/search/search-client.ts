@@ -55,6 +55,8 @@ const STATIC_PAGES: { id: string; tr: string; en: string; href: string }[] = [
   { id: "page-sss", tr: "Sık Sorulan Sorular SSS", en: "Frequently Asked Questions FAQ", href: "/destek/sss" },
   { id: "page-hakkimizda", tr: "Hakkımızda kurumsal şirket", en: "About Us company", href: "/kesfet/hakkimizda" },
   { id: "page-blog", tr: "Blog yazılar rehber ipuçları", en: "Blog articles guide tips", href: "/kesfet/blog" },
+  { id: "page-etkinlikler", tr: "Etkinlikler etkinlik takvimi fuar fuarlar", en: "Events event calendar trade fairs", href: "/kesfet/etkinlikler" },
+  { id: "page-haberler", tr: "Haberler duyurular basın", en: "News announcements press", href: "/kesfet/haberler" },
 ];
 
 export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[] {
@@ -95,6 +97,36 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
       href: `/${c.section}/${c.slug}`,
     });
   });
+
+  db.events
+    .filter((e) => e.active)
+    .forEach((e) => {
+      docs.push({
+        id: `article:event-${e.id}`,
+        type: "article",
+        title: e.title[locale],
+        subtitle: `${e.venue[locale]} · ${e.city}`,
+        body: `${e.summary[locale]} ${e.description[locale]} ${e.city} ${e.country}`,
+        sku: "",
+        href: `/kesfet/etkinlikler/${e.slug}`,
+        image: e.logoUrl,
+      });
+    });
+
+  db.news
+    .filter((n) => n.active)
+    .forEach((n) => {
+      docs.push({
+        id: `article:news-${n.id}`,
+        type: "article",
+        title: n.title[locale],
+        subtitle: n.category[locale],
+        body: `${n.summary[locale]} ${n.body[locale]}`,
+        sku: "",
+        href: `/kesfet/haberler/${n.slug}`,
+        image: n.coverUrl,
+      });
+    });
 
   db.blogPosts.forEach((b) => {
     docs.push({

@@ -52,6 +52,8 @@ const NESTED: Record<string, Record<string, string>> = {
     "garanti-sorgula": "check-warranty",
     "garanti-kayit": "register-warranty",
     blog: "blog",
+    etkinlikler: "events",
+    haberler: "news",
     msds: "msds",
     "parti-sertifikalari": "batch-certificates",
     "urun-secici": "product-selector",

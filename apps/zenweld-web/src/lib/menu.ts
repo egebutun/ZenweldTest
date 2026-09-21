@@ -76,6 +76,8 @@ export function useMainMenu(): TopMenu[] {
             { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/kesfet/welders-club" },
             { label: t.explore.guide, description: t.explore.guideDesc, href: "/kesfet/rehber" },
             { label: t.explore.blog, description: t.explore.blogDesc, href: "/kesfet/blog" },
+            { label: t.explore.events, description: t.explore.eventsDesc, href: "/kesfet/etkinlikler" },
+            { label: t.explore.news, description: t.explore.newsDesc, href: "/kesfet/haberler" },
             { label: t.explore.msds, description: t.explore.msdsDesc, href: "/kesfet/msds" },
             { label: t.explore.checkWarranty, description: t.explore.checkWarrantyDesc, href: "/kesfet/garanti-sorgula" },
             { label: t.explore.batchCertificates, description: t.explore.batchCertificatesDesc, href: "/kesfet/parti-sertifikalari" },
@@ -125,6 +127,8 @@ export function useFooterMenu() {
         title: t.footer.community,
         links: [
           { label: t.footer.blog, href: "/kesfet/blog" },
+          { label: t.explore.events, href: "/kesfet/etkinlikler" },
+          { label: t.explore.news, href: "/kesfet/haberler" },
           { label: t.footer.weldersClub, href: "/kesfet/welders-club" },
         ],
       },
