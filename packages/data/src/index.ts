@@ -6,6 +6,7 @@ export { retailers } from "./seed/retailers.seed";
 export { retailerStock, dealerStock } from "./seed/stock.seed";
 export { users, addresses, DEMO_PASSWORDS } from "./seed/users.seed";
 export { blogPosts, faqs, quotes, orders, warranties } from "./seed/content.seed";
+export { events, news } from "./seed/events.seed";
 export { stockPhotos } from "./seed/images";
 
 import type { ZenweldDatabase } from "./types";
@@ -16,9 +17,10 @@ import { retailers } from "./seed/retailers.seed";
 import { retailerStock, dealerStock } from "./seed/stock.seed";
 import { users, addresses } from "./seed/users.seed";
 import { blogPosts, faqs, quotes, orders, warranties } from "./seed/content.seed";
+import { events, news } from "./seed/events.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 4;
+export const DB_VERSION = 5;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(
@@ -36,6 +38,8 @@ export function createSeedDatabase(): ZenweldDatabase {
       quotes,
       orders,
       blogPosts,
+      events,
+      news,
       faqs,
       warranties,
     }),
