@@ -15,8 +15,14 @@ Kart başlığında görünen etkinlik logosu. Dosya adı etkinliğin `slug`'ı 
 | `konya-makine-teknolojileri-fuari-2024.png` | Konya Makine Teknolojileri Fuarı 2024 |
 | `imatech-2024.png` | İmatech 2024 |
 
-- **Şeffaf arka planlı PNG** tercih edilir (SVG de olur, uzantıyı seed dosyasında
-  güncellemek gerekir).
+- **Uzantı fark etmez:** `.svg`, `.png`, `.jpg` veya `.webp` yükleyebilirsiniz.
+  Site dosyayı sırayla dener, hangisi varsa onu gösterir. Tablodaki adlar `.png`
+  yazsa da dosya adının gövdesi (slug) doğru olduğu sürece `.svg` de çalışır.
+- **SVG varsa SVG tercih edin** — vektörel olduğu için her ekranda net görünür ve
+  dosya boyutu küçüktür. Ancak elinizde yalnızca PNG/JPG varsa onu çevirmeyin:
+  dönüştürücüler rastere bakarak iz sürer, sonuç genelde orijinal PNG'den kötü olur.
+  Gerçek vektör kaynak (AI / EPS / PDF) varsa ondan SVG çıkarın.
+- Şeffaf arka plan tercih edilir.
 - Yatay logolar en iyi sonucu verir; kartta en fazla 190×68 px alana sığar.
 - Logo yoksa site kırılmaz, markalı yer tutucu görünür.
 

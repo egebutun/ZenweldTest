@@ -4,6 +4,7 @@ import type {
   Dealer,
   DealerStock,
   NewsItem,
+  RichTextStyle,
   Order,
   Product,
   Quote,
@@ -13,6 +14,7 @@ import type {
   ZenweldDatabase,
   ZenweldEvent,
 } from "@zenweld/data";
+import { defaultSettings } from "@zenweld/data";
 import { getSnapshot, mutate } from "./database";
 
 const nowIso = () => new Date().toISOString();
@@ -486,7 +488,7 @@ export function createEvent(partial: Partial<ZenweldEvent>): ZenweldEvent {
   const event: ZenweldEvent = {
     id,
     slug: partial.slug ?? id,
-    title: partial.title ?? { tr: "", en: "" },
+    title: partial.title ?? "",
     summary: partial.summary ?? { tr: "", en: "" },
     description: partial.description ?? { tr: "", en: "" },
     startDate: partial.startDate ?? today,
@@ -577,5 +579,30 @@ export function createNews(partial: Partial<NewsItem>): NewsItem {
 export function deleteNews(id: string): void {
   mutate((db) => {
     db.news = db.news.filter((n) => n.id !== id);
+  });
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Gorunum ayarlari                                                    */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Metin gorunum ayarlarini dondurur. Eski bir localStorage kaydinda
+ * settings bulunmayabilecegi icin eksik alanlar varsayilanla tamamlanir.
+ */
+export function getRichTextStyle(db: ZenweldDatabase = getSnapshot()): RichTextStyle {
+  return { ...defaultSettings.richText, ...(db.settings?.richText ?? {}) };
+}
+
+export function saveRichTextStyle(style: RichTextStyle): void {
+  mutate((db) => {
+    db.settings = { ...db.settings, richText: style };
+  });
+}
+
+export function resetRichTextStyle(): void {
+  mutate((db) => {
+    db.settings = { ...db.settings, richText: { ...defaultSettings.richText } };
   });
 }

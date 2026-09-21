@@ -104,7 +104,7 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
       docs.push({
         id: `article:event-${e.id}`,
         type: "article",
-        title: e.title[locale],
+        title: e.title,
         subtitle: `${e.venue[locale]} · ${e.city}`,
         body: `${e.summary[locale]} ${e.description[locale]} ${e.city} ${e.country}`,
         sku: "",

@@ -5,6 +5,7 @@ import type { ZenweldEvent } from "@zenweld/data";
 import { Badge } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
+import { logoAlternates } from "@/lib/event-logo";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 
 /** Tarih bloğu: gün aralığı üstte, ay ortada, yıl altta. */
@@ -53,8 +54,9 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
         <div className="flex h-[92px] flex-1 items-center justify-end">
           <ProductImage
             src={event.logoUrl}
-            alt={text(event.title)}
-            label={text(event.title)}
+            alternates={logoAlternates(event.logoUrl)}
+            alt={event.title}
+            label={event.title}
             className="max-h-[68px] max-w-[190px] object-contain"
           />
         </div>
@@ -71,7 +73,7 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
       )}
 
       <h3 className="mt-4 font-display text-xl font-semibold leading-tight text-zw-ink">
-        {text(event.title)}
+        {event.title}
       </h3>
 
       <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zw-grey-600">

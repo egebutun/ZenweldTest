@@ -36,27 +36,34 @@ export function ProductImage({
   className = "",
   label,
   priority,
+  alternates,
 }: {
   src?: string;
   alt: string;
   className?: string;
   label?: string;
   priority?: boolean;
+  /** src yuklenemezse sirayla denenecek adresler (orn. ayni dosyanin .svg hali). */
+  alternates?: string[];
 }) {
   const fallback = placeholderDataUri(label ?? alt);
-  const [current, setCurrent] = useState(src && src.length > 0 ? src : fallback);
+  const chain = [...(src && src.length > 0 ? [src] : []), ...(alternates ?? []), fallback];
+  const [index, setIndex] = useState(0);
+  const current = chain[Math.min(index, chain.length - 1)];
   const ref = useRef<HTMLImageElement>(null);
 
+  const next = () => setIndex((i) => Math.min(i + 1, chain.length - 1));
+
   useEffect(() => {
-    setCurrent(src && src.length > 0 ? src : fallback);
+    setIndex(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [src]);
+  }, [src, alternates?.join("|")]);
 
   // Gorsel, React hydration tamamlanmadan once hata verdiyse onError tetiklenmez;
   // bu yuzden mount sonrasi durumu elle kontrol ediyoruz.
   useEffect(() => {
     const img = ref.current;
-    if (img && img.complete && img.naturalWidth === 0) setCurrent(fallback);
+    if (img && img.complete && img.naturalWidth === 0) next();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
@@ -67,7 +74,7 @@ export function ProductImage({
       src={current}
       alt={alt}
       loading={priority ? "eager" : "lazy"}
-      onError={() => setCurrent(fallback)}
+      onError={next}
       className={className}
     />
   );

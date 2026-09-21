@@ -23,7 +23,7 @@ export const events: ZenweldEvent[] = [
   {
     id: "e-big5-global-2025",
     slug: "big-5-global-2025",
-    title: { tr: "Big 5 Global 2025", en: "Big 5 Global 2025" },
+    title: "Big 5 Global 2025",
     summary: {
       tr: "Big 5 Global, dünyanın en büyük ve en prestijli yapı ve inşaat fuarı.",
       en: "Big 5 Global is the world's largest and most prestigious construction industry event.",
@@ -93,10 +93,7 @@ Visit us at our stand and let us discover the future of welding technologies tog
   {
     id: "e-international-hardware-riyad-2025",
     slug: "international-hardware-riyad-2025",
-    title: {
-      tr: "International Hardware Riyadh",
-      en: "International Hardware Riyadh",
-    },
+    title: "International Hardware Riyadh",
     summary: {
       tr: "International Hardware Riyadh 2025, Orta Doğu'nun en büyük donanım, el aletleri, yapı malzemeleri ve endüstriyel ekipman fuarlarından biridir.",
       en: "International Hardware Riyadh 2025 is one of the largest hardware, hand tools, building materials and industrial equipment fairs in the Middle East.",
@@ -149,10 +146,7 @@ Contact us for more information, and do not forget to visit us during the fair!`
   {
     id: "e-win-eurasia-2025",
     slug: "win-eurasia-2025",
-    title: {
-      tr: "Win Eurasia 2025 Otomasyon ve Makine Teknolojileri Fuarı",
-      en: "Win Eurasia 2025 Automation and Machine Technologies Fair",
-    },
+    title: "Win Eurasia 2025 Otomasyon ve Makine Teknolojileri Fuarı",
     summary: {
       tr: "Avrasya Bölgesi'nin lider endüstri fuarı olarak 30 yıldır imalat sanayinin rotasını çizen WIN EURASIA Otomasyon ve Makine Teknolojileri Fuarı.",
       en: "WIN EURASIA Automation and Machine Technologies Fair, the leading industrial fair of the Eurasia region, has been setting the course of the manufacturing industry for 30 years.",
@@ -200,10 +194,7 @@ Throughout the fair, our expert team will be delighted to host you for industry 
   {
     id: "e-imatech-2025",
     slug: "imatech-2025",
-    title: {
-      tr: "İmatech 2025 — 3. Endüstriyel Üretim Teknolojileri Fuarı",
-      en: "İmatech 2025 — 3rd Industrial Production Technologies Fair",
-    },
+    title: "İmatech 2025 — 3. Endüstriyel Üretim Teknolojileri Fuarı",
     summary: {
       tr: "Zenweld olarak, sektörün en prestijli endüstriyel üretim ve kaynak teknolojileri etkinliklerinden biri olan İmatech 2025 Fuarı'nda yer alıyoruz!",
       en: "Zenweld takes part in İmatech 2025, one of the industry's most prestigious industrial production and welding technology events!",
@@ -241,10 +232,7 @@ Follow us for details and post-fair news!`,
   {
     id: "e-istanbul-hirdavat-2024",
     slug: "istanbul-hirdavat-fuari-2024",
-    title: {
-      tr: "2024 Uluslararası İstanbul Hırdavat Fuarı",
-      en: "2024 International Istanbul Hardware Fair",
-    },
+    title: "2024 Uluslararası İstanbul Hırdavat Fuarı",
     summary: {
       tr: "Yeni ürünlerimizi görmek ve sektördeki en son yenilikleri keşfetmek için standımıza bekliyoruz.",
       en: "We look forward to welcoming you at our stand to see our new products and discover the latest innovations in the sector.",
@@ -274,10 +262,7 @@ The Istanbul Hardware Fair offers an excellent opportunity to meet business part
   {
     id: "e-win-eurasia-2024",
     slug: "win-eurasia-2024",
-    title: {
-      tr: "WIN Eurasia — Endüstri Fuarı",
-      en: "WIN Eurasia — Industry Fair",
-    },
+    title: "WIN Eurasia — Endüstri Fuarı",
     summary: {
       tr: "Zenweld Kaynak ve Kesme Makinaları olarak, 2024 yılı 05-08 Haziran tarihleri arasında İstanbul'da düzenlenecek olan Win Eurasia 2024 Endüstri Fuarı'na katılımımızı büyük bir heyecanla duyuruyoruz.",
       en: "As Zenweld Welding and Cutting Machines, we are excited to announce our participation in the Win Eurasia 2024 Industry Fair, held in Istanbul on 05–08 June 2024.",
@@ -339,10 +324,7 @@ If you are planning to visit the Win Eurasia 2024 Industry Fair, do not forget t
   {
     id: "e-konya-makine-2024",
     slug: "konya-makine-teknolojileri-fuari-2024",
-    title: {
-      tr: "Konya Makine Teknolojileri Fuarı",
-      en: "Konya Machine Technologies Fair",
-    },
+    title: "Konya Makine Teknolojileri Fuarı",
     summary: {
       tr: "Zenweld Kaynak ve Kesme Makinaları olarak, 2024 yılı 8-11 Mayıs tarihleri arasında Konya'da düzenlenecek olan Konya Makine Teknolojileri Fuarı'na katılımımızı büyük bir heyecanla duyuruyoruz.",
       en: "As Zenweld Welding and Cutting Machines, we are excited to announce our participation in the Konya Machine Technologies Fair, held in Konya on 8–11 May 2024.",
@@ -402,10 +384,7 @@ Zenweld is a Turkish brand that has been operating in welding and cutting techno
   {
     id: "e-imatech-2024",
     slug: "imatech-2024",
-    title: {
-      tr: "İmatech 2024 — 2. Endüstriyel Üretim Teknolojileri Fuarı",
-      en: "İmatech 2024 — 2nd Industrial Production Technologies Fair",
-    },
+    title: "İmatech 2024 — 2. Endüstriyel Üretim Teknolojileri Fuarı",
     summary: {
       tr: "Zenweld ve Önder Kaynak Makina ve Malzemeleri'nin birlikte katıldığı 2. Endüstriyel Üretim Teknolojileri Fuarı, sektördeki önemli bir etkinlik olarak dikkat çekti.",
       en: "The 2nd Industrial Production Technologies Fair, attended jointly by Zenweld and Önder Kaynak Makina ve Malzemeleri, stood out as an important event in the sector.",

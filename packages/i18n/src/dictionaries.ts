@@ -85,7 +85,7 @@ export const dictionaries = {
     events: {
       title: "Etkinlik Takvimi",
       subtitle:
-        "Zenweld'in katılacağı veya sponsor olacağı fuar ve diğer etkinlikler hakkında bilgi bulabilirsiniz.",
+        "Zenweld olarak katılacağımız veya sponsor olacağımız fuar ve diğer etkinlikler hakkında bilgi bulabilirsiniz.",
       upcoming: "Yaklaşan Etkinlikler",
       past: "Geçmiş Etkinlikler",
       details: "Detaylar",
@@ -512,7 +512,7 @@ export const dictionaries = {
     events: {
       title: "Event Calendar",
       subtitle:
-        "Find out about the fairs and other events Zenweld attends or sponsors.",
+        "Find out about the fairs and other events we attend or sponsor as Zenweld.",
       upcoming: "Upcoming Events",
       past: "Past Events",
       details: "Details",
