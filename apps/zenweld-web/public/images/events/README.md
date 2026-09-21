@@ -14,8 +14,6 @@ Kart başlığında görünen etkinlik logosu. Dosya adı etkinliğin `slug`'ı 
 | `win-eurasia-2024.png` | WIN EURASIA 2024 |
 | `konya-makine-teknolojileri-fuari-2024.png` | Konya Makine Teknolojileri Fuarı 2024 |
 | `imatech-2024.png` | İmatech 2024 |
-| `win-eurasia-2027.png` | WIN EURASIA 2027 (yaklaşan) |
-| `imatech-2027.png` | İmatech 2027 (yaklaşan) |
 
 - **Şeffaf arka planlı PNG** tercih edilir (SVG de olur, uzantıyı seed dosyasında
   güncellemek gerekir).

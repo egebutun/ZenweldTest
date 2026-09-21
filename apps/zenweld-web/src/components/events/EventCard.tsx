@@ -60,7 +60,7 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
         </div>
       </div>
 
-      {(isNow || (daysLeft > 0 && daysLeft <= 60)) && (
+      {(isNow || daysLeft > 0) && (
         <div className="mt-4">
           <Badge tone={isNow ? "red" : "green"}>
             {isNow
