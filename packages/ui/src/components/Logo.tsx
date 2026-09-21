@@ -47,7 +47,7 @@ function FallbackMark({
 
   return (
     <svg viewBox={`0 0 ${width} 40`} className={className} role="img" aria-label={label}>
-      <path d="M2 4 h26 l-18 24 h18 v8 H0 l18-24 H2 Z" fill="#d62027" />
+      <path d="M2 4 h26 l-18 24 h18 v8 H0 l18-24 H2 Z" fill="#b82429" />
       <text
         x="36"
         y="30"
@@ -122,18 +122,31 @@ export function ZenweldLogo({
 
 /**
  * Bayi magazasi logosu: Zenweld logosu + bayi adi.
- * Bayi adi store-config.ts'ten gelir, varsayilan "BAYİ-A".
+ *
+ * Hizalama notu: logo gorselinde kelime markasi ustteki tac yuzunden kutunun
+ * tam ortasinda degil, %73 yuksekliginde duruyor. Bayi adi da bu optik
+ * merkeze hizalanir, aksi halde logonun uzerinde kalip kopuk gorunuyor.
+ *
+ * Olculer logo yuksekligine (height) bagli em degerleridir; boylece her
+ * kullanim boyutunda oran korunur.
  */
+const WORDMARK_CENTER = 0.73; // logo yuksekliginin orani
+
 export function ZenweldBayiLogo({
   className = "",
   variant = "dark",
   suffix = "BAYİ-A",
+  height = 32,
 }: {
   className?: string;
   variant?: "dark" | "light";
   suffix?: string;
+  /** Logo yuksekligi (px). Yazi boyutu ve hizasi bundan turetilir. */
+  height?: number;
 }) {
   const src = useResolvedLogo(variant);
+  const color = variant === "light" ? "#FFFFFF" : "#141619";
+  const shift = WORDMARK_CENTER - 0.5; // kutu merkezinden asagi kayma orani
 
   if (!src) {
     return (
@@ -146,22 +159,26 @@ export function ZenweldBayiLogo({
     );
   }
 
-  // Logo + bayi adi kilidi: aralarinda ince ayirac, yazi logonun optik
-  // merkezine hizali (kelime markasi gorsel icinde biraz asagida duruyor).
   return (
-    <span className={`inline-flex items-center gap-2.5 ${className}`}>
+    <span
+      className={`inline-flex items-center gap-[0.28em] ${className}`}
+      style={{ height, fontSize: height }}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={`Zenweld ${suffix}`} className="h-full w-auto" />
       <span
         aria-hidden
-        className="h-[62%] w-px shrink-0 self-center"
+        className="w-px shrink-0"
         style={{
-          backgroundColor: variant === "light" ? "rgba(255,255,255,0.35)" : "rgba(20,22,25,0.22)",
+          height: "0.62em",
+          transform: `translateY(${shift}em)`,
+          backgroundColor:
+            variant === "light" ? "rgba(255,255,255,0.4)" : "rgba(20,22,25,0.25)",
         }}
       />
       <span
-        className="translate-y-[0.06em] font-display text-[0.62em] font-bold uppercase leading-none tracking-[0.08em]"
-        style={{ color: variant === "light" ? "#FFFFFF" : "#141619" }}
+        className="whitespace-nowrap font-display font-bold uppercase leading-none tracking-[0.04em]"
+        style={{ color, fontSize: "0.5em", transform: `translateY(${shift * 2}em)` }}
       >
         {suffix}
       </span>

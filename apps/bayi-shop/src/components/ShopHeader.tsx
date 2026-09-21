@@ -45,7 +45,7 @@ export function ShopHeader() {
         </button>
 
         <LocaleLink href="/" className="shrink-0">
-          <ZenweldBayiLogo className="h-7 w-auto sm:h-8" />
+          <ZenweldBayiLogo height={32} />
         </LocaleLink>
 
         <form
@@ -158,7 +158,7 @@ export function ShopHeader() {
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
           <div className="absolute left-0 top-0 h-full w-[85%] max-w-sm overflow-y-auto bg-white p-5">
             <div className="mb-6 flex items-center justify-between">
-              <ZenweldBayiLogo className="h-7 w-auto" />
+              <ZenweldBayiLogo height={28} />
               <button onClick={() => setMenuOpen(false)} aria-label={t.common.close}>
                 <X size={22} />
               </button>

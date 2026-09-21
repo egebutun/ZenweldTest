@@ -23,7 +23,7 @@ function placeholderDataUri(label: string): string {
       </linearGradient>
     </defs>
     <rect width="800" height="800" fill="url(#g)"/>
-    <path d="M300 300 h120 l-84 112 h84 v40 H276 l84-112 h-60 z" fill="#d62027" opacity="0.9"/>
+    <path d="M300 300 h120 l-84 112 h84 v40 H276 l84-112 h-60 z" fill="#b82429" opacity="0.9"/>
     <text x="400" y="520" text-anchor="middle" font-family="Arial Narrow, Arial, sans-serif" font-size="34" font-weight="700" fill="#2b2f33" letter-spacing="1">ZENWELD</text>
     <text x="400" y="560" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#6b7178">${safe}</text>
   </svg>`;

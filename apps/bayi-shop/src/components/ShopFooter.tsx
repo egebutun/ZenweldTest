@@ -14,7 +14,7 @@ export function ShopFooter() {
     <footer className="mt-16 border-t border-zw-grey-200 bg-zw-grey-50">
       <div className="zw-container grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <ZenweldBayiLogo className="h-8 w-auto" />
+          <ZenweldBayiLogo height={34} />
           <p className="mt-4 text-sm text-zw-grey-600">{STORE.legalName}</p>
           <p className="mt-2 text-xs text-zw-grey-500">{t.shop.authorizedDealer}</p>
         </div>
