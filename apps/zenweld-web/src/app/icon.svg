@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Zenweld kare marka işareti: kurumsal kırmızı zemin üzerinde beyaz Z -->
+  <rect width="512" height="512" fill="#b82429"/>
+  <g transform="translate(133.5 81) scale(8.75)">
+    <path d="M2 4 h26 l-18 24 h18 v8 H0 l18-24 H2 Z" fill="#ffffff"/>
+  </g>
+</svg>

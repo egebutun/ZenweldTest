@@ -1,15 +1,15 @@
 /* Zenweld tasarim sistemi — kirmizi + gri tema (Tailwind v4 CSS-first) */
 
 @theme {
-  /* Marka kirmizisi */
+  /* Marka kirmizisi — Zenweld kurumsal rengi #B82429 (logodaki renk) */
   --color-zw-red-50: #fdf2f2;
-  --color-zw-red-100: #fbe0e1;
-  --color-zw-red-200: #f5b8bb;
-  --color-zw-red-400: #e8474e;
-  --color-zw-red-500: #de2b33;
-  --color-zw-red-600: #d62027;
-  --color-zw-red-700: #a8171c;
-  --color-zw-red-800: #7d1216;
+  --color-zw-red-100: #f9dedf;
+  --color-zw-red-200: #f0babc;
+  --color-zw-red-400: #d86266;
+  --color-zw-red-500: #cb383d;
+  --color-zw-red-600: #b82429;  /* ana marka rengi */
+  --color-zw-red-700: #931d21;  /* hover */
+  --color-zw-red-800: #6e1619;
 
   /* Gri skala */
   --color-zw-ink: #141619;

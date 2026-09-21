@@ -93,7 +93,7 @@ export function DealerMap({
     dealers.forEach((d) => {
       const active = d.id === selectedId;
       const marker = L.marker([d.lat, d.lng], {
-        icon: pin(active ? "#141619" : "#d62027", active),
+        icon: pin(active ? "#141619" : "#b82429", active),
         zIndexOffset: active ? 1000 : 0,
       });
       marker.bindTooltip(`<strong>${d.name}</strong><br/>${d.district} / ${d.city}`, {

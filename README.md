@@ -350,6 +350,23 @@ tüm sayfalara `noindex` eklenir. Demo bir `vercel.app` adresindeyken bu öneril
 
 ---
 
+## Marka varlıkları
+
+| Varlık | Yer |
+|---|---|
+| Logo (kırmızı / beyaz) | `apps/*/public/images/brand/` |
+| Kare marka işareti | `assets/brand-mark.svg` |
+| Favicon ve uygulama ikonları | `apps/*/src/app/` (favicon.ico, icon.png, apple-icon.png) |
+
+**Marka rengi:** `#B82429` — `packages/ui/src/theme.css` içindeki `--color-zw-red-600`.
+Tüm buton, vurgu ve rozet renkleri bu tondan türetilir.
+
+**İkonları yeniden üretmek:** `assets/brand-mark.svg` dosyasını değiştirip
+`node scripts/generate-icons.mjs` çalıştırın; favicon.ico (16/32/48 px),
+icon.png ve apple-icon.png her iki uygulama için yeniden oluşturulur.
+
+---
+
 ## Teknoloji
 
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·

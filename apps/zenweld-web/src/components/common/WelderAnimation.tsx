@@ -112,7 +112,7 @@ export function WelderAnimation({ className = "" }: { className?: string }) {
           <path d="M 140 70 L 160 67 L 161 81 L 141 84 Z" fill="#0a0d10" />
           <path className="zw-visor" d="M 140 70 L 160 67 L 161 81 L 141 84 Z" fill="#6fb2ff" />
           {/* Kask üst şerit — marka kırmızısı */}
-          <path d="M 108 70 Q 107 60 119 58 L 146 55 Q 158 54 160 66 L 158 69 Q 156 60 146 60 L 121 63 Q 111 64 111 71 Z" fill="#d62027" />
+          <path d="M 108 70 Q 107 60 119 58 L 146 55 Q 158 54 160 66 L 158 69 Q 156 60 146 60 L 121 63 Q 111 64 111 71 Z" fill="#b82429" />
         </g>
 
         {/* Torç */}
