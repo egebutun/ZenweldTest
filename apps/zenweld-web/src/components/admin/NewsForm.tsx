@@ -181,7 +181,9 @@ export function NewsForm({ item }: { item?: NewsItem }) {
         <div className="space-y-5 rounded-[4px] border border-zw-grey-200 bg-white p-5">
           <Alert tone="info">
             Özet haber kartında, metin haber sayfasında görünür. Metinde boş satır bırakarak
-            paragraf oluşturabilirsiniz.
+            paragraf oluşturabilirsiniz. Biçimlendirme için: satır başına <code>## </code>
+            koyarsanız ara başlık, <code>- </code> koyarsanız madde olur;{" "}
+            <code>**kelime**</code> yazarsanız kalın görünür.
           </Alert>
           {(["tr", "en"] as const).map((lang) => (
             <div key={lang} className="space-y-4">

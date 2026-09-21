@@ -497,7 +497,6 @@ export function createEvent(partial: Partial<ZenweldEvent>): ZenweldEvent {
     logoUrl: partial.logoUrl ?? "",
     images: partial.images ?? [],
     websiteUrl: partial.websiteUrl,
-    booth: partial.booth,
     featured: partial.featured ?? false,
     active: partial.active ?? true,
   };

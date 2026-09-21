@@ -2,10 +2,11 @@
 
 import { useMemo } from "react";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CalendarDays, ExternalLink, MapPin, Store } from "lucide-react";
+import { ArrowLeft, CalendarDays, ExternalLink, MapPin } from "lucide-react";
 import { useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
+import { RichText } from "./RichText";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatDate } from "@/lib/format";
 import { countryName } from "@/lib/country";
@@ -52,14 +53,7 @@ export function EventDetail({ slug }: { slug: string }) {
       <div className="zw-container py-10">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div>
-            <div className="max-w-3xl space-y-4 text-[15px] leading-relaxed text-zw-grey-700">
-              {text(event.description)
-                .split("\n")
-                .filter(Boolean)
-                .map((paragraph, i) => (
-                  <p key={i}>{paragraph}</p>
-                ))}
-            </div>
+            <RichText source={text(event.description)} className="max-w-3xl" />
 
             {event.images.length > 0 && (
               <div className="mt-10">
@@ -106,15 +100,6 @@ export function EventDetail({ slug }: { slug: string }) {
                   {event.city} · {countryName(event.country, locale)}
                 </dd>
               </div>
-              {event.booth && (
-                <div>
-                  <dt className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-zw-grey-500">
-                    <Store size={14} />
-                    {t.events.booth}
-                  </dt>
-                  <dd className="mt-1 font-semibold">{event.booth}</dd>
-                </div>
-              )}
               {event.websiteUrl && (
                 <a
                   href={event.websiteUrl}

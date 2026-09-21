@@ -7,6 +7,7 @@ import { useDatabase } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
+import { RichText } from "./RichText";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatDate } from "@/lib/format";
 
@@ -56,14 +57,7 @@ export function NewsDetail({ slug }: { slug: string }) {
         />
       </div>
 
-      <div className="mt-8 max-w-3xl space-y-4 text-[15px] leading-relaxed text-zw-grey-700">
-        {text(item.body)
-          .split("\n")
-          .filter(Boolean)
-          .map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
-      </div>
+      <RichText source={text(item.body)} className="mt-8 max-w-3xl" />
 
       {others.length > 0 && (
         <div className="mt-14">

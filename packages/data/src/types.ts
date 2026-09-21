@@ -325,8 +325,6 @@ export interface ZenweldEvent {
   /** Detay sayfasindaki fotograf galerisi */
   images: string[];
   websiteUrl?: string;
-  /** Zenweld stant numarasi */
-  booth?: string;
   featured: boolean;
   active: boolean;
 }
