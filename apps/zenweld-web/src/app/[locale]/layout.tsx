@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import "@fontsource-variable/inter";
 import "@fontsource/barlow-condensed/400.css";
@@ -19,6 +19,13 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { DemoRibbon } from "@/components/layout/DemoRibbon";
 import { WelcomeGate } from "@/components/layout/WelcomeGate";
+
+/** Android Chrome ve iOS Safari tarayıcı çubuğunu marka rengine boyar. */
+export const viewport: Viewport = {
+  themeColor: "#b82429",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));

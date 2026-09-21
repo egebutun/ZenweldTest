@@ -357,6 +357,17 @@ tüm sayfalara `noindex` eklenir. Demo bir `vercel.app` adresindeyken bu öneril
 | Logo (kırmızı / beyaz) | `apps/*/public/images/brand/` |
 | Kare marka işareti | `assets/brand-mark.svg` |
 | Favicon ve uygulama ikonları | `apps/*/src/app/` (favicon.ico, icon.png, apple-icon.png) |
+| Android ikonları | `apps/*/public/icons/` (icon-192.png, icon-512.png) |
+| Web app manifest | `apps/*/src/app/manifest.ts` |
+
+### Platform kapsamı
+
+| Platform | Hangi dosya |
+|---|---|
+| Tüm tarayıcı sekmeleri (Android, iOS, masaüstü) | `favicon.ico` + `icon.png` |
+| Android — ana ekrana ekle, uygulama geçiş ekranı, splash | `manifest.ts` + `icons/icon-192.png`, `icon-512.png` |
+| iOS — ana ekrana ekle | `apple-icon.png` |
+| Android Chrome tarayıcı çubuğu rengi | `viewport.themeColor` (layout.tsx) |
 
 **Marka rengi:** `#B82429` — `packages/ui/src/theme.css` içindeki `--color-zw-red-600`.
 Tüm buton, vurgu ve rozet renkleri bu tondan türetilir.
