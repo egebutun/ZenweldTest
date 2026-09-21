@@ -2,80 +2,59 @@
 
 import { useMemo, useState } from "react";
 import { CalendarDays } from "lucide-react";
-import type { EventCategory } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { Button, EmptyState, Select } from "@zenweld/ui";
 import { EventCard } from "./EventCard";
 import { useLocale, useT } from "@/lib/i18n-client";
+import { countryName } from "@/lib/country";
 
 /**
  * Etkinlik listesi.
  *
- * Yaklasan ve gecmis etkinlikler ayri bolumlerde gosterilir; yaklasanlar
- * en yakin tarih once, gecmisler en yeni once siralanir. Filtreler: yil,
- * sehir, tur ve siralama yonu.
+ * Yaklasan ve gecmis etkinlikler ayri bolumlerde gosterilir. Varsayilan
+ * siralama her iki bolumde de tarihe gore yeniden eskiye dogrudur.
+ * Filtreler: ulke ve siralama yonu.
  */
 export function EventList() {
   const t = useT();
   const locale = useLocale();
   const db = useDatabase();
 
-  const [year, setYear] = useState("");
-  const [city, setCity] = useState("");
-  const [type, setType] = useState("");
+  const [country, setCountry] = useState("");
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
 
   const all = useMemo(() => db.events.filter((e) => e.active), [db]);
 
-  const years = useMemo(
+  const countries = useMemo(
     () =>
-      Array.from(new Set(all.map((e) => new Date(e.startDate).getFullYear())))
-        .sort((a, b) => b - a)
-        .map(String),
-    [all],
+      Array.from(new Set(all.map((e) => e.country))).sort((a, b) =>
+        countryName(a, locale).localeCompare(countryName(b, locale), locale),
+      ),
+    [all, locale],
   );
 
-  const cities = useMemo(
-    () => Array.from(new Set(all.map((e) => e.city))).sort((a, b) => a.localeCompare(b, "tr")),
-    [all],
+  const filtered = useMemo(
+    () => (country ? all.filter((e) => e.country === country) : all),
+    [all, country],
   );
-
-  const typeLabel: Record<EventCategory, string> = {
-    fuar: t.events.typeFuar,
-    sponsorluk: t.events.typeSponsorluk,
-    egitim: t.events.typeEgitim,
-    etkinlik: t.events.typeEtkinlik,
-  };
-
-  const filtered = useMemo(() => {
-    return all.filter((e) => {
-      if (year && String(new Date(e.startDate).getFullYear()) !== year) return false;
-      if (city && e.city !== city) return false;
-      if (type && e.category !== type) return false;
-      return true;
-    });
-  }, [all, year, city, type]);
 
   const { upcoming, past } = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const up = filtered
-      .filter((e) => new Date(e.endDate) >= today)
-      .sort((a, b) => a.startDate.localeCompare(b.startDate)); // en yakın önce
+    // Iki bolum de ayni yonde siralanir: varsayilan gunumuzden geriye dogru.
+    const byDate = (a: { startDate: string }, b: { startDate: string }) =>
+      sort === "newest"
+        ? b.startDate.localeCompare(a.startDate)
+        : a.startDate.localeCompare(b.startDate);
 
-    const pa = filtered
-      .filter((e) => new Date(e.endDate) < today)
-      .sort((a, b) =>
-        sort === "newest"
-          ? b.startDate.localeCompare(a.startDate)
-          : a.startDate.localeCompare(b.startDate),
-      );
-
-    return { upcoming: up, past: pa };
+    return {
+      upcoming: filtered.filter((e) => new Date(e.endDate) >= today).sort(byDate),
+      past: filtered.filter((e) => new Date(e.endDate) < today).sort(byDate),
+    };
   }, [filtered, sort]);
 
-  const hasFilter = Boolean(year || city || type);
+  const hasFilter = Boolean(country);
 
   return (
     <div className="zw-container py-10">
@@ -85,42 +64,16 @@ export function EventList() {
       <p className="mt-3 max-w-3xl text-zw-grey-600">{t.events.subtitle}</p>
 
       {/* Filtreler */}
-      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid gap-3 sm:grid-cols-2">
         <div>
           <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-            {t.events.year}
+            {t.events.country}
           </label>
-          <Select value={year} onChange={(e) => setYear(e.target.value)}>
-            <option value="">{t.events.allYears}</option>
-            {years.map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-            {t.events.city}
-          </label>
-          <Select value={city} onChange={(e) => setCity(e.target.value)}>
-            <option value="">{t.events.allCities}</option>
-            {cities.map((c) => (
+          <Select value={country} onChange={(e) => setCountry(e.target.value)}>
+            <option value="">{t.events.allCountries}</option>
+            {countries.map((c) => (
               <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-            {t.events.type}
-          </label>
-          <Select value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="">{t.events.allTypes}</option>
-            {(Object.keys(typeLabel) as EventCategory[]).map((k) => (
-              <option key={k} value={k}>
-                {typeLabel[k]}
+                {countryName(c, locale)}
               </option>
             ))}
           </Select>
@@ -142,11 +95,7 @@ export function EventList() {
         </span>
         {hasFilter && (
           <button
-            onClick={() => {
-              setYear("");
-              setCity("");
-              setType("");
-            }}
+            onClick={() => setCountry("")}
             className="text-sm font-semibold uppercase text-zw-red-600 hover:underline"
           >
             {t.events.clear}
@@ -161,15 +110,7 @@ export function EventList() {
             title={t.events.empty}
             action={
               hasFilter ? (
-                <Button
-                  onClick={() => {
-                    setYear("");
-                    setCity("");
-                    setType("");
-                  }}
-                >
-                  {t.events.clear}
-                </Button>
+                <Button onClick={() => setCountry("")}>{t.events.clear}</Button>
               ) : undefined
             }
           />

@@ -305,8 +305,6 @@ export interface FaqItem {
 /* Etkinlikler (fuarlar, sponsorluklar)                                */
 /* ------------------------------------------------------------------ */
 
-export type EventCategory = "fuar" | "sponsorluk" | "egitim" | "etkinlik";
-
 export interface ZenweldEvent {
   id: string;
   slug: string;
@@ -329,7 +327,6 @@ export interface ZenweldEvent {
   websiteUrl?: string;
   /** Zenweld stant numarasi */
   booth?: string;
-  category: EventCategory;
   featured: boolean;
   active: boolean;
 }
