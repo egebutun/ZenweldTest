@@ -35,6 +35,8 @@ export default function AdminDataPage() {
     { label: "Üye", value: db.users.length },
     { label: "Teklif", value: db.quotes.length },
     { label: "Sipariş", value: db.orders.length },
+    { label: "Etkinlik", value: db.events.length },
+    { label: "Haber", value: db.news.length },
     { label: "Garanti Kaydı", value: db.warranties.length },
   ];
 

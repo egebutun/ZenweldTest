@@ -3,7 +3,9 @@
 import { useMemo } from "react";
 import {
   AlertTriangle,
+  CalendarDays,
   FileText,
+  Newspaper,
   Package,
   ShoppingCart,
   Store,
@@ -33,6 +35,11 @@ export default function AdminDashboard() {
       newQuotes: db.quotes.filter((q) => q.status === "new").length,
       quotes: db.quotes.length,
       orders: db.orders.length,
+      events: db.events.filter((e) => e.active).length,
+      upcomingEvents: db.events.filter(
+        (e) => e.active && e.endDate >= new Date().toISOString().slice(0, 10),
+      ).length,
+      news: db.news.filter((n) => n.active).length,
       noOnlineStock,
     };
   }, [db]);
@@ -43,6 +50,8 @@ export default function AdminDashboard() {
     { href: "/admin/saticilar", label: "Online Satıcı", value: stats.retailers, Icon: Store },
     { href: "/admin/teklifler", label: "Teklif", value: stats.quotes, Icon: FileText, note: stats.newQuotes ? `${stats.newQuotes} yeni` : undefined },
     { href: "/admin/siparisler", label: "Sipariş", value: stats.orders, Icon: ShoppingCart },
+    { href: "/admin/etkinlikler", label: "Etkinlik", value: stats.events, Icon: CalendarDays, note: stats.upcomingEvents ? `${stats.upcomingEvents} yaklaşan` : "yaklaşan etkinlik yok" },
+    { href: "/admin/haberler", label: "Haber", value: stats.news, Icon: Newspaper },
   ];
 
   return (

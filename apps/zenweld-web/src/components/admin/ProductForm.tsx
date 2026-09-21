@@ -9,6 +9,7 @@ import { Alert, Badge, Button, Checkbox, FormRow, Input, Select, Tabs, Textarea 
 import { ProductImage } from "@/components/common/ProductImage";
 import { useHref } from "@/lib/i18n-client";
 import { priceWithVat } from "@/lib/format";
+import { slugify } from "@/lib/slugify";
 
 const PROCESSES: WeldingProcess[] = ["MULTI", "MIG", "MAG", "PULSE", "TIG", "MMA", "PLAZMA"];
 const SECTIONS: { id: TopLevelSection; label: string }[] = [
@@ -17,14 +18,6 @@ const SECTIONS: { id: TopLevelSection; label: string }[] = [
   { id: "aksesuarlar", label: "Aksesuarlar" },
   { id: "dolgu-metalleri", label: "Dolgu Metalleri" },
 ];
-
-const slugify = (value: string) =>
-  value
-    .toLocaleLowerCase("tr")
-    .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
-    .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 export function ProductForm({ product }: { product?: Product }) {
   const db = useDatabase();

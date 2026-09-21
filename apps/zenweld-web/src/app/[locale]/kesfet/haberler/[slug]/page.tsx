@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { news } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { NewsDetail } from "@/components/events/NewsDetail";
@@ -44,7 +43,8 @@ export default async function NewsDetailPage({
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
+  // Tohum verisinde olmayan slug'lar yonetim panelinden eklenmis olabilir;
+  // bu kayitlar yalnizca tarayici deposunda tutulur, bulmayi istemciye birakiyoruz.
   const { slug } = await params;
-  if (!news.find((n) => n.slug === slug)) notFound();
   return <NewsDetail slug={slug} />;
 }
