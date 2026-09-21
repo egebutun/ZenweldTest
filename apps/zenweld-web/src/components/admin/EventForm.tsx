@@ -7,6 +7,7 @@ import type { ZenweldEvent } from "@zenweld/data";
 import { createEvent, saveEvent, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Checkbox, FormRow, Input, Tabs, Textarea } from "@zenweld/ui";
 import { ProductImage } from "@/components/common/ProductImage";
+import { logoAlternates } from "@/lib/event-logo";
 import { useHref } from "@/lib/i18n-client";
 import { readImageFiles, slugify } from "@/lib/slugify";
 
@@ -41,7 +42,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
     event ?? {
       id: "",
       slug: "",
-      title: { tr: "", en: "" },
+      title: "",
       summary: { tr: "", en: "" },
       description: { tr: "", en: "" },
       startDate: today,
@@ -59,15 +60,15 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
   const set = <K extends keyof ZenweldEvent>(key: K, value: ZenweldEvent[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
 
-  const setI18n = (key: "title" | "summary" | "description" | "venue", lang: "tr" | "en", value: string) =>
+  const setI18n = (key: "summary" | "description" | "venue", lang: "tr" | "en", value: string) =>
     setDraft((d) => ({ ...d, [key]: { ...d[key], [lang]: value } }));
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!draft.title.tr.trim()) {
-      setError("Etkinlik başlığı (TR) zorunludur.");
+    if (!draft.title.trim()) {
+      setError("Etkinlik adı zorunludur.");
       setTab("temel");
       return;
     }
@@ -77,7 +78,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
       return;
     }
 
-    const slug = draft.slug.trim() || slugify(draft.title.tr);
+    const slug = draft.slug.trim() || slugify(draft.title);
     const clash = db.events.find((x) => x.slug === slug && x.id !== draft.id);
     if (clash) {
       setError(`"${slug}" adresi başka bir etkinlikte kullanılıyor.`);
@@ -89,7 +90,6 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
     const next: ZenweldEvent = {
       ...draft,
       slug,
-      title: { tr: draft.title.tr, en: draft.title.en.trim() || draft.title.tr },
       summary: { tr: draft.summary.tr, en: draft.summary.en.trim() || draft.summary.tr },
       description: {
         tr: draft.description.tr,
@@ -134,24 +134,20 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
 
       {tab === "temel" && (
         <div className="space-y-4 rounded-[4px] border border-zw-grey-200 bg-white p-5">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Etkinlik Başlığı (TR)" required>
-              <Input
-                required
-                value={draft.title.tr}
-                onChange={(e) => {
-                  setI18n("title", "tr", e.target.value);
-                  if (isNew) set("slug", slugify(e.target.value));
-                }}
-              />
-            </FormRow>
-            <FormRow label="Etkinlik Başlığı (EN)" hint="Boş bırakılırsa Türkçe başlık kullanılır">
-              <Input
-                value={draft.title.en}
-                onChange={(e) => setI18n("title", "en", e.target.value)}
-              />
-            </FormRow>
-          </div>
+          <FormRow
+            label="Etkinlik Adı"
+            required
+            hint="Özel isimdir; Türkçe ve İngilizce sitede aynı görünür, çevrilmez."
+          >
+            <Input
+              required
+              value={draft.title}
+              onChange={(e) => {
+                set("title", e.target.value);
+                if (isNew) set("slug", slugify(e.target.value));
+              }}
+            />
+          </FormRow>
 
           <FormRow label="URL (slug)" hint={`/kesfet/etkinlikler/${draft.slug || "…"}`}>
             <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
@@ -293,8 +289,9 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
               <div className="flex h-24 w-48 shrink-0 items-center justify-center rounded-[4px] border border-zw-grey-200 bg-zw-grey-50 p-2">
                 <ProductImage
                   src={draft.logoUrl}
-                  alt={draft.title.tr}
-                  label={draft.title.tr || "Logo"}
+                  alternates={logoAlternates(draft.logoUrl)}
+                  alt={draft.title}
+                  label={draft.title || "Logo"}
                   className="max-h-full max-w-full object-contain"
                 />
               </div>
@@ -394,8 +391,8 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
                   <div className="aspect-[4/3] overflow-hidden rounded-[3px] bg-zw-grey-50">
                     <ProductImage
                       src={img}
-                      alt={`${draft.title.tr} — ${i + 1}`}
-                      label={draft.title.tr || "Fotoğraf"}
+                      alt={`${draft.title} — ${i + 1}`}
+                      label={draft.title || "Fotoğraf"}
                       className="h-full w-full object-cover"
                     />
                   </div>

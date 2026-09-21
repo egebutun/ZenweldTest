@@ -1,6 +1,8 @@
 "use client";
 
 import { Fragment } from "react";
+import type { RichTextStyle } from "@zenweld/data";
+import { getRichTextStyle, useDatabase } from "@zenweld/store";
 
 /**
  * ETKINLIK / HABER METIN BICIMLENDIRICI
@@ -8,13 +10,14 @@ import { Fragment } from "react";
  * Duz metni hafif bir isaretleme ile bicimlendirir. Metnin kendisi
  * degismez, yalnizca satir baslarina isaret konur:
  *
- *   "## Ara baslik"        -> ara baslik (kirmizi cizgili)
+ *   "## Ara baslik"        -> ara baslik (renkli cizgili)
  *   "- Madde"              -> madde isaretli liste
  *   "- **Etiket:** metin"  -> etiketi kalin madde
  *   "**kalin**"            -> satir ici kalin metin
  *
  * Isaretsiz satirlar paragraf olur; ilk paragraf giris paragrafi olarak
- * biraz daha buyuk gosterilir.
+ * biraz daha buyuk gosterilir. Punto ve renkler yonetim panelindeki
+ * "Görünüm" sayfasindan degistirilebilir.
  */
 
 type Block =
@@ -55,7 +58,7 @@ function Inline({ text }: { text: string }) {
     <>
       {parts.map((part, i) =>
         i % 2 === 1 ? (
-          <strong key={i} className="font-semibold text-zw-ink">
+          <strong key={i} className="font-semibold" style={{ color: "var(--zw-rt-strong)" }}>
             {part}
           </strong>
         ) : (
@@ -66,20 +69,48 @@ function Inline({ text }: { text: string }) {
   );
 }
 
-export function RichText({ source, className = "" }: { source: string; className?: string }) {
+export function RichText({
+  source,
+  className = "",
+  overrides,
+}: {
+  source: string;
+  className?: string;
+  /** Yonetim panelindeki onizleme icin kaydedilmemis ayarlar. */
+  overrides?: RichTextStyle;
+}) {
+  const db = useDatabase();
+  const style = overrides ?? getRichTextStyle(db);
   const blocks = parse(source);
   let paragraphSeen = false;
 
+  const vars = {
+    "--zw-rt-accent": style.accentColor,
+    "--zw-rt-strong": style.strongColor,
+  } as React.CSSProperties;
+
   return (
-    <div className={className}>
+    <div className={className} style={vars}>
       {blocks.map((block, i) => {
         if (block.kind === "heading") {
           return (
             <h2 key={i} className="mt-9 first:mt-0">
-              <span className="block font-display text-lg font-bold uppercase leading-snug tracking-wide text-zw-ink">
+              <span
+                className="block font-display font-bold leading-snug tracking-wide"
+                style={{
+                  fontSize: `${style.headingSize}px`,
+                  color: style.headingColor,
+                  textTransform: style.headingUppercase ? "uppercase" : "none",
+                }}
+              >
                 {block.text}
               </span>
-              <span className="mt-2 block h-[3px] w-10 bg-zw-red-600" />
+              {style.accentWidth > 0 && (
+                <span
+                  className="mt-2 block h-[3px]"
+                  style={{ width: `${style.accentWidth}px`, background: "var(--zw-rt-accent)" }}
+                />
+              )}
             </h2>
           );
         }
@@ -88,8 +119,15 @@ export function RichText({ source, className = "" }: { source: string; className
           return (
             <ul key={i} className="mt-4 space-y-2.5">
               {block.items.map((item, j) => (
-                <li key={j} className="flex gap-3 text-[15px] leading-relaxed text-zw-grey-700">
-                  <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-zw-red-600" />
+                <li
+                  key={j}
+                  className="flex gap-3 leading-relaxed"
+                  style={{ fontSize: `${style.bodySize}px`, color: style.bodyColor }}
+                >
+                  <span
+                    className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rounded-full"
+                    style={{ background: "var(--zw-rt-accent)" }}
+                  />
                   <span>
                     <Inline text={item} />
                   </span>
@@ -104,11 +142,11 @@ export function RichText({ source, className = "" }: { source: string; className
         return (
           <p
             key={i}
-            className={
-              isLead
-                ? "text-lg font-medium leading-relaxed text-zw-ink"
-                : "mt-4 text-[15px] leading-relaxed text-zw-grey-700"
-            }
+            className={isLead ? "font-medium leading-relaxed" : "mt-4 leading-relaxed"}
+            style={{
+              fontSize: `${isLead ? style.leadSize : style.bodySize}px`,
+              color: isLead ? style.headingColor : style.bodyColor,
+            }}
           >
             <Inline text={block.text} />
           </p>

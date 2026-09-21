@@ -308,7 +308,8 @@ export interface FaqItem {
 export interface ZenweldEvent {
   id: string;
   slug: string;
-  title: I18nText;
+  /** Etkinlik adi ozel isimdir, cevrilmez; iki dilde de ayni gosterilir. */
+  title: string;
   /** Kart uzerinde gorunen kisa aciklama */
   summary: I18nText;
   /** Detay sayfasindaki uzun metin */
@@ -364,6 +365,37 @@ export interface WarrantyRecord {
 /* Veritabani anlik goruntusu (localStorage'da tutulan sekil)          */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/* Gorunum ayarlari                                                     */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Etkinlik ve haber metinlerinin ("## baslik", "- madde", "**kalin**")
+ * gorunumu. Yonetim panelindeki Gorunum sayfasindan degistirilir.
+ */
+export interface RichTextStyle {
+  /** Ara baslik punto (px) */
+  headingSize: number;
+  headingColor: string;
+  /** Ara basliklar BUYUK HARF gosterilsin mi */
+  headingUppercase: boolean;
+  /** Baslik altindaki cizgi ve madde noktasi rengi */
+  accentColor: string;
+  /** Baslik altindaki cizginin genisligi (px); 0 ise cizgi gizlenir */
+  accentWidth: number;
+  /** Giris paragrafi punto (px) */
+  leadSize: number;
+  /** Govde metni punto (px) */
+  bodySize: number;
+  bodyColor: string;
+  /** Kalin vurgulu metinlerin rengi */
+  strongColor: string;
+}
+
+export interface SiteSettings {
+  richText: RichTextStyle;
+}
+
 export interface ZenweldDatabase {
   version: number;
   products: Product[];
@@ -382,4 +414,5 @@ export interface ZenweldDatabase {
   news: NewsItem[];
   faqs: FaqItem[];
   warranties: WarrantyRecord[];
+  settings: SiteSettings;
 }

@@ -7,6 +7,7 @@ import { Badge, Button, Input, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
+import { logoAlternates } from "@/lib/event-logo";
 import { formatDate } from "@/lib/format";
 
 export default function AdminEventsPage() {
@@ -24,7 +25,7 @@ export default function AdminEventsPage() {
         if (status === "past" && e.endDate >= today) return false;
         if (!q) return true;
         return (
-          e.title.tr.toLocaleLowerCase("tr").includes(q) ||
+          e.title.toLocaleLowerCase("tr").includes(q) ||
           e.city.toLocaleLowerCase("tr").includes(q) ||
           e.country.toLocaleLowerCase("tr").includes(q)
         );
@@ -80,13 +81,14 @@ export default function AdminEventsPage() {
                     <div className="flex h-11 w-16 shrink-0 items-center justify-center rounded-[3px] border border-zw-grey-200 bg-zw-grey-50 p-1">
                       <ProductImage
                         src={e.logoUrl}
-                        alt={e.title.tr}
-                        label={e.title.tr}
+                        alternates={logoAlternates(e.logoUrl)}
+                        alt={e.title}
+                        label={e.title}
                         className="max-h-full max-w-full object-contain"
                       />
                     </div>
                     <div className="min-w-0">
-                      <div className="truncate font-semibold">{e.title.tr}</div>
+                      <div className="truncate font-semibold">{e.title}</div>
                       <div className="text-xs text-zw-grey-500">/{e.slug}</div>
                     </div>
                   </div>
@@ -127,7 +129,7 @@ export default function AdminEventsPage() {
                     <button
                       title="Sil"
                       onClick={() => {
-                        if (confirm(`"${e.title.tr}" silinsin mi? Bu işlem geri alınamaz.`)) {
+                        if (confirm(`"${e.title}" silinsin mi? Bu işlem geri alınamaz.`)) {
                           deleteEvent(e.id);
                         }
                       }}

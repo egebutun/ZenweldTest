@@ -24,7 +24,7 @@ export default function EditEventPage({
   return (
     <>
       <AdminPageHeader
-        title={event.title.tr}
+        title={event.title}
         description={`${formatDate(event.startDate, "tr")} — ${formatDate(event.endDate, "tr")}`}
         action={
           <LocaleLink

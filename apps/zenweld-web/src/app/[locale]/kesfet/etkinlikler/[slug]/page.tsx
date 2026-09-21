@@ -20,7 +20,7 @@ export async function generateMetadata({
 
   if (!event) return { title: lang === "tr" ? "Etkinlik" : "Event" };
 
-  const title = event.title[lang];
+  const title = event.title;
   const description = event.summary[lang];
 
   return {
@@ -58,7 +58,7 @@ export default async function EventDetailPage({
         data={{
           "@context": "https://schema.org",
           "@type": "Event",
-          name: event.title[lang],
+          name: event.title,
           description: event.summary[lang],
           startDate: event.startDate,
           endDate: event.endDate,
