@@ -2,15 +2,32 @@
 
 import { useMemo } from "react";
 import { useDatabase } from "@zenweld/store";
-import type { TopLevelSection } from "@zenweld/data";
+import type { Product, TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
 import { useLocale, useT } from "./i18n-client";
+
+/** Mega menudeki kucuk urun onizleme karti. */
+export interface MenuProduct {
+  id: string;
+  name: string;
+  href: string;
+  imageUrl?: string;
+  /** Satista one cikan 1-2 ozellik */
+  highlights: string[];
+}
 
 export interface MenuLink {
   label: string;
   description?: string;
   href: string;
+  /** Menude gosterilen ilk 9 urun (yalnizca urun menulerinde) */
+  products?: MenuProduct[];
+  /** Kategorideki toplam urun sayisi (9'dan fazlaysa "tumunu gor" onemli) */
+  productCount?: number;
 }
+
+/** Mega menude gosterilecek en fazla urun sayisi (3 x 3). */
+export const MENU_PRODUCT_LIMIT = 9;
 
 export interface MenuColumn {
   /** Sol kolondaki grup (Unimig'deki "Welding Machines" gibi) */
@@ -33,6 +50,21 @@ const SECTIONS: { id: TopLevelSection; labelKey: keyof Dictionary["nav"] }[] = [
   { id: "dolgu-metalleri", labelKey: "fillerMetals" },
 ];
 
+/**
+ * Menu kartinda gosterilecek 2 satislik ozellik secer.
+ *
+ * Aksesuar tohumlarinda ozellikler henuz lorem ipsum oldugu icin bunlar
+ * elenir; hicbiri kalmazsa kisa aciklamaya dusulur.
+ */
+function sellingPoints(product: Product, locale: "tr" | "en"): string[] {
+  const real = product.highlights
+    .map((h) => h[locale])
+    .filter((h) => h && !/lorem ipsum/i.test(h));
+  if (real.length > 0) return real.slice(0, 2);
+  const short = product.shortDescription[locale];
+  return short && !/lorem ipsum/i.test(short) ? [short] : [];
+}
+
 export function useMainMenu(): TopMenu[] {
   const db = useDatabase();
   const locale = useLocale();
@@ -54,11 +86,24 @@ export function useMainMenu(): TopMenu[] {
           links: db.categories
             .filter((c) => c.section === id && c.group === group.slug)
             .sort((a, b) => a.order - b.order)
-            .map((c) => ({
-              label: c.name[locale],
-              description: c.description[locale],
-              href: `/${id}/${c.slug}`,
-            })),
+            .map((c) => {
+              const inCategory = db.products.filter(
+                (p) => p.active && p.categorySlug === c.slug,
+              );
+              return {
+                label: c.name[locale],
+                description: c.description[locale],
+                href: `/${id}/${c.slug}`,
+                productCount: inCategory.length,
+                products: inCategory.slice(0, MENU_PRODUCT_LIMIT).map((p) => ({
+                  id: p.id,
+                  name: p.name,
+                  href: `/urun/${p.slug}`,
+                  imageUrl: p.images[0]?.url,
+                  highlights: sellingPoints(p, locale),
+                })),
+              };
+            }),
         })),
       };
     });

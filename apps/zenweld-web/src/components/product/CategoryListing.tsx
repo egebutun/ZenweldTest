@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal, X } from "lucide-react";
 import type { TopLevelSection, WeldingProcess } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
@@ -15,13 +16,34 @@ import {
 } from "./ProductFilters";
 import { useLocale, useT } from "@/lib/i18n-client";
 
-export function CategoryListing({
-  section,
-  categorySlug,
-}: {
+interface ListingProps {
   section: TopLevelSection;
   categorySlug?: string;
-}) {
+}
+
+/**
+ * Mega menudeki grup basligi buraya "?grup=lazer" seklinde yonlendirir.
+ * useSearchParams statik on-uretimde Suspense sinirini gerektirir; sinir
+ * cozulene kadar gruplanmamis liste gosterilir.
+ */
+export function CategoryListing(props: ListingProps) {
+  return (
+    <Suspense fallback={<Listing {...props} />}>
+      <ListingWithGroupParam {...props} />
+    </Suspense>
+  );
+}
+
+function ListingWithGroupParam(props: ListingProps) {
+  const groupSlug = useSearchParams().get("grup") ?? undefined;
+  return <Listing {...props} groupSlug={groupSlug} />;
+}
+
+function Listing({
+  section,
+  categorySlug,
+  groupSlug,
+}: ListingProps & { groupSlug?: string }) {
   const t = useT();
   const locale = useLocale();
   const db = useDatabase();
@@ -33,10 +55,22 @@ export function CategoryListing({
     [db, categorySlug],
   );
 
-  const sectionCategories = useMemo(
-    () => db.categories.filter((c) => c.section === section).sort((a, b) => a.order - b.order),
-    [db, section],
+  const group = useMemo(
+    () => (groupSlug ? db.categoryGroups.find((g) => g.slug === groupSlug) : undefined),
+    [db, groupSlug],
   );
+
+  // Kategoriler once ait olduklari grubun sirasina, sonra kendi siralarina gore.
+  const sectionCategories = useMemo(() => {
+    const groupOrder = new Map(db.categoryGroups.map((g) => [g.slug, g.order]));
+    return db.categories
+      .filter((c) => c.section === section && (group ? c.group === group.slug : true))
+      .sort(
+        (a, b) =>
+          (groupOrder.get(a.group) ?? 99) - (groupOrder.get(b.group) ?? 99) ||
+          a.order - b.order,
+      );
+  }, [db, section, group]);
 
   const scoped = useMemo(
     () =>
@@ -44,9 +78,11 @@ export function CategoryListing({
         (p) =>
           p.active &&
           p.section === section &&
-          (categorySlug ? p.categorySlug === categorySlug : true),
+          (categorySlug
+            ? p.categorySlug === categorySlug
+            : sectionCategories.some((c) => c.slug === p.categorySlug)),
       ),
-    [db, section, categorySlug],
+    [db, section, categorySlug, sectionCategories],
   );
 
   const availableProcesses = useMemo(
@@ -64,7 +100,11 @@ export function CategoryListing({
     "dolgu-metalleri": t.nav.fillerMetals,
   };
 
-  const title = category ? category.name[locale] : sectionTitles[section];
+  const title = category
+    ? category.name[locale]
+    : group
+      ? group.name[locale]
+      : sectionTitles[section];
   const description = category
     ? category.description[locale]
     : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.";
@@ -81,7 +121,7 @@ export function CategoryListing({
       <div className="border-b border-zw-grey-200">
         <div className="zw-container flex gap-2 overflow-x-auto py-3">
           <LocaleLink
-            href={`/${section}`}
+            href={group ? `/${section}?grup=${group.slug}` : `/${section}`}
             className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
               !categorySlug
                 ? "bg-zw-ink text-white"
