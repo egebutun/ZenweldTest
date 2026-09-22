@@ -1,12 +1,9 @@
 import type { Category, CategoryGroup } from "../types";
 
 export const categoryGroups: CategoryGroup[] = [
-  { id: "g1", slug: "kaynak-makineleri", section: "ekipmanlar", name: { tr: "Kaynak Makineleri", en: "Welding Machines" }, order: 1 },
-  { id: "g2", slug: "plazma-kesme", section: "ekipmanlar", name: { tr: "Plazma Kesme", en: "Plasma Cutting" }, order: 2 },
-  { id: "g3", slug: "duman-emis", section: "ekipmanlar", name: { tr: "Duman Emiş", en: "Fume Extraction" }, order: 3 },
-  { id: "g4", slug: "oksi-gaz", section: "ekipmanlar", name: { tr: "Oksi-Gaz", en: "Oxy-Fuel" }, order: 4 },
-  { id: "g5", slug: "cnc-tezgahlar", section: "ekipmanlar", name: { tr: "CNC Tezgahlar", en: "CNC Tables" }, order: 5 },
-  { id: "g6", slug: "punta-kaynak", section: "ekipmanlar", name: { tr: "Punta Kaynak", en: "Spot Welders" }, order: 6 },
+  { id: "g1", slug: "lazer", section: "ekipmanlar", name: { tr: "Lazer", en: "Laser" }, order: 1 },
+  { id: "g2", slug: "kaynak-makineleri", section: "ekipmanlar", name: { tr: "Kaynak Makineleri", en: "Welding Machines" }, order: 2 },
+  { id: "g3", slug: "plazma-kesme", section: "ekipmanlar", name: { tr: "Plazma Kesme", en: "Plasma Cutting" }, order: 3 },
 
   { id: "g7", slug: "kaynak-maskeleri", section: "guvenlik", name: { tr: "Kaynak Maskeleri", en: "Welding Helmets" }, order: 1 },
   { id: "g8", slug: "koruyucu-giyim", section: "guvenlik", name: { tr: "Koruyucu Giyim", en: "Protective Clothing" }, order: 2 },
@@ -23,6 +20,16 @@ export const categoryGroups: CategoryGroup[] = [
 ];
 
 export const categories: Category[] = [
+  {
+    id: "c19", slug: "lazer-kaynak-makineleri", section: "ekipmanlar", group: "lazer", order: 1,
+    name: { tr: "Lazer Kaynak Makineleri", en: "Laser Welding Machines" },
+    description: { tr: "Yüksek hızda, düşük ısı girdisiyle temiz ve ince dikişli kaynak.", en: "Fast welding with low heat input and clean, fine beads." },
+  },
+  {
+    id: "c20", slug: "lazer-kesme-makineleri", section: "ekipmanlar", group: "lazer", order: 2,
+    name: { tr: "Lazer Kesme Makineleri", en: "Laser Cutting Machines" },
+    description: { tr: "Sac metalde yüksek hassasiyetli, çapaksız kesim performansı.", en: "High-precision, burr-free cutting performance on sheet metal." },
+  },
   {
     id: "c1", slug: "multi-process", section: "ekipmanlar", group: "kaynak-makineleri", order: 1,
     name: { tr: "Multi-Process", en: "Multi-Process" },
@@ -52,11 +59,6 @@ export const categories: Category[] = [
     id: "c6", slug: "plazma-kesme-makineleri", section: "ekipmanlar", group: "plazma-kesme", order: 1,
     name: { tr: "Plazma Kesme Makineleri", en: "Plasma Cutters" },
     description: { tr: "Karbon çeliği, paslanmaz ve alüminyumda temiz kesim performansı.", en: "Clean cutting performance on carbon steel, stainless and aluminium." },
-  },
-  {
-    id: "c7", slug: "cnc-plazma", section: "ekipmanlar", group: "cnc-tezgahlar", order: 1,
-    name: { tr: "CNC Plazma Sistemleri", en: "CNC Plasma Systems" },
-    description: { tr: "Otomasyon sistemlerine adapte edilebilen CNC çıkışlı çözümler.", en: "CNC-ready solutions that adapt to automation systems." },
   },
   {
     id: "c8", slug: "otomatik-kararan-maskeler", section: "guvenlik", group: "kaynak-maskeleri", order: 1,
