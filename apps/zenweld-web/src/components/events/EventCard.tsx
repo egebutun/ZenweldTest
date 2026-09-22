@@ -80,18 +80,20 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
         {text(event.summary)}
       </p>
 
-      {/* Alt şerit: Detaylar butonu + konum */}
-      <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
+      {/* Alt şerit: konum + Detaylar butonu.
+          Mekan adlari farkli uzunlukta oldugu icin konum ustte, buton en altta
+          duruyor; boylece butonlar tum kartlarda ayni hizada kaliyor. */}
+      <div className="mt-auto pt-5">
+        <span className="flex items-start gap-1.5 text-sm text-zw-grey-600">
+          <MapPin size={15} className="mt-0.5 shrink-0 text-zw-grey-500" />
+          {text(event.venue)}
+        </span>
         <LocaleLink
           href={`/kesfet/etkinlikler/${event.slug}`}
-          className="rounded-[4px] bg-zw-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zw-red-700"
+          className="mt-3 inline-block rounded-[4px] bg-zw-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zw-red-700"
         >
           {t.events.details}
         </LocaleLink>
-        <span className="flex items-center gap-1.5 text-sm text-zw-grey-600">
-          <MapPin size={15} className="shrink-0 text-zw-grey-500" />
-          {text(event.venue)}
-        </span>
       </div>
     </div>
   );
