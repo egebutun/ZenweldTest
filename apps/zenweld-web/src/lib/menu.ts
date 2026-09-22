@@ -50,19 +50,20 @@ const SECTIONS: { id: TopLevelSection; labelKey: keyof Dictionary["nav"] }[] = [
   { id: "dolgu-metalleri", labelKey: "fillerMetals" },
 ];
 
+/** Yer tutucu metinleri ayirt etmek icin kullanilan lorem ipsum kaliplari. */
+const LOREM = /\b(lorem|ipsum|dolor sit amet|consectetur|adipiscing|eiusmod|tempor|incididunt)\b/i;
+
 /**
  * Menu kartinda gosterilecek 2 satislik ozellik secer.
  *
- * Aksesuar tohumlarinda ozellikler henuz lorem ipsum oldugu icin bunlar
- * elenir; hicbiri kalmazsa kisa aciklamaya dusulur.
+ * Bazi aksesuar tohumlarinda ozellikler henuz lorem ipsum oldugu icin
+ * bunlar elenir; hicbiri kalmazsa kisa aciklamaya dusulur.
  */
 function sellingPoints(product: Product, locale: "tr" | "en"): string[] {
-  const real = product.highlights
-    .map((h) => h[locale])
-    .filter((h) => h && !/lorem ipsum/i.test(h));
+  const real = product.highlights.map((h) => h[locale]).filter((h) => h && !LOREM.test(h));
   if (real.length > 0) return real.slice(0, 2);
   const short = product.shortDescription[locale];
-  return short && !/lorem ipsum/i.test(short) ? [short] : [];
+  return short && !LOREM.test(short) ? [short] : [];
 }
 
 export function useMainMenu(): TopMenu[] {

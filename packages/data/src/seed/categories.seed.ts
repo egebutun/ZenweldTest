@@ -9,10 +9,10 @@ export const categoryGroups: CategoryGroup[] = [
   { id: "g8", slug: "koruyucu-giyim", section: "guvenlik", name: { tr: "Koruyucu Giyim", en: "Protective Clothing" }, order: 2 },
   { id: "g9", slug: "solunum-koruma", section: "guvenlik", name: { tr: "Solunum Koruma", en: "Respiratory Protection" }, order: 3 },
 
-  { id: "g10", slug: "torclar", section: "aksesuarlar", name: { tr: "Torçlar", en: "Torches" }, order: 1 },
-  { id: "g11", slug: "sarf-malzemeleri", section: "aksesuarlar", name: { tr: "Sarf Malzemeleri", en: "Consumables" }, order: 2 },
-  { id: "g12", slug: "regulatorler", section: "aksesuarlar", name: { tr: "Regülatörler", en: "Regulators" }, order: 3 },
-  { id: "g13", slug: "kablo-pense", section: "aksesuarlar", name: { tr: "Kablo & Pense", en: "Cables & Clamps" }, order: 4 },
+  { id: "g10", slug: "mig", section: "aksesuarlar", name: { tr: "MIG", en: "MIG" }, order: 1 },
+  { id: "g11", slug: "mag", section: "aksesuarlar", name: { tr: "MAG", en: "MAG" }, order: 2 },
+  { id: "g12", slug: "tig", section: "aksesuarlar", name: { tr: "TIG", en: "TIG" }, order: 3 },
+  { id: "g13", slug: "regulatorler", section: "aksesuarlar", name: { tr: "Regülatörler", en: "Regulators" }, order: 4 },
 
   { id: "g14", slug: "mig-telleri", section: "dolgu-metalleri", name: { tr: "MIG Telleri", en: "MIG Wires" }, order: 1 },
   { id: "g15", slug: "tig-cubuklari", section: "dolgu-metalleri", name: { tr: "TIG Çubukları", en: "TIG Rods" }, order: 2 },
@@ -76,29 +76,54 @@ export const categories: Category[] = [
     description: { tr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", en: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
   },
   {
-    id: "c11", slug: "mig-torclari", section: "aksesuarlar", group: "torclar", order: 1,
+    id: "c11", slug: "mig-torclari", section: "aksesuarlar", group: "mig", order: 1,
     name: { tr: "MIG Torçları", en: "MIG Torches" },
-    description: { tr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", en: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
+    description: { tr: "Euro bağlantılı MIG kaynak torçları ve torç setleri.", en: "Euro-connection MIG welding torches and torch sets." },
   },
   {
-    id: "c12", slug: "tig-torclari", section: "aksesuarlar", group: "torclar", order: 2,
+    id: "c21", slug: "mig-yedek-parca", section: "aksesuarlar", group: "mig", order: 2,
+    name: { tr: "Yedek Parça", en: "Spare Parts" },
+    description: { tr: "MIG torçları için gövde, boyun, hortum ve tetik yedekleri.", en: "Body, neck, liner and trigger spares for MIG torches." },
+  },
+  {
+    id: "c22", slug: "mig-sarf-malzemeleri", section: "aksesuarlar", group: "mig", order: 3,
+    name: { tr: "Sarf Malzemeleri", en: "Consumables" },
+    description: { tr: "Gaz nozulu, kontak meme ve diğer MIG sarf malzemeleri.", en: "Gas nozzles, contact tips and other MIG consumables." },
+  },
+  {
+    id: "c23", slug: "mag-torclari", section: "aksesuarlar", group: "mag", order: 1,
+    name: { tr: "MAG Torçları", en: "MAG Torches" },
+    description: { tr: "Karışım gazla çalışan MAG uygulamaları için kaynak torçları.", en: "Welding torches for MAG applications using mixed shielding gas." },
+  },
+  {
+    id: "c24", slug: "mag-yedek-parca", section: "aksesuarlar", group: "mag", order: 2,
+    name: { tr: "Yedek Parça", en: "Spare Parts" },
+    description: { tr: "MAG torçları için gövde, boyun, hortum ve tetik yedekleri.", en: "Body, neck, liner and trigger spares for MAG torches." },
+  },
+  {
+    id: "c25", slug: "mag-sarf-malzemeleri", section: "aksesuarlar", group: "mag", order: 3,
+    name: { tr: "Sarf Malzemeleri", en: "Consumables" },
+    description: { tr: "Gaz nozulu, kontak meme ve diğer MAG sarf malzemeleri.", en: "Gas nozzles, contact tips and other MAG consumables." },
+  },
+  {
+    id: "c12", slug: "tig-torclari", section: "aksesuarlar", group: "tig", order: 1,
     name: { tr: "TIG Torçları", en: "TIG Torches" },
-    description: { tr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", en: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
+    description: { tr: "Hava ve su soğutmalı TIG kaynak torçları.", en: "Air-cooled and water-cooled TIG welding torches." },
   },
   {
-    id: "c13", slug: "nozul-meme", section: "aksesuarlar", group: "sarf-malzemeleri", order: 1,
-    name: { tr: "Nozul & Meme", en: "Nozzles & Tips" },
-    description: { tr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", en: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
+    id: "c26", slug: "tig-yedek-parca", section: "aksesuarlar", group: "tig", order: 2,
+    name: { tr: "Yedek Parça", en: "Spare Parts" },
+    description: { tr: "TIG torçları için kafa, kapak ve hortum yedekleri.", en: "Head, cap and hose spares for TIG torches." },
+  },
+  {
+    id: "c27", slug: "tig-sarf-malzemeleri", section: "aksesuarlar", group: "tig", order: 3,
+    name: { tr: "Sarf Malzemeleri", en: "Consumables" },
+    description: { tr: "Tungsten elektrot, pens, seramik nozul ve gaz lensleri.", en: "Tungsten electrodes, collets, ceramic nozzles and gas lenses." },
   },
   {
     id: "c14", slug: "gaz-regulatorleri", section: "aksesuarlar", group: "regulatorler", order: 1,
     name: { tr: "Gaz Regülatörleri", en: "Gas Regulators" },
-    description: { tr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", en: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-  },
-  {
-    id: "c15", slug: "sase-penseleri", section: "aksesuarlar", group: "kablo-pense", order: 1,
-    name: { tr: "Şase Penseleri", en: "Earth Clamps" },
-    description: { tr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", en: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
+    description: { tr: "Argon, CO2 ve karışım gazlar için debimetreli regülatörler.", en: "Regulators with flowmeters for argon, CO2 and mixed gases." },
   },
   {
     id: "c16", slug: "gazalti-telleri", section: "dolgu-metalleri", group: "mig-telleri", order: 1,
