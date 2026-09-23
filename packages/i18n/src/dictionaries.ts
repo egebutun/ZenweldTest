@@ -54,6 +54,15 @@ export const dictionaries = {
       myOrders: "Siparişlerim",
       discover: "Keşfet",
     },
+    finder: {
+      question: "Hangi kaynak makinesi size uygun?",
+      hint: "3 soruda ihtiyacınıza uygun modeli bulun.",
+      cta: "Ürün Seçici",
+      steel: "Çelik",
+      stainless: "Paslanmaz",
+      aluminium: "Alüminyum",
+      cutting: "Kesim",
+    },
     explore: {
       about: "Hakkımızda",
       aboutDesc: "Türkiye'nin kaynak teknolojileri markası",
@@ -130,6 +139,9 @@ export const dictionaries = {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       heroCta: "Ürünleri Keşfet",
       heroCtaSecondary: "Teklif Al",
+      newArrivalsEyebrow: "Yeni",
+      newArrivalsTitle: "Yeni Gelenler",
+      newArrivalsSubtitle: "Ürün gamımıza yeni katılan makine ve ekipmanlar.",
       hotSaleEyebrow: "Hot Sale",
       hotSaleTitle: "Kampanyalı Ürünler",
       hotSaleSubtitle:
@@ -500,6 +512,15 @@ export const dictionaries = {
       myOrders: "My Orders",
       discover: "Discover",
     },
+    finder: {
+      question: "Which welding machine is right for you?",
+      hint: "Find the model that fits your needs in 3 questions.",
+      cta: "Product Selector",
+      steel: "Steel",
+      stainless: "Stainless",
+      aluminium: "Aluminium",
+      cutting: "Cutting",
+    },
     explore: {
       about: "About Us",
       aboutDesc: "Türkiye's welding technology brand",
@@ -576,6 +597,9 @@ export const dictionaries = {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       heroCta: "Explore Products",
       heroCtaSecondary: "Request a Quote",
+      newArrivalsEyebrow: "New",
+      newArrivalsTitle: "New Arrivals",
+      newArrivalsSubtitle: "Machines and equipment recently added to our range.",
       hotSaleEyebrow: "Hot Sale",
       hotSaleTitle: "Products on Offer",
       hotSaleSubtitle:

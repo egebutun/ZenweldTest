@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { WeldingProcess } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { Button } from "@zenweld/ui";
@@ -10,11 +11,28 @@ import { useT } from "@/lib/i18n-client";
 
 type Step = 0 | 1 | 2 | 3;
 
+/**
+ * Anasayfadaki serit "?malzeme=celik" gibi bir on secimle gelebilir.
+ * useSearchParams statik on-uretimde Suspense siniri gerektirir.
+ */
 export default function ProductSelectorPage() {
+  return (
+    <Suspense fallback={<ProductSelector />}>
+      <ProductSelectorWithParam />
+    </Suspense>
+  );
+}
+
+function ProductSelectorWithParam() {
+  const preset = useSearchParams().get("malzeme") ?? "";
+  return <ProductSelector preset={preset} />;
+}
+
+function ProductSelector({ preset = "" }: { preset?: string }) {
   const t = useT();
   const db = useDatabase();
-  const [step, setStep] = useState<Step>(0);
-  const [material, setMaterial] = useState<string>("");
+  const [step, setStep] = useState<Step>(preset ? 1 : 0);
+  const [material, setMaterial] = useState<string>(preset);
   const [usage, setUsage] = useState<string>("");
   const [power, setPower] = useState<string>("");
 

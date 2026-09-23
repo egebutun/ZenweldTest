@@ -68,22 +68,25 @@ export default function ContactPage() {
   );
 }
 
-/** Ofis karti: adres, telefonlar ve tiklaninca yol tarifi acan harita. */
+/** Ofis karti: adres, telefonlar, harita ve yol tarifi baglantisi. */
 function OfficeCard({ office }: { office: Office }) {
   const t = useT();
 
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white">
-      <div className="flex-1 p-6">
-        <h3 className="font-display text-xl font-bold text-zw-ink">
+    <div className="overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white">
+      <div className="p-5">
+        <div className="text-xs font-bold uppercase tracking-wide text-zw-red-600">
+          {office.city}
+        </div>
+        <h3 className="mt-1 font-display text-lg font-bold leading-snug text-zw-ink">
           {office.legalName ?? `Zenweld ${office.city}`}
         </h3>
-        <div className="mt-3 space-y-0.5 text-sm text-zw-grey-700">
+        <div className="mt-2.5 space-y-0.5 text-sm text-zw-grey-700">
           {office.addressLines.map((line) => (
             <div key={line}>{line}</div>
           ))}
         </div>
-        <div className="mt-3 space-y-0.5 text-sm">
+        <div className="mt-2.5 space-y-0.5 text-sm">
           {office.phones.map((phone) => (
             <div key={phone}>
               <a
@@ -97,34 +100,34 @@ function OfficeCard({ office }: { office: Office }) {
         </div>
         <a
           href={`mailto:${CONTACT.email}`}
-          className="mt-3 inline-block text-sm text-zw-grey-700 hover:text-zw-red-600"
+          className="mt-2.5 inline-block text-sm text-zw-grey-700 hover:text-zw-red-600"
           title={t.support.emailNote}
         >
           {CONTACT.email}
         </a>
       </div>
 
-      {/* Harita gec yuklenir; tiklaninca Google Haritalar'da yol tarifi acilir. */}
-      <a
-        href={mapDirectionsUrl(office)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group relative block h-[220px] shrink-0 border-t border-zw-grey-200"
-        aria-label={`${office.city} — ${t.support.directions}`}
-      >
+      {/* Harita gec yuklenir. Uzerine tiklamak da alttaki buton da
+          Google Haritalar'da yol tarifini acar. */}
+      <div className="relative aspect-[4/3] w-full border-t border-zw-grey-200 bg-zw-grey-100">
         <iframe
           src={mapEmbedUrl(office)}
           title={`${office.city} harita`}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          className="pointer-events-none h-full w-full border-0"
+          className="absolute inset-0 h-full w-full border-0"
         />
-        <span className="absolute inset-0" />
-        <span className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-[4px] bg-white px-3 py-2 text-sm font-semibold text-zw-ink shadow-md transition-colors group-hover:bg-zw-red-600 group-hover:text-white">
-          <Navigation size={15} />
-          {t.support.directions}
-          <ExternalLink size={13} className="opacity-60" />
-        </span>
+      </div>
+
+      <a
+        href={mapDirectionsUrl(office)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 border-t border-zw-grey-200 bg-zw-grey-50 py-3 text-sm font-semibold text-zw-ink transition-colors hover:bg-zw-red-600 hover:text-white"
+      >
+        <Navigation size={15} />
+        {t.support.directions}
+        <ExternalLink size={13} className="opacity-60" />
       </a>
     </div>
   );

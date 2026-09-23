@@ -17,7 +17,7 @@ import { ProductImage } from "@/components/ProductImage";
 import { ShopProductCard } from "@/components/ShopProductCard";
 import { useLocale, useT } from "@/lib/i18n-client";
 import { STORE } from "@/lib/store-config";
-import { formatPrice, priceWithVat } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 
 export function ShopHomeContent() {
   const t = useT();
@@ -29,8 +29,8 @@ export function ShopHomeContent() {
   const inStockProducts = db.products.filter(
     (p) => p.active && stockMap.get(p.id)?.inStock,
   );
-  const featured = inStockProducts.filter((p) => p.featured).slice(0, 8);
-  const rest = inStockProducts.filter((p) => !p.featured).slice(0, 4);
+  /** Urun gamina yeni katilanlardan magazada stokta olanlar. */
+  const newArrivals = inStockProducts.filter((p) => p.isNew).slice(0, 8);
 
   /** Zenweld'in kampanyali urunlerinden magazada stokta olanlar. */
   const hotSale = inStockProducts.filter((p) => p.hotSale).slice(0, 8);
@@ -141,69 +141,36 @@ export function ShopHomeContent() {
               Mağazamızda az sayıda kalan ürünler. Tükenmeden sipariş verebilirsiniz.
             </p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {lowStock.map(({ product, qty }) => (
-              <LocaleLink
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {lowStock.map(({ product }) => (
+              <ShopProductCard
                 key={product.id}
-                href={`/urun/${product.slug}`}
-                className="group flex gap-4 rounded-[4px] border border-zw-grey-200 bg-white p-4 transition-shadow hover:shadow-lg"
-              >
-                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[3px] bg-zw-grey-50">
-                  <ProductImage
-                    src={product.images[0]?.url}
-                    alt={product.name}
-                    label={product.name}
-                    className="max-h-16 max-w-16 object-contain"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="line-clamp-2 font-display text-[15px] font-semibold leading-tight text-zw-ink group-hover:text-zw-red-600">
-                    {product.name}
-                  </div>
-                  <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700">
-                    <AlertTriangle size={12} />
-                    Son {qty} adet
-                  </div>
-                  <div className="mt-2 text-sm font-bold text-zw-ink">
-                    {formatPrice(
-                      stockMap.get(product.id)?.price ??
-                        priceWithVat(product.priceExVat, product.vatRate),
-                      locale,
-                    )}
-                  </div>
-                </div>
-              </LocaleLink>
+                product={product}
+                stock={stockMap.get(product.id)}
+              />
             ))}
           </div>
         </section>
       )}
 
-      <section className="zw-container zw-section">
-        <SectionHeading
-          eyebrow={STORE.name}
-          title="Öne Çıkan Ürünler"
-          action={
-            <LocaleLink
-              href="/magaza"
-              className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
-            >
-              {t.common.viewAll} <ArrowRight size={16} />
-            </LocaleLink>
-          }
-        />
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {featured.map((p) => (
-            <ShopProductCard key={p.id} product={p} stock={stockMap.get(p.id)} />
-          ))}
-        </div>
-      </section>
-
-      {rest.length > 0 && (
+      {newArrivals.length > 0 && (
         <section className="bg-zw-grey-50">
           <div className="zw-container zw-section">
-            <SectionHeading title="Yeni Gelenler" />
+            <SectionHeading
+              eyebrow="Yeni"
+              title="Yeni Gelenler"
+              subtitle="Ürün gamımıza yeni katılan makine ve ekipmanlar."
+              action={
+                <LocaleLink
+                  href="/magaza"
+                  className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+                >
+                  {t.common.viewAll} <ArrowRight size={16} />
+                </LocaleLink>
+              }
+            />
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {rest.map((p) => (
+              {newArrivals.map((p) => (
                 <ShopProductCard key={p.id} product={p} stock={stockMap.get(p.id)} />
               ))}
             </div>

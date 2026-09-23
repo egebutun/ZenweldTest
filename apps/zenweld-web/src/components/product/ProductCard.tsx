@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart } from "lucide-react";
-import type { Product } from "@zenweld/data";
+import { productHighlights, type Product } from "@zenweld/data";
 import { Badge } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
@@ -16,6 +16,7 @@ export function ProductCard({ product }: { product: Product }) {
   const favourites = useFavourites();
 
   // Liste fiyati varsa indirim orani hesaplanir (Hot Sale bolumu icin).
+  const highlights = productHighlights(product, locale, 3);
   const list = product.listPriceExVat;
   const discount =
     list && list > product.priceExVat
@@ -60,9 +61,21 @@ export function ProductCard({ product }: { product: Product }) {
             {product.name}
           </h3>
         </LocaleLink>
-        <p className="mt-1.5 line-clamp-2 text-sm text-zw-grey-500">
-          {text(product.shortDescription)}
-        </p>
+        {/* Satista one cikan ilk 3 ozellik (yonetim panelinden duzenlenir) */}
+        {highlights.length > 0 ? (
+          <ul className="mt-2 space-y-1">
+            {highlights.map((h, i) => (
+              <li key={i} className="flex gap-2 text-xs leading-snug text-zw-grey-600">
+                <span className="mt-[6px] h-1 w-1 shrink-0 rounded-full bg-zw-red-600" />
+                <span className="line-clamp-2">{h}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-1.5 line-clamp-2 text-sm text-zw-grey-500">
+            {text(product.shortDescription)}
+          </p>
+        )}
 
         <div className="mt-auto pt-4">
           <div className="text-lg font-bold text-zw-ink">

@@ -6,6 +6,8 @@ import {
   DealerStrip,
   Hero,
   HotSale,
+  NewArrivals,
+  ProductFinderStrip,
   QuoteBanner,
   WhyZenweld,
 } from "@/components/home/HomeSections";
@@ -21,8 +23,10 @@ export default async function HomePage({
   return (
     <>
       <JsonLd data={organizationJsonLd(lang)} />
+      <ProductFinderStrip />
       <Hero />
       <HotSale />
+      <NewArrivals />
       <QuoteBanner />
       <WhyZenweld />
       <DealerStrip />

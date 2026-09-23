@@ -1,4 +1,5 @@
 export * from "./types";
+export * from "./highlights";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";

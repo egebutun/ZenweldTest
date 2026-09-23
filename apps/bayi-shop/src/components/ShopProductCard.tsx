@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Check, ShoppingCart } from "lucide-react";
-import type { Product, RetailerStock } from "@zenweld/data";
+import { productHighlights, type Product, type RetailerStock } from "@zenweld/data";
 import { Badge, Button } from "@zenweld/ui";
 import { LocaleLink } from "./LocaleLink";
 import { ProductImage } from "./ProductImage";
@@ -25,6 +25,10 @@ export function ShopProductCard({
 
   const price = stock?.price ?? priceWithVat(product.priceExVat, product.vatRate);
   const available = stock?.inStock ?? false;
+  const highlights = productHighlights(product, locale, 3);
+  /** Magaza stogunda 5 ve altinda kalanlar icin uyari rozeti. */
+  const left = stock?.quantity ?? 0;
+  const runningLow = available && left > 0 && left <= 5;
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white text-zw-ink transition-shadow hover:shadow-lg">
@@ -38,6 +42,7 @@ export function ShopProductCard({
           />
           <div className="absolute left-2 top-2 flex flex-col gap-1">
             {product.isNew && <Badge tone="red">{t.product.new}</Badge>}
+            {runningLow && <Badge tone="amber">Son {left} adet</Badge>}
             {!available && <Badge tone="outline">{t.product.outOfStock}</Badge>}
           </div>
         </div>
@@ -52,9 +57,21 @@ export function ShopProductCard({
             {product.name}
           </h3>
         </LocaleLink>
-        <p className="mt-1.5 line-clamp-2 text-sm text-zw-grey-500">
-          {text(product.shortDescription)}
-        </p>
+        {/* Satista one cikan ilk 3 ozellik */}
+        {highlights.length > 0 ? (
+          <ul className="mt-2 space-y-1">
+            {highlights.map((h, i) => (
+              <li key={i} className="flex gap-2 text-xs leading-snug text-zw-grey-600">
+                <span className="mt-[6px] h-1 w-1 shrink-0 rounded-full bg-zw-red-600" />
+                <span className="line-clamp-2">{h}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-1.5 line-clamp-2 text-sm text-zw-grey-500">
+            {text(product.shortDescription)}
+          </p>
+        )}
 
         <div className="mt-auto pt-4">
           <div className="font-display text-2xl font-bold text-zw-ink">
