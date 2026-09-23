@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import {
   ArrowRight,
   Award,
+  Compass,
   Flame,
   Factory,
   Headphones,
@@ -111,6 +112,95 @@ export function HotSale() {
   );
 }
 
+/**
+ * Baslik altindaki urun secici seridi.
+ *
+ * Ziyaretciyi 3 adimlik urun seciciye yonlendirir; malzeme kisayollari
+ * seciciyi ilgili secimle acar.
+ */
+export function ProductFinderStrip() {
+  const t = useT();
+
+  const shortcuts = [
+    { id: "celik", label: t.finder.steel },
+    { id: "paslanmaz", label: t.finder.stainless },
+    { id: "aluminyum", label: t.finder.aluminium },
+    { id: "kesim", label: t.finder.cutting },
+  ];
+
+  return (
+    <section className="border-b border-zw-grey-200 bg-zw-grey-100">
+      <div className="zw-container flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-3">
+          <Compass size={22} className="shrink-0 text-zw-red-600" />
+          <div>
+            <div className="font-display text-lg font-bold text-zw-ink sm:text-xl">
+              {t.finder.question}
+            </div>
+            <div className="text-sm text-zw-grey-600">{t.finder.hint}</div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          {shortcuts.map((s) => (
+            <LocaleLink
+              key={s.id}
+              href={`/kesfet/urun-secici?malzeme=${s.id}`}
+              className="rounded-full border border-zw-grey-300 bg-white px-3.5 py-1.5 text-sm font-semibold text-zw-grey-700 transition-colors hover:border-zw-ink hover:text-zw-ink"
+            >
+              {s.label}
+            </LocaleLink>
+          ))}
+          <LocaleLink
+            href="/kesfet/urun-secici"
+            className="inline-flex items-center gap-1.5 rounded-full bg-zw-ink px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-zw-red-600"
+          >
+            {t.finder.cta}
+            <ArrowRight size={15} />
+          </LocaleLink>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Yeni eklenen urunler. */
+export function NewArrivals() {
+  const t = useT();
+  const db = useDatabase();
+  const items = useMemo(
+    () => db.products.filter((p) => p.active && p.isNew).slice(0, 8),
+    [db],
+  );
+
+  if (items.length === 0) return null;
+
+  return (
+    <section className="bg-zw-grey-50">
+      <div className="zw-container zw-section">
+        <SectionHeading
+          eyebrow={t.home.newArrivalsEyebrow}
+          title={t.home.newArrivalsTitle}
+          subtitle={t.home.newArrivalsSubtitle}
+          action={
+            <LocaleLink
+              href="/ekipmanlar"
+              className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+            >
+              {t.common.viewAll} <ArrowRight size={16} />
+            </LocaleLink>
+          }
+        />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function WhyZenweld() {
   const t = useT();
   const items = [
@@ -191,11 +281,7 @@ export function QuoteBanner() {
           <p className="mt-2 text-white/90">{t.home.quoteBannerText}</p>
         </div>
         <LocaleLink href="/teklif-al" className="shrink-0">
-          <Button
-            size="lg"
-            className="bg-white text-zw-red-700 hover:bg-zw-grey-100"
-            rightIcon={<ArrowRight size={18} />}
-          >
+          <Button size="lg" variant="light" rightIcon={<ArrowRight size={18} />}>
             {t.home.quoteBannerCta}
           </Button>
         </LocaleLink>

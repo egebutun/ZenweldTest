@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useDatabase } from "@zenweld/store";
-import type { Product, TopLevelSection } from "@zenweld/data";
+import { productHighlights, type TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
 import { useLocale, useT } from "./i18n-client";
 
@@ -50,22 +50,6 @@ const SECTIONS: { id: TopLevelSection; labelKey: keyof Dictionary["nav"] }[] = [
   { id: "dolgu-metalleri", labelKey: "fillerMetals" },
 ];
 
-/** Yer tutucu metinleri ayirt etmek icin kullanilan lorem ipsum kaliplari. */
-const LOREM = /\b(lorem|ipsum|dolor sit amet|consectetur|adipiscing|eiusmod|tempor|incididunt)\b/i;
-
-/**
- * Menu kartinda gosterilecek 3 satislik ozellik secer.
- *
- * Bazi aksesuar tohumlarinda ozellikler henuz lorem ipsum oldugu icin
- * bunlar elenir; hicbiri kalmazsa kisa aciklamaya dusulur.
- */
-function sellingPoints(product: Product, locale: "tr" | "en"): string[] {
-  const real = product.highlights.map((h) => h[locale]).filter((h) => h && !LOREM.test(h));
-  if (real.length > 0) return real.slice(0, 3);
-  const short = product.shortDescription[locale];
-  return short && !LOREM.test(short) ? [short] : [];
-}
-
 export function useMainMenu(): TopMenu[] {
   const db = useDatabase();
   const locale = useLocale();
@@ -101,7 +85,7 @@ export function useMainMenu(): TopMenu[] {
                   name: p.name,
                   href: `/urun/${p.slug}`,
                   imageUrl: p.images[0]?.url,
-                  highlights: sellingPoints(p, locale),
+                  highlights: productHighlights(p, locale, 3),
                 })),
               };
             }),
@@ -134,22 +118,26 @@ export function useMainMenu(): TopMenu[] {
       ],
     };
 
-    return [...productMenus, explore];
-  }, [db, locale, t]);
-}
+    const support: TopMenu = {
+      id: "destek",
+      label: t.nav.support,
+      href: "/destek",
+      columns: [
+        {
+          label: t.nav.support,
+          href: "/destek",
+          links: [
+            { label: t.nav.findDealer, description: t.support.dealerCardText, href: "/nereden-alabilirim" },
+            { label: t.support.faqTitle, description: t.support.faqCardText, href: "/destek/sss" },
+            { label: t.support.serviceTitle, description: t.support.serviceCardText, href: "/destek/servis-agi" },
+            { label: t.support.contactTitle, description: t.support.contactCardText, href: "/destek/iletisim" },
+          ],
+        },
+      ],
+    };
 
-/** Baslikta "Destek" uzerine gelince acilan kisa liste. */
-export function useSupportMenu(): MenuLink[] {
-  const t = useT();
-  return useMemo(
-    () => [
-      { label: t.nav.findDealer, href: "/nereden-alabilirim" },
-      { label: t.support.faqTitle, href: "/destek/sss" },
-      { label: t.support.serviceTitle, href: "/destek/servis-agi" },
-      { label: t.support.contactTitle, href: "/destek/iletisim" },
-    ],
-    [t],
-  );
+    return [...productMenus, explore, support];
+  }, [db, locale, t]);
 }
 
 export function useFooterMenu() {
@@ -243,14 +231,17 @@ export const OFFICES: Office[] = [
   },
 ];
 
-/** Adresin tek satirlik, haritaya verilebilir hali. */
+/**
+ * Adresin tek satirlik, haritaya verilebilir hali.
+ * Sirket unvani eklenmez: Google Haritalar'da adres eslesmesini bozuyor.
+ */
 export function officeQuery(office: Office): string {
-  return [office.legalName, ...office.addressLines].filter(Boolean).join(", ");
+  return office.addressLines.join(", ");
 }
 
 /** Google Haritalar goml baglantisi (anahtar gerektirmez). */
 export function mapEmbedUrl(office: Office): string {
-  return `https://www.google.com/maps?q=${encodeURIComponent(officeQuery(office))}&hl=tr&z=15&output=embed`;
+  return `https://maps.google.com/maps?q=${encodeURIComponent(officeQuery(office))}&hl=tr&z=15&ie=UTF8&output=embed`;
 }
 
 /** Tiklaninca yol tarifi baslatan baglanti. */
