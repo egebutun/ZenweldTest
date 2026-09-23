@@ -16,8 +16,9 @@ export default function ContactPage() {
       <PageHero title={t.support.contactTitle} subtitle={t.support.subtitle} />
 
       <div className="zw-container py-12">
-        <div className="grid gap-10 lg:grid-cols-[1fr_420px]">
-          <div className="max-w-xl">
+        {/* Form dar bir kolonda; iki ofis sagda yan yana. */}
+        <div className="grid gap-10 lg:grid-cols-[340px_1fr] xl:grid-cols-[380px_1fr]">
+          <div>
             {sent ? (
               <Alert tone="success">{t.support.sent}</Alert>
             ) : (
@@ -28,14 +29,12 @@ export default function ContactPage() {
                 }}
                 className="space-y-4"
               >
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <FormRow label={t.support.name} required>
-                    <Input required />
-                  </FormRow>
-                  <FormRow label={t.support.email} required>
-                    <Input type="email" required />
-                  </FormRow>
-                </div>
+                <FormRow label={t.support.name} required>
+                  <Input required />
+                </FormRow>
+                <FormRow label={t.support.email} required>
+                  <Input type="email" required />
+                </FormRow>
                 <FormRow label={t.support.subject} required>
                   <Input required />
                 </FormRow>
@@ -49,17 +48,17 @@ export default function ContactPage() {
             )}
           </div>
 
-          {/* Ofisler: iletisim bilgileri ve haritalar */}
-          <aside className="space-y-5">
-            <div>
-              <h2 className="font-display text-xl font-bold uppercase">
-                {t.support.officesTitle}
-              </h2>
-              <p className="mt-1.5 text-sm text-zw-grey-600">{t.support.officesSubtitle}</p>
+          {/* Ofisler: iletisim bilgileri ve haritalar, yan yana */}
+          <aside>
+            <h2 className="font-display text-xl font-bold uppercase">
+              {t.support.officesTitle}
+            </h2>
+            <p className="mt-1.5 text-sm text-zw-grey-600">{t.support.officesSubtitle}</p>
+            <div className="mt-5 grid gap-5 md:grid-cols-2">
+              {CONTACT.offices.map((office) => (
+                <OfficeCard key={office.id} office={office} />
+              ))}
             </div>
-            {CONTACT.offices.map((office) => (
-              <OfficeCard key={office.id} office={office} />
-            ))}
           </aside>
         </div>
 
@@ -73,8 +72,8 @@ function OfficeCard({ office }: { office: Office }) {
   const t = useT();
 
   return (
-    <div className="overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white">
-      <div className="p-5">
+    <div className="flex h-full flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white">
+      <div className="flex-1 p-5">
         <div className="text-xs font-bold uppercase tracking-wide text-zw-red-600">
           {office.city}
         </div>
@@ -109,7 +108,7 @@ function OfficeCard({ office }: { office: Office }) {
 
       {/* Harita gec yuklenir. Uzerine tiklamak da alttaki buton da
           Google Haritalar'da yol tarifini acar. */}
-      <div className="relative aspect-[4/3] w-full border-t border-zw-grey-200 bg-zw-grey-100">
+      <div className="relative aspect-[16/10] w-full border-t border-zw-grey-200 bg-zw-grey-100">
         <iframe
           src={mapEmbedUrl(office)}
           title={`${office.city} harita`}
