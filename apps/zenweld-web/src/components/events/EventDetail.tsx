@@ -36,7 +36,9 @@ export function EventDetail({ slug }: { slug: string }) {
 
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="max-w-2xl">
-              <h1 className="font-display text-4xl font-bold uppercase leading-tight sm:text-5xl">
+              {/* Ozel isim: CSS uppercase Turkce yerelde i harfini İ'ye cevirdigi
+                  icin (RIYADH -> RİYADH) baslik oldugu gibi gosterilir. */}
+              <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl">
                 {event.title}
               </h1>
               <p className="mt-3 text-zw-grey-600">{text(event.summary)}</p>

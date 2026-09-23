@@ -7,7 +7,7 @@ Kart başlığında görünen etkinlik logosu. Dosya adı etkinliğin `slug`'ı 
 | Dosya | Etkinlik |
 |---|---|
 | `big-5-global-2025.png` | Big 5 Global 2025 |
-| `international-hardware-riyad-2025.png` | International Hardware Riyad |
+| `international-hardware-riyadh-2025.png` | International Hardware Riyadh |
 | `win-eurasia-2025.png` | WIN EURASIA 2025 |
 | `imatech-2025.png` | İmatech 2025 |
 | `istanbul-hirdavat-fuari-2024.png` | 2024 Uluslararası İstanbul Hırdavat Fuarı |
@@ -26,13 +26,20 @@ Kart başlığında görünen etkinlik logosu. Dosya adı etkinliğin `slug`'ı 
 - Yatay logolar en iyi sonucu verir; kartta en fazla 190×68 px alana sığar.
 - Logo yoksa site kırılmaz, markalı yer tutucu görünür.
 
-## Etkinlik fotoğrafları
+## Etkinlik fotoğrafları (detay sayfasındaki galeri)
 
-Detay sayfasındaki galeri için. Şu an `packages/data/src/seed/events.seed.ts`
-içinde geçici stok görseller tanımlı. Gerçek fotoğrafları eklemek için:
+Etkinlik detay sayfasının alt kısmında bir fotoğraf galerisi var. **Şu an orada
+gerçek fotoğraflar değil, geçici stok görseller duruyor.**
 
-1. Fotoğrafları `public/images/events/<slug>/` klasörüne koyun (`1.jpg`, `2.jpg` …)
-2. Seed dosyasındaki `images` dizisini güncelleyin:
-   `images: ["/images/events/win-eurasia-2025/1.jpg", "..."]`
+Gerçek fotoğrafları eklemek için tek yapmanız gereken: dosyaları bu klasörde
+etkinliğin adını taşıyan bir alt klasöre yükleyin. Örnek:
 
-Yardım isterseniz fotoğrafları yükleyip haber verin, yolları ben bağlarım.
+```
+public/images/events/win-eurasia-2025/1.jpg
+public/images/events/win-eurasia-2025/2.jpg
+public/images/events/big-5-global-2025/1.jpg
+```
+
+Yükledikten sonra haber verin, kalan bağlantı işini ben yaparım. (Dilerseniz
+yönetim panelinden de ekleyebilirsiniz: Etkinlikler → Düzenle → Logo &
+Fotoğraflar. Ancak panelden eklenenler yalnızca sizin tarayıcınızda görünür.)

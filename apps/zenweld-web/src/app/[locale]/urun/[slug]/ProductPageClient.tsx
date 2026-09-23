@@ -85,7 +85,8 @@ export function ProductPageClient({ slug }: { slug: string }) {
           <ProductGallery product={product} />
 
           <div>
-            <h1 className="font-display text-3xl font-bold uppercase leading-tight sm:text-4xl">
+            {/* Urun adi ozel isim: CSS uppercase Turkce yerelde i -> İ cevirir */}
+            <h1 className="font-display text-3xl font-bold leading-tight sm:text-4xl">
               {product.name}
             </h1>
             <p className="mt-3 text-zw-grey-600">{text(product.shortDescription)}</p>
