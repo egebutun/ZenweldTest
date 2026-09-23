@@ -6,7 +6,6 @@ import {
   DealerStrip,
   Hero,
   HotSale,
-  LowStock,
   QuoteBanner,
   WhyZenweld,
 } from "@/components/home/HomeSections";
@@ -24,7 +23,6 @@ export default async function HomePage({
       <JsonLd data={organizationJsonLd(lang)} />
       <Hero />
       <HotSale />
-      <LowStock />
       <QuoteBanner />
       <WhyZenweld />
       <DealerStrip />

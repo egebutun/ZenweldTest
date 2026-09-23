@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, Mail, MapPin, Navigation, Phone } from "lucide-react";
+import { ExternalLink, Navigation } from "lucide-react";
 import { Alert, Button, FormRow, Input, Textarea } from "@zenweld/ui";
 import { PageHero } from "@/components/common/PageShell";
 import { useT } from "@/lib/i18n-client";
@@ -16,7 +16,7 @@ export default function ContactPage() {
       <PageHero title={t.support.contactTitle} subtitle={t.support.subtitle} />
 
       <div className="zw-container py-12">
-        <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
+        <div className="grid gap-10 lg:grid-cols-[1fr_420px]">
           <div className="max-w-xl">
             {sent ? (
               <Alert tone="success">{t.support.sent}</Alert>
@@ -49,58 +49,20 @@ export default function ContactPage() {
             )}
           </div>
 
-          <aside className="space-y-4 rounded-[4px] bg-zw-grey-100 p-6">
-            <div className="flex gap-3">
-              <Mail size={20} className="shrink-0 text-zw-red-600" />
-              <a href={`mailto:${CONTACT.email}`} className="text-sm hover:text-zw-red-600">
-                {CONTACT.email}
-              </a>
+          {/* Ofisler: iletisim bilgileri ve haritalar */}
+          <aside className="space-y-5">
+            <div>
+              <h2 className="font-display text-xl font-bold uppercase">
+                {t.support.officesTitle}
+              </h2>
+              <p className="mt-1.5 text-sm text-zw-grey-600">{t.support.officesSubtitle}</p>
             </div>
-            <p className="text-xs leading-relaxed text-zw-grey-600">
-              {t.support.emailNote}
-            </p>
             {CONTACT.offices.map((office) => (
-              <div key={office.id} className="border-t border-zw-grey-300 pt-4">
-                <div className="flex gap-3">
-                  <MapPin size={20} className="shrink-0 text-zw-red-600" />
-                  <div className="text-sm">
-                    <div className="font-semibold">{office.city}</div>
-                    {office.addressLines.map((line) => (
-                      <div key={line} className="text-zw-grey-600">
-                        {line}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="mt-2 flex gap-3">
-                  <Phone size={20} className="shrink-0 text-zw-red-600" />
-                  <div className="text-sm">
-                    {office.phones.map((phone) => (
-                      <div key={phone}>
-                        <a
-                          href={`tel:${phone.replace(/\s/g, "")}`}
-                          className="hover:text-zw-red-600"
-                        >
-                          {phone}
-                        </a>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <OfficeCard key={office.id} office={office} />
             ))}
           </aside>
         </div>
 
-        <section className="mt-14">
-          <h2 className="font-display text-2xl font-bold uppercase">{t.support.officesTitle}</h2>
-          <p className="mt-2 max-w-2xl text-sm text-zw-grey-600">{t.support.officesSubtitle}</p>
-          <div className="mt-6 grid gap-6 lg:grid-cols-2">
-            {CONTACT.offices.map((office) => (
-              <OfficeCard key={office.id} office={office} />
-            ))}
-          </div>
-        </section>
       </div>
     </>
   );
@@ -136,6 +98,7 @@ function OfficeCard({ office }: { office: Office }) {
         <a
           href={`mailto:${CONTACT.email}`}
           className="mt-3 inline-block text-sm text-zw-grey-700 hover:text-zw-red-600"
+          title={t.support.emailNote}
         >
           {CONTACT.email}
         </a>
@@ -146,7 +109,7 @@ function OfficeCard({ office }: { office: Office }) {
         href={mapDirectionsUrl(office)}
         target="_blank"
         rel="noopener noreferrer"
-        className="group relative block h-[280px] shrink-0 border-t border-zw-grey-200"
+        className="group relative block h-[220px] shrink-0 border-t border-zw-grey-200"
         aria-label={`${office.city} — ${t.support.directions}`}
       >
         <iframe

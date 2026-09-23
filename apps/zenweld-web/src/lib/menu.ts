@@ -138,6 +138,20 @@ export function useMainMenu(): TopMenu[] {
   }, [db, locale, t]);
 }
 
+/** Baslikta "Destek" uzerine gelince acilan kisa liste. */
+export function useSupportMenu(): MenuLink[] {
+  const t = useT();
+  return useMemo(
+    () => [
+      { label: t.nav.findDealer, href: "/nereden-alabilirim" },
+      { label: t.support.faqTitle, href: "/destek/sss" },
+      { label: t.support.serviceTitle, href: "/destek/servis-agi" },
+      { label: t.support.contactTitle, href: "/destek/iletisim" },
+    ],
+    [t],
+  );
+}
+
 export function useFooterMenu() {
   const t = useT();
   return useMemo(

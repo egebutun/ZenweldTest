@@ -27,7 +27,7 @@ export function ShopProductCard({
   const available = stock?.inStock ?? false;
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white transition-shadow hover:shadow-lg">
+    <div className="group flex flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white text-zw-ink transition-shadow hover:shadow-lg">
       <LocaleLink href={`/urun/${product.slug}`} className="block">
         <div className="relative aspect-square overflow-hidden bg-zw-grey-50">
           <ProductImage
@@ -48,7 +48,7 @@ export function ShopProductCard({
           {product.sku}
         </div>
         <LocaleLink href={`/urun/${product.slug}`}>
-          <h3 className="font-display text-lg font-semibold leading-tight group-hover:text-zw-red-600">
+          <h3 className="font-display text-lg font-semibold leading-tight text-zw-ink group-hover:text-zw-red-600">
             {product.name}
           </h3>
         </LocaleLink>
@@ -57,7 +57,9 @@ export function ShopProductCard({
         </p>
 
         <div className="mt-auto pt-4">
-          <div className="font-display text-2xl font-bold">{formatPrice(price, locale)}</div>
+          <div className="font-display text-2xl font-bold text-zw-ink">
+            {formatPrice(price, locale)}
+          </div>
           <div className="text-xs text-zw-grey-500">{t.product.priceIncVat}</div>
 
           <Button
