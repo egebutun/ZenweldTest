@@ -702,20 +702,20 @@ interface AccessorySeed {
 }
 
 const accessorySeeds: AccessorySeed[] = [
-  { slug: "zenmask-auto-9000", sku: "ZW-MASK9000", name: "Zenweld ZenMask Auto 9000", section: "guvenlik", categorySlug: "otomatik-kararan-maskeler", price: 3450, photo: stockPhotos.welderAtWork, short: { tr: "Gerçek renk teknolojili otomatik kararan kaynak maskesi, 4 sensörlü.", en: "True-colour auto-darkening welding helmet with 4 sensors." } },
-  { slug: "zenmask-basic-500", sku: "ZW-MASK500", name: "Zenweld ZenMask Basic 500", section: "guvenlik", categorySlug: "otomatik-kararan-maskeler", price: 1290, photo: stockPhotos.workshop, short: { tr: "Giriş seviyesi otomatik kararan kaynak maskesi, 2 sensörlü.", en: "Entry-level auto-darkening welding helmet with 2 sensors." } },
-  { slug: "kaynak-eldiveni-pro", sku: "ZW-GLV-PRO", name: "Zenweld Pro Kaynak Eldiveni", section: "guvenlik", categorySlug: "kaynak-eldivenleri", price: 480, photo: stockPhotos.toolsFlatlay, short: { tr: "Sığır derisi, kevlar dikişli, ısıya dayanıklı kaynak eldiveni.", en: "Cowhide, Kevlar-stitched, heat-resistant welding glove." } },
-  { slug: "kaynak-onlugu-deri", sku: "ZW-APR-01", name: "Zenweld Deri Kaynak Önlüğü", section: "guvenlik", categorySlug: "kaynak-onlukleri", price: 890, photo: stockPhotos.industrialShop, short: { tr: "Kıvılcıma ve ısıya dayanıklı tam boy deri kaynak önlüğü.", en: "Full-length leather welding apron resistant to sparks and heat." } },
-  { slug: "mig-torcu-mb25", sku: "ZW-TRC-MB25", name: "Zenweld MB-25 MIG Torcu 3m", section: "aksesuarlar", categorySlug: "mig-torclari", price: 1650, photo: stockPhotos.toolsFlatlay, short: { tr: "250A kapasiteli, 3 metre Euro bağlantılı MIG kaynak torcu.", en: "250A, 3 m Euro-connection MIG welding torch." } },
-  { slug: "mig-torcu-mb36", sku: "ZW-TRC-MB36", name: "Zenweld MB-36 MIG Torcu 4m", section: "aksesuarlar", categorySlug: "mig-torclari", price: 2350, photo: stockPhotos.workshop, short: { tr: "350A kapasiteli, 4 metre ağır hizmet MIG kaynak torcu.", en: "350A, 4 m heavy-duty MIG welding torch." } },
-  { slug: "tig-torcu-wp26", sku: "ZW-TRC-WP26", name: "Zenweld WP-26 TIG Torcu 4m", section: "aksesuarlar", categorySlug: "tig-torclari", price: 1980, photo: stockPhotos.metalWork, short: { tr: "Hava soğutmalı, 200A kapasiteli 4 metre TIG kaynak torcu.", en: "Air-cooled 200A 4 m TIG welding torch." } },
-  { slug: "gaz-nozulu-seti", sku: "ZW-NZL-SET", name: "Zenweld Gaz Nozulu Seti (10'lu)", section: "aksesuarlar", categorySlug: "mig-sarf-malzemeleri", price: 420, photo: stockPhotos.toolsFlatlay, short: { tr: "MB-25 uyumlu 10 adetlik gaz nozulu seti.", en: "10-piece gas nozzle set compatible with MB-25." } },
-  { slug: "kontak-meme-seti", sku: "ZW-TIP-SET", name: "Zenweld Kontak Meme Seti M6 (20'li)", section: "aksesuarlar", categorySlug: "mig-sarf-malzemeleri", price: 380, photo: stockPhotos.workshop, short: { tr: "0.8 / 1.0 / 1.2 mm ölçülerinde 20 adetlik kontak meme seti.", en: "20-piece contact tip set in 0.8 / 1.0 / 1.2 mm." } },
-  { slug: "argon-regulatoru-cift-manometreli", sku: "ZW-REG-AR2", name: "Zenweld Çift Manometreli Argon Regülatörü", section: "aksesuarlar", categorySlug: "gaz-regulatorleri", price: 1150, photo: stockPhotos.industrialShop, short: { tr: "Debimetreli, çift manometreli argon / karışım gaz regülatörü.", en: "Argon / mixed-gas regulator with flowmeter and dual gauges." } },
-  { slug: "gazalti-teli-sg2-08", sku: "ZW-WIRE-SG208", name: "Zenweld SG2 Gazaltı Teli 0.8 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "gazalti-telleri", price: 1450, photo: stockPhotos.metalWork, short: { tr: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", en: "Copper-coated SG2 grade MIG wire, 15 kg spool." } },
-  { slug: "gazalti-teli-sg2-10", sku: "ZW-WIRE-SG210", name: "Zenweld SG2 Gazaltı Teli 1.0 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "gazalti-telleri", price: 1420, photo: stockPhotos.factoryLine, short: { tr: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", en: "Copper-coated SG2 grade MIG wire, 15 kg spool." } },
-  { slug: "tig-cubugu-308l", sku: "ZW-ROD-308L", name: "Zenweld 308L Paslanmaz TIG Çubuğu 2.4 mm", section: "dolgu-metalleri", categorySlug: "paslanmaz-tig-cubuklari", price: 2250, photo: stockPhotos.blueprint, short: { tr: "304/308 paslanmaz çelik kaynağı için 5 kg'lık TIG çubuğu paketi.", en: "5 kg TIG rod pack for welding 304/308 stainless steel." } },
-  { slug: "rutil-elektrot-6013", sku: "ZW-ELC-6013", name: "Zenweld E6013 Rutil Elektrot 3.25 mm", section: "dolgu-metalleri", categorySlug: "rutil-elektrotlar", price: 680, photo: stockPhotos.sparksDark, short: { tr: "Genel amaçlı rutil örtülü elektrot, 5 kg paket.", en: "General-purpose rutile-coated electrode, 5 kg pack." } },
+  { slug: "zenmask-auto-9000", sku: "ZW-MASK9000", name: "Zenweld ZenMask Auto 9000", section: "guvenlik", categorySlug: "otomatik-kararan-maskeler", price: 3450, photo: stockPhotos.welderAtWork, short: { tr: "Gerçek renk teknolojili otomatik kararan kaynak maskesi, 4 sensörlü.", en: "True-colour auto-darkening welding helmet with 4 sensors." }, highlights: [{ tr: "Gerçek renk (True Color) görüş", en: "True Color view" }, { tr: "4 sensörlü, 1/25000 sn tepki", en: "4 sensors, 1/25000 s reaction" }, { tr: "DIN 5-13 kademesiz ayar", en: "Stepless DIN 5-13 shade" }] },
+  { slug: "zenmask-basic-500", sku: "ZW-MASK500", name: "Zenweld ZenMask Basic 500", section: "guvenlik", categorySlug: "otomatik-kararan-maskeler", price: 1290, photo: stockPhotos.workshop, short: { tr: "Giriş seviyesi otomatik kararan kaynak maskesi, 2 sensörlü.", en: "Entry-level auto-darkening welding helmet with 2 sensors." }, highlights: [{ tr: "Giriş seviyesi, hafif kask", en: "Entry-level, lightweight shell" }, { tr: "2 sensörlü otomatik kararma", en: "2-sensor auto-darkening" }, { tr: "Değiştirilebilir ön cam", en: "Replaceable front lens" }] },
+  { slug: "kaynak-eldiveni-pro", sku: "ZW-GLV-PRO", name: "Zenweld Pro Kaynak Eldiveni", section: "guvenlik", categorySlug: "kaynak-eldivenleri", price: 480, photo: stockPhotos.toolsFlatlay, short: { tr: "Sığır derisi, kevlar dikişli, ısıya dayanıklı kaynak eldiveni.", en: "Cowhide, Kevlar-stitched, heat-resistant welding glove." }, highlights: [{ tr: "Sığır derisi, kevlar dikiş", en: "Cowhide with Kevlar stitching" }, { tr: "Isıya ve kıvılcıma dayanıklı", en: "Heat and spark resistant" }, { tr: "Astarlı, uzun manşetli", en: "Lined, long cuff" }] },
+  { slug: "kaynak-onlugu-deri", sku: "ZW-APR-01", name: "Zenweld Deri Kaynak Önlüğü", section: "guvenlik", categorySlug: "kaynak-onlukleri", price: 890, photo: stockPhotos.industrialShop, short: { tr: "Kıvılcıma ve ısıya dayanıklı tam boy deri kaynak önlüğü.", en: "Full-length leather welding apron resistant to sparks and heat." }, highlights: [{ tr: "Tam boy deri koruma", en: "Full-length leather protection" }, { tr: "Ayarlanabilir omuz askısı", en: "Adjustable shoulder strap" }, { tr: "Kıvılcım ve cüruf geçirmez", en: "Blocks sparks and slag" }] },
+  { slug: "mig-torcu-mb25", sku: "ZW-TRC-MB25", name: "Zenweld MB-25 MIG Torcu 3m", section: "aksesuarlar", categorySlug: "mig-torclari", price: 1650, photo: stockPhotos.toolsFlatlay, short: { tr: "250A kapasiteli, 3 metre Euro bağlantılı MIG kaynak torcu.", en: "250A, 3 m Euro-connection MIG welding torch." }, highlights: [{ tr: "250 A / %60 devrede kalma", en: "250 A / 60% duty cycle" }, { tr: "3 m Euro bağlantılı hortum", en: "3 m Euro-connection cable" }, { tr: "Yaygın sarf malzeme bulunabilirliği", en: "Widely available consumables" }] },
+  { slug: "mig-torcu-mb36", sku: "ZW-TRC-MB36", name: "Zenweld MB-36 MIG Torcu 4m", section: "aksesuarlar", categorySlug: "mig-torclari", price: 2350, photo: stockPhotos.workshop, short: { tr: "350A kapasiteli, 4 metre ağır hizmet MIG kaynak torcu.", en: "350A, 4 m heavy-duty MIG welding torch." }, highlights: [{ tr: "350 A ağır hizmet kapasitesi", en: "350 A heavy-duty capacity" }, { tr: "4 m uzun erişim", en: "4 m long reach" }, { tr: "Kalın kesitte sürekli kaynak", en: "Continuous welding on thick sections" }] },
+  { slug: "tig-torcu-wp26", sku: "ZW-TRC-WP26", name: "Zenweld WP-26 TIG Torcu 4m", section: "aksesuarlar", categorySlug: "tig-torclari", price: 1980, photo: stockPhotos.metalWork, short: { tr: "Hava soğutmalı, 200A kapasiteli 4 metre TIG kaynak torcu.", en: "Air-cooled 200A 4 m TIG welding torch." }, highlights: [{ tr: "200 A hava soğutmalı", en: "200 A air-cooled" }, { tr: "4 m esnek hortum paketi", en: "4 m flexible cable assembly" }, { tr: "Standart WP-26 sarf uyumu", en: "Standard WP-26 consumables" }] },
+  { slug: "gaz-nozulu-seti", sku: "ZW-NZL-SET", name: "Zenweld Gaz Nozulu Seti (10'lu)", section: "aksesuarlar", categorySlug: "mig-sarf-malzemeleri", price: 420, photo: stockPhotos.toolsFlatlay, short: { tr: "MB-25 uyumlu 10 adetlik gaz nozulu seti.", en: "10-piece gas nozzle set compatible with MB-25." }, highlights: [{ tr: "MB-25 torçlarla uyumlu", en: "Compatible with MB-25 torches" }, { tr: "10 adetlik ekonomik paket", en: "Economical 10-piece pack" }, { tr: "Bakır gövde, uzun ömür", en: "Copper body, long life" }] },
+  { slug: "kontak-meme-seti", sku: "ZW-TIP-SET", name: "Zenweld Kontak Meme Seti M6 (20'li)", section: "aksesuarlar", categorySlug: "mig-sarf-malzemeleri", price: 380, photo: stockPhotos.workshop, short: { tr: "0.8 / 1.0 / 1.2 mm ölçülerinde 20 adetlik kontak meme seti.", en: "20-piece contact tip set in 0.8 / 1.0 / 1.2 mm." }, highlights: [{ tr: "0.8 / 1.0 / 1.2 mm karışık", en: "Mixed 0.8 / 1.0 / 1.2 mm" }, { tr: "M6 diş, MB-25 uyumlu", en: "M6 thread, fits MB-25" }, { tr: "20 adetlik paket", en: "20-piece pack" }] },
+  { slug: "argon-regulatoru-cift-manometreli", sku: "ZW-REG-AR2", name: "Zenweld Çift Manometreli Argon Regülatörü", section: "aksesuarlar", categorySlug: "gaz-regulatorleri", price: 1150, photo: stockPhotos.industrialShop, short: { tr: "Debimetreli, çift manometreli argon / karışım gaz regülatörü.", en: "Argon / mixed-gas regulator with flowmeter and dual gauges." }, highlights: [{ tr: "Çift manometre + debimetre", en: "Dual gauge with flowmeter" }, { tr: "Argon ve karışım gaz uyumu", en: "For argon and mixed gases" }, { tr: "Pirinç gövde, sızdırmaz", en: "Brass body, gas-tight" }] },
+  { slug: "gazalti-teli-sg2-08", sku: "ZW-WIRE-SG208", name: "Zenweld SG2 Gazaltı Teli 0.8 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "gazalti-telleri", price: 1450, photo: stockPhotos.metalWork, short: { tr: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", en: "Copper-coated SG2 grade MIG wire, 15 kg spool." }, highlights: [{ tr: "Bakır kaplı SG2 kalite", en: "Copper-coated SG2 grade" }, { tr: "0.8 mm, 15 kg makara", en: "0.8 mm, 15 kg spool" }, { tr: "Düşük sıçrantı, düzgün dikiş", en: "Low spatter, clean bead" }] },
+  { slug: "gazalti-teli-sg2-10", sku: "ZW-WIRE-SG210", name: "Zenweld SG2 Gazaltı Teli 1.0 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "gazalti-telleri", price: 1420, photo: stockPhotos.factoryLine, short: { tr: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", en: "Copper-coated SG2 grade MIG wire, 15 kg spool." }, highlights: [{ tr: "Bakır kaplı SG2 kalite", en: "Copper-coated SG2 grade" }, { tr: "1.0 mm, 15 kg makara", en: "1.0 mm, 15 kg spool" }, { tr: "Kalın kesitte yüksek verim", en: "High output on thick sections" }] },
+  { slug: "tig-cubugu-308l", sku: "ZW-ROD-308L", name: "Zenweld 308L Paslanmaz TIG Çubuğu 2.4 mm", section: "dolgu-metalleri", categorySlug: "paslanmaz-tig-cubuklari", price: 2250, photo: stockPhotos.blueprint, short: { tr: "304/308 paslanmaz çelik kaynağı için 5 kg'lık TIG çubuğu paketi.", en: "5 kg TIG rod pack for welding 304/308 stainless steel." }, highlights: [{ tr: "304 / 308 paslanmaz için", en: "For 304 / 308 stainless" }, { tr: "2.4 mm, 5 kg paket", en: "2.4 mm, 5 kg pack" }, { tr: "Korozyona dayanıklı dikiş", en: "Corrosion-resistant bead" }] },
+  { slug: "rutil-elektrot-6013", sku: "ZW-ELC-6013", name: "Zenweld E6013 Rutil Elektrot 3.25 mm", section: "dolgu-metalleri", categorySlug: "rutil-elektrotlar", price: 680, photo: stockPhotos.sparksDark, short: { tr: "Genel amaçlı rutil örtülü elektrot, 5 kg paket.", en: "General-purpose rutile-coated electrode, 5 kg pack." }, highlights: [{ tr: "Genel amaçlı rutil örtü", en: "General-purpose rutile coating" }, { tr: "3.25 mm, 5 kg paket", en: "3.25 mm, 5 kg pack" }, { tr: "Kolay ark tutuşturma", en: "Easy arc striking" }] },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -734,136 +734,137 @@ const accessorySeeds: AccessorySeed[] = [
 /* ------------------------------------------------------------------ */
 
 type Demo = [slug: string, sku: string, name: string, cat: string, price: number,
-  trShort: string, enShort: string, trA: string, enA: string, trB: string, enB: string];
+  trShort: string, enShort: string,
+  trA: string, enA: string, trB: string, enB: string, trC: string, enC: string];
 
 const demoAccessories: Demo[] = [
   /* --- MIG > MIG Torçları (mevcut 2 + 10 = 12) --- */
   ["mig-torcu-mb15", "ZW-TRC-MB15", "Zenweld MB-15 MIG Torcu 3m", "mig-torclari", 980,
     "180A kapasiteli, hafif gövdeli 3 metre MIG torcu.", "Lightweight 180A 3 m MIG torch.",
-    "İnce sacta kolay kullanım", "Easy handling on thin sheet", "Hafif gövde, 180 A", "Lightweight body, 180 A"],
+    "İnce sacta kolay kullanım", "Easy handling on thin sheet", "Hafif gövde, 180 A", "Lightweight body, 180 A", "Değiştirilebilir kısa boyun", "Replaceable short neck"],
   ["mig-torcu-mb24", "ZW-TRC-MB24", "Zenweld MB-24 MIG Torcu 3m", "mig-torclari", 1320,
     "250A kapasiteli, Euro bağlantılı 3 metre MIG torcu.", "250A Euro-connection 3 m MIG torch.",
-    "Euro bağlantı standardı", "Euro connection standard", "250 A / %60 devrede kalma", "250 A / 60% duty cycle"],
+    "Euro bağlantı standardı", "Euro connection standard", "250 A / %60 devrede kalma", "250 A / 60% duty cycle", "Yaygın sarf bulunabilirliği", "Widely available consumables"],
   ["mig-torcu-mb25-4m", "ZW-TRC-MB25-4", "Zenweld MB-25 MIG Torcu 4m", "mig-torclari", 1890,
     "250A kapasiteli, 4 metre uzun erişimli MIG torcu.", "250A 4 m long-reach MIG torch.",
-    "4 m ile geniş çalışma alanı", "4 m for wider working area", "MB-25 sarf uyumu", "Uses standard MB-25 consumables"],
+    "4 m ile geniş çalışma alanı", "4 m for wider working area", "MB-25 sarf uyumu", "Uses standard MB-25 consumables", "Ergonomik kavrama kulpu", "Ergonomic grip handle"],
   ["mig-torcu-mb36-3m", "ZW-TRC-MB36-3", "Zenweld MB-36 MIG Torcu 3m", "mig-torclari", 2050,
     "350A kapasiteli, ağır hizmet 3 metre MIG torcu.", "Heavy-duty 350A 3 m MIG torch.",
-    "Kalın kesitte sürekli kaynak", "Continuous welding on thick sections", "350 A ağır hizmet", "350 A heavy duty"],
+    "Kalın kesitte sürekli kaynak", "Continuous welding on thick sections", "350 A ağır hizmet", "350 A heavy duty", "Güçlendirilmiş hortum paketi", "Reinforced cable assembly"],
   ["mig-torcu-mb38", "ZW-TRC-MB38", "Zenweld MB-38 MIG Torcu 4m", "mig-torclari", 2680,
     "400A kapasiteli, endüstriyel kullanım için 4 metre MIG torcu.", "400A 4 m MIG torch for industrial use.",
-    "400 A endüstriyel kapasite", "400 A industrial capacity", "Güçlendirilmiş hortum paketi", "Reinforced cable assembly"],
+    "400 A endüstriyel kapasite", "400 A industrial capacity", "Güçlendirilmiş hortum paketi", "Reinforced cable assembly", "Uzun ömürlü kontak meme yuvası", "Long-life contact tip seat"],
   ["mig-torcu-mb401-su", "ZW-TRC-MB401W", "Zenweld MB-401 Su Soğutmalı MIG Torcu 3m", "mig-torclari", 4450,
     "400A kapasiteli, su soğutmalı 3 metre MIG torcu.", "Water-cooled 400A 3 m MIG torch.",
-    "Su soğutma ile uzun süreli kaynak", "Long welding runs with water cooling", "Daha düşük torç sıcaklığı", "Lower torch temperature"],
+    "Su soğutma ile uzun süreli kaynak", "Long welding runs with water cooling", "Daha düşük torç sıcaklığı", "Lower torch temperature", "Hızlı geçmeli su bağlantısı", "Quick-connect water fittings"],
   ["mig-torcu-mb501-su", "ZW-TRC-MB501W", "Zenweld MB-501 Su Soğutmalı MIG Torcu 4m", "mig-torclari", 5750,
     "500A kapasiteli, su soğutmalı 4 metre MIG torcu.", "Water-cooled 500A 4 m MIG torch.",
-    "500 A sürekli kaynak kapasitesi", "500 A continuous welding capacity", "Robot ve otomasyona uygun", "Suitable for robot and automation"],
+    "500 A sürekli kaynak kapasitesi", "500 A continuous welding capacity", "Robot ve otomasyona uygun", "Suitable for robot and automation", "Yüksek akımda düşük yıpranma", "Low wear at high current"],
   ["mig-spool-gun-200", "ZW-TRC-SG200", "Zenweld SG-200 Spool Gun 4m", "mig-torclari", 6250,
     "Alüminyum kaynağı için makaralı besleme üniteli 4 metre torç.", "4 m spool gun with on-board feeder for aluminium welding.",
-    "Alüminyum telde besleme sorunu yok", "No feeding issues with aluminium wire", "Entegre 1 kg makara", "Built-in 1 kg spool"],
+    "Alüminyum telde besleme sorunu yok", "No feeding issues with aluminium wire", "Entegre 1 kg makara", "Built-in 1 kg spool", "Torç üzerinden hız ayarı", "Speed adjustment on the torch"],
   ["mig-push-pull-torc", "ZW-TRC-PP8", "Zenweld Push-Pull Alüminyum Torcu 8m", "mig-torclari", 12900,
     "Uzun mesafede alüminyum kaynağı için 8 metre push-pull torç.", "8 m push-pull torch for aluminium welding at distance.",
-    "8 m uzaklıkta stabil tel akışı", "Stable wire feed at 8 m", "Alüminyum ve paslanmaz uyumlu", "For aluminium and stainless"],
+    "8 m uzaklıkta stabil tel akışı", "Stable wire feed at 8 m", "Alüminyum ve paslanmaz uyumlu", "For aluminium and stainless", "Dijital hız göstergesi", "Digital speed display"],
   ["mig-torcu-kisa-boyun", "ZW-TRC-KB25", "Zenweld MB-25 Kısa Boyun Torç 2m", "mig-torclari", 1480,
     "Dar alanlarda çalışma için kısa boyunlu 2 metre MIG torcu.", "Short-neck 2 m MIG torch for confined spaces.",
-    "Dar alanda rahat erişim", "Better access in tight spaces", "Standart MB-25 sarf uyumu", "Standard MB-25 consumables"],
+    "Dar alanda rahat erişim", "Better access in tight spaces", "Standart MB-25 sarf uyumu", "Standard MB-25 consumables", "Hafif, tek elle kullanım", "Lightweight, one-handed use"],
 
   /* --- MIG > Sarf Malzemeleri (mevcut 2 + 7 = 9) --- */
   ["kontak-meme-seti-m8", "ZW-TIP-M8", "Zenweld Kontak Meme Seti M8 (20'li)", "mig-sarf-malzemeleri", 460,
     "MB-36 uyumlu, 1.0 / 1.2 mm ölçülerinde 20 adetlik kontak meme seti.", "20-piece M8 contact tip set in 1.0 / 1.2 mm for MB-36.",
-    "MB-36 / MB-38 uyumlu", "Fits MB-36 / MB-38", "20 adetlik ekonomik paket", "Economical 20-piece pack"],
+    "MB-36 / MB-38 uyumlu", "Fits MB-36 / MB-38", "20 adetlik ekonomik paket", "Economical 20-piece pack", "Bakır alaşım, uzun ömür", "Copper alloy, long life"],
   ["gaz-dagitici-seti", "ZW-DIF-SET", "Zenweld Gaz Dağıtıcı (Difüzör) Seti (5'li)", "mig-sarf-malzemeleri", 390,
     "MB-25 uyumlu 5 adetlik gaz dağıtıcı seti.", "5-piece gas diffuser set for MB-25.",
-    "Homojen gaz dağılımı", "Even gas distribution", "Isıya dayanıklı pirinç gövde", "Heat-resistant brass body"],
+    "Homojen gaz dağılımı", "Even gas distribution", "Isıya dayanıklı pirinç gövde", "Heat-resistant brass body", "Kolay sökülüp takılır", "Quick to fit and remove"],
   ["tel-kilavuzu-3m", "ZW-LNR-3", "Zenweld Tel Kılavuzu (Liner) 3m 0.8-1.0 mm", "mig-sarf-malzemeleri", 320,
     "3 metre torçlar için çelik spiral tel kılavuzu.", "Steel liner for 3 m torches.",
-    "Düzgün tel akışı", "Smooth wire feed", "0.8 – 1.0 mm tel uyumu", "For 0.8 – 1.0 mm wire"],
+    "Düzgün tel akışı", "Smooth wire feed", "0.8 – 1.0 mm tel uyumu", "For 0.8 – 1.0 mm wire", "Çelik spiral yapı", "Steel spiral construction"],
   ["tel-kilavuzu-4m", "ZW-LNR-4", "Zenweld Tel Kılavuzu (Liner) 4m 1.0-1.2 mm", "mig-sarf-malzemeleri", 380,
     "4 metre torçlar için çelik spiral tel kılavuzu.", "Steel liner for 4 m torches.",
-    "Uzun torçta tel sıkışmasını önler", "Prevents wire jams in long torches", "1.0 – 1.2 mm tel uyumu", "For 1.0 – 1.2 mm wire"],
+    "Uzun torçta tel sıkışmasını önler", "Prevents wire jams in long torches", "1.0 – 1.2 mm tel uyumu", "For 1.0 – 1.2 mm wire", "Kesilerek boy ayarlanabilir", "Trim to length"],
   ["makara-seti-v-kanal", "ZW-ROL-V", "Zenweld Çelik Makara Seti V Kanal 0.8/1.0", "mig-sarf-malzemeleri", 540,
     "Çelik tel besleme için V kanallı makara seti.", "V-groove drive roller set for steel wire.",
-    "Sertleştirilmiş çelik", "Hardened steel", "Çift ölçü: 0.8 / 1.0 mm", "Dual size: 0.8 / 1.0 mm"],
+    "Sertleştirilmiş çelik", "Hardened steel", "Çift ölçü: 0.8 / 1.0 mm", "Dual size: 0.8 / 1.0 mm", "Standart besleme üniteleriyle uyumlu", "Fits standard wire feeders"],
   ["anti-spatter-sprey", "ZW-AS-400", "Zenweld Anti-Spatter Sprey 400 ml", "mig-sarf-malzemeleri", 210,
     "Nozul ve iş parçasında sıçrantı yapışmasını önleyen sprey.", "Spray that prevents spatter sticking to nozzle and workpiece.",
-    "Nozul ömrünü uzatır", "Extends nozzle life", "Silikonsuz formül", "Silicone-free formula"],
+    "Nozul ömrünü uzatır", "Extends nozzle life", "Silikonsuz formül", "Silicone-free formula", "İş parçasına boya öncesi uyumlu", "Paint-compatible on the workpiece"],
   ["nozul-temizleme-seti", "ZW-CLN-SET", "Zenweld Nozul Temizleme Seti", "mig-sarf-malzemeleri", 290,
     "Nozul ve meme temizliği için eğe ve raybalardan oluşan set.", "File and reamer set for cleaning nozzles and tips.",
-    "Sarf ömrünü uzatır", "Extends consumable life", "Çantalı 8 parça", "8 pieces in a pouch"],
+    "Sarf ömrünü uzatır", "Extends consumable life", "Çantalı 8 parça", "8 pieces in a pouch", "Taşınabilir çantalı", "Comes in a carry pouch"],
 
   /* --- MIG > Yedek Parça (5) --- */
   ["mb25-torc-boynu", "ZW-SPR-N25", "Zenweld MB-25 Torç Boynu (Swan Neck)", "mig-yedek-parca", 890,
     "MB-25 torçlar için yedek eğik boyun.", "Replacement swan neck for MB-25 torches.",
-    "Orijinal geometri", "Original geometry", "Tek parça değişim", "Single-part replacement"],
+    "Orijinal geometri", "Original geometry", "Tek parça değişim", "Single-part replacement", "Sızdırmaz o-ring dahil", "O-ring seal included"],
   ["mb36-torc-boynu", "ZW-SPR-N36", "Zenweld MB-36 Torç Boynu (Swan Neck)", "mig-yedek-parca", 1150,
     "MB-36 torçlar için yedek eğik boyun.", "Replacement swan neck for MB-36 torches.",
-    "350 A kapasite", "350 A capacity", "Güçlendirilmiş bakır iç yapı", "Reinforced copper core"],
+    "350 A kapasite", "350 A capacity", "Güçlendirilmiş bakır iç yapı", "Reinforced copper core", "Yüksek akıma dayanıklı", "Built for high current"],
   ["torc-tetik-anahtari", "ZW-SPR-SW", "Zenweld Torç Tetik Anahtarı", "mig-yedek-parca", 240,
     "MB serisi torçlar için yedek tetik mikro anahtarı.", "Replacement trigger microswitch for MB-series torches.",
-    "Tüm MB serisi uyumlu", "Fits all MB-series torches", "Kolay montaj", "Easy to fit"],
+    "Tüm MB serisi uyumlu", "Fits all MB-series torches", "Kolay montaj", "Easy to fit", "Kablolu hazır set", "Pre-wired ready set"],
   ["euro-baglanti-adaptoru", "ZW-SPR-EU", "Zenweld Euro Bağlantı Adaptörü", "mig-yedek-parca", 560,
     "Torç ile makine arasında standart Euro bağlantı adaptörü.", "Standard Euro connector between torch and machine.",
-    "Pirinç gövde", "Brass body", "Gaz sızdırmaz conta", "Gas-tight seal"],
+    "Pirinç gövde", "Brass body", "Gaz sızdırmaz conta", "Gas-tight seal", "Tüm MB serisiyle uyumlu", "Fits all MB-series torches"],
   ["torc-govde-kulp-seti", "ZW-SPR-HG", "Zenweld MB-25 Torç Gövde ve Kulp Seti", "mig-yedek-parca", 720,
     "MB-25 torçlar için yedek gövde ve kulp seti.", "Replacement handle and body set for MB-25 torches.",
-    "Isıya dayanıklı polimer", "Heat-resistant polymer", "Vidalı montaj", "Screw-fit assembly"],
+    "Isıya dayanıklı polimer", "Heat-resistant polymer", "Vidalı montaj", "Screw-fit assembly", "Kaymaz yüzey", "Non-slip surface"],
 
   /* --- MAG > MAG Torçları (4) --- */
   ["mag-torcu-mb25", "ZW-TRC-MG25", "Zenweld MB-25 MAG Torcu 3m", "mag-torclari", 1650,
     "CO2 ve karışım gaz uygulamaları için 250A 3 metre MAG torcu.", "250A 3 m MAG torch for CO2 and mixed gas.",
-    "CO2 ve karışım gaz uyumu", "For CO2 and mixed gas", "250 A kapasite", "250 A capacity"],
+    "CO2 ve karışım gaz uyumu", "For CO2 and mixed gas", "250 A kapasite", "250 A capacity", "3 m Euro bağlantı", "3 m Euro connection"],
   ["mag-torcu-mb36", "ZW-TRC-MG36", "Zenweld MB-36 MAG Torcu 4m", "mag-torclari", 2350,
     "Ağır hizmet MAG uygulamaları için 350A 4 metre torç.", "350A 4 m torch for heavy-duty MAG work.",
-    "Kalın kesitte yüksek verim", "High output on thick sections", "350 A ağır hizmet", "350 A heavy duty"],
+    "Kalın kesitte yüksek verim", "High output on thick sections", "350 A ağır hizmet", "350 A heavy duty", "Güçlendirilmiş hortum", "Reinforced cable"],
   ["mag-torcu-mb501-su", "ZW-TRC-MG501W", "Zenweld MB-501 Su Soğutmalı MAG Torcu 4m", "mag-torclari", 5950,
     "Yoğun üretim için 500A su soğutmalı 4 metre MAG torcu.", "Water-cooled 500A 4 m MAG torch for high-volume production.",
-    "Sürekli üretime uygun", "Built for continuous production", "Su soğutmalı gövde", "Water-cooled body"],
+    "Sürekli üretime uygun", "Built for continuous production", "Su soğutmalı gövde", "Water-cooled body", "Hızlı geçmeli su bağlantısı", "Quick-connect water fittings"],
   ["mag-torcu-kisa-boyun", "ZW-TRC-MGKB", "Zenweld MAG Kısa Boyun Torç 3m", "mag-torclari", 1720,
     "Dar alanlarda MAG kaynağı için kısa boyunlu 3 metre torç.", "Short-neck 3 m torch for MAG welding in tight spaces.",
-    "Dar alanda erişim", "Access in tight spaces", "Standart sarf uyumu", "Standard consumables"],
+    "Dar alanda erişim", "Access in tight spaces", "Standart sarf uyumu", "Standard consumables", "Hafif gövde", "Lightweight body"],
 
   /* --- MAG > Sarf Malzemeleri (3) --- */
   ["mag-gaz-nozulu-seti", "ZW-NZL-MG", "Zenweld CO2 Gaz Nozulu Seti (10'lu)", "mag-sarf-malzemeleri", 440,
     "MAG uygulamaları için 10 adetlik konik gaz nozulu seti.", "10-piece conical gas nozzle set for MAG work.",
-    "Sıçrantıya dayanıklı kaplama", "Spatter-resistant coating", "10 adetlik paket", "10-piece pack"],
+    "Sıçrantıya dayanıklı kaplama", "Spatter-resistant coating", "10 adetlik paket", "10-piece pack", "Konik ağız, dar dikişe uygun", "Conical tip for narrow joints"],
   ["mag-kontak-meme-cucrzr", "ZW-TIP-CZ", "Zenweld Kontak Meme Seti M6 CuCrZr (20'li)", "mag-sarf-malzemeleri", 520,
     "Yüksek akımda uzun ömürlü CuCrZr alaşımlı kontak meme seti.", "Long-life CuCrZr contact tip set for high current.",
-    "Yüksek akımda uzun ömür", "Long life at high current", "CuCrZr alaşım", "CuCrZr alloy"],
+    "Yüksek akımda uzun ömür", "Long life at high current", "CuCrZr alaşım", "CuCrZr alloy", "M6 diş standardı", "M6 thread standard"],
   ["mag-difuzor-seti", "ZW-DIF-MG", "Zenweld MAG Difüzör Seti (5'li)", "mag-sarf-malzemeleri", 410,
     "MAG torçları için 5 adetlik gaz dağıtıcı seti.", "5-piece gas diffuser set for MAG torches.",
-    "Dengeli gaz akışı", "Balanced gas flow", "Isıya dayanıklı", "Heat resistant"],
+    "Dengeli gaz akışı", "Balanced gas flow", "Isıya dayanıklı", "Heat resistant", "Kolay sökülüp takılır", "Quick to fit and remove"],
 
   /* --- TIG > Sarf Malzemeleri (6) --- */
   ["tungsten-wl15-24", "ZW-TNG-WL24", "Zenweld WL-15 Tungsten Elektrot 2.4 mm (10'lu)", "tig-sarf-malzemeleri", 890,
     "Altın renk kodlu, lantanlı tungsten elektrot, 10 adet.", "Gold-coded lanthanated tungsten electrode, 10 pieces.",
-    "AC ve DC'de kullanılabilir", "Works on both AC and DC", "Kolay ark tutuşturma", "Easy arc starting"],
+    "AC ve DC'de kullanılabilir", "Works on both AC and DC", "Kolay ark tutuşturma", "Easy arc starting", "Radyoaktif değil (lantanlı)", "Non-radioactive (lanthanated)"],
   ["tungsten-wc20-16", "ZW-TNG-WC16", "Zenweld WC-20 Tungsten Elektrot 1.6 mm (10'lu)", "tig-sarf-malzemeleri", 780,
     "Gri renk kodlu, seryumlu tungsten elektrot, 10 adet.", "Grey-coded ceriated tungsten electrode, 10 pieces.",
-    "Düşük akımda kararlı ark", "Stable arc at low current", "İnce kesit için ideal", "Ideal for thin sections"],
+    "Düşük akımda kararlı ark", "Stable arc at low current", "İnce kesit için ideal", "Ideal for thin sections", "Uzun elektrot ömrü", "Long electrode life"],
   ["seramik-nozul-seti-wp26", "ZW-CUP-26", "Zenweld WP-26 Seramik Nozul Seti (10'lu)", "tig-sarf-malzemeleri", 460,
     "WP-26 torçlar için 4 – 8 numara seramik nozul seti.", "Size 4 – 8 ceramic cup set for WP-26 torches.",
-    "4 – 8 numara karışık", "Mixed sizes 4 – 8", "Yüksek ısı dayanımı", "High heat resistance"],
+    "4 – 8 numara karışık", "Mixed sizes 4 – 8", "Yüksek ısı dayanımı", "High heat resistance", "Isıl şoka dayanıklı", "Thermal shock resistant"],
   ["pens-seti-wp26", "ZW-COL-26", "Zenweld WP-26 Pens (Collet) Seti", "tig-sarf-malzemeleri", 380,
     "1.6 / 2.4 / 3.2 mm ölçülerinde pens ve pens gövdesi seti.", "Collet and collet body set in 1.6 / 2.4 / 3.2 mm.",
-    "Üç ölçü tek sette", "Three sizes in one set", "Bakır alaşım", "Copper alloy"],
+    "Üç ölçü tek sette", "Three sizes in one set", "Bakır alaşım", "Copper alloy", "Pens ve gövde bir arada", "Collet and body together"],
   ["gaz-lensi-seti-wp26", "ZW-GLN-26", "Zenweld WP-26 Gaz Lensi Seti", "tig-sarf-malzemeleri", 640,
     "Daha geniş ve düzgün gaz örtüsü için gaz lensi seti.", "Gas lens set for wider, smoother shielding coverage.",
-    "Paslanmazda oksitlenmeyi azaltır", "Less oxidation on stainless", "Daha geniş gaz örtüsü", "Wider gas coverage"],
+    "Paslanmazda oksitlenmeyi azaltır", "Less oxidation on stainless", "Daha geniş gaz örtüsü", "Wider gas coverage", "Uzun uzatma için uygun", "Suitable for long stick-out"],
   ["arka-kapak-seti-wp26", "ZW-CAP-26", "Zenweld WP-26 Arka Kapak Seti (3'lü)", "tig-sarf-malzemeleri", 260,
     "Kısa, orta ve uzun boy arka kapaklardan oluşan set.", "Set of short, medium and long back caps.",
-    "Üç boy bir arada", "Three lengths together", "Sızdırmaz o-ring", "Sealed with o-ring"],
+    "Üç boy bir arada", "Three lengths together", "Sızdırmaz o-ring", "Sealed with o-ring", "Dar alanda kısa kapak", "Short cap for tight spaces"],
 
   /* --- TIG > Yedek Parça (3) --- */
   ["wp26-torc-kafasi", "ZW-SPR-H26", "Zenweld WP-26 Torç Kafası", "tig-yedek-parca", 980,
     "WP-26 TIG torçlar için yedek torç kafası.", "Replacement torch head for WP-26 TIG torches.",
-    "200 A hava soğutmalı", "200 A air-cooled", "Orijinal ölçü", "Original dimensions"],
+    "200 A hava soğutmalı", "200 A air-cooled", "Orijinal ölçü", "Original dimensions", "Orijinal ölçülerde", "Original dimensions"],
   ["wp26-hortum-seti", "ZW-SPR-C26", "Zenweld WP-26 Hortum Seti 4m", "tig-yedek-parca", 1240,
     "WP-26 torçlar için 4 metre yedek kablo ve hortum paketi.", "4 m replacement cable and hose package for WP-26.",
-    "Esnek kauçuk hortum", "Flexible rubber hose", "4 m tam takım", "Complete 4 m assembly"],
+    "Esnek kauçuk hortum", "Flexible rubber hose", "4 m tam takım", "Complete 4 m assembly", "Gaz ve akım tek pakette", "Gas and power in one assembly"],
   ["wp17-torc-govdesi", "ZW-SPR-B17", "Zenweld WP-17 Torç Gövdesi", "tig-yedek-parca", 760,
     "WP-17 TIG torçlar için yedek gövde ve kulp.", "Replacement body and handle for WP-17 TIG torches.",
-    "150 A hava soğutmalı", "150 A air-cooled", "Isıya dayanıklı kulp", "Heat-resistant handle"],
+    "150 A hava soğutmalı", "150 A air-cooled", "Isıya dayanıklı kulp", "Heat-resistant handle", "Kaymaz kulp", "Non-slip handle"],
 ];
 
 const demoPhotos = [
@@ -871,7 +872,7 @@ const demoPhotos = [
   stockPhotos.industrialShop, stockPhotos.factoryLine,
 ];
 
-demoAccessories.forEach(([slug, sku, name, cat, price, trShort, enShort, trA, enA, trB, enB], i) => {
+demoAccessories.forEach(([slug, sku, name, cat, price, trShort, enShort, trA, enA, trB, enB, trC, enC], i) => {
   accessorySeeds.push({
     slug, sku, name,
     section: "aksesuarlar",
@@ -882,6 +883,7 @@ demoAccessories.forEach(([slug, sku, name, cat, price, trShort, enShort, trA, en
     highlights: [
       { tr: trA, en: enA },
       { tr: trB, en: enB },
+      { tr: trC, en: enC },
     ],
   });
 });
@@ -917,4 +919,49 @@ accessorySeeds.forEach((a, i) => {
     updatedAt: now,
     active: true,
   });
+});
+
+/* ------------------------------------------------------------------ */
+/* Hot Sale ve depo stok adetleri — !! DEMO VERISI, DOGRULANMALI !!    */
+/*                                                                     */
+/* Anasayfadaki "Hot Sale" ve "Stokta Azalanlar" bolumlerini beslemek  */
+/* icin kullanilir. Gercek kampanya ve stok verisiyle degistirilmeli;  */
+/* yonetim panelinden urun bazinda da duzenlenebilir.                  */
+/* ------------------------------------------------------------------ */
+
+/** Kampanyali urunler: slug -> indirim orani (%) */
+const HOT_SALE: Record<string, number> = {
+  "ultimate-250-mtc": 12,
+  "evomig-205-p": 15,
+  "arc-200": 20,
+  "multicut-40-cnc": 10,
+  "mig-torcu-mb25": 18,
+  "zenmask-auto-9000": 25,
+  "gazalti-teli-sg2-08": 10,
+  "argon-regulatoru-cift-manometreli": 15,
+};
+
+/** Stogu azalan urunler: slug -> kalan adet */
+const LOW_STOCK: Record<string, number> = {
+  "ultimate-355-mtc": 2,
+  "ultimate-205-acdc-tig": 3,
+  "multicut-60-s": 1,
+  "arc-120": 4,
+  "mig-torcu-mb36": 4,
+  "zenmask-basic-500": 2,
+  "tig-cubugu-308l": 3,
+  "mig-torcu-mb501-su": 2,
+};
+
+products.forEach((p, i) => {
+  const discount = HOT_SALE[p.slug];
+  if (discount) {
+    p.hotSale = true;
+    // Kampanyadaki urun stokta olmali.
+    p.inStock = true;
+    // Gosterilen fiyat indirimli fiyattir; liste fiyati ustu cizili gorunur.
+    p.listPriceExVat = Math.round((p.priceExVat / (1 - discount / 100)) / 10) * 10;
+  }
+  // Stok adedi: azalanlar elle, digerleri sabit bir dagilimla.
+  p.stockQuantity = LOW_STOCK[p.slug] ?? (p.inStock ? 12 + ((i * 7) % 48) : 0);
 });
