@@ -86,6 +86,12 @@ export interface Product {
   highlights: I18nText[];
   /** Zenweld ana deposunda stok var mi */
   inStock: boolean;
+  /** Zenweld deposundaki adet — anasayfadaki "azalan stok" bolumu bunu kullanir */
+  stockQuantity?: number;
+  /** Anasayfadaki "Hot Sale" bolumunde gosterilir */
+  hotSale?: boolean;
+  /** Indirim oncesi liste fiyati (KDV haric); hotSale ile birlikte kullanilir */
+  listPriceExVat?: number;
   /** Teklif Al akisina acik mi */
   quotable: boolean;
   featured: boolean;

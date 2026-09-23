@@ -15,6 +15,13 @@ export function ProductCard({ product }: { product: Product }) {
   const text = useText();
   const favourites = useFavourites();
 
+  // Liste fiyati varsa indirim orani hesaplanir (Hot Sale bolumu icin).
+  const list = product.listPriceExVat;
+  const discount =
+    list && list > product.priceExVat
+      ? Math.round(((list - product.priceExVat) / list) * 100)
+      : 0;
+
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white transition-shadow hover:shadow-lg">
       <button
@@ -37,7 +44,8 @@ export function ProductCard({ product }: { product: Product }) {
             className="h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute left-2 top-2 flex flex-col gap-1">
-            {product.isNew && <Badge tone="red">{t.product.new}</Badge>}
+            {discount > 0 && <Badge tone="red">%{discount} {t.product.discount}</Badge>}
+            {product.isNew && !discount && <Badge tone="red">{t.product.new}</Badge>}
             {!product.inStock && <Badge tone="outline">{t.product.outOfStock}</Badge>}
           </div>
         </div>
@@ -65,6 +73,9 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
           <div className="text-xs text-zw-grey-500">
             {formatPrice(product.priceExVat, locale)} {t.product.priceExVat}
+            {discount > 0 && list && (
+              <span className="ml-2 line-through">{formatPrice(list, locale)}</span>
+            )}
           </div>
           <LocaleLink
             href={`/urun/${product.slug}`}

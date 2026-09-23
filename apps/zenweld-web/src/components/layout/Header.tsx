@@ -376,36 +376,37 @@ function MegaMenu({ menu }: { menu: TopMenu }) {
             </div>
 
             {link.products && link.products.length > 0 ? (
-              <div className="grid grid-cols-3 gap-x-5 gap-y-4">
+              /* 3 sutun x 2 satir; ozellikler fotografin altinda madde madde */
+              <div className="grid grid-cols-3 gap-x-6 gap-y-5">
                 {link.products.map((product) => (
                   <LocaleLink
                     key={product.id}
                     href={product.href}
-                    className="group flex gap-3 rounded-[4px] p-2 transition-colors hover:bg-zw-grey-50"
+                    className="group rounded-[4px] p-2.5 transition-colors hover:bg-zw-grey-50"
                   >
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[3px] border border-zw-grey-200 bg-white">
-                      <ProductImage
-                        src={product.imageUrl}
-                        alt={product.name}
-                        label={product.name}
-                        className="max-h-12 max-w-12 object-contain"
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="line-clamp-2 text-sm font-semibold leading-snug text-zw-ink group-hover:text-zw-red-600">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[3px] border border-zw-grey-200 bg-white">
+                        <ProductImage
+                          src={product.imageUrl}
+                          alt={product.name}
+                          label={product.name}
+                          className="max-h-12 max-w-12 object-contain"
+                        />
+                      </div>
+                      <div className="min-w-0 text-sm font-semibold leading-snug text-zw-ink group-hover:text-zw-red-600">
                         {product.name}
                       </div>
-                      <ul className="mt-1 space-y-0.5">
+                    </div>
+                    {product.highlights.length > 0 && (
+                      <ul className="mt-2.5 space-y-1">
                         {product.highlights.map((h, i) => (
-                          <li
-                            key={i}
-                            className="line-clamp-1 text-xs leading-snug text-zw-grey-500"
-                          >
-                            {h}
+                          <li key={i} className="flex gap-2 text-xs leading-snug text-zw-grey-600">
+                            <span className="mt-[6px] h-1 w-1 shrink-0 rounded-full bg-zw-red-600" />
+                            <span>{h}</span>
                           </li>
                         ))}
                       </ul>
-                    </div>
+                    )}
                   </LocaleLink>
                 ))}
               </div>

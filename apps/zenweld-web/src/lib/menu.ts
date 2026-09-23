@@ -20,14 +20,14 @@ export interface MenuLink {
   label: string;
   description?: string;
   href: string;
-  /** Menude gosterilen ilk 9 urun (yalnizca urun menulerinde) */
+  /** Menude gosterilen ilk 6 urun (yalnizca urun menulerinde) */
   products?: MenuProduct[];
-  /** Kategorideki toplam urun sayisi (9'dan fazlaysa "tumunu gor" onemli) */
+  /** Kategorideki toplam urun sayisi (6'dan fazlaysa "tumunu gor" onemli) */
   productCount?: number;
 }
 
-/** Mega menude gosterilecek en fazla urun sayisi (3 x 3). */
-export const MENU_PRODUCT_LIMIT = 9;
+/** Mega menude gosterilecek en fazla urun sayisi (3 sutun x 2 satir). */
+export const MENU_PRODUCT_LIMIT = 6;
 
 export interface MenuColumn {
   /** Sol kolondaki grup (Unimig'deki "Welding Machines" gibi) */
@@ -54,14 +54,14 @@ const SECTIONS: { id: TopLevelSection; labelKey: keyof Dictionary["nav"] }[] = [
 const LOREM = /\b(lorem|ipsum|dolor sit amet|consectetur|adipiscing|eiusmod|tempor|incididunt)\b/i;
 
 /**
- * Menu kartinda gosterilecek 2 satislik ozellik secer.
+ * Menu kartinda gosterilecek 3 satislik ozellik secer.
  *
  * Bazi aksesuar tohumlarinda ozellikler henuz lorem ipsum oldugu icin
  * bunlar elenir; hicbiri kalmazsa kisa aciklamaya dusulur.
  */
 function sellingPoints(product: Product, locale: "tr" | "en"): string[] {
   const real = product.highlights.map((h) => h[locale]).filter((h) => h && !LOREM.test(h));
-  if (real.length > 0) return real.slice(0, 2);
+  if (real.length > 0) return real.slice(0, 3);
   const short = product.shortDescription[locale];
   return short && !LOREM.test(short) ? [short] : [];
 }
@@ -200,10 +200,57 @@ export function useFooterMenu() {
   );
 }
 
+/** Zenweld ofisleri. Harita ve yol tarifi baglantilari adresten uretilir. */
+export interface Office {
+  id: string;
+  city: string;
+  /** Sirket unvani — merkezde tam unvan gosterilir */
+  legalName?: string;
+  addressLines: string[];
+  phones: string[];
+}
+
+export const OFFICES: Office[] = [
+  {
+    id: "istanbul",
+    city: "İstanbul",
+    legalName: "Zenweld Kaynak ve Kesme Ekip İnş San Tic A.Ş.",
+    addressLines: [
+      "İkitelli O.S.B. Demirciler Sitesi A1 Blok",
+      "No.7 Başakşehir 34490 İstanbul",
+    ],
+    phones: ["+90 212 549 61 86", "+90 212 549 61 89"],
+  },
+  {
+    id: "izmir",
+    city: "İzmir",
+    addressLines: ["İTOB OSB, 10026. Sk. No:7", "35471 Menderes / İzmir"],
+    phones: ["+90 232 203 37 08"],
+  },
+];
+
+/** Adresin tek satirlik, haritaya verilebilir hali. */
+export function officeQuery(office: Office): string {
+  return [office.legalName, ...office.addressLines].filter(Boolean).join(", ");
+}
+
+/** Google Haritalar goml baglantisi (anahtar gerektirmez). */
+export function mapEmbedUrl(office: Office): string {
+  return `https://www.google.com/maps?q=${encodeURIComponent(officeQuery(office))}&hl=tr&z=15&output=embed`;
+}
+
+/** Tiklaninca yol tarifi baslatan baglanti. */
+export function mapDirectionsUrl(office: Office): string {
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(officeQuery(office))}`;
+}
+
 export const CONTACT = {
-  phone: "+90 850 000 00 00",
+  /** Merkez telefon — footer ve kisa alanlarda kullanilir */
+  phone: OFFICES[0].phones[0],
+  /** Sehir ayrimi yok, ortak kullaniliyor */
   email: "info@zenweld.com",
-  address: "Lorem OSB, 1. Cadde No:1, İstanbul / Türkiye",
+  address: `${OFFICES[0].addressLines.join(" ")}`,
+  offices: OFFICES,
   social: {
     instagram: "#",
     facebook: "#",

@@ -2,8 +2,10 @@
 
 import { useMemo } from "react";
 import {
+  AlertTriangle,
   ArrowRight,
   Award,
+  Flame,
   Factory,
   Headphones,
   MapPin,
@@ -18,7 +20,7 @@ import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { ProductCard } from "@/components/product/ProductCard";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatPrice, priceWithVat } from "@/lib/format";
 
 export function Hero() {
   const t = useT();
@@ -67,100 +69,116 @@ export function Hero() {
   );
 }
 
-export function CategoryTiles() {
+/** Kampanyali urunler. hotSale isaretli urunler listelenir. */
+export function HotSale() {
   const t = useT();
-  const locale = useLocale();
   const db = useDatabase();
-
-  const tiles = useMemo(
-    () =>
-      db.categories
-        .filter((c) => c.section === "ekipmanlar")
-        .slice(0, 6)
-        .map((c, i) => ({
-          ...c,
-          photo: [
-            stockPhotos.weldingSparks,
-            stockPhotos.industrialShop,
-            stockPhotos.engineer,
-            stockPhotos.welderAtWork,
-            stockPhotos.sparksDark,
-            stockPhotos.metalWork,
-          ][i % 6],
-        })),
+  const items = useMemo(
+    () => db.products.filter((p) => p.active && p.hotSale).slice(0, 8),
     [db],
   );
 
+  if (items.length === 0) return null;
+
   return (
-    <section className="zw-container zw-section">
-      <SectionHeading
-        eyebrow={t.common.brand}
-        title={t.home.categoriesTitle}
-        subtitle={t.home.categoriesSubtitle}
-        action={
+    <section className="bg-zw-ink text-white">
+      <div className="zw-container zw-section">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-zw-red-500">
+              <Flame size={18} />
+              {t.home.hotSaleEyebrow}
+            </div>
+            <h2 className="mt-2 font-display text-3xl font-bold uppercase sm:text-4xl">
+              {t.home.hotSaleTitle}
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm text-zw-grey-300">{t.home.hotSaleSubtitle}</p>
+          </div>
           <LocaleLink
             href="/ekipmanlar"
-            className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+            className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-white hover:text-zw-red-500 sm:flex"
           >
             {t.common.viewAll} <ArrowRight size={16} />
           </LocaleLink>
-        }
-      />
+        </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {tiles.map((tile) => (
-          <LocaleLink
-            key={tile.id}
-            href={`/${tile.section}/${tile.slug}`}
-            className="group relative flex h-56 flex-col justify-end overflow-hidden rounded-[4px] bg-zw-ink p-5 text-white"
-          >
-            <ProductImage
-              src={tile.photo}
-              alt={tile.name[locale]}
-              label={tile.name[locale]}
-              className="absolute inset-0 h-full w-full object-cover opacity-55 transition-all duration-300 group-hover:scale-105 group-hover:opacity-40"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-            <div className="relative">
-              <h3 className="font-display text-2xl font-bold uppercase leading-tight">
-                {tile.name[locale]}
-              </h3>
-              <p className="mt-1 line-clamp-2 text-sm text-zw-grey-300">
-                {tile.description[locale]}
-              </p>
-            </div>
-          </LocaleLink>
-        ))}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-export function FeaturedProducts() {
+/** Zenweld deposunda stogu azalan urunler. */
+export function LowStock() {
   const t = useT();
+  const locale = useLocale();
   const db = useDatabase();
-  const featured = db.products.filter((p) => p.active && p.featured).slice(0, 8);
+
+  const items = useMemo(
+    () =>
+      db.products
+        .filter((p) => p.active && (p.stockQuantity ?? 0) > 0 && (p.stockQuantity ?? 0) <= 5)
+        .sort((a, b) => (a.stockQuantity ?? 0) - (b.stockQuantity ?? 0))
+        .slice(0, 8),
+    [db],
+  );
+
+  if (items.length === 0) return null;
 
   return (
-    <section className="bg-zw-grey-50">
-      <div className="zw-container zw-section">
-        <SectionHeading
-          eyebrow={t.home.featuredSubtitle}
-          title={t.home.featuredTitle}
-          action={
-            <LocaleLink
-              href="/ekipmanlar"
-              className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
-            >
-              {t.common.viewAll} <ArrowRight size={16} />
-            </LocaleLink>
-          }
-        />
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {featured.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
+    <section className="zw-container zw-section">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-amber-600">
+            <AlertTriangle size={18} />
+            {t.home.lowStockEyebrow}
+          </div>
+          <h2 className="mt-2 font-display text-3xl font-bold uppercase sm:text-4xl">
+            {t.home.lowStockTitle}
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-zw-grey-600">{t.home.lowStockSubtitle}</p>
         </div>
+        <LocaleLink
+          href="/nereden-alabilirim"
+          className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+        >
+          {t.nav.findDealer} <ArrowRight size={16} />
+        </LocaleLink>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map((p) => (
+          <LocaleLink
+            key={p.id}
+            href={`/urun/${p.slug}`}
+            className="group flex gap-4 rounded-[4px] border border-zw-grey-200 bg-white p-4 transition-shadow hover:shadow-lg"
+          >
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[3px] bg-zw-grey-50">
+              <ProductImage
+                src={p.images[0]?.url}
+                alt={p.name}
+                label={p.name}
+                className="max-h-16 max-w-16 object-contain"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="line-clamp-2 font-display text-[15px] font-semibold leading-tight text-zw-ink group-hover:text-zw-red-600">
+                {p.name}
+              </div>
+              <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700">
+                <AlertTriangle size={12} />
+                {t.home.lowStockLeft.replace("{count}", String(p.stockQuantity))}
+              </div>
+              <div className="mt-2 text-sm font-bold text-zw-ink">
+                {formatPrice(priceWithVat(p.priceExVat, p.vatRate), locale)}
+              </div>
+            </div>
+          </LocaleLink>
+        ))}
       </div>
     </section>
   );
