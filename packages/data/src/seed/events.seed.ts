@@ -17,7 +17,13 @@ import { stockPhotos } from "./images";
  *   "**kalin**"  -> kalin metin
  */
 
-const logo = (slug: string) => `/images/events/${slug}.png`;
+/**
+ * Etkinlik logosu. Yuklenen dosyalarin cogu webp'ye cevrildi
+ * (scripts/optimize-images.mjs); kucuk olanlar PNG olarak kaldi.
+ * Dosya bulunamazsa ProductImage diger uzantilari da dener.
+ */
+const logo = (slug: string, ext: "webp" | "png" = "webp") =>
+  `/images/events/${slug}.${ext}`;
 
 export const events: ZenweldEvent[] = [
   {
@@ -91,8 +97,8 @@ Visit us at our stand and let us discover the future of welding technologies tog
     active: true,
   },
   {
-    id: "e-international-hardware-riyad-2025",
-    slug: "international-hardware-riyad-2025",
+    id: "e-international-hardware-riyadh-2025",
+    slug: "international-hardware-riyadh-2025",
     title: "International Hardware Riyadh",
     summary: {
       tr: "International Hardware Riyadh 2025, Orta Doğu'nun en büyük donanım, el aletleri, yapı malzemeleri ve endüstriyel ekipman fuarlarından biridir.",
@@ -138,7 +144,7 @@ Contact us for more information, and do not forget to visit us during the fair!`
     },
     city: "Riyad",
     country: "Suudi Arabistan",
-    logoUrl: logo("international-hardware-riyad-2025"),
+    logoUrl: logo("international-hardware-riyadh-2025"),
     images: [stockPhotos.industrialShop, stockPhotos.teamTalk],
     featured: false,
     active: true,
@@ -186,7 +192,7 @@ Throughout the fair, our expert team will be delighted to host you for industry 
     venue: { tr: "İstanbul Fuar Merkezi (IFM)", en: "Istanbul Expo Center (IFM)" },
     city: "İstanbul",
     country: "Türkiye",
-    logoUrl: logo("win-eurasia-2025"),
+    logoUrl: logo("win-eurasia-2025", "png"),
     images: [stockPhotos.factoryLine, stockPhotos.engineer, stockPhotos.teamTalk],
     featured: false,
     active: true,
@@ -316,7 +322,7 @@ If you are planning to visit the Win Eurasia 2024 Industry Fair, do not forget t
     venue: { tr: "İstanbul Fuar Merkezi (IFM)", en: "Istanbul Expo Center (IFM)" },
     city: "İstanbul",
     country: "Türkiye",
-    logoUrl: logo("win-eurasia-2024"),
+    logoUrl: logo("win-eurasia-2024", "png"),
     images: [stockPhotos.factoryLine],
     featured: false,
     active: true,
