@@ -19,7 +19,10 @@ const now = "2026-09-16T08:00:00+03:00";
  * Farkli urunlere farkli fotograf vermek icin: Yonetim Paneli > Urunler >
  * Duzenle > Gorseller sekmesinden URL girin veya dosya yukleyin.
  */
-const PRODUCT_PHOTO = "/images/products/zenweld-urun.png";
+/* 748x1064 PNG (519 KB) yerine 800 px webp (27 KB). Orijinal PNG dosyasi
+   duruyor; webp desteklemeyen tarayici ProductImage uzerinden ona duser.
+   Yeni gorsel eklendiginde: node scripts/optimize-images.mjs */
+const PRODUCT_PHOTO = "/images/products/zenweld-urun.webp";
 
 const lorem = {
   tr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",

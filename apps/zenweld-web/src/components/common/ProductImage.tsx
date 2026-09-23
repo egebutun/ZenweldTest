@@ -47,7 +47,15 @@ export function ProductImage({
   alternates?: string[];
 }) {
   const fallback = placeholderDataUri(label ?? alt);
-  const chain = [...(src && src.length > 0 ? [src] : []), ...(alternates ?? []), fallback];
+  // .webp desteklemeyen eski tarayicilar icin ayni adin .png/.jpg hali denenir.
+  const webpFallbacks =
+    src && /\.webp$/i.test(src) ? [src.replace(/\.webp$/i, ".png"), src.replace(/\.webp$/i, ".jpg")] : [];
+  const chain = [
+    ...(src && src.length > 0 ? [src] : []),
+    ...(alternates ?? []),
+    ...webpFallbacks,
+    fallback,
+  ];
   const [index, setIndex] = useState(0);
   const current = chain[Math.min(index, chain.length - 1)];
   const ref = useRef<HTMLImageElement>(null);
@@ -74,6 +82,7 @@ export function ProductImage({
       src={current}
       alt={alt}
       loading={priority ? "eager" : "lazy"}
+      decoding="async"
       onError={next}
       className={className}
     />
