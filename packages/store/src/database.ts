@@ -10,6 +10,9 @@ import { createSeedDatabase, DB_VERSION, type ZenweldDatabase } from "@zenweld/d
  *
  * ILERIDE: adapter'i Supabase/Firebase ile degistirmek icin yalnizca
  * read()/write() fonksiyonlarini degistirmek yeterlidir.
+ *
+ * !! ONEMLI !! Tohum verisi veya sema her degistiginde DB_VERSION
+ * artirilmalidir; kayitli surum tuttugu surece tohum hic kurulmaz.
  */
 
 const STORAGE_KEY = "zenweld.db.v1";
@@ -24,25 +27,29 @@ function isBrowser(): boolean {
 }
 
 function loadFromStorage(): ZenweldDatabase {
-  const seed = createSeedDatabase();
-  if (!isBrowser()) return seed;
+  if (!isBrowser()) return createSeedDatabase();
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
-      return seed;
+    if (raw) {
+      const parsed = JSON.parse(raw) as ZenweldDatabase;
+      if (parsed && parsed.version === DB_VERSION) {
+        // Surum tuttuguna gore kayit bu derlemenin tohumundan yazilmis
+        // demektir; 500 KB'lik tohumu bastan kurmaya gerek yok.
+        return parsed;
+      }
     }
-    const parsed = JSON.parse(raw) as ZenweldDatabase;
-    if (!parsed || parsed.version !== DB_VERSION) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
-      return seed;
-    }
-    // Yeni alanlar eklendiyse seed'den tamamla.
-    return { ...seed, ...parsed };
   } catch {
-    return seed;
+    /* bozuk kayit — tohumla bastan kur */
   }
+
+  const seed = createSeedDatabase();
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+  } catch {
+    /* kota dolu olabilir; bellekte calismaya devam */
+  }
+  return seed;
 }
 
 /** Istemci anlik goruntusu (useSyncExternalStore icin sabit referans). */

@@ -44,6 +44,8 @@ export function ProductImage({
   priority?: boolean;
 }) {
   const fallback = placeholderDataUri(label ?? alt);
+  // .webp desteklemeyen eski tarayicilar icin ayni adin .png hali denenir.
+  const pngFallback = src && /\.webp$/i.test(src) ? src.replace(/\.webp$/i, ".png") : null;
   const [current, setCurrent] = useState(src && src.length > 0 ? src : fallback);
   const ref = useRef<HTMLImageElement>(null);
 
@@ -56,7 +58,9 @@ export function ProductImage({
   // bu yuzden mount sonrasi durumu elle kontrol ediyoruz.
   useEffect(() => {
     const img = ref.current;
-    if (img && img.complete && img.naturalWidth === 0) setCurrent(fallback);
+    if (img && img.complete && img.naturalWidth === 0) {
+      setCurrent(pngFallback && current !== pngFallback ? pngFallback : fallback);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
@@ -66,8 +70,9 @@ export function ProductImage({
       ref={ref}
       src={current}
       alt={alt}
+      decoding="async"
       loading={priority ? "eager" : "lazy"}
-      onError={() => setCurrent(fallback)}
+      onError={() => setCurrent(pngFallback && current !== pngFallback ? pngFallback : fallback)}
       className={className}
     />
   );
