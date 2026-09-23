@@ -10,10 +10,10 @@ export default function SupportPage() {
   const t = useT();
 
   const cards = [
-    { href: "/destek/sss", Icon: FileQuestion, title: t.support.faqTitle },
-    { href: "/destek/iletisim", Icon: MessageSquare, title: t.support.contactTitle },
-    { href: "/destek/servis-agi", Icon: Wrench, title: t.support.serviceTitle },
-    { href: "/nereden-alabilirim", Icon: MapPin, title: t.nav.findDealer },
+    { href: "/destek/sss", Icon: FileQuestion, title: t.support.faqTitle, text: t.support.faqCardText },
+    { href: "/destek/iletisim", Icon: MessageSquare, title: t.support.contactTitle, text: t.support.contactCardText },
+    { href: "/destek/servis-agi", Icon: Wrench, title: t.support.serviceTitle, text: t.support.serviceCardText },
+    { href: "/nereden-alabilirim", Icon: MapPin, title: t.nav.findDealer, text: t.support.dealerCardText },
   ];
 
   return (
@@ -22,7 +22,7 @@ export default function SupportPage() {
 
       <div className="zw-container py-12">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {cards.map(({ href, Icon, title }) => (
+          {cards.map(({ href, Icon, title, text }) => (
             <LocaleLink
               key={href}
               href={href}
@@ -30,9 +30,7 @@ export default function SupportPage() {
             >
               <Icon size={26} className="text-zw-red-600" />
               <h2 className="mt-3 font-display text-xl font-semibold uppercase">{title}</h2>
-              <p className="mt-1.5 text-sm text-zw-grey-500">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              </p>
+              <p className="mt-1.5 text-sm text-zw-grey-500">{text}</p>
             </LocaleLink>
           ))}
         </div>

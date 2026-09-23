@@ -21,7 +21,7 @@ import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
 import { useHref, useLocale, useT } from "@/lib/i18n-client";
-import { useMainMenu, type TopMenu } from "@/lib/menu";
+import { useMainMenu, useSupportMenu, type TopMenu } from "@/lib/menu";
 import { useQuoteList } from "@/lib/quote-list";
 
 export function Header() {
@@ -31,6 +31,7 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const menus = useMainMenu();
+  const supportLinks = useSupportMenu();
   const { user, logout } = useAuth();
   const quoteList = useQuoteList();
 
@@ -103,12 +104,40 @@ export function Header() {
                 />
               </button>
             ))}
-            <LocaleLink
-              href="/destek"
-              className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold text-zw-grey-700 transition-colors hover:text-zw-ink"
+            {/* Destek: tiklamak yerine uzerine gelince acilan kisa liste */}
+            <div
+              className="relative"
+              onMouseEnter={() => setOpenMenu("destek")}
+              onFocus={() => setOpenMenu("destek")}
             >
-              {t.nav.support}
-            </LocaleLink>
+              <LocaleLink
+                href="/destek"
+                className={`flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-colors zw-focus ${
+                  openMenu === "destek"
+                    ? "bg-zw-grey-100 text-zw-ink"
+                    : "text-zw-grey-700 hover:text-zw-ink"
+                }`}
+              >
+                {t.nav.support}
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform ${openMenu === "destek" ? "rotate-180" : ""}`}
+                />
+              </LocaleLink>
+              {openMenu === "destek" && (
+                <div className="absolute left-0 top-full z-50 w-60 rounded-[4px] border border-zw-grey-200 bg-white py-1.5 shadow-xl">
+                  {supportLinks.map((item) => (
+                    <LocaleLink
+                      key={item.href}
+                      href={item.href}
+                      className="block px-4 py-2.5 text-sm font-semibold text-zw-grey-700 transition-colors hover:bg-zw-grey-50 hover:text-zw-red-600"
+                    >
+                      {item.label}
+                    </LocaleLink>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
 
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
@@ -254,9 +283,10 @@ export function Header() {
           </div>
         </div>
 
-        {openMenu && (
-          <MegaMenu menu={menus.find((m) => m.id === openMenu)!} />
-        )}
+        {(() => {
+          const open = menus.find((m) => m.id === openMenu);
+          return open ? <MegaMenu menu={open} /> : null;
+        })()}
       </header>
 
       {drawerOpen && <MobileDrawer menus={menus} onClose={() => setDrawerOpen(false)} />}
@@ -422,6 +452,7 @@ function MegaMenu({ menu }: { menu: TopMenu }) {
 
 function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: () => void }) {
   const t = useT();
+  const supportLinks = useSupportMenu();
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
@@ -474,20 +505,32 @@ function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: () => voi
               )}
             </div>
           ))}
-          <LocaleLink
-            href="/destek"
-            onClick={onClose}
-            className="block border-b border-zw-grey-100 px-4 py-3.5 font-semibold"
-          >
-            {t.nav.support}
-          </LocaleLink>
-          <LocaleLink
-            href="/nereden-alabilirim"
-            onClick={onClose}
-            className="block border-b border-zw-grey-100 px-4 py-3.5 font-semibold text-zw-red-600"
-          >
-            {t.nav.findDealer}
-          </LocaleLink>
+          <div className="border-b border-zw-grey-100">
+            <button
+              onClick={() => setExpanded(expanded === "destek" ? null : "destek")}
+              className="flex w-full items-center justify-between px-4 py-3.5 text-left font-semibold"
+            >
+              {t.nav.support}
+              <ChevronDown
+                size={18}
+                className={`text-zw-grey-500 transition-transform ${expanded === "destek" ? "rotate-180" : ""}`}
+              />
+            </button>
+            {expanded === "destek" && (
+              <div className="bg-zw-grey-50 px-4 pb-3 pt-1">
+                {supportLinks.map((item) => (
+                  <LocaleLink
+                    key={item.href}
+                    href={item.href}
+                    onClick={onClose}
+                    className="block py-1.5 text-sm text-zw-grey-700"
+                  >
+                    {item.label}
+                  </LocaleLink>
+                ))}
+              </div>
+            )}
+          </div>
           <LocaleLink
             href="/teklif-al"
             onClick={onClose}
