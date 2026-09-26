@@ -276,7 +276,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
         <div className="space-y-6 rounded-[4px] border border-zw-grey-200 bg-white p-5">
           <Alert tone="info">
             Logo ve fotoğraflar için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen
-            dosyalar tarayıcı deposunda saklandığı için 1.5 MB altında olmalıdır. Kalıcı
+            dosyalar otomatik olarak küçültülüp WebP'ye çevrilir; boyutla uğraşmanıza gerek yok. Kalıcı
             kullanım için görselleri <code>public/images/events/</code> klasörüne koyup
             <code> /images/events/dosya.png</code> yolunu girin.
           </Alert>

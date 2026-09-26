@@ -43,16 +43,3 @@ public/images/events/big-5-global-2025/1.jpg
 Yükledikten sonra haber verin, kalan bağlantı işini ben yaparım. (Dilerseniz
 yönetim panelinden de ekleyebilirsiniz: Etkinlikler → Düzenle → Logo &
 Fotoğraflar. Ancak panelden eklenenler yalnızca sizin tarayıcınızda görünür.)
-
-## Yeni logo yükledikten sonra
-
-Proje kökünde şunu çalıştırın:
-
-```
-node scripts/trim-event-logos.mjs
-```
-
-Logo dosyalarının çoğunda asıl logonun etrafında geniş boş alan oluyor
-(bazılarında dosyanın %80'inden fazlası). Detay sayfasında hepsi aynı
-ölçülü kutuya konduğu için, bu boşluk bazı logoların küçük görünmesine
-yol açıyor. Betik bu boş kenarları kesiyor, logo kutuyu dolduruyor.
