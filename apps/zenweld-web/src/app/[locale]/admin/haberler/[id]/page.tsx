@@ -25,7 +25,7 @@ export default function EditNewsPage({
     <>
       <AdminPageHeader
         title={item.title.tr}
-        description={`${item.category.tr} · ${formatDate(item.publishedAt, "tr")}`}
+        description={formatDate(item.publishedAt, "tr")}
         action={
           <LocaleLink
             href={`/kesfet/haberler/${item.slug}`}

@@ -18,6 +18,10 @@ export function Tabs({
       {tabs.map((t) => (
         <button
           key={t.id}
+          // Form icinde type verilmezse tarayici bunu "submit" sayar; sekmeye
+          // her tiklamada form kaydediliyordu (yeni kayit sayfasinda da
+          // form doldurulmadan kayit olusuyordu).
+          type="button"
           onClick={() => onChange(t.id)}
           className={[
             "shrink-0 border-b-2 px-4 py-3 text-sm font-semibold uppercase tracking-wide transition-colors zw-focus",

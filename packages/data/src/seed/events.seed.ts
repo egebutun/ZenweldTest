@@ -460,64 +460,59 @@ Zenweld is a Turkish brand that has been operating in welding and cutting techno
 export const news: NewsItem[] = [
   {
     id: "n1",
-    slug: "yeni-bayi-agi-genislemesi",
+    slug: "kaynak-ve-kesme-teknolojileri-tanitim-gunu-van",
     title: {
-      tr: "Bayi ağımız 30 noktaya ulaştı",
-      en: "Our dealer network reaches 30 locations",
+      tr: "Kaynak ve Kesme Teknolojileri Tanıtım Günü",
+      en: "Welding and Cutting Technologies Open Day",
     },
     summary: {
-      tr: "Türkiye genelindeki yetkili satış ve servis noktalarımızın sayısı 30'a ulaştı.",
-      en: "Our authorised sales and service points across Türkiye have reached 30.",
+      tr: "Van'daki iş ortaklarımızla 29 Temmuz 2026 Çarşamba günü Ebinç Makina ev sahipliğinde buluşuyoruz.",
+      en: "We are meeting our partners in Van on Wednesday 29 July 2026, hosted by Ebinç Makina.",
     },
     body: {
-      tr: "Türkiye genelindeki yetkili satış ve servis noktalarımızın sayısı 30'a ulaştı. Yeni açılan noktalarla birlikte müşterilerimize daha hızlı servis ve stoktan teslim imkânı sunuyoruz.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      en: "Our authorised sales and service points across Türkiye have reached 30. With the newly opened locations we offer faster service and stock availability to our customers.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      tr: `Zenweld olarak, Van bölgesindeki iş ortaklarımız ve sektör profesyonelleriyle 29 Temmuz 2026 Çarşamba günü Ebinç Makina ev sahipliğinde düzenlenecek Kaynak ve Kesme Teknolojileri Tanıtım Günü'nde bir araya geliyoruz.
+
+Etkinlik boyunca yeni nesil MIG/MAG, TIG, MMA, Plazma Kesim ve Lazer Kaynak çözümlerimizi yakından inceleyebilir, makinelerimizin canlı performansını deneyimleyebilir ve uzman ekibimizden uygulamaya yönelik teknik bilgiler alabilirsiniz.
+
+Kaynak ve kesme teknolojilerindeki en yeni çözümleri keşfetmek, üretim süreçlerinize değer katacak ekipmanları yakından görmek ve Zenweld uzmanlarıyla birebir görüşmek için sizleri etkinliğimize bekliyoruz.`,
+      en: `Zenweld is bringing together its partners and industry professionals in the Van region at the Welding and Cutting Technologies Open Day, hosted by Ebinç Makina on Wednesday 29 July 2026.
+
+Throughout the event you can take a close look at our new generation MIG/MAG, TIG, MMA, plasma cutting and laser welding solutions, see our machines perform live, and get hands-on technical guidance from our expert team.
+
+We look forward to welcoming you — to discover the latest in welding and cutting technology, to see the equipment that can add value to your production, and to speak with Zenweld specialists one to one.`,
     },
-    coverUrl: stockPhotos.industrialShop,
-    category: { tr: "Kurumsal", en: "Corporate" },
-    publishedAt: "2026-08-12T09:00:00+03:00",
+    coverUrl: "/images/news/kaynak-kesme-tanitim-gunu-van-2026.webp",
+    images: [],
+    publishedAt: "2026-07-27T09:00:00+03:00",
     featured: true,
     active: true,
   },
   {
     id: "n2",
-    slug: "evomig-205-p-tanitildi",
+    slug: "zenweld-kaynak-akademi",
     title: {
-      tr: "Evomig 205 P Pulse MIG ürün gamımıza katıldı",
-      en: "Evomig 205 P Pulse MIG joins our range",
+      tr: "Zenweld Kaynak Akademi",
+      en: "Zenweld Welding Academy",
     },
     summary: {
-      tr: "Double pulse desteği ve renkli sinerjik ekranıyla Evomig 205 P satışa sunuldu.",
-      en: "With double pulse support and a colour synergic display, the Evomig 205 P is now available.",
+      tr: "Çınarlı Mesleki ve Teknik Eğitim Lisesi ile imzalanan protokolle öğrencilere kaynaklı metal imalat eğitimi veren Kaynak Akademisi kuruldu.",
+      en: "A Welding Academy has been established under a protocol with Çınarlı Vocational and Technical High School, training students in welded metal fabrication.",
     },
     body: {
-      tr: "Double pulse desteği ve renkli sinerjik ekranıyla Evomig 205 P satışa sunuldu. Özellikle alüminyum ve paslanmaz uygulamalarında dekoratif dikiş görünümü sağlıyor.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      en: "With double pulse support and a colour synergic display, the Evomig 205 P is now available, delivering a decorative bead appearance especially on aluminium and stainless applications.\n\nLorem ipsum dolor sit amet.",
+      tr: `Konak İlçe Milli Eğitim Müdürlüğü, Çınarlı Mesleki ve Teknik Eğitim Lisesi ve Zenweld Kaynak ve Kesme Ekipmanları Sanayi Ticaret Anonim Şirketi arasında yapılan 'Mesleki Eğitim İşbirliği' protokolüyle öğrencilerin kaynaklı metal imalat alanında yeteneklerini geliştirecekleri 'Kaynak Akademisi' kuruldu.
+
+## Öğrencilere son teknolojiyle eğitim!
+
+Akademiyle, öğrencilerin sektördeki çalışma olanaklarını okullarında görmesi ve donanım kazanması amaçlanıyor. Açılış töreninde konuşan Konak İlçe Milli Eğitim Müdürü Serdar Şimşek, "Akademinin kurulması, meslek öğrencileri için son teknolojiyle alanlarında çalışma şartlarını en yakından çalışma hayatıyla bire bir görmesi için önemli. Çünkü onlar ara eleman değil, ana elemanlardır." dedi.`,
+      en: `Under a 'Vocational Training Cooperation' protocol signed between the Konak District Directorate of National Education, Çınarlı Vocational and Technical High School and Zenweld Kaynak ve Kesme Ekipmanları Sanayi Ticaret Anonim Şirketi, a 'Welding Academy' has been established where students will develop their skills in welded metal fabrication.
+
+## Training students on the latest technology
+
+The academy aims to let students see the working conditions of the industry within their own school and to build practical skills. Speaking at the opening ceremony, Konak District Director of National Education Serdar Şimşek said: "Establishing the academy matters because it lets vocational students see working conditions in their field, with the latest technology, exactly as they are in working life. They are not auxiliary staff — they are the core staff."`,
     },
-    coverUrl: stockPhotos.engineer,
-    category: { tr: "Ürün", en: "Product" },
-    publishedAt: "2026-06-03T09:00:00+03:00",
-    featured: false,
-    active: true,
-  },
-  {
-    id: "n3",
-    slug: "ihracat-pazarlari-genisliyor",
-    title: {
-      tr: "İhracat pazarlarımız Orta Doğu'da genişliyor",
-      en: "Our export markets expand in the Middle East",
-    },
-    summary: {
-      tr: "Riyad ve Dubai fuarlarının ardından bölgedeki dağıtım ağımızı büyütüyoruz.",
-      en: "Following the Riyadh and Dubai fairs, we are growing our regional distribution network.",
-    },
-    body: {
-      tr: "Riyad ve Dubai fuarlarının ardından bölgedeki dağıtım ağımızı büyütüyoruz.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.",
-      en: "Following the Riyadh and Dubai fairs, we are growing our regional distribution network.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-    coverUrl: stockPhotos.factoryLine,
-    category: { tr: "İhracat", en: "Export" },
-    publishedAt: "2026-01-20T09:00:00+03:00",
+    coverUrl: "/images/news/zenweld-kaynak-akademi-2023.webp",
+    images: [],
+    publishedAt: "2023-09-12T09:00:00+03:00",
     featured: false,
     active: true,
   },

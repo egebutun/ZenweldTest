@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ImagePlus, Upload } from "lucide-react";
+import { ImagePlus, Trash2, Upload } from "lucide-react";
 import type { NewsItem } from "@zenweld/data";
 import { createNews, saveNews, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Checkbox, FormRow, Input, Tabs, Textarea } from "@zenweld/ui";
@@ -28,6 +28,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [coverInput, setCoverInput] = useState("");
+  const [imageInput, setImageInput] = useState("");
 
   const [draft, setDraft] = useState<NewsItem>(
     item ?? {
@@ -37,7 +38,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
       summary: { tr: "", en: "" },
       body: { tr: "", en: "" },
       coverUrl: "",
-      category: { tr: "Kurumsal", en: "Corporate" },
+      images: [],
       publishedAt: new Date().toISOString(),
       featured: false,
       active: true,
@@ -47,7 +48,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
   const set = <K extends keyof NewsItem>(key: K, value: NewsItem[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
 
-  const setI18n = (key: "title" | "summary" | "body" | "category", lang: "tr" | "en", value: string) =>
+  const setI18n = (key: "title" | "summary" | "body", lang: "tr" | "en", value: string) =>
     setDraft((d) => ({ ...d, [key]: { ...d[key], [lang]: value } }));
 
   const submit = (e: React.FormEvent) => {
@@ -75,7 +76,6 @@ export function NewsForm({ item }: { item?: NewsItem }) {
       title: { tr: draft.title.tr, en: draft.title.en.trim() || draft.title.tr },
       summary: { tr: draft.summary.tr, en: draft.summary.en.trim() || draft.summary.tr },
       body: { tr: draft.body.tr, en: draft.body.en.trim() || draft.body.tr },
-      category: { tr: draft.category.tr, en: draft.category.en.trim() || draft.category.tr },
     };
 
     if (isNew) {
@@ -108,7 +108,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
         tabs={[
           { id: "temel", label: "Temel Bilgiler" },
           { id: "icerik", label: "İçerik" },
-          { id: "gorsel", label: "Kapak Görseli" },
+          { id: "gorsel", label: "Görseller" },
         ]}
       />
 
@@ -137,19 +137,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
             <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
           </FormRow>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            <FormRow label="Kategori (TR)" hint="Örn. Kurumsal, Ürün, İhracat">
-              <Input
-                value={draft.category.tr}
-                onChange={(e) => setI18n("category", "tr", e.target.value)}
-              />
-            </FormRow>
-            <FormRow label="Kategori (EN)">
-              <Input
-                value={draft.category.en}
-                onChange={(e) => setI18n("category", "en", e.target.value)}
-              />
-            </FormRow>
+          <div className="grid gap-4 sm:grid-cols-2">
             <FormRow label="Yayın Tarihi">
               <Input
                 type="datetime-local"
@@ -215,7 +203,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
       {tab === "gorsel" && (
         <div className="space-y-4 rounded-[4px] border border-zw-grey-200 bg-white p-5">
           <Alert tone="info">
-            Kapak görseli için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar
+            Kapak görseli ve galeri fotoğrafları için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar
             tarayıcı deposunda saklandığı için 1.5 MB altında olmalıdır.
           </Alert>
 
@@ -270,6 +258,83 @@ export function NewsForm({ item }: { item?: NewsItem }) {
                 >
                   Görseli kaldır
                 </button>
+              )}
+            </div>
+          </div>
+
+          {/* Etkinliklerdeki galerinin aynisi: haber sayfasinin altinda
+              fotograflar izgara halinde gosterilir. */}
+          <div className="border-t border-zw-grey-200 pt-5">
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
+              Fotoğraf Galerisi
+            </div>
+            <p className="mb-3 text-sm text-zw-grey-500">
+              Kapak görselinin yanı sıra habere istediğiniz kadar fotoğraf ekleyebilirsiniz.
+              Bunlar haber sayfasının altında görünür.
+            </p>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Input
+                placeholder="/images/news/haber/1.jpg"
+                value={imageInput}
+                onChange={(e) => setImageInput(e.target.value)}
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                leftIcon={<ImagePlus size={16} />}
+                onClick={() => {
+                  if (!imageInput.trim()) return;
+                  set("images", [...draft.images, imageInput.trim()]);
+                  setImageInput("");
+                }}
+              >
+                URL Ekle
+              </Button>
+              <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-[4px] border border-zw-grey-300 px-4 text-sm font-semibold hover:border-zw-ink">
+                <Upload size={16} />
+                Dosya Yükle
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    readImageFiles(
+                      e.target.files,
+                      (url) => setDraft((d) => ({ ...d, images: [...d.images, url] })),
+                      setError,
+                    );
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            </div>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {draft.images.map((img, i) => (
+                <div key={i} className="rounded-[4px] border border-zw-grey-200 p-2">
+                  <div className="aspect-[4/3] overflow-hidden rounded-[3px] bg-zw-grey-50">
+                    <ProductImage
+                      src={img}
+                      alt={`${draft.title.tr} — ${i + 1}`}
+                      label={draft.title.tr || "Fotoğraf"}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => set("images", draft.images.filter((_, x) => x !== i))}
+                    className="mt-2 w-full rounded-[3px] border border-zw-grey-300 py-1 text-xs text-zw-red-600 hover:border-zw-red-600"
+                  >
+                    <Trash2 size={13} className="mx-auto" />
+                  </button>
+                </div>
+              ))}
+              {draft.images.length === 0 && (
+                <p className="col-span-full py-6 text-center text-sm text-zw-grey-500">
+                  Henüz fotoğraf eklenmedi.
+                </p>
               )}
             </div>
           </div>

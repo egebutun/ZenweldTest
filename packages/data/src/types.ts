@@ -346,8 +346,10 @@ export interface NewsItem {
   title: I18nText;
   summary: I18nText;
   body: I18nText;
+  /** Kart ve haber basindaki ana gorsel */
   coverUrl: string;
-  category: I18nText;
+  /** Haber sayfasindaki fotograf galerisi (etkinliklerdeki gibi) */
+  images: string[];
   publishedAt: string;
   featured: boolean;
   active: boolean;

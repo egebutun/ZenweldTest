@@ -564,7 +564,7 @@ export function createNews(partial: Partial<NewsItem>): NewsItem {
     summary: partial.summary ?? { tr: "", en: "" },
     body: partial.body ?? { tr: "", en: "" },
     coverUrl: partial.coverUrl ?? "",
-    category: partial.category ?? { tr: "Kurumsal", en: "Corporate" },
+    images: partial.images ?? [],
     publishedAt: partial.publishedAt ?? nowIso(),
     featured: partial.featured ?? false,
     active: partial.active ?? true,

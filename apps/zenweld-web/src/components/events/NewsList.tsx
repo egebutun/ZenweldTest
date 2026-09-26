@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { useDatabase } from "@zenweld/store";
-import { Badge, EmptyState } from "@zenweld/ui";
+import { EmptyState } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { PageHero } from "@/components/common/PageShell";
@@ -42,13 +42,12 @@ export function NewsList() {
               <ProductImage
                 src={lead.coverUrl}
                 alt={text(lead.title)}
-                label={text(lead.category)}
+                label={text(lead.title)}
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             </div>
             <div className="flex flex-col justify-center p-6 md:pr-10">
               <div className="flex items-center gap-3">
-                <Badge tone="red">{text(lead.category)}</Badge>
                 <span className="text-xs text-zw-grey-500">
                   {formatDate(lead.publishedAt, locale)}
                 </span>
@@ -77,15 +76,12 @@ export function NewsList() {
                   <ProductImage
                     src={item.coverUrl}
                     alt={text(item.title)}
-                    label={text(item.category)}
+                    label={text(item.title)}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <div className="p-5">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-zw-red-600">
-                      {text(item.category)}
-                    </span>
                     <span className="text-xs text-zw-grey-400">
                       {formatDate(item.publishedAt, locale)}
                     </span>
