@@ -16,9 +16,10 @@ import {
 import { useDatabase } from "@zenweld/store";
 import { Button, SectionHeading } from "@zenweld/ui";
 import { stockPhotos } from "@zenweld/data";
+import { DealerFinder } from "@/components/dealers/DealerFinder";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
-import { ProductCard } from "@/components/product/ProductCard";
+import { ProductMarquee } from "@/components/product/ProductMarquee";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatDate } from "@/lib/format";
 
@@ -74,7 +75,7 @@ export function HotSale() {
   const t = useT();
   const db = useDatabase();
   const items = useMemo(
-    () => db.products.filter((p) => p.active && p.hotSale).slice(0, 8),
+    () => db.products.filter((p) => p.active && p.hotSale).slice(0, 12),
     [db],
   );
 
@@ -102,11 +103,7 @@ export function HotSale() {
           </LocaleLink>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        <ProductMarquee products={items} />
       </div>
     </section>
   );
@@ -169,7 +166,7 @@ export function NewArrivals() {
   const t = useT();
   const db = useDatabase();
   const items = useMemo(
-    () => db.products.filter((p) => p.active && p.isNew).slice(0, 8),
+    () => db.products.filter((p) => p.active && p.isNew).slice(0, 12),
     [db],
   );
 
@@ -191,11 +188,7 @@ export function NewArrivals() {
             </LocaleLink>
           }
         />
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        <ProductMarquee products={items} />
       </div>
     </section>
   );
@@ -234,36 +227,34 @@ export function WhyZenweld() {
   );
 }
 
+/**
+ * Anasayfadaki bayi/servis bolumu.
+ *
+ * Onceden sehir ve bayi adi yazan kutucuklar vardi; yerine bayi bulucu
+ * sayfasindaki haritanin aynisi kondu. Sehir ve tur (yetkili satici /
+ * yetkili servis) filtreleri burada da calisiyor.
+ */
 export function DealerStrip() {
   const t = useT();
-  const db = useDatabase();
 
   return (
     <section className="bg-zw-grey-100">
-      <div className="zw-container zw-section grid items-center gap-10 lg:grid-cols-2">
-        <div>
-          <h2 className="font-display text-4xl font-bold uppercase leading-tight">
-            {t.home.dealerTitle}
-          </h2>
-          <p className="mt-3 text-zw-grey-600">{t.home.dealerSubtitle}</p>
-          <LocaleLink href="/nereden-alabilirim" className="mt-6 inline-block">
+      <div className="zw-container zw-section">
+        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <h2 className="font-display text-3xl font-bold uppercase leading-tight sm:text-4xl">
+              {t.home.dealerTitle}
+            </h2>
+            <p className="mt-3 text-zw-grey-600">{t.home.dealerSubtitle}</p>
+          </div>
+          <LocaleLink href="/nereden-alabilirim" className="shrink-0">
             <Button variant="dark" size="lg" leftIcon={<MapPin size={18} />}>
               {t.home.dealerCta}
             </Button>
           </LocaleLink>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {db.dealers.slice(0, 9).map((d) => (
-            <div
-              key={d.id}
-              className="rounded-[4px] border border-zw-grey-200 bg-white px-3 py-3 text-center"
-            >
-              <div className="truncate font-display text-sm font-bold uppercase">{d.city}</div>
-              <div className="truncate text-xs text-zw-grey-500">{d.name}</div>
-            </div>
-          ))}
-        </div>
+        <DealerFinder variant="home" compact />
       </div>
     </section>
   );

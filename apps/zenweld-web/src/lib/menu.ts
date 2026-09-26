@@ -132,7 +132,6 @@ export function useMainMenu(): TopMenu[] {
           links: [
             { label: t.nav.findDealer, description: t.support.dealerCardText, href: "/nereden-alabilirim" },
             { label: t.support.faqTitle, description: t.support.faqCardText, href: "/destek/sss" },
-            { label: t.support.serviceTitle, description: t.support.serviceCardText, href: "/destek/servis-agi" },
             { label: t.support.contactTitle, description: t.support.contactCardText, href: "/destek/iletisim" },
           ],
         },
