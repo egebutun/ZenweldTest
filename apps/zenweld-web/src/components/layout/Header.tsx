@@ -10,7 +10,6 @@ import {
   MapPin,
   Menu,
   Search,
-  ShoppingBag,
   User as UserIcon,
   X,
 } from "lucide-react";
@@ -22,7 +21,6 @@ import { ProductImage } from "@/components/common/ProductImage";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
 import { useHref, useLocale, useT } from "@/lib/i18n-client";
 import { useMainMenu, type TopMenu } from "@/lib/menu";
-import { useQuoteList } from "@/lib/quote-list";
 
 export function Header() {
   const t = useT();
@@ -32,7 +30,6 @@ export function Header() {
   const router = useRouter();
   const menus = useMainMenu();
   const { user, logout } = useAuth();
-  const quoteList = useQuoteList();
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -125,20 +122,6 @@ export function Header() {
               title={t.nav.findDealer}
             >
               <MapPin size={20} />
-            </LocaleLink>
-
-            <LocaleLink
-              href="/teklif-al"
-              className="relative rounded-[4px] p-2 text-zw-ink transition-colors hover:bg-zw-grey-100"
-              aria-label={t.product.requestQuote}
-              title={t.product.requestQuote}
-            >
-              <ShoppingBag size={20} />
-              {quoteList.count > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-zw-red-600 px-1 text-[10px] font-bold text-white">
-                  {quoteList.count}
-                </span>
-              )}
             </LocaleLink>
 
             <div className="relative">
