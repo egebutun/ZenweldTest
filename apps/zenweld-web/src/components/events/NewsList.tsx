@@ -38,12 +38,12 @@ export function NewsList() {
             href={`/kesfet/haberler/${lead.slug}`}
             className="group grid gap-6 overflow-hidden rounded-[4px] border border-zw-grey-200 md:grid-cols-2"
           >
-            <div className="aspect-[16/10] overflow-hidden bg-zw-grey-100">
+            <div className="flex aspect-[16/10] items-center justify-center overflow-hidden bg-zw-grey-100">
               <ProductImage
                 src={lead.coverUrl}
                 alt={text(lead.title)}
                 label={text(lead.title)}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
               />
             </div>
             <div className="flex flex-col justify-center p-6 md:pr-10">
@@ -72,12 +72,12 @@ export function NewsList() {
                 href={`/kesfet/haberler/${item.slug}`}
                 className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
               >
-                <div className="aspect-[16/9] overflow-hidden bg-zw-grey-100">
+                <div className="flex aspect-[16/9] items-center justify-center overflow-hidden bg-zw-grey-100">
                   <ProductImage
                     src={item.coverUrl}
                     alt={text(item.title)}
                     label={text(item.title)}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <div className="p-5">
