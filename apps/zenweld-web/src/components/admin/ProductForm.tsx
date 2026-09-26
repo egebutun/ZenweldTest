@@ -9,7 +9,7 @@ import { Alert, Badge, Button, Checkbox, FormRow, Input, Select, Tabs, Textarea 
 import { ProductImage } from "@/components/common/ProductImage";
 import { useHref } from "@/lib/i18n-client";
 import { priceWithVat } from "@/lib/format";
-import { slugify } from "@/lib/slugify";
+import { readImageFiles, slugify } from "@/lib/slugify";
 
 const PROCESSES: WeldingProcess[] = ["MULTI", "MIG", "MAG", "PULSE", "TIG", "MMA", "PLAZMA"];
 const SECTIONS: { id: TopLevelSection; label: string }[] = [
@@ -64,27 +64,19 @@ export function ProductForm({ product }: { product?: Product }) {
 
   const categories = db.categories.filter((c) => c.section === draft.section);
 
+  // Etkinlik/haber formlariyla ayni yol: readImageFiles gorseli tarayicida
+  // otomatik kucultup WebP'ye cevirir. Burada ayri bir kopya vardi ve
+  // buyuk dosyalari geri ceviriyordu.
   const onFileUpload = (files: FileList | null) => {
-    if (!files) return;
-    Array.from(files).forEach((file) => {
-      if (file.size > 1_500_000) {
-        setError(
-          `${file.name} çok büyük (>1.5 MB). Tarayıcı deposu sınırlı olduğu için küçük dosya kullanın veya URL girin.`,
-        );
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => {
+    readImageFiles(
+      files,
+      (url) =>
         setDraft((d) => ({
           ...d,
-          images: [
-            ...d.images,
-            { url: String(reader.result), alt: { tr: d.name, en: d.name } },
-          ],
-        }));
-      };
-      reader.readAsDataURL(file);
-    });
+          images: [...d.images, { url, alt: { tr: d.name, en: d.name } }],
+        })),
+      setError,
+    );
   };
 
   const submit = (e: React.FormEvent) => {
@@ -447,7 +439,7 @@ export function ProductForm({ product }: { product?: Product }) {
         <div className="space-y-5 rounded-[4px] border border-zw-grey-200 bg-white p-5">
           <Alert tone="info">
             Görsel URL&apos;si girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar tarayıcı
-            deposunda saklandığı için 1.5 MB altında olmalıdır. İlk görsel kapak görselidir.
+            otomatik olarak küçültülüp WebP'ye çevrilir; boyutla uğraşmanıza gerek yok. İlk görsel kapak görselidir.
           </Alert>
 
           <div className="flex flex-col gap-2 sm:flex-row">

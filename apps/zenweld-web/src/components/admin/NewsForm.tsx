@@ -204,7 +204,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
         <div className="space-y-4 rounded-[4px] border border-zw-grey-200 bg-white p-5">
           <Alert tone="info">
             Kapak görseli ve galeri fotoğrafları için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar
-            tarayıcı deposunda saklandığı için 1.5 MB altında olmalıdır.
+            otomatik olarak küçültülüp WebP'ye çevrilir; boyutla uğraşmanıza gerek yok.
           </Alert>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
