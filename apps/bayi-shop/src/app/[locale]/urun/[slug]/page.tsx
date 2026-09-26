@@ -27,7 +27,10 @@ export async function generateMetadata({
 
   const title = product.name;
   const description = product.shortDescription[lang];
-  const image = product.images[0]?.url ?? "/images/products/zenweld-urun.png";
+  // Urunun fotografi yoksa paylasim karti olarak markali gorsel kullanilir.
+  // Onceden 519 KB'lik dikey bir urun fotografi vardi; sosyal aglar bu
+  // olcuyu kirpiyordu.
+  const image = product.images[0]?.url ?? "/images/brand/og-cover.png";
 
   return {
     title,

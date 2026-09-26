@@ -9,10 +9,11 @@ const nextConfig = {
     "@zenweld/i18n",
   ],
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "**" },
-    ],
+    // hostname: "**" acikti; bu, /_next/image ucunu herkesin kullanabilecegi
+    // bir gorsel vekiline cevirir (baskasinin dosyasi bizim sunucumuzdan
+    // servis edilir). Uygulamada next/image kullanilmadigi icin genis izne
+    // gerek yok. Yeni bir kaynak gerekirse buraya acikca eklenir.
+    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
   },
 };
 

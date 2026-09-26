@@ -42,15 +42,16 @@ export async function generateMetadata({
       title,
       description,
       url: `/${lang}`,
+      // 1200x630 markali paylasim karti (scripts/make-brand-images.mjs)
       images: [
-        { url: "/images/products/zenweld-urun.png", width: 748, height: 1064, alt: STORE.name },
+        { url: "/images/brand/og-cover.png", width: 1200, height: 630, alt: STORE.name },
       ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/images/products/zenweld-urun.png"],
+      images: ["/images/brand/og-cover.png"],
     },
   };
 }

@@ -79,7 +79,8 @@ export function ShopFooter() {
 
       <div className="border-t border-zw-grey-200">
         <div className="zw-container flex flex-col gap-2 py-4 text-xs text-zw-grey-500 sm:flex-row sm:justify-between">
-          <span>© 2026 {STORE.legalName}</span>
+          {/* Yil elle yazilmaz; her 1 Ocak'ta kendiliginden guncellenir. */}
+          <span>© {new Date().getFullYear()} {STORE.legalName}</span>
           <span>{t.shop.demoCheckout}</span>
         </div>
       </div>

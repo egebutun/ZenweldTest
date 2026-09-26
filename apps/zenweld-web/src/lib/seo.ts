@@ -130,7 +130,9 @@ export function organizationJsonLd(locale: Locale): Record<string, unknown> {
     "@type": "Organization",
     name: SITE_NAME,
     url: absoluteUrl(`/${locale}`),
-    logo: absoluteUrl("/images/brand/zenweld-logo.svg"),
+    // Raster bicim: paylasim onizlemeleri ve arama motorlari PNG'yi her
+    // zaman isler, SVG'yi her arac islemez.
+    logo: absoluteUrl("/images/brand/zenweld-logo.png"),
     description: siteDescription(locale),
     // Resmi sosyal medya hesaplari — arama motorlari markayi bu hesaplarla
     // eslestirir. Tek kaynak CONTACT.social.
@@ -155,4 +157,62 @@ export function organizationJsonLd(locale: Locale): Record<string, unknown> {
 /** <script type="application/ld+json"> icerigi icin guvenli seri hale getirme. */
 export function jsonLdScript(data: Record<string, unknown>): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+/* ------------------------------------------------------------------ */
+/* Icerigi henuz yazilmamis sayfalar                                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Yer tutucu metin tasiyan sayfalar icin metadata.
+ *
+ * Bu sayfalarda (KVKK, gizlilik, iade, garanti sartlari...) su an Lorem
+ * ipsum duruyor. Arama motorlarina acik birakilirsa Google bu metni
+ * Zenweld'in GERCEK hukuki metni sanip indeksler; sonradan gercek metin
+ * yazildiginda da eski hali bir sure aramada kalir. Bu yuzden gercek
+ * icerik gelene kadar noindex isaretliyoruz.
+ *
+ * Gercek metin eklendiginde: ilgili sayfada bu fonksiyon yerine
+ * pageMetadata() kullanin, sayfa aramaya acilir.
+ */
+export function placeholderPageMetadata(opts: {
+  path: string;
+  locale: Locale;
+  title: { tr: string; en: string };
+  description: { tr: string; en: string };
+}) {
+  return {
+    title: opts.title[opts.locale],
+    description: opts.description[opts.locale],
+    alternates: languageAlternates(opts.path, opts.locale),
+    robots: { index: false, follow: true },
+  };
+}
+
+/**
+ * Icerigi hazir sayfalar icin metadata.
+ * Her sayfanin kendi basligi ve aciklamasi olur; aksi halde tum sayfalar
+ * aramada anasayfanin basligiyla cikar.
+ */
+export function pageMetadata(opts: {
+  path: string;
+  locale: Locale;
+  title: { tr: string; en: string };
+  description: { tr: string; en: string };
+}) {
+  const title = opts.title[opts.locale];
+  const description = opts.description[opts.locale];
+
+  return {
+    title,
+    description,
+    alternates: languageAlternates(opts.path, opts.locale),
+    openGraph: {
+      title,
+      description,
+      siteName: SITE_NAME,
+      url: `/${opts.locale}${opts.path}`,
+    },
+    ...(isNoIndex() ? { robots: { index: false, follow: false } } : {}),
+  };
 }
