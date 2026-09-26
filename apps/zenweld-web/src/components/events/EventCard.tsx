@@ -5,7 +5,7 @@ import type { ZenweldEvent } from "@zenweld/data";
 import { Badge } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
-import { logoAlternates } from "@/lib/event-logo";
+import { EventLogo } from "./EventLogo";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 
 /** Tarih bloğu: gün aralığı üstte, ay ortada, yıl altta. */
@@ -52,12 +52,14 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
       <div className="flex items-start justify-between gap-4">
         <DateBlock event={event} locale={locale} />
         <div className="flex h-[92px] flex-1 items-center justify-end">
-          <ProductImage
+          {/* Sabit kutu + esit alan: her etkinligin logosu ayni gorsel
+              agirlikta gorunur, hicbiri kirpilmaz. */}
+          <EventLogo
             src={event.logoUrl}
-            alternates={logoAlternates(event.logoUrl)}
-            alt={event.title}
-            label={event.title}
-            className="max-h-[68px] max-w-[190px] object-contain"
+            title={event.title}
+            maxWidth={242}
+            maxHeight={86}
+            targetArea={11_600}
           />
         </div>
       </div>

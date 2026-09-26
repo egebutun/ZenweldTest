@@ -6,7 +6,7 @@ import { ArrowLeft, CalendarDays, ExternalLink, MapPin } from "lucide-react";
 import { useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
-import { logoAlternates } from "@/lib/event-logo";
+import { EventLogo } from "./EventLogo";
 import { RichText } from "./RichText";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatDate } from "@/lib/format";
@@ -43,21 +43,18 @@ export function EventDetail({ slug }: { slug: string }) {
               </h1>
               <p className="mt-3 text-zw-grey-600">{text(event.summary)}</p>
             </div>
-            {/* Her logo ayni olculu beyaz kutuda durur ve kutunun alt/ust
-                kenarina kadar uzar: h-full yuksekligi birebir kutuya esitler,
-                w-auto genisligi logonun kendi oranindan hesaplar. Boylece
-                logo ezilmez. Mevcut logolarin en genis orani 2.15; 128 px
-                yukseklikte 275 px yapar, kutuya (300 px) sigar. Cok daha
-                genis bir logo gelirse max-w-full tasmayi onler. */}
-            <div className="flex h-32 w-[300px] shrink-0 items-center justify-center overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white">
-              <ProductImage
-                src={event.logoUrl}
-                alternates={logoAlternates(event.logoUrl)}
-                alt={event.title}
-                label={event.title}
-                className="h-full w-auto max-w-full object-contain"
-              />
-            </div>
+            {/* Kutu logonun etrafini sarar (fit="hug"): yanlarda artik
+                bos beyaz alan kalmiyor. Yukseklik sabit oldugu icin butun
+                etkinliklerde ayni cizgide duruyor. */}
+            <EventLogo
+              src={event.logoUrl}
+              title={event.title}
+              maxWidth={320}
+              maxHeight={120}
+              targetArea={20_000}
+              fit="hug"
+              className="rounded-[4px] border border-zw-grey-200 bg-white"
+            />
           </div>
         </div>
       </div>
