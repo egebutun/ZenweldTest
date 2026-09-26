@@ -116,7 +116,7 @@ export function Header() {
             </button>
 
             <LocaleLink
-              href="/bayi-ve-servis-agi"
+              href="/yetkili-bayi-ve-servis-agi"
               className="rounded-[4px] p-2 text-zw-ink transition-colors hover:bg-zw-grey-100"
               aria-label={t.nav.findDealer}
               title={t.nav.findDealer}

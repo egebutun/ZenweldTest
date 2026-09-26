@@ -28,8 +28,45 @@ interface DealerWithDistance extends Dealer {
   hasProduct?: boolean;
 }
 
-/** Bayi mi, yetkili servis mi, ikisi de mi? */
-type DealerType = "" | "satici" | "servis";
+/**
+ * Bir noktanin iletisim eylemleri: Ara / WhatsApp / Yol Tarifi.
+ *
+ * Hem listedeki kartta hem anasayfada haritanin altindaki secili nokta
+ * kartinda kullanilir; ayni kodun iki kopyasi durmasin.
+ */
+function DealerActions({ dealer, t }: { dealer: Dealer; t: ReturnType<typeof useT> }) {
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
+  const cls =
+    "inline-flex items-center gap-1.5 rounded-[3px] border border-zw-grey-300 px-2.5 py-1.5 text-xs font-semibold hover:border-zw-ink";
+
+  return (
+    <div className="mt-3 flex flex-wrap gap-2">
+      <a href={`tel:${dealer.phone.replace(/\s/g, "")}`} onClick={stop} className={cls}>
+        <Phone size={13} /> {t.dealers.call}
+      </a>
+      {dealer.whatsapp && (
+        <a
+          href={`https://wa.me/${dealer.whatsapp.replace(/\D/g, "")}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={stop}
+          className={cls}
+        >
+          <MessageCircle size={13} /> {t.dealers.whatsapp}
+        </a>
+      )}
+      <a
+        href={`https://www.google.com/maps/dir/?api=1&destination=${dealer.lat},${dealer.lng}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={stop}
+        className={cls}
+      >
+        <ExternalLink size={13} /> {t.dealers.directions}
+      </a>
+    </div>
+  );
+}
 
 export function DealerFinder({
   productId,
@@ -52,7 +89,8 @@ export function DealerFinder({
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState(false);
   const [city, setCity] = useState("");
-  const [type, setType] = useState<DealerType>("");
+  const [wantSeller, setWantSeller] = useState(false);
+  const [wantService, setWantService] = useState(false);
   const [onlyInStock, setOnlyInStock] = useState(Boolean(productId));
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -74,15 +112,18 @@ export function DealerFinder({
 
     if (productId && onlyInStock) list = list.filter((d) => d.hasProduct);
     if (city) list = list.filter((d) => d.city === city);
-    // Secenekler birbirini dislar, aksi halde filtre ise yaramiyordu:
-    // 30 noktanin 30'u yetkili satici oldugu icin "yalnizca satici"
-    // secmek listeyi hic degistirmiyordu. Artik yetkili servis olanlar
-    // satici listesinden cikariliyor: 20 satici + 10 servis = 30.
-    if (type === "servis") list = list.filter((d) => d.badges.includes("yetkili-servis"));
-    if (type === "satici") {
-      list = list.filter(
-        (d) => d.badges.includes("yetkili-satici") && !d.badges.includes("yetkili-servis"),
-      );
+    // Iki bagimsiz onay kutusu. Hicbiri secili degilse ya da ikisi de
+    // seciliyse butun noktalar listelenir.
+    //
+    // "Yetkili Satici" isaretlendiginde yetkili servisler disarida kalir:
+    // 30 noktanin 30'unda satici rozeti var, dislama olmasa bu secim
+    // listeyi hic degistirmezdi. Boylece 20 satici + 10 servis = 30.
+    if (wantSeller !== wantService) {
+      list = wantService
+        ? list.filter((d) => d.badges.includes("yetkili-servis"))
+        : list.filter(
+            (d) => d.badges.includes("yetkili-satici") && !d.badges.includes("yetkili-servis"),
+          );
     }
 
     const origin = position ?? (city ? CITY_CENTERS[city] : undefined);
@@ -95,7 +136,9 @@ export function DealerFinder({
     }
 
     return list;
-  }, [db, productId, onlyInStock, city, type, position, stockedDealerIds]);
+  }, [db, productId, onlyInStock, city, wantSeller, wantService, position, stockedDealerIds]);
+
+  const selected = dealers.find((d) => d.id === selectedId) ?? null;
 
   const locate = () => {
     if (!navigator.geolocation) {
@@ -166,14 +209,21 @@ export function DealerFinder({
           </Select>
         </div>
         <div className="flex-1">
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
+          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
             {t.dealers.filterType}
-          </label>
-          <Select value={type} onChange={(e) => setType(e.target.value as DealerType)}>
-            <option value="">{t.dealers.allTypes}</option>
-            <option value="satici">{t.dealers.onlySellers}</option>
-            <option value="servis">{t.dealers.onlyServices}</option>
-          </Select>
+          </span>
+          <div className="flex h-11 items-center gap-5">
+            <Checkbox
+              label={t.dealers.onlySellers}
+              checked={wantSeller}
+              onChange={(e) => setWantSeller(e.target.checked)}
+            />
+            <Checkbox
+              label={t.dealers.onlyServices}
+              checked={wantService}
+              onChange={(e) => setWantService(e.target.checked)}
+            />
+          </div>
         </div>
         <Button
           variant="dark"
@@ -215,6 +265,43 @@ export function DealerFinder({
               className="h-[380px] w-full lg:h-[440px]"
             />
           </div>
+
+          {/* Haritada bir isaretciye tiklanildiginda noktanin bilgileri ve
+              Ara / WhatsApp / Yol Tarifi baglantilari burada acilir.
+              Onceden anasayfada yalnizca harita vardi, secilen noktaya
+              ulasmanin bir yolu yoktu. */}
+          {selected ? (
+            <div className="mt-4 rounded-[4px] border border-zw-red-600 bg-white p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-display text-lg font-semibold leading-tight">
+                    {selected.name}
+                  </h3>
+                  <p className="mt-1 flex items-start gap-1.5 text-sm text-zw-grey-600">
+                    <MapPin size={15} className="mt-0.5 shrink-0" />
+                    {selected.address}
+                  </p>
+                  <p className="mt-1 flex items-center gap-1.5 text-sm text-zw-grey-600">
+                    <Clock size={15} className="shrink-0" />
+                    {text(selected.workingHours)}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {selected.badges.map((b) => (
+                    <Badge key={b} tone={b === "yetkili-servis" ? "dark" : "grey"}>
+                      {b === "yetkili-servis" ? <Wrench size={11} /> : <Building2 size={11} />}
+                      {badgeLabel(b)}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+              <DealerActions dealer={selected} t={t} />
+            </div>
+          ) : (
+            <p className="mt-4 rounded-[4px] border border-dashed border-zw-grey-300 px-4 py-5 text-center text-sm text-zw-grey-500">
+              {t.dealers.selectHint}
+            </p>
+          )}
         </>
       ) : (
       <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_1fr]">
@@ -268,35 +355,7 @@ export function DealerFinder({
                   )}
                 </div>
 
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <a
-                    href={`tel:${dealer.phone.replace(/\s/g, "")}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-1.5 rounded-[3px] border border-zw-grey-300 px-2.5 py-1.5 text-xs font-semibold hover:border-zw-ink"
-                  >
-                    <Phone size={13} /> {t.dealers.call}
-                  </a>
-                  {dealer.whatsapp && (
-                    <a
-                      href={`https://wa.me/${dealer.whatsapp.replace(/\D/g, "")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1.5 rounded-[3px] border border-zw-grey-300 px-2.5 py-1.5 text-xs font-semibold hover:border-zw-ink"
-                    >
-                      <MessageCircle size={13} /> {t.dealers.whatsapp}
-                    </a>
-                  )}
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${dealer.lat},${dealer.lng}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-1.5 rounded-[3px] border border-zw-grey-300 px-2.5 py-1.5 text-xs font-semibold hover:border-zw-ink"
-                  >
-                    <ExternalLink size={13} /> {t.dealers.directions}
-                  </a>
-                </div>
+                <DealerActions dealer={dealer} t={t} />
               </button>
             ))}
 

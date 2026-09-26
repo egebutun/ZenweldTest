@@ -22,7 +22,7 @@ const TOP_LEVEL: Record<string, string> = {
   guvenlik: "safety",
   aksesuarlar: "accessories",
   "dolgu-metalleri": "filler-metals",
-  "bayi-ve-servis-agi": "dealer-service-network",
+  "yetkili-bayi-ve-servis-agi": "authorised-dealer-service-network",
   "teklif-al": "request-quote",
   arama: "search",
   kesfet: "explore",

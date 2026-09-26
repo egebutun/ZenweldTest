@@ -19,8 +19,8 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: languageAlternates("/bayi-ve-servis-agi", lang),
-    openGraph: { title, description, url: `/${lang}/bayi-ve-servis-agi` },
+    alternates: languageAlternates("/yetkili-bayi-ve-servis-agi", lang),
+    openGraph: { title, description, url: `/${lang}/yetkili-bayi-ve-servis-agi` },
   };
 }
 

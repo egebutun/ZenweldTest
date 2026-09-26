@@ -130,7 +130,7 @@ export function useMainMenu(): TopMenu[] {
           label: t.nav.support,
           href: "/destek",
           links: [
-            { label: t.nav.findDealer, description: t.support.dealerCardText, href: "/bayi-ve-servis-agi" },
+            { label: t.nav.findDealer, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi" },
             { label: t.support.faqTitle, description: t.support.faqCardText, href: "/destek/sss" },
             { label: t.support.contactTitle, description: t.support.contactCardText, href: "/destek/iletisim" },
           ],
@@ -168,7 +168,7 @@ export function useFooterMenu() {
         title: t.footer.company,
         links: [
           { label: t.footer.about, href: "/hakkimizda" },
-          { label: t.footer.findStore, href: "/bayi-ve-servis-agi" },
+          { label: t.footer.findStore, href: "/yetkili-bayi-ve-servis-agi" },
           { label: t.footer.checkWarranty, href: "/kesfet/garanti-sorgula" },
           { label: t.footer.contact, href: "/destek/iletisim" },
         ],

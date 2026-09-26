@@ -121,7 +121,7 @@ export function WelcomeOverlay() {
                 {t.welcome.cta}
               </Button>
             </LocaleLink>
-            <LocaleLink href="/bayi-ve-servis-agi" onClick={close}>
+            <LocaleLink href="/yetkili-bayi-ve-servis-agi" onClick={close}>
               <Button
                 size="lg"
                 fullWidth
