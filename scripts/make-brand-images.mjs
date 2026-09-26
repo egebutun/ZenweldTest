@@ -46,45 +46,53 @@ function backgroundSvg() {
     </linearGradient>
   </defs>
   <rect width="${W}" height="${H}" fill="url(#g)"/>
-  <rect x="0" y="0" width="14" height="${H}" fill="${RED}"/>
-  <path d="M${W - 420} ${H} L${W} ${H - 300} L${W} ${H} Z" fill="${RED}" opacity="0.10"/>
-  <path d="M${W - 250} ${H} L${W} ${H - 180} L${W} ${H} Z" fill="${RED}" opacity="0.14"/>
 </svg>`);
 }
 
-/** Logonun altindaki aciklama satiri. */
-function taglineSvg(text, suffix) {
-  const suffixBlock = suffix
-    ? `<text x="0" y="34" font-family="Liberation Sans, DejaVu Sans, sans-serif"
-             font-size="40" font-weight="bold" fill="#ffffff" letter-spacing="3">${suffix}</text>
-       <rect x="0" y="56" width="70" height="4" fill="${RED}"/>`
-    : `<rect x="0" y="0" width="70" height="4" fill="${RED}"/>`;
-
-  const y = suffix ? 104 : 44;
-
-  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="140">
-  ${suffixBlock}
-  <text x="0" y="${y}" font-family="Liberation Sans, DejaVu Sans, sans-serif"
-        font-size="27" fill="#c8cbd0" letter-spacing="0.6">${text}</text>
+/**
+ * Bayi kartindaki "BAYİ-A" eki.
+ *
+ * Ana sitede hicbir yazi yok, yalnizca logo var. Bayi sitesinin ana
+ * sayfadaki logosu da logo + bayi adi seklinde oldugu icin kartta yalnizca
+ * bu ek duruyor; aciklama satiri kaldirildi.
+ */
+function suffixSvg(suffix) {
+  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="80">
+  <text x="0" y="52" font-family="Liberation Sans, DejaVu Sans, sans-serif"
+        font-size="46" font-weight="bold" fill="#ffffff" letter-spacing="4">${suffix}</text>
 </svg>`);
 }
 
-async function buildCard({ app, logoWidth, tagline, suffix }) {
+/**
+ * Paylasim karti: koyu zemin uzerinde ortalanmis Zenweld logosu.
+ * Sitenin ana sayfasindaki logonun aynisi kullanilir.
+ */
+async function buildCard({ app, logoWidth, suffix }) {
   const logo = await renderLogo(logoWidth);
-  const logoMeta = await sharp(logo).metadata();
+  const { width: lw, height: lh } = await sharp(logo).metadata();
 
-  const left = 96;
-  const logoTop = suffix ? 196 : 232;
+  const gap = 26;
+
+  // Ek yaziyi once kirp, GERCEK yuksekligini olc; blok yuksekligini ona
+  // gore hesapla. Sabit bir yukseklik varsaymak bloku yukari kaydiriyordu.
+  const sx = suffix ? await sharp(suffixSvg(suffix)).trim().toBuffer() : null;
+  const sm = sx ? await sharp(sx).metadata() : null;
+
+  const blockH = lh + (sm ? gap + sm.height : 0);
+  const top = Math.round((H - blockH) / 2);
+
+  const layers = [{ input: logo, left: Math.round((W - lw) / 2), top }];
+
+  if (sx && sm) {
+    layers.push({
+      input: sx,
+      left: Math.round((W - sm.width) / 2),
+      top: top + lh + gap,
+    });
+  }
 
   const image = await sharp(backgroundSvg())
-    .composite([
-      { input: logo, left, top: logoTop },
-      {
-        input: taglineSvg(tagline, suffix),
-        left,
-        top: logoTop + logoMeta.height + 34,
-      },
-    ])
+    .composite(layers)
     .png({ compressionLevel: 9 })
     .toBuffer();
 
@@ -106,17 +114,8 @@ async function buildLogoPng() {
 }
 
 console.log("Marka gorselleri uretiliyor...");
-await buildCard({
-  app: "zenweld-web",
-  logoWidth: 620,
-  tagline: "KAYNAK MAKİNELERİ  ·  PLAZMA KESME  ·  KAYNAK EKİPMANLARI",
-});
-await buildCard({
-  app: "bayi-shop",
-  logoWidth: 520,
-  suffix: "BAYİ-A",
-  tagline: "YETKİLİ ZENWELD BAYİSİ  ·  ONLINE SATIŞ",
-});
+await buildCard({ app: "zenweld-web", logoWidth: 720 });
+await buildCard({ app: "bayi-shop", logoWidth: 620, suffix: "BAYİ-A" });
 await buildLogoPng();
 console.log("Bitti.");
 
