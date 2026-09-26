@@ -20,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/guvenlik", priority: 0.7, freq: "monthly" },
     { path: "/aksesuarlar", priority: 0.7, freq: "monthly" },
     { path: "/dolgu-metalleri", priority: 0.7, freq: "monthly" },
-    { path: "/bayi-ve-servis-agi", priority: 0.9, freq: "monthly" },
+    { path: "/yetkili-bayi-ve-servis-agi", priority: 0.9, freq: "monthly" },
     { path: "/teklif-al", priority: 0.9, freq: "monthly" },
     { path: "/hakkimizda", priority: 0.6, freq: "yearly" },
     { path: "/kesfet/welders-club", priority: 0.6, freq: "monthly" },
