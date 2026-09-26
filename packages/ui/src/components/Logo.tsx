@@ -1,36 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 /**
  * ZENWELD LOGOSU
  *
- * Gercek logo dosyasi su yollardan okunur (her iki uygulamanin public
- * klasorunde bulunur):
+ * Gercek logo dosyalari (her iki uygulamanin public klasorunde):
  *
- *   /images/brand/zenweld-logo.svg         acik zeminler icin (koyu yazili)
+ *   /images/brand/zenweld-logo.svg         acik zeminler icin (kirmizi yazili)
  *   /images/brand/zenweld-logo-light.svg   koyu zeminler icin (beyaz yazili)
  *
- * Dosya SVG degil PNG ise .png uzantisi da denenir. Hicbiri bulunamazsa
- * asagidaki gomulu SVG'ye duser — yani logo dosyasi yuklenmemis olsa bile
- * sitede hicbir zaman kirik gorsel cikmaz.
+ * YANIP SONME NOTU
+ * Onceki surum once gomulu yedek isareti ciziyor, arka planda dosyayi
+ * new Image() ile deneyip yuklendiginde gercek logoyla degistiriyordu.
+ * Bu yuzden her sayfa acilisinda once cizilmis yedek logo, hemen ardindan
+ * gercek logo goruluyordu.
+ *
+ * Simdi gercek dosya dogrudan basiliyor; yedek isaret yalnizca dosya
+ * gercekten yuklenemezse (onError) devreye giriyor. Dosyalar depoda
+ * oldugu icin normal kullanimda yedek hic gorunmez.
  */
 
-const CANDIDATES: Record<"dark" | "light", string[]> = {
-  dark: [
-    "/images/brand/zenweld-logo.svg",
-    "/images/brand/zenweld-logo.png",
-  ],
-  light: [
-    "/images/brand/zenweld-logo-light.svg",
-    "/images/brand/zenweld-logo-light.png",
-    // Beyaz versiyon yoksa normal logoyu dene
-    "/images/brand/zenweld-logo.svg",
-    "/images/brand/zenweld-logo.png",
-  ],
+const SRC: Record<"dark" | "light", string> = {
+  dark: "/images/brand/zenweld-logo.svg",
+  light: "/images/brand/zenweld-logo-light.svg",
 };
 
-/** Gomulu yedek logo — gercek dosya bulunamadiginda kullanilir. */
+/** Gomulu yedek logo — gercek dosya yuklenemezse kullanilir. */
 function FallbackMark({
   className,
   variant,
@@ -63,46 +59,6 @@ function FallbackMark({
   );
 }
 
-/**
- * Aday logo dosyalarini sirayla dener ve YALNIZCA basariyla yuklenen dosyayi
- * sayfaya koyar. Boylece dosya yokken kisa sureligine kirik gorsel gorunmez;
- * yerine gomulu yedek logo durur.
- */
-function useResolvedLogo(variant: "dark" | "light"): string | null | undefined {
-  // undefined = araniyor, null = hicbiri bulunamadi, string = bulundu
-  const [src, setSrc] = useState<string | null | undefined>(undefined);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const probe = (url: string) =>
-      new Promise<boolean>((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(img.naturalWidth > 0);
-        img.onerror = () => resolve(false);
-        img.src = url;
-      });
-
-    (async () => {
-      for (const candidate of CANDIDATES[variant]) {
-        const ok = await probe(candidate);
-        if (cancelled) return;
-        if (ok) {
-          setSrc(candidate);
-          return;
-        }
-      }
-      if (!cancelled) setSrc(null);
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [variant]);
-
-  return src;
-}
-
 export function ZenweldLogo({
   className = "",
   variant = "dark",
@@ -110,14 +66,21 @@ export function ZenweldLogo({
   className?: string;
   variant?: "dark" | "light";
 }) {
-  const src = useResolvedLogo(variant);
+  const [failed, setFailed] = useState(false);
 
-  if (!src) {
+  if (failed) {
     return <FallbackMark className={className} variant={variant} label="Zenweld" />;
   }
 
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt="Zenweld" className={className} />;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={SRC[variant]}
+      alt="Zenweld"
+      className={className}
+      onError={() => setFailed(true)}
+    />
+  );
 }
 
 /**
@@ -144,11 +107,11 @@ export function ZenweldBayiLogo({
   /** Logo yuksekligi (px). Yazi boyutu ve hizasi bundan turetilir. */
   height?: number;
 }) {
-  const src = useResolvedLogo(variant);
+  const [failed, setFailed] = useState(false);
   const color = variant === "light" ? "#FFFFFF" : "#141619";
   const shift = WORDMARK_CENTER - 0.5; // kutu merkezinden asagi kayma orani
 
-  if (!src) {
+  if (failed) {
     return (
       <FallbackMark
         className={className}
@@ -165,7 +128,12 @@ export function ZenweldBayiLogo({
       style={{ height, fontSize: height }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt={`Zenweld ${suffix}`} className="h-full w-auto" />
+      <img
+        src={SRC[variant]}
+        alt={`Zenweld ${suffix}`}
+        className="h-full w-auto"
+        onError={() => setFailed(true)}
+      />
       <span
         aria-hidden
         className="w-px shrink-0"
