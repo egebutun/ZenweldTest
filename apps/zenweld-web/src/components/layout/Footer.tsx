@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
+import { Instagram, Linkedin, Youtube } from "lucide-react";
 import { ZenweldLogo } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
+import { TikTokIcon } from "@/components/common/TikTokIcon";
 import { useLocale, useT } from "@/lib/i18n-client";
 import { CONTACT, useFooterMenu } from "@/lib/menu";
 import { locales, localeNames, switchLocaleInPath } from "@zenweld/i18n";
@@ -54,14 +55,17 @@ export function Footer() {
             <div className="mt-5 flex gap-3">
               {[
                 { Icon: Instagram, href: CONTACT.social.instagram, label: "Instagram" },
-                { Icon: Facebook, href: CONTACT.social.facebook, label: "Facebook" },
                 { Icon: Youtube, href: CONTACT.social.youtube, label: "YouTube" },
                 { Icon: Linkedin, href: CONTACT.social.linkedin, label: "LinkedIn" },
+                { Icon: TikTokIcon, href: CONTACT.social.tiktok, label: "TikTok" },
               ].map(({ Icon, href, label }) => (
                 <a
                   key={label}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
+                  title={label}
                   className="text-zw-ink transition-colors hover:text-zw-red-600"
                 >
                   <Icon size={20} />

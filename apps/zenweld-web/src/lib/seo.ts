@@ -1,5 +1,6 @@
 import { localizePath, type Locale } from "@zenweld/i18n";
 import type { Category, Product } from "@zenweld/data";
+import { CONTACT, OFFICES } from "@/lib/contact";
 
 /**
  * SEO yardimcilari.
@@ -129,15 +130,25 @@ export function organizationJsonLd(locale: Locale): Record<string, unknown> {
     "@type": "Organization",
     name: SITE_NAME,
     url: absoluteUrl(`/${locale}`),
-    logo: absoluteUrl("/images/products/zenweld-urun.png"),
+    logo: absoluteUrl("/images/brand/zenweld-logo.svg"),
     description: siteDescription(locale),
+    // Resmi sosyal medya hesaplari — arama motorlari markayi bu hesaplarla
+    // eslestirir. Tek kaynak CONTACT.social.
+    sameAs: Object.values(CONTACT.social),
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+90-850-000-00-00",
+      telephone: OFFICES[0].phones[0].replace(/\s/g, ""),
+      email: CONTACT.email,
       contactType: "customer service",
       areaServed: "TR",
       availableLanguage: ["Turkish", "English"],
     },
+    address: OFFICES.map((office) => ({
+      "@type": "PostalAddress",
+      streetAddress: office.addressLines.join(" "),
+      addressLocality: office.city,
+      addressCountry: "TR",
+    })),
   };
 }
 
