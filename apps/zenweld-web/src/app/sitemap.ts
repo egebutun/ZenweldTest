@@ -35,7 +35,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/destek", priority: 0.5, freq: "monthly" },
     { path: "/destek/sss", priority: 0.5, freq: "monthly" },
     { path: "/destek/iletisim", priority: 0.5, freq: "yearly" },
-    { path: "/destek/servis-agi", priority: 0.5, freq: "monthly" },
   ];
 
   const entries: MetadataRoute.Sitemap = [];

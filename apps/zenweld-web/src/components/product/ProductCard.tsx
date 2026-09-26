@@ -9,7 +9,14 @@ import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@/lib/format";
 import { useFavourites } from "@/lib/favourites";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({
+  product,
+  /** Anasayfadaki kayan seritte kullanilan daha kucuk hal. */
+  compact = false,
+}: {
+  product: Product;
+  compact?: boolean;
+}) {
   const t = useT();
   const locale = useLocale();
   const text = useText();
@@ -37,27 +44,35 @@ export function ProductCard({ product }: { product: Product }) {
       </button>
 
       <LocaleLink href={`/urun/${product.slug}`} className="block">
-        <div className="relative aspect-square overflow-hidden bg-zw-grey-50">
+        <div
+          className={`relative overflow-hidden bg-zw-grey-50 ${compact ? "aspect-[4/3]" : "aspect-square"}`}
+        >
           <ProductImage
             src={product.images[0]?.url}
             alt={text(product.images[0]?.alt) || product.name}
             label={product.name}
-            className="h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+            className={`h-full w-full object-contain transition-transform duration-300 group-hover:scale-105 ${compact ? "p-2" : "p-3"}`}
           />
-          <div className="absolute left-2 top-2 flex flex-col gap-1">
+          {/* Indirimli bir urun ayni zamanda yeni olabilir; ikisi de gosterilir.
+              Onceden indirim varken "Yeni" etiketi gizleniyordu. */}
+          <div className="absolute left-2 top-2 flex flex-col items-start gap-1">
             {discount > 0 && <Badge tone="red">%{discount} {t.product.discount}</Badge>}
-            {product.isNew && !discount && <Badge tone="red">{t.product.new}</Badge>}
+            {product.isNew && (
+              <Badge tone={discount > 0 ? "dark" : "red"}>{t.product.new}</Badge>
+            )}
             {!product.inStock && <Badge tone="outline">{t.product.outOfStock}</Badge>}
           </div>
         </div>
       </LocaleLink>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className={`flex flex-1 flex-col ${compact ? "p-3" : "p-4"}`}>
         <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-zw-grey-500">
           {product.processes.slice(0, 3).join(" · ") || product.sku}
         </div>
         <LocaleLink href={`/urun/${product.slug}`}>
-          <h3 className="font-display text-lg font-semibold leading-tight text-zw-ink transition-colors group-hover:text-zw-red-600">
+          <h3
+            className={`font-display font-semibold leading-tight text-zw-ink transition-colors group-hover:text-zw-red-600 ${compact ? "text-base" : "text-lg"}`}
+          >
             {product.name}
           </h3>
         </LocaleLink>
@@ -77,8 +92,8 @@ export function ProductCard({ product }: { product: Product }) {
           </p>
         )}
 
-        <div className="mt-auto pt-4">
-          <div className="text-lg font-bold text-zw-ink">
+        <div className={compact ? "mt-auto pt-3" : "mt-auto pt-4"}>
+          <div className={`font-bold text-zw-ink ${compact ? "text-base" : "text-lg"}`}>
             {formatPrice(priceWithVat(product.priceExVat, product.vatRate), locale)}
             <span className="ml-1.5 text-xs font-normal text-zw-grey-500">
               {t.product.priceIncVat}

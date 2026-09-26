@@ -1,6 +1,6 @@
 "use client";
 
-import { FileQuestion, MapPin, MessageSquare, Wrench } from "lucide-react";
+import { FileQuestion, MapPin, MessageSquare } from "lucide-react";
 import { PageHero } from "@/components/common/PageShell";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useT } from "@/lib/i18n-client";
@@ -12,7 +12,6 @@ export default function SupportPage() {
   const cards = [
     { href: "/destek/sss", Icon: FileQuestion, title: t.support.faqTitle, text: t.support.faqCardText },
     { href: "/destek/iletisim", Icon: MessageSquare, title: t.support.contactTitle, text: t.support.contactCardText },
-    { href: "/destek/servis-agi", Icon: Wrench, title: t.support.serviceTitle, text: t.support.serviceCardText },
     { href: "/nereden-alabilirim", Icon: MapPin, title: t.nav.findDealer, text: t.support.dealerCardText },
   ];
 
@@ -21,7 +20,7 @@ export default function SupportPage() {
       <PageHero title={t.support.title} subtitle={t.support.subtitle} />
 
       <div className="zw-container py-12">
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map(({ href, Icon, title, text }) => (
             <LocaleLink
               key={href}

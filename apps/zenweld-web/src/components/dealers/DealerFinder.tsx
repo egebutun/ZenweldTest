@@ -28,14 +28,20 @@ interface DealerWithDistance extends Dealer {
   hasProduct?: boolean;
 }
 
+/** Bayi mi, yetkili servis mi, ikisi de mi? */
+type DealerType = "" | "satici" | "servis";
+
 export function DealerFinder({
   productId,
   productName,
   compact = false,
+  /** "home": anasayfada baslik ve liste olmadan yalnizca filtreler + harita. */
+  variant = "full",
 }: {
   productId?: string;
   productName?: string;
   compact?: boolean;
+  variant?: "full" | "home";
 }) {
   const t = useT();
   const locale = useLocale();
@@ -46,6 +52,7 @@ export function DealerFinder({
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState(false);
   const [city, setCity] = useState("");
+  const [type, setType] = useState<DealerType>("");
   const [onlyInStock, setOnlyInStock] = useState(Boolean(productId));
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -67,6 +74,9 @@ export function DealerFinder({
 
     if (productId && onlyInStock) list = list.filter((d) => d.hasProduct);
     if (city) list = list.filter((d) => d.city === city);
+    // Yetkili servis rozeti ayri; satici tarafinda showroom da satis noktasidir.
+    if (type === "servis") list = list.filter((d) => d.badges.includes("yetkili-servis"));
+    if (type === "satici") list = list.filter((d) => d.badges.includes("yetkili-satici"));
 
     const origin = position ?? (city ? CITY_CENTERS[city] : undefined);
     if (origin) {
@@ -78,7 +88,7 @@ export function DealerFinder({
     }
 
     return list;
-  }, [db, productId, onlyInStock, city, position, stockedDealerIds]);
+  }, [db, productId, onlyInStock, city, type, position, stockedDealerIds]);
 
   const locate = () => {
     if (!navigator.geolocation) {
@@ -148,6 +158,16 @@ export function DealerFinder({
             ))}
           </Select>
         </div>
+        <div className="flex-1">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
+            {t.dealers.filterType}
+          </label>
+          <Select value={type} onChange={(e) => setType(e.target.value as DealerType)}>
+            <option value="">{t.dealers.allTypes}</option>
+            <option value="satici">{t.dealers.onlySellers}</option>
+            <option value="servis">{t.dealers.onlyServices}</option>
+          </Select>
+        </div>
         <Button
           variant="dark"
           onClick={locate}
@@ -174,10 +194,26 @@ export function DealerFinder({
         </div>
       )}
 
+      {variant === "home" ? (
+        <>
+          <div className="mb-3 text-sm font-semibold text-zw-grey-600">
+            {t.dealers.resultCount.replace("{count}", String(dealers.length))}
+          </div>
+          <div className="overflow-hidden rounded-[4px] border border-zw-grey-200">
+            <DealerMap
+              dealers={dealers}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              userPosition={position}
+              className="h-[380px] w-full lg:h-[440px]"
+            />
+          </div>
+        </>
+      ) : (
       <div className="grid gap-6 lg:grid-cols-[minmax(0,420px)_1fr]">
         <div>
           <div className="mb-3 text-sm font-semibold text-zw-grey-600">
-            {t.dealers.dealerCount.replace("{count}", String(dealers.length))}
+            {t.dealers.resultCount.replace("{count}", String(dealers.length))}
           </div>
           <div className="max-h-[560px] space-y-3 overflow-y-auto pr-1">
             {dealers.map((dealer) => (
@@ -275,6 +311,8 @@ export function DealerFinder({
           />
         </div>
       </div>
+
+      )}
 
       <p className="mt-3 text-xs text-zw-grey-500">{t.dealers.mapHint}</p>
     </div>

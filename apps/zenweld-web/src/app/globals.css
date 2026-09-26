@@ -3,3 +3,9 @@
 
 @source "../../../../packages/ui/src";
 @source "../../src";
+
+/* Kendiliginden kayan urun seridinde kaydirma cubugu gizlenir;
+   serit yine parmakla/fareyle kaydirilabilir. */
+.zw-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
