@@ -18,8 +18,8 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: languageAlternates("/kesfet/rehber", lang),
-    openGraph: { title, description, url: `/${lang}/kesfet/rehber` },
+    alternates: languageAlternates("/kesfet/kaynak-rehberi", lang),
+    openGraph: { title, description, url: `/${lang}/kesfet/kaynak-rehberi` },
   };
 }
 

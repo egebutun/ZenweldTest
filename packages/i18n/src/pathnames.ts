@@ -22,7 +22,7 @@ const TOP_LEVEL: Record<string, string> = {
   guvenlik: "safety",
   aksesuarlar: "accessories",
   "dolgu-metalleri": "filler-metals",
-  "nereden-alabilirim": "where-to-buy",
+  "bayi-ve-servis-agi": "dealer-service-network",
   "teklif-al": "request-quote",
   arama: "search",
   kesfet: "explore",
@@ -47,7 +47,6 @@ const TOP_LEVEL: Record<string, string> = {
 /** Ikinci seviye segmentler: yalnizca su ust segmentlerin altinda gecerli */
 const NESTED: Record<string, Record<string, string>> = {
   kesfet: {
-    hakkimizda: "about",
     "welders-club": "welders-club",
     "garanti-sorgula": "check-warranty",
     "garanti-kayit": "register-warranty",
@@ -57,7 +56,7 @@ const NESTED: Record<string, Record<string, string>> = {
     msds: "msds",
     "parti-sertifikalari": "batch-certificates",
     "urun-secici": "product-selector",
-    rehber: "welding-guide",
+    "kaynak-rehberi": "welding-guide",
   },
   destek: {
     sss: "faq",
