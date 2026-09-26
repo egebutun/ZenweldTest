@@ -99,15 +99,15 @@ export function useMainMenu(): TopMenu[] {
     const explore: TopMenu = {
       id: "kesfet",
       label: t.nav.explore,
-      href: "/kesfet/hakkimizda",
+      href: "/hakkimizda",
       columns: [
         {
           label: t.nav.discover,
-          href: "/kesfet/hakkimizda",
+          href: "/hakkimizda",
           links: [
-            { label: t.explore.about, description: t.explore.aboutDesc, href: "/kesfet/hakkimizda" },
+            { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
             { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/kesfet/welders-club" },
-            { label: t.explore.guide, description: t.explore.guideDesc, href: "/kesfet/rehber" },
+            { label: t.explore.guide, description: t.explore.guideDesc, href: "/kesfet/kaynak-rehberi" },
             { label: t.explore.blog, description: t.explore.blogDesc, href: "/kesfet/blog" },
             { label: t.explore.events, description: t.explore.eventsDesc, href: "/kesfet/etkinlikler" },
             { label: t.explore.news, description: t.explore.newsDesc, href: "/kesfet/haberler" },
@@ -130,7 +130,7 @@ export function useMainMenu(): TopMenu[] {
           label: t.nav.support,
           href: "/destek",
           links: [
-            { label: t.nav.findDealer, description: t.support.dealerCardText, href: "/nereden-alabilirim" },
+            { label: t.nav.findDealer, description: t.support.dealerCardText, href: "/bayi-ve-servis-agi" },
             { label: t.support.faqTitle, description: t.support.faqCardText, href: "/destek/sss" },
             { label: t.support.contactTitle, description: t.support.contactCardText, href: "/destek/iletisim" },
           ],
@@ -161,14 +161,14 @@ export function useFooterMenu() {
           { label: t.footer.msds, href: "/kesfet/msds" },
           { label: t.footer.batchCertificates, href: "/kesfet/parti-sertifikalari" },
           { label: t.footer.productSelector, href: "/kesfet/urun-secici" },
-          { label: t.footer.guide, href: "/kesfet/rehber" },
+          { label: t.footer.guide, href: "/kesfet/kaynak-rehberi" },
         ],
       },
       {
         title: t.footer.company,
         links: [
-          { label: t.footer.about, href: "/kesfet/hakkimizda" },
-          { label: t.footer.findStore, href: "/nereden-alabilirim" },
+          { label: t.footer.about, href: "/hakkimizda" },
+          { label: t.footer.findStore, href: "/bayi-ve-servis-agi" },
           { label: t.footer.checkWarranty, href: "/kesfet/garanti-sorgula" },
           { label: t.footer.contact, href: "/destek/iletisim" },
         ],

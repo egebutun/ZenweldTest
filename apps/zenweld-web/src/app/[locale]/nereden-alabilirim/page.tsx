@@ -1,29 +1,18 @@
-import type { Metadata } from "next";
-import { isLocale, type Locale } from "@zenweld/i18n";
-import { DealerFinder } from "@/components/dealers/DealerFinder";
-import { languageAlternates } from "@/lib/seo";
+import { redirect } from "next/navigation";
 
-export async function generateMetadata({
+/**
+ * ESKI ADRES — KALICI YONLENDIRME
+ *
+ * Sayfa artik yalnizca bayileri degil yetkili servisleri de listeliyor;
+ * adres icerige uyacak sekilde degistirildi.
+ * Eski adres disaridan verilmis baglantilarda ve arama sonuclarinda
+ * kalabildigi icin 404 yerine yeni sayfaya yonlendiriliyor.
+ */
+export default async function Redirect({
   params,
 }: {
   params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
+}) {
   const { locale } = await params;
-  const lang = (isLocale(locale) ? locale : "tr") as Locale;
-  const title = lang === "tr" ? "Nereden Alabilirim — Bayi Bul" : "Where To Buy — Find a Dealer";
-  const description =
-    lang === "tr"
-      ? "Size en yakın Zenweld yetkili bayisini haritada bulun; ürünleri yerinde inceleyin ve satın alın."
-      : "Find your nearest authorised Zenweld dealer on the map, see the products in person and buy on the spot.";
-
-  return {
-    title,
-    description,
-    alternates: languageAlternates("/nereden-alabilirim", lang),
-    openGraph: { title, description, url: `/${lang}/nereden-alabilirim` },
-  };
-}
-
-export default function WhereToBuyPage() {
-  return <DealerFinder />;
+  redirect(`/${locale}/bayi-ve-servis-agi`);
 }

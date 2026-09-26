@@ -12,5 +12,5 @@ export default async function ServiceNetworkRedirect({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  redirect(`/${locale}/nereden-alabilirim`);
+  redirect(`/${locale}/bayi-ve-servis-agi`);
 }

@@ -18,8 +18,8 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: languageAlternates("/kesfet/hakkimizda", lang),
-    openGraph: { title, description, url: `/${lang}/kesfet/hakkimizda` },
+    alternates: languageAlternates("/hakkimizda", lang),
+    openGraph: { title, description, url: `/${lang}/hakkimizda` },
   };
 }
 

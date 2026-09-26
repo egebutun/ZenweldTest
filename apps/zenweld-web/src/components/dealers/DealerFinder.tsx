@@ -74,9 +74,16 @@ export function DealerFinder({
 
     if (productId && onlyInStock) list = list.filter((d) => d.hasProduct);
     if (city) list = list.filter((d) => d.city === city);
-    // Yetkili servis rozeti ayri; satici tarafinda showroom da satis noktasidir.
+    // Secenekler birbirini dislar, aksi halde filtre ise yaramiyordu:
+    // 30 noktanin 30'u yetkili satici oldugu icin "yalnizca satici"
+    // secmek listeyi hic degistirmiyordu. Artik yetkili servis olanlar
+    // satici listesinden cikariliyor: 20 satici + 10 servis = 30.
     if (type === "servis") list = list.filter((d) => d.badges.includes("yetkili-servis"));
-    if (type === "satici") list = list.filter((d) => d.badges.includes("yetkili-satici"));
+    if (type === "satici") {
+      list = list.filter(
+        (d) => d.badges.includes("yetkili-satici") && !d.badges.includes("yetkili-servis"),
+      );
+    }
 
     const origin = position ?? (city ? CITY_CENTERS[city] : undefined);
     if (origin) {

@@ -12,7 +12,7 @@ export default function SupportPage() {
   const cards = [
     { href: "/destek/sss", Icon: FileQuestion, title: t.support.faqTitle, text: t.support.faqCardText },
     { href: "/destek/iletisim", Icon: MessageSquare, title: t.support.contactTitle, text: t.support.contactCardText },
-    { href: "/nereden-alabilirim", Icon: MapPin, title: t.nav.findDealer, text: t.support.dealerCardText },
+    { href: "/bayi-ve-servis-agi", Icon: MapPin, title: t.nav.findDealer, text: t.support.dealerCardText },
   ];
 
   return (

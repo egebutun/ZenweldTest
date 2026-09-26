@@ -1,18 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import {
-  ArrowRight,
-  Award,
-  Compass,
-  Flame,
-  Factory,
-  Headphones,
-  MapPin,
-  ShieldCheck,
-  Truck,
-  Wrench,
-} from "lucide-react";
+import { ArrowRight, Award, Compass, Flame, Factory, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { useDatabase } from "@zenweld/store";
 import { Button, SectionHeading } from "@zenweld/ui";
 import { stockPhotos } from "@zenweld/data";
@@ -240,18 +229,13 @@ export function DealerStrip() {
   return (
     <section className="bg-zw-grey-100">
       <div className="zw-container zw-section">
-        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mb-6">
           <div className="max-w-3xl">
             <h2 className="font-display text-3xl font-bold uppercase leading-tight sm:text-4xl">
               {t.home.dealerTitle}
             </h2>
             <p className="mt-3 text-zw-grey-600">{t.home.dealerSubtitle}</p>
           </div>
-          <LocaleLink href="/nereden-alabilirim" className="shrink-0">
-            <Button variant="dark" size="lg" leftIcon={<MapPin size={18} />}>
-              {t.home.dealerCta}
-            </Button>
-          </LocaleLink>
         </div>
 
         <DealerFinder variant="home" compact />

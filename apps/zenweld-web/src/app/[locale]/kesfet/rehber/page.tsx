@@ -1,11 +1,17 @@
-import { SimpleContentPage } from "@/components/common/PageShell";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  return (
-    <SimpleContentPage
-      title="Ultimate Kaynak Rehberi"
-      subtitle="Ücretsiz dijital kopyayı edinin veya basılı sürümü sipariş edin."
-      paragraphs={5}
-    />
-  );
+/**
+ * ESKI ADRES — KALICI YONLENDIRME
+ *
+ * "rehber" tek basina neyin rehberi oldugunu soylemiyordu.
+ * Eski adres disaridan verilmis baglantilarda ve arama sonuclarinda
+ * kalabildigi icin 404 yerine yeni sayfaya yonlendiriliyor.
+ */
+export default async function Redirect({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  redirect(`/${locale}/kesfet/kaynak-rehberi`);
 }
