@@ -61,6 +61,66 @@ function pickOutputType(canvas: HTMLCanvasElement): "image/webp" | "image/png" {
     : "image/png";
 }
 
+
+/**
+ * Gorselin cevresindeki BOS kenari (beyaz ya da seffaf) keser.
+ *
+ * scripts/prepare-images.mjs ile ayni kurali uygular: yalnizca dort
+ * kosesi de beyaz/seffaf olan gorseller kesilir. Kosesi renkli olan
+ * logolarda (WIN Eurasia kirmizi, Riyadh koyu gri) markanin kendi zemini
+ * kirpilmasin diye hicbir sey yapilmaz.
+ *
+ * Boylece yonetim panelinden yuklenen logo da, depoya elle eklenen logo
+ * da ayni sekilde hazirlanmis olur.
+ */
+function trimBlankEdges(canvas: HTMLCanvasElement): HTMLCanvasElement {
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return canvas;
+
+  const { width, height } = canvas;
+  let pixels: ImageData;
+  try {
+    pixels = ctx.getImageData(0, 0, width, height);
+  } catch {
+    return canvas; // baska kaynakli gorsel: okunamaz
+  }
+  const d = pixels.data;
+
+  const at = (x: number, y: number) => (y * width + x) * 4;
+  const isBlank = (i: number) =>
+    d[i + 3] < 10 || (d[i] > 240 && d[i + 1] > 240 && d[i + 2] > 240);
+
+  // Dort kose de bos degilse dokunma.
+  const corners = [at(0, 0), at(width - 1, 0), at(0, height - 1), at(width - 1, height - 1)];
+  if (!corners.every(isBlank)) return canvas;
+
+  let top = 0, bottom = height - 1, left = 0, right = width - 1;
+  const rowBlank = (y: number) => {
+    for (let x = 0; x < width; x++) if (!isBlank(at(x, y))) return false;
+    return true;
+  };
+  const colBlank = (x: number) => {
+    for (let y = top; y <= bottom; y++) if (!isBlank(at(x, y))) return false;
+    return true;
+  };
+
+  while (top < bottom && rowBlank(top)) top++;
+  while (bottom > top && rowBlank(bottom)) bottom--;
+  while (left < right && colBlank(left)) left++;
+  while (right > left && colBlank(right)) right--;
+
+  const w = right - left + 1;
+  const h = bottom - top + 1;
+  if (w < 8 || h < 8) return canvas;                    // tamami bos: birak
+  if (w * h > width * height * 0.98) return canvas;     // kesilecek bosluk yok
+
+  const out = document.createElement("canvas");
+  out.width = w;
+  out.height = h;
+  out.getContext("2d")?.drawImage(canvas, left, top, w, h, 0, 0, w, h);
+  return out;
+}
+
 /**
  * Secilen gorseli tarayicida kucultur ve WebP'ye cevirir.
  *
@@ -75,8 +135,12 @@ function pickOutputType(canvas: HTMLCanvasElement): "image/webp" | "image/png" {
  *  - Aksi halde uzun kenar sirayla 1600/1200/900/700 px denenir, her
  *    olcude kalite dusurulur; sinirin altina inen ilk sonuc kullanilir.
  *  - Sonuc orijinalden buyuk cikarsa orijinal korunur.
+ *  - trimEdges verilirse once bos kenarlar kesilir (etkinlik logolari).
  */
-export async function optimizeImageFile(file: File): Promise<string> {
+export async function optimizeImageFile(
+  file: File,
+  options: { trimEdges?: boolean } = {},
+): Promise<string> {
   if (file.type === "image/svg+xml") return readAsDataUrl(file);
 
   const original = await readAsDataUrl(file);
@@ -89,7 +153,9 @@ export async function optimizeImageFile(file: File): Promise<string> {
   }
 
   const longEdge = Math.max(img.naturalWidth, img.naturalHeight);
-  if (file.size <= KEEP_ORIGINAL_UNDER && longEdge <= WIDTHS[0]) return original;
+  if (!options.trimEdges && file.size <= KEEP_ORIGINAL_UNDER && longEdge <= WIDTHS[0]) {
+    return original;
+  }
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -104,12 +170,15 @@ export async function optimizeImageFile(file: File): Promise<string> {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-    const type = pickOutputType(canvas);
+    const surface = options.trimEdges ? trimBlankEdges(canvas) : canvas;
+    const type = pickOutputType(surface);
     for (const quality of QUALITIES) {
-      const candidate = canvas.toDataURL(type, quality);
+      const candidate = surface.toDataURL(type, quality);
       if (!best || dataUrlBytes(candidate) < dataUrlBytes(best)) best = candidate;
       if (dataUrlBytes(candidate) <= MAX_UPLOAD_BYTES) {
-        // Kucultme ise yaramadiysa orijinali kullan.
+        // Kirpma yapildiysa sonuc her halukarda kullanilir; yalnizca
+        // boyut kucultmede kazanc yoksa orijinale donulur.
+        if (options.trimEdges) return candidate;
         return dataUrlBytes(candidate) < file.size ? candidate : original;
       }
     }
@@ -128,12 +197,13 @@ export function readImageFiles(
   files: FileList | null,
   onImage: (dataUrl: string) => void,
   onError: (message: string) => void,
+  options: { trimEdges?: boolean } = {},
 ): void {
   if (!files) return;
 
   Array.from(files).forEach(async (file) => {
     try {
-      const dataUrl = await optimizeImageFile(file);
+      const dataUrl = await optimizeImageFile(file, options);
       if (dataUrlBytes(dataUrl) > MAX_UPLOAD_BYTES) {
         onError(
           `${file.name} küçültüldükten sonra bile çok büyük. Lütfen daha düşük çözünürlüklü bir görsel seçin veya URL girin.`,

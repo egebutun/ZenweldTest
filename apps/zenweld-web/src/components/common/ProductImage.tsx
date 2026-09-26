@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 /**
  * Urun gorseli.
@@ -37,6 +37,8 @@ export function ProductImage({
   label,
   priority,
   alternates,
+  style,
+  onReady,
 }: {
   src?: string;
   alt: string;
@@ -45,6 +47,9 @@ export function ProductImage({
   priority?: boolean;
   /** src yuklenemezse sirayla denenecek adresler (orn. ayni dosyanin .svg hali). */
   alternates?: string[];
+  style?: CSSProperties;
+  /** Gorsel yuklendiginde gercek olculeriyle cagrilir (logo olceklemesi icin). */
+  onReady?: (size: { width: number; height: number }) => void;
 }) {
   const fallback = placeholderDataUri(label ?? alt);
   // .webp desteklemeyen eski tarayicilar icin ayni adin .png/.jpg hali denenir.
@@ -71,7 +76,12 @@ export function ProductImage({
   // bu yuzden mount sonrasi durumu elle kontrol ediyoruz.
   useEffect(() => {
     const img = ref.current;
-    if (img && img.complete && img.naturalWidth === 0) next();
+    if (!img) return;
+    if (img.complete && img.naturalWidth === 0) next();
+    // Onbellekten gelen gorselde onLoad tetiklenmeyebilir; olculeri burada bildir.
+    else if (img.complete && img.naturalWidth > 0) {
+      onReady?.({ width: img.naturalWidth, height: img.naturalHeight });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
@@ -84,7 +94,14 @@ export function ProductImage({
       loading={priority ? "eager" : "lazy"}
       decoding="async"
       onError={next}
+      onLoad={(e) => {
+        const img = e.currentTarget;
+        if (img.naturalWidth > 0) {
+          onReady?.({ width: img.naturalWidth, height: img.naturalHeight });
+        }
+      }}
       className={className}
+      style={style}
     />
   );
 }

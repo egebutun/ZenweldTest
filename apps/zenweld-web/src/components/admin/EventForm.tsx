@@ -323,7 +323,11 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
                       accept="image/*"
                       className="hidden"
                       onChange={(e) => {
-                        readImageFiles(e.target.files, (url) => set("logoUrl", url), setError);
+                        // Logo yuklenirken cevresindeki bos beyaz kenar otomatik kesilir,
+                        // boylece detay sayfasinda digerleriyle ayni agirlikta gorunur.
+                        readImageFiles(e.target.files, (url) => set("logoUrl", url), setError, {
+                          trimEdges: true,
+                        });
                         e.target.value = "";
                       }}
                     />
