@@ -68,13 +68,13 @@ export function EventDetail({ slug }: { slug: string }) {
                   {event.images.map((img, i) => (
                     <div
                       key={i}
-                      className="aspect-[4/3] overflow-hidden rounded-[4px] bg-zw-grey-100"
+                      className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[4px] bg-zw-grey-100"
                     >
                       <ProductImage
                         src={img}
                         alt={`${event.title} — ${i + 1}`}
                         label={event.title}
-                        className="h-full w-full object-cover"
+                        className="max-h-full max-w-full object-contain"
                       />
                     </div>
                   ))}

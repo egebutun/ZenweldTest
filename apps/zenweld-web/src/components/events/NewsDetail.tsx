@@ -46,12 +46,16 @@ export function NewsDetail({ slug }: { slug: string }) {
         <p className="mt-4 text-lg text-zw-grey-600">{text(item.summary)}</p>
       </div>
 
-      <div className="mt-8 aspect-[21/9] max-w-4xl overflow-hidden rounded-[4px] bg-zw-grey-100">
+      {/* Sabit en-boy orani yok: afis, yatay fotograf, dikey fotograf —
+          hepsi kendi oraninda tam gorunur. Onceden 21/9 kutuya object-cover
+          ile basiliyordu ve afislerin alt/ust kismi (tarih, telefon, adres)
+          kirpiliyordu. */}
+      <div className="mt-8 max-w-4xl overflow-hidden rounded-[4px] bg-zw-grey-100">
         <ProductImage
           src={item.coverUrl}
           alt={text(item.title)}
           label={text(item.title)}
-          className="h-full w-full object-cover"
+          className="h-auto w-full"
         />
       </div>
 
@@ -67,13 +71,13 @@ export function NewsDetail({ slug }: { slug: string }) {
             {item.images.map((img, i) => (
               <div
                 key={i}
-                className="aspect-[4/3] overflow-hidden rounded-[4px] bg-zw-grey-100"
+                className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[4px] bg-zw-grey-100"
               >
                 <ProductImage
                   src={img}
                   alt={`${text(item.title)} — ${i + 1}`}
                   label={text(item.title)}
-                  className="h-full w-full object-cover"
+                  className="max-h-full max-w-full object-contain"
                 />
               </div>
             ))}
@@ -91,12 +95,12 @@ export function NewsDetail({ slug }: { slug: string }) {
                 href={`/kesfet/haberler/${n.slug}`}
                 className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
               >
-                <div className="aspect-[16/9] overflow-hidden bg-zw-grey-100">
+                <div className="flex aspect-[16/9] items-center justify-center overflow-hidden bg-zw-grey-100">
                   <ProductImage
                     src={n.coverUrl}
                     alt={text(n.title)}
                     label={text(n.title)}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <div className="p-4">
