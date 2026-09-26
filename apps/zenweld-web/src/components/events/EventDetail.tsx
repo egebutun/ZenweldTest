@@ -43,13 +43,19 @@ export function EventDetail({ slug }: { slug: string }) {
               </h1>
               <p className="mt-3 text-zw-grey-600">{text(event.summary)}</p>
             </div>
-            <ProductImage
-              src={event.logoUrl}
-              alternates={logoAlternates(event.logoUrl)}
-              alt={event.title}
-              label={event.title}
-              className="max-h-20 max-w-[240px] object-contain"
-            />
+            {/* Logolarin en-boy oranlari cok farkli (1.23 ile 2.15 arasi).
+                Serbest birakilinca her biri baska boyda gorunuyordu. Sabit
+                olculu beyaz bir kutuya ortalaniyor: hepsi ayni alani kaplar
+                ve oncekinden belirgin sekilde buyuk. */}
+            <div className="flex h-32 w-[300px] shrink-0 items-center justify-center rounded-[4px] border border-zw-grey-200 bg-white p-4">
+              <ProductImage
+                src={event.logoUrl}
+                alternates={logoAlternates(event.logoUrl)}
+                alt={event.title}
+                label={event.title}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
           </div>
         </div>
       </div>
