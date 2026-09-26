@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useDatabase } from "@zenweld/store";
-import { Badge } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { RichText } from "./RichText";
@@ -37,7 +36,6 @@ export function NewsDetail({ slug }: { slug: string }) {
 
       <div className="max-w-3xl">
         <div className="flex items-center gap-3">
-          <Badge tone="red">{text(item.category)}</Badge>
           <span className="text-sm text-zw-grey-500">
             {formatDate(item.publishedAt, locale)}
           </span>
@@ -52,12 +50,36 @@ export function NewsDetail({ slug }: { slug: string }) {
         <ProductImage
           src={item.coverUrl}
           alt={text(item.title)}
-          label={text(item.category)}
+          label={text(item.title)}
           className="h-full w-full object-cover"
         />
       </div>
 
       <RichText source={text(item.body)} className="mt-8 max-w-3xl" />
+
+      {/* Fotograf galerisi — etkinlik detay sayfasindakiyle ayni duzen. */}
+      {item.images.length > 0 && (
+        <div className="mt-10 max-w-4xl">
+          <h2 className="mb-4 font-display text-2xl font-bold uppercase">
+            {t.events.gallery}
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {item.images.map((img, i) => (
+              <div
+                key={i}
+                className="aspect-[4/3] overflow-hidden rounded-[4px] bg-zw-grey-100"
+              >
+                <ProductImage
+                  src={img}
+                  alt={`${text(item.title)} — ${i + 1}`}
+                  label={text(item.title)}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {others.length > 0 && (
         <div className="mt-14">
@@ -73,7 +95,7 @@ export function NewsDetail({ slug }: { slug: string }) {
                   <ProductImage
                     src={n.coverUrl}
                     alt={text(n.title)}
-                    label={text(n.category)}
+                    label={text(n.title)}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>

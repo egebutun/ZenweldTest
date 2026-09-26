@@ -20,7 +20,7 @@ export default function AdminNewsPage() {
         (n) =>
           !q ||
           n.title.tr.toLocaleLowerCase("tr").includes(q) ||
-          n.category.tr.toLocaleLowerCase("tr").includes(q),
+          n.summary.tr.toLocaleLowerCase("tr").includes(q),
       )
       .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   }, [db, query]);
@@ -42,7 +42,7 @@ export default function AdminNewsPage() {
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Haber başlığı veya kategori ara…"
+          placeholder="Haber başlığı veya özet ara…"
           className="pl-9"
         />
       </div>
@@ -52,7 +52,6 @@ export default function AdminNewsPage() {
           <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
             <tr>
               <th className="px-4 py-3">Haber</th>
-              <th className="px-4 py-3">Kategori</th>
               <th className="px-4 py-3">Yayın Tarihi</th>
               <th className="px-4 py-3">Durum</th>
               <th className="px-4 py-3 text-right">İşlem</th>
@@ -75,7 +74,6 @@ export default function AdminNewsPage() {
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-2.5 text-zw-grey-600">{n.category.tr}</td>
                 <td className="whitespace-nowrap px-4 py-2.5 text-zw-grey-600">
                   {formatDate(n.publishedAt, "tr")}
                 </td>

@@ -120,7 +120,7 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
         id: `article:news-${n.id}`,
         type: "article",
         title: n.title[locale],
-        subtitle: n.category[locale],
+        subtitle: n.summary[locale],
         body: `${n.summary[locale]} ${n.body[locale]}`,
         sku: "",
         href: `/kesfet/haberler/${n.slug}`,
