@@ -17,7 +17,6 @@ import { ProductImage } from "@/components/common/ProductImage";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@/lib/format";
-import { useQuoteList } from "@/lib/quote-list";
 
 /* ---------------------------------------------------------------- */
 
@@ -111,33 +110,6 @@ export function WhereToBuyButton({ product }: { product: Product }) {
         <DealerFinder productId={product.id} productName={product.name} compact />
       </Modal>
     </>
-  );
-}
-
-/* ---------------------------------------------------------------- */
-
-export function AddToQuoteButton({ product }: { product: Product }) {
-  const t = useT();
-  const quoteList = useQuoteList();
-  const [added, setAdded] = useState(false);
-
-  if (!product.quotable) return null;
-
-  return (
-    <Button
-      variant="primary"
-      size="lg"
-      fullWidth
-      className="mt-3"
-      onClick={() => {
-        quoteList.add({ productId: product.id, productName: product.name });
-        setAdded(true);
-        setTimeout(() => setAdded(false), 2200);
-      }}
-      leftIcon={added ? <Check size={20} /> : undefined}
-    >
-      {added ? t.product.addedToQuote : t.product.addToQuote}
-    </Button>
   );
 }
 

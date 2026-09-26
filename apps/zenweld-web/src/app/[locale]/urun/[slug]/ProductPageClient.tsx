@@ -8,7 +8,6 @@ import { Accordion, Tabs } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { OnlineRetailers } from "@/components/product/OnlineRetailers";
 import {
-  AddToQuoteButton,
   InTheBoxList,
   PriceBlock,
   ProductGallery,
@@ -101,7 +100,6 @@ export function ProductPageClient({ slug }: { slug: string }) {
 
             <div className="mt-8">
               <WhereToBuyButton product={product} />
-              <AddToQuoteButton product={product} />
             </div>
 
             <OnlineRetailers product={product} />
