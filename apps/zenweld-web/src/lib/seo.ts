@@ -12,9 +12,15 @@ import { CONTACT, OFFICES } from "@/lib/contact";
  */
 export function getSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return explicit.replace(/\/$/, "");
+  if (explicit) return explicit.replace(/^https?:\/\//, "https://").replace(/\/$/, "");
 
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  // Vercel her dagitimda VERCEL_PROJECT_PRODUCTION_URL saglamayabilir
+  // (ornegin onizleme dagitimlarinda). VERCEL_URL her zaman dolu olur.
+  // Ikisi de yoksa adres localhost kalir ve og:image gibi MUTLAK adres
+  // isteyen alanlar disaridan erisilemez hale gelir — WhatsApp/LinkedIn
+  // onizlemesi bu yuzden bos doner.
+  const vercel =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
   if (vercel) return `https://${vercel.replace(/\/$/, "")}`;
 
   return "http://localhost:3000";
