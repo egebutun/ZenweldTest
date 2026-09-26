@@ -61,11 +61,14 @@ export async function generateMetadata({
       title,
       description,
       url: `/${lang}`,
+      // Paylasim karti: 1200x630 markali gorsel. Onceden dikey bir urun
+      // fotografi vardi; WhatsApp/LinkedIn bu olcuyu kirptigi icin marka
+      // gorunmuyordu. Kart scripts/make-brand-images.mjs ile uretilir.
       images: [
         {
-          url: "/images/products/zenweld-urun.png",
-          width: 748,
-          height: 1064,
+          url: "/images/brand/og-cover.png",
+          width: 1200,
+          height: 630,
           alt: SITE_NAME,
         },
       ],
@@ -74,7 +77,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: ["/images/products/zenweld-urun.png"],
+      images: ["/images/brand/og-cover.png"],
     },
   };
 }

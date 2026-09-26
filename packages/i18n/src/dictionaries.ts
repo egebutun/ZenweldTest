@@ -388,7 +388,7 @@ export const dictionaries = {
       newsletterCta: "Kayıt Ol",
       newsletterConsent: "Zenweld'den bülten ve pazarlama e-postaları almayı kabul ediyorum",
       newsletterThanks: "Teşekkürler! Bültenimize kaydoldunuz.",
-      rights: "© 2026 ZENWELD. Tüm hakları saklıdır.",
+      rights: "© {year} ZENWELD. Tüm hakları saklıdır.",
       demoDisclaimer:
         "Bu site bir demo/sunum çalışmasıdır. Ürün bilgileri ve fiyatlar temsilidir.",
     },
@@ -845,7 +845,7 @@ export const dictionaries = {
       newsletterCta: "Sign Up",
       newsletterConsent: "You agree to receive newsletters and marketing emails from Zenweld",
       newsletterThanks: "Thank you! You are subscribed to our newsletter.",
-      rights: "© 2026 ZENWELD. All rights reserved.",
+      rights: "© {year} ZENWELD. All rights reserved.",
       demoDisclaimer:
         "This site is a demo/presentation build. Product data and prices are indicative.",
     },

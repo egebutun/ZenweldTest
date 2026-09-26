@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { categories, products, blogPosts, events, news } from "@zenweld/data";
+import { categories, products, events, news } from "@zenweld/data";
 import { locales, localizePath } from "@zenweld/i18n";
 import { getSiteUrl } from "@/lib/seo";
 
@@ -76,9 +76,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       push(`/urun/${product.slug}`, 0.9, "weekly", new Date(product.updatedAt));
     });
 
-  blogPosts.forEach((post) => {
-    push(`/kesfet/blog/${post.slug}`, 0.5, "monthly", new Date(post.publishedAt));
-  });
+  // Blog yazilarinin govdesi hala yer tutucu metin. Gercek yazilar
+  // yazildiginda asagidaki blogun yorumu kaldirilir ve
+  // kesfet/blog/[slug]/layout.tsx icindeki noindex silinir.
+  // blogPosts.forEach((post) => {
+  //   push(`/kesfet/blog/${post.slug}`, 0.5, "monthly", new Date(post.publishedAt));
+  // });
 
   events
     .filter((event) => event.active)

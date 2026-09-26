@@ -74,7 +74,7 @@ export const orders: Order[] = [
   {
     id: "o1", code: "SIP-2026-0001", userId: "u-bayi-a", channel: "zenweld", status: "shipped",
     customerName: "ZENWELD-BAYİ-A Kaynak Teknolojileri", email: "bayi@zenweld-bayi-a.com",
-    phone: "+90 532 000 00 02", city: "İstanbul", address: "Lorem OSB 5. Blok No:44, Başakşehir",
+    phone: "+90 532 000 00 02", city: "İstanbul", address: "Örnek OSB 5. Blok No:44, Başakşehir",
     items: [
       { productId: "p-arc-200", productName: "Zenweld ARC 200", quantity: 20, unitPrice: 8400 },
       { productId: "p-ultimate-th-200", productName: "Zenweld Ultimate TH 200", quantity: 10, unitPrice: 20800 },
@@ -85,7 +85,7 @@ export const orders: Order[] = [
   {
     id: "o2", code: "SIP-2026-0002", userId: "u-bireysel", channel: "bayi-shop", status: "delivered",
     customerName: "Ahmet Yılmaz", email: "bireysel@demo.com", phone: "+90 532 111 11 11",
-    city: "İstanbul", address: "Lorem Mah. 12. Sok. No:5 D:8, Maltepe",
+    city: "İstanbul", address: "Örnek Mah. 12. Sok. No:5 D:8, Maltepe",
     items: [{ productId: "p-arc-120", productName: "Zenweld ARC 120", quantity: 1, unitPrice: 7080 }],
     subtotal: 5900, vat: 1180, shipping: 250, total: 7330,
     createdAt: "2026-08-21T19:30:00+03:00",
