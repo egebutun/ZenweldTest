@@ -45,8 +45,8 @@ export interface SearchHit extends SearchDoc {
 const STATIC_PAGES: { id: string; tr: string; en: string; href: string }[] = [
   { id: "page-teklif", tr: "Teklif Al kurumsal vadeli çek ödeme", en: "Request a Quote business deferred cheque payment", href: "/teklif-al" },
   { id: "page-bayi", tr: "Nereden Alabilirim bayi bul harita satış noktası", en: "Where to Buy find dealer map store locator", href: "/yetkili-bayi-ve-servis-agi" },
-  { id: "page-garanti-sorgula", tr: "Garanti Sorgula seri numarası", en: "Check Your Warranty serial number", href: "/kesfet/garanti-sorgula" },
-  { id: "page-garanti-kayit", tr: "Garanti Kaydı uzatma kayıt", en: "Register Your Warranty extension", href: "/kesfet/garanti-kayit" },
+  { id: "page-garanti-sorgula", tr: "Garanti Sorgula seri numarası", en: "Check Your Warranty serial number", href: "/kesfet/garanti?islem=sorgula" },
+  { id: "page-garanti-kayit", tr: "Garanti Kaydı uzatma kayıt", en: "Register Your Warranty extension", href: "/kesfet/garanti?islem=kayit" },
   { id: "page-club", tr: "Welders Club topluluk üyelik", en: "Welders Club community membership", href: "/kesfet/welders-club" },
   { id: "page-msds", tr: "MSDS malzeme güvenlik bilgi formu", en: "MSDS material safety data sheet", href: "/kesfet/msds" },
   { id: "page-sertifika", tr: "Parti Sertifikaları uygunluk belgesi", en: "Batch Certificates compliance", href: "/kesfet/parti-sertifikalari" },

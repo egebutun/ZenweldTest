@@ -59,6 +59,24 @@ products.forEach((product) => {
 });
 
 /**
+ * KAMPANYALI URUN, MARKANIN KENDI MAGAZASINDA SATISTA OLMALI
+ *
+ * Hot Sale urunleri iki sitede de kampanya bolumunde gorunur. Stok
+ * matrisi hash ile uretildigi icin kampanyali bir urun kendi bayi
+ * magazamizda tesadufen "stokta yok" cikabiliyordu; o zaman urun
+ * kampanya seridinde hic yer almiyordu.
+ */
+retailerStock.forEach((row) => {
+  const retailer = retailers.find((r) => r.id === row.retailerId);
+  if (!retailer?.isOwnStore || row.inStock) return;
+  const product = products.find((p) => p.id === row.productId);
+  if (!product?.hotSale) return;
+  row.inStock = true;
+  row.quantity = 6;
+  row.price = Math.round((product.priceExVat * (1 + product.vatRate / 100)) / 10) * 10;
+});
+
+/**
  * YORUMU OLAN URUN, O MAGAZADA MUTLAKA SATISTA OLMALI
  *
  * Stok matrisi hash ile uretildigi icin bir bayi yorumunun urunu

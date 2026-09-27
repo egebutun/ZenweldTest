@@ -36,6 +36,9 @@ const TOP_LEVEL: Record<string, string> = {
 
   // Bayi magazasina ozel segmentler
   magaza: "shop",
+  // Bayi magazasinda blog ust seviyededir (/blog); ana sitede
+  // /kesfet/blog altindadir — iki yazim da ayni kelimeye cevrilir.
+  blog: "blog",
   sepet: "cart",
   odeme: "checkout",
   "siparis-tamam": "order-complete",
@@ -49,8 +52,7 @@ const NESTED: Record<string, Record<string, string>> = {
   kesfet: {
     "bayilik-basvurusu": "become-a-dealer",
     "welders-club": "welders-club",
-    "garanti-sorgula": "check-warranty",
-    "garanti-kayit": "register-warranty",
+    garanti: "warranty",
     blog: "blog",
     etkinlikler: "events",
     haberler: "news",

@@ -188,3 +188,131 @@ body { overflow-x: hidden; }
   .zw-welder .zw-spark { opacity: 0.6; }
   .zw-welder .zw-bead { stroke-dasharray: none; }
 }
+
+/* ==================================================================== */
+/* ORTAK BILESEN STILLERI                                               */
+/*                                                                      */
+/* Iki site de (ana site ve bayi magazasi) bu dosyayi import eder, bu   */
+/* yuzden kart/serit gorunumleri burada tek yerde tanimlanir. Onceden   */
+/* yalnizca ana sitenin globals.css'inde duruyordu; bayi magazasinda    */
+/* ayni kartlar kullanilinca alevler ve kaydirma cubugu gizleme         */
+/* calismiyordu.                                                        */
+/* ==================================================================== */
+
+/* Kendiliginden kayan urun seridinde kaydirma cubugu gizlenir;
+   serit yine parmakla/fareyle kaydirilabilir. */
+.zw-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* FLAS INDIRIM — yukselen alevler                                     */
+/*                                                                     */
+/* Esigi asan urun kartlarinin cevresinde yukari dogru yukselip sonen  */
+/* alev dilleri. Renkler yalnizca marka kirmizisinin tonlarindan.      */
+/*                                                                     */
+/* Alev dilleri kartin KENARINA oturur: yarisi kartin arkasinda kalir, */
+/* yarisi disarida gorunur — boylece kartin cevresini yalayan alev     */
+/* izlenimi olusur. Kartin ARKASINA konsalardi opak govde hepsini      */
+/* orterdi.                                                            */
+/* ------------------------------------------------------------------ */
+.zw-flash {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Kenar cercevesi (koru) */
+.zw-flash::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 6px;
+  background: linear-gradient(
+    120deg,
+    var(--color-zw-red-800),
+    var(--color-zw-red-500),
+    var(--color-zw-red-600),
+    var(--color-zw-red-700)
+  );
+  background-size: 250% 250%;
+  z-index: 0;
+  animation: zw-flash-flow 5s ease-in-out infinite;
+}
+
+/* Alevlerin ciziledigi, tasmasi serbest kap */
+/* Alevler cercevenin UZERINDE, kart govdesinin ALTINDA cizilir.
+   z-index 0 birakilirsa ::after cercevesi hepsini ortuyor. */
+.zw-flame-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Tek alev dili */
+.zw-flame {
+  position: absolute;
+  width: 44px;
+  height: 76px;
+  margin-left: -22px;
+  margin-bottom: -16px;
+  border-radius: 50% 50% 44% 44% / 64% 64% 36% 36%;
+  background: linear-gradient(
+    to top,
+    var(--color-zw-red-800) 0%,
+    var(--color-zw-red-600) 40%,
+    var(--color-zw-red-400) 100%
+  );
+  filter: blur(8px);
+  opacity: 0;
+  transform-origin: 50% 100%;
+  animation: zw-flame-rise 2.4s ease-out infinite;
+}
+
+/* Kart govdesi alevlerin onunde */
+.zw-flash > *:not(.zw-flame-layer) {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes zw-flame-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scaleY(0.5) scaleX(1.05);
+  }
+  20% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.7;
+    transform: translateY(-34px) scaleY(1.2) scaleX(0.78);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-72px) scaleY(1.6) scaleX(0.38);
+  }
+}
+
+@keyframes zw-flash-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Hareket azaltma tercihi: cerceve kalir, alevler sabit kizil bir
+   parlamaya doner. */
+@media (prefers-reduced-motion: reduce) {
+  .zw-flash::after {
+    animation: none;
+  }
+  .zw-flame {
+    animation: none;
+    opacity: 0.45;
+    transform: translateY(-12px) scaleY(1.1);
+  }
+}
