@@ -12,7 +12,8 @@ import { Button } from "./Button";
  * `site` propuyla verir. Veri erisimi disaridan gelir (props), boylece
  * paket katmani store'a bagimli kalmaz.
  *
- * Yorum gonderildiginde dogrudan yayinlanmaz; yonetim panelinde
+ * Yorum gonderildiginde dogrudan yayinlanmaz; ana sitede yonetim
+ * panelinde, bayi magazasinda ise bayinin Hesabim > Yorumlar sayfasinda
  * onaylanmasi gerekir. Amac, gercek bir markanin sayfasinda denetimsiz
  * icerik yayinlanmamasi.
  */
