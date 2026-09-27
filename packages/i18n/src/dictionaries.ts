@@ -199,9 +199,9 @@ export const dictionaries = {
       support: "Kolay Destek",
     },
     supportCta: {
-      title: "Sorularınız mı var?",
+      title: "Ürün hakkında sorularınız mı var?",
       text: "Uzman ekibimiz yardımcı olmaya hazır.",
-      cta: "Sağ alttaki sohbetten bize yazın",
+      cta: "Bize yazın",
     },
     dealers: {
       title: "Size En Yakın Zenweld Bayi ve Yetkili Servisini Bulun",
@@ -674,9 +674,9 @@ export const dictionaries = {
       support: "Hassle-free Support",
     },
     supportCta: {
-      title: "Have Questions?",
+      title: "Questions about this product?",
       text: "Our experts are ready to help.",
-      cta: "Use the chat at the bottom right",
+      cta: "Write to us",
     },
     dealers: {
       title: "Find Your Nearest Zenweld Dealer and Authorised Service",

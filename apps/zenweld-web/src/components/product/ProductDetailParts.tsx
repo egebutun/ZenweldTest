@@ -8,6 +8,7 @@ import { DealerFinder } from "@/components/dealers/DealerFinder";
 import { ProductImage } from "@/components/common/ProductImage";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
+import { openSupportChat } from "@/lib/support-chat";
 import { formatPrice, priceWithVat } from "@/lib/format";
 
 /* ---------------------------------------------------------------- */
@@ -178,12 +179,15 @@ export function SupportCta() {
     <div className="mt-6 overflow-hidden rounded-[4px] bg-zw-ink px-6 py-6 text-white">
       <h3 className="font-display text-2xl font-bold uppercase">{t.supportCta.title}</h3>
       <p className="mt-1 text-sm text-zw-grey-300">{t.supportCta.text}</p>
-      {/* Artik /destek sayfasina gondermiyor; sag alttaki sohbet
-          penceresini isaret ediyor. */}
-      <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-zw-red-500">
+      {/* Tiklaninca sag alttaki destek sohbetini acar. */}
+      <button
+        type="button"
+        onClick={openSupportChat}
+        className="mt-4 inline-flex items-center gap-2 border-b border-white pb-0.5 text-sm font-semibold transition-colors hover:border-zw-red-500 hover:text-zw-red-500 zw-focus"
+      >
         <MessageCircle size={16} />
         {t.supportCta.cta}
-      </p>
+      </button>
     </div>
   );
 }
