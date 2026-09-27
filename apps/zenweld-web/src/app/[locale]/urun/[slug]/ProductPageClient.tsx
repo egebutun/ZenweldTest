@@ -21,6 +21,7 @@ import {
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductSupportChat } from "@/components/support/ProductSupportChat";
 import { VariantPicker } from "@/components/product/VariantPicker";
+import { ProductReviewsSection } from "@/components/product/ProductReviewsSection";
 import { resolveVariant, type VariantSelection } from "@/lib/variants";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 
@@ -198,6 +199,10 @@ export function ProductPageClient({ slug }: { slug: string }) {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="mt-14">
+          <ProductReviewsSection product={product} site="zenweld" />
         </div>
 
         {related.length > 0 && (

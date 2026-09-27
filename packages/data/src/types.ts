@@ -340,6 +340,42 @@ export interface BlogPost {
   publishedAt: string;
 }
 
+/* ------------------------------------------------------------------ */
+/* Urun degerlendirmeleri                                              */
+/* ------------------------------------------------------------------ */
+
+/** Yoruma eklenen gorsel ya da video. */
+export interface ReviewMedia {
+  /** data: URL ya da dosya yolu */
+  url: string;
+  kind: "image" | "video";
+}
+
+export interface ProductReview {
+  id: string;
+  productId: string;
+  /** Yorumu yazan uyenin id'si; uye degilse bos. */
+  userId?: string;
+  authorName: string;
+  /** 1 - 5 arasi yildiz */
+  rating: number;
+  title?: string;
+  body: string;
+  media: ReviewMedia[];
+  /** Urunu gercekten satin almis mi (dogrulanmis alici rozeti). */
+  verifiedPurchase?: boolean;
+  /**
+   * Hangi siteye ait: ana site mi bayi magazasi mi. Iki site ayni
+   * veritabanini paylastigi icin yorumlar bu alanla ayriliyor.
+   */
+  site: "zenweld" | "bayi";
+  /** Yonetim panelinde onaylandi mi; yalnizca onaylilar yayinda. */
+  approved: boolean;
+  /** Anasayfadaki kayan seritte gosterilsin mi (en fazla 10 tane). */
+  featured: boolean;
+  createdAt: string;
+}
+
 export interface FaqItem {
   id: string;
   question: I18nText;
@@ -461,6 +497,7 @@ export interface ZenweldDatabase {
   events: ZenweldEvent[];
   news: NewsItem[];
   faqs: FaqItem[];
+  reviews: ProductReview[];
   warranties: WarrantyRecord[];
   settings: SiteSettings;
 }

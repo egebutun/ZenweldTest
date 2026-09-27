@@ -8,6 +8,7 @@ import { Badge, Button, Tabs } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
 import { ShopProductCard } from "@/components/ShopProductCard";
+import { ShopProductReviews } from "@/components/ShopProductReviews";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@/lib/format";
 import { useCart } from "@/lib/cart";
@@ -240,6 +241,10 @@ export function ShopProductPageClient({ slug }: { slug: string }) {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="mt-12">
+          <ShopProductReviews product={product} />
         </div>
 
         {related.length > 0 && (
