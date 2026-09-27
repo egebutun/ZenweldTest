@@ -71,12 +71,15 @@ function DealerActions({ dealer, t }: { dealer: Dealer; t: ReturnType<typeof use
 export function DealerFinder({
   productId,
   productName,
+  /** Secili urun secenegi; stok bu secenege gore bakilir. */
+  variantId,
   compact = false,
   /** "home": anasayfada baslik ve liste olmadan yalnizca filtreler + harita. */
   variant = "full",
 }: {
   productId?: string;
   productName?: string;
+  variantId?: string;
   compact?: boolean;
   variant?: "full" | "home";
 }) {
@@ -94,8 +97,8 @@ export function DealerFinder({
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const stockedDealerIds = useMemo(
-    () => (productId ? dealersWithProduct(productId, db) : new Set<string>()),
-    [productId, db],
+    () => (productId ? dealersWithProduct(productId, db, variantId) : new Set<string>()),
+    [productId, db, variantId],
   );
 
   const cities = useMemo(
