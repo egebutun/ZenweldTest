@@ -20,6 +20,8 @@ import {
 } from "@/components/product/ProductDetailParts";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductSupportChat } from "@/components/support/ProductSupportChat";
+import { VariantPicker } from "@/components/product/VariantPicker";
+import { resolveVariant, type VariantSelection } from "@/lib/variants";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 
 export function ProductPageClient({ slug }: { slug: string }) {
@@ -28,6 +30,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
   const text = useText();
   const db = useDatabase();
   const [tab, setTab] = useState("specs");
+  const [selection, setSelection] = useState<VariantSelection>({});
 
   const product = useMemo(() => findProductBySlug(slug, db), [slug, db]);
 
@@ -44,6 +47,19 @@ export function ProductPageClient({ slug }: { slug: string }) {
   );
 
   if (!product) notFound();
+
+  // Secilen secenek fiyati, urun kodunu, teknik ozellikleri ve stok
+  // durumunu degistirir. Alt bilesenlerin imzasini degistirmemek icin
+  // secimi uygulanmis bir urun nesnesi turetiyoruz.
+  const variant = resolveVariant(product, selection);
+  const shown: typeof product = {
+    ...product,
+    priceExVat: variant.priceExVat,
+    listPriceExVat: variant.listPriceExVat,
+    specs: variant.specs,
+    sku: variant.sku,
+    inStock: variant.inStock,
+  };
 
   const tabs = [
     { id: "specs", label: t.product.specs },
@@ -92,18 +108,26 @@ export function ProductPageClient({ slug }: { slug: string }) {
             <p className="mt-3 text-zw-grey-600">{text(product.shortDescription)}</p>
 
             <div className="mt-4">
-              <ProductMeta product={product} />
+              <ProductMeta product={shown} />
             </div>
 
-            <PriceBlock product={product} />
+            <VariantPicker
+              product={product}
+              selection={selection}
+              onChange={(groupId, optionId) =>
+                setSelection((sel) => ({ ...sel, [groupId]: optionId }))
+              }
+            />
+
+            <PriceBlock product={shown} />
             <ProductHighlights product={product} />
             <InTheBoxList product={product} />
 
             <div className="mt-8">
-              <WhereToBuyButton product={product} />
+              <WhereToBuyButton product={shown} variantId={variant.variantId} />
             </div>
 
-            <OnlineRetailers product={product} />
+            <OnlineRetailers product={shown} />
             <TrustBadges />
             <SupportCta />
           </div>
@@ -113,7 +137,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
         <div className="mt-14">
           <Tabs tabs={tabs} active={tab} onChange={setTab} />
           <div className="py-8">
-            {tab === "specs" && <SpecTable product={product} />}
+            {tab === "specs" && <SpecTable product={shown} />}
 
             {tab === "description" && (
               <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-zw-grey-700">
@@ -191,7 +215,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
       </div>
 
       {/* Destek sohbeti yalnizca urun sayfalarinda gosteriliyor. */}
-      <ProductSupportChat product={product} />
+      <ProductSupportChat product={shown} />
     </>
   );
 }

@@ -48,6 +48,34 @@ export interface SpecRow {
   value: I18nText;
 }
 
+/* ------------------------------------------------------------------ */
+/* Urun secenekleri (varyantlar)                                       */
+/*                                                                     */
+/* Ornek: bir MIG torcunun 3 m ve 5 m secenekleri. Secenek degisince   */
+/* fiyat, urun kodu, teknik ozellikler ve hangi bayide bulundugu       */
+/* degisebilir.                                                        */
+/* ------------------------------------------------------------------ */
+
+export interface ProductVariantOption {
+  id: string;
+  label: I18nText;
+  /** Taban fiyata eklenecek fark (KDV haric, TRY). Eksi de olabilir. */
+  priceDeltaExVat: number;
+  /** Varyanta ozel urun kodu; yoksa urunun kendi SKU'su kullanilir. */
+  sku?: string;
+  /** Ayni etiketli satir varsa uzerine yazar, yoksa listeye eklenir. */
+  specOverrides?: SpecRow[];
+  /** Zenweld deposunda bu secenek var mi (yoksa urunun genel durumu). */
+  inStock?: boolean;
+}
+
+export interface ProductVariantGroup {
+  id: string;
+  /** Orn. "Torç Uzunluğu" */
+  label: I18nText;
+  options: ProductVariantOption[];
+}
+
 export interface ProductImage {
   /** Uzak gorsel (Unsplash). Yuklenemezse markali SVG placeholder devreye girer. */
   url: string;
@@ -92,6 +120,11 @@ export interface Product {
   hotSale?: boolean;
   /** Indirim oncesi liste fiyati (KDV haric); hotSale ile birlikte kullanilir */
   listPriceExVat?: number;
+  /**
+   * Secenekli urunler (orn. 3 m / 5 m torc). Secim fiyati, urun kodunu,
+   * teknik ozellikleri ve bayi bulunurlugunu degistirebilir.
+   */
+  variantGroups?: ProductVariantGroup[];
   /** Teklif Al akisina acik mi */
   quotable: boolean;
   featured: boolean;
@@ -152,6 +185,8 @@ export interface Retailer {
 export interface RetailerStock {
   productId: string;
   retailerId: string;
+  /** Belirli bir varyanta aitse secenegin id'si; bos ise tum secenekler. */
+  variantId?: string;
   inStock: boolean;
   quantity?: number;
   /** Saticiya ozel fiyat (KDV dahil). Yoksa liste fiyati gosterilir. */
@@ -165,6 +200,11 @@ export interface RetailerStock {
 export interface DealerStock {
   productId: string;
   dealerId: string;
+  /**
+   * Bu kayit belirli bir varyant icinse secenegin id'si. Bos birakilirsa
+   * kayit urunun tum secenekleri icin gecerli sayilir.
+   */
+  variantId?: string;
   inStock: boolean;
   quantity?: number;
   updatedAt: string;

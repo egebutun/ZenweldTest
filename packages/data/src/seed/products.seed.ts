@@ -1,4 +1,4 @@
-import type { Product } from "../types";
+import type { Product, ProductVariantGroup } from "../types";
 import { stockPhotos } from "./images";
 
 /**
@@ -706,7 +706,7 @@ const accessorySeeds: AccessorySeed[] = [
   { slug: "zenmask-basic-500", sku: "ZW-MASK500", name: "Zenweld ZenMask Basic 500", section: "guvenlik", categorySlug: "otomatik-kararan-maskeler", price: 1290, photo: stockPhotos.workshop, short: { tr: "Giriş seviyesi otomatik kararan kaynak maskesi, 2 sensörlü.", en: "Entry-level auto-darkening welding helmet with 2 sensors." }, highlights: [{ tr: "Giriş seviyesi, hafif kask", en: "Entry-level, lightweight shell" }, { tr: "2 sensörlü otomatik kararma", en: "2-sensor auto-darkening" }, { tr: "Değiştirilebilir ön cam", en: "Replaceable front lens" }] },
   { slug: "kaynak-eldiveni-pro", sku: "ZW-GLV-PRO", name: "Zenweld Pro Kaynak Eldiveni", section: "guvenlik", categorySlug: "kaynak-eldivenleri", price: 480, photo: stockPhotos.toolsFlatlay, short: { tr: "Sığır derisi, kevlar dikişli, ısıya dayanıklı kaynak eldiveni.", en: "Cowhide, Kevlar-stitched, heat-resistant welding glove." }, highlights: [{ tr: "Sığır derisi, kevlar dikiş", en: "Cowhide with Kevlar stitching" }, { tr: "Isıya ve kıvılcıma dayanıklı", en: "Heat and spark resistant" }, { tr: "Astarlı, uzun manşetli", en: "Lined, long cuff" }] },
   { slug: "kaynak-onlugu-deri", sku: "ZW-APR-01", name: "Zenweld Deri Kaynak Önlüğü", section: "guvenlik", categorySlug: "kaynak-onlukleri", price: 890, photo: stockPhotos.industrialShop, short: { tr: "Kıvılcıma ve ısıya dayanıklı tam boy deri kaynak önlüğü.", en: "Full-length leather welding apron resistant to sparks and heat." }, highlights: [{ tr: "Tam boy deri koruma", en: "Full-length leather protection" }, { tr: "Ayarlanabilir omuz askısı", en: "Adjustable shoulder strap" }, { tr: "Kıvılcım ve cüruf geçirmez", en: "Blocks sparks and slag" }] },
-  { slug: "mig-torcu-mb25", sku: "ZW-TRC-MB25", name: "Zenweld MB-25 MIG Torcu 3m", section: "aksesuarlar", categorySlug: "mig-torclari", price: 1650, photo: stockPhotos.toolsFlatlay, short: { tr: "250A kapasiteli, 3 metre Euro bağlantılı MIG kaynak torcu.", en: "250A, 3 m Euro-connection MIG welding torch." }, highlights: [{ tr: "250 A / %60 devrede kalma", en: "250 A / 60% duty cycle" }, { tr: "3 m Euro bağlantılı hortum", en: "3 m Euro-connection cable" }, { tr: "Yaygın sarf malzeme bulunabilirliği", en: "Widely available consumables" }] },
+  { slug: "mig-torcu-mb25", sku: "ZW-TRC-MB25", name: "Zenweld MB-25 MIG Torcu", section: "aksesuarlar", categorySlug: "mig-torclari", price: 1650, photo: stockPhotos.toolsFlatlay, short: { tr: "250A kapasiteli, Euro bağlantılı MIG kaynak torcu. 3, 4 ve 5 metre seçenekleriyle.", en: "250A Euro-connection MIG welding torch, available in 3, 4 and 5 m." }, highlights: [{ tr: "250 A / %60 devrede kalma", en: "250 A / 60% duty cycle" }, { tr: "Euro bağlantılı hortum", en: "Euro-connection cable" }, { tr: "Yaygın sarf malzeme bulunabilirliği", en: "Widely available consumables" }] },
   { slug: "mig-torcu-mb36", sku: "ZW-TRC-MB36", name: "Zenweld MB-36 MIG Torcu 4m", section: "aksesuarlar", categorySlug: "mig-torclari", price: 2350, photo: stockPhotos.workshop, short: { tr: "350A kapasiteli, 4 metre ağır hizmet MIG kaynak torcu.", en: "350A, 4 m heavy-duty MIG welding torch." }, highlights: [{ tr: "350 A ağır hizmet kapasitesi", en: "350 A heavy-duty capacity" }, { tr: "4 m uzun erişim", en: "4 m long reach" }, { tr: "Kalın kesitte sürekli kaynak", en: "Continuous welding on thick sections" }] },
   { slug: "tig-torcu-wp26", sku: "ZW-TRC-WP26", name: "Zenweld WP-26 TIG Torcu 4m", section: "aksesuarlar", categorySlug: "tig-torclari", price: 1980, photo: stockPhotos.metalWork, short: { tr: "Hava soğutmalı, 200A kapasiteli 4 metre TIG kaynak torcu.", en: "Air-cooled 200A 4 m TIG welding torch." }, highlights: [{ tr: "200 A hava soğutmalı", en: "200 A air-cooled" }, { tr: "4 m esnek hortum paketi", en: "4 m flexible cable assembly" }, { tr: "Standart WP-26 sarf uyumu", en: "Standard WP-26 consumables" }] },
   { slug: "gaz-nozulu-seti", sku: "ZW-NZL-SET", name: "Zenweld Gaz Nozulu Seti (10'lu)", section: "aksesuarlar", categorySlug: "mig-sarf-malzemeleri", price: 420, photo: stockPhotos.toolsFlatlay, short: { tr: "MB-25 uyumlu 10 adetlik gaz nozulu seti.", en: "10-piece gas nozzle set compatible with MB-25." }, highlights: [{ tr: "MB-25 torçlarla uyumlu", en: "Compatible with MB-25 torches" }, { tr: "10 adetlik ekonomik paket", en: "Economical 10-piece pack" }, { tr: "Bakır gövde, uzun ömür", en: "Copper body, long life" }] },
@@ -964,4 +964,60 @@ products.forEach((p, i) => {
   }
   // Stok adedi: azalanlar elle, digerleri sabit bir dagilimla.
   p.stockQuantity = LOW_STOCK[p.slug] ?? (p.inStock ? 12 + ((i * 7) % 48) : 0);
+});
+
+/* ------------------------------------------------------------------ */
+/* Secenekli urunler (varyantlar)                                      */
+/*                                                                     */
+/* Ornek: MB-25 MIG torcu 3 / 4 / 5 metre secenekleriyle satiliyor.    */
+/* Secenek degisince fiyat, urun kodu ve "Hortum Uzunlugu" teknik      */
+/* satiri degisiyor; bayi bulunurlugu da varyant bazli tutuluyor       */
+/* (bkz. stock.seed.ts).                                               */
+/*                                                                     */
+/* Yeni bir secenekli urun icin buraya bir kayit eklemek yeterli.      */
+/* ------------------------------------------------------------------ */
+const VARIANT_GROUPS: Record<string, ProductVariantGroup[]> = {
+  "mig-torcu-mb25": [
+    {
+      id: "hortum-uzunlugu",
+      label: { tr: "Hortum Uzunluğu", en: "Cable Length" },
+      options: [
+        {
+          id: "3m",
+          label: { tr: "3 metre", en: "3 m" },
+          priceDeltaExVat: 0,
+          sku: "ZW-TRC-MB25-3",
+          specOverrides: [
+            { label: { tr: "Hortum Uzunluğu", en: "Cable Length" }, value: { tr: "3 m", en: "3 m" } },
+            { label: { tr: "Ağırlık", en: "Weight" }, value: { tr: "1,9 kg", en: "1.9 kg" } },
+          ],
+        },
+        {
+          id: "4m",
+          label: { tr: "4 metre", en: "4 m" },
+          priceDeltaExVat: 240,
+          sku: "ZW-TRC-MB25-4",
+          specOverrides: [
+            { label: { tr: "Hortum Uzunluğu", en: "Cable Length" }, value: { tr: "4 m", en: "4 m" } },
+            { label: { tr: "Ağırlık", en: "Weight" }, value: { tr: "2,3 kg", en: "2.3 kg" } },
+          ],
+        },
+        {
+          id: "5m",
+          label: { tr: "5 metre", en: "5 m" },
+          priceDeltaExVat: 460,
+          sku: "ZW-TRC-MB25-5",
+          specOverrides: [
+            { label: { tr: "Hortum Uzunluğu", en: "Cable Length" }, value: { tr: "5 m", en: "5 m" } },
+            { label: { tr: "Ağırlık", en: "Weight" }, value: { tr: "2,7 kg", en: "2.7 kg" } },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+products.forEach((p) => {
+  const groups = VARIANT_GROUPS[p.slug];
+  if (groups) p.variantGroups = groups;
 });

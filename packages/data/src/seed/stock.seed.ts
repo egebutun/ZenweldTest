@@ -61,16 +61,25 @@ products.forEach((product) => {
 export const dealerStock: DealerStock[] = [];
 
 products.forEach((product) => {
+  // Secenekli urunlerde stok secenek bazinda tutulur: bir bayide 3 m
+  // torc bulunurken 5 m bulunmayabilir. Secenegi olmayan urunlerde tek
+  // kayit yazilir (variantId bos = tum secenekler).
+  const options = product.variantGroups?.[0]?.options ?? [undefined];
+
   dealers.forEach((dealer) => {
-    const h = hash(dealer.id, product.id);
-    if (h % 100 >= 85) return; // bazi bayiler bu urunu hic tutmuyor
-    const inStock = h % 100 < 62;
-    dealerStock.push({
-      productId: product.id,
-      dealerId: dealer.id,
-      inStock,
-      quantity: inStock ? (h % 9) + 1 : 0,
-      updatedAt: STAMP,
+    options.forEach((option, index) => {
+      const h = hash(dealer.id, `${product.id}${option ? `-${option.id}` : ""}`);
+      if (h % 100 >= 85) return; // bazi bayiler bunu hic tutmuyor
+      // Uzun secenekler daha az bayide bulunur; gercek hayatta da boyle.
+      const inStock = h % 100 < 62 - index * 14;
+      dealerStock.push({
+        productId: product.id,
+        dealerId: dealer.id,
+        variantId: option?.id,
+        inStock,
+        quantity: inStock ? (h % 9) + 1 : 0,
+        updatedAt: STAMP,
+      });
     });
   });
 });

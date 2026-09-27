@@ -83,7 +83,14 @@ export function PriceBlock({ product }: { product: Product }) {
 
 /* ---------------------------------------------------------------- */
 
-export function WhereToBuyButton({ product }: { product: Product }) {
+export function WhereToBuyButton({
+  product,
+  /** Secili urun secenegi; bayi listesi buna gore filtrelenir. */
+  variantId,
+}: {
+  product: Product;
+  variantId?: string;
+}) {
   const t = useT();
   const [open, setOpen] = useState(false);
 
@@ -100,7 +107,12 @@ export function WhereToBuyButton({ product }: { product: Product }) {
       </Button>
 
       <Modal open={open} onClose={() => setOpen(false)} title={t.dealers.title} size="full">
-        <DealerFinder productId={product.id} productName={product.name} compact />
+        <DealerFinder
+          productId={product.id}
+          productName={product.name}
+          variantId={variantId}
+          compact
+        />
       </Modal>
     </>
   );
