@@ -2,6 +2,7 @@ import type { DealerStock, RetailerStock } from "../types";
 import { products } from "./products.seed";
 import { retailers } from "./retailers.seed";
 import { dealers } from "./dealers.seed";
+import { reviews } from "./reviews.seed";
 
 /**
  * Urun x Satici stok matrisi.
@@ -55,6 +56,28 @@ products.forEach((product) => {
       updatedAt: STAMP,
     });
   });
+});
+
+/**
+ * YORUMU OLAN URUN, O MAGAZADA MUTLAKA SATISTA OLMALI
+ *
+ * Stok matrisi hash ile uretildigi icin bir bayi yorumunun urunu
+ * tesadufen "stokta yok" cikabiliyordu; yorum, magazada bulunmayan bir
+ * urunun sayfasinda kaliyordu. Yorumu olan urun/satici ciftleri burada
+ * stokta olmaya zorlanir.
+ */
+reviews.forEach((review) => {
+  if (review.site !== "bayi" || !review.retailerId) return;
+  const row = retailerStock.find(
+    (s) => s.productId === review.productId && s.retailerId === review.retailerId,
+  );
+  const product = products.find((p) => p.id === review.productId);
+  if (!row || !product) return;
+  if (row.inStock) return;
+  row.inStock = true;
+  row.quantity = 4;
+  row.price =
+    Math.round((product.priceExVat * (1 + product.vatRate / 100)) / 10) * 10;
 });
 
 /** Fiziksel bayi stogu — "sadece stokta olan bayiler" filtresi icin. */

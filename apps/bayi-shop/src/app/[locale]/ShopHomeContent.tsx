@@ -15,6 +15,7 @@ import { Button, SectionHeading } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
 import { ShopProductCard } from "@/components/ShopProductCard";
+import { ShopReviewMarquee } from "@/components/ShopReviewMarquee";
 import { useLocale, useT } from "@/lib/i18n-client";
 import { STORE } from "@/lib/store-config";
 import { formatPrice } from "@/lib/format";
@@ -177,6 +178,9 @@ export function ShopHomeContent() {
           </div>
         </section>
       )}
+
+      {/* Magazanin kendi yorumlari — bayi hesabindan isaretlenenler. */}
+      <ShopReviewMarquee />
     </>
   );
 }
