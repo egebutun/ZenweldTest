@@ -106,6 +106,7 @@ export function useMainMenu(): TopMenu[] {
           href: "/hakkimizda",
           links: [
             { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
+            { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/kesfet/bayilik-basvurusu" },
             { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/kesfet/welders-club" },
             { label: t.explore.guide, description: t.explore.guideDesc, href: "/kesfet/kaynak-rehberi" },
             { label: t.explore.blog, description: t.explore.blogDesc, href: "/kesfet/blog" },

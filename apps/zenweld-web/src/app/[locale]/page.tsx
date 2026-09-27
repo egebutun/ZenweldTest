@@ -1,10 +1,12 @@
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { JsonLd } from "@/components/common/JsonLd";
-import { organizationJsonLd } from "@/lib/seo";
+import { faqJsonLd, organizationJsonLd } from "@/lib/seo";
 import {
   BlogTeaser,
+  DealerApplyBanner,
   DealerStrip,
   Hero,
+  HomeFaq,
   HotSale,
   NewArrivals,
   ProductFinderStrip,
@@ -23,13 +25,17 @@ export default async function HomePage({
   return (
     <>
       <JsonLd data={organizationJsonLd(lang)} />
+      {/* Sorular arama sonuclarinda acilir baslik olarak cikabilsin */}
+      <JsonLd data={faqJsonLd(lang)} />
       <ProductFinderStrip />
       <Hero />
       <HotSale />
       <NewArrivals />
       <QuoteBanner />
       <WhyZenweld />
+      <HomeFaq />
       <DealerStrip />
+      <DealerApplyBanner />
       <BlogTeaser />
     </>
   );
