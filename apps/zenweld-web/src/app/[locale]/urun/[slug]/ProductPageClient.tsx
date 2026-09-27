@@ -19,6 +19,7 @@ import {
   WhereToBuyButton,
 } from "@/components/product/ProductDetailParts";
 import { ProductCard } from "@/components/product/ProductCard";
+import { ProductSupportChat } from "@/components/support/ProductSupportChat";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 
 export function ProductPageClient({ slug }: { slug: string }) {
@@ -188,6 +189,9 @@ export function ProductPageClient({ slug }: { slug: string }) {
           </div>
         )}
       </div>
+
+      {/* Destek sohbeti yalnizca urun sayfalarinda gosteriliyor. */}
+      <ProductSupportChat product={product} />
     </>
   );
 }

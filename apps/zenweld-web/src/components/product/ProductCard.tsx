@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart } from "lucide-react";
+import { Flame, Heart } from "lucide-react";
 import { productHighlights, type Product } from "@zenweld/data";
 import { Badge } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
@@ -8,6 +8,7 @@ import { ProductImage } from "@/components/common/ProductImage";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@/lib/format";
 import { useFavourites } from "@/lib/favourites";
+import { discountPercent, isFlashDeal } from "@/lib/discount";
 
 export function ProductCard({
   product,
@@ -22,16 +23,14 @@ export function ProductCard({
   const text = useText();
   const favourites = useFavourites();
 
-  // Liste fiyati varsa indirim orani hesaplanir (Hot Sale bolumu icin).
   const highlights = productHighlights(product, locale, 3);
   const list = product.listPriceExVat;
-  const discount =
-    list && list > product.priceExVat
-      ? Math.round(((list - product.priceExVat) / list) * 100)
-      : 0;
+  // Indirim orani ve "flas" esigi tek yerden gelir (lib/discount.ts).
+  const discount = discountPercent(product);
+  const flash = isFlashDeal(product);
 
-  return (
-    <div className="group relative flex flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white transition-shadow hover:shadow-lg">
+  const card = (
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white transition-shadow hover:shadow-lg">
       <button
         onClick={() => favourites.toggle(product.id)}
         aria-label="Favori"
@@ -56,7 +55,14 @@ export function ProductCard({
           {/* Indirimli bir urun ayni zamanda yeni olabilir; ikisi de gosterilir.
               Onceden indirim varken "Yeni" etiketi gizleniyordu. */}
           <div className="absolute left-2 top-2 flex flex-col items-start gap-1">
-            {discount > 0 && <Badge tone="red">%{discount} {t.product.discount}</Badge>}
+            {flash ? (
+              <span className="inline-flex items-center gap-1 rounded-[3px] bg-zw-red-600 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow">
+                <Flame size={12} />
+                {t.product.flashDeal} %{discount}
+              </span>
+            ) : (
+              discount > 0 && <Badge tone="red">%{discount} {t.product.discount}</Badge>
+            )}
             {product.isNew && (
               <Badge tone={discount > 0 ? "dark" : "red"}>{t.product.new}</Badge>
             )}
@@ -93,17 +99,33 @@ export function ProductCard({
         )}
 
         <div className={compact ? "mt-auto pt-3" : "mt-auto pt-4"}>
-          <div className={`font-bold text-zw-ink ${compact ? "text-base" : "text-lg"}`}>
-            {formatPrice(priceWithVat(product.priceExVat, product.vatRate), locale)}
-            <span className="ml-1.5 text-xs font-normal text-zw-grey-500">
-              {t.product.priceIncVat}
-            </span>
-          </div>
-          <div className="text-xs text-zw-grey-500">
-            {formatPrice(product.priceExVat, locale)} {t.product.priceExVat}
-            {discount > 0 && list && (
-              <span className="ml-2 line-through">{formatPrice(list, locale)}</span>
-            )}
+          {/* Indirimli fiyat kirmizi kutuda beyaz ve kalin; indirimsizler
+              de eskisinden belirgin sekilde buyuk. */}
+          {discount > 0 ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-block rounded-[4px] bg-zw-red-600 px-2.5 py-1 font-bold text-white ${
+                  compact ? "text-xl" : "text-2xl"
+                }`}
+              >
+                {formatPrice(priceWithVat(product.priceExVat, product.vatRate), locale)}
+              </span>
+              {list && (
+                <span
+                  className={`text-zw-grey-500 line-through ${compact ? "text-sm" : "text-base"}`}
+                >
+                  {formatPrice(priceWithVat(list, product.vatRate), locale)}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className={`font-bold text-zw-ink ${compact ? "text-xl" : "text-2xl"}`}>
+              {formatPrice(priceWithVat(product.priceExVat, product.vatRate), locale)}
+            </div>
+          )}
+          <div className="mt-1 text-xs text-zw-grey-500">
+            {t.product.priceIncVat} · {formatPrice(product.priceExVat, locale)}{" "}
+            {t.product.priceExVat}
           </div>
           <LocaleLink
             href={`/urun/${product.slug}`}
@@ -115,4 +137,7 @@ export function ProductCard({
       </div>
     </div>
   );
+
+  // Esigi asan urunler alevli cercevenin icine alinir.
+  return flash ? <div className="zw-flash h-full">{card}</div> : card;
 }

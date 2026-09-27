@@ -9,3 +9,91 @@
 .zw-no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* ------------------------------------------------------------------ */
+/* FLAS INDIRIM — alevli cerceve                                       */
+/*                                                                     */
+/* Esigi asan urun kartlarinda kullanilir. Renkler yalnizca marka       */
+/* kirmizisinin tonlarindan alinir; temadan disari cikilmaz.           */
+/*                                                                     */
+/* Iki katman var: disarida yumusak kizil parlama (::before), onun     */
+/* uzerinde hareketli kirmizi cerceve (::after). Ikisi de z-index 0;   */
+/* ::after sonra ciziliyor, kart govdesi ise z-index 1 ile ustte.      */
+/* ------------------------------------------------------------------ */
+.zw-flash {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Kenarlardan alev gibi tasan parlama */
+.zw-flash::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 12px;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    var(--color-zw-red-600) 0%,
+    var(--color-zw-red-700) 45%,
+    transparent 72%
+  );
+  filter: blur(12px);
+  opacity: 0.55;
+  z-index: 0;
+  animation: zw-flash-glow 2.4s ease-in-out infinite;
+}
+
+/* Hareketli kirmizi cerceve */
+.zw-flash::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 7px;
+  background: linear-gradient(
+    120deg,
+    var(--color-zw-red-800),
+    var(--color-zw-red-500),
+    var(--color-zw-red-600),
+    var(--color-zw-red-400),
+    var(--color-zw-red-700)
+  );
+  background-size: 300% 300%;
+  z-index: 0;
+  animation: zw-flash-flow 5s ease-in-out infinite;
+}
+
+/* Kart govdesi cercevenin uzerinde kalir */
+.zw-flash > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes zw-flash-flow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes zw-flash-glow {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.99);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.02);
+  }
+}
+
+/* Hareket azaltma tercihi: cerceve ve parlama kalir, oynama durur. */
+@media (prefers-reduced-motion: reduce) {
+  .zw-flash::before,
+  .zw-flash::after {
+    animation: none;
+  }
+}

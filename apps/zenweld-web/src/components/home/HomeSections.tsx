@@ -108,27 +108,56 @@ export function ProductFinderStrip() {
   const t = useT();
 
   return (
-    <section className="border-b border-zw-grey-200 bg-zw-grey-100">
-      <div className="zw-container flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center gap-3">
-          <Compass size={22} className="shrink-0 text-zw-red-600" />
+    <section className="relative overflow-hidden bg-zw-ink text-white">
+      {/* Marka kirmizisindan egik bir isik huzmesi — dikkat ceker ama
+          paletten cikmaz. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-70"
+        style={{
+          background:
+            "linear-gradient(105deg, transparent 38%, var(--color-zw-red-800) 58%, var(--color-zw-red-600) 78%, var(--color-zw-red-700) 100%)",
+        }}
+      />
+
+      <div className="zw-container relative flex flex-col gap-5 py-7 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-4">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25">
+            <Compass size={24} className="text-white" />
+          </span>
           <div>
-            <div className="font-display text-lg font-bold text-zw-ink sm:text-xl">
+            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-zw-red-200">
+              {t.finder.eyebrow}
+            </div>
+            <div className="font-display text-2xl font-bold uppercase leading-tight sm:text-3xl">
               {t.finder.question}
             </div>
-            <div className="text-sm text-zw-grey-600">{t.finder.hint}</div>
+            <div className="mt-1 text-sm text-zw-grey-300">{t.finder.hint}</div>
           </div>
         </div>
 
-        {/* Malzeme kisayollari kaldirildi: zaten secicinin ilk sorusunun
-            cevaplari, burada tekrar etmeleri gereksizdi. */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex shrink-0 items-center gap-4">
+          {/* Uc adimi gorsellestiren kucuk sayaç: isin ne kadar kisa
+              oldugunu bir bakista anlatir. */}
+          <div className="hidden items-center gap-1.5 sm:flex" aria-hidden>
+            {[1, 2, 3].map((n) => (
+              <span
+                key={n}
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-white/35 text-xs font-bold text-white/90"
+              >
+                {n}
+              </span>
+            ))}
+          </div>
           <LocaleLink
             href="/kesfet/urun-secici"
-            className="inline-flex items-center gap-1.5 rounded-full bg-zw-ink px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-zw-red-600"
+            className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold uppercase tracking-wide text-zw-red-700 shadow-lg transition-colors hover:bg-zw-grey-100"
           >
             {t.finder.cta}
-            <ArrowRight size={15} />
+            <ArrowRight
+              size={17}
+              className="transition-transform duration-200 group-hover:translate-x-1"
+            />
           </LocaleLink>
         </div>
       </div>
