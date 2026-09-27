@@ -1,6 +1,7 @@
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { JsonLd } from "@/components/common/JsonLd";
 import { faqJsonLd, organizationJsonLd } from "@/lib/seo";
+import { ReviewMarquee } from "@/components/home/ReviewMarquee";
 import {
   BlogTeaser,
   DealerApplyBanner,
@@ -33,6 +34,7 @@ export default async function HomePage({
       <NewArrivals />
       <QuoteBanner />
       <WhyZenweld />
+      <ReviewMarquee />
       <HomeFaq />
       <DealerStrip />
       <DealerApplyBanner />

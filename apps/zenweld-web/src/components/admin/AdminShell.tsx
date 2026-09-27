@@ -12,6 +12,7 @@ import {
   Package,
   Palette,
   ShoppingCart,
+  Star,
   Store,
   Users,
 } from "lucide-react";
@@ -39,6 +40,7 @@ const NAV = [
   { href: "/admin/uyeler", label: "Üyeler", Icon: Users },
   { href: "/admin/etkinlikler", label: "Etkinlikler", Icon: CalendarDays },
   { href: "/admin/haberler", label: "Haberler", Icon: Newspaper },
+  { href: "/admin/yorumlar", label: "Yorumlar", Icon: Star },
   { href: "/admin/gorunum", label: "Görünüm", Icon: Palette },
   { href: "/admin/teklifler", label: "Teklifler", Icon: FileText },
   { href: "/admin/siparisler", label: "Siparişler", Icon: ShoppingCart },

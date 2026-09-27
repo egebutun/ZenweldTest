@@ -4,12 +4,13 @@ import type {
   Dealer,
   DealerStock,
   NewsItem,
-  RichTextStyle,
   Order,
   Product,
+  ProductReview,
   Quote,
   Retailer,
   RetailerStock,
+  RichTextStyle,
   User,
   ZenweldDatabase,
   ZenweldEvent,
@@ -618,4 +619,114 @@ export function resetRichTextStyle(): void {
   mutate((db) => {
     db.settings = { ...db.settings, richText: { ...defaultSettings.richText } };
   });
+}
+
+/* ------------------------------------------------------------------ */
+/* Urun degerlendirmeleri                                              */
+/* ------------------------------------------------------------------ */
+
+/** Anasayfadaki kayan seritte en fazla bu kadar yorum gosterilir. */
+export const FEATURED_REVIEW_LIMIT = 10;
+
+/** Bir urunun yayindaki yorumlari (en yeni once). */
+export function listProductReviews(
+  productId: string,
+  site: ProductReview["site"],
+  db: ZenweldDatabase = getSnapshot(),
+): ProductReview[] {
+  return db.reviews
+    .filter((r) => r.productId === productId && r.site === site && r.approved)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+/** Ortalama puan ve yorum sayisi. */
+export function reviewSummary(
+  productId: string,
+  site: ProductReview["site"],
+  db: ZenweldDatabase = getSnapshot(),
+): { average: number; count: number } {
+  const list = listProductReviews(productId, site, db);
+  if (list.length === 0) return { average: 0, count: 0 };
+  const total = list.reduce((sum, r) => sum + r.rating, 0);
+  return { average: Math.round((total / list.length) * 10) / 10, count: list.length };
+}
+
+/** Anasayfada gosterilecek, isaretlenmis yorumlar. */
+export function featuredReviews(
+  site: ProductReview["site"],
+  db: ZenweldDatabase = getSnapshot(),
+): ProductReview[] {
+  return db.reviews
+    .filter((r) => r.site === site && r.approved && r.featured)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, FEATURED_REVIEW_LIMIT);
+}
+
+/** Yonetim panelindeki tam liste (onay bekleyenler dahil). */
+export function listAllReviews(
+  site: ProductReview["site"],
+  db: ZenweldDatabase = getSnapshot(),
+): ProductReview[] {
+  return db.reviews
+    .filter((r) => r.site === site)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export function createReview(partial: Partial<ProductReview>): ProductReview {
+  const item: ProductReview = {
+    id: partial.id ?? uid("rv"),
+    productId: partial.productId ?? "",
+    userId: partial.userId,
+    authorName: partial.authorName ?? "",
+    rating: Math.min(5, Math.max(1, partial.rating ?? 5)),
+    title: partial.title,
+    body: partial.body ?? "",
+    media: partial.media ?? [],
+    verifiedPurchase: partial.verifiedPurchase ?? false,
+    site: partial.site ?? "zenweld",
+    // Yeni yorumlar once yonetim panelinde onaylanir.
+    approved: partial.approved ?? false,
+    featured: false,
+    createdAt: partial.createdAt ?? nowIso(),
+  };
+  mutate((db) => {
+    db.reviews.unshift(item);
+  });
+  return item;
+}
+
+export function saveReview(review: ProductReview): void {
+  mutate((db) => {
+    const i = db.reviews.findIndex((r) => r.id === review.id);
+    if (i >= 0) db.reviews[i] = review;
+  });
+}
+
+export function deleteReview(id: string): void {
+  mutate((db) => {
+    const i = db.reviews.findIndex((r) => r.id === id);
+    if (i >= 0) db.reviews.splice(i, 1);
+  });
+}
+
+/**
+ * Yorumu anasayfa seridine alir ya da cikarir.
+ * Sinir dolmussa yeni isaretleme yapilmaz; cagiran taraf false donusunu
+ * kullaniciya bildirir.
+ */
+export function toggleFeaturedReview(id: string): boolean {
+  let ok = true;
+  mutate((db) => {
+    const review = db.reviews.find((r) => r.id === id);
+    if (!review) return;
+    if (!review.featured) {
+      const count = db.reviews.filter((r) => r.site === review.site && r.featured).length;
+      if (count >= FEATURED_REVIEW_LIMIT) {
+        ok = false;
+        return;
+      }
+    }
+    review.featured = !review.featured;
+  });
+  return ok;
 }
