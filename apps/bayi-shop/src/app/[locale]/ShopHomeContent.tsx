@@ -11,18 +11,20 @@ import {
 } from "lucide-react";
 import { stockPhotos } from "@zenweld/data";
 import { stockForRetailer, useDatabase } from "@zenweld/store";
-import { Button, SectionHeading } from "@zenweld/ui";
+import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
 import { ShopProductCard } from "@/components/ShopProductCard";
+import { ShopProductMarquee } from "@/components/ShopProductMarquee";
 import { ShopReviewMarquee } from "@/components/ShopReviewMarquee";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { STORE } from "@/lib/store-config";
-import { formatPrice } from "@/lib/format";
+import { formatDate, formatPrice } from "@/lib/format";
 
 export function ShopHomeContent() {
   const t = useT();
   const locale = useLocale();
+  const text = useText();
   const db = useDatabase();
 
   const stock = stockForRetailer(STORE.retailerId, db);
@@ -31,10 +33,16 @@ export function ShopHomeContent() {
     (p) => p.active && stockMap.get(p.id)?.inStock,
   );
   /** Urun gamina yeni katilanlardan magazada stokta olanlar. */
-  const newArrivals = inStockProducts.filter((p) => p.isNew).slice(0, 8);
+  const newArrivals = inStockProducts
+    .filter((p) => p.isNew)
+    .slice(0, 12)
+    .map((p) => ({ product: p, stock: stockMap.get(p.id) }));
 
   /** Zenweld'in kampanyali urunlerinden magazada stokta olanlar. */
-  const hotSale = inStockProducts.filter((p) => p.hotSale).slice(0, 8);
+  const hotSale = inStockProducts
+    .filter((p) => p.hotSale)
+    .slice(0, 12)
+    .map((p) => ({ product: p, stock: stockMap.get(p.id) }));
 
   /** Magazanin kendi stogunda 5 adet ve altinda kalanlar. */
   const lowStock = inStockProducts
@@ -103,13 +111,13 @@ export function ShopHomeContent() {
               <div>
                 <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-zw-red-500">
                   <Flame size={18} />
-                  Hot Sale
+                  {t.home.hotSaleEyebrow}
                 </div>
                 <h2 className="mt-2 font-display text-3xl font-bold uppercase sm:text-4xl">
-                  Kampanyalı Ürünler
+                  {t.home.hotSaleTitle}
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm text-zw-grey-300">
-                  Sınırlı süreli fiyatlarla öne çıkan ürünler. Stoklarla sınırlıdır.
+                  {t.home.hotSaleSubtitle}
                 </p>
               </div>
               <LocaleLink
@@ -119,11 +127,7 @@ export function ShopHomeContent() {
                 {t.common.viewAll} <ArrowRight size={16} />
               </LocaleLink>
             </div>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {hotSale.map((p) => (
-                <ShopProductCard key={p.id} product={p} stock={stockMap.get(p.id)} />
-              ))}
-            </div>
+            <ShopProductMarquee items={hotSale} />
           </div>
         </section>
       )}
@@ -133,10 +137,10 @@ export function ShopHomeContent() {
           <div className="mb-8">
             <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-amber-600">
               <AlertTriangle size={18} />
-              Son Adetler
+              {t.home.lowStockEyebrow}
             </div>
             <h2 className="mt-2 font-display text-3xl font-bold uppercase sm:text-4xl">
-              Stokta Azalanlar
+              {t.home.lowStockTitle}
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-zw-grey-600">
               Mağazamızda az sayıda kalan ürünler. Tükenmeden sipariş verebilirsiniz.
@@ -158,9 +162,9 @@ export function ShopHomeContent() {
         <section className="bg-zw-grey-50">
           <div className="zw-container zw-section">
             <SectionHeading
-              eyebrow="Yeni"
-              title="Yeni Gelenler"
-              subtitle="Ürün gamımıza yeni katılan makine ve ekipmanlar."
+              eyebrow={t.home.newArrivalsEyebrow}
+              title={t.home.newArrivalsTitle}
+              subtitle={t.home.newArrivalsSubtitle}
               action={
                 <LocaleLink
                   href="/magaza"
@@ -170,17 +174,96 @@ export function ShopHomeContent() {
                 </LocaleLink>
               }
             />
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {newArrivals.map((p) => (
-                <ShopProductCard key={p.id} product={p} stock={stockMap.get(p.id)} />
-              ))}
-            </div>
+            <ShopProductMarquee items={newArrivals} />
           </div>
         </section>
       )}
 
       {/* Magazanin kendi yorumlari — bayi hesabindan isaretlenenler. */}
       <ShopReviewMarquee />
+
+      {/* Sik sorulan sorular — ana siteyle ayni sorular (tek kaynak).
+          Arama motorlari icin de degerli, o yuzden anasayfada. */}
+      {db.faqs.length > 0 && (
+        <section className="bg-white">
+          <div className="zw-container zw-section">
+            <SectionHeading
+              eyebrow={t.support.faqTitle}
+              title={t.home.faqTitle}
+              subtitle={t.home.faqSubtitle}
+              action={
+                <LocaleLink
+                  href="/destek/sss"
+                  className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+                >
+                  {t.common.viewAll} <ArrowRight size={16} />
+                </LocaleLink>
+              }
+            />
+            <div className="max-w-3xl">
+              <Accordion
+                icon="plus"
+                items={db.faqs.slice(0, 8).map((f) => ({
+                  id: f.id,
+                  title: text(f.question),
+                  content: text(f.answer),
+                }))}
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Blog — yazilar Zenweld merkez editoru tarafindan hazirlanir,
+          magaza yalnizca gosterir. */}
+      {db.blogPosts.length > 0 && (
+        <section className="zw-container zw-section">
+          <SectionHeading
+            eyebrow={t.home.blogSubtitle}
+            title={t.home.blogTitle}
+            action={
+              <LocaleLink
+                href="/blog"
+                className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+              >
+                {t.common.viewAll} <ArrowRight size={16} />
+              </LocaleLink>
+            }
+          />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {db.blogPosts.slice(0, 3).map((post) => (
+              <LocaleLink
+                key={post.id}
+                href={`/blog/${post.slug}`}
+                className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
+              >
+                <div className="aspect-[16/9] overflow-hidden bg-zw-grey-100">
+                  <ProductImage
+                    src={post.coverUrl}
+                    alt={text(post.title)}
+                    label={text(post.category)}
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-5">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-zw-red-600">
+                    {text(post.category)}
+                  </div>
+                  <h3 className="mt-2 font-display text-xl font-semibold leading-tight group-hover:text-zw-red-600">
+                    {text(post.title)}
+                  </h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-zw-grey-500">
+                    {text(post.excerpt)}
+                  </p>
+                  <div className="mt-3 text-xs text-zw-grey-400">
+                    {formatDate(post.publishedAt, locale)}
+                  </div>
+                </div>
+              </LocaleLink>
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 }

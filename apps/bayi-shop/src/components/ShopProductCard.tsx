@@ -1,21 +1,42 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ShoppingCart } from "lucide-react";
-import { productHighlights, type Product, type RetailerStock } from "@zenweld/data";
-import { Badge, Button } from "@zenweld/ui";
+import { Check, Flame, ShoppingCart } from "lucide-react";
+import {
+  discountPercent,
+  isFlashDeal,
+  productHighlights,
+  type Product,
+  type RetailerStock,
+} from "@zenweld/data";
+import { Badge, Button, FlashFrame } from "@zenweld/ui";
 import { LocaleLink } from "./LocaleLink";
 import { ProductImage } from "./ProductImage";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@/lib/format";
 import { useCart } from "@/lib/cart";
 
+/**
+ * MAGAZA URUN KARTI
+ *
+ * Gorsel dil ana siteyle AYNIDIR: flas indirim etiketi ve alevli
+ * cerceve, "Yeni" rozeti, indirimli fiyatin kirmizi kutuda beyaz-bold
+ * yazilmasi, ustu cizili liste fiyati. Magazaya ozgu olan kisimlar
+ * korunur: sepete ekle butonu, magaza fiyati ve "Son N adet" uyarisi.
+ *
+ * Fiyat farki: ana site marka fiyatini, magaza kendi satis fiyatini
+ * gosterir (stock.price). Indirim orani yine markanin liste fiyatindan
+ * hesaplanir, boylece iki sitede ayni yuzde gorunur.
+ */
 export function ShopProductCard({
   product,
   stock,
+  /** Anasayfadaki kayan seritte kullanilan daha kucuk hal. */
+  compact = false,
 }: {
   product: Product;
   stock?: RetailerStock;
+  compact?: boolean;
 }) {
   const t = useT();
   const locale = useLocale();
@@ -30,30 +51,49 @@ export function ShopProductCard({
   const left = stock?.quantity ?? 0;
   const runningLow = available && left > 0 && left <= 5;
 
-  return (
-    <div className="group flex flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white text-zw-ink transition-shadow hover:shadow-lg">
+  const list = product.listPriceExVat;
+  const discount = discountPercent(product);
+  const flash = isFlashDeal(product);
+
+  const card = (
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white text-zw-ink transition-shadow hover:shadow-lg">
       <LocaleLink href={`/urun/${product.slug}`} className="block">
-        <div className="relative aspect-square overflow-hidden bg-zw-grey-50">
+        <div
+          className={`relative overflow-hidden bg-zw-grey-50 ${compact ? "aspect-[4/3]" : "aspect-square"}`}
+        >
           <ProductImage
             src={product.images[0]?.url}
             alt={text(product.images[0]?.alt) || product.name}
             label={product.name}
-            className="h-full w-full object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+            className={`h-full w-full object-contain transition-transform duration-300 group-hover:scale-105 ${compact ? "p-2" : "p-3"}`}
           />
-          <div className="absolute left-2 top-2 flex flex-col gap-1">
-            {product.isNew && <Badge tone="red">{t.product.new}</Badge>}
+          {/* Indirimli bir urun ayni zamanda yeni olabilir; ikisi de gosterilir. */}
+          <div className="absolute left-2 top-2 flex flex-col items-start gap-1">
+            {flash ? (
+              <span className="inline-flex items-center gap-1 rounded-[3px] bg-zw-red-600 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow">
+                <Flame size={12} />
+                {t.product.flashDeal} %{discount}
+              </span>
+            ) : (
+              discount > 0 && <Badge tone="red">%{discount} {t.product.discount}</Badge>
+            )}
+            {product.isNew && (
+              <Badge tone={discount > 0 ? "dark" : "red"}>{t.product.new}</Badge>
+            )}
             {runningLow && <Badge tone="amber">Son {left} adet</Badge>}
             {!available && <Badge tone="outline">{t.product.outOfStock}</Badge>}
           </div>
         </div>
       </LocaleLink>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className={`flex flex-1 flex-col ${compact ? "p-3" : "p-4"}`}>
         <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-zw-grey-500">
           {product.sku}
         </div>
         <LocaleLink href={`/urun/${product.slug}`}>
-          <h3 className="font-display text-lg font-semibold leading-tight text-zw-ink group-hover:text-zw-red-600">
+          <h3
+            className={`font-display font-semibold leading-tight text-zw-ink transition-colors group-hover:text-zw-red-600 ${compact ? "text-base" : "text-lg"}`}
+          >
             {product.name}
           </h3>
         </LocaleLink>
@@ -73,14 +113,38 @@ export function ShopProductCard({
           </p>
         )}
 
-        <div className="mt-auto pt-4">
-          <div className="font-display text-2xl font-bold text-zw-ink">
-            {formatPrice(price, locale)}
-          </div>
-          <div className="text-xs text-zw-grey-500">{t.product.priceIncVat}</div>
+        <div className={compact ? "mt-auto pt-3" : "mt-auto pt-4"}>
+          {/* Indirimli fiyat kirmizi kutuda beyaz ve kalin; indirimsizler
+              de eskisinden belirgin sekilde buyuk. */}
+          {discount > 0 ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={`inline-block rounded-[4px] bg-zw-red-600 px-2.5 py-1 font-bold text-white ${
+                  compact ? "text-xl" : "text-2xl"
+                }`}
+              >
+                {formatPrice(price, locale)}
+              </span>
+              {list && (
+                <span
+                  className={`text-zw-grey-500 line-through ${compact ? "text-sm" : "text-base"}`}
+                >
+                  {formatPrice(priceWithVat(list, product.vatRate), locale)}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div
+              className={`font-display font-bold text-zw-ink ${compact ? "text-xl" : "text-2xl"}`}
+            >
+              {formatPrice(price, locale)}
+            </div>
+          )}
+          <div className="mt-1 text-xs text-zw-grey-500">{t.product.priceIncVat}</div>
 
           <Button
             className="mt-3"
+            size={compact ? "sm" : "md"}
             fullWidth
             disabled={!available}
             leftIcon={added ? <Check size={17} /> : <ShoppingCart size={17} />}
@@ -102,4 +166,7 @@ export function ShopProductCard({
       </div>
     </div>
   );
+
+  // Esigi asan urunler alevli cercevenin icine alinir.
+  return flash ? <FlashFrame>{card}</FlashFrame> : card;
 }

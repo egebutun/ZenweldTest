@@ -9,17 +9,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const lang = (isLocale(locale) ? locale : "tr") as Locale;
-  const title = lang === "tr" ? "Garanti Sorgula" : "Check Your Warranty";
+  const title = lang === "tr" ? "Sık Sorulan Sorular" : "Frequently Asked Questions";
   const description =
     lang === "tr"
-      ? "Seri numaranızı girerek Zenweld ürününüzün garanti durumunu ve bitiş tarihini öğrenin."
-      : "Enter your serial number to see your Zenweld product's warranty status and expiry date.";
+      ? "Zenweld ürünleri, garanti, sipariş ve teknik konularda sık sorulan sorular."
+      : "Frequently asked questions about Zenweld products, warranty, orders and technical topics.";
 
   return {
     title,
     description,
-    alternates: languageAlternates("/kesfet/garanti-sorgula", lang),
-    openGraph: { title, description, url: `/${lang}/kesfet/garanti-sorgula` },
+    alternates: languageAlternates("/destek/sss", lang),
+    openGraph: { title, description, url: `/${lang}/destek/sss` },
   };
 }
 

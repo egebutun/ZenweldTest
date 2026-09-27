@@ -9,17 +9,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const lang = (isLocale(locale) ? locale : "tr") as Locale;
-  const title = lang === "tr" ? "Garanti Kaydı" : "Register Your Warranty";
+  const title = lang === "tr" ? "Garanti" : "Warranty";
   const description =
     lang === "tr"
-      ? "Zenweld makinenizi online kaydedin, garanti sürenize 12 ay ücretsiz uzatma kazanın."
-      : "Register your Zenweld machine online and get 12 extra months of warranty for free.";
+      ? "Zenweld makinenizin garantisini online kaydedin ya da seri numaranızla mevcut garantinizi sorgulayın."
+      : "Register your Zenweld machine's warranty online or look up an existing warranty by serial number.";
 
   return {
     title,
     description,
-    alternates: languageAlternates("/kesfet/garanti-kayit", lang),
-    openGraph: { title, description, url: `/${lang}/kesfet/garanti-kayit` },
+    alternates: languageAlternates("/kesfet/garanti", lang),
+    openGraph: { title, description, url: `/${lang}/kesfet/garanti` },
   };
 }
 

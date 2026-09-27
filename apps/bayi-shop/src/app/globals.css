@@ -3,8 +3,3 @@
 
 @source "../../../../packages/ui/src";
 @source "../../src";
-
-/* Kayan yorum seridinde (hareketi azaltma modunda) kaydirma cubugu gizlenir. */
-.zw-no-scrollbar::-webkit-scrollbar {
-  display: none;
-}

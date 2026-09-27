@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { notFound } from "next/navigation";
 import { Check, ChevronRight, Minus, Plus, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
 import { findProductBySlug, getRetailerStock, stockForRetailer, useDatabase } from "@zenweld/store";
-import { Badge, Button, Tabs } from "@zenweld/ui";
+import { localizePath } from "@zenweld/i18n";
+import { Accordion, Badge, Button, Tabs } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
 import { ShopProductCard } from "@/components/ShopProductCard";
@@ -208,6 +209,8 @@ export function ShopProductPageClient({ slug }: { slug: string }) {
               { id: "specs", label: t.product.specs },
               { id: "description", label: t.product.description },
               { id: "shipping", label: "Kargo & İade" },
+              { id: "warranty", label: t.product.warranty },
+              { id: "faq", label: t.support.faqTitle },
             ]}
           />
           <div className="py-8">
@@ -238,6 +241,53 @@ export function ShopProductPageClient({ slug }: { slug: string }) {
                   {formatPrice(STORE.shippingFee, locale)} kargo bedeli uygulanır.
                 </p>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+              </div>
+            )}
+
+            {/* Garanti — ana siteyle ayni metin. Garanti kaydi ve
+                sorgulama markanin kendi sitesinde yapilir, o yuzden
+                baglantilar Zenweld sitesine gider. */}
+            {tab === "warranty" && (
+              <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-zw-grey-700">
+                <p className="flex items-center gap-2 font-semibold text-zw-ink">
+                  <ShieldCheck size={18} className="text-zw-red-600" />
+                  {t.product.warrantyMonths.replace("{months}", String(product.warrantyMonths))}
+                </p>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <a
+                    href={`${STORE.zenweldUrl}/${locale}${localizePath("/kesfet/garanti", locale)}?islem=kayit`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-zw-red-600 hover:underline"
+                  >
+                    {t.explore.registerWarranty} →
+                  </a>
+                  <a
+                    href={`${STORE.zenweldUrl}/${locale}${localizePath("/kesfet/garanti", locale)}?islem=sorgula`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-zw-red-600 hover:underline"
+                  >
+                    {t.explore.checkWarranty} →
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* Sik sorulan sorular — ana siteyle ayni kaynak (db.faqs) */}
+            {tab === "faq" && (
+              <div className="max-w-3xl">
+                <Accordion
+                  items={db.faqs.map((f) => ({
+                    id: f.id,
+                    title: text(f.question),
+                    content: text(f.answer),
+                  }))}
+                />
               </div>
             )}
           </div>

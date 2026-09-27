@@ -28,8 +28,18 @@ export function ShopFooter() {
               </LocaleLink>
             </li>
             <li>
+              <LocaleLink href="/destek/sss" className="hover:text-zw-red-600">
+                {t.support.faqTitle}
+              </LocaleLink>
+            </li>
+            <li>
               <LocaleLink href="/iletisim" className="hover:text-zw-red-600">
                 {t.footer.contact}
+              </LocaleLink>
+            </li>
+            <li>
+              <LocaleLink href="/blog" className="hover:text-zw-red-600">
+                {t.explore.blog}
               </LocaleLink>
             </li>
             <li>

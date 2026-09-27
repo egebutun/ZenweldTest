@@ -2,34 +2,13 @@
 
 import { Flame, Heart } from "lucide-react";
 import { productHighlights, type Product } from "@zenweld/data";
-import { Badge } from "@zenweld/ui";
+import { Badge, FlashFrame } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@/lib/format";
 import { useFavourites } from "@/lib/favourites";
 import { discountPercent, isFlashDeal } from "@/lib/discount";
-
-/**
- * Alev dillerinin kart KENARI uzerindeki konumlari.
- * left/bottom yuzde olarak kartin kenarina oturur; her dilin yarisi
- * kartin arkasinda kalir, yarisi disarida gorunur.
- */
-const FLAME_SPOTS: { left: string; bottom: string; delay: number }[] = [
-  // alt kenar
-  { left: "14%", bottom: "0%", delay: 0 },
-  { left: "38%", bottom: "0%", delay: 0.5 },
-  { left: "62%", bottom: "0%", delay: 0.25 },
-  { left: "86%", bottom: "0%", delay: 0.75 },
-  // sol kenar
-  { left: "0%", bottom: "16%", delay: 0.35 },
-  { left: "0%", bottom: "44%", delay: 0.9 },
-  { left: "0%", bottom: "72%", delay: 0.15 },
-  // sag kenar
-  { left: "100%", bottom: "24%", delay: 0.65 },
-  { left: "100%", bottom: "54%", delay: 0.1 },
-  { left: "100%", bottom: "80%", delay: 1.05 },
-];
 
 export function ProductCard({
   product,
@@ -163,18 +142,5 @@ export function ProductCard({
   // kartin arkasinda, farkli gecikmelerle yukselir.
   if (!flash) return card;
 
-  return (
-    <div className="zw-flash h-full">
-      <span aria-hidden className="zw-flame-layer">
-        {FLAME_SPOTS.map((f, i) => (
-          <span
-            key={i}
-            className="zw-flame"
-            style={{ left: f.left, bottom: f.bottom, animationDelay: `${f.delay}s` }}
-          />
-        ))}
-      </span>
-      {card}
-    </div>
-  );
+  return <FlashFrame>{card}</FlashFrame>;
 }

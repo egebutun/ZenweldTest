@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, Phone, Search, ShoppingCart, User as UserIcon, X } from "lucide-react";
+import { ChevronDown, Menu, Phone, Search, ShoppingCart, User as UserIcon, X } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { locales, localeNames, switchLocaleInPath } from "@zenweld/i18n";
 import { useDatabase } from "@zenweld/store";
@@ -141,6 +141,45 @@ export function ShopHeader() {
               {g.name[locale]}
             </LocaleLink>
           ))}
+
+          <LocaleLink
+            href="/blog"
+            className="rounded-[4px] px-3 py-2 text-sm font-semibold text-zw-grey-700 hover:bg-zw-grey-100 hover:text-zw-ink"
+          >
+            {t.explore.blog}
+          </LocaleLink>
+
+          {/* Destek basligi: uzerine gelince SSS ve Iletisim acilir. */}
+          <div className="group relative">
+            <button
+              type="button"
+              className="flex items-center gap-1 rounded-[4px] px-3 py-2 text-sm font-semibold text-zw-grey-700 hover:bg-zw-grey-100 hover:text-zw-ink"
+            >
+              {t.nav.support}
+              <ChevronDown size={15} />
+            </button>
+            <div className="invisible absolute left-0 top-full z-50 w-56 rounded-[4px] border border-zw-grey-200 bg-white py-2 opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+              <LocaleLink
+                href="/destek/sss"
+                className="block px-4 py-2 text-sm hover:bg-zw-grey-50 hover:text-zw-red-600"
+              >
+                {t.support.faqTitle}
+              </LocaleLink>
+              <LocaleLink
+                href="/iletisim"
+                className="block px-4 py-2 text-sm hover:bg-zw-grey-50 hover:text-zw-red-600"
+              >
+                {t.support.contactTitle}
+              </LocaleLink>
+              <LocaleLink
+                href="/kargo-iade"
+                className="block px-4 py-2 text-sm hover:bg-zw-grey-50 hover:text-zw-red-600"
+              >
+                Kargo & İade
+              </LocaleLink>
+            </div>
+          </div>
+
           <a
             href={STORE.zenweldUrl}
             target="_blank"
@@ -182,18 +221,43 @@ export function ShopHeader() {
                 </LocaleLink>
               ))}
               <LocaleLink
+                href="/blog"
+                onClick={() => setMenuOpen(false)}
+                className="block border-b border-zw-grey-100 py-3"
+              >
+                {t.explore.blog}
+              </LocaleLink>
+              <LocaleLink
                 href="/hakkimizda"
                 onClick={() => setMenuOpen(false)}
                 className="block border-b border-zw-grey-100 py-3"
               >
                 {t.footer.about}
               </LocaleLink>
+
+              <div className="pt-4 text-xs font-bold uppercase tracking-wide text-zw-grey-500">
+                {t.nav.support}
+              </div>
+              <LocaleLink
+                href="/destek/sss"
+                onClick={() => setMenuOpen(false)}
+                className="block border-b border-zw-grey-100 py-3"
+              >
+                {t.support.faqTitle}
+              </LocaleLink>
               <LocaleLink
                 href="/iletisim"
                 onClick={() => setMenuOpen(false)}
                 className="block border-b border-zw-grey-100 py-3"
               >
-                {t.footer.contact}
+                {t.support.contactTitle}
+              </LocaleLink>
+              <LocaleLink
+                href="/kargo-iade"
+                onClick={() => setMenuOpen(false)}
+                className="block border-b border-zw-grey-100 py-3"
+              >
+                Kargo &amp; İade
               </LocaleLink>
             </nav>
           </div>

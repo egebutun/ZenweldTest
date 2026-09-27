@@ -40,6 +40,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   push("/hakkimizda", 0.4, "yearly");
   push("/iletisim", 0.4, "yearly");
   push("/kargo-iade", 0.4, "yearly");
+  push("/destek/sss", 0.5, "monthly");
+  // Blog LISTESI haritaya girer; yazilarin govdesi hala yer tutucu
+  // oldugu icin tekil yazilar (robots: noindex) haritaya alinmaz.
+  push("/blog", 0.5, "weekly");
 
   products
     .filter((p) => p.active && inStock.has(p.id))

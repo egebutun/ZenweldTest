@@ -23,7 +23,7 @@ export default function MyWarrantiesPage() {
         icon={<ShieldCheck size={38} />}
         title={t.account.noWarranties}
         action={
-          <LocaleLink href="/kesfet/garanti-kayit">
+          <LocaleLink href="/kesfet/garanti?islem=kayit">
             <Button>{t.explore.registerWarranty}</Button>
           </LocaleLink>
         }
