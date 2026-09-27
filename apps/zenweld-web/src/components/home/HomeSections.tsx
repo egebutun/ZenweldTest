@@ -107,13 +107,6 @@ export function HotSale() {
 export function ProductFinderStrip() {
   const t = useT();
 
-  const shortcuts = [
-    { id: "celik", label: t.finder.steel },
-    { id: "paslanmaz", label: t.finder.stainless },
-    { id: "aluminyum", label: t.finder.aluminium },
-    { id: "kesim", label: t.finder.cutting },
-  ];
-
   return (
     <section className="border-b border-zw-grey-200 bg-zw-grey-100">
       <div className="zw-container flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
@@ -127,16 +120,9 @@ export function ProductFinderStrip() {
           </div>
         </div>
 
+        {/* Malzeme kisayollari kaldirildi: zaten secicinin ilk sorusunun
+            cevaplari, burada tekrar etmeleri gereksizdi. */}
         <div className="flex flex-wrap items-center gap-2">
-          {shortcuts.map((s) => (
-            <LocaleLink
-              key={s.id}
-              href={`/kesfet/urun-secici?malzeme=${s.id}`}
-              className="rounded-full border border-zw-grey-300 bg-white px-3.5 py-1.5 text-sm font-semibold text-zw-grey-700 transition-colors hover:border-zw-ink hover:text-zw-ink"
-            >
-              {s.label}
-            </LocaleLink>
-          ))}
           <LocaleLink
             href="/kesfet/urun-secici"
             className="inline-flex items-center gap-1.5 rounded-full bg-zw-ink px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-zw-red-600"
