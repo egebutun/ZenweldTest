@@ -71,15 +71,19 @@ export const reviews: ProductReview[] = [
     { featured: true }),
   // --- ZENWELD-BAYI-A magazasina ait yorumlar ---
   // Bayi sahibi ana siteden giris yapip Hesabim > Yorumlar'dan yonetir.
+  //
+  // ONEMLI: Bu yorumlarin urunleri stock.seed.ts icinde magazanin
+  // stogunda OLMAYA ZORLANIR (BAYI_REVIEW_PRODUCTS). Aksi halde yorum,
+  // magazada satista olmayan bir urunun sayfasinda kalirdi.
   review("rvb1", "p-ultimate-250-mtc", "İsmail Ç.", 5, "Hızlı teslimat",
     "Siparişten iki gün sonra elimdeydi, kurulum için de telefonla destek verdiler.",
     { site: "bayi", retailerId: "r-zenweld-bayi-a", featured: true }),
-  review("rvb2", "p-zenmask-auto-9000", "Levent A.", 4, "Fiyat/performans iyi",
-    "Mağazadan aldım, kutusu sağlam geldi. Maskenin camı beklediğimden net.",
+  review("rvb2", "p-evomig-205-p", "Levent A.", 4, "Fiyat/performans iyi",
+    "Mağazadan aldım, kutusu sağlam geldi. Double pulse dikişleri beklediğimden temiz çıkıyor.",
     { site: "bayi", retailerId: "r-zenweld-bayi-a", featured: true }),
   review("rvb3", "p-arc-200", "Tuncay E.", 5, "Servis desteği",
     "Bir ayar sorunu yaşadım, mağazadan aradılar ve aynı gün çözdüler.",
-    { site: "bayi", retailerId: "r-zenweld-bayi-a", approved: false }),
+    { site: "bayi", retailerId: "r-zenweld-bayi-a", featured: true }),
 
   // Onay bekleyen ornek (yonetim panelinde gorunur, sitede gorunmez)
   review("rv11", "p-arc-120", "Deneme Kullanıcı", 3, "Fena değil",

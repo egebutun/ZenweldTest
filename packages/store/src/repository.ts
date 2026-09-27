@@ -703,6 +703,9 @@ export function createReview(partial: Partial<ProductReview>): ProductReview {
     media: partial.media ?? [],
     verifiedPurchase: partial.verifiedPurchase ?? false,
     site: partial.site ?? "zenweld",
+    // Bayi magazasindan gelen yorum hangi magazaya aitse orada kalir;
+    // bu alan yazilmazsa bayi kendi yorumunu panelinde goremez.
+    retailerId: partial.retailerId,
     // Yeni yorumlar once yonetim panelinde onaylanir.
     approved: partial.approved ?? false,
     featured: false,

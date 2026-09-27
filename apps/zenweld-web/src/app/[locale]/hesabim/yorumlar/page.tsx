@@ -14,6 +14,7 @@ import { Alert, Badge, Button, Input, StarRating } from "@zenweld/ui";
 import { useAuth } from "@zenweld/auth";
 
 import { formatDate } from "@/lib/format";
+import { useLocale, useT } from "@/lib/i18n-client";
 
 /**
  * BAYI — KENDI MAGAZASININ YORUMLARI
@@ -28,6 +29,8 @@ import { formatDate } from "@/lib/format";
  * sitesinin anasayfasindaki kayan seritte cikar (en fazla 10).
  */
 export default function AccountReviewsPage() {
+  const t = useT();
+  const locale = useLocale();
   const db = useDatabase();
   const { user } = useAuth();
   const retailerId = user?.retailerId;
@@ -59,11 +62,15 @@ export default function AccountReviewsPage() {
   return (
     <>
       <div className="mb-6">
-        <h2 className="font-display text-2xl font-bold uppercase">Mağazamdaki Yorumlar</h2>
+        <h2 className="font-display text-2xl font-bold uppercase">{t.account.reviewsTitle}</h2>
         <p className="mt-1 text-sm text-zw-grey-600">
           {retailerId
-            ? `${reviews.length} yorum · ${pendingCount} onay bekliyor · mağaza anasayfasında ${featuredCount}/${FEATURED_REVIEW_LIMIT}`
-            : "Hesabınıza bağlı bir online mağaza bulunmuyor."}
+            ? t.account.reviewsSummary
+                .replace("{count}", String(reviews.length))
+                .replace("{pending}", String(pendingCount))
+                .replace("{featured}", String(featuredCount))
+                .replace("{limit}", String(FEATURED_REVIEW_LIMIT))
+            : t.account.reviewsNoStore}
         </p>
       </div>
 
@@ -78,7 +85,7 @@ export default function AccountReviewsPage() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zw-grey-400" />
           <Input
             className="pl-9"
-            placeholder="Yorum veya kişi ara…"
+            placeholder={t.account.reviewsSearch}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -87,7 +94,7 @@ export default function AccountReviewsPage() {
           variant={onlyPending ? "primary" : "outline"}
           onClick={() => setOnlyPending((v) => !v)}
         >
-          Onay bekleyenler
+          {t.account.reviewsOnlyPending}
         </Button>
       </div>
 
@@ -103,10 +110,10 @@ export default function AccountReviewsPage() {
               <StarRating value={r.rating} size={15} />
               <span className="font-semibold text-zw-ink">{r.authorName}</span>
               <span className="text-sm text-zw-grey-500">{productName(r.productId)}</span>
-              <span className="text-xs text-zw-grey-400">{formatDate(r.createdAt, "tr")}</span>
-              {!r.approved && <Badge tone="outline">Onay bekliyor</Badge>}
-              {r.featured && <Badge tone="red">Anasayfada</Badge>}
-              {r.verifiedPurchase && <Badge tone="grey">Doğrulanmış alıcı</Badge>}
+              <span className="text-xs text-zw-grey-400">{formatDate(r.createdAt, locale)}</span>
+              {!r.approved && <Badge tone="outline">{t.account.reviewsPending}</Badge>}
+              {r.featured && <Badge tone="red">{t.account.reviewsOnHome}</Badge>}
+              {r.verifiedPurchase && <Badge tone="grey">{t.reviews.verified}</Badge>}
             </div>
 
             {r.title && <h3 className="mt-2 font-semibold">{r.title}</h3>}
@@ -132,7 +139,7 @@ export default function AccountReviewsPage() {
                 leftIcon={r.approved ? <X size={14} /> : <Check size={14} />}
                 onClick={() => saveReview({ ...r, approved: !r.approved, featured: r.approved ? false : r.featured })}
               >
-                {r.approved ? "Yayından kaldır" : "Onayla"}
+                {r.approved ? t.account.reviewsUnpublish : t.account.reviewsApprove}
               </Button>
 
               <Button
@@ -144,12 +151,12 @@ export default function AccountReviewsPage() {
                   setNotice(null);
                   if (!toggleFeaturedReview(r.id)) {
                     setNotice(
-                      `Anasayfada en fazla ${FEATURED_REVIEW_LIMIT} yorum gösterilebilir. Önce birini çıkarın.`,
+                      t.account.reviewsLimit.replace("{limit}", String(FEATURED_REVIEW_LIMIT)),
                     );
                   }
                 }}
               >
-                {r.featured ? "Anasayfadan çıkar" : "Anasayfada göster"}
+                {r.featured ? t.account.reviewsUnfeature : t.account.reviewsFeature}
               </Button>
 
               <Button
@@ -158,7 +165,7 @@ export default function AccountReviewsPage() {
                 leftIcon={<Trash2 size={14} />}
                 onClick={() => deleteReview(r.id)}
               >
-                Sil
+                {t.account.reviewsDelete}
               </Button>
             </div>
           </div>
@@ -166,7 +173,7 @@ export default function AccountReviewsPage() {
 
         {reviews.length === 0 && (
           <p className="rounded-[4px] border border-dashed border-zw-grey-300 px-4 py-10 text-center text-sm text-zw-grey-500">
-            Henüz yorum yok.
+            {t.account.reviewsEmpty}
           </p>
         )}
       </div>
