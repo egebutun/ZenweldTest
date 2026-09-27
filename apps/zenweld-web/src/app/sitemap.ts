@@ -24,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/teklif-al", priority: 0.9, freq: "monthly" },
     { path: "/hakkimizda", priority: 0.6, freq: "yearly" },
     { path: "/kesfet/welders-club", priority: 0.6, freq: "monthly" },
+    { path: "/kesfet/bayilik-basvurusu", priority: 0.7, freq: "yearly" },
     { path: "/kesfet/garanti-sorgula", priority: 0.6, freq: "yearly" },
     { path: "/kesfet/garanti-kayit", priority: 0.6, freq: "yearly" },
     { path: "/kesfet/blog", priority: 0.6, freq: "weekly" },

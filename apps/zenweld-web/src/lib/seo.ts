@@ -1,5 +1,5 @@
 import { localizePath, type Locale } from "@zenweld/i18n";
-import type { Category, Product } from "@zenweld/data";
+import { faqs, type Category, type Product } from "@zenweld/data";
 import { CONTACT, OFFICES } from "@/lib/contact";
 
 /**
@@ -220,5 +220,21 @@ export function pageMetadata(opts: {
       url: `/${opts.locale}${opts.path}`,
     },
     ...(isNoIndex() ? { robots: { index: false, follow: false } } : {}),
+  };
+}
+
+/**
+ * Anasayfadaki sik sorulan sorular icin FAQPage yapisal verisi.
+ * Google bu sorulari arama sonucunda dogrudan gosterebiliyor.
+ */
+export function faqJsonLd(locale: Locale): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.slice(0, 8).map((item) => ({
+      "@type": "Question",
+      name: item.question[locale],
+      acceptedAnswer: { "@type": "Answer", text: item.answer[locale] },
+    })),
   };
 }

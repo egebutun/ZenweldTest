@@ -47,6 +47,7 @@ const TOP_LEVEL: Record<string, string> = {
 /** Ikinci seviye segmentler: yalnizca su ust segmentlerin altinda gecerli */
 const NESTED: Record<string, Record<string, string>> = {
   kesfet: {
+    "bayilik-basvurusu": "become-a-dealer",
     "welders-club": "welders-club",
     "garanti-sorgula": "check-warranty",
     "garanti-kayit": "register-warranty",

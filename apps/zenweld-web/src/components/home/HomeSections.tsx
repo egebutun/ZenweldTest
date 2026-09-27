@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowRight, Award, Compass, Flame, Factory, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
+import { ArrowRight, Award, Compass, Flame, Factory, Handshake, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { useDatabase } from "@zenweld/store";
-import { Button, SectionHeading } from "@zenweld/ui";
+import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { stockPhotos } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
 import { LocaleLink } from "@/components/common/LocaleLink";
@@ -254,6 +254,78 @@ export function DealerStrip() {
         </div>
 
         <DealerFinder variant="home" compact />
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Anasayfadaki sik sorulan sorular.
+ *
+ * SEO icin onemli: sorular sayfanin HTML'inde duz metin olarak bulunur
+ * ve ayrica FAQPage yapisal verisi olarak arama motoruna bildirilir
+ * (bkz. app/[locale]/page.tsx). Google bu sorulari sonuc sayfasinda
+ * dogrudan gosterebiliyor.
+ */
+export function HomeFaq() {
+  const t = useT();
+  const text = useText();
+  const db = useDatabase();
+  const items = useMemo(() => db.faqs.slice(0, 8), [db]);
+
+  if (items.length === 0) return null;
+
+  return (
+    <section className="bg-white">
+      <div className="zw-container zw-section">
+        <SectionHeading
+          eyebrow={t.support.faqTitle}
+          title={t.home.faqTitle}
+          subtitle={t.home.faqSubtitle}
+          action={
+            <LocaleLink
+              href="/destek/sss"
+              className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+            >
+              {t.common.viewAll} <ArrowRight size={16} />
+            </LocaleLink>
+          }
+        />
+        <div className="max-w-3xl">
+          <Accordion
+            icon="plus"
+            items={items.map((f) => ({
+              id: f.id,
+              title: text(f.question),
+              content: text(f.answer),
+            }))}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Anasayfada bayilik basvurusuna cagri. */
+export function DealerApplyBanner() {
+  const t = useT();
+  return (
+    <section className="zw-container py-12">
+      <div className="flex flex-col items-start gap-5 rounded-[6px] border-2 border-zw-red-600 bg-zw-red-50 px-7 py-8 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-start gap-4">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zw-red-600 text-white">
+            <Handshake size={24} />
+          </span>
+          <div>
+            <h2 className="font-display text-2xl font-bold uppercase text-zw-ink sm:text-3xl">
+              {t.dealerApply.homeTitle}
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm text-zw-grey-700">{t.dealerApply.homeText}</p>
+          </div>
+        </div>
+        <LocaleLink href="/kesfet/bayilik-basvurusu" className="shrink-0">
+          <Button size="lg">{t.dealerApply.homeCta}</Button>
+        </LocaleLink>
       </div>
     </section>
   );
