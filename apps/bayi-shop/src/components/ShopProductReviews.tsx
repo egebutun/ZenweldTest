@@ -13,7 +13,8 @@ import { STORE } from "@/lib/store-config";
  *
  * Ana siteyle ayni gorsel bileseni kullanir; yorumlar site: "bayi"
  * olarak kaydedildigi icin iki sitenin yorumlari birbirine karismaz.
- * Yeni yorumlar bayinin yonetim panelinde onay bekler.
+ * Yeni yorumlar, bayi sahibinin ANA SITEDEKI hesabinda
+ * (Hesabim > Yorumlar) onay bekler.
  */
 export function ShopProductReviews({ product }: { product: Product }) {
   const t = useT();
