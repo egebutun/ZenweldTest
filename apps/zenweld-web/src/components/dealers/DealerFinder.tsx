@@ -89,8 +89,7 @@ export function DealerFinder({
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState(false);
   const [city, setCity] = useState("");
-  const [wantSeller, setWantSeller] = useState(false);
-  const [wantService, setWantService] = useState(false);
+  const [onlyService, setOnlyService] = useState(false);
   const [onlyInStock, setOnlyInStock] = useState(Boolean(productId));
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -112,19 +111,9 @@ export function DealerFinder({
 
     if (productId && onlyInStock) list = list.filter((d) => d.hasProduct);
     if (city) list = list.filter((d) => d.city === city);
-    // Iki bagimsiz onay kutusu. Hicbiri secili degilse ya da ikisi de
-    // seciliyse butun noktalar listelenir.
-    //
-    // "Yetkili Satici" isaretlendiginde yetkili servisler disarida kalir:
-    // 30 noktanin 30'unda satici rozeti var, dislama olmasa bu secim
-    // listeyi hic degistirmezdi. Boylece 20 satici + 10 servis = 30.
-    if (wantSeller !== wantService) {
-      list = wantService
-        ? list.filter((d) => d.badges.includes("yetkili-servis"))
-        : list.filter(
-            (d) => d.badges.includes("yetkili-satici") && !d.badges.includes("yetkili-servis"),
-          );
-    }
+    // Butun noktalar zaten yetkili satici; ayirt edici tek ozellik
+    // yetkili servis olup olmadigi. Bu yuzden tek onay kutusu var.
+    if (onlyService) list = list.filter((d) => d.badges.includes("yetkili-servis"));
 
     const origin = position ?? (city ? CITY_CENTERS[city] : undefined);
     if (origin) {
@@ -136,7 +125,7 @@ export function DealerFinder({
     }
 
     return list;
-  }, [db, productId, onlyInStock, city, wantSeller, wantService, position, stockedDealerIds]);
+  }, [db, productId, onlyInStock, city, onlyService, position, stockedDealerIds]);
 
   const selected = dealers.find((d) => d.id === selectedId) ?? null;
 
@@ -208,22 +197,12 @@ export function DealerFinder({
             ))}
           </Select>
         </div>
-        <div className="flex-1">
-          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-            {t.dealers.filterType}
-          </span>
-          <div className="flex h-11 items-center gap-5">
-            <Checkbox
-              label={t.dealers.onlySellers}
-              checked={wantSeller}
-              onChange={(e) => setWantSeller(e.target.checked)}
-            />
-            <Checkbox
-              label={t.dealers.onlyServices}
-              checked={wantService}
-              onChange={(e) => setWantService(e.target.checked)}
-            />
-          </div>
+        <div className="flex items-center sm:h-11">
+          <Checkbox
+            label={t.dealers.onlyServices}
+            checked={onlyService}
+            onChange={(e) => setOnlyService(e.target.checked)}
+          />
         </div>
         <Button
           variant="dark"
