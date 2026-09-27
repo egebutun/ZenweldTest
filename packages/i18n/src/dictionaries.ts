@@ -364,6 +364,7 @@ export const dictionaries = {
       warranties: "Garantilerim",
       addresses: "Adreslerim",
       stockNotice: "Stok Bildirimi",
+      reviews: "Yorumlar",
       noQuotes: "Henüz teklif talebiniz yok.",
       noOrders: "Henüz siparişiniz yok.",
       noFavourites: "Henüz favori ürününüz yok.",

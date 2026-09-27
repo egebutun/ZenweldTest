@@ -7,6 +7,7 @@ import {
   MapPin,
   Package,
   ShieldCheck,
+  Star,
   Store,
   User as UserIcon,
 } from "lucide-react";
@@ -45,6 +46,7 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
   const items = [
     { href: "/hesabim/profil", label: t.account.profile, Icon: UserIcon, roles: ["individual", "business", "dealer", "admin"] },
     { href: "/hesabim/stok-bildirimi", label: t.account.stockNotice, Icon: Store, roles: ["dealer"] },
+    { href: "/hesabim/yorumlar", label: t.account.reviews, Icon: Star, roles: ["dealer"] },
     { href: "/hesabim/tekliflerim", label: t.account.myQuotes, Icon: FileText, roles: ["business", "dealer"] },
     { href: "/hesabim/siparislerim", label: t.account.myOrders, Icon: Package, roles: ["individual", "dealer"] },
     { href: "/hesabim/favorilerim", label: t.account.favourites, Icon: Heart, roles: ["individual", "business", "dealer", "admin"] },

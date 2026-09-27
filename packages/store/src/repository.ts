@@ -628,14 +628,24 @@ export function resetRichTextStyle(): void {
 /** Anasayfadaki kayan seritte en fazla bu kadar yorum gosterilir. */
 export const FEATURED_REVIEW_LIMIT = 10;
 
-/** Bir urunun yayindaki yorumlari (en yeni once). */
+/**
+ * Bir urunun yayindaki yorumlari (en yeni once).
+ * retailerId verilirse yalnizca o bayinin magazasina ait olanlar doner.
+ */
 export function listProductReviews(
   productId: string,
   site: ProductReview["site"],
   db: ZenweldDatabase = getSnapshot(),
+  retailerId?: string,
 ): ProductReview[] {
   return db.reviews
-    .filter((r) => r.productId === productId && r.site === site && r.approved)
+    .filter(
+      (r) =>
+        r.productId === productId &&
+        r.site === site &&
+        r.approved &&
+        (!retailerId || r.retailerId === retailerId),
+    )
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
@@ -644,8 +654,9 @@ export function reviewSummary(
   productId: string,
   site: ProductReview["site"],
   db: ZenweldDatabase = getSnapshot(),
+  retailerId?: string,
 ): { average: number; count: number } {
-  const list = listProductReviews(productId, site, db);
+  const list = listProductReviews(productId, site, db, retailerId);
   if (list.length === 0) return { average: 0, count: 0 };
   const total = list.reduce((sum, r) => sum + r.rating, 0);
   return { average: Math.round((total / list.length) * 10) / 10, count: list.length };
@@ -655,9 +666,16 @@ export function reviewSummary(
 export function featuredReviews(
   site: ProductReview["site"],
   db: ZenweldDatabase = getSnapshot(),
+  retailerId?: string,
 ): ProductReview[] {
   return db.reviews
-    .filter((r) => r.site === site && r.approved && r.featured)
+    .filter(
+      (r) =>
+        r.site === site &&
+        r.approved &&
+        r.featured &&
+        (!retailerId || r.retailerId === retailerId),
+    )
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, FEATURED_REVIEW_LIMIT);
 }
@@ -666,9 +684,10 @@ export function featuredReviews(
 export function listAllReviews(
   site: ProductReview["site"],
   db: ZenweldDatabase = getSnapshot(),
+  retailerId?: string,
 ): ProductReview[] {
   return db.reviews
-    .filter((r) => r.site === site)
+    .filter((r) => r.site === site && (!retailerId || r.retailerId === retailerId))
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
@@ -720,7 +739,12 @@ export function toggleFeaturedReview(id: string): boolean {
     const review = db.reviews.find((r) => r.id === id);
     if (!review) return;
     if (!review.featured) {
-      const count = db.reviews.filter((r) => r.site === review.site && r.featured).length;
+      const count = db.reviews.filter(
+        (r) =>
+          r.site === review.site &&
+          r.featured &&
+          (review.retailerId ? r.retailerId === review.retailerId : true),
+      ).length;
       if (count >= FEATURED_REVIEW_LIMIT) {
         ok = false;
         return;

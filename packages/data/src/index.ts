@@ -25,7 +25,7 @@ import { events, news } from "./seed/events.seed";
 import { defaultSettings } from "./seed/settings.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 22;
+export const DB_VERSION = 23;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(
