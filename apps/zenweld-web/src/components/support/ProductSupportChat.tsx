@@ -7,6 +7,7 @@ import { useAuth } from "@zenweld/auth";
 import { Button, Checkbox, Input, Textarea } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useLocale, useT } from "@/lib/i18n-client";
+import { onOpenSupportChat } from "@/lib/support-chat";
 
 /**
  * URUN DESTEK SOHBETI
@@ -52,6 +53,9 @@ export function ProductSupportChat({ product }: { product: Product }) {
   const [delivered, setDelivered] = useState<boolean | null>(null);
 
   const endRef = useRef<HTMLDivElement>(null);
+
+  // Sayfa icindeki "Bize yazin" baglantisi sohbeti acabilsin.
+  useEffect(() => onOpenSupportChat(() => setOpen(true)), []);
 
   // Uye girisi varsa iletisim bilgileri hazir gelir.
   useEffect(() => {
