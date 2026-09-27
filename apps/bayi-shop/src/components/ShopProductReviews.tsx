@@ -6,6 +6,7 @@ import { createReview, listProductReviews, reviewSummary, useDatabase } from "@z
 import { useAuth } from "@zenweld/auth";
 import { ProductReviews } from "@zenweld/ui";
 import { useLocale, useT } from "@/lib/i18n-client";
+import { STORE } from "@/lib/store-config";
 
 /**
  * Bayi magazasindaki urun degerlendirmeleri.
@@ -20,8 +21,8 @@ export function ShopProductReviews({ product }: { product: Product }) {
   const db = useDatabase();
   const { user } = useAuth();
 
-  const items = useMemo(() => listProductReviews(product.id, "bayi", db), [product.id, db]);
-  const summary = useMemo(() => reviewSummary(product.id, "bayi", db), [product.id, db]);
+  const items = useMemo(() => listProductReviews(product.id, "bayi", db, STORE.retailerId), [product.id, db]);
+  const summary = useMemo(() => reviewSummary(product.id, "bayi", db, STORE.retailerId), [product.id, db]);
 
   return (
     <ProductReviews
@@ -41,6 +42,7 @@ export function ShopProductReviews({ product }: { product: Product }) {
           media: input.media,
           verifiedPurchase: Boolean(user),
           site: "bayi",
+          retailerId: STORE.retailerId,
         })
       }
       onPickMedia={(files, add) => {

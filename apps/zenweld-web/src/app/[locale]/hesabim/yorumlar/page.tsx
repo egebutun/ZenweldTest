@@ -11,26 +11,34 @@ import {
   useDatabase,
 } from "@zenweld/store";
 import { Alert, Badge, Button, Input, StarRating } from "@zenweld/ui";
+import { useAuth } from "@zenweld/auth";
 
-import { RequireAuth } from "@zenweld/auth";
 import { formatDate } from "@/lib/format";
 
 /**
- * BAYI MAGAZASI — YORUM YONETIMI
+ * BAYI — KENDI MAGAZASININ YORUMLARI
  *
- * Yeni yorumlar once onay bekler; onaylananlar urun sayfasinda gorunur.
- * "Anasayfada goster" isaretlenen en fazla 10 yorum anasayfadaki kayan
- * seritte cikar.
+ * Bayi sahibi ANA SITEDEN giris yapar, Hesabim > Yorumlar'dan kendi
+ * magazasinda (bayi sitesinde) gorunecek yorumlari yonetir. Baska bir
+ * bayinin yorumlarini goremez: liste kullanicinin retailerId'sine gore
+ * filtrelenir.
+ *
+ * Yeni yorumlar once onay bekler; onaylananlar bayi sitesindeki urun
+ * sayfasinda gorunur. "Anasayfada goster" isaretlenenler ise bayi
+ * sitesinin anasayfasindaki kayan seritte cikar (en fazla 10).
  */
-export default function ShopAdminReviewsPage() {
+export default function AccountReviewsPage() {
   const db = useDatabase();
+  const { user } = useAuth();
+  const retailerId = user?.retailerId;
   const [query, setQuery] = useState("");
   const [onlyPending, setOnlyPending] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
   const reviews = useMemo(() => {
     const q = query.trim().toLocaleLowerCase("tr");
-    return listAllReviews("bayi", db).filter((r) => {
+    if (!retailerId) return [];
+    return listAllReviews("bayi", db, retailerId).filter((r) => {
       if (onlyPending && r.approved) return false;
       if (!q) return true;
       return (
@@ -38,27 +46,26 @@ export default function ShopAdminReviewsPage() {
         r.body.toLocaleLowerCase("tr").includes(q)
       );
     });
-  }, [db, query, onlyPending]);
+  }, [db, query, onlyPending, retailerId]);
 
-  const featuredCount = db.reviews.filter((r) => r.site === "bayi" && r.featured).length;
-  const pendingCount = db.reviews.filter((r) => r.site === "bayi" && !r.approved).length;
+  const featuredCount = db.reviews.filter(
+    (r) => r.site === "bayi" && r.retailerId === retailerId && r.featured,
+  ).length;
+  const pendingCount = db.reviews.filter(
+    (r) => r.site === "bayi" && r.retailerId === retailerId && !r.approved,
+  ).length;
   const productName = (id: string) => db.products.find((p) => p.id === id)?.name ?? id;
 
   return (
-    <RequireAuth
-      roles={["dealer", "admin"]}
-      fallback={
-        <div className="zw-container py-16 text-center">
-          <p className="text-zw-grey-600">Bu alana yalnızca bayi yöneticileri erişebilir.</p>
-        </div>
-      }
-    >
-      <div className="zw-container py-10">
-      <h1 className="font-display text-3xl font-bold uppercase">Yorumlar</h1>
-      <p className="mb-6 mt-1 text-sm text-zw-grey-600">
-        {reviews.length} yorum · {pendingCount} onay bekliyor · anasayfada {featuredCount}/
-        {FEATURED_REVIEW_LIMIT}
-      </p>
+    <>
+      <div className="mb-6">
+        <h2 className="font-display text-2xl font-bold uppercase">Mağazamdaki Yorumlar</h2>
+        <p className="mt-1 text-sm text-zw-grey-600">
+          {retailerId
+            ? `${reviews.length} yorum · ${pendingCount} onay bekliyor · mağaza anasayfasında ${featuredCount}/${FEATURED_REVIEW_LIMIT}`
+            : "Hesabınıza bağlı bir online mağaza bulunmuyor."}
+        </p>
+      </div>
 
       {notice && (
         <div className="mb-4">
@@ -159,11 +166,10 @@ export default function ShopAdminReviewsPage() {
 
         {reviews.length === 0 && (
           <p className="rounded-[4px] border border-dashed border-zw-grey-300 px-4 py-10 text-center text-sm text-zw-grey-500">
-            Yorum bulunamadı.
+            Henüz yorum yok.
           </p>
         )}
       </div>
-      </div>
-    </RequireAuth>
+    </>
   );
 }

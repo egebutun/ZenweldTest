@@ -369,6 +369,12 @@ export interface ProductReview {
    * veritabanini paylastigi icin yorumlar bu alanla ayriliyor.
    */
   site: "zenweld" | "bayi";
+  /**
+   * Bayi magazasina ait yorumlarda hangi bayinin magazasi oldugunu
+   * soyler. Bayi sahibi ana siteden giris yapinca yalnizca kendi
+   * magazasinin yorumlarini yonetir.
+   */
+  retailerId?: string;
   /** Yonetim panelinde onaylandi mi; yalnizca onaylilar yayinda. */
   approved: boolean;
   /** Anasayfadaki kayan seritte gosterilsin mi (en fazla 10 tane). */

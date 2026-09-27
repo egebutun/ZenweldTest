@@ -190,7 +190,8 @@ export function ProductPageClient({ slug }: { slug: string }) {
             {tab === "faq" && (
               <div className="max-w-3xl">
                 <Accordion
-                  items={db.faqs.slice(0, 6).map((f) => ({
+                  // Tum sorular gosteriliyor; onceden ilk 6 ile sinirliydi.
+                  items={db.faqs.map((f) => ({
                     id: f.id,
                     title: text(f.question),
                     content: text(f.answer),
