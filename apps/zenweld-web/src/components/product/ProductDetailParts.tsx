@@ -1,15 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Award,
-  Check,
-  Factory,
-  Headphones,
-  MapPin,
-  ShieldCheck,
-  ArrowRight,
-} from "lucide-react";
+import { Award, Check, Factory, Headphones, MapPin, MessageCircle, ShieldCheck } from "lucide-react";
 import type { Product } from "@zenweld/data";
 import { Badge, Button, Modal } from "@zenweld/ui";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
@@ -186,13 +178,12 @@ export function SupportCta() {
     <div className="mt-6 overflow-hidden rounded-[4px] bg-zw-ink px-6 py-6 text-white">
       <h3 className="font-display text-2xl font-bold uppercase">{t.supportCta.title}</h3>
       <p className="mt-1 text-sm text-zw-grey-300">{t.supportCta.text}</p>
-      <LocaleLink
-        href="/destek"
-        className="mt-4 inline-flex items-center gap-2 border-b border-white pb-0.5 text-sm font-semibold transition-colors hover:border-zw-red-600 hover:text-zw-red-600"
-      >
+      {/* Artik /destek sayfasina gondermiyor; sag alttaki sohbet
+          penceresini isaret ediyor. */}
+      <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-zw-red-500">
+        <MessageCircle size={16} />
         {t.supportCta.cta}
-        <ArrowRight size={16} />
-      </LocaleLink>
+      </p>
     </div>
   );
 }
