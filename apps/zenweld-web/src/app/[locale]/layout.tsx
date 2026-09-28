@@ -7,13 +7,7 @@ import "@fontsource/barlow-condensed/700.css";
 import "../globals.css";
 
 import { isLocale, locales, type Locale } from "@zenweld/i18n";
-import {
-  SITE_NAME,
-  getSiteUrl,
-  isNoIndex,
-  languageAlternates,
-  siteDescription,
-} from "@/lib/seo";
+import { SITE_NAME, getSiteUrl, isNoIndex, languageAlternates, ogUrl, siteDescription } from "@/lib/seo";
 import { Providers } from "./providers";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -60,7 +54,7 @@ export async function generateMetadata({
       alternateLocale: lang === "tr" ? "en_US" : "tr_TR",
       title,
       description,
-      url: `/${lang}`,
+      url: ogUrl(`/`, lang),
       // Paylasim karti: 1200x630 markali gorsel. Onceden dikey bir urun
       // fotografi vardi; WhatsApp/LinkedIn bu olcuyu kirptigi icin marka
       // gorunmuyordu. Kart scripts/make-brand-images.mjs ile uretilir.

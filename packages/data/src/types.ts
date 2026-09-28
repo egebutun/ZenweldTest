@@ -435,7 +435,13 @@ export interface ZenweldEvent {
 
 export interface NewsItem {
   id: string;
+  /** Turkce adres parcasi: /tr/kesfet/haberler/<slug> */
   slug: string;
+  /**
+   * Ingilizce adres parcasi: /en/explore/news/<slugEn>
+   * Bos birakilirsa Turkce slug kullanilir.
+   */
+  slugEn?: string;
   title: I18nText;
   summary: I18nText;
   body: I18nText;

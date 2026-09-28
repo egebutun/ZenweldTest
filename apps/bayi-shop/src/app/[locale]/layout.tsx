@@ -11,7 +11,7 @@ import { Providers } from "./providers";
 import { ShopHeader } from "@/components/ShopHeader";
 import { ShopFooter } from "@/components/ShopFooter";
 import { STORE } from "@/lib/store-config";
-import { getSiteUrl, isNoIndex, languageAlternates } from "@/lib/seo";
+import { getSiteUrl, isNoIndex, languageAlternates, ogUrl } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -41,7 +41,7 @@ export async function generateMetadata({
       locale: lang === "tr" ? "tr_TR" : "en_US",
       title,
       description,
-      url: `/${lang}`,
+      url: ogUrl(`/`, lang),
       // 1200x630 markali paylasim karti (scripts/make-brand-images.mjs)
       images: [
         { url: "/images/brand/og-cover.png", width: 1200, height: 630, alt: STORE.name },

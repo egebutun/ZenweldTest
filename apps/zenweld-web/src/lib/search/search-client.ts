@@ -2,7 +2,7 @@
 
 import MiniSearch, { type SearchResult as MiniSearchResult } from "minisearch";
 import type { Locale } from "@zenweld/i18n";
-import { blogSlug, type ZenweldDatabase } from "@zenweld/data";
+import { blogSlug, newsSlug, type ZenweldDatabase } from "@zenweld/data";
 import { trNormalize, trTokenize } from "./tr-normalize";
 import { expandQuery } from "./synonyms";
 
@@ -123,7 +123,7 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
         subtitle: n.summary[locale],
         body: `${n.summary[locale]} ${n.body[locale]}`,
         sku: "",
-        href: `/kesfet/haberler/${n.slug}`,
+        href: `/kesfet/haberler/${newsSlug(n, locale)}`,
         image: n.coverUrl,
       });
     });

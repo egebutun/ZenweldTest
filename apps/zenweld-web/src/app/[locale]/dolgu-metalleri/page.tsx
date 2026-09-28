@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { CategoryListing } from "@/components/product/CategoryListing";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, ogUrl } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -20,7 +20,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: languageAlternates("/dolgu-metalleri", lang),
-    openGraph: { title, description, url: `/${lang}/dolgu-metalleri` },
+    openGraph: { title, description, url: ogUrl(`/dolgu-metalleri`, lang) },
   };
 }
 

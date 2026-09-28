@@ -3,7 +3,7 @@ import { events } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { JsonLd } from "@/components/common/JsonLd";
 import { EventDetail } from "@/components/events/EventDetail";
-import { SITE_NAME, absoluteUrl, languageAlternates } from "@/lib/seo";
+import { SITE_NAME, absoluteUrl, languageAlternates, ogUrl } from "@/lib/seo";
 
 export function generateStaticParams() {
   return events.filter((e) => e.active).map((e) => ({ slug: e.slug }));
@@ -32,7 +32,7 @@ export async function generateMetadata({
       siteName: SITE_NAME,
       title,
       description,
-      url: `/${lang}/kesfet/etkinlikler/${event.slug}`,
+      url: ogUrl(`/kesfet/etkinlikler/${event.slug}`, lang),
       images: [{ url: event.images[0] ?? event.logoUrl, alt: title }],
     },
   };

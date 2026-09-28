@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { NewsList } from "@/components/events/NewsList";
-import { SITE_NAME, languageAlternates } from "@/lib/seo";
+import { SITE_NAME, languageAlternates, ogUrl } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -20,7 +20,7 @@ export async function generateMetadata({
     title: { default: title, template: `%s | ${SITE_NAME}` },
     description,
     alternates: languageAlternates("/kesfet/haberler", lang),
-    openGraph: { title, description, url: `/${lang}/kesfet/haberler` },
+    openGraph: { title, description, url: ogUrl(`/kesfet/haberler`, lang) },
   };
 }
 

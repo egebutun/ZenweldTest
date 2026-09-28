@@ -34,6 +34,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
     item ?? {
       id: "",
       slug: "",
+      slugEn: "",
       title: { tr: "", en: "" },
       summary: { tr: "", en: "" },
       body: { tr: "", en: "" },
@@ -62,9 +63,17 @@ export function NewsForm({ item }: { item?: NewsItem }) {
     }
 
     const slug = draft.slug.trim() || slugify(draft.title.tr);
-    const clash = db.news.find((n) => n.slug === slug && n.id !== draft.id);
+    // Ingilizce adres bos birakilirsa Ingilizce basliktan uretilir;
+    // baslik da cevrilmemisse Turkce adres kullanilir.
+    const slugEn =
+      draft.slugEn?.trim() || (draft.title.en.trim() ? slugify(draft.title.en) : "");
+
+    const used = [slug, slugEn].filter(Boolean);
+    const clash = db.news.find(
+      (n) => n.id !== draft.id && (used.includes(n.slug) || (n.slugEn && used.includes(n.slugEn))),
+    );
     if (clash) {
-      setError(`"${slug}" adresi başka bir haberde kullanılıyor.`);
+      setError(`"${clash.slug}" adresi başka bir haberde kullanılıyor.`);
       setTab("temel");
       return;
     }
@@ -73,6 +82,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
     const next: NewsItem = {
       ...draft,
       slug,
+      slugEn: slugEn || undefined,
       title: { tr: draft.title.tr, en: draft.title.en.trim() || draft.title.tr },
       summary: { tr: draft.summary.tr, en: draft.summary.en.trim() || draft.summary.tr },
       body: { tr: draft.body.tr, en: draft.body.en.trim() || draft.body.tr },
@@ -128,14 +138,32 @@ export function NewsForm({ item }: { item?: NewsItem }) {
             <FormRow label="Haber Başlığı (EN)" hint="Boş bırakılırsa Türkçe başlık kullanılır">
               <Input
                 value={draft.title.en}
-                onChange={(e) => setI18n("title", "en", e.target.value)}
+                onChange={(e) => {
+                  setI18n("title", "en", e.target.value);
+                  // Ingilizce adres, Ingilizce basliktan kendiliginden uretilir.
+                  if (isNew) set("slugEn", slugify(e.target.value));
+                }}
               />
             </FormRow>
           </div>
 
-          <FormRow label="URL (slug)" hint={`/kesfet/haberler/${draft.slug || "…"}`}>
-            <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
-          </FormRow>
+          {/* Haber basligi iki dilde de yazildigi icin adres de dile gore
+              degisir. (Etkinliklerde degismez: fuar adlari ozel isimdir.) */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormRow label="Türkçe adres (slug)" hint={`/tr/kesfet/haberler/${draft.slug || "…"}`}>
+              <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
+            </FormRow>
+            <FormRow
+              label="İngilizce adres (slug)"
+              hint={`/en/explore/news/${draft.slugEn?.trim() || draft.slug || "…"}`}
+            >
+              <Input
+                value={draft.slugEn ?? ""}
+                onChange={(e) => set("slugEn", slugify(e.target.value))}
+                placeholder="Boş bırakılırsa Türkçe adres kullanılır"
+              />
+            </FormRow>
+          </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <FormRow label="Yayın Tarihi">

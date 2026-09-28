@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { products, retailerStock } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { JsonLd } from "@/components/JsonLd";
-import { languageAlternates, shopProductJsonLd } from "@/lib/seo";
+import { languageAlternates, ogUrl, shopProductJsonLd } from "@/lib/seo";
 import { STORE } from "@/lib/store-config";
 import { ShopProductPageClient } from "./ShopProductPageClient";
 
@@ -41,7 +41,7 @@ export async function generateMetadata({
       siteName: STORE.name,
       title: `${title} | ${STORE.name}`,
       description,
-      url: `/${lang}/urun/${product.slug}`,
+      url: ogUrl(`/urun/${product.slug}`, lang),
       images: [{ url: image, alt: product.name }],
     },
     twitter: {

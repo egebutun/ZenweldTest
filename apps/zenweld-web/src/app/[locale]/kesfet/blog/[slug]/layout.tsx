@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { blogPosts, blogSlug, matchesBlogSlug } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
-import { SITE_NAME, languageAlternatesFor } from "@/lib/seo";
+import { SITE_NAME, languageAlternatesFor, ogUrl } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -31,7 +31,7 @@ export async function generateMetadata({
       siteName: SITE_NAME,
       title,
       description,
-      url: `/${lang}/kesfet/blog/${blogSlug(post, lang)}`,
+      url: ogUrl(`/kesfet/blog/${blogSlug(post, lang)}`, lang),
       publishedTime: post.publishedAt,
       authors: [post.author],
       images: [{ url: post.coverUrl, alt: title }],
