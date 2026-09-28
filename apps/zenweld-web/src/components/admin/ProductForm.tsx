@@ -3,12 +3,21 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp, GripVertical, ImagePlus, Plus, Trash2, Upload } from "lucide-react";
-import type { Product, TopLevelSection, WeldingProcess } from "@zenweld/data";
-import { createProduct, saveProduct, useDatabase } from "@zenweld/store";
+import {
+  applyDiscount,
+  FLASH_DISCOUNT_THRESHOLD,
+  MAX_DISCOUNT_PERCENT,
+  MIN_DISCOUNT_PERCENT,
+  type Product,
+  type TopLevelSection,
+  type WeldingProcess,
+} from "@zenweld/data";
+import { createProduct, saveProduct, useDatabase, useNow } from "@zenweld/store";
 import { Alert, Badge, Button, Checkbox, FormRow, Input, Select, Tabs, Textarea } from "@zenweld/ui";
+import { CampaignBadge } from "@/components/admin/CampaignBadge";
 import { ProductImage } from "@/components/common/ProductImage";
 import { useHref } from "@/lib/i18n-client";
-import { priceWithVat } from "@/lib/format";
+import { formatPrice, fromDateTimeLocal, priceWithVat, toDateTimeLocal } from "@/lib/format";
 import { readImageFiles, slugify } from "@/lib/slugify";
 
 const PROCESSES: WeldingProcess[] = ["MULTI", "MIG", "MAG", "PULSE", "TIG", "MMA", "PLAZMA"];
@@ -21,6 +30,7 @@ const SECTIONS: { id: TopLevelSection; label: string }[] = [
 
 export function ProductForm({ product }: { product?: Product }) {
   const db = useDatabase();
+  const now = useNow();
   const router = useRouter();
   const href = useHref();
   const isNew = !product;
@@ -95,6 +105,26 @@ export function ProductForm({ product }: { product?: Product }) {
       setError(`"${slug}" adresi başka bir üründe kullanılıyor.`);
       setTab("temel");
       return;
+    }
+
+    const d = draft.discount;
+    if (d) {
+      if (
+        !Number.isInteger(d.percent) ||
+        d.percent < MIN_DISCOUNT_PERCENT ||
+        d.percent > MAX_DISCOUNT_PERCENT
+      ) {
+        setError(
+          `İndirim oranı %${MIN_DISCOUNT_PERCENT} ile %${MAX_DISCOUNT_PERCENT} arasında tam sayı olmalıdır.`,
+        );
+        setTab("temel");
+        return;
+      }
+      if (d.startsAt && d.endsAt && new Date(d.endsAt) <= new Date(d.startsAt)) {
+        setError("Kampanya bitişi, başlangıçtan sonra olmalıdır.");
+        setTab("temel");
+        return;
+      }
     }
 
     if (isNew) {
@@ -232,7 +262,8 @@ export function ProductForm({ product }: { product?: Product }) {
           </FormRow>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <FormRow label="Fiyat (KDV hariç, ₺)" required>
+            <FormRow label="Normal fiyat (KDV hariç, ₺)" required hint="İndirimsiz fiyat">
+
               <Input
                 type="number"
                 required
@@ -254,6 +285,95 @@ export function ProductForm({ product }: { product?: Product }) {
                 value={priceWithVat(draft.priceExVat, draft.vatRate).toLocaleString("tr-TR")}
               />
             </FormRow>
+          </div>
+
+          {/* KAMPANYA / INDIRIM — normal fiyat yukarida kalir, indirim
+              yalnizca gecerlilik suresi icinde uygulanir. */}
+          <div className="rounded-[4px] border border-zw-grey-200 bg-zw-grey-50 p-4">
+            <Checkbox
+              label="Bu ürüne kampanya / indirim uygula"
+              checked={Boolean(draft.discount)}
+              onChange={(e) =>
+                set("discount", e.target.checked ? { percent: 10 } : undefined)
+              }
+            />
+
+            {draft.discount && (
+              <div className="mt-4 space-y-4">
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <FormRow
+                    label="İndirim oranı (%)"
+                    required
+                    hint={`%${MIN_DISCOUNT_PERCENT}–%${MAX_DISCOUNT_PERCENT}. %${FLASH_DISCOUNT_THRESHOLD} ve üzeri "Flaş İndirim" olarak gösterilir.`}
+                  >
+                    <Input
+                      type="number"
+                      required
+                      min={MIN_DISCOUNT_PERCENT}
+                      max={MAX_DISCOUNT_PERCENT}
+                      step={1}
+                      value={draft.discount.percent}
+                      onChange={(e) =>
+                        set("discount", { ...draft.discount!, percent: Number(e.target.value) })
+                      }
+                    />
+                  </FormRow>
+                  <FormRow label="Başlangıç" hint="Boş bırakılırsa hemen başlar">
+                    <Input
+                      type="datetime-local"
+                      value={toDateTimeLocal(draft.discount.startsAt)}
+                      onChange={(e) =>
+                        set("discount", {
+                          ...draft.discount!,
+                          startsAt: fromDateTimeLocal(e.target.value),
+                        })
+                      }
+                    />
+                  </FormRow>
+                  <FormRow label="Bitiş" hint="Boş bırakılırsa süresiz">
+                    <Input
+                      type="datetime-local"
+                      value={toDateTimeLocal(draft.discount.endsAt)}
+                      onChange={(e) =>
+                        set("discount", {
+                          ...draft.discount!,
+                          endsAt: fromDateTimeLocal(e.target.value),
+                        })
+                      }
+                    />
+                  </FormRow>
+                </div>
+
+                {/* Canli onizleme: musterinin gorecegi fiyat ve kampanya durumu */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[4px] border border-zw-grey-200 bg-white px-4 py-3 text-sm">
+                  <span className="text-zw-grey-600">
+                    Normal:{" "}
+                    <span className="line-through">
+                      {formatPrice(priceWithVat(draft.priceExVat, draft.vatRate), "tr")}
+                    </span>
+                  </span>
+                  <span className="font-semibold text-zw-ink">
+                    Kampanya fiyatı:{" "}
+                    <span className="rounded-[3px] bg-zw-red-600 px-2 py-0.5 text-white">
+                      {formatPrice(
+                        priceWithVat(
+                          applyDiscount(draft.priceExVat, draft.discount.percent),
+                          draft.vatRate,
+                        ),
+                        "tr",
+                      )}
+                    </span>{" "}
+                    <span className="font-normal text-zw-grey-500">KDV dahil</span>
+                  </span>
+                  <CampaignBadge product={draft} now={now} />
+                </div>
+                {(draft.variantGroups?.length ?? 0) > 0 && (
+                  <p className="text-xs text-zw-grey-500">
+                    Seçenekli ürün: aynı indirim oranı tüm seçeneklere (ör. 3 m / 5 m) uygulanır.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

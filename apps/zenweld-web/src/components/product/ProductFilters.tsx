@@ -1,6 +1,6 @@
 "use client";
 
-import type { WeldingProcess } from "@zenweld/data";
+import { salePriceExVat, type Product, type WeldingProcess } from "@zenweld/data";
 import { useT } from "@/lib/i18n-client";
 import { Checkbox, Select } from "@zenweld/ui";
 
@@ -115,31 +115,28 @@ export function ProductFilters({
   );
 }
 
-export function applyFilters<
-  T extends {
-    processes: WeldingProcess[];
-    inStock: boolean;
-    priceExVat: number;
-    name: string;
-    featured: boolean;
-    createdAt: string;
-  },
->(items: T[], filters: FilterState): T[] {
+/**
+ * Filtre ve siralama. Fiyat filtresi ve fiyata gore siralama, musterinin
+ * GORDUGU fiyatla (kampanya uygulanmis) yapilir; aksi halde "fiyata gore
+ * artan" listede indirimli urun yanlis sirada durur.
+ */
+export function applyFilters(items: Product[], filters: FilterState, now?: Date): Product[] {
   let out = items;
+  const price = (p: Product) => salePriceExVat(p, now);
 
   if (filters.processes.length > 0) {
     out = out.filter((p) => p.processes.some((proc) => filters.processes.includes(proc)));
   }
   if (filters.inStockOnly) out = out.filter((p) => p.inStock);
-  if (filters.maxPrice != null) out = out.filter((p) => p.priceExVat <= filters.maxPrice!);
+  if (filters.maxPrice != null) out = out.filter((p) => price(p) <= filters.maxPrice!);
 
   const sorted = [...out];
   switch (filters.sort) {
     case "priceAsc":
-      sorted.sort((a, b) => a.priceExVat - b.priceExVat);
+      sorted.sort((a, b) => price(a) - price(b));
       break;
     case "priceDesc":
-      sorted.sort((a, b) => b.priceExVat - a.priceExVat);
+      sorted.sort((a, b) => price(b) - price(a));
       break;
     case "nameAsc":
       sorted.sort((a, b) => a.name.localeCompare(b.name, "tr"));

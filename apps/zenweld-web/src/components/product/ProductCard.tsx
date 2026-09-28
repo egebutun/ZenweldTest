@@ -1,14 +1,20 @@
 "use client";
 
 import { Flame, Heart } from "lucide-react";
-import { productHighlights, type Product } from "@zenweld/data";
+import {
+  discountPercent,
+  FLASH_DISCOUNT_THRESHOLD,
+  productHighlights,
+  salePriceExVat,
+  type Product,
+} from "@zenweld/data";
+import { useNow } from "@zenweld/store";
 import { Badge, FlashFrame } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@/lib/format";
 import { useFavourites } from "@/lib/favourites";
-import { discountPercent, isFlashDeal } from "@/lib/discount";
 
 export function ProductCard({
   product,
@@ -23,11 +29,14 @@ export function ProductCard({
   const text = useText();
   const favourites = useFavourites();
 
+  const now = useNow();
+
   const highlights = productHighlights(product, locale, 3);
-  const list = product.listPriceExVat;
-  // Indirim orani ve "flas" esigi tek yerden gelir (lib/discount.ts).
-  const discount = discountPercent(product);
-  const flash = isFlashDeal(product);
+  // Fiyat ve kampanya kurallari tek yerden gelir (packages/data/src/discount.ts).
+  // Kampanya tarihleri "now" ile degerlendirilir.
+  const discount = discountPercent(product, now);
+  const flash = discount >= FLASH_DISCOUNT_THRESHOLD;
+  const sale = salePriceExVat(product, now);
 
   const card = (
     <div className="group relative flex h-full flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white transition-shadow hover:shadow-lg">
@@ -108,24 +117,21 @@ export function ProductCard({
                   compact ? "text-xl" : "text-2xl"
                 }`}
               >
+                {formatPrice(priceWithVat(sale, product.vatRate), locale)}
+              </span>
+              <span
+                className={`text-zw-grey-500 line-through ${compact ? "text-sm" : "text-base"}`}
+              >
                 {formatPrice(priceWithVat(product.priceExVat, product.vatRate), locale)}
               </span>
-              {list && (
-                <span
-                  className={`text-zw-grey-500 line-through ${compact ? "text-sm" : "text-base"}`}
-                >
-                  {formatPrice(priceWithVat(list, product.vatRate), locale)}
-                </span>
-              )}
             </div>
           ) : (
             <div className={`font-bold text-zw-ink ${compact ? "text-xl" : "text-2xl"}`}>
-              {formatPrice(priceWithVat(product.priceExVat, product.vatRate), locale)}
+              {formatPrice(priceWithVat(sale, product.vatRate), locale)}
             </div>
           )}
           <div className="mt-1 text-xs text-zw-grey-500">
-            {t.product.priceIncVat} · {formatPrice(product.priceExVat, locale)}{" "}
-            {t.product.priceExVat}
+            {t.product.priceIncVat} · {formatPrice(sale, locale)} {t.product.priceExVat}
           </div>
           <LocaleLink
             href={`/urun/${product.slug}`}

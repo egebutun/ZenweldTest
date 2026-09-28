@@ -4,7 +4,7 @@ import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal, X } from "lucide-react";
 import type { TopLevelSection, WeldingProcess } from "@zenweld/data";
-import { useDatabase } from "@zenweld/store";
+import { useDatabase, useNow } from "@zenweld/store";
 import { Button } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductGrid } from "./ProductGrid";
@@ -47,6 +47,7 @@ function Listing({
   const t = useT();
   const locale = useLocale();
   const db = useDatabase();
+  const now = useNow();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -91,7 +92,7 @@ function Listing({
     [scoped],
   );
 
-  const filtered = useMemo(() => applyFilters(scoped, filters), [scoped, filters]);
+  const filtered = useMemo(() => applyFilters(scoped, filters, now), [scoped, filters, now]);
 
   const sectionTitles: Record<TopLevelSection, string> = {
     ekipmanlar: t.nav.equipment,

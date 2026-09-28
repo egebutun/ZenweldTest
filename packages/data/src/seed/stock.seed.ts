@@ -47,6 +47,8 @@ products.forEach((product) => {
       retailerId: retailer.id,
       inStock,
       quantity: inStock ? (h % 17) + 1 : 0,
+      // Saticinin NORMAL satis fiyati (KDV dahil). Zenweld kampanyasi
+      // gecerliyken ayni indirim orani bu fiyata da uygulanir.
       price: inStock
         ? Math.round(
             (product.priceExVat * (1 + product.vatRate / 100) * (0.96 + ((h % 9) / 100))) / 10,
@@ -70,7 +72,7 @@ retailerStock.forEach((row) => {
   const retailer = retailers.find((r) => r.id === row.retailerId);
   if (!retailer?.isOwnStore || row.inStock) return;
   const product = products.find((p) => p.id === row.productId);
-  if (!product?.hotSale) return;
+  if (!product?.discount) return;
   row.inStock = true;
   row.quantity = 6;
   row.price = Math.round((product.priceExVat * (1 + product.vatRate / 100)) / 10) * 10;

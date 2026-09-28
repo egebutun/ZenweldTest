@@ -34,6 +34,24 @@ export function formatDateTime(iso: string, locale: Locale = "tr"): string {
   }).format(d);
 }
 
+/**
+ * ISO tarih <-> <input type="datetime-local"> degeri.
+ * Girdi yerel saatle calisir; kayit ISO (UTC) olarak tutulur.
+ */
+export function toDateTimeLocal(iso?: string): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+export function fromDateTimeLocal(value: string): string | undefined {
+  if (!value) return undefined;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
+}
+
 export function priceWithVat(exVat: number, vatRate: number): number {
   return Math.round(exVat * (1 + vatRate / 100));
 }

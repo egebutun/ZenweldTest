@@ -2,9 +2,9 @@
 
 import { useMemo } from "react";
 import { ArrowRight, Award, Compass, Flame, Factory, Handshake, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
-import { listBlogPosts, useDatabase } from "@zenweld/store";
+import { listBlogPosts, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
-import { blogSlug, stockPhotos } from "@zenweld/data";
+import { blogSlug, discountPercent, isOnSale, stockPhotos } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
@@ -59,13 +59,22 @@ export function Hero() {
   );
 }
 
-/** Kampanyali urunler. hotSale isaretli urunler listelenir. */
+/**
+ * Kampanyali urunler. Kampanyasi SU AN gecerli olan urunler listelenir;
+ * kampanya baslayinca bolume kendiliginden girer, bitince cikar.
+ * En yuksek indirim en basta.
+ */
 export function HotSale() {
   const t = useT();
   const db = useDatabase();
+  const now = useNow();
   const items = useMemo(
-    () => db.products.filter((p) => p.active && p.hotSale).slice(0, 12),
-    [db],
+    () =>
+      db.products
+        .filter((p) => p.active && isOnSale(p, now))
+        .sort((a, b) => discountPercent(b, now) - discountPercent(a, now))
+        .slice(0, 12),
+    [db, now],
   );
 
   if (items.length === 0) return null;
