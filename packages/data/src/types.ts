@@ -338,6 +338,11 @@ export interface BlogPost {
   category: I18nText;
   author: string;
   publishedAt: string;
+  /**
+   * Yayinda mi? Yonetim panelinden kapatilan yazi iki sitede de
+   * gorunmez. Eski kayitlarda alan yoksa yayinda sayilir.
+   */
+  active?: boolean;
 }
 
 /* ------------------------------------------------------------------ */

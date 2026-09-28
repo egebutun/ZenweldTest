@@ -1,6 +1,6 @@
 "use client";
 
-import { useDatabase } from "@zenweld/store";
+import { listBlogPosts, useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { PageHero } from "@/components/common/PageShell";
@@ -19,7 +19,7 @@ export default function BlogPage() {
 
       <div className="zw-container py-12">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {db.blogPosts.map((post) => (
+          {listBlogPosts(db).map((post) => (
             <LocaleLink
               key={post.id}
               href={`/kesfet/blog/${post.slug}`}

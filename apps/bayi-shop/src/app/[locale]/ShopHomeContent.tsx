@@ -10,7 +10,7 @@ import {
   Truck,
 } from "lucide-react";
 import { stockPhotos } from "@zenweld/data";
-import { stockForRetailer, useDatabase } from "@zenweld/store";
+import { listBlogPosts, stockForRetailer, useDatabase } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
@@ -216,7 +216,7 @@ export function ShopHomeContent() {
 
       {/* Blog — yazilar Zenweld merkez editoru tarafindan hazirlanir,
           magaza yalnizca gosterir. */}
-      {db.blogPosts.length > 0 && (
+      {listBlogPosts(db).length > 0 && (
         <section className="zw-container zw-section">
           <SectionHeading
             eyebrow={t.home.blogSubtitle}
@@ -231,7 +231,7 @@ export function ShopHomeContent() {
             }
           />
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {db.blogPosts.slice(0, 3).map((post) => (
+            {listBlogPosts(db).slice(0, 3).map((post) => (
               <LocaleLink
                 key={post.id}
                 href={`/blog/${post.slug}`}

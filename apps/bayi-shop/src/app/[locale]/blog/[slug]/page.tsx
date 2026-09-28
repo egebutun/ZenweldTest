@@ -19,7 +19,8 @@ export default function ShopBlogPostPage({
   const text = useText();
   const db = useDatabase();
 
-  const post = db.blogPosts.find((p) => p.slug === slug);
+  // Yayindan kaldirilan yazi magazada da gorunmez.
+  const post = db.blogPosts.find((p) => p.slug === slug && p.active !== false);
   if (!post) notFound();
 
   return (

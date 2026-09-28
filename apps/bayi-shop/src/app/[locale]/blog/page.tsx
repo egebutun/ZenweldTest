@@ -1,6 +1,6 @@
 "use client";
 
-import { useDatabase } from "@zenweld/store";
+import { listBlogPosts, useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
@@ -25,7 +25,7 @@ export default function ShopBlogPage() {
       <p className="mt-2 max-w-2xl text-zw-grey-600">{t.explore.blogDesc}</p>
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {db.blogPosts.map((post) => (
+        {listBlogPosts(db).map((post) => (
           <LocaleLink
             key={post.id}
             href={`/blog/${post.slug}`}
