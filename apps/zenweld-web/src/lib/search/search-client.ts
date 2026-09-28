@@ -2,7 +2,7 @@
 
 import MiniSearch, { type SearchResult as MiniSearchResult } from "minisearch";
 import type { Locale } from "@zenweld/i18n";
-import type { ZenweldDatabase } from "@zenweld/data";
+import { blogSlug, type ZenweldDatabase } from "@zenweld/data";
 import { trNormalize, trTokenize } from "./tr-normalize";
 import { expandQuery } from "./synonyms";
 
@@ -128,7 +128,8 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
       });
     });
 
-  db.blogPosts.forEach((b) => {
+  // Yayindan kaldirilan yazi arama sonuclarinda cikmaz.
+  db.blogPosts.filter((b) => b.active !== false).forEach((b) => {
     docs.push({
       id: `article:${b.id}`,
       type: "article",
@@ -136,7 +137,7 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
       subtitle: b.category[locale],
       body: b.excerpt[locale],
       sku: "",
-      href: `/kesfet/blog/${b.slug}`,
+      href: `/kesfet/blog/${blogSlug(b, locale)}`,
       image: b.coverUrl,
     });
   });

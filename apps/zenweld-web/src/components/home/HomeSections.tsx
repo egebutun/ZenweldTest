@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { ArrowRight, Award, Compass, Flame, Factory, Handshake, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { listBlogPosts, useDatabase } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
-import { stockPhotos } from "@zenweld/data";
+import { blogSlug, stockPhotos } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
@@ -376,7 +376,7 @@ export function BlogTeaser() {
         {listBlogPosts(db).slice(0, 3).map((post) => (
           <LocaleLink
             key={post.id}
-            href={`/kesfet/blog/${post.slug}`}
+            href={`/kesfet/blog/${blogSlug(post, locale)}`}
             className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
           >
             <div className="aspect-[16/9] overflow-hidden bg-zw-grey-100">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { blogPosts } from "@zenweld/data";
+import { blogPosts, blogSlug, matchesBlogSlug } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
-import { SITE_NAME, languageAlternates } from "@/lib/seo";
+import { SITE_NAME, languageAlternatesFor } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -10,7 +10,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
   const lang = (isLocale(locale) ? locale : "tr") as Locale;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = blogPosts.find((p) => matchesBlogSlug(p, slug));
 
   if (!post) return { title: lang === "tr" ? "Yazı" : "Article" };
 
@@ -20,13 +20,18 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: languageAlternates(`/kesfet/blog/${post.slug}`, lang),
+    // Her dilin kendi adresi: /tr/kesfet/blog/<tr> ve
+    // /en/explore/blog/<en>
+    alternates: languageAlternatesFor(
+      (l) => `/kesfet/blog/${blogSlug(post, l)}`,
+      lang,
+    ),
     openGraph: {
       type: "article",
       siteName: SITE_NAME,
       title,
       description,
-      url: `/${lang}/kesfet/blog/${post.slug}`,
+      url: `/${lang}/kesfet/blog/${blogSlug(post, lang)}`,
       publishedTime: post.publishedAt,
       authors: [post.author],
       images: [{ url: post.coverUrl, alt: title }],
