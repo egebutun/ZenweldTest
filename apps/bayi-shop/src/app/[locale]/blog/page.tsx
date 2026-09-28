@@ -1,5 +1,6 @@
 "use client";
 
+import { blogSlug } from "@zenweld/data";
 import { listBlogPosts, useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
@@ -28,7 +29,7 @@ export default function ShopBlogPage() {
         {listBlogPosts(db).map((post) => (
           <LocaleLink
             key={post.id}
-            href={`/blog/${post.slug}`}
+            href={`/blog/${blogSlug(post, locale)}`}
             className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
           >
             <div className="aspect-[16/9] overflow-hidden bg-zw-grey-100">

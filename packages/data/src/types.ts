@@ -330,7 +330,13 @@ export interface Order {
 
 export interface BlogPost {
   id: string;
+  /** Turkce adres parcasi: /tr/kesfet/blog/<slug> */
   slug: string;
+  /**
+   * Ingilizce adres parcasi: /en/explore/blog/<slugEn>
+   * Bos birakilirsa Turkce slug kullanilir (baslik cevrilmemisse).
+   */
+  slugEn?: string;
   title: I18nText;
   excerpt: I18nText;
   body: I18nText;

@@ -40,6 +40,7 @@ export function BlogForm({ item }: { item?: BlogPost }) {
     item ?? {
       id: "",
       slug: "",
+      slugEn: "",
       title: { tr: "", en: "" },
       excerpt: { tr: "", en: "" },
       body: { tr: "", en: "" },
@@ -68,9 +69,17 @@ export function BlogForm({ item }: { item?: BlogPost }) {
     }
 
     const slug = draft.slug.trim() || slugify(draft.title.tr);
-    const clash = db.blogPosts.find((p) => p.slug === slug && p.id !== draft.id);
+    // Ingilizce adres bos birakilirsa Ingilizce basliktan uretilir;
+    // baslik da cevrilmemisse Turkce adres kullanilir.
+    const slugEn =
+      draft.slugEn?.trim() || (draft.title.en.trim() ? slugify(draft.title.en) : "");
+
+    const used = [slug, slugEn].filter(Boolean);
+    const clash = db.blogPosts.find(
+      (p) => p.id !== draft.id && (used.includes(p.slug) || (p.slugEn && used.includes(p.slugEn))),
+    );
     if (clash) {
-      setError(`"${slug}" adresi başka bir yazıda kullanılıyor.`);
+      setError(`"${clash.slug}" adresi başka bir yazıda kullanılıyor.`);
       setTab("temel");
       return;
     }
@@ -79,6 +88,7 @@ export function BlogForm({ item }: { item?: BlogPost }) {
     const next: BlogPost = {
       ...draft,
       slug,
+      slugEn: slugEn || undefined,
       author: draft.author.trim() || "Zenweld",
       title: { tr: draft.title.tr, en: draft.title.en.trim() || draft.title.tr },
       excerpt: { tr: draft.excerpt.tr, en: draft.excerpt.en.trim() || draft.excerpt.tr },
@@ -136,14 +146,32 @@ export function BlogForm({ item }: { item?: BlogPost }) {
             <FormRow label="Yazı Başlığı (EN)" hint="Boş bırakılırsa Türkçe başlık kullanılır">
               <Input
                 value={draft.title.en}
-                onChange={(e) => setI18n("title", "en", e.target.value)}
+                onChange={(e) => {
+                  setI18n("title", "en", e.target.value);
+                  // Ingilizce adres, Ingilizce basliktan kendiliginden uretilir.
+                  if (isNew) set("slugEn", slugify(e.target.value));
+                }}
               />
             </FormRow>
           </div>
 
-          <FormRow label="URL (slug)" hint={`/kesfet/blog/${draft.slug || "…"}`}>
-            <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
-          </FormRow>
+          {/* Her dilin kendi adresi olur; Ingilizce sayfada Turkce slug
+              gorunmesi hem okunaksiz hem de SEO acisindan zayiftir. */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormRow label="Türkçe adres (slug)" hint={`/tr/kesfet/blog/${draft.slug || "…"}`}>
+              <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
+            </FormRow>
+            <FormRow
+              label="İngilizce adres (slug)"
+              hint={`/en/explore/blog/${draft.slugEn?.trim() || draft.slug || "…"}`}
+            >
+              <Input
+                value={draft.slugEn ?? ""}
+                onChange={(e) => set("slugEn", slugify(e.target.value))}
+                placeholder="Boş bırakılırsa Türkçe adres kullanılır"
+              />
+            </FormRow>
+          </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <FormRow label="Kategori (TR)" hint="Örn. Teknik Rehber, İpuçları, Bakım">

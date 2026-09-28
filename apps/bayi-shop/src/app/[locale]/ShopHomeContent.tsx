@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Truck,
 } from "lucide-react";
-import { stockPhotos } from "@zenweld/data";
+import { blogSlug, stockPhotos } from "@zenweld/data";
 import { listBlogPosts, stockForRetailer, useDatabase } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
@@ -234,7 +234,7 @@ export function ShopHomeContent() {
             {listBlogPosts(db).slice(0, 3).map((post) => (
               <LocaleLink
                 key={post.id}
-                href={`/blog/${post.slug}`}
+                href={`/blog/${blogSlug(post, locale)}`}
                 className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
               >
                 <div className="aspect-[16/9] overflow-hidden bg-zw-grey-100">

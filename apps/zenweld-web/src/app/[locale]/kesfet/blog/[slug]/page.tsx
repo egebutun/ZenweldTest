@@ -1,12 +1,13 @@
 "use client";
 
-import { use } from "react";
-import { notFound } from "next/navigation";
+import { use, useEffect } from "react";
+import { notFound, useRouter } from "next/navigation";
+import { blogSlug, matchesBlogSlug } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { PageHero } from "@/components/common/PageShell";
 import { RichText } from "@/components/events/RichText";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+import { useHref, useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatDate } from "@/lib/format";
 
 export default function BlogPostPage({
@@ -19,9 +20,21 @@ export default function BlogPostPage({
   const locale = useLocale();
   const text = useText();
   const db = useDatabase();
+  const router = useRouter();
+  const href = useHref();
 
-  // Yayindan kaldirilan yazi sitede gorunmez.
-  const post = db.blogPosts.find((p) => p.slug === slug && p.active !== false);
+  // Yayindan kaldirilan yazi sitede gorunmez. Adres parcasi iki dilde
+  // farklidir; dil degistirilince gelen "obur dilin" slug'i da kabul
+  // edilir, sonra adres kendi diline cevrilir.
+  const post = db.blogPosts.find((p) => matchesBlogSlug(p, slug) && p.active !== false);
+  const canonicalSlug = post ? blogSlug(post, locale) : "";
+
+  useEffect(() => {
+    if (post && canonicalSlug && canonicalSlug !== slug) {
+      router.replace(href(`/kesfet/blog/${canonicalSlug}`));
+    }
+  }, [post, canonicalSlug, slug, router, href]);
+
   if (!post) notFound();
 
   return (

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { blogPosts } from "@zenweld/data";
+import { blogPosts, blogSlug, matchesBlogSlug } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternatesFor } from "@/lib/seo";
 import { STORE } from "@/lib/store-config";
 
 export async function generateMetadata({
@@ -11,7 +11,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params;
   const lang = (isLocale(locale) ? locale : "tr") as Locale;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = blogPosts.find((p) => matchesBlogSlug(p, slug));
 
   if (!post) return { title: lang === "tr" ? "Yazı" : "Article" };
 
@@ -21,13 +21,13 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: languageAlternates(`/blog/${post.slug}`, lang),
+    alternates: languageAlternatesFor((l) => `/blog/${blogSlug(post, l)}`, lang),
     openGraph: {
       type: "article",
       siteName: STORE.name,
       title,
       description,
-      url: `/${lang}/blog/${post.slug}`,
+      url: `/${lang}/blog/${blogSlug(post, lang)}`,
       publishedTime: post.publishedAt,
       authors: [post.author],
       images: [{ url: post.coverUrl, alt: title }],

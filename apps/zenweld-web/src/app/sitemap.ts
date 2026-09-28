@@ -81,6 +81,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // kesfet/blog/[slug]/layout.tsx icindeki noindex silinir.
   // blogPosts.forEach((post) => {
   //   push(`/kesfet/blog/${post.slug}`, 0.5, "monthly", new Date(post.publishedAt));
+  //   (push her iki dili de uretir; blogSlug(post, locale) kullanilmali)
   // });
 
   events

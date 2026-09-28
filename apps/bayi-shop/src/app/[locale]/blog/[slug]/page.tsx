@@ -1,11 +1,12 @@
 "use client";
 
-import { use } from "react";
-import { notFound } from "next/navigation";
+import { use, useEffect } from "react";
+import { notFound, useRouter } from "next/navigation";
+import { blogSlug, matchesBlogSlug } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+import { useHref, useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatDate } from "@/lib/format";
 
 export default function ShopBlogPostPage({
@@ -18,9 +19,21 @@ export default function ShopBlogPostPage({
   const locale = useLocale();
   const text = useText();
   const db = useDatabase();
+  const router = useRouter();
+  const href = useHref();
 
-  // Yayindan kaldirilan yazi magazada da gorunmez.
-  const post = db.blogPosts.find((p) => p.slug === slug && p.active !== false);
+  // Yayindan kaldirilan yazi magazada da gorunmez. Adres parcasi iki
+  // dilde farklidir; obur dilin slug'i da kabul edilip adres kendi
+  // diline cevrilir (dil degistirme butonu icin gerekli).
+  const post = db.blogPosts.find((p) => matchesBlogSlug(p, slug) && p.active !== false);
+  const canonicalSlug = post ? blogSlug(post, locale) : "";
+
+  useEffect(() => {
+    if (post && canonicalSlug && canonicalSlug !== slug) {
+      router.replace(href(`/blog/${canonicalSlug}`));
+    }
+  }, [post, canonicalSlug, slug, router, href]);
+
   if (!post) notFound();
 
   return (

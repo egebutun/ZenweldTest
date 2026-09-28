@@ -650,6 +650,7 @@ export function createBlogPost(partial: Partial<BlogPost>): BlogPost {
   const item: BlogPost = {
     id,
     slug: partial.slug ?? id,
+    slugEn: partial.slugEn,
     title: partial.title ?? { tr: "", en: "" },
     excerpt: partial.excerpt ?? { tr: "", en: "" },
     body: partial.body ?? { tr: "", en: "" },

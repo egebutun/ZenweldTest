@@ -238,3 +238,27 @@ export function faqJsonLd(locale: Locale): Record<string, unknown> {
     })),
   };
 }
+
+/**
+ * Adres parcasi dile gore DEGISEN sayfalar icin alternates.
+ * (Blog yazilari: /tr/kesfet/blog/<tr-slug> ve /en/explore/blog/<en-slug>)
+ *
+ * pathFor, her dil icin IC rotayi dondurur; cevrim yine localizePath ile
+ * yapilir, yalnizca slug disaridan gelir.
+ */
+export function languageAlternatesFor(
+  pathFor: (locale: Locale) => string,
+  locale: Locale = "tr",
+): { canonical: string; languages: Record<string, string> } {
+  const forLocale = (target: Locale) =>
+    absoluteUrl(`/${target}${localizePath(pathFor(target), target)}`);
+
+  return {
+    canonical: forLocale(locale),
+    languages: {
+      "tr-TR": forLocale("tr"),
+      "en-US": forLocale("en"),
+      "x-default": forLocale("tr"),
+    },
+  };
+}

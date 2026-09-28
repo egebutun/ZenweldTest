@@ -1,6 +1,7 @@
 export * from "./types";
 export * from "./highlights";
 export * from "./discount";
+export * from "./slugs";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";
@@ -26,7 +27,7 @@ import { events, news } from "./seed/events.seed";
 import { defaultSettings } from "./seed/settings.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 26;
+export const DB_VERSION = 27;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(
