@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { ArrowRight, Award, Compass, Flame, Factory, Handshake, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
-import { useDatabase } from "@zenweld/store";
+import { listBlogPosts, useDatabase } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { stockPhotos } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
@@ -373,7 +373,7 @@ export function BlogTeaser() {
         }
       />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {db.blogPosts.slice(0, 3).map((post) => (
+        {listBlogPosts(db).slice(0, 3).map((post) => (
           <LocaleLink
             key={post.id}
             href={`/kesfet/blog/${post.slug}`}
