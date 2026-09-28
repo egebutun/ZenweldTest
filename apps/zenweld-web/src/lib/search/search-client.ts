@@ -2,7 +2,7 @@
 
 import MiniSearch, { type SearchResult as MiniSearchResult } from "minisearch";
 import type { Locale } from "@zenweld/i18n";
-import { blogSlug, newsSlug, type ZenweldDatabase } from "@zenweld/data";
+import { blogSlug, newsSlug, salePriceExVat, type ZenweldDatabase } from "@zenweld/data";
 import { trNormalize, trTokenize } from "./tr-normalize";
 import { expandQuery } from "./synonyms";
 
@@ -81,7 +81,9 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
         sku: p.sku,
         href: `/urun/${p.slug}`,
         image: p.images[0]?.url,
-        price: p.priceExVat,
+        // Sonuclarda musterinin odeyecegi (kampanyali) fiyat gorunur.
+        // Arama yalnizca kullanici acinca cizildigi icin anlik saat kullanilir.
+        price: salePriceExVat(p),
         inStock: p.inStock,
       });
     });

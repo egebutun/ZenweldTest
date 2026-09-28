@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  env: {
+    // Kampanya tarihleri icin: sunucu ciktisi ile tarayicinin ilk cizimi
+    // ayni ana gore hesaplansin (bkz. packages/store/src/hooks.ts useNow).
+    NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
+  },
   transpilePackages: [
     "@zenweld/data",
     "@zenweld/store",

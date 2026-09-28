@@ -922,14 +922,17 @@ accessorySeeds.forEach((a, i) => {
 });
 
 /* ------------------------------------------------------------------ */
-/* Hot Sale ve depo stok adetleri — !! DEMO VERISI, DOGRULANMALI !!    */
+/* Kampanyalar ve depo stok adetleri — !! DEMO VERISI, DOGRULANMALI !! */
 /*                                                                     */
 /* Anasayfadaki "Hot Sale" ve "Stokta Azalanlar" bolumlerini beslemek  */
-/* icin kullanilir. Gercek kampanya ve stok verisiyle degistirilmeli;  */
-/* yonetim panelinden urun bazinda da duzenlenebilir.                  */
+/* icin kullanilir. Kampanyalar yonetim panelinde Urunler > urun >     */
+/* "Kampanya / Indirim" bolumunden duzenlenir veya kaldirilir.         */
 /* ------------------------------------------------------------------ */
 
-/** Kampanyali urunler: slug -> indirim orani (%) */
+/**
+ * Kampanyali urunler: slug -> indirim orani (%)
+ * Tarihsiz (suresiz) ornek kampanyalar; panelden tarih eklenebilir.
+ */
 const HOT_SALE: Record<string, number> = {
   "ultimate-250-mtc": 12,
   "evomig-205-p": 15,
@@ -954,13 +957,16 @@ const LOW_STOCK: Record<string, number> = {
 };
 
 products.forEach((p, i) => {
-  const discount = HOT_SALE[p.slug];
-  if (discount) {
-    p.hotSale = true;
+  const percent = HOT_SALE[p.slug];
+  if (percent) {
     // Kampanyadaki urun stokta olmali.
     p.inStock = true;
-    // Gosterilen fiyat indirimli fiyattir; liste fiyati ustu cizili gorunur.
-    p.listPriceExVat = Math.round((p.priceExVat / (1 - discount / 100)) / 10) * 10;
+    // Urunde NORMAL fiyat saklanir, indirim gosterimde uygulanir.
+    // Yukaridaki fiyatlar musterinin odedigi (indirimli) tutarlar olarak
+    // yazilmisti; ekranda ayni tutarlar gorunsun diye normal fiyat
+    // bunlardan geri hesaplanir.
+    p.priceExVat = Math.round(p.priceExVat / (1 - percent / 100) / 10) * 10;
+    p.discount = { percent };
   }
   // Stok adedi: azalanlar elle, digerleri sabit bir dagilimla.
   p.stockQuantity = LOW_STOCK[p.slug] ?? (p.inStock ? 12 + ((i * 7) % 48) : 0);

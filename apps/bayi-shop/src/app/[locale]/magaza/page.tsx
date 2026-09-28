@@ -3,10 +3,11 @@
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
-import { stockForRetailer, useDatabase } from "@zenweld/store";
+import { stockForRetailer, useDatabase, useNow } from "@zenweld/store";
 import { EmptyState, Input, Select } from "@zenweld/ui";
 import { ShopProductCard } from "@/components/ShopProductCard";
 import { useLocale, useT } from "@/lib/i18n-client";
+import { shopPrice } from "@/lib/pricing";
 import { STORE } from "@/lib/store-config";
 import { trNormalize } from "@/lib/tr-normalize";
 
@@ -14,6 +15,7 @@ function StoreInner() {
   const t = useT();
   const locale = useLocale();
   const db = useDatabase();
+  const now = useNow();
   const params = useSearchParams();
 
   const [query, setQuery] = useState(params.get("q") ?? "");
@@ -45,16 +47,17 @@ function StoreInner() {
       return true;
     });
 
+    // Musterinin gordugu fiyatla (magaza fiyati + gecerli kampanya, KDV
+    // dahil) siralanir. Onceden stok fiyati KDV dahil, yedek fiyat KDV
+    // haric karistirilarak karsilastiriliyordu.
     const sorted = [...list];
-    const priceOf = (id: string, fallback: number) => stockMap.get(id)?.price ?? fallback;
-    if (sort === "priceAsc")
-      sorted.sort((a, b) => priceOf(a.id, a.priceExVat) - priceOf(b.id, b.priceExVat));
-    if (sort === "priceDesc")
-      sorted.sort((a, b) => priceOf(b.id, b.priceExVat) - priceOf(a.id, a.priceExVat));
+    const priceOf = (p: (typeof list)[number]) => shopPrice(p, stockMap.get(p.id), now).sale;
+    if (sort === "priceAsc") sorted.sort((a, b) => priceOf(a) - priceOf(b));
+    if (sort === "priceDesc") sorted.sort((a, b) => priceOf(b) - priceOf(a));
     if (sort === "nameAsc") sorted.sort((a, b) => a.name.localeCompare(b.name, "tr"));
     if (sort === "featured") sorted.sort((a, b) => Number(b.featured) - Number(a.featured));
     return sorted;
-  }, [db, stockMap, query, group, sort, onlyInStock, locale]);
+  }, [db, stockMap, query, group, sort, onlyInStock, locale, now]);
 
   return (
     <div className="zw-container py-10">

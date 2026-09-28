@@ -1,5 +1,11 @@
 import { localizePath, type Locale } from "@zenweld/i18n";
-import { faqs, type Category, type Product } from "@zenweld/data";
+import {
+  faqs,
+  isDiscountActive,
+  salePriceExVat,
+  type Category,
+  type Product,
+} from "@zenweld/data";
 import { CONTACT, OFFICES } from "@/lib/contact";
 
 /**
@@ -84,7 +90,12 @@ export function productJsonLd(
   locale: Locale,
   category?: Category,
 ): Record<string, unknown> {
-  const priceIncVat = Math.round(product.priceExVat * (1 + product.vatRate / 100));
+  // Google'a musterinin odedigi fiyat bildirilir. Kampanyanin bitis tarihi
+  // varsa priceValidUntil ile birlikte verilir; tarih gecince arama
+  // sonucunda eski indirimli fiyat gosterilmez.
+  const now = new Date();
+  const priceIncVat = Math.round(salePriceExVat(product, now) * (1 + product.vatRate / 100));
+  const endsAt = isDiscountActive(product, now) ? product.discount?.endsAt : undefined;
 
   return {
     "@context": "https://schema.org",
@@ -98,9 +109,12 @@ export function productJsonLd(
     category: category?.name[locale],
     offers: {
       "@type": "Offer",
-      url: absoluteUrl(`/${locale}/urun/${product.slug}`),
+      // Dile gore cevrilmis adres (/en/products/...); onceden Ingilizce
+      // sayfada ic rota (/en/urun/...) yaziliyordu.
+      url: ogUrl(`/urun/${product.slug}`, locale),
       priceCurrency: "TRY",
       price: priceIncVat,
+      ...(endsAt ? { priceValidUntil: endsAt.slice(0, 10) } : {}),
       availability: product.inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",

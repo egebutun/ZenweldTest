@@ -2,15 +2,18 @@
 
 import { useMemo, useState } from "react";
 import { Eye, EyeOff, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { deleteProduct, saveProduct, useDatabase } from "@zenweld/store";
+import { isDiscountActive, salePriceExVat } from "@zenweld/data";
+import { deleteProduct, saveProduct, useDatabase, useNow } from "@zenweld/store";
 import { Badge, Button, Input, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { CampaignBadge } from "@/components/admin/CampaignBadge";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { formatPrice, priceWithVat } from "@/lib/format";
 
 export default function AdminProductsPage() {
   const db = useDatabase();
+  const now = useNow();
   const [query, setQuery] = useState("");
   const [section, setSection] = useState("");
 
@@ -92,9 +95,23 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="px-4 py-2.5 text-zw-grey-600">{category?.name.tr ?? "—"}</td>
                   <td className="px-4 py-2.5">
-                    <div className="font-semibold">
-                      {formatPrice(priceWithVat(p.priceExVat, p.vatRate), "tr")}
-                    </div>
+                    {/* Kampanya gecerliyse musterinin gordugu fiyat kirmizi,
+                        normal fiyat ustu cizili; her durumda KDV haric normal
+                        fiyat altta yazar. */}
+                    {isDiscountActive(p, now) ? (
+                      <div className="flex flex-wrap items-baseline gap-x-2">
+                        <span className="font-semibold text-zw-red-600">
+                          {formatPrice(priceWithVat(salePriceExVat(p, now), p.vatRate), "tr")}
+                        </span>
+                        <span className="text-xs text-zw-grey-500 line-through">
+                          {formatPrice(priceWithVat(p.priceExVat, p.vatRate), "tr")}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="font-semibold">
+                        {formatPrice(priceWithVat(p.priceExVat, p.vatRate), "tr")}
+                      </div>
+                    )}
                     <div className="text-xs text-zw-grey-500">
                       {formatPrice(p.priceExVat, "tr")} + KDV
                     </div>
@@ -104,7 +121,8 @@ export default function AdminProductsPage() {
                       <Badge tone={p.inStock ? "green" : "outline"}>
                         {p.inStock ? "Stokta" : "Stok yok"}
                       </Badge>
-                      {p.featured && <Badge tone="red">Öne çıkan</Badge>}
+                      {p.featured && <Badge tone="dark">Öne çıkan</Badge>}
+                      <CampaignBadge product={p} now={now} />
                       {!p.active && <Badge tone="grey">Yayında değil</Badge>}
                     </div>
                   </td>

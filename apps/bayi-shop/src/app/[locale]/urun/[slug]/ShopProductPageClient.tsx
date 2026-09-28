@@ -2,8 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { notFound } from "next/navigation";
-import { Check, ChevronRight, Minus, Plus, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
-import { findProductBySlug, getRetailerStock, stockForRetailer, useDatabase } from "@zenweld/store";
+import { Check, ChevronRight, Flame, Minus, Plus, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
+import { FLASH_DISCOUNT_THRESHOLD } from "@zenweld/data";
+import {
+  findProductBySlug,
+  getRetailerStock,
+  stockForRetailer,
+  useDatabase,
+  useNow,
+} from "@zenweld/store";
 import { localizePath } from "@zenweld/i18n";
 import { Accordion, Badge, Button, Tabs } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
@@ -11,8 +18,9 @@ import { ProductImage } from "@/components/ProductImage";
 import { ShopProductCard } from "@/components/ShopProductCard";
 import { ShopProductReviews } from "@/components/ShopProductReviews";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatPrice, priceWithVat } from "@/lib/format";
+import { formatDateTime, formatPrice } from "@/lib/format";
 import { useCart } from "@/lib/cart";
+import { shopPrice } from "@/lib/pricing";
 import { STORE } from "@/lib/store-config";
 
 export function ShopProductPageClient({ slug }: { slug: string }) {
@@ -21,6 +29,7 @@ export function ShopProductPageClient({ slug }: { slug: string }) {
   const text = useText();
   const db = useDatabase();
   const cart = useCart();
+  const now = useNow();
 
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -47,7 +56,9 @@ export function ShopProductPageClient({ slug }: { slug: string }) {
 
   if (!product) notFound();
 
-  const price = stock?.price ?? priceWithVat(product.priceExVat, product.vatRate);
+  // Magaza fiyati; Zenweld kampanyasi gecerliyse ayni oran uygulanir.
+  const { normal, sale: price, percent } = shopPrice(product, stock, now);
+  const endsAt = percent > 0 ? product.discount?.endsAt : undefined;
   const available = stock?.inStock ?? false;
   const images = product.images.length > 0 ? product.images : [{ url: "", alt: { tr: product.name, en: product.name } }];
 
@@ -125,8 +136,32 @@ export function ShopProductPageClient({ slug }: { slug: string }) {
             </div>
 
             <div className="mt-6 border-y border-zw-grey-200 py-5">
-              <div className="font-display text-4xl font-bold">{formatPrice(price, locale)}</div>
+              {percent > 0 && (
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-[3px] bg-zw-red-600 px-2 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                    {percent >= FLASH_DISCOUNT_THRESHOLD && <Flame size={13} />}
+                    {percent >= FLASH_DISCOUNT_THRESHOLD ? `${t.product.flashDeal} ` : ""}%{percent}{" "}
+                    {t.product.discount}
+                  </span>
+                  <span className="text-sm text-zw-grey-500">
+                    {t.product.normalPrice}{" "}
+                    <span className="line-through">{formatPrice(normal, locale)}</span>
+                  </span>
+                </div>
+              )}
+              <div
+                className={`inline-block font-display text-4xl font-bold ${
+                  percent > 0 ? "rounded-[4px] bg-zw-red-600 px-3 py-1 text-white" : ""
+                }`}
+              >
+                {formatPrice(price, locale)}
+              </div>
               <div className="mt-1 text-sm text-zw-grey-500">{t.product.priceIncVat}</div>
+              {endsAt && (
+                <p className="mt-2 text-sm font-semibold text-zw-red-700">
+                  {t.product.campaignEnds.replace("{date}", formatDateTime(endsAt, locale))}
+                </p>
+              )}
               <div className="mt-3 flex items-center gap-2 text-sm text-emerald-700">
                 <Truck size={17} />
                 {formatPrice(STORE.freeShippingOver, locale)} ve üzeri kargo ücretsiz

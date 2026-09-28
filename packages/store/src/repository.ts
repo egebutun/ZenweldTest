@@ -72,6 +72,8 @@ export function createProduct(partial: Partial<Product>): Product {
     shortDescription: partial.shortDescription ?? { tr: "", en: "" },
     description: partial.description ?? { tr: "", en: "" },
     priceExVat: partial.priceExVat ?? 0,
+    // Yeni urun olustururken girilen kampanya kaybolmasin.
+    discount: partial.discount,
     vatRate: partial.vatRate ?? 20,
     currency: "TRY",
     images: partial.images ?? [],

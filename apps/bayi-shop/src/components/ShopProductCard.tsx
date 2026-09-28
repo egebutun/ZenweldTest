@@ -3,18 +3,19 @@
 import { useState } from "react";
 import { Check, Flame, ShoppingCart } from "lucide-react";
 import {
-  discountPercent,
-  isFlashDeal,
+  FLASH_DISCOUNT_THRESHOLD,
   productHighlights,
   type Product,
   type RetailerStock,
 } from "@zenweld/data";
+import { useNow } from "@zenweld/store";
 import { Badge, Button, FlashFrame } from "@zenweld/ui";
 import { LocaleLink } from "./LocaleLink";
 import { ProductImage } from "./ProductImage";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatPrice, priceWithVat } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import { useCart } from "@/lib/cart";
+import { shopPrice } from "@/lib/pricing";
 
 /**
  * MAGAZA URUN KARTI
@@ -25,8 +26,8 @@ import { useCart } from "@/lib/cart";
  * korunur: sepete ekle butonu, magaza fiyati ve "Son N adet" uyarisi.
  *
  * Fiyat farki: ana site marka fiyatini, magaza kendi satis fiyatini
- * gosterir (stock.price). Indirim orani yine markanin liste fiyatindan
- * hesaplanir, boylece iki sitede ayni yuzde gorunur.
+ * gosterir (stock.price). Zenweld kampanyasi gecerliyken ayni indirim
+ * orani magaza fiyatina uygulanir (bkz. lib/pricing.ts).
  */
 export function ShopProductCard({
   product,
@@ -43,17 +44,15 @@ export function ShopProductCard({
   const text = useText();
   const cart = useCart();
   const [added, setAdded] = useState(false);
+  const now = useNow();
 
-  const price = stock?.price ?? priceWithVat(product.priceExVat, product.vatRate);
+  const { normal, sale: price, percent: discount } = shopPrice(product, stock, now);
+  const flash = discount >= FLASH_DISCOUNT_THRESHOLD;
   const available = stock?.inStock ?? false;
   const highlights = productHighlights(product, locale, 3);
   /** Magaza stogunda 5 ve altinda kalanlar icin uyari rozeti. */
   const left = stock?.quantity ?? 0;
   const runningLow = available && left > 0 && left <= 5;
-
-  const list = product.listPriceExVat;
-  const discount = discountPercent(product);
-  const flash = isFlashDeal(product);
 
   const card = (
     <div className="group relative flex h-full flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white text-zw-ink transition-shadow hover:shadow-lg">
@@ -125,13 +124,11 @@ export function ShopProductCard({
               >
                 {formatPrice(price, locale)}
               </span>
-              {list && (
-                <span
-                  className={`text-zw-grey-500 line-through ${compact ? "text-sm" : "text-base"}`}
-                >
-                  {formatPrice(priceWithVat(list, product.vatRate), locale)}
-                </span>
-              )}
+              <span
+                className={`text-zw-grey-500 line-through ${compact ? "text-sm" : "text-base"}`}
+              >
+                {formatPrice(normal, locale)}
+              </span>
             </div>
           ) : (
             <div

@@ -51,12 +51,12 @@ export function ProductPageClient({ slug }: { slug: string }) {
 
   // Secilen secenek fiyati, urun kodunu, teknik ozellikleri ve stok
   // durumunu degistirir. Alt bilesenlerin imzasini degistirmemek icin
-  // secimi uygulanmis bir urun nesnesi turetiyoruz.
+  // secimi uygulanmis bir urun nesnesi turetiyoruz. priceExVat secenegin
+  // NORMAL fiyatidir; kampanya indirimi gosterimde uygulanir.
   const variant = resolveVariant(product, selection);
   const shown: typeof product = {
     ...product,
     priceExVat: variant.priceExVat,
-    listPriceExVat: variant.listPriceExVat,
     specs: variant.specs,
     sku: variant.sku,
     inStock: variant.inStock,

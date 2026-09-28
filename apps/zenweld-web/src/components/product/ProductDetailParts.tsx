@@ -1,15 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { Award, Check, Factory, Headphones, MapPin, MessageCircle, ShieldCheck } from "lucide-react";
-import type { Product } from "@zenweld/data";
+import {
+  Award,
+  Check,
+  Factory,
+  Flame,
+  Headphones,
+  MapPin,
+  MessageCircle,
+  ShieldCheck,
+} from "lucide-react";
+import {
+  discountPercent,
+  FLASH_DISCOUNT_THRESHOLD,
+  salePriceExVat,
+  type Product,
+} from "@zenweld/data";
+import { useNow } from "@zenweld/store";
 import { Badge, Button, Modal } from "@zenweld/ui";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
 import { ProductImage } from "@/components/common/ProductImage";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { openSupportChat } from "@/lib/support-chat";
-import { formatPrice, priceWithVat } from "@/lib/format";
+import { formatDateTime, formatPrice, priceWithVat } from "@/lib/format";
 
 /* ---------------------------------------------------------------- */
 
@@ -56,24 +71,59 @@ export function ProductGallery({ product }: { product: Product }) {
 
 /* ---------------------------------------------------------------- */
 
+/**
+ * Urun sayfasindaki fiyat. Kampanya gecerliyse indirimli fiyat kirmizi
+ * kutuda, normal fiyat ustu cizili, oran rozetle ve (varsa) bitis tarihi
+ * gosterilir — kartlardaki gorunumle ayni dil. Onceden urun sayfasi
+ * indirimi hic gostermiyordu.
+ */
 export function PriceBlock({ product }: { product: Product }) {
   const t = useT();
   const locale = useLocale();
-  const incVat = priceWithVat(product.priceExVat, product.vatRate);
+  const now = useNow();
+
+  const percent = discountPercent(product, now);
+  const sale = salePriceExVat(product, now);
+  const incVat = priceWithVat(sale, product.vatRate);
+  const endsAt = percent > 0 ? product.discount?.endsAt : undefined;
 
   return (
     <div className="mt-5 border-y border-zw-grey-200 py-5">
+      {percent > 0 && (
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1 rounded-[3px] bg-zw-red-600 px-2 py-1 text-xs font-bold uppercase tracking-wide text-white">
+            {percent >= FLASH_DISCOUNT_THRESHOLD && <Flame size={13} />}
+            {percent >= FLASH_DISCOUNT_THRESHOLD ? `${t.product.flashDeal} ` : ""}%{percent}{" "}
+            {t.product.discount}
+          </span>
+          <span className="text-sm text-zw-grey-500">
+            {t.product.normalPrice}{" "}
+            <span className="line-through">
+              {formatPrice(priceWithVat(product.priceExVat, product.vatRate), locale)}
+            </span>
+          </span>
+        </div>
+      )}
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="font-display text-4xl font-bold tracking-tight">
+        <span
+          className={`font-display text-4xl font-bold tracking-tight ${
+            percent > 0 ? "rounded-[4px] bg-zw-red-600 px-3 py-1 text-white" : ""
+          }`}
+        >
           {formatPrice(incVat, locale)}
         </span>
         <span className="text-sm font-medium text-zw-grey-500">{t.product.priceIncVat}</span>
       </div>
       <div className="mt-1 text-sm text-zw-grey-500">
-        {formatPrice(product.priceExVat, locale)} <span>{t.product.priceExVat}</span>
+        {formatPrice(sale, locale)} <span>{t.product.priceExVat}</span>
         <span className="mx-2 text-zw-grey-300">·</span>
         KDV %{product.vatRate}
       </div>
+      {endsAt && (
+        <p className="mt-2 text-sm font-semibold text-zw-red-700">
+          {t.product.campaignEnds.replace("{date}", formatDateTime(endsAt, locale))}
+        </p>
+      )}
       <p className="mt-3 rounded-[4px] bg-zw-grey-50 px-3 py-2 text-xs text-zw-grey-600">
         {t.product.deferredNote}
       </p>

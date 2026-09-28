@@ -9,8 +9,8 @@ import {
   ShieldCheck,
   Truck,
 } from "lucide-react";
-import { blogSlug, stockPhotos } from "@zenweld/data";
-import { listBlogPosts, stockForRetailer, useDatabase } from "@zenweld/store";
+import { blogSlug, discountPercent, isOnSale, stockPhotos } from "@zenweld/data";
+import { listBlogPosts, stockForRetailer, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
@@ -26,6 +26,7 @@ export function ShopHomeContent() {
   const locale = useLocale();
   const text = useText();
   const db = useDatabase();
+  const now = useNow();
 
   const stock = stockForRetailer(STORE.retailerId, db);
   const stockMap = new Map(stock.map((s) => [s.productId, s]));
@@ -38,9 +39,13 @@ export function ShopHomeContent() {
     .slice(0, 12)
     .map((p) => ({ product: p, stock: stockMap.get(p.id) }));
 
-  /** Zenweld'in kampanyali urunlerinden magazada stokta olanlar. */
+  /**
+   * Zenweld'in SU AN gecerli kampanyalarindan magazada stokta olanlar.
+   * Kampanya tarihleri gelince bolume kendiliginden girer/cikar.
+   */
   const hotSale = inStockProducts
-    .filter((p) => p.hotSale)
+    .filter((p) => isOnSale(p, now))
+    .sort((a, b) => discountPercent(b, now) - discountPercent(a, now))
     .slice(0, 12)
     .map((p) => ({ product: p, stock: stockMap.get(p.id) }));
 

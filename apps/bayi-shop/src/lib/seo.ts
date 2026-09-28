@@ -1,5 +1,6 @@
 import { localizePath, type Locale } from "@zenweld/i18n";
 import type { Product, RetailerStock } from "@zenweld/data";
+import { shopPrice } from "./pricing";
 import { STORE } from "./store-config";
 
 /** Magaza adresi: NEXT_PUBLIC_SITE_URL > Vercel > yerel gelistirme */
@@ -47,8 +48,10 @@ export function shopProductJsonLd(
   stock: RetailerStock | undefined,
   locale: Locale,
 ): Record<string, unknown> {
-  const price =
-    stock?.price ?? Math.round(product.priceExVat * (1 + product.vatRate / 100));
+  // Musterinin odedigi fiyat: magaza fiyati + gecerli Zenweld kampanyasi.
+  const now = new Date();
+  const { sale: price, percent } = shopPrice(product, stock, now);
+  const endsAt = percent > 0 ? product.discount?.endsAt : undefined;
 
   return {
     "@context": "https://schema.org",
@@ -61,9 +64,11 @@ export function shopProductJsonLd(
     brand: { "@type": "Brand", name: "Zenweld" },
     offers: {
       "@type": "Offer",
-      url: absoluteUrl(`/${locale}/urun/${product.slug}`),
+      // Dile gore cevrilmis adres (/en/products/...).
+      url: ogUrl(`/urun/${product.slug}`, locale),
       priceCurrency: "TRY",
       price,
+      ...(endsAt ? { priceValidUntil: endsAt.slice(0, 10) } : {}),
       availability: stock?.inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",

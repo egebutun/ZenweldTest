@@ -40,13 +40,10 @@ export function activeOptionId(
 export function resolveVariant(product: Product, selection: VariantSelection) {
   const options = selectedOptions(product, selection);
 
+  // Secenegin NORMAL fiyati. Kampanya varsa ayni indirim ORANI bu fiyata
+  // gosterimde uygulanir (salePriceExVat), boylece 3 m ve 5 m torcta
+  // indirim yuzdesi ayni kalir.
   const priceExVat = options.reduce((sum, o) => sum + o.priceDeltaExVat, product.priceExVat);
-
-  // Liste (indirim oncesi) fiyat da ayni farkla kayar ki indirim orani
-  // secenekten secenege degismesin.
-  const listPriceExVat = product.listPriceExVat
-    ? options.reduce((sum, o) => sum + o.priceDeltaExVat, product.listPriceExVat)
-    : undefined;
 
   // Sonraki secenek oncekinin uzerine yazar; ayni etiketli satir varsa
   // degistirilir, yoksa sona eklenir.
@@ -64,5 +61,5 @@ export function resolveVariant(product: Product, selection: VariantSelection) {
   // Bayi stogu tek boyutlu tutuluyor; ilk grubun secimi kullanilir.
   const variantId = options[0]?.id;
 
-  return { priceExVat, listPriceExVat, specs, sku, inStock, variantId, options };
+  return { priceExVat, specs, sku, inStock, variantId, options };
 }

@@ -3,8 +3,8 @@
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
-import type { Product, WeldingProcess } from "@zenweld/data";
-import { useDatabase } from "@zenweld/store";
+import { salePriceExVat, type Product, type WeldingProcess } from "@zenweld/data";
+import { useDatabase, useNow } from "@zenweld/store";
 import { Button } from "@zenweld/ui";
 import { PageHero } from "@/components/common/PageShell";
 import { ProductGrid } from "@/components/product/ProductGrid";
@@ -54,6 +54,7 @@ function ProductSelectorWithParam() {
 function ProductSelector({ preset = "" }: { preset?: string }) {
   const t = useT();
   const db = useDatabase();
+  const now = useNow();
 
   // Her adimda birden fazla secenek isaretlenebilir.
   const [materials, setMaterials] = useState<string[]>(
@@ -90,10 +91,11 @@ function ProductSelector({ preset = "" }: { preset?: string }) {
     return db.products.filter((p) => {
       if (!p.active || p.section !== "ekipmanlar") return false;
       if (!p.processes.some((proc) => wanted.has(proc as WeldingProcess))) return false;
-      if (p.priceExVat > budget) return false;
+      // Butce, musterinin odeyecegi (kampanyali) fiyatla karsilastirilir.
+      if (salePriceExVat(p, now) > budget) return false;
       return powerFits(p);
     });
-  }, [db, materials, usages, powers]);
+  }, [db, materials, usages, powers, now]);
 
   const steps = [
     {

@@ -91,6 +91,19 @@ export type WeldingProcess =
   | "PLAZMA"
   | "MULTI";
 
+/**
+ * Urun indirimi. Normal fiyat urunde kalir; indirim yalnizca gecerlilik
+ * suresi icinde uygulanir (bkz. packages/data/src/discount.ts).
+ */
+export interface ProductDiscount {
+  /** Indirim orani (%), 1–90 */
+  percent: number;
+  /** Kampanya baslangici (ISO). Bos: kayit aninda baslar. */
+  startsAt?: string;
+  /** Kampanya bitisi (ISO). Bos: suresiz. */
+  endsAt?: string;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -103,7 +116,11 @@ export interface Product {
   processes: WeldingProcess[];
   shortDescription: I18nText;
   description: I18nText;
-  /** KDV haric liste fiyati (TRY) */
+  /**
+   * KDV haric NORMAL fiyat (TRY) — indirimsiz, yonetim panelinde girilen.
+   * Musterinin odedigi fiyat icin salePriceExVat() kullanilir; kampanya
+   * varsa indirim orada uygulanir.
+   */
   priceExVat: number;
   vatRate: number;
   currency: "TRY";
@@ -116,10 +133,12 @@ export interface Product {
   inStock: boolean;
   /** Zenweld deposundaki adet — anasayfadaki "azalan stok" bolumu bunu kullanir */
   stockQuantity?: number;
-  /** Anasayfadaki "Hot Sale" bolumunde gosterilir */
-  hotSale?: boolean;
-  /** Indirim oncesi liste fiyati (KDV haric); hotSale ile birlikte kullanilir */
-  listPriceExVat?: number;
+  /**
+   * Kampanya / indirim. Gecerli oldugu surece urun indirimli fiyatla
+   * gosterilir ve anasayfadaki "Hot Sale" bolumune kendiliginden girer;
+   * suresi bitince kendiliginden cikar. Ayrica isaretlemeye gerek yok.
+   */
+  discount?: ProductDiscount;
   /**
    * Secenekli urunler (orn. 3 m / 5 m torc). Secim fiyati, urun kodunu,
    * teknik ozellikleri ve bayi bulunurlugunu degistirebilir.
