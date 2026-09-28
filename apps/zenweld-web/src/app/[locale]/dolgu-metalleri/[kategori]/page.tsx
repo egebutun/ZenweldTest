@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { categories } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { CategoryListing } from "@/components/product/CategoryListing";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, ogUrl } from "@/lib/seo";
 
 export function generateStaticParams() {
   return categories
@@ -33,7 +33,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      url: `/${lang}/dolgu-metalleri/${category.slug}`,
+      url: ogUrl(`/dolgu-metalleri/${category.slug}`, lang),
     },
   };
 }

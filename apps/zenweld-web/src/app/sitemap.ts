@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { categories, products, events, news } from "@zenweld/data";
+import { categories, products, events, news, newsSlug } from "@zenweld/data";
 import { locales, localizePath } from "@zenweld/i18n";
 import { getSiteUrl } from "@/lib/seo";
 
@@ -64,6 +64,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   };
 
+  /**
+   * Adres parcasi dile gore DEGISEN kayitlar icin (haberler).
+   * pathFor her dil icin ic rotayi dondurur.
+   */
+  const pushPerLocale = (
+    pathFor: (locale: (typeof locales)[number]) => string,
+    priority: number,
+    freq: MetadataRoute.Sitemap[number]["changeFrequency"],
+    lastModified: Date = now,
+  ) => {
+    locales.forEach((locale) => {
+      entries.push({
+        url: `${base}/${locale}${localizePath(pathFor(locale), locale)}`,
+        lastModified,
+        changeFrequency: freq,
+        priority,
+        alternates: {
+          languages: Object.fromEntries(
+            locales.map((alt) => [
+              alt === "tr" ? "tr-TR" : "en-US",
+              `${base}/${alt}${localizePath(pathFor(alt), alt)}`,
+            ]),
+          ),
+        },
+      });
+    });
+  };
+
   staticPaths.forEach((p) => push(p.path, p.priority, p.freq));
 
   categories.forEach((category) => {
@@ -90,10 +118,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       push(`/kesfet/etkinlikler/${event.slug}`, 0.6, "monthly", new Date(event.startDate));
     });
 
+  // Haberin adresi dile gore degisir (baslik cevriliyor), bu yuzden her
+  // dil kendi adresiyle listelenir.
   news
     .filter((item) => item.active)
     .forEach((item) => {
-      push(`/kesfet/haberler/${item.slug}`, 0.5, "monthly", new Date(item.publishedAt));
+      pushPerLocale(
+        (locale) => `/kesfet/haberler/${newsSlug(item, locale)}`,
+        0.5,
+        "monthly",
+        new Date(item.publishedAt),
+      );
     });
 
   return entries;

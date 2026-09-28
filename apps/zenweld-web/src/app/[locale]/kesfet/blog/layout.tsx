@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { isLocale, type Locale } from "@zenweld/i18n";
-import { SITE_NAME, languageAlternates } from "@/lib/seo";
+import { SITE_NAME, languageAlternates, ogUrl } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -19,7 +19,7 @@ export async function generateMetadata({
     title: { default: title, template: `%s | ${SITE_NAME}` },
     description,
     alternates: languageAlternates("/kesfet/blog", lang),
-    openGraph: { title, description, url: `/${lang}/kesfet/blog` },
+    openGraph: { title, description, url: ogUrl(`/kesfet/blog`, lang) },
   };
 }
 

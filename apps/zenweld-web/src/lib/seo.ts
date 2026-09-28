@@ -262,3 +262,16 @@ export function languageAlternatesFor(
     },
   };
 }
+
+/**
+ * og:url icin MUTLAK ve DILE GORE CEVRILMIS adres.
+ *
+ * Onceden `/${lang}/kesfet/haberler/...` gibi ic rota yaziliyordu;
+ * Ingilizce sayfalar paylasildiginda og:url Turkce adresi gosteriyordu
+ * (canonical dogruydu, yalnizca og:url yanlisti). Bu yardimci ayni
+ * cevrimi canonical ile birlikte yapar.
+ */
+export function ogUrl(path: string, locale: Locale = "tr"): string {
+  const clean = path.startsWith("/") ? path : `/${path}`;
+  return absoluteUrl(`/${locale}${clean === "/" ? "" : localizePath(clean, locale)}`);
+}

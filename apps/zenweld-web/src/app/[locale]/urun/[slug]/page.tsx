@@ -3,12 +3,7 @@ import { notFound } from "next/navigation";
 import { categories, products } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { JsonLd } from "@/components/common/JsonLd";
-import {
-  SITE_NAME,
-  breadcrumbJsonLd,
-  languageAlternates,
-  productJsonLd,
-} from "@/lib/seo";
+import { SITE_NAME, breadcrumbJsonLd, languageAlternates, ogUrl, productJsonLd } from "@/lib/seo";
 import { ProductPageClient } from "./ProductPageClient";
 
 /**
@@ -56,7 +51,7 @@ export async function generateMetadata({
       siteName: SITE_NAME,
       title: `${title} | ${SITE_NAME}`,
       description,
-      url: `/${lang}/urun/${product.slug}`,
+      url: ogUrl(`/urun/${product.slug}`, lang),
       images: [{ url: image, alt: product.name }],
       locale: lang === "tr" ? "tr_TR" : "en_US",
     },

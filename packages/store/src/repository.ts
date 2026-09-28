@@ -575,6 +575,7 @@ export function createNews(partial: Partial<NewsItem>): NewsItem {
   const item: NewsItem = {
     id,
     slug: partial.slug ?? id,
+    slugEn: partial.slugEn,
     title: partial.title ?? { tr: "", en: "" },
     summary: partial.summary ?? { tr: "", en: "" },
     body: partial.body ?? { tr: "", en: "" },

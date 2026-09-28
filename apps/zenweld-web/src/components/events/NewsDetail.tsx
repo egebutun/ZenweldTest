@@ -1,13 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
-import { notFound } from "next/navigation";
+import { useEffect, useMemo } from "react";
+import { notFound, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { matchesNewsSlug, newsSlug } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
 import { RichText } from "./RichText";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+import { useHref, useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatDate } from "@/lib/format";
 
 export function NewsDetail({ slug }: { slug: string }) {
@@ -15,12 +16,23 @@ export function NewsDetail({ slug }: { slug: string }) {
   const locale = useLocale();
   const text = useText();
   const db = useDatabase();
+  const router = useRouter();
+  const href = useHref();
 
-  const item = useMemo(() => db.news.find((n) => n.slug === slug), [db, slug]);
+  // Adres parcasi iki dilde farklidir; dil degistirilince gelen "obur
+  // dilin" slug'i da kabul edilir, sonra adres kendi diline cevrilir.
+  const item = useMemo(() => db.news.find((n) => matchesNewsSlug(n, slug)), [db, slug]);
   const others = useMemo(
-    () => db.news.filter((n) => n.active && n.slug !== slug).slice(0, 3),
+    () => db.news.filter((n) => n.active && !matchesNewsSlug(n, slug)).slice(0, 3),
     [db, slug],
   );
+  const canonicalSlug = item ? newsSlug(item, locale) : "";
+
+  useEffect(() => {
+    if (item && canonicalSlug && canonicalSlug !== slug) {
+      router.replace(href(`/kesfet/haberler/${canonicalSlug}`));
+    }
+  }, [item, canonicalSlug, slug, router, href]);
 
   if (!item) notFound();
 
@@ -92,7 +104,7 @@ export function NewsDetail({ slug }: { slug: string }) {
             {others.map((n) => (
               <LocaleLink
                 key={n.id}
-                href={`/kesfet/haberler/${n.slug}`}
+                href={`/kesfet/haberler/${newsSlug(n, locale)}`}
                 className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
               >
                 <div className="flex aspect-[16/9] items-center justify-center overflow-hidden bg-zw-grey-100">

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
+import { newsSlug } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { EmptyState } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
@@ -35,7 +36,7 @@ export function NewsList() {
 
         {lead && (
           <LocaleLink
-            href={`/kesfet/haberler/${lead.slug}`}
+            href={`/kesfet/haberler/${newsSlug(lead, locale)}`}
             className="group grid gap-6 overflow-hidden rounded-[4px] border border-zw-grey-200 md:grid-cols-2"
           >
             <div className="flex aspect-[16/10] items-center justify-center overflow-hidden bg-zw-grey-100">
@@ -69,7 +70,7 @@ export function NewsList() {
             {rest.map((item) => (
               <LocaleLink
                 key={item.id}
-                href={`/kesfet/haberler/${item.slug}`}
+                href={`/kesfet/haberler/${newsSlug(item, locale)}`}
                 className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
               >
                 <div className="flex aspect-[16/9] items-center justify-center overflow-hidden bg-zw-grey-100">

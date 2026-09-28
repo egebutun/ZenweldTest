@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
-import { languageAlternates } from "@/lib/seo";
+import { languageAlternates, ogUrl } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -20,7 +20,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: languageAlternates("/yetkili-bayi-ve-servis-agi", lang),
-    openGraph: { title, description, url: `/${lang}/yetkili-bayi-ve-servis-agi` },
+    openGraph: { title, description, url: ogUrl(`/yetkili-bayi-ve-servis-agi`, lang) },
   };
 }
 

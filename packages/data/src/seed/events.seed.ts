@@ -461,6 +461,7 @@ export const news: NewsItem[] = [
   {
     id: "n1",
     slug: "kaynak-ve-kesme-teknolojileri-tanitim-gunu-van",
+    slugEn: "welding-and-cutting-technologies-open-day-van",
     title: {
       tr: "Kaynak ve Kesme Teknolojileri Tanıtım Günü",
       en: "Welding and Cutting Technologies Open Day",
@@ -490,6 +491,7 @@ We look forward to welcoming you — to discover the latest in welding and cutti
   {
     id: "n2",
     slug: "zenweld-kaynak-akademi",
+    slugEn: "zenweld-welding-academy",
     title: {
       tr: "Zenweld Kaynak Akademi",
       en: "Zenweld Welding Academy",
