@@ -48,10 +48,9 @@ export function shopProductJsonLd(
   stock: RetailerStock | undefined,
   locale: Locale,
 ): Record<string, unknown> {
-  // Musterinin odedigi fiyat: magaza fiyati + gecerli Zenweld kampanyasi.
+  // Musterinin odedigi fiyat: magaza fiyati + bayinin gecerli kampanyasi.
   const now = new Date();
-  const { sale: price, percent } = shopPrice(product, stock, now);
-  const endsAt = percent > 0 ? product.discount?.endsAt : undefined;
+  const { sale: price, endsAt } = shopPrice(product, stock, now);
 
   return {
     "@context": "https://schema.org",

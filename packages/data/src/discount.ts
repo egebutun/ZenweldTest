@@ -1,4 +1,4 @@
-import type { Product } from "./types";
+import type { Product, ProductDiscount } from "./types";
 
 /**
  * FIYAT VE KAMPANYA KURALLARI — TEK KAYNAK
@@ -10,6 +10,10 @@ import type { Product } from "./types";
  *
  * Musteriye gosterilen her fiyat salePriceExVat() uzerinden gecmelidir.
  * product.priceExVat dogrudan gosterilirse kampanya gozden kacar.
+ *
+ * Ayni kurallar bayi kampanyalarinda da gecerlidir: bayi kendi magazasi
+ * icin RetailerStock.discount girer; asagidaki *Of() fonksiyonlari
+ * urune bagli olmadan bir kampanya kaydiyla calisir.
  *
  * "at" parametresi: fiyatin hangi an icin hesaplanacagi. Istemci
  * bilesenleri useNow() ile verir (bkz. packages/store/src/hooks.ts) —
@@ -32,14 +36,45 @@ export const MAX_DISCOUNT_PERCENT = 90;
 
 export type CampaignStatus = "none" | "scheduled" | "active" | "ended";
 
-/** Kampanyanin verilen andaki durumu. */
-export function campaignStatus(product: Product, at: Date = new Date()): CampaignStatus {
-  const d = product.discount;
+/** Bir kampanya kaydinin verilen andaki durumu (urun ya da bayi). */
+export function discountStatusOf(
+  d: ProductDiscount | undefined,
+  at: Date = new Date(),
+): CampaignStatus {
   if (!d || !(d.percent > 0)) return "none";
   const now = at.getTime();
   if (d.startsAt && now < new Date(d.startsAt).getTime()) return "scheduled";
   if (d.endsAt && now > new Date(d.endsAt).getTime()) return "ended";
   return "active";
+}
+
+/** Kampanya kaydinin gecerli indirim yuzdesi; suresi disindaysa 0. */
+export function discountPercentOf(d: ProductDiscount | undefined, at?: Date): number {
+  return discountStatusOf(d, at) === "active" ? d!.percent : 0;
+}
+
+/**
+ * Panelde girilen kampanya kaydini dogrular; sorun yoksa null.
+ * Yonetim panelindeki urun formu ve bayinin Stok Bildirimi sayfasi
+ * ayni kurallari kullanir.
+ */
+export function validateDiscount(d: ProductDiscount): string | null {
+  if (
+    !Number.isInteger(d.percent) ||
+    d.percent < MIN_DISCOUNT_PERCENT ||
+    d.percent > MAX_DISCOUNT_PERCENT
+  ) {
+    return `İndirim oranı %${MIN_DISCOUNT_PERCENT} ile %${MAX_DISCOUNT_PERCENT} arasında tam sayı olmalıdır.`;
+  }
+  if (d.startsAt && d.endsAt && new Date(d.endsAt) <= new Date(d.startsAt)) {
+    return "Kampanya bitişi, başlangıçtan sonra olmalıdır.";
+  }
+  return null;
+}
+
+/** Zenweld kampanyasinin (product.discount) verilen andaki durumu. */
+export function campaignStatus(product: Product, at?: Date): CampaignStatus {
+  return discountStatusOf(product.discount, at);
 }
 
 /** Kampanya su an gecerli mi? */
@@ -49,7 +84,7 @@ export function isDiscountActive(product: Product, at?: Date): boolean {
 
 /** Gecerli indirim yuzdesi; kampanya yoksa ya da suresi disindaysa 0. */
 export function discountPercent(product: Product, at?: Date): number {
-  return isDiscountActive(product, at) ? product.discount!.percent : 0;
+  return discountPercentOf(product.discount, at);
 }
 
 /**

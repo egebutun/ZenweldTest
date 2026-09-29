@@ -11,6 +11,7 @@ import {
   type Product,
   type TopLevelSection,
   type WeldingProcess,
+  validateDiscount,
 } from "@zenweld/data";
 import { createProduct, saveProduct, useDatabase, useNow } from "@zenweld/store";
 import { Alert, Badge, Button, Checkbox, FormRow, Input, Select, Tabs, Textarea } from "@zenweld/ui";
@@ -107,24 +108,11 @@ export function ProductForm({ product }: { product?: Product }) {
       return;
     }
 
-    const d = draft.discount;
-    if (d) {
-      if (
-        !Number.isInteger(d.percent) ||
-        d.percent < MIN_DISCOUNT_PERCENT ||
-        d.percent > MAX_DISCOUNT_PERCENT
-      ) {
-        setError(
-          `İndirim oranı %${MIN_DISCOUNT_PERCENT} ile %${MAX_DISCOUNT_PERCENT} arasında tam sayı olmalıdır.`,
-        );
-        setTab("temel");
-        return;
-      }
-      if (d.startsAt && d.endsAt && new Date(d.endsAt) <= new Date(d.startsAt)) {
-        setError("Kampanya bitişi, başlangıçtan sonra olmalıdır.");
-        setTab("temel");
-        return;
-      }
+    const discountError = draft.discount ? validateDiscount(draft.discount) : null;
+    if (discountError) {
+      setError(discountError);
+      setTab("temel");
+      return;
     }
 
     if (isNew) {
@@ -365,7 +353,7 @@ export function ProductForm({ product }: { product?: Product }) {
                     </span>{" "}
                     <span className="font-normal text-zw-grey-500">KDV dahil</span>
                   </span>
-                  <CampaignBadge product={draft} now={now} />
+                  <CampaignBadge discount={draft.discount} now={now} />
                 </div>
                 {(draft.variantGroups?.length ?? 0) > 0 && (
                   <p className="text-xs text-zw-grey-500">
@@ -392,8 +380,18 @@ export function ProductForm({ product }: { product?: Product }) {
               checked={draft.quotable}
               onChange={(e) => set("quotable", e.target.checked)}
             />
+            {/* Yalnizca siralamayi etkiler: kategori sayfalarinda ve bayi
+                magazasinda varsayilan "Öne çıkanlar" siralamasinda bu
+                urunler en uste gelir. Baska bir yerde gosterilmez. */}
             <Checkbox
-              label="Öne çıkan"
+              label={
+                <>
+                  Öne çıkan{" "}
+                  <span className="text-xs text-zw-grey-500">
+                    (listelerde &quot;Öne çıkanlar&quot; sıralamasında en üstte gösterilir)
+                  </span>
+                </>
+              }
               checked={draft.featured}
               onChange={(e) => set("featured", e.target.checked)}
             />

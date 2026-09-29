@@ -263,7 +263,10 @@ Aynı sayfadan **JSON İçe Aktar** ve **Başlangıca Dön** işlemleri de yapı
 
 **Seçenek A — Bayi kendi girer (önerilen):**
 1. Bayi `bayi@zenweld-bayi-a.com` ile giriş yapar
-2. `Hesabım → Stok Bildirimi` sayfasında ürünleri işaretler veya CSV yükler
+2. `Hesabım → Stok Bildirimi` sayfasında ürünleri işaretler veya CSV yükler;
+   aynı sayfada **kendi satış fiyatını ve kampanyasını** (indirim %, başlangıç,
+   bitiş) girer. Bu fiyat ve kampanyalar yalnızca bayi mağazasında geçerlidir;
+   ana sitenin fiyatlarını yönetici belirler.
 3. İşaretlenen ürünler ana sitedeki ürün sayfalarında o bayinin logosuyla görünür
 
 **Seçenek B — Yönetici girer:**

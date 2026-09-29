@@ -26,8 +26,9 @@ import { shopPrice } from "@/lib/pricing";
  * korunur: sepete ekle butonu, magaza fiyati ve "Son N adet" uyarisi.
  *
  * Fiyat farki: ana site marka fiyatini, magaza kendi satis fiyatini
- * gosterir (stock.price). Zenweld kampanyasi gecerliyken ayni indirim
- * orani magaza fiyatina uygulanir (bkz. lib/pricing.ts).
+ * gosterir (stock.price). Kampanyayi da bayi kendisi belirler
+ * (stock.discount); Zenweld kampanyalari magazayi etkilemez
+ * (bkz. lib/pricing.ts).
  */
 export function ShopProductCard({
   product,

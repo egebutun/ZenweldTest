@@ -38,8 +38,32 @@ Beş sekme vardır:
 | **Teknik Özellikler** | Satır satır TR/EN özellik–değer tablosu |
 | **Kutu İçeriği** | TR/EN madde listesi |
 
+**Durum işaretleri:**
+- **Öne çıkan** — yalnızca sıralamayı etkiler. Kategori sayfalarında ve bayi
+  mağazasında varsayılan *"Öne çıkanlar"* sıralamasında bu ürünler en üstte
+  gösterilir. Anasayfada veya başka bir bölümde ayrıca gösterilmez.
+- **Kampanya / indirim** — yalnızca **Zenweld ana sitesindeki** fiyatı etkiler.
+  Bayi mağazalarının fiyat ve kampanyalarını bayiler kendi hesaplarından yönetir
+  (bkz. aşağıdaki *Bayi fiyat ve kampanyaları*).
+
 **Not:** Yeni ürün eklediğinizde hiçbir satıcıda stokta görünmez. Ürünün online
 satıcılarda çıkması için **Stok Matrisi**'nden işaretlemelisiniz.
+
+---
+
+### Bayi fiyat ve kampanyaları
+
+Ana site ile bayi mağazasının fiyatları **ayrıdır**:
+
+| Fiyat | Kim belirler | Nereden |
+|---|---|---|
+| Zenweld ana sitesi fiyatı ve kampanyası | Zenweld yöneticisi | `Yönetim Paneli → Ürünler → Düzenle` |
+| Bayi mağazası fiyatı ve kampanyası | Bayi | `Hesabım → Stok Bildirimi` (ana sitede bayi hesabıyla) |
+
+Bayi fiyat girmezse mağazada Zenweld liste fiyatı (KDV dahil) gösterilir.
+Zenweld kampanyası bayi mağazasına **uygulanmaz**; bayi isterse kendi
+kampanyasını ürün satırındaki **Kampanya ekle** bağlantısından tanımlar
+(indirim %, başlangıç, bitiş — kurallar yönetim panelindekiyle aynıdır).
 
 ---
 

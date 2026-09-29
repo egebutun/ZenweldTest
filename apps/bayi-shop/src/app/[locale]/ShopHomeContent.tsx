@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Truck,
 } from "lucide-react";
-import { blogSlug, discountPercent, isOnSale, stockPhotos } from "@zenweld/data";
+import { blogSlug, stockPhotos } from "@zenweld/data";
 import { listBlogPosts, stockForRetailer, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
@@ -18,6 +18,7 @@ import { ShopProductCard } from "@/components/ShopProductCard";
 import { ShopProductMarquee } from "@/components/ShopProductMarquee";
 import { ShopReviewMarquee } from "@/components/ShopReviewMarquee";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
+import { shopPrice } from "@/lib/pricing";
 import { STORE } from "@/lib/store-config";
 import { formatDate, formatPrice } from "@/lib/format";
 
@@ -40,14 +41,17 @@ export function ShopHomeContent() {
     .map((p) => ({ product: p, stock: stockMap.get(p.id) }));
 
   /**
-   * Zenweld'in SU AN gecerli kampanyalarindan magazada stokta olanlar.
+   * Magazanin (bayinin) SU AN gecerli kampanyalarindan stokta olanlar.
    * Kampanya tarihleri gelince bolume kendiliginden girer/cikar.
    */
   const hotSale = inStockProducts
-    .filter((p) => isOnSale(p, now))
-    .sort((a, b) => discountPercent(b, now) - discountPercent(a, now))
-    .slice(0, 12)
-    .map((p) => ({ product: p, stock: stockMap.get(p.id) }));
+    .map((p) => {
+      const s = stockMap.get(p.id);
+      return { product: p, stock: s, percent: shopPrice(p, s, now).percent };
+    })
+    .filter((item) => item.percent > 0)
+    .sort((a, b) => b.percent - a.percent)
+    .slice(0, 12);
 
   /** Magazanin kendi stogunda 5 adet ve altinda kalanlar. */
   const lowStock = inStockProducts

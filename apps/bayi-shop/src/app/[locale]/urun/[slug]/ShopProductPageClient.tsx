@@ -2,7 +2,17 @@
 
 import { useMemo, useState } from "react";
 import { notFound } from "next/navigation";
-import { Check, ChevronRight, Flame, Minus, Plus, ShieldCheck, ShoppingCart, Truck } from "lucide-react";
+import {
+  Check,
+  ChevronRight,
+  FileText,
+  Flame,
+  Minus,
+  Plus,
+  ShieldCheck,
+  ShoppingCart,
+  Truck,
+} from "lucide-react";
 import { FLASH_DISCOUNT_THRESHOLD } from "@zenweld/data";
 import {
   findProductBySlug,
@@ -56,9 +66,8 @@ export function ShopProductPageClient({ slug }: { slug: string }) {
 
   if (!product) notFound();
 
-  // Magaza fiyati; Zenweld kampanyasi gecerliyse ayni oran uygulanir.
-  const { normal, sale: price, percent } = shopPrice(product, stock, now);
-  const endsAt = percent > 0 ? product.discount?.endsAt : undefined;
+  // Magaza fiyati ve bayinin kendi kampanyasi (bkz. lib/pricing.ts).
+  const { normal, sale: price, percent, endsAt } = shopPrice(product, stock, now);
   const available = stock?.inStock ?? false;
   const images = product.images.length > 0 ? product.images : [{ url: "", alt: { tr: product.name, en: product.name } }];
 
@@ -263,10 +272,28 @@ export function ShopProductPageClient({ slug }: { slug: string }) {
                 </tbody>
               </table>
             )}
+            {/* Aciklama + kullanim kilavuzu — ana siteyle ayni. Kilavuz
+                Zenweld sitesinde barindirildigi icin "/" ile baslayan
+                adresler o siteye yonlendirilir. */}
             {tab === "description" && (
-              <p className="max-w-3xl text-sm leading-relaxed text-zw-grey-700">
-                {text(product.description)}
-              </p>
+              <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-zw-grey-700">
+                <p>{text(product.description)}</p>
+                {product.manualUrl && (
+                  <a
+                    href={
+                      product.manualUrl.startsWith("/")
+                        ? `${STORE.zenweldUrl}${product.manualUrl}`
+                        : product.manualUrl
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-zw-red-600 hover:underline"
+                  >
+                    <FileText size={16} />
+                    {t.product.manual} (PDF)
+                  </a>
+                )}
+              </div>
             )}
             {tab === "shipping" && (
               <div className="max-w-3xl space-y-3 text-sm leading-relaxed text-zw-grey-700">

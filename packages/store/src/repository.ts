@@ -176,6 +176,7 @@ export function setRetailerStock(
         inStock: patch.inStock ?? false,
         quantity: patch.quantity,
         price: patch.price,
+        discount: patch.discount,
         productUrl:
           patch.productUrl ??
           (retailer?.isOwnStore
