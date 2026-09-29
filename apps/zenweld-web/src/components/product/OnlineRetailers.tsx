@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { ChevronDown, ExternalLink, Store } from "lucide-react";
-import type { Product } from "@zenweld/data";
-import { lastStockUpdate, retailersInStockFor, useDatabase } from "@zenweld/store";
+import { applyDiscount, discountPercentOf, type Product } from "@zenweld/data";
+import { lastStockUpdate, retailersInStockFor, useDatabase, useNow } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
 import { useLocale, useT } from "@/lib/i18n-client";
 import { formatDate, formatPrice } from "@/lib/format";
@@ -14,12 +14,16 @@ import { formatDate, formatPrice } from "@/lib/format";
  * ONEMLI: Bu liste urune ozeldir. Yalnizca o urunu STOKTA TUTAN saticilar
  * gosterilir — A urunu 3 sitede, B urunu 2 sitede cikabilir. Stok bilgisi
  * admin panelinden (/admin/stok) veya bayinin kendi panelinden guncellenir.
+ *
+ * Gosterilen fiyat saticinin kendi fiyatidir; saticinin gecerli bir
+ * kampanyasi varsa (stock.discount) indirimli fiyat gosterilir.
  */
 export function OnlineRetailers({ product }: { product: Product }) {
   const t = useT();
   const locale = useLocale();
   const db = useDatabase();
   const [expanded, setExpanded] = useState(false);
+  const now = useNow();
 
   const inStock = useMemo(() => retailersInStockFor(product.id, db), [product.id, db]);
   const updatedAt = useMemo(() => lastStockUpdate(product.id, db), [product.id, db]);
@@ -64,9 +68,7 @@ export function OnlineRetailers({ product }: { product: Product }) {
               {retailer.logoText}
             </span>
             {stock.price != null && (
-              <span className="text-xs font-semibold text-zw-grey-500">
-                {formatPrice(stock.price, locale)}
-              </span>
+              <RetailerPrice price={stock.price} percent={discountPercentOf(stock.discount, now)} />
             )}
           </a>
         ))}
@@ -88,5 +90,19 @@ export function OnlineRetailers({ product }: { product: Product }) {
         </p>
       )}
     </section>
+  );
+}
+
+/** Saticinin fiyati; kampanyasi gecerliyse ustu cizili normal + indirimli fiyat. */
+function RetailerPrice({ price, percent }: { price: number; percent: number }) {
+  const locale = useLocale();
+  if (percent <= 0) {
+    return <span className="text-xs font-semibold text-zw-grey-500">{formatPrice(price, locale)}</span>;
+  }
+  return (
+    <span className="text-xs font-semibold text-zw-red-600">
+      <span className="mr-1 font-normal text-zw-grey-400 line-through">{formatPrice(price, locale)}</span>
+      {formatPrice(applyDiscount(price, percent), locale)}
+    </span>
   );
 }

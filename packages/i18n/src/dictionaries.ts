@@ -394,9 +394,9 @@ export const dictionaries = {
       date: "Tarih",
       total: "Tutar",
       items: "Ürünler",
-      stockNoticeTitle: "Stok Bildirimi",
+      stockNoticeTitle: "Stok, Fiyat ve Kampanya",
       stockNoticeDesc:
-        "Mağazanızda stokta olan ürünleri işaretleyin. İşaretlediğiniz ürünler Zenweld ürün sayfalarında sizin siteniz üzerinden satın alınabilir olarak görünür.",
+        "Mağazanızda stokta olan ürünleri işaretleyin, kendi satış fiyatınızı ve kampanyalarınızı girin. İşaretlediğiniz ürünler Zenweld ürün sayfalarında sizin siteniz üzerinden satın alınabilir olarak görünür. Buradaki fiyat ve kampanyalar yalnızca sizin mağazanızda geçerlidir; Zenweld ana sitesindeki fiyatları değiştirmez.",
       stockSaved: "Stok bilgisi güncellendi.",
       notDealerYet:
         "Bayi hesabınız henüz onaylanmadı. Onay sonrası stok bildirimi yapabilirsiniz.",
@@ -946,9 +946,9 @@ export const dictionaries = {
       date: "Date",
       total: "Total",
       items: "Items",
-      stockNoticeTitle: "Stock Update",
+      stockNoticeTitle: "Stock, Price & Campaigns",
       stockNoticeDesc:
-        "Mark the products you have in stock. Marked products appear on Zenweld product pages as buyable through your store.",
+        "Mark the products you have in stock and set your own selling prices and campaigns. Marked products appear on Zenweld product pages as buyable through your store. Prices and campaigns set here apply only to your store; they do not change prices on the Zenweld website.",
       stockSaved: "Stock information updated.",
       notDealerYet:
         "Your dealer account is not approved yet. You can submit stock updates after approval.",

@@ -1,16 +1,17 @@
 "use client";
 
-import { campaignStatus, isFlashDeal, type Product } from "@zenweld/data";
+import { discountStatusOf, FLASH_DISCOUNT_THRESHOLD, type ProductDiscount } from "@zenweld/data";
 import { Badge } from "@zenweld/ui";
 import { formatDateTime } from "@/lib/format";
 
 /**
- * Yonetim panelinde bir urunun kampanya durumunu tek satirda gosterir:
- * gecerli / planlandi / bitti. Urun listesi ve urun formu ortak kullanir.
+ * Bir kampanyanin durumunu tek satirda gosterir: gecerli / planlandi /
+ * bitti. Yonetim panelindeki urun listesi ve urun formu (Zenweld
+ * kampanyasi) ile bayinin Stok Bildirimi sayfasi (bayi kampanyasi) ortak
+ * kullanir.
  */
-export function CampaignBadge({ product, now }: { product: Product; now: Date }) {
-  const status = campaignStatus(product, now);
-  const d = product.discount;
+export function CampaignBadge({ discount: d, now }: { discount?: ProductDiscount; now: Date }) {
+  const status = discountStatusOf(d, now);
   if (status === "none" || !d) return null;
 
   if (status === "scheduled") {
@@ -25,7 +26,7 @@ export function CampaignBadge({ product, now }: { product: Product; now: Date })
   }
   return (
     <Badge tone="red">
-      {isFlashDeal(product, now) ? "Flaş " : ""}Kampanya %{d.percent}
+      {d.percent >= FLASH_DISCOUNT_THRESHOLD ? "Flaş " : ""}Kampanya %{d.percent}
       {d.endsAt ? ` · ${formatDateTime(d.endsAt, "tr")}'e kadar` : " · süresiz"}
     </Badge>
   );

@@ -210,6 +210,13 @@ export interface RetailerStock {
   quantity?: number;
   /** Saticiya ozel fiyat (KDV dahil). Yoksa liste fiyati gosterilir. */
   price?: number;
+  /**
+   * Saticinin KENDI kampanyasi — yalnizca bu saticinin fiyatina uygulanir.
+   * Zenweld'in urun kampanyasindan (Product.discount) bagimsizdir: bayi
+   * kendi magazasinin fiyatini ve kampanyasini Hesabim > Stok Bildirimi
+   * sayfasindan yonetir, Zenweld ana site fiyatlarini yonetim panelinden.
+   */
+  discount?: ProductDiscount;
   /** Urunun o sitedeki dogrudan linki */
   productUrl: string;
   updatedAt: string;
