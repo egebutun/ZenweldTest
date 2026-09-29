@@ -145,7 +145,8 @@ export function applyFilters(items: Product[], filters: FilterState, now?: Date)
       sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       break;
     default:
-      sorted.sort((a, b) => Number(b.featured) - Number(a.featured));
+      // "Önerilen": katalogdaki sira korunur.
+      break;
   }
   return sorted;
 }

@@ -55,7 +55,6 @@ function StoreInner() {
     if (sort === "priceAsc") sorted.sort((a, b) => priceOf(a) - priceOf(b));
     if (sort === "priceDesc") sorted.sort((a, b) => priceOf(b) - priceOf(a));
     if (sort === "nameAsc") sorted.sort((a, b) => a.name.localeCompare(b.name, "tr"));
-    if (sort === "featured") sorted.sort((a, b) => Number(b.featured) - Number(a.featured));
     return sorted;
   }, [db, stockMap, query, group, sort, onlyInStock, locale, now]);
 

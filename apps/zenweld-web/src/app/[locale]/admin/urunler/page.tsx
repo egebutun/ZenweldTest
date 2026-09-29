@@ -121,7 +121,6 @@ export default function AdminProductsPage() {
                       <Badge tone={p.inStock ? "green" : "outline"}>
                         {p.inStock ? "Stokta" : "Stok yok"}
                       </Badge>
-                      {p.featured && <Badge tone="dark">Öne çıkan</Badge>}
                       <CampaignBadge discount={p.discount} now={now} />
                       {!p.active && <Badge tone="grey">Yayında değil</Badge>}
                     </div>
