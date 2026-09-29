@@ -39,9 +39,6 @@ Beş sekme vardır:
 | **Kutu İçeriği** | TR/EN madde listesi |
 
 **Durum işaretleri:**
-- **Öne çıkan** — yalnızca sıralamayı etkiler. Kategori sayfalarında ve bayi
-  mağazasında varsayılan *"Öne çıkanlar"* sıralamasında bu ürünler en üstte
-  gösterilir. Anasayfada veya başka bir bölümde ayrıca gösterilmez.
 - **Kampanya / indirim** — yalnızca **Zenweld ana sitesindeki** fiyatı etkiler.
   Bayi mağazalarının fiyat ve kampanyalarını bayiler kendi hesaplarından yönetir
   (bkz. aşağıdaki *Bayi fiyat ve kampanyaları*).

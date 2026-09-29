@@ -380,21 +380,6 @@ export function ProductForm({ product }: { product?: Product }) {
               checked={draft.quotable}
               onChange={(e) => set("quotable", e.target.checked)}
             />
-            {/* Yalnizca siralamayi etkiler: kategori sayfalarinda ve bayi
-                magazasinda varsayilan "Öne çıkanlar" siralamasinda bu
-                urunler en uste gelir. Baska bir yerde gosterilmez. */}
-            <Checkbox
-              label={
-                <>
-                  Öne çıkan{" "}
-                  <span className="text-xs text-zw-grey-500">
-                    (listelerde &quot;Öne çıkanlar&quot; sıralamasında en üstte gösterilir)
-                  </span>
-                </>
-              }
-              checked={draft.featured}
-              onChange={(e) => set("featured", e.target.checked)}
-            />
             <Checkbox
               label="Yeni ürün rozeti"
               checked={draft.isNew}
