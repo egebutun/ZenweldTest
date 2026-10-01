@@ -956,7 +956,25 @@ const LOW_STOCK: Record<string, number> = {
   "mig-torcu-mb501-su": 2,
 };
 
+/**
+ * Yeni gelenler (anasayfadaki "Yeni Gelenler" seridi).
+ * Serit ekrani dolduracak kadar urun olsun diye 8 urun; bazilari ayni
+ * zamanda kampanyali, kartta iki etiket birlikte gorunur. Panelde
+ * Urunler > urun > "Yeni" kutusundan degistirilir.
+ */
+const NEW_ARRIVALS = new Set([
+  "evomig-205-p",
+  "ultimate-205-mte-pro",
+  "ultimate-th-200",
+  "ultimate-arc-200-s",
+  "multicut-40-cnc",
+  "zenmask-auto-9000",
+  "zenmask-basic-500",
+  "tig-torcu-wp26",
+]);
+
 products.forEach((p, i) => {
+  if (NEW_ARRIVALS.has(p.slug)) p.isNew = true;
   const percent = HOT_SALE[p.slug];
   if (percent) {
     // Kampanyadaki urun stokta olmali.
