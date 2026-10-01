@@ -17,12 +17,9 @@ import type {
   ZenweldEvent,
 } from "@zenweld/data";
 import { defaultSettings } from "@zenweld/data";
-import { getSnapshot, mutate } from "./database";
+import { getSnapshot, mutate, uid } from "./database";
 
 const nowIso = () => new Date().toISOString();
-
-const uid = (prefix: string) =>
-  `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
 
 /* ------------------------------------------------------------------ */
 /* Urunler                                                             */
@@ -60,7 +57,9 @@ export function saveProduct(product: Product): void {
 }
 
 export function createProduct(partial: Partial<Product>): Product {
-  const id = partial.id ?? uid("p");
+  // Panel formlari yeni kayitta id: "" gonderir; bos metin de "id yok"
+  // sayilir (?? kullanilsaydi kayit bos id ile yazilirdi).
+  const id = partial.id || uid("p");
   const product: Product = {
     id,
     slug: partial.slug ?? id,
@@ -501,7 +500,7 @@ export function saveEvent(event: ZenweldEvent): void {
 }
 
 export function createEvent(partial: Partial<ZenweldEvent>): ZenweldEvent {
-  const id = partial.id ?? uid("e");
+  const id = partial.id || uid("e");
   const today = nowIso().slice(0, 10);
   const event: ZenweldEvent = {
     id,
@@ -574,7 +573,7 @@ export function saveNews(item: NewsItem): void {
 }
 
 export function createNews(partial: Partial<NewsItem>): NewsItem {
-  const id = partial.id ?? uid("n");
+  const id = partial.id || uid("n");
   const item: NewsItem = {
     id,
     slug: partial.slug ?? id,
@@ -650,7 +649,7 @@ export function saveBlogPost(item: BlogPost): void {
 }
 
 export function createBlogPost(partial: Partial<BlogPost>): BlogPost {
-  const id = partial.id ?? uid("b");
+  const id = partial.id || uid("b");
   const item: BlogPost = {
     id,
     slug: partial.slug ?? id,
@@ -773,7 +772,7 @@ export function listAllReviews(
 
 export function createReview(partial: Partial<ProductReview>): ProductReview {
   const item: ProductReview = {
-    id: partial.id ?? uid("rv"),
+    id: partial.id || uid("rv"),
     productId: partial.productId ?? "",
     userId: partial.userId,
     authorName: partial.authorName ?? "",
