@@ -13,6 +13,7 @@ import type { User, UserRole } from "@zenweld/data";
 import { addUser, findUserByEmail, findUserById, saveUser, useDatabase } from "@zenweld/store";
 import { demoHash, verifyPassword } from "./hash";
 
+/** Ana site (musteri ve bayi) oturumu. */
 const SESSION_KEY = "zenweld.session.v1";
 
 export interface RegisterInput {
@@ -49,28 +50,60 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+/**
+ * OTURUM SAGLAYICI
+ *
+ * Ana site ile yonetim paneli (apps/admin) ayni tarayici deposunu
+ * paylasir, ama oturumlari AYRIDIR:
+ *
+ *   - sessionKey: her uygulama oturumu kendi anahtarinda tutar; panelden
+ *     cikis yapmak ana sitedeki oturumu etkilemez, tersi de oyle.
+ *   - roles: uygulamaya giris yapabilecek roller. Ana site yonetici
+ *     hesaplarini kabul etmez; panel yalnizca yonetici hesaplarini kabul
+ *     eder. Izinsiz rol, "hesap bulunamadi" ile ayni mesaji alir — boylece
+ *     ana sitenin giris formu yonetici e-postalarini ele vermez.
+ */
+export function AuthProvider({
+  children,
+  sessionKey = SESSION_KEY,
+  roles,
+}: {
+  children: ReactNode;
+  sessionKey?: string;
+  /** Bos birakilirsa tum roller giris yapabilir. */
+  roles?: UserRole[];
+}) {
   const db = useDatabase();
   const [userId, setUserId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
+  const allowed = useCallback(
+    (u: User) => !roles || roles.includes(u.role),
+    // roles dizisi her render'da yeniden olusabilir; icerigine bagliyoruz.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [roles?.join("|")],
+  );
+
   useEffect(() => {
     try {
-      setUserId(window.localStorage.getItem(SESSION_KEY));
+      setUserId(window.localStorage.getItem(sessionKey));
     } catch {
       /* gizli sekme vb. */
     }
     setReady(true);
-  }, []);
+  }, [sessionKey]);
 
   const user = useMemo(() => {
     if (!userId) return null;
-    return findUserById(userId, db) ?? null;
-  }, [userId, db]);
+    const found = findUserById(userId, db);
+    return found && allowed(found) ? found : null;
+  }, [userId, db, allowed]);
 
   const login = useCallback<AuthContextValue["login"]>((email, password) => {
     const found = findUserByEmail(email);
-    if (!found) return { ok: false, error: "Bu e-posta ile kayıtlı bir hesap bulunamadı." };
+    if (!found || !allowed(found)) {
+      return { ok: false, error: "Bu e-posta ile kayıtlı bir hesap bulunamadı." };
+    }
     if (!verifyPassword(password, found.passwordHash)) {
       return { ok: false, error: "Şifre hatalı." };
     }
@@ -79,22 +112,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     saveUser({ ...found, lastLoginAt: new Date().toISOString() });
     try {
-      window.localStorage.setItem(SESSION_KEY, found.id);
+      window.localStorage.setItem(sessionKey, found.id);
     } catch {
       /* yok say */
     }
     setUserId(found.id);
     return { ok: true, user: found };
-  }, []);
+  }, [allowed, sessionKey]);
 
   const logout = useCallback(() => {
     try {
-      window.localStorage.removeItem(SESSION_KEY);
+      window.localStorage.removeItem(sessionKey);
     } catch {
       /* yok say */
     }
     setUserId(null);
-  }, []);
+  }, [sessionKey]);
 
   const register = useCallback<AuthContextValue["register"]>((input) => {
     if (findUserByEmail(input.email)) {
@@ -124,13 +157,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     addUser(newUser);
     try {
-      window.localStorage.setItem(SESSION_KEY, newUser.id);
+      window.localStorage.setItem(sessionKey, newUser.id);
     } catch {
       /* yok say */
     }
     setUserId(newUser.id);
     return { ok: true, user: newUser };
-  }, []);
+  }, [sessionKey]);
 
   const updateProfile = useCallback<AuthContextValue["updateProfile"]>(
     (patch) => {

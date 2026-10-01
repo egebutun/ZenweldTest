@@ -19,8 +19,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Yonetim paneli ve hesap sayfalari aramada cikmasin
-        disallow: ["/tr/admin", "/en/admin", "/tr/hesabim", "/en/account", "/api/"],
+        // Yonetim paneli (ayri uygulama, /yonetim) ve hesap sayfalari
+        // aramada cikmasin.
+        disallow: ["/yonetim", "/tr/hesabim", "/en/account", "/api/"],
       },
     ],
     ...(isNoIndex() ? {} : { sitemap: `${siteUrl}/sitemap.xml` }),

@@ -13,7 +13,7 @@ import { formatDate, formatPrice } from "@/lib/format";
  *
  * ONEMLI: Bu liste urune ozeldir. Yalnizca o urunu STOKTA TUTAN saticilar
  * gosterilir — A urunu 3 sitede, B urunu 2 sitede cikabilir. Stok bilgisi
- * admin panelinden (/admin/stok) veya bayinin kendi panelinden guncellenir.
+ * yonetim panelinden (/yonetim/stok) veya bayinin kendi panelinden guncellenir.
  *
  * Gosterilen fiyat saticinin kendi fiyatidir; saticinin gecerli bir
  * kampanyasi varsa (stock.discount) indirimli fiyat gosterilir.

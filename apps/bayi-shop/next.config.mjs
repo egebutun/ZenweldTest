@@ -12,6 +12,8 @@ const nextConfig = {
     "@zenweld/auth",
     "@zenweld/ui",
     "@zenweld/i18n",
+    // @zenweld/ui artik ortak yardimcilari bu paketten aliyor.
+    "@zenweld/utils",
   ],
   images: {
     // hostname: "**" acikti; bu, /_next/image ucunu herkesin kullanabilecegi

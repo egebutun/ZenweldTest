@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronDown,
   ChevronRight,
-  LayoutDashboard,
   LogOut,
   MapPin,
   Menu,
@@ -42,8 +41,6 @@ export function Header() {
     setAccountOpen(false);
   }, [pathname]);
 
-  const isAdminArea = pathname.includes("/admin");
-
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -58,9 +55,6 @@ export function Header() {
   const changeLocale = (next: Locale) => {
     router.push(switchLocaleInPath(pathname, next));
   };
-
-  // Yonetim paneli kendi basligini kullanir.
-  if (isAdminArea) return null;
 
   return (
     <>
@@ -168,15 +162,6 @@ export function Header() {
                           className="block px-4 py-2 text-sm hover:bg-zw-grey-50"
                         >
                           {t.account.stockNotice}
-                        </LocaleLink>
-                      )}
-                      {user.role === "admin" && (
-                        <LocaleLink
-                          href="/admin"
-                          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-zw-red-600 hover:bg-zw-red-50"
-                        >
-                          <LayoutDashboard size={15} />
-                          {t.nav.adminPanel}
                         </LocaleLink>
                       )}
                       <button

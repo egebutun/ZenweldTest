@@ -22,8 +22,7 @@ import {
   useDatabase,
   useNow,
 } from "@zenweld/store";
-import { Alert, Badge, Button, FormRow, Input, Modal } from "@zenweld/ui";
-import { CampaignBadge } from "@/components/admin/CampaignBadge";
+import { Alert, Badge, Button, CampaignBadge, FormRow, Input, Modal } from "@zenweld/ui";
 import { ProductImage } from "@/components/common/ProductImage";
 import { useLocale, useT } from "@/lib/i18n-client";
 import {

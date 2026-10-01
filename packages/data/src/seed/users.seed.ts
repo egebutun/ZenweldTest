@@ -5,7 +5,8 @@ import type { Address, User } from "../types";
  *
  * !! UYARI !! Sifreler tarayicida basit bir hash ile saklanir; bu yapi
  * yalnizca sunum/demo icindir, gercek kimlik dogrulama degildir.
- * Sifreler README.md ve /admin/giris ekraninda yazilidir.
+ * Sifreler README.md'de yazilidir; yonetici sifresi ayrica panelin
+ * giris ekraninda (/yonetim/giris) gosterilir.
  */
 
 /** demoHash("admin123") gibi — packages/auth/src/hash.ts ile ayni algoritma. */

@@ -1,7 +1,11 @@
 # Yönetim Paneli Kullanım Kılavuzu
 
-Panel adresi: `http://localhost:3000/tr/admin`
+Panel adresi: `http://localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`)
 Demo giriş: `admin@zenweld.com` / `admin123`
+
+> Panel ana siteden **ayrı bir uygulamadır** ve kendi giriş ekranı vardır. Ana
+> sitenin "Giriş Yap" sayfası yönetici hesaplarını kabul etmez; sitede panele
+> giden bir bağlantı da yoktur. Panelden çıkış yapmak sitedeki oturumu etkilemez.
 
 > Panel yalnızca Türkçedir. Tüm değişiklikler tarayıcının yerel deposunda saklanır;
 > kalıcı hale getirmek için **Veri Yönetimi → JSON Dışa Aktar** kullanın.

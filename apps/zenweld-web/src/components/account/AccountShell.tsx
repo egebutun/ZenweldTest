@@ -62,14 +62,6 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
           {t.account.welcome.replace("{name}", `${user.firstName} ${user.lastName}`)}
           <Badge tone="dark">{ROLE_LABELS[user.role][locale]}</Badge>
           {user.status === "pending" && <Badge tone="amber">Onay Bekliyor</Badge>}
-          {user.role === "admin" && (
-            <LocaleLink
-              href="/admin"
-              className="font-semibold text-zw-red-600 hover:underline"
-            >
-              {t.nav.adminPanel} →
-            </LocaleLink>
-          )}
         </p>
       </div>
 

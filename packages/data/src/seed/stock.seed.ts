@@ -11,7 +11,7 @@ import { reviews } from "./reviews.seed";
  * B urunu 2 sitede stokta olabilir. Urun sayfasi sadece inStock === true
  * olan saticilarin logosunu gosterir.
  *
- * Bu veriler admin panelden (/admin/stok) ve bayi hesaplarinin kendi
+ * Bu veriler yonetim panelinden (/yonetim/stok) ve bayi hesaplarinin kendi
  * panelinden (/hesabim/stok-bildirimi) guncellenir.
  */
 
