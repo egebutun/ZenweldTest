@@ -22,6 +22,56 @@ let serverSnapshot: ZenweldDatabase | null = null;
 
 const listeners = new Set<() => void>();
 
+/** Yeni kayitlar icin benzersiz kimlik: "n-lx3k9a2b7f" gibi. */
+export const uid = (prefix: string) =>
+  `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+
+/**
+ * BOS KIMLIKLI KAYITLARI ONARIR
+ *
+ * Bir sure panelden eklenen urun, etkinlik, haber ve blog yazilari bos id
+ * ("") ile kaydedildi. Ayni tabloda iki bos id birbirine karisir; duzenleme
+ * sayfasi da acilmaz. Tarayicida kalmis bu kayitlara burada kimlik verilir.
+ * Urunde, o urune bagli stok/yorum/garanti/teklif/siparis satirlari da
+ * yeni kimlige tasinir (bos id'li tek urun varsa; birden fazlaysa hangi
+ * satirin hangisine ait oldugu bilinemez).
+ *
+ * Kayitlar silinmez, tohum yeniden kurulmaz. Degisiklik yoksa false doner.
+ */
+function repairEmptyIds(db: ZenweldDatabase): boolean {
+  let changed = false;
+  const tables = [
+    [db.news, "n"],
+    [db.events, "e"],
+    [db.blogPosts, "b"],
+  ] as const;
+  tables.forEach(([rows, prefix]) =>
+    rows.forEach((row) => {
+      if (row.id) return;
+      row.id = uid(prefix);
+      changed = true;
+    }),
+  );
+
+  const emptyProducts = db.products.filter((p) => !p.id);
+  emptyProducts.forEach((product) => {
+    product.id = uid("p");
+    changed = true;
+  });
+  if (emptyProducts.length === 1) {
+    const newId = emptyProducts[0].id;
+    const relink = (value: unknown): void => {
+      if (Array.isArray(value)) return value.forEach(relink);
+      if (!value || typeof value !== "object") return;
+      const row = value as Record<string, unknown>;
+      if (row.productId === "") row.productId = newId;
+      Object.values(row).forEach(relink);
+    };
+    relink([db.retailerStock, db.dealerStock, db.reviews, db.warranties, db.quotes, db.orders]);
+  }
+  return changed;
+}
+
 function isBrowser(): boolean {
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
 }
@@ -36,6 +86,13 @@ function loadFromStorage(): ZenweldDatabase {
       if (parsed && parsed.version === DB_VERSION) {
         // Surum tuttuguna gore kayit bu derlemenin tohumundan yazilmis
         // demektir; 500 KB'lik tohumu bastan kurmaya gerek yok.
+        if (repairEmptyIds(parsed)) {
+          try {
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          } catch {
+            /* kota dolu olabilir; onarilmis hali bellekte kullanilir */
+          }
+        }
         return parsed;
       }
     }
