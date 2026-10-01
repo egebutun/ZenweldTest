@@ -11,13 +11,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.1.0",
+    "@fontsource/barlow-condensed": "^5.1.0",
     "@zenweld/auth": "*",
     "@zenweld/data": "*",
     "@zenweld/i18n": "*",
     "@zenweld/store": "*",
     "@zenweld/ui": "*",
-    "@fontsource-variable/inter": "^5.1.0",
-    "@fontsource/barlow-condensed": "^5.1.0",
+    "@zenweld/utils": "*",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.454.0",
     "minisearch": "^7.1.1",
