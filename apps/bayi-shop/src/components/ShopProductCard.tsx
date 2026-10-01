@@ -88,7 +88,7 @@ export function ShopProductCard({
 
       <div className={`flex flex-1 flex-col ${compact ? "p-3" : "p-4"}`}>
         <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-zw-grey-500">
-          {product.sku}
+          {product.processes.slice(0, 3).join(" · ") || product.sku}
         </div>
         <LocaleLink href={`/urun/${product.slug}`}>
           <h3
@@ -132,13 +132,16 @@ export function ShopProductCard({
               </span>
             </div>
           ) : (
-            <div
-              className={`font-display font-bold text-zw-ink ${compact ? "text-xl" : "text-2xl"}`}
-            >
+            <div className={`font-bold text-zw-ink ${compact ? "text-xl" : "text-2xl"}`}>
               {formatPrice(price, locale)}
             </div>
           )}
-          <div className="mt-1 text-xs text-zw-grey-500">{t.product.priceIncVat}</div>
+          {/* Magaza fiyatlari KDV dahil tutulur; KDV haric tutar ondan hesaplanir. */}
+          <div className="mt-1 text-xs text-zw-grey-500">
+            {t.product.priceIncVat} ·{" "}
+            {formatPrice(Math.round(price / (1 + product.vatRate / 100)), locale)}{" "}
+            {t.product.priceExVat}
+          </div>
 
           <Button
             className="mt-3"

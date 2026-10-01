@@ -61,21 +61,29 @@ products.forEach((product) => {
 });
 
 /**
- * KAMPANYALI URUN, MARKANIN KENDI MAGAZASINDA SATISTA OLMALI
+ * KAMPANYALI VE YENI URUNLER, MARKANIN KENDI MAGAZASINDA SATISTA OLMALI
  *
- * Hot Sale urunleri iki sitede de kampanya bolumunde gorunur. Stok
- * matrisi hash ile uretildigi icin kampanyali bir urun kendi bayi
- * magazamizda tesadufen "stokta yok" cikabiliyordu; o zaman urun
- * kampanya seridinde hic yer almiyordu.
+ * Bayi sitesinin anasayfasindaki "Kampanyali Urunler" ve "Yeni Gelenler"
+ * seritleri yalnizca magazada stokta olan urunleri gosterir. Stok matrisi
+ * hash ile uretildigi icin bu urunler tesadufen "stokta yok" cikip
+ * seritten dusuyordu; burada stokta olmaya zorlanir.
+ *
+ * Kampanya: magaza kampanyasini bayi kendi hesabindan belirler
+ * (stock.discount; Zenweld kampanyasi magazayi etkilemez). Demo verisinde
+ * magaza, Zenweld'in kampanyalarinin aynisini yurutuyor; boylece bayi
+ * anasayfasindaki kampanya bolumu bos kalmiyor.
  */
 retailerStock.forEach((row) => {
   const retailer = retailers.find((r) => r.id === row.retailerId);
-  if (!retailer?.isOwnStore || row.inStock) return;
+  if (!retailer?.isOwnStore) return;
   const product = products.find((p) => p.id === row.productId);
-  if (!product?.discount) return;
-  row.inStock = true;
-  row.quantity = 6;
-  row.price = Math.round((product.priceExVat * (1 + product.vatRate / 100)) / 10) * 10;
+  if (!product?.discount && !product?.isNew) return;
+  if (!row.inStock) {
+    row.inStock = true;
+    row.quantity = 6;
+    row.price = Math.round((product.priceExVat * (1 + product.vatRate / 100)) / 10) * 10;
+  }
+  if (product.discount) row.discount = { ...product.discount };
 });
 
 /**
