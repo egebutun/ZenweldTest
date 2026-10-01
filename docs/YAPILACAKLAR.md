@@ -30,6 +30,31 @@ Anasayfadaki "Stokta Azalanlar" bölümündeki adetler şu an demo veriden
 geliyor. İleride stok bilgisi SAP'tan çekilecek ve stoğu azalan ürünler
 bölüme otomatik girecek.
 
+## Canlı sunucu (hosting) kararı ve Vercel temizliği
+
+Demo şu an Vercel'de yayında; derleme sunucusu ABD'de (Washington, D.C.).
+Canlıya çıkmadan önce sitenin nerede barındırılacağına BT ekibiyle
+birlikte karar verilmeli.
+
+- **KVKK:** Şu an müşteri verisi sunucuda tutulmuyor (her şey ziyaretçinin
+  tarayıcısında). Backend geldiğinde Türk kullanıcıların kişisel verisinin
+  yurt dışında tutulması KVKK kapsamında değerlendirilmeli; hukuk/BT ile
+  konuşulmalı. Bu karar sunucu yerini belirleyebilir.
+- **Vercel'de kalınırsa:** Kod olduğu gibi kalır. Gerçek alan adı
+  bağlanır, `NEXT_PUBLIC_SITE_URL` = `https://zenweld.com` tanımlanır.
+- **Başka sunucuya geçilirse** (kendi sunucu, Türk barındırma firması,
+  Azure, AWS…): Vercel'e özel parçalar kaldırılır (yaklaşık 10 dakika):
+  - `apps/zenweld-web/vercel.json`, `apps/admin/vercel.json`,
+    `apps/bayi-shop/vercel.json`
+  - İki sitenin `src/lib/seo.ts` dosyasındaki `getSiteUrl()` içinde
+    `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` yedeği
+  - README ve kod yorumlarındaki Vercel anlatımları
+  - Yeni sunucuda `ADMIN_URL` (yönetim panelinin adresi) ve
+    `NEXT_PUBLIC_SITE_URL` tanımlanır.
+
+Proje standart bir Next.js projesidir; Vercel'e bağımlı değildir ve her
+Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
+
 ## Kod incelemesi bulguları
 
 Ayrıntılı inceleme sohbette yapıldı; düzeltme zamanı ayrıca
