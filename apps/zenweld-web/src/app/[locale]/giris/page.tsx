@@ -38,7 +38,6 @@ function LoginInner() {
     }
     const next = params.get("next");
     if (next) router.push(href(next));
-    else if (result.user?.role === "admin") router.push(href("/admin"));
     else router.push(href("/hesabim"));
   };
 

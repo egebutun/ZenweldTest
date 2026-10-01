@@ -9,8 +9,11 @@
   "scripts": {
     "dev": "npm run dev --workspace=@zenweld/web",
     "dev:web": "npm run dev --workspace=@zenweld/web",
+    "dev:admin": "npm run dev --workspace=@zenweld/admin",
     "dev:bayi": "npm run dev --workspace=@zenweld/bayi-shop",
-    "build": "npm run build --workspace=@zenweld/web && npm run build --workspace=@zenweld/bayi-shop",
+    "build": "npm run build --workspace=@zenweld/web && npm run build --workspace=@zenweld/admin && npm run build --workspace=@zenweld/bayi-shop",
+    "build:web": "npm run build --workspace=@zenweld/web",
+    "build:admin": "npm run build --workspace=@zenweld/admin",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },

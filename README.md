@@ -43,9 +43,18 @@ npm install
 # Ana Zenweld sitesi → http://localhost:3000
 npm run dev:web
 
+# Yönetim paneli (ayrı uygulama) → http://localhost:3000/yonetim
+# Ayrı bir terminalde, ana site ile BİRLİKTE çalıştırın:
+npm run dev:admin
+
 # Bayi mağazası (ZENWELD-BAYİ-A) → http://localhost:3001
 npm run dev:bayi
 ```
+
+**Yönetim paneli ayrı bir uygulamadır** (`apps/admin`), ama ana sitenin adresi
+altında açılır: `localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`). Paneli
+**her zaman bu adresten** açın. `localhost:3002` doğrudan açılırsa panel çalışır
+ama tarayıcı deposu ayrı olduğu için yaptığınız değişiklikler sitede görünmez.
 
 İki siteyi **aynı anda** çalıştırmak, ürün sayfasındaki "Ayrıca online alışveriş
 olarak şurada da mevcuttur" bölümünden bayi mağazasına geçişi denemek için gerekir.
@@ -53,7 +62,7 @@ olarak şurada da mevcuttur" bölümünden bayi mağazasına geçişi denemek i�
 Diğer komutlar:
 
 ```bash
-npm run build       # iki uygulamanın da üretim derlemesi
+npm run build       # üç uygulamanın da üretim derlemesi
 npm run typecheck   # TypeScript kontrolü
 ```
 
@@ -65,7 +74,7 @@ Giriş sayfasındaki kartlara tıklayarak formu otomatik doldurabilirsiniz.
 
 | Rol | E-posta | Şifre | Neler görebilir |
 |---|---|---|---|
-| **Yönetici** | `admin@zenweld.com` | `admin123` | Yönetim paneli (`/tr/admin`) |
+| **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca yönetim paneli (`/yonetim`); ana sitede giriş yapamaz |
 | **Bireysel** | `bireysel@demo.com` | `demo123` | Favoriler, garanti kayıtları, siparişler |
 | **Kurumsal** | `kurumsal@demo.com` | `demo123` | Teklif talepleri, vadeli/çek ödeme |
 | **Bayi** | `bayi@zenweld-bayi-a.com` | `bayi123` | Stok bildirimi, bayi siparişleri |
@@ -102,7 +111,7 @@ olurken diğeri 2 sitede olabilir; ürün sayfasında **yalnızca stokta olan sa
 görünür. Hiçbirinde yoksa "en yakın bayiden temin edebilirsiniz" mesajı çıkar.
 
 Stok iki yerden güncellenir:
-- **Yönetici:** `/tr/admin/stok` → ürün × satıcı matrisi (tek tek, toplu veya CSV)
+- **Yönetici:** `/yonetim/stok` → ürün × satıcı matrisi (tek tek, toplu veya CSV)
 - **Bayi:** `/tr/hesabim/stok-bildirimi` → bayi kendi stoğunu işaretler
 
 ### Arama
@@ -137,11 +146,11 @@ olduğu bayiler" filtresi, yol tarifi ve WhatsApp bağlantıları.
 | Yönetici | Yönetim panelinin tamamı |
 
 Bayi kayıtları `pending` (onay bekliyor) durumunda açılır; yönetici
-`/tr/admin/uyeler` sayfasından onaylar.
+`/yonetim/uyeler` sayfasından onaylar.
 
 ### Yönetim paneli (yalnızca Türkçe)
 
-`/tr/admin` — ürün CRUD (görsel yükleme dahil), stok matrisi + CSV içe aktarma,
+`/yonetim` — ürün CRUD (görsel yükleme dahil), stok matrisi + CSV içe aktarma,
 online satıcı ve bayi yönetimi, üye yönetimi (rol değiştirme, onaylama, askıya
 alma, CSV dışa aktarma), teklif ve sipariş takibi, JSON yedekleme.
 
@@ -249,7 +258,7 @@ Backend olmadığı için:
    `localStorage`'a yazılır ve sayfalar anında güncellenir.
 3. Değişiklikler **yalnızca o tarayıcıda** görünür. Başka bilgisayarda görünmez.
 
-Değişiklikleri kalıcı hale getirmek için: `/tr/admin/veri` → **JSON Dışa Aktar**
+Değişiklikleri kalıcı hale getirmek için: `/yonetim/veri` → **JSON Dışa Aktar**
 → indirilen dosyayı yedekleyin veya seed dosyalarına aktarın.
 Aynı sayfadan **JSON İçe Aktar** ve **Başlangıca Dön** işlemleri de yapılabilir.
 
@@ -305,7 +314,7 @@ olduğu için 1.5 MB altında olmalıdır).
 Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
 
 1. **Kimlik doğrulama sunucuya taşınmalı.** Şu an şifre karşılaştırması tarayıcıda
-   yapılıyor ve `/tr/admin` adresi tarayıcı tarafında korunuyor — bu gerçek bir
+   yapılıyor ve `/yonetim` paneli tarayıcı tarafında korunuyor — bu gerçek bir
    güvenlik değildir. Supabase Auth, Auth0 veya kendi backend'iniz kullanılmalı.
 2. **Veri gerçek bir veritabanına taşınmalı.** `packages/store/src/database.ts`
    içindeki okuma/yazma fonksiyonları değiştirilerek tüm uygulama aynı kalacak

@@ -1,14 +1,13 @@
 "use client";
 
 import { discountStatusOf, FLASH_DISCOUNT_THRESHOLD, type ProductDiscount } from "@zenweld/data";
-import { Badge } from "@zenweld/ui";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime } from "@zenweld/utils/src/format";
+import { Badge } from "./Badge";
 
 /**
  * Bir kampanyanin durumunu tek satirda gosterir: gecerli / planlandi /
- * bitti. Yonetim panelindeki urun listesi ve urun formu (Zenweld
- * kampanyasi) ile bayinin Stok Bildirimi sayfasi (bayi kampanyasi) ortak
- * kullanir.
+ * bitti. Yonetim panelindeki (apps/admin) urun listesi ve urun formu ile
+ * ana sitedeki bayi Stok Bildirimi sayfasi ortak kullanir.
  */
 export function CampaignBadge({ discount: d, now }: { discount?: ProductDiscount; now: Date }) {
   const status = discountStatusOf(d, now);

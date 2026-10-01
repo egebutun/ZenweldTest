@@ -21,3 +21,6 @@ export {
   FormRow,
   Checkbox,
 } from "./components/Field";
+export { ProductImage, placeholderDataUri } from "./components/ProductImage";
+export { RichText } from "./components/RichText";
+export { CampaignBadge } from "./components/CampaignBadge";
