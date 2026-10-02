@@ -20,6 +20,8 @@ export type TopLevelSection =
 
 export interface Category {
   id: string;
+  /** Kategori tablosundaki numara (or. "1.2.3"). */
+  code?: string;
   slug: string;
   section: TopLevelSection;
   /** Ust kategori slug'i (mega menude sol kolon) */
@@ -33,6 +35,8 @@ export interface Category {
 /** Mega menude sol kolonda duran gruplar */
 export interface CategoryGroup {
   id: string;
+  /** Kategori tablosundaki numara (or. "1.2"). */
+  code?: string;
   slug: string;
   section: TopLevelSection;
   name: I18nText;

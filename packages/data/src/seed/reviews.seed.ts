@@ -66,8 +66,8 @@ export const reviews: ProductReview[] = [
   review("rv9", "p-ultimate-205-acdc-tig", "Barış Y.", 5, "AC/DC tek makinede",
     "Hem alüminyum hem paslanmaz işliyorum, ikisi için ayrı makine almaktan kurtuldum.",
     { featured: true }),
-  review("rv10", "p-argon-regulatoru-cift-manometreli", "Fatih G.", 4, "Sızdırmıyor",
-    "Debimetre okuması net, altı aydır hiç kaçak yapmadı. Fiyatına göre gayet iyi.",
+  review("rv10", "p-mig-torcu-mb36", "Fatih G.", 4, "Ağır işte ısınmıyor",
+    "Kalın sacda saatlerce kaynak yapıyorum, torç ısınıp elimi yakmıyor. Fiyatına göre gayet iyi.",
     { featured: true }),
   // --- ZENWELD-BAYI-A magazasina ait yorumlar ---
   // Bayi sahibi ana siteden giris yapip Hesabim > Yorumlar'dan yonetir.

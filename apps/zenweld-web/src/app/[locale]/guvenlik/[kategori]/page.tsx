@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { categories } from "@zenweld/data";
 import { isLocale, type Locale } from "@zenweld/i18n";
 import { CategoryListing } from "@/components/product/CategoryListing";
@@ -44,5 +45,7 @@ export default async function CategoryPage({
   params: Promise<{ locale: string; kategori: string }>;
 }) {
   const { kategori } = await params;
+  // Bilinmeyen veya kaldirilmis kategori adresi 404 doner (yonlendirme yok).
+  if (!categories.some((c) => c.section === "guvenlik" && c.slug === kategori)) notFound();
   return <CategoryListing section="guvenlik" categorySlug={kategori} />;
 }
