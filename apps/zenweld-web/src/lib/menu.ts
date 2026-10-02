@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useDatabase } from "@zenweld/store";
-import { productHighlights, type TopLevelSection } from "@zenweld/data";
+import { localeSlug, productHighlights, type TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
 import { useLocale, useT } from "./i18n-client";
 
@@ -70,7 +70,7 @@ export function useMainMenu(): TopMenu[] {
         href: `/${id}`,
         columns: groups.map((group) => ({
           label: group.name[locale],
-          href: `/${id}?grup=${group.slug}`,
+          href: `/${id}?grup=${localeSlug(group, locale)}`,
           links: db.categories
             .filter((c) => c.section === id && c.group === group.slug)
             .sort((a, b) => a.order - b.order)
@@ -81,7 +81,7 @@ export function useMainMenu(): TopMenu[] {
               return {
                 label: c.name[locale],
                 description: c.description[locale],
-                href: `/${id}/${c.slug}`,
+                href: `/${id}/${localeSlug(c, locale)}`,
                 productCount: inCategory.length,
                 products: inCategory.slice(0, MENU_PRODUCT_LIMIT).map((p) => ({
                   id: p.id,

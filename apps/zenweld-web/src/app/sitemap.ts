@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { categories, products, events, news, newsSlug } from "@zenweld/data";
+import { categories, localeSlug, products, events, news, newsSlug } from "@zenweld/data";
 import { locales, localizePath } from "@zenweld/i18n";
 import { getSiteUrl } from "@/lib/seo";
 
@@ -94,8 +94,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   staticPaths.forEach((p) => push(p.path, p.priority, p.freq));
 
+  // Kategori adresi dile gore degisir (Ingilizce slug), her dil kendi adresiyle.
   categories.forEach((category) => {
-    push(`/${category.section}/${category.slug}`, 0.8, "weekly");
+    pushPerLocale((locale) => `/${category.section}/${localeSlug(category, locale)}`, 0.8, "weekly");
   });
 
   products

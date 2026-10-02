@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, Menu, Phone, Search, ShoppingCart, User as UserIcon, X } from "lucide-react";
+import { localeSlug } from "@zenweld/data";
 import { useAuth } from "@zenweld/auth";
 import { locales, localeNames, switchLocaleInPath } from "@zenweld/i18n";
 import { useDatabase } from "@zenweld/store";
@@ -135,7 +136,7 @@ export function ShopHeader() {
           {categories.map((g) => (
             <LocaleLink
               key={g.id}
-              href={`/magaza?grup=${g.slug}`}
+              href={`/magaza?grup=${localeSlug(g, locale)}`}
               className="rounded-[4px] px-3 py-2 text-sm font-semibold text-zw-grey-700 hover:bg-zw-grey-100 hover:text-zw-ink"
             >
               {g.name[locale]}
@@ -213,7 +214,7 @@ export function ShopHeader() {
               {categories.map((g) => (
                 <LocaleLink
                   key={g.id}
-                  href={`/magaza?grup=${g.slug}`}
+                  href={`/magaza?grup=${localeSlug(g, locale)}`}
                   onClick={() => setMenuOpen(false)}
                   className="block border-b border-zw-grey-100 py-3"
                 >

@@ -66,7 +66,7 @@ export function createProduct(partial: Partial<Product>): Product {
     sku: partial.sku ?? "ZW-YENI",
     name: partial.name ?? "Yeni Ürün",
     section: partial.section ?? "ekipmanlar",
-    categorySlug: partial.categorySlug ?? "cok-fonksiyonlu-kaynak-makinalari",
+    categorySlug: partial.categorySlug ?? "cok-fonksiyonlu-kaynak-makineleri",
     processes: partial.processes ?? [],
     shortDescription: partial.shortDescription ?? { tr: "", en: "" },
     description: partial.description ?? { tr: "", en: "" },

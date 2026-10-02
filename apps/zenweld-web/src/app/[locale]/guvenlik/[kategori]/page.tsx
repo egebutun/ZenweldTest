@@ -1,14 +1,25 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { categories } from "@zenweld/data";
-import { isLocale, type Locale } from "@zenweld/i18n";
+import { notFound, permanentRedirect } from "next/navigation";
+import { categories, localeSlug, matchesLocaleSlug } from "@zenweld/data";
+import { isLocale, localizePath, type Locale } from "@zenweld/i18n";
 import { CategoryListing } from "@/components/product/CategoryListing";
-import { languageAlternates, ogUrl } from "@/lib/seo";
+import { languageAlternatesFor, ogUrl } from "@/lib/seo";
+
+const SECTION = "guvenlik";
+
+/** Adres parcasi Turkce veya Ingilizce slug olabilir (bkz. packages/data/src/slugs.ts). */
+function findCategory(kategori: string) {
+  return categories.find((c) => c.section === SECTION && matchesLocaleSlug(c, kategori));
+}
 
 export function generateStaticParams() {
   return categories
-    .filter((category) => category.section === "guvenlik")
-    .map((category) => ({ kategori: category.slug }));
+    .filter((category) => category.section === SECTION)
+    .flatMap((category) =>
+      [category.slug, category.slugEn]
+        .filter((slug): slug is string => Boolean(slug))
+        .map((kategori) => ({ kategori })),
+    );
 }
 
 export async function generateMetadata({
@@ -18,7 +29,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, kategori } = await params;
   const lang = (isLocale(locale) ? locale : "tr") as Locale;
-  const category = categories.find((c) => c.slug === kategori);
+  const category = findCategory(kategori);
 
   if (!category) {
     return { title: lang === "tr" ? "Kategori" : "Category" };
@@ -30,11 +41,12 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: languageAlternates(`/guvenlik/${category.slug}`, lang),
+    // Her dil kendi slug'iyla: /tr/ekipmanlar/lazer-temizleme <-> /en/equipment/laser-cleaning
+    alternates: languageAlternatesFor((l) => `/${SECTION}/${localeSlug(category, l)}`, lang),
     openGraph: {
       title,
       description,
-      url: ogUrl(`/guvenlik/${category.slug}`, lang),
+      url: ogUrl(`/${SECTION}/${localeSlug(category, lang)}`, lang),
     },
   };
 }
@@ -44,8 +56,19 @@ export default async function CategoryPage({
 }: {
   params: Promise<{ locale: string; kategori: string }>;
 }) {
-  const { kategori } = await params;
-  // Bilinmeyen veya kaldirilmis kategori adresi 404 doner (yonlendirme yok).
-  if (!categories.some((c) => c.section === "guvenlik" && c.slug === kategori)) notFound();
-  return <CategoryListing section="guvenlik" categorySlug={kategori} />;
+  const { locale, kategori } = await params;
+  const lang = (isLocale(locale) ? locale : "tr") as Locale;
+  const category = findCategory(kategori);
+
+  // Bilinmeyen veya kaldirilmis kategori adresi 404 doner.
+  if (!category) notFound();
+
+  // Dil degistirilince gelen "obur dilin" slug'i bu dilin adresine tasinir:
+  // /en/equipment/lazer-temizleme -> /en/equipment/laser-cleaning
+  const canonical = localeSlug(category, lang);
+  if (kategori !== canonical) {
+    permanentRedirect(`/${lang}${localizePath(`/${SECTION}/${canonical}`, lang)}`);
+  }
+
+  return <CategoryListing section={SECTION} categorySlug={category.slug} />;
 }

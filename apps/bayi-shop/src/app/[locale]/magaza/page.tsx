@@ -3,6 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
+import { matchesLocaleSlug } from "@zenweld/data";
 import { stockForRetailer, useDatabase, useNow } from "@zenweld/store";
 import { EmptyState, Input, Select } from "@zenweld/ui";
 import { ShopProductCard } from "@/components/ShopProductCard";
@@ -19,7 +20,11 @@ function StoreInner() {
   const params = useSearchParams();
 
   const [query, setQuery] = useState(params.get("q") ?? "");
-  const [group, setGroup] = useState(params.get("grup") ?? "");
+  // ?grup= Turkce veya Ingilizce slug olabilir; filtre ic (Turkce) slug ile calisir.
+  const [group, setGroup] = useState(() => {
+    const fromUrl = params.get("grup");
+    return fromUrl ? (db.categoryGroups.find((g) => matchesLocaleSlug(g, fromUrl))?.slug ?? "") : "";
+  });
   const [sort, setSort] = useState("featured");
   const [onlyInStock, setOnlyInStock] = useState(true);
 

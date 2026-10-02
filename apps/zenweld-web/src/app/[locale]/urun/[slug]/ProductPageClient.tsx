@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { notFound } from "next/navigation";
 import { ChevronRight, FileText } from "lucide-react";
+import { localeSlug } from "@zenweld/data";
 import { findProductBySlug, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
@@ -85,7 +86,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
             <>
               <ChevronRight size={13} className="shrink-0" />
               <LocaleLink
-                href={`/${product.section}/${category.slug}`}
+                href={`/${product.section}/${localeSlug(category, locale)}`}
                 className="shrink-0 hover:text-zw-ink"
               >
                 {category.name[locale]}

@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PackageOpen, SlidersHorizontal, X } from "lucide-react";
-import type { TopLevelSection, WeldingProcess } from "@zenweld/data";
+import { localeSlug, matchesLocaleSlug, type TopLevelSection, type WeldingProcess } from "@zenweld/data";
 import { useDatabase, useNow } from "@zenweld/store";
 import { Button, EmptyState } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
@@ -57,13 +57,17 @@ function Listing({
   );
 
   const group = useMemo(
-    () => (groupSlug ? db.categoryGroups.find((g) => g.slug === groupSlug) : undefined),
-    [db, groupSlug],
+    // ?grup= Turkce veya Ingilizce slug olabilir (dil degistirilince ikisi de gelir).
+    () =>
+      groupSlug
+        ? db.categoryGroups.find((g) => g.section === section && matchesLocaleSlug(g, groupSlug))
+        : undefined,
+    [db, groupSlug, section],
   );
 
   /**
    * Ust seritteki kisayollar. Bolum sayfasinda gruplar (Lazer Makinalari,
-   * Kaynak Makinalari ...), grup veya kategori sayfasinda o grubun
+   * Kaynak Makineleri ...), grup veya kategori sayfasinda o grubun
    * kategorileri listelenir. Tum kategorileri tek seride dizmek
    * (Aksesuarlar'da 20 kategori) ekrandan tasiyordu.
    */
@@ -83,7 +87,7 @@ function Listing({
         .map((c) => ({
           id: c.id,
           label: c.name[locale],
-          href: `/${section}/${c.slug}`,
+          href: `/${section}/${localeSlug(c, locale)}`,
           active: categorySlug === c.slug,
         }));
     }
@@ -93,7 +97,7 @@ function Listing({
       .map((g) => ({
         id: g.id,
         label: g.name[locale],
-        href: `/${section}?grup=${g.slug}`,
+        href: `/${section}?grup=${localeSlug(g, locale)}`,
         active: false,
       }));
   }, [db, section, chipGroup, categorySlug, locale]);
@@ -159,7 +163,7 @@ function Listing({
       <div className="border-b border-zw-grey-200">
         <div className="zw-container flex gap-2 overflow-x-auto py-3">
           <LocaleLink
-            href={chipGroup ? `/${section}?grup=${chipGroup.slug}` : `/${section}`}
+            href={chipGroup ? `/${section}?grup=${localeSlug(chipGroup, locale)}` : `/${section}`}
             className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
               !categorySlug
                 ? "bg-zw-ink text-white"

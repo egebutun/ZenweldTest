@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { categories, products } from "@zenweld/data";
-import { isLocale, type Locale } from "@zenweld/i18n";
+import { categories, localeSlug, products } from "@zenweld/data";
+import { isLocale, localizePath, type Locale } from "@zenweld/i18n";
 import { JsonLd } from "@/components/common/JsonLd";
 import { SITE_NAME, breadcrumbJsonLd, languageAlternates, ogUrl, productJsonLd } from "@/lib/seo";
 import { ProductPageClient } from "./ProductPageClient";
@@ -92,16 +92,17 @@ export default async function ProductPage({
       <JsonLd
         data={breadcrumbJsonLd([
           { name: SITE_NAME, path: `/${lang}` },
-          { name: sectionLabel, path: `/${lang}/${product.section}` },
+          // Breadcrumb adresleri ziyaretcinin gordugu (dile cevrilmis) adreslerdir.
+          { name: sectionLabel, path: `/${lang}${localizePath(`/${product.section}`, lang)}` },
           ...(category
             ? [
                 {
                   name: category.name[lang],
-                  path: `/${lang}/${product.section}/${category.slug}`,
+                  path: `/${lang}${localizePath(`/${product.section}/${localeSlug(category, lang)}`, lang)}`,
                 },
               ]
             : []),
-          { name: product.name, path: `/${lang}/urun/${product.slug}` },
+          { name: product.name, path: `/${lang}${localizePath(`/urun/${product.slug}`, lang)}` },
         ])}
       />
       <ProductPageClient slug={slug} />

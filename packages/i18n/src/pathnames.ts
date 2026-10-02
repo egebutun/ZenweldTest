@@ -11,8 +11,10 @@ import type { Locale } from "./config";
  *
  * Cevrimi middleware yapar; linkler localizePath() ile uretilir.
  *
- * ONEMLI: Yalnizca YAPISAL segmentler cevrilir. Urun ve kategori slug'lari
- * (arc-200, lazer-temizleme) iki dilde de aynidir — model adlari cevrilmez.
+ * ONEMLI: Bu tablo yalnizca YAPISAL segmentleri cevirir. Urun slug'lari
+ * (arc-200) iki dilde aynidir — model adlari cevrilmez. Kategori, blog ve
+ * haber slug'larinin Ingilizcesi kaydin kendisinde tutulur (slugEn; bkz.
+ * packages/data/src/slugs.ts).
  */
 
 /** Birinci seviye segmentler: /tr/<segment> */
@@ -101,7 +103,11 @@ const NESTED_REVERSE: Record<string, Record<string, string>> = Object.fromEntrie
 export function localizePath(path: string, locale: Locale): string {
   if (locale === "tr") return path;
 
-  const [first, second, ...rest] = path.replace(/^\//, "").split("/");
+  // Sorgu ve parca (?grup=..., #...) cevrilmez, sona aynen eklenir. Onceden
+  // "/ekipmanlar?grup=x" tek parca sanilip hic cevrilmiyordu.
+  const [, base, suffix] = path.match(/^([^?#]*)(.*)$/) ?? ["", path, ""];
+
+  const [first, second, ...rest] = base.replace(/^\//, "").split("/");
   if (!first) return path;
 
   const translatedFirst = TOP_LEVEL[first];
@@ -110,7 +116,7 @@ export function localizePath(path: string, locale: Locale): string {
   const nestedMap = NESTED[first];
   const translatedSecond = second && nestedMap ? (nestedMap[second] ?? second) : second;
 
-  return "/" + [translatedFirst, translatedSecond, ...rest].filter(Boolean).join("/");
+  return "/" + [translatedFirst, translatedSecond, ...rest].filter(Boolean).join("/") + suffix;
 }
 
 /**

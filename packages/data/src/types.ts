@@ -23,6 +23,8 @@ export interface Category {
   /** Kategori tablosundaki numara (or. "1.2.3"). */
   code?: string;
   slug: string;
+  /** Ingilizce adres parcasi (bos ise Turkce slug kullanilir). Bkz. slugs.ts */
+  slugEn?: string;
   section: TopLevelSection;
   /** Ust kategori slug'i (mega menude sol kolon) */
   group: string;
@@ -38,6 +40,8 @@ export interface CategoryGroup {
   /** Kategori tablosundaki numara (or. "1.2"). */
   code?: string;
   slug: string;
+  /** Ingilizce adres parcasi (bos ise Turkce slug kullanilir). Bkz. slugs.ts */
+  slugEn?: string;
   section: TopLevelSection;
   name: I18nText;
   order: number;

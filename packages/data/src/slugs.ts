@@ -10,6 +10,10 @@ import type { BlogPost, NewsItem } from "./types";
  *   /tr/kesfet/blog/mig-kaynaginda-gaz-secimi
  *   /en/explore/blog/choosing-the-right-gas-for-mig-welding
  *
+ * Urun kategorileri ve gruplari da ayni kurala uyar:
+ *
+ *   /tr/ekipmanlar/lazer-temizleme  <->  /en/equipment/laser-cleaning
+ *
  * ETKINLIKLER HARIC: fuar/etkinlik adlari ozel isimdir (WIN EURASIA,
  * IMATECH), iki dilde de ayni yazilir — adresleri de tek kalir.
  *
