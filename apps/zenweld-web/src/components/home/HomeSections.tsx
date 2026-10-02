@@ -135,9 +135,6 @@ export function ProductFinderStrip() {
             <Compass size={24} className="text-white" />
           </span>
           <div>
-            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-zw-red-200">
-              {t.finder.eyebrow}
-            </div>
             <div className="font-display text-2xl font-bold uppercase leading-tight sm:text-3xl">
               {t.finder.question}
             </div>
@@ -146,18 +143,6 @@ export function ProductFinderStrip() {
         </div>
 
         <div className="flex shrink-0 items-center gap-4">
-          {/* Uc adimi gorsellestiren kucuk sayaç: isin ne kadar kisa
-              oldugunu bir bakista anlatir. */}
-          <div className="hidden items-center gap-1.5 sm:flex" aria-hidden>
-            {[1, 2, 3].map((n) => (
-              <span
-                key={n}
-                className="flex h-7 w-7 items-center justify-center rounded-full border border-white/35 text-xs font-bold text-white/90"
-              >
-                {n}
-              </span>
-            ))}
-          </div>
           <LocaleLink
             href="/kesfet/urun-secici"
             className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold uppercase tracking-wide text-zw-red-700 shadow-lg transition-colors hover:bg-zw-grey-100"
