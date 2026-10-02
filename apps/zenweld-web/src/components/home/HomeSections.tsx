@@ -24,20 +24,23 @@ const HERO_PHOTO = "/images/hero/kaynak-atolyesi.webp";
  */
 export function Hero() {
   const t = useT();
+  // Genis ekranda yukseklik ekran genisligiyle orantili: fotograf her
+  // genislikte ayni oranda kirpilir, kaynak yapan usta (kask, eller,
+  // kivilcim) her zaman gorunur.
   return (
-    <section className="relative overflow-hidden bg-zw-ink">
+    <section className="relative overflow-hidden bg-zw-ink lg:flex lg:min-h-[31vw] lg:items-center">
       <ProductImage
         src={HERO_PHOTO}
         alt="Zenweld kaynak makinesiyle atölyede kaynak yapan usta"
         label="ZENWELD"
         priority
-        className="absolute inset-0 h-full w-full object-cover object-[72%_center] lg:object-[center_40%]"
+        className="absolute inset-0 h-full w-full object-cover object-[72%_center] lg:object-[center_62%]"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-zw-ink/95 via-zw-ink/70 to-zw-ink/10" />
       {/* Telefonda yazi fotografin tamaminin uzerine gelir; biraz daha koyulastir. */}
       <div className="absolute inset-0 bg-zw-ink/45 lg:hidden" />
 
-      <div className="zw-container relative py-9 lg:py-10">
+      <div className="zw-container relative w-full py-9 lg:py-10">
         <div className="max-w-2xl text-white">
           <div className="mb-3 inline-block border-l-4 border-zw-red-600 pl-3 text-xs font-bold uppercase tracking-[0.2em] text-zw-red-500">
             {t.common.tagline}
