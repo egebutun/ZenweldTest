@@ -7,11 +7,10 @@ import {
   DealerApplyBanner,
   DealerStrip,
   Hero,
+  HomeActionStrip,
   HomeFaq,
   HotSale,
   NewArrivals,
-  ProductFinderStrip,
-  QuoteBanner,
   WhyZenweld,
 } from "@/components/home/HomeSections";
 
@@ -28,8 +27,7 @@ export default async function HomePage({
       <JsonLd data={organizationJsonLd(lang)} />
       {/* Sorular arama sonuclarinda acilir baslik olarak cikabilsin */}
       <JsonLd data={faqJsonLd(lang)} />
-      <ProductFinderStrip />
-      <QuoteBanner />
+      <HomeActionStrip />
       <Hero />
       <HotSale />
       <NewArrivals />

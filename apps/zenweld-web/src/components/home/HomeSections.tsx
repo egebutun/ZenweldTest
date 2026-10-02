@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowRight, Award, Compass, Flame, Factory, Handshake, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
+import { ArrowRight, Award, Building2, Compass, Flame, Factory, Handshake, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { listBlogPosts, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { blogSlug, discountPercent, isOnSale, stockPhotos } from "@zenweld/data";
@@ -108,12 +108,14 @@ export function HotSale() {
 }
 
 /**
- * Baslik altindaki urun secici seridi.
+ * Baslik altindaki ust bant: urun secici + kurumsal teklif.
  *
- * Ziyaretciyi 3 adimlik urun seciciye yonlendirir; malzeme kisayollari
- * seciciyi ilgili secimle acar.
+ * Iki satir ayni tasarimdadir (ikon, baslik, aciklama, beyaz buton) ve
+ * tek bir arka plan uzerinde ince bir cizgiyle ayrilir; ikisi tek bir
+ * blok gibi gorunur. Ince tutulur ki buyuk tanitim alani ilk ekranda
+ * gorunsun.
  */
-export function ProductFinderStrip() {
+export function HomeActionStrip() {
   const t = useT();
 
   return (
@@ -129,33 +131,63 @@ export function ProductFinderStrip() {
         }}
       />
 
-      <div className="zw-container relative flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center gap-3.5">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25">
-            <Compass size={21} className="text-white" />
-          </span>
-          <div>
-            <div className="font-display text-xl font-bold uppercase leading-tight sm:text-2xl">
-              {t.finder.question}
-            </div>
-            <div className="mt-0.5 text-sm text-zw-grey-300">{t.finder.hint}</div>
-          </div>
-        </div>
-
-        <div className="flex shrink-0 items-center gap-4">
-          <LocaleLink
-            href="/kesfet/urun-secici"
-            className="group inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-zw-red-700 shadow-lg transition-colors hover:bg-zw-grey-100"
-          >
-            {t.finder.cta}
-            <ArrowRight
-              size={17}
-              className="transition-transform duration-200 group-hover:translate-x-1"
-            />
-          </LocaleLink>
-        </div>
+      <div className="zw-container relative divide-y divide-white/15">
+        <ActionRow
+          Icon={Compass}
+          title={t.finder.question}
+          text={t.finder.hint}
+          href="/kesfet/urun-secici"
+          cta={t.finder.cta}
+        />
+        <ActionRow
+          Icon={Building2}
+          title={t.home.quoteBannerTitle}
+          text={t.home.quoteBannerText}
+          href="/teklif-al"
+          cta={t.home.quoteBannerCta}
+        />
       </div>
     </section>
+  );
+}
+
+function ActionRow({
+  Icon,
+  title,
+  text,
+  href,
+  cta,
+}: {
+  Icon: typeof Compass;
+  title: string;
+  text: string;
+  href: string;
+  cta: string;
+}) {
+  return (
+    <div className="flex flex-col gap-3 py-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex items-center gap-3.5">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25">
+          <Icon size={21} className="text-white" />
+        </span>
+        <div>
+          <h2 className="font-display text-xl font-bold uppercase leading-tight sm:text-2xl">
+            {title}
+          </h2>
+          <p className="mt-0.5 text-sm text-zw-grey-300">{text}</p>
+        </div>
+      </div>
+      <LocaleLink
+        href={href}
+        className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-zw-red-700 shadow-lg transition-colors hover:bg-zw-grey-100"
+      >
+        {cta}
+        <ArrowRight
+          size={17}
+          className="transition-transform duration-200 group-hover:translate-x-1"
+        />
+      </LocaleLink>
+    </div>
   );
 }
 
@@ -319,34 +351,6 @@ export function DealerApplyBanner() {
         </div>
         <LocaleLink href="/kesfet/bayilik-basvurusu" className="shrink-0">
           <Button size="lg">{t.dealerApply.homeCta}</Button>
-        </LocaleLink>
-      </div>
-    </section>
-  );
-}
-
-/**
- * Kurumsal alim / teklif seridi.
- *
- * Anasayfada urun secici seridinin hemen altinda, ona yapisik ve tam
- * genislikte durur; ikisi birlikte ince bir ust bant olusturur, buyuk
- * tanitim alani ilk ekranda gorunur kalir.
- */
-export function QuoteBanner() {
-  const t = useT();
-  return (
-    <section className="border-t border-white/15 bg-zw-red-600 text-white">
-      <div className="zw-container flex flex-col items-start gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="font-display text-xl font-bold uppercase leading-tight sm:text-2xl">
-            {t.home.quoteBannerTitle}
-          </h2>
-          <p className="mt-0.5 text-sm text-white/90">{t.home.quoteBannerText}</p>
-        </div>
-        <LocaleLink href="/teklif-al" className="shrink-0">
-          <Button variant="light" rightIcon={<ArrowRight size={17} />}>
-            {t.home.quoteBannerCta}
-          </Button>
         </LocaleLink>
       </div>
     </section>
