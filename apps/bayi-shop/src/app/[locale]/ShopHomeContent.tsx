@@ -7,6 +7,7 @@ import {
   Flame,
   Headphones,
   ShieldCheck,
+  Sparkles,
   Truck,
 } from "lucide-react";
 import { blogSlug, stockPhotos } from "@zenweld/data";
@@ -14,7 +15,6 @@ import { listBlogPosts, stockForRetailer, useDatabase, useNow } from "@zenweld/s
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { LocaleLink } from "@/components/LocaleLink";
 import { ProductImage } from "@/components/ProductImage";
-import { ShopProductCard } from "@/components/ShopProductCard";
 import { ShopProductMarquee } from "@/components/ShopProductMarquee";
 import { ShopReviewMarquee } from "@/components/ShopReviewMarquee";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
@@ -53,12 +53,12 @@ export function ShopHomeContent() {
     .sort((a, b) => b.percent - a.percent)
     .slice(0, 12);
 
-  /** Magazanin kendi stogunda 5 adet ve altinda kalanlar. */
+  /** Magazanin kendi stogunda 5 adet ve altinda kalanlar, en az kalan once. */
   const lowStock = inStockProducts
-    .map((p) => ({ product: p, qty: stockMap.get(p.id)?.quantity ?? 0 }))
-    .filter(({ qty }) => qty > 0 && qty <= 5)
-    .sort((a, b) => a.qty - b.qty)
-    .slice(0, 8);
+    .map((p) => ({ product: p, stock: stockMap.get(p.id) }))
+    .filter(({ stock: s }) => (s?.quantity ?? 0) > 0 && (s?.quantity ?? 0) <= 5)
+    .sort((a, b) => (a.stock?.quantity ?? 0) - (b.stock?.quantity ?? 0))
+    .slice(0, 12);
 
   const trust = [
     { Icon: Truck, title: "Hızlı Kargo", text: `${formatPrice(STORE.freeShippingOver, locale)} üzeri ücretsiz` },
@@ -141,48 +141,60 @@ export function ShopHomeContent() {
         </section>
       )}
 
+      {/* Anasayfa seritleri siyah - beyaz - siyah sirayla dizilir:
+          Kampanyali Urunler (koyu), Stokta Azalanlar (acik),
+          Yeni Gelenler (koyu). */}
       {lowStock.length > 0 && (
-        <section className="zw-container zw-section">
-          <div className="mb-8">
-            <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-amber-600">
-              <AlertTriangle size={18} />
-              {t.home.lowStockEyebrow}
+        <section className="bg-white">
+          <div className="zw-container zw-section">
+            <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-amber-600">
+                  <AlertTriangle size={18} />
+                  {t.home.lowStockEyebrow}
+                </div>
+                <h2 className="mt-2 font-display text-3xl font-bold uppercase sm:text-4xl">
+                  {t.home.lowStockTitle}
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm text-zw-grey-600">
+                  Mağazamızda az sayıda kalan ürünler. Tükenmeden sipariş verebilirsiniz.
+                </p>
+              </div>
+              <LocaleLink
+                href="/magaza"
+                className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+              >
+                {t.common.viewAll} <ArrowRight size={16} />
+              </LocaleLink>
             </div>
-            <h2 className="mt-2 font-display text-3xl font-bold uppercase sm:text-4xl">
-              {t.home.lowStockTitle}
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm text-zw-grey-600">
-              Mağazamızda az sayıda kalan ürünler. Tükenmeden sipariş verebilirsiniz.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {lowStock.map(({ product }) => (
-              <ShopProductCard
-                key={product.id}
-                product={product}
-                stock={stockMap.get(product.id)}
-              />
-            ))}
+            <ShopProductMarquee items={lowStock} />
           </div>
         </section>
       )}
 
       {newArrivals.length > 0 && (
-        <section className="bg-zw-grey-50">
+        <section className="bg-zw-ink text-white">
           <div className="zw-container zw-section">
-            <SectionHeading
-              eyebrow={t.home.newArrivalsEyebrow}
-              title={t.home.newArrivalsTitle}
-              subtitle={t.home.newArrivalsSubtitle}
-              action={
-                <LocaleLink
-                  href="/magaza"
-                  className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
-                >
-                  {t.common.viewAll} <ArrowRight size={16} />
-                </LocaleLink>
-              }
-            />
+            <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-zw-red-500">
+                  <Sparkles size={18} />
+                  {t.home.newArrivalsEyebrow}
+                </div>
+                <h2 className="mt-2 font-display text-3xl font-bold uppercase sm:text-4xl">
+                  {t.home.newArrivalsTitle}
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm text-zw-grey-300">
+                  {t.home.newArrivalsSubtitle}
+                </p>
+              </div>
+              <LocaleLink
+                href="/magaza"
+                className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-white hover:text-zw-red-500 sm:flex"
+              >
+                {t.common.viewAll} <ArrowRight size={16} />
+              </LocaleLink>
+            </div>
             <ShopProductMarquee items={newArrivals} />
           </div>
         </section>
