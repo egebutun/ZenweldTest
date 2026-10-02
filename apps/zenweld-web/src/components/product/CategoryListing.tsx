@@ -2,10 +2,10 @@
 
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { SlidersHorizontal, X } from "lucide-react";
+import { PackageOpen, SlidersHorizontal, X } from "lucide-react";
 import type { TopLevelSection, WeldingProcess } from "@zenweld/data";
 import { useDatabase, useNow } from "@zenweld/store";
-import { Button } from "@zenweld/ui";
+import { Button, EmptyState } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductGrid } from "./ProductGrid";
 import {
@@ -22,7 +22,7 @@ interface ListingProps {
 }
 
 /**
- * Mega menudeki grup basligi buraya "?grup=lazer" seklinde yonlendirir.
+ * Mega menudeki grup basligi buraya "?grup=lazer-makinalari" seklinde yonlendirir.
  * useSearchParams statik on-uretimde Suspense sinirini gerektirir; sinir
  * cozulene kadar gruplanmamis liste gosterilir.
  */
@@ -60,6 +60,43 @@ function Listing({
     () => (groupSlug ? db.categoryGroups.find((g) => g.slug === groupSlug) : undefined),
     [db, groupSlug],
   );
+
+  /**
+   * Ust seritteki kisayollar. Bolum sayfasinda gruplar (Lazer Makinalari,
+   * Kaynak Makinalari ...), grup veya kategori sayfasinda o grubun
+   * kategorileri listelenir. Tum kategorileri tek seride dizmek
+   * (Aksesuarlar'da 20 kategori) ekrandan tasiyordu.
+   */
+  const chipGroup = useMemo(
+    () =>
+      group ??
+      (category
+        ? db.categoryGroups.find((g) => g.section === section && g.slug === category.group)
+        : undefined),
+    [db, group, category, section],
+  );
+  const chips = useMemo(() => {
+    if (chipGroup) {
+      return db.categories
+        .filter((c) => c.section === section && c.group === chipGroup.slug)
+        .sort((a, b) => a.order - b.order)
+        .map((c) => ({
+          id: c.id,
+          label: c.name[locale],
+          href: `/${section}/${c.slug}`,
+          active: categorySlug === c.slug,
+        }));
+    }
+    return db.categoryGroups
+      .filter((g) => g.section === section)
+      .sort((a, b) => a.order - b.order)
+      .map((g) => ({
+        id: g.id,
+        label: g.name[locale],
+        href: `/${section}?grup=${g.slug}`,
+        active: false,
+      }));
+  }, [db, section, chipGroup, categorySlug, locale]);
 
   // Kategoriler once ait olduklari grubun sirasina, sonra kendi siralarina gore.
   const sectionCategories = useMemo(() => {
@@ -122,7 +159,7 @@ function Listing({
       <div className="border-b border-zw-grey-200">
         <div className="zw-container flex gap-2 overflow-x-auto py-3">
           <LocaleLink
-            href={group ? `/${section}?grup=${group.slug}` : `/${section}`}
+            href={chipGroup ? `/${section}?grup=${chipGroup.slug}` : `/${section}`}
             className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
               !categorySlug
                 ? "bg-zw-ink text-white"
@@ -131,17 +168,17 @@ function Listing({
           >
             {t.common.all}
           </LocaleLink>
-          {sectionCategories.map((c) => (
+          {chips.map((c) => (
             <LocaleLink
               key={c.id}
-              href={`/${section}/${c.slug}`}
+              href={c.href}
               className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
-                categorySlug === c.slug
+                c.active
                   ? "bg-zw-ink text-white"
                   : "bg-zw-grey-100 text-zw-grey-700 hover:bg-zw-grey-200"
               }`}
             >
-              {c.name[locale]}
+              {c.label}
             </LocaleLink>
           ))}
         </div>
@@ -172,7 +209,13 @@ function Listing({
           </aside>
 
           <div>
-            <ProductGrid products={filtered} />
+            {/* Kategoride hic urun yoksa "sonuc bulunamadi" (arama dili)
+                yerine durumu dogru anlatan mesaj. */}
+            {scoped.length === 0 ? (
+              <EmptyState icon={<PackageOpen size={40} />} title={t.nav.menuEmptyCategory} />
+            ) : (
+              <ProductGrid products={filtered} />
+            )}
           </div>
         </div>
       </div>

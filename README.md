@@ -338,7 +338,7 @@ Her iki sitede de aşağıdakiler hazırdır:
 - **`/robots.txt`** — yönetim paneli, hesap, sepet ve ödeme sayfaları taramaya kapalı
 - **Dile göre adresler** — İngilizce sayfalar İngilizce adres kullanır:
   `/tr/urun/arc-200` ↔ `/en/products/arc-200`,
-  `/tr/ekipmanlar/mig-gmaw` ↔ `/en/equipment/mig-gmaw`.
+  `/tr/ekipmanlar/lazer-temizleme` ↔ `/en/equipment/lazer-temizleme`.
   Çeviri tablosu `packages/i18n/src/pathnames.ts` dosyasındadır; uygulamanın iç
   rota ağacı Türkçe kalır, `middleware.ts` İngilizce adresi iç rotaya bağlar.
   Bileşenlerde her zaman Türkçe yol yazılır, çeviriyi `useHref()` yapar.

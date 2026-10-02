@@ -12,7 +12,7 @@ import type { Locale } from "./config";
  * Cevrimi middleware yapar; linkler localizePath() ile uretilir.
  *
  * ONEMLI: Yalnizca YAPISAL segmentler cevrilir. Urun ve kategori slug'lari
- * (arc-200, mig-gmaw) iki dilde de aynidir — model adlari cevrilmez.
+ * (arc-200, lazer-temizleme) iki dilde de aynidir — model adlari cevrilmez.
  */
 
 /** Birinci seviye segmentler: /tr/<segment> */
