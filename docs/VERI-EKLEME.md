@@ -38,7 +38,7 @@ kullanılmaya devam eder.
   name: "Zenweld Yeni Model 300",
   modelCode: "Z05.03.00",
   section: "ekipmanlar",           // ekipmanlar | guvenlik | aksesuarlar | dolgu-metalleri
-  categorySlug: "mig-gazalti-kaynak-makinalari", // categories.seed.ts içindeki bir slug
+  categorySlug: "mig-gazalti-kaynak-makineleri", // categories.seed.ts içindeki bir slug
   processes: ["MIG", "MAG"],
   shortDescription: { tr: "…", en: "…" },
   description: { tr: "…", en: "…" },

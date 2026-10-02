@@ -38,7 +38,7 @@ export const products: Product[] = [
     name: "Zenweld Ultimate 250 MTC",
     modelCode: "Z05.02.25",
     section: "ekipmanlar",
-    categorySlug: "cok-fonksiyonlu-kaynak-makinalari",
+    categorySlug: "cok-fonksiyonlu-kaynak-makineleri",
     processes: ["MIG", "MAG", "TIG", "MMA", "MULTI"],
     shortDescription: {
       tr: "D300 mm tel besleme ünitesi entegre, 250A gücünde monofaze multi-process inverter kaynak makinesi.",
@@ -98,7 +98,7 @@ export const products: Product[] = [
     name: "Zenweld Ultimate 255 MTC",
     modelCode: "Z05.02.55",
     section: "ekipmanlar",
-    categorySlug: "mig-gazalti-kaynak-makinalari",
+    categorySlug: "mig-gazalti-kaynak-makineleri",
     processes: ["MIG", "MAG", "MMA", "TIG"],
     shortDescription: {
       tr: "Senkron kontrol panelli, 255A gücünde gazaltı kaynak makinesi. Ağır hizmet atölye kullanımı için.",
@@ -152,7 +152,7 @@ export const products: Product[] = [
     name: "Zenweld Ultimate 355 MTC",
     modelCode: "Z05.03.55",
     section: "ekipmanlar",
-    categorySlug: "mig-gazalti-kaynak-makinalari",
+    categorySlug: "mig-gazalti-kaynak-makineleri",
     processes: ["MIG", "MAG", "MMA"],
     shortDescription: {
       tr: "Trifaze 355A gazaltı kaynak makinesi. Ağır sanayi ve sürekli üretim için endüstriyel çözüm.",
@@ -205,7 +205,7 @@ export const products: Product[] = [
     name: "Zenweld Ultimate 205 MTE Pro",
     modelCode: "Z05.02.05",
     section: "ekipmanlar",
-    categorySlug: "mig-gazalti-kaynak-makinalari",
+    categorySlug: "mig-gazalti-kaynak-makineleri",
     processes: ["MIG", "MAG", "MMA", "TIG"],
     shortDescription: {
       tr: "Kompakt gövdeli, 200A sınıfı taşınabilir MIG kaynak makinesi. Servis ve saha işleri için ideal.",
@@ -257,7 +257,7 @@ export const products: Product[] = [
     name: "Zenweld Evomig 205 P Pulse MIG",
     modelCode: "Z06.02.05",
     section: "ekipmanlar",
-    categorySlug: "mig-gazalti-kaynak-makinalari",
+    categorySlug: "mig-gazalti-kaynak-makineleri",
     processes: ["PULSE", "MIG", "MAG", "TIG", "MMA", "MULTI"],
     shortDescription: {
       tr: "Pulse ve Double Pulse destekli, renkli ekranlı sinerjik MIG kaynak makinesi. Alüminyumda üstün görünüm.",
@@ -312,7 +312,7 @@ export const products: Product[] = [
     name: "Zenweld Ultimate 205 AC/DC TIG",
     modelCode: "Z04.02.05",
     section: "ekipmanlar",
-    categorySlug: "tig-argon-kaynak-makinalari",
+    categorySlug: "tig-argon-kaynak-makineleri",
     processes: ["TIG", "MMA"],
     shortDescription: {
       tr: "AC/DC TIG kaynak makinesi. Alüminyum ve alaşımlarında hassas kaynak için pulse ve dalga formu kontrolü.",
@@ -368,7 +368,7 @@ export const products: Product[] = [
     name: "Zenweld Ultimate TH 200",
     modelCode: "Z04.01.20",
     section: "ekipmanlar",
-    categorySlug: "tig-argon-kaynak-makinalari",
+    categorySlug: "tig-argon-kaynak-makineleri",
     processes: ["TIG", "MMA"],
     shortDescription: {
       tr: "DC TIG / MMA inverter kaynak makinesi. HF ateşlemeli, hafif ve taşınabilir gövde.",
@@ -421,7 +421,7 @@ export const products: Product[] = [
     name: "Zenweld ARC 200",
     modelCode: "Z03.01.15",
     section: "ekipmanlar",
-    categorySlug: "mma-ortulu-elektrod-kaynak-makinalari",
+    categorySlug: "mma-ortulu-elektrod-kaynak-makineleri",
     processes: ["MMA"],
     shortDescription: {
       tr: "200A örtülü elektrot (MMA) inverter kaynak makinesi. Dış mekan ve genel imalat için gaz gerektirmez.",
@@ -474,7 +474,7 @@ export const products: Product[] = [
     name: "Zenweld ARC 120",
     modelCode: "Z03.01.12",
     section: "ekipmanlar",
-    categorySlug: "mma-ortulu-elektrod-kaynak-makinalari",
+    categorySlug: "mma-ortulu-elektrod-kaynak-makineleri",
     processes: ["MMA"],
     shortDescription: {
       tr: "Hobi ve bakım-onarım işleri için giriş seviyesi 120A örtülü elektrot inverter kaynak makinesi.",
@@ -525,7 +525,7 @@ export const products: Product[] = [
     name: "Zenweld Ultimate ARC 200 S",
     modelCode: "Z03.02.00",
     section: "ekipmanlar",
-    categorySlug: "mma-ortulu-elektrod-kaynak-makinalari",
+    categorySlug: "mma-ortulu-elektrod-kaynak-makineleri",
     processes: ["MMA", "TIG"],
     shortDescription: {
       tr: "Profesyonel kullanım için yüksek devrede kalma oranlı 200A MMA / Lift TIG kaynak makinesi.",

@@ -2,7 +2,7 @@
 
 import MiniSearch, { type SearchResult as MiniSearchResult } from "minisearch";
 import type { Locale } from "@zenweld/i18n";
-import { blogSlug, newsSlug, salePriceExVat, type ZenweldDatabase } from "@zenweld/data";
+import { blogSlug, localeSlug, newsSlug, salePriceExVat, type ZenweldDatabase } from "@zenweld/data";
 import { trNormalize, trTokenize } from "./tr-normalize";
 import { expandQuery } from "./synonyms";
 
@@ -96,7 +96,7 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
       subtitle: c.description[locale],
       body: `${c.name.tr} ${c.name.en} ${c.description[locale]} ${c.group}`,
       sku: "",
-      href: `/${c.section}/${c.slug}`,
+      href: `/${c.section}/${localeSlug(c, locale)}`,
     });
   });
 
