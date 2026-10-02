@@ -129,23 +129,23 @@ export function ProductFinderStrip() {
         }}
       />
 
-      <div className="zw-container relative flex flex-col gap-5 py-7 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center gap-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25">
-            <Compass size={24} className="text-white" />
+      <div className="zw-container relative flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-3.5">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25">
+            <Compass size={21} className="text-white" />
           </span>
           <div>
-            <div className="font-display text-2xl font-bold uppercase leading-tight sm:text-3xl">
+            <div className="font-display text-xl font-bold uppercase leading-tight sm:text-2xl">
               {t.finder.question}
             </div>
-            <div className="mt-1 text-sm text-zw-grey-300">{t.finder.hint}</div>
+            <div className="mt-0.5 text-sm text-zw-grey-300">{t.finder.hint}</div>
           </div>
         </div>
 
         <div className="flex shrink-0 items-center gap-4">
           <LocaleLink
             href="/kesfet/urun-secici"
-            className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold uppercase tracking-wide text-zw-red-700 shadow-lg transition-colors hover:bg-zw-grey-100"
+            className="group inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-zw-red-700 shadow-lg transition-colors hover:bg-zw-grey-100"
           >
             {t.finder.cta}
             <ArrowRight
@@ -325,19 +325,26 @@ export function DealerApplyBanner() {
   );
 }
 
+/**
+ * Kurumsal alim / teklif seridi.
+ *
+ * Anasayfada urun secici seridinin hemen altinda, ona yapisik ve tam
+ * genislikte durur; ikisi birlikte ince bir ust bant olusturur, buyuk
+ * tanitim alani ilk ekranda gorunur kalir.
+ */
 export function QuoteBanner() {
   const t = useT();
   return (
-    <section className="zw-container py-12">
-      <div className="flex flex-col items-start gap-6 overflow-hidden rounded-[4px] bg-zw-red-600 px-8 py-10 text-white lg:flex-row lg:items-center lg:justify-between">
-        <div className="max-w-2xl">
-          <h2 className="font-display text-3xl font-bold uppercase leading-tight sm:text-4xl">
+    <section className="border-t border-white/15 bg-zw-red-600 text-white">
+      <div className="zw-container flex flex-col items-start gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="font-display text-xl font-bold uppercase leading-tight sm:text-2xl">
             {t.home.quoteBannerTitle}
           </h2>
-          <p className="mt-2 text-white/90">{t.home.quoteBannerText}</p>
+          <p className="mt-0.5 text-sm text-white/90">{t.home.quoteBannerText}</p>
         </div>
         <LocaleLink href="/teklif-al" className="shrink-0">
-          <Button size="lg" variant="light" rightIcon={<ArrowRight size={18} />}>
+          <Button variant="light" rightIcon={<ArrowRight size={17} />}>
             {t.home.quoteBannerCta}
           </Button>
         </LocaleLink>
