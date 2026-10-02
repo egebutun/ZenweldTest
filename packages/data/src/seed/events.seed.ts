@@ -270,13 +270,13 @@ The Istanbul Hardware Fair offers an excellent opportunity to meet business part
     slug: "win-eurasia-2024",
     title: "WIN Eurasia — Endüstri Fuarı",
     summary: {
-      tr: "Zenweld Kaynak ve Kesme Makinaları olarak, 2024 yılı 05-08 Haziran tarihleri arasında İstanbul'da düzenlenecek olan Win Eurasia 2024 Endüstri Fuarı'na katılımımızı büyük bir heyecanla duyuruyoruz.",
+      tr: "Zenweld Kaynak ve Kesme Makineleri olarak, 2024 yılı 05-08 Haziran tarihleri arasında İstanbul'da düzenlenecek olan Win Eurasia 2024 Endüstri Fuarı'na katılımımızı büyük bir heyecanla duyuruyoruz.",
       en: "As Zenweld Welding and Cutting Machines, we are excited to announce our participation in the Win Eurasia 2024 Industry Fair, held in Istanbul on 05–08 June 2024.",
     },
     description: {
       tr: `Zenweld Win Eurasia 2024 Endüstri Fuarında!
 
-Zenweld Kaynak ve Kesme Makinaları olarak, 2024 yılı 05-08 Haziran tarihleri arasında İstanbul'da düzenlenecek olan Win Eurasia 2024 Endüstri Fuarı'na katılımımızı büyük bir heyecanla duyuruyoruz.
+Zenweld Kaynak ve Kesme Makineleri olarak, 2024 yılı 05-08 Haziran tarihleri arasında İstanbul'da düzenlenecek olan Win Eurasia 2024 Endüstri Fuarı'na katılımımızı büyük bir heyecanla duyuruyoruz.
 
 Fuar boyunca, en son teknoloji kaynak ve kesme makinelerimizi siz değerli ziyaretçilerimizle buluşturmaktan mutluluk duyacağız. Deneyimli ekibimiz, ihtiyaçlarınıza en uygun çözümleri sunmak için fuar boyunca standımızda hazır olacak.
 
@@ -332,7 +332,7 @@ If you are planning to visit the Win Eurasia 2024 Industry Fair, do not forget t
     slug: "konya-makine-teknolojileri-fuari-2024",
     title: "Konya Makine Teknolojileri Fuarı",
     summary: {
-      tr: "Zenweld Kaynak ve Kesme Makinaları olarak, 2024 yılı 8-11 Mayıs tarihleri arasında Konya'da düzenlenecek olan Konya Makine Teknolojileri Fuarı'na katılımımızı büyük bir heyecanla duyuruyoruz.",
+      tr: "Zenweld Kaynak ve Kesme Makineleri olarak, 2024 yılı 8-11 Mayıs tarihleri arasında Konya'da düzenlenecek olan Konya Makine Teknolojileri Fuarı'na katılımımızı büyük bir heyecanla duyuruyoruz.",
       en: "As Zenweld Welding and Cutting Machines, we are excited to announce our participation in the Konya Machine Technologies Fair, held in Konya on 8–11 May 2024.",
     },
     description: {
