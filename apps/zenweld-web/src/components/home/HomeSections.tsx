@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { ArrowRight, Award, Building2, Compass, Flame, Factory, Handshake, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
 import { listBlogPosts, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
-import { blogSlug, discountPercent, isOnSale, stockPhotos } from "@zenweld/data";
+import { blogSlug, discountPercent, isOnSale } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage } from "@/components/common/ProductImage";
@@ -12,32 +12,44 @@ import { ProductMarquee } from "@/components/product/ProductMarquee";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatDate } from "@/lib/format";
 
+/** Anasayfa tanitim alani arka plani (public/images/hero). */
+const HERO_PHOTO = "/images/hero/kaynak-atolyesi.webp";
+
+/**
+ * Buyuk tanitim alani.
+ *
+ * Ust banttan (urun secici + kurumsal teklif) sonra ilk ekranda TAMAMEN
+ * gorunecek kadar kisa tutulur. Fotograf solda koyulasir (yazi okunur),
+ * sagda kaynakci ve kivilcimlar acik kalir.
+ */
 export function Hero() {
   const t = useT();
   return (
     <section className="relative overflow-hidden bg-zw-ink">
       <ProductImage
-        src={stockPhotos.heroWide}
-        alt="Zenweld"
+        src={HERO_PHOTO}
+        alt="Zenweld kaynak makinesiyle atölyede kaynak yapan usta"
         label="ZENWELD"
         priority
-        className="absolute inset-0 h-full w-full object-cover opacity-40"
+        className="absolute inset-0 h-full w-full object-cover object-[72%_center] lg:object-[center_40%]"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-zw-ink via-zw-ink/85 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-zw-ink/95 via-zw-ink/70 to-zw-ink/10" />
+      {/* Telefonda yazi fotografin tamaminin uzerine gelir; biraz daha koyulastir. */}
+      <div className="absolute inset-0 bg-zw-ink/45 lg:hidden" />
 
-      <div className="zw-container relative py-20 lg:py-32">
+      <div className="zw-container relative py-9 lg:py-10">
         <div className="max-w-2xl text-white">
-          <div className="mb-4 inline-block border-l-4 border-zw-red-600 pl-3 text-xs font-bold uppercase tracking-[0.2em] text-zw-red-500">
+          <div className="mb-3 inline-block border-l-4 border-zw-red-600 pl-3 text-xs font-bold uppercase tracking-[0.2em] text-zw-red-500">
             {t.common.tagline}
           </div>
-          <h1 className="font-display text-4xl font-bold uppercase leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="font-display text-3xl font-bold uppercase leading-[1.02] tracking-tight sm:text-4xl lg:text-5xl">
             {t.home.heroTitle}
           </h1>
-          <p className="mt-4 font-display text-2xl font-semibold uppercase tracking-tight text-zw-red-500 sm:text-3xl">
+          <p className="mt-3 font-display text-xl font-semibold uppercase tracking-tight text-zw-red-500 sm:text-2xl">
             {t.home.heroSlogan}
           </p>
-          <p className="mt-4 max-w-xl text-zw-grey-300">{t.home.heroSubtitle}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <p className="mt-3 max-w-xl text-zw-grey-200">{t.home.heroSubtitle}</p>
+          <div className="mt-6 flex flex-wrap gap-3">
             <LocaleLink href="/ekipmanlar">
               <Button size="lg" rightIcon={<ArrowRight size={18} />}>
                 {t.home.heroCta}
