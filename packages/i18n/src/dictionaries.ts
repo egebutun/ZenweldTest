@@ -54,10 +54,9 @@ export const dictionaries = {
       discover: "Keşfet",
     },
     finder: {
-      eyebrow: "Ürün Seçici",
       question: "Hangi kaynak makinesi size uygun?",
       hint: "3 soruda ihtiyacınıza uygun modeli bulun.",
-      cta: "Ürün Seçici",
+      cta: "Teste Başla!",
     },
     explore: {
       about: "Hakkımızda",
@@ -606,10 +605,9 @@ export const dictionaries = {
       discover: "Discover",
     },
     finder: {
-      eyebrow: "Product Selector",
       question: "Which welding machine is right for you?",
       hint: "Find the model that fits your needs in 3 questions.",
-      cta: "Product Selector",
+      cta: "Start the Test!",
     },
     explore: {
       about: "About Us",

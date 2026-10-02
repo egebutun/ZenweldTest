@@ -29,10 +29,10 @@ export default async function HomePage({
       {/* Sorular arama sonuclarinda acilir baslik olarak cikabilsin */}
       <JsonLd data={faqJsonLd(lang)} />
       <ProductFinderStrip />
+      <QuoteBanner />
       <Hero />
       <HotSale />
       <NewArrivals />
-      <QuoteBanner />
       <WhyZenweld />
       <ReviewMarquee />
       <HomeFaq />
