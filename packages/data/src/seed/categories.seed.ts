@@ -13,7 +13,7 @@ import type { Category, CategoryGroup } from "../types";
  */
 
 export const categoryGroups: CategoryGroup[] = [
-  { id: "g1.1", code: "1.1", slug: "lazer-makinalari", slugEn: "laser-machines", section: "ekipmanlar", name: { tr: "Lazer Makinaları", en: "Laser Machines" }, order: 1 },
+  { id: "g1.1", code: "1.1", slug: "lazer-makineleri", slugEn: "laser-machines", section: "ekipmanlar", name: { tr: "Lazer Makineleri", en: "Laser Machines" }, order: 1 },
   { id: "g1.2", code: "1.2", slug: "kaynak-makineleri", slugEn: "welding-machines", section: "ekipmanlar", name: { tr: "Kaynak Makineleri", en: "Welding Machines" }, order: 2 },
 
   { id: "g2.1", code: "2.1", slug: "kaynak-maskeleri", slugEn: "welding-helmets", section: "guvenlik", name: { tr: "Kaynak Maskeleri", en: "Welding Helmets" }, order: 1 },
@@ -31,17 +31,17 @@ export const categoryGroups: CategoryGroup[] = [
 
 export const categories: Category[] = [
   {
-    id: "c1.1.1", code: "1.1.1", slug: "lazer-kaynak-makineleri", slugEn: "laser-welding-machines", section: "ekipmanlar", group: "lazer-makinalari", order: 1,
+    id: "c1.1.1", code: "1.1.1", slug: "lazer-kaynak-makineleri", slugEn: "laser-welding-machines", section: "ekipmanlar", group: "lazer-makineleri", order: 1,
     name: { tr: "Lazer Kaynak Makineleri", en: "Laser Welding Machines" },
     description: { tr: "Yüksek hızda, düşük ısı girdisiyle temiz ve ince dikişli kaynak.", en: "Fast welding with low heat input and clean, fine beads." },
   },
   {
-    id: "c1.1.2", code: "1.1.2", slug: "lazer-temizleme", slugEn: "laser-cleaning", section: "ekipmanlar", group: "lazer-makinalari", order: 2,
+    id: "c1.1.2", code: "1.1.2", slug: "lazer-temizleme", slugEn: "laser-cleaning", section: "ekipmanlar", group: "lazer-makineleri", order: 2,
     name: { tr: "Lazer Temizleme", en: "Laser Cleaning" },
     description: { tr: "Pas, boya ve oksiti yüzeye zarar vermeden kimyasalsız temizleyin.", en: "Remove rust, paint and oxide without chemicals or surface damage." },
   },
   {
-    id: "c1.1.3", code: "1.1.3", slug: "lazer-markalama", slugEn: "laser-marking", section: "ekipmanlar", group: "lazer-makinalari", order: 3,
+    id: "c1.1.3", code: "1.1.3", slug: "lazer-markalama", slugEn: "laser-marking", section: "ekipmanlar", group: "lazer-makineleri", order: 3,
     name: { tr: "Lazer Markalama", en: "Laser Marking" },
     description: { tr: "Metal yüzeylere kalıcı, hassas yazı, logo ve kod işleme.", en: "Permanent, precise text, logos and codes on metal surfaces." },
   },
@@ -66,8 +66,8 @@ export const categories: Category[] = [
     description: { tr: "Tek makinede birden fazla kaynak yönteminin esnekliği.", en: "The flexibility of several welding processes in one machine." },
   },
   {
-    id: "c1.2.5", code: "1.2.5", slug: "plazma-kesim-makinalari", slugEn: "plasma-cutting-machines", section: "ekipmanlar", group: "kaynak-makineleri", order: 5,
-    name: { tr: "Plazma Kesim Makinaları", en: "Plasma Cutting Machines" },
+    id: "c1.2.5", code: "1.2.5", slug: "plazma-kesim-makineleri", slugEn: "plasma-cutting-machines", section: "ekipmanlar", group: "kaynak-makineleri", order: 5,
+    name: { tr: "Plazma Kesim Makineleri", en: "Plasma Cutting Machines" },
     description: { tr: "Karbon çeliği, paslanmaz ve alüminyumda temiz kesim performansı.", en: "Clean cutting on carbon steel, stainless and aluminium." },
   },
   {

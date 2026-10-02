@@ -578,7 +578,7 @@ export const products: Product[] = [
     name: "Zenweld Multicut 40 CNC",
     modelCode: "Z07.01.40",
     section: "ekipmanlar",
-    categorySlug: "plazma-kesim-makinalari",
+    categorySlug: "plazma-kesim-makineleri",
     processes: ["PLAZMA"],
     shortDescription: {
       tr: "Monofaze 40A plazma kesme makinesi. 14 mm temiz kesim, CNC bağlantı çıkışı ve PFC modülü.",
@@ -636,7 +636,7 @@ export const products: Product[] = [
     name: "Zenweld Multicut 60 S",
     modelCode: "Z07.02.60",
     section: "ekipmanlar",
-    categorySlug: "plazma-kesim-makinalari",
+    categorySlug: "plazma-kesim-makineleri",
     processes: ["PLAZMA"],
     shortDescription: {
       tr: "Trifaze, kompakt ve taşınabilir 60A plazma kesme makinesi. 18 mm temiz kesim, 25 mm oluk açma.",

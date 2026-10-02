@@ -22,7 +22,7 @@ interface ListingProps {
 }
 
 /**
- * Mega menudeki grup basligi buraya "?grup=lazer-makinalari" seklinde yonlendirir.
+ * Mega menudeki grup basligi buraya "?grup=lazer-makineleri" seklinde yonlendirir.
  * useSearchParams statik on-uretimde Suspense sinirini gerektirir; sinir
  * cozulene kadar gruplanmamis liste gosterilir.
  */
@@ -66,7 +66,7 @@ function Listing({
   );
 
   /**
-   * Ust seritteki kisayollar. Bolum sayfasinda gruplar (Lazer Makinalari,
+   * Ust seritteki kisayollar. Bolum sayfasinda gruplar (Lazer Makineleri,
    * Kaynak Makineleri ...), grup veya kategori sayfasinda o grubun
    * kategorileri listelenir. Tum kategorileri tek seride dizmek
    * (Aksesuarlar'da 20 kategori) ekrandan tasiyordu.
