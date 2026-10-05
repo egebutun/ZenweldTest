@@ -220,7 +220,7 @@ Sitedeki **Hakkımızda** sayfasının tamamı buradan yönetilir:
 
 ---
 
-## 11. Veri Yönetimi ⭐
+## 12. Veri Yönetimi ⭐
 
 | İşlem | Ne yapar |
 |---|---|
