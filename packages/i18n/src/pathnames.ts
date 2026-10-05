@@ -82,8 +82,6 @@ const NESTED: Record<string, Record<string, string>> = {
     favorilerim: "favourites",
     garantilerim: "my-warranties",
     adreslerim: "addresses",
-    "stok-bildirimi": "stock-update",
-    yorumlar: "reviews",
   },
 };
 

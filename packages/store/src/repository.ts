@@ -316,6 +316,19 @@ export function listUsers(db: ZenweldDatabase = getSnapshot()): User[] {
   return db.users;
 }
 
+/**
+ * Ana sitenin uyeleri: bir bayi magazasina ait olmayan bireysel, kurumsal
+ * ve yonetici hesaplari. Bayi hesaplari ve magaza uyeleri listelenmez.
+ */
+export function siteMembers(db: ZenweldDatabase = getSnapshot()): User[] {
+  return db.users.filter((u) => u.role !== "dealer" && !u.storeId);
+}
+
+/** Bir bayi magazasinin uyeleri (o magazada hesap acan musteriler). */
+export function storeMembers(retailerId: string, db: ZenweldDatabase = getSnapshot()): User[] {
+  return db.users.filter((u) => u.storeId === retailerId && u.role !== "dealer");
+}
+
 export function findUserByEmail(
   email: string,
   db: ZenweldDatabase = getSnapshot(),
@@ -358,6 +371,16 @@ export function listQuotes(db: ZenweldDatabase = getSnapshot()): Quote[] {
   return [...db.quotes].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+/**
+ * Ana sitenin teklif talepleri. Bayi hesaplarinin talepleri sayilmaz:
+ * Zenweld ile bayiler arasindaki teklif/siparis isleri ileride ayri B2B
+ * uygulamasinda yurutulecek.
+ */
+export function siteQuotes(db: ZenweldDatabase = getSnapshot()): Quote[] {
+  const dealerIds = new Set(db.users.filter((u) => u.role === "dealer").map((u) => u.id));
+  return listQuotes(db).filter((q) => !q.userId || !dealerIds.has(q.userId));
+}
+
 export function quotesForUser(
   userId: string,
   db: ZenweldDatabase = getSnapshot(),
@@ -396,6 +419,22 @@ export function deleteQuote(id: string): void {
 
 export function listOrders(db: ZenweldDatabase = getSnapshot()): Order[] {
   return [...db.orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+/**
+ * Ana sitenin siparisleri (kanal "zenweld"). Bayi hesaplarinin siparisleri
+ * (B2B) ve bayi magazalarinin siparisleri burada yer almaz.
+ */
+export function siteOrders(db: ZenweldDatabase = getSnapshot()): Order[] {
+  const dealerIds = new Set(db.users.filter((u) => u.role === "dealer").map((u) => u.id));
+  return listOrders(db).filter(
+    (o) => o.channel === "zenweld" && (!o.userId || !dealerIds.has(o.userId)),
+  );
+}
+
+/** Bir bayi magazasinin (e-ticaret sitesi) siparisleri. */
+export function storeOrders(retailerId: string, db: ZenweldDatabase = getSnapshot()): Order[] {
+  return listOrders(db).filter((o) => o.channel === "bayi-shop" && o.retailerId === retailerId);
 }
 
 export function ordersForUser(userId: string, db: ZenweldDatabase = getSnapshot()): Order[] {

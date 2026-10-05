@@ -7,8 +7,6 @@ import {
   MapPin,
   Package,
   ShieldCheck,
-  Star,
-  Store,
   User as UserIcon,
 } from "lucide-react";
 import { useAuth, ROLE_LABELS } from "@zenweld/auth";
@@ -44,14 +42,12 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
   }
 
   const items = [
-    { href: "/hesabim/profil", label: t.account.profile, Icon: UserIcon, roles: ["individual", "business", "dealer", "admin"] },
-    { href: "/hesabim/stok-bildirimi", label: t.account.stockNotice, Icon: Store, roles: ["dealer"] },
-    { href: "/hesabim/yorumlar", label: t.account.reviews, Icon: Star, roles: ["dealer"] },
-    { href: "/hesabim/tekliflerim", label: t.account.myQuotes, Icon: FileText, roles: ["business", "dealer"] },
-    { href: "/hesabim/siparislerim", label: t.account.myOrders, Icon: Package, roles: ["individual", "dealer"] },
-    { href: "/hesabim/favorilerim", label: t.account.favourites, Icon: Heart, roles: ["individual", "business", "dealer", "admin"] },
-    { href: "/hesabim/garantilerim", label: t.account.warranties, Icon: ShieldCheck, roles: ["individual", "business", "dealer"] },
-    { href: "/hesabim/adreslerim", label: t.account.addresses, Icon: MapPin, roles: ["individual", "business", "dealer"] },
+    { href: "/hesabim/profil", label: t.account.profile, Icon: UserIcon, roles: ["individual", "business"] },
+    { href: "/hesabim/tekliflerim", label: t.account.myQuotes, Icon: FileText, roles: ["business"] },
+    { href: "/hesabim/siparislerim", label: t.account.myOrders, Icon: Package, roles: ["individual"] },
+    { href: "/hesabim/favorilerim", label: t.account.favourites, Icon: Heart, roles: ["individual", "business"] },
+    { href: "/hesabim/garantilerim", label: t.account.warranties, Icon: ShieldCheck, roles: ["individual", "business"] },
+    { href: "/hesabim/adreslerim", label: t.account.addresses, Icon: MapPin, roles: ["individual", "business"] },
   ].filter((i) => i.roles.includes(user.role));
 
   return (

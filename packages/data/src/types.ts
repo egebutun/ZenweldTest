@@ -269,8 +269,15 @@ export interface User {
   /** Bayi hesaplar icin — hangi bayi kaydina bagli */
   dealerId?: string;
   dealerCode?: string;
-  /** Bayi hesabi online magaza isletiyorsa */
+  /** Bayi hesabi online magaza isletiyorsa — bayi bu magazanin panelini yonetir */
   retailerId?: string;
+  /**
+   * Hesap bir bayinin e-ticaret magazasinda acildiysa o magazanin kimligi
+   * (Retailer.id). Magaza uyeleri yalnizca o magazaya giris yapar; ana
+   * sitenin uyeleri (storeId bos) magazaya, magaza uyeleri ana siteye
+   * giris yapamaz. Ana sitenin ve her magazanin "Uyeler" listesi ayridir.
+   */
+  storeId?: string;
   city?: string;
   createdAt: string;
   lastLoginAt?: string;
@@ -342,8 +349,16 @@ export interface Order {
   id: string;
   code: string;
   userId?: string;
-  /** Hangi magazadan — ana site (bayi siparisi) ya da bayi-shop */
+  /**
+   * Siparisin geldigi kanal:
+   *   zenweld   — ana site (su an dogrudan satis yok)
+   *   bayi-shop — bir bayinin e-ticaret magazasi (retailerId hangisi oldugunu soyler)
+   * Zenweld ile bayiler arasindaki siparisler bu sistemde tutulmaz; ileride
+   * ayri B2B uygulamasinda olacak.
+   */
   channel: "zenweld" | "bayi-shop";
+  /** Bayi magazasi siparisinde magazanin kimligi (Retailer.id) */
+  retailerId?: string;
   status: OrderStatus;
   customerName: string;
   email: string;
@@ -416,8 +431,8 @@ export interface ProductReview {
   site: "zenweld" | "bayi";
   /**
    * Bayi magazasina ait yorumlarda hangi bayinin magazasi oldugunu
-   * soyler. Bayi sahibi ana siteden giris yapinca yalnizca kendi
-   * magazasinin yorumlarini yonetir.
+   * soyler. Bayi sahibi magaza panelinde (bayi sitesi /yonetim) yalnizca
+   * kendi magazasinin yorumlarini yonetir.
    */
   retailerId?: string;
   /** Yonetim panelinde onaylandi mi; yalnizca onaylilar yayinda. */

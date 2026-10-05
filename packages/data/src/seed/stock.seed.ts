@@ -12,7 +12,7 @@ import { reviews } from "./reviews.seed";
  * olan saticilarin logosunu gosterir.
  *
  * Bu veriler yonetim panelinden (/yonetim/stok) ve bayi hesaplarinin kendi
- * panelinden (/hesabim/stok-bildirimi) guncellenir.
+ * magaza panelinden (bayi sitesi /yonetim/stok-bildirimi) guncellenir.
  */
 
 const STAMP = "2026-09-16T08:00:00+03:00";

@@ -29,6 +29,8 @@ export const DEMO_PASSWORDS = {
   bireysel: "demo123",
   kurumsal: "demo123",
   bayi: "bayi123",
+  /** ZENWELD-BAYI-A magazasinin musteri hesaplari */
+  magazaUyesi: "demo123",
 } as const;
 
 export const users: User[] = [
@@ -143,6 +145,54 @@ export const users: User[] = [
     city: "Ankara",
     createdAt: "2026-07-01T18:15:00+03:00",
     newsletter: true,
+  },
+
+  // --- ZENWELD-BAYI-A e-ticaret magazasinin uyeleri ---
+  // Magazada hesap acan musteriler (storeId). Ana sitenin uyeleriyle
+  // karismaz: magaza panelinde (/yonetim/uyeler) listelenir, yalnizca
+  // magazaya giris yapabilir. Sifre: demo123
+  {
+    id: "u-bya-hakan",
+    role: "individual",
+    status: "active",
+    email: "hakan.celik@demo.com",
+    passwordHash: demoHash("demo123"),
+    firstName: "Hakan",
+    lastName: "Çelik",
+    phone: "+90 532 410 10 10",
+    city: "İstanbul",
+    storeId: "r-zenweld-bayi-a",
+    createdAt: "2026-05-12T20:10:00+03:00",
+    newsletter: true,
+  },
+  {
+    id: "u-bya-selin",
+    role: "individual",
+    status: "active",
+    email: "selin.koc@demo.com",
+    passwordHash: demoHash("demo123"),
+    firstName: "Selin",
+    lastName: "Koç",
+    phone: "+90 535 420 20 20",
+    city: "Kocaeli",
+    storeId: "r-zenweld-bayi-a",
+    createdAt: "2026-07-03T11:45:00+03:00",
+    newsletter: false,
+  },
+  {
+    id: "u-bya-yildiz",
+    role: "business",
+    status: "active",
+    email: "satinalma@yildizmetal.com",
+    passwordHash: demoHash("demo123"),
+    firstName: "Kerem",
+    lastName: "Yıldız",
+    phone: "+90 533 430 30 30",
+    companyName: "Yıldız Metal İşleme Ltd. Şti.",
+    city: "İstanbul",
+    storeId: "r-zenweld-bayi-a",
+    createdAt: "2026-08-19T09:05:00+03:00",
+    newsletter: false,
   },
 ];
 

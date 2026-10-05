@@ -74,11 +74,18 @@ Giriş sayfasındaki kartlara tıklayarak formu otomatik doldurabilirsiniz.
 
 | Rol | E-posta | Şifre | Neler görebilir |
 |---|---|---|---|
-| **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca yönetim paneli (`/yonetim`); ana sitede giriş yapamaz |
-| **Bireysel** | `bireysel@demo.com` | `demo123` | Favoriler, garanti kayıtları, siparişler |
-| **Kurumsal** | `kurumsal@demo.com` | `demo123` | Teklif talepleri, vadeli/çek ödeme |
-| **Bayi** | `bayi@zenweld-bayi-a.com` | `bayi123` | Stok bildirimi, bayi siparişleri |
-| **Bayi 2** | `bayi@basakhirdavat.com` | `bayi123` | Başak Hırdavat bayi hesabı |
+| **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca Zenweld yönetim paneli (ana site `/yonetim`) |
+| **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: favoriler, garanti kayıtları |
+| **Kurumsal** | `kurumsal@demo.com` | `demo123` | Ana site: teklif talepleri, vadeli/çek ödeme |
+| **Bayi (Murat Kaya)** | `bayi@zenweld-bayi-a.com` | `bayi123` | Yalnızca ZENWELD-BAYİ-A **mağaza paneli** (bayi sitesi `/yonetim`) |
+| **Mağaza üyesi** | `hakan.celik@demo.com` | `demo123` | Yalnızca ZENWELD-BAYİ-A mağazası (alışveriş, siparişlerim) |
+
+Hesaplar sitelere göre ayrıdır:
+- **Ana site** yalnızca bireysel ve kurumsal üyeleri kabul eder. Bayiler ana
+  sitenin müşterisi değildir; Zenweld ile bayiler arasındaki teklif/sipariş
+  işleri ileride ayrı bir **B2B uygulamasında** olacak.
+- **Bayi mağazasının** kendi üyeleri vardır (`User.storeId`); ana sitenin
+  üyeleriyle karışmaz. Mağaza yöneticisi (bayi) mağazanın paneline girer.
 
 ---
 
@@ -100,6 +107,10 @@ E-ticaret sitesi olmayan bayiler için **beyaz etiket mağaza şablonu**. Sepet,
 mock ödeme akışı ve sipariş takibi vardır. Yeni bir bayi için yalnızca
 `apps/bayi-shop/src/lib/store-config.ts` dosyasındaki değerleri değiştirmek yeterlidir.
 
+Bayi mağazasını kendi **mağaza panelinden** yönetir: `<mağaza>/yonetim` —
+siparişler, stok/fiyat/kampanya, yorumlar, üyeler, profil. Ayrıntı:
+`docs/MAGAZA-PANELI.md`.
+
 ---
 
 ## Öne Çıkan Özellikler
@@ -112,7 +123,7 @@ görünür. Hiçbirinde yoksa "en yakın bayiden temin edebilirsiniz" mesajı ç
 
 Stok iki yerden güncellenir:
 - **Yönetici:** `/yonetim/stok` → ürün × satıcı matrisi (tek tek, toplu veya CSV)
-- **Bayi:** `/tr/hesabim/stok-bildirimi` → bayi kendi stoğunu işaretler
+- **Bayi:** mağaza paneli → `Stok Bildirimi` (bayi sitesi `/yonetim/stok-bildirimi`)
 
 ### Arama
 
@@ -140,13 +151,13 @@ olduğu bayiler" filtresi, yol tarifi ve WhatsApp bağlantıları.
 
 | Rol | Yetkiler |
 |---|---|
-| Bireysel | Favoriler, garanti kaydı, sipariş takibi |
-| Kurumsal | Teklif talebi (vadeli / çek), teklif geçmişi |
-| Bayi | Stok bildirimi, bayi fiyat listesi, sipariş |
-| Yönetici | Yönetim panelinin tamamı |
+| Bireysel | Ana site: favoriler, garanti kaydı |
+| Kurumsal | Ana site: teklif talebi (vadeli / çek), teklif geçmişi |
+| Bayi | Yalnızca kendi mağazasının paneli (bayi sitesi `/yonetim`) |
+| Yönetici | Zenweld yönetim panelinin tamamı (ana site `/yonetim`) |
 
-Bayi kayıtları `pending` (onay bekliyor) durumunda açılır; yönetici
-`/yonetim/uyeler` sayfasından onaylar.
+Ana sitede bayi hesabı açılmaz; bayi olmak isteyenler **Bayilik Başvurusu**
+formunu doldurur.
 
 ### Yönetim paneli (yalnızca Türkçe)
 
@@ -210,18 +221,16 @@ ZenweldTest/
     │       │   ├── nereden-alabilirim/page.tsx Bayi bulucu (harita)
     │       │   ├── teklif-al/page.tsx          4 adımlı teklif formu
     │       │   ├── giris | kayit | cikis | sifremi-unuttum/
-    │       │   ├── hesabim/                    Rol bazlı hesap paneli
+    │       │   ├── hesabim/                    Müşteri hesabı (bireysel / kurumsal)
     │       │   │   └── profil · tekliflerim · siparislerim · favorilerim
-    │       │   │      · garantilerim · adreslerim · stok-bildirimi
+    │       │   │      · garantilerim · adreslerim
     │       │   ├── kesfet/                     KEŞFET menüsü
     │       │   │   └── hakkimizda · welders-club · garanti-sorgula
     │       │   │      · garanti-kayit · blog · msds · parti-sertifikalari
     │       │   │      · urun-secici · rehber
     │       │   ├── destek/                     sss · iletisim · servis-agi
     │       │   ├── kurumsal/                   kvkk · gizlilik · iade …
-    │       │   └── admin/                      YÖNETİM PANELİ
-    │       │       └── urunler · stok · saticilar · bayiler · uyeler
-    │       │          · teklifler · siparisler · veri
+    │       │   └── (yönetim paneli ayrı uygulamadır: apps/admin, /yonetim)
     │       ├── components/
     │       │   ├── layout/    Header · MegaMenu · Footer · DemoRibbon
     │       │   ├── search/    SearchOverlay
@@ -240,9 +249,11 @@ ZenweldTest/
             ├── app/[locale]/
             │   ├── page.tsx · magaza · urun/[slug]
             │   ├── sepet · odeme · siparis-tamam
-            │   ├── giris · kayit · hesabim
+            │   ├── giris · kayit · hesabim       (mağazanın kendi üyeleri)
             │   └── hakkimizda · iletisim · kargo-iade
-            ├── components/ ShopHeader · ShopFooter · ShopProductCard
+            ├── app/yonetim/                MAĞAZA PANELİ (bayi, yalnızca TR)
+            │   └── siparisler · stok-bildirimi · yorumlar · uyeler · profil
+            ├── components/ ShopHeader · ShopFooter · ShopProductCard · panel/PanelShell
             └── lib/ cart.tsx · store-config.ts
 ```
 
@@ -271,8 +282,8 @@ Aynı sayfadan **JSON İçe Aktar** ve **Başlangıca Dön** işlemleri de yapı
 ## Günlük Stok Güncelleme Akışı
 
 **Seçenek A — Bayi kendi girer (önerilen):**
-1. Bayi `bayi@zenweld-bayi-a.com` ile giriş yapar
-2. `Hesabım → Stok Bildirimi` sayfasında ürünleri işaretler veya CSV yükler;
+1. Bayi mağaza paneline `bayi@zenweld-bayi-a.com` ile giriş yapar
+2. Mağaza panelinde (bayi sitesi `/yonetim`) `Stok Bildirimi` sayfasında ürünleri işaretler veya CSV yükler;
    aynı sayfada **kendi satış fiyatını ve kampanyasını** (indirim %, başlangıç,
    bitiş) girer. Bu fiyat ve kampanyalar yalnızca bayi mağazasında geçerlidir;
    ana sitenin fiyatlarını yönetici belirler.

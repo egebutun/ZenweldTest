@@ -55,6 +55,22 @@ birlikte karar verilmeli.
 Proje standart bir Next.js projesidir; Vercel'e bağımlı değildir ve her
 Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
 
+## Zenweld – bayi B2B uygulaması
+
+Zenweld ile bayiler arasındaki teklif ve siparişler (bayinin Zenweld'den mal
+alması) ana siteden ve bayi mağaza panelinden çıkarıldı. Bunlar için ayrı bir
+B2B uygulaması geliştirilecek. Bayi hesaplarını (mağaza paneli girişleri)
+kimin açıp yöneteceği de bu uygulamayla birlikte netleşecek.
+
+## Mağaza paneli — canlıya geçerken
+
+- Mağaza bilgileri (ad, telefon, adres, çalışma saatleri) şu an
+  `apps/bayi-shop/src/lib/store-config.ts` dosyasında; panelde yalnızca
+  gösteriliyor. Backend gelince panelden düzenlenebilir olmalı.
+- Ana sitenin ürün sayfasındaki "online satıcılar" bölümü, bayinin mağaza
+  panelinde işaretlediği stoğu backend gelince görecek (şu an iki site ayrı
+  tarayıcı deposu kullandığı için demoda birbirini görmez).
+
 ## Kod incelemesi bulguları
 
 Ayrıntılı inceleme sohbette yapıldı; düzeltme zamanı ayrıca

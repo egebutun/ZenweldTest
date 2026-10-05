@@ -28,7 +28,7 @@ export const faqs: FaqItem[] = [
   { id: "f5", topic: "teknik", question: { tr: "Makinem hangi şebekede çalışır?", en: "What mains supply does my machine need?" }, answer: lorem, },
   { id: "f6", topic: "teknik", question: { tr: "Jeneratör ile kullanabilir miyim?", en: "Can I run it from a generator?" }, answer: lorem },
   { id: "f7", topic: "siparis", question: { tr: "Teklifim ne kadar sürede yanıtlanır?", en: "How quickly will my quote be answered?" }, answer: { tr: "Teklif talepleriniz iş günlerinde ortalama 24 saat içinde yanıtlanır.", en: "Quote requests are answered within 24 hours on business days on average." } },
-  { id: "f8", topic: "genel", question: { tr: "Bayi olmak için ne yapmalıyım?", en: "How can I become a dealer?" }, answer: { tr: "Bayilik başvurusu için \"Bayi\" hesabı oluşturabilir veya Destek > İletişim sayfasından bize ulaşabilirsiniz.", en: "Create a \"Dealer\" account or contact us through Support > Contact to apply for a dealership." } },
+  { id: "f8", topic: "genel", question: { tr: "Bayi olmak için ne yapmalıyım?", en: "How can I become a dealer?" }, answer: { tr: "Keşfet > Bayilik Başvurusu sayfasındaki formu doldurun; ekibimiz başvurunuzu inceleyip sizinle iletişime geçer.", en: "Fill in the form on Explore > Become a Dealer; our team will review your application and get in touch." } },
 ];
 
 export const quotes: Quote[] = [
@@ -55,40 +55,57 @@ export const quotes: Quote[] = [
     message: "Lorem ipsum dolor sit amet.",
     createdAt: "2026-09-15T15:02:00+03:00", updatedAt: "2026-09-15T15:02:00+03:00",
   },
-  {
-    id: "q3", code: "TKL-2026-0003", userId: "u-bayi-a", status: "sent",
-    companyName: "ZENWELD-BAYİ-A Kaynak Teknolojileri", contactName: "Murat Kaya",
-    email: "bayi@zenweld-bayi-a.com", phone: "+90 532 000 00 02", taxNumber: "9876543210",
-    city: "İstanbul", paymentPreference: "havale",
-    items: [
-      { productId: "p-arc-200", productName: "Zenweld ARC 200", quantity: 20 },
-      { productId: "p-ultimate-th-200", productName: "Zenweld Ultimate TH 200", quantity: 10 },
-    ],
-    message: "Bayi stok tazeleme siparişi.",
-    assignedTo: "Bayi Kanalı – Ayşe K.",
-    createdAt: "2026-09-08T08:40:00+03:00", updatedAt: "2026-09-09T11:15:00+03:00",
-  },
 ];
 
+/**
+ * Siparisler. Su an yalnizca ZENWELD-BAYI-A e-ticaret magazasinin
+ * musteri siparisleri var; magaza panelinde (/yonetim/siparisler) gorunur.
+ * Ana site dogrudan satis yapmiyor. Zenweld ile bayiler arasindaki
+ * siparis ve teklifler bu sistemde tutulmaz (ileride ayri B2B uygulamasi).
+ */
 export const orders: Order[] = [
   {
-    id: "o1", code: "SIP-2026-0001", userId: "u-bayi-a", channel: "zenweld", status: "shipped",
-    customerName: "ZENWELD-BAYİ-A Kaynak Teknolojileri", email: "bayi@zenweld-bayi-a.com",
-    phone: "+90 532 000 00 02", city: "İstanbul", address: "Örnek OSB 5. Blok No:44, Başakşehir",
+    id: "o1", code: "SIP-2026-0001", userId: "u-bya-hakan", channel: "bayi-shop", retailerId: "r-zenweld-bayi-a",
+    status: "delivered", customerName: "Hakan Çelik", email: "hakan.celik@demo.com", phone: "+90 532 410 10 10",
+    city: "İstanbul", address: "Örnek Mah. 12. Sok. No:5 D:8, Maltepe / İstanbul",
     items: [
-      { productId: "p-arc-200", productName: "Zenweld ARC 200", quantity: 20, unitPrice: 8400 },
-      { productId: "p-ultimate-th-200", productName: "Zenweld Ultimate TH 200", quantity: 10, unitPrice: 20800 },
+      { productId: "p-arc-120", productName: "Zenweld ARC 120", quantity: 1, unitPrice: 7080 },
     ],
-    subtotal: 376000, vat: 75200, shipping: 0, total: 451200,
-    createdAt: "2026-09-09T12:00:00+03:00",
+    subtotal: 5900, vat: 1180, shipping: 0, total: 7080,
+    createdAt: "2026-08-21T19:30:00+03:00",
   },
   {
-    id: "o2", code: "SIP-2026-0002", userId: "u-bireysel", channel: "bayi-shop", status: "delivered",
-    customerName: "Ahmet Yılmaz", email: "bireysel@demo.com", phone: "+90 532 111 11 11",
-    city: "İstanbul", address: "Örnek Mah. 12. Sok. No:5 D:8, Maltepe",
-    items: [{ productId: "p-arc-120", productName: "Zenweld ARC 120", quantity: 1, unitPrice: 7080 }],
-    subtotal: 5900, vat: 1180, shipping: 250, total: 7330,
-    createdAt: "2026-08-21T19:30:00+03:00",
+    id: "o2", code: "SIP-2026-0002", userId: "u-bya-selin", channel: "bayi-shop", retailerId: "r-zenweld-bayi-a",
+    status: "shipped", customerName: "Selin Koç", email: "selin.koc@demo.com", phone: "+90 535 420 20 20",
+    city: "Kocaeli", address: "Yenimahalle Cad. No:21, İzmit / Kocaeli",
+    items: [
+      { productId: "p-zenmask-auto-9000", productName: "Zenweld ZenMask Auto 9000", quantity: 1, unitPrice: 4140 },
+      { productId: "p-kaynak-eldiveni-pro", productName: "Zenweld Pro Kaynak Eldiveni", quantity: 2, unitPrice: 580 },
+    ],
+    subtotal: 4417, vat: 883, shipping: 0, total: 5300,
+    createdAt: "2026-09-24T14:12:00+03:00",
+  },
+  {
+    id: "o3", code: "SIP-2026-0003", userId: "u-bya-yildiz", channel: "bayi-shop", retailerId: "r-zenweld-bayi-a",
+    status: "confirmed", customerName: "Yıldız Metal İşleme Ltd. Şti.", email: "satinalma@yildizmetal.com", phone: "+90 533 430 30 30",
+    city: "İstanbul", address: "İkitelli OSB Demirciler Sitesi B Blok No:7, Başakşehir / İstanbul",
+    items: [
+      { productId: "p-evomig-205-p", productName: "Zenweld Evomig 205 P Pulse MIG", quantity: 1, unitPrice: 77877 },
+      { productId: "p-mig-torcu-mb25", productName: "Zenweld MB-25 MIG Torcu", quantity: 2, unitPrice: 1976 },
+    ],
+    subtotal: 68191, vat: 13638, shipping: 0, total: 81829,
+    createdAt: "2026-10-01T10:40:00+03:00",
+  },
+  {
+    id: "o4", code: "SIP-2026-0004", userId: "u-bya-hakan", channel: "bayi-shop", retailerId: "r-zenweld-bayi-a",
+    status: "pending", customerName: "Hakan Çelik", email: "hakan.celik@demo.com", phone: "+90 532 410 10 10",
+    city: "İstanbul", address: "Örnek Mah. 12. Sok. No:5 D:8, Maltepe / İstanbul",
+    items: [
+      { productId: "p-mig-torcu-mb25", productName: "Zenweld MB-25 MIG Torcu", quantity: 1, unitPrice: 1976 },
+      { productId: "p-kontak-meme-seti", productName: "Zenweld Kontak Meme Seti M6 (20'li)", quantity: 2, unitPrice: 456 },
+    ],
+    subtotal: 2407, vat: 481, shipping: 350, total: 3238,
+    createdAt: "2026-10-04T21:05:00+03:00",
   },
 ];
 

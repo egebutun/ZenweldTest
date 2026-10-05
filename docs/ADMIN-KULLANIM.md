@@ -1,5 +1,12 @@
 # Yönetim Paneli Kullanım Kılavuzu
 
+> Bu kılavuz **Zenweld'in** yönetim panelidir. Bayilerin kendi e-ticaret
+> mağazalarını yönettiği panel ayrıdır: `docs/MAGAZA-PANELI.md`.
+
+Menü sırası: Panel · Ürünler · Stok Matrisi · Siparişler · Teklifler · Bayiler ·
+Online Satıcılar · Üyeler · Etkinlikler · Haberler · Blog · Yorumlar · Görünüm ·
+Veri Yönetimi
+
 Panel adresi: `http://localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`)
 Demo giriş: `admin@zenweld.com` / `admin123`
 
@@ -14,7 +21,8 @@ Demo giriş: `admin@zenweld.com` / `admin123`
 
 ## 1. Panel (Dashboard)
 
-Özet kartlar: aktif ürün, üye, online satıcı, teklif ve sipariş sayıları.
+Özet kartlar: aktif ürün, üye, online satıcı, teklif ve sipariş sayıları
+(üye, teklif ve sipariş yalnızca ana sitenin kayıtlarıdır; bayi kayıtları sayılmaz).
 Onay bekleyen üye ve yeni teklif varsa kartta uyarı rozeti çıkar.
 
 Altta **"Hiçbir online satıcıda stokta olmayan ürünler"** listesi vardır. Bu
@@ -44,8 +52,8 @@ Beş sekme vardır:
 
 **Durum işaretleri:**
 - **Kampanya / indirim** — yalnızca **Zenweld ana sitesindeki** fiyatı etkiler.
-  Bayi mağazalarının fiyat ve kampanyalarını bayiler kendi hesaplarından yönetir
-  (bkz. aşağıdaki *Bayi fiyat ve kampanyaları*).
+  Bayi mağazalarının fiyat ve kampanyalarını bayiler kendi mağaza panellerinden
+  yönetir (bkz. aşağıdaki *Bayi fiyat ve kampanyaları*).
 
 **Not:** Yeni ürün eklediğinizde hiçbir satıcıda stokta görünmez. Ürünün online
 satıcılarda çıkması için **Stok Matrisi**'nden işaretlemelisiniz.
@@ -59,7 +67,7 @@ Ana site ile bayi mağazasının fiyatları **ayrıdır**:
 | Fiyat | Kim belirler | Nereden |
 |---|---|---|
 | Zenweld ana sitesi fiyatı ve kampanyası | Zenweld yöneticisi | `Yönetim Paneli → Ürünler → Düzenle` |
-| Bayi mağazası fiyatı ve kampanyası | Bayi | `Hesabım → Stok Bildirimi` (ana sitede bayi hesabıyla) |
+| Bayi mağazası fiyatı ve kampanyası | Bayi | Mağaza paneli → `Stok Bildirimi` (bayi sitesi `/yonetim`) |
 
 Bayi fiyat girmezse mağazada Zenweld liste fiyatı (KDV dahil) gösterilir.
 Zenweld kampanyası bayi mağazasına **uygulanmaz**; bayi isterse kendi
@@ -101,7 +109,45 @@ satırlar atlanır ve kaç satırın atlandığı bildirilir.
 
 ---
 
-## 4. Online Satıcılar
+## 4. Siparişler
+
+Ana sitenin siparişleri listelenir; durum açılır menüsünden güncellenir.
+Ana site şu an doğrudan satış yapmadığı için liste boştur.
+
+Burada **bayi kaydı yoktur**:
+- Bayi mağazalarının (ör. ZENWELD-BAYİ-A) müşteri siparişleri her bayinin kendi
+  mağaza panelinde tutulur (bkz. `docs/MAGAZA-PANELI.md`).
+- Zenweld ile bayiler arasındaki siparişler ileride ayrı B2B uygulamasında olacak.
+
+---
+
+## 5. Teklifler
+
+Teklif kartına tıklayınca detay açılır:
+
+- Sol: firma bilgileri, istenen ürünler, müşteri notu
+- Sağ: durum (Yeni → İnceleniyor → Teklif Gönderildi → Kazanıldı/Kapandı),
+  atanan satış temsilcisi, iç not, **E-posta Gönder** butonu
+
+Durum değişiklikleri müşterinin `Hesabım → Tekliflerim` sayfasına anında yansır.
+
+Bayilerin Zenweld'den teklif talepleri burada yer almaz; Zenweld ile bayiler
+arasındaki teklif ve siparişler ileride ayrı bir **B2B uygulamasında** yürütülecek.
+
+---
+
+## 6. Bayiler
+
+"Nereden Alabilirim" haritasındaki fiziksel satış/servis noktaları.
+
+Enlem–boylam değerlerini Google Maps'te konuma sağ tıklayıp kopyalayabilirsiniz.
+Rozetler (Yetkili Satıcı / Yetkili Servis / Showroom) hem haritada hem servis ağı
+sayfasında kullanılır. Bayinin online mağazası varsa **Bağlı olduğu online mağaza**
+alanından eşleştirin.
+
+---
+
+## 7. Online Satıcılar
 
 Ürün sayfasında logosu çıkacak e-ticaret siteleri.
 
@@ -114,46 +160,19 @@ Satıcıyı silmek, o satıcıya ait tüm stok kayıtlarını da siler.
 
 ---
 
-## 5. Bayiler
+## 8. Üyeler
 
-"Nereden Alabilirim" haritasındaki fiziksel satış/servis noktaları.
-
-Enlem–boylam değerlerini Google Maps'te konuma sağ tıklayıp kopyalayabilirsiniz.
-Rozetler (Yetkili Satıcı / Yetkili Servis / Showroom) hem haritada hem servis ağı
-sayfasında kullanılır. Bayinin online mağazası varsa **Bağlı olduğu online mağaza**
-alanından eşleştirin.
-
----
-
-## 6. Üyeler
+Yalnızca **ana sitenin** üyeleri (bireysel, kurumsal) ve yönetici hesapları
+listelenir. Bayiler ana sitenin üyesi değildir; bayi mağazalarının müşterileri de
+burada görünmez (her bayi kendi mağaza panelinde görür).
 
 - Rol, durum ve metin araması ile filtreleme
 - Rol açılır menüsünden anında değiştirilebilir
-- **Onayla** → `pending` bayi hesabını aktifleştirir (bayi böylece stok bildirimi
-  yapabilir hale gelir)
+- **Onayla** → `pending` (onay bekleyen) hesabı aktifleştirir
 - **Askıya al** → hesabın girişini engeller
 - **CSV İndir** → filtrelenmiş üye listesini dışa aktarır
 
 Yönetici hesapları silinemez.
-
----
-
-## 7. Teklifler
-
-Teklif kartına tıklayınca detay açılır:
-
-- Sol: firma bilgileri, istenen ürünler, müşteri notu
-- Sağ: durum (Yeni → İnceleniyor → Teklif Gönderildi → Kazanıldı/Kapandı),
-  atanan satış temsilcisi, iç not, **E-posta Gönder** butonu
-
-Durum değişiklikleri müşterinin `Hesabım → Tekliflerim` sayfasına anında yansır.
-
----
-
-## 8. Siparişler
-
-Bayi siparişleri (Zenweld kanalı) ve bayi mağazasından gelen siparişler
-listelenir. Durum açılır menüsünden güncellenir.
 
 ---
 

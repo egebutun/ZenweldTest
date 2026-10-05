@@ -9,10 +9,10 @@ import { LocaleLink } from "@/components/common/LocaleLink";
 import { useHref, useT } from "@/lib/i18n-client";
 
 const DEMO_ACCOUNTS = [
-  { label: "Yönetici (Admin)", email: "admin@zenweld.com", password: DEMO_PASSWORDS.admin },
+  // Ana siteye yalnizca bireysel ve kurumsal musteriler girer. Yonetici
+  // /yonetim, bayi kendi magazasinin panelinden giris yapar.
   { label: "Bireysel", email: "bireysel@demo.com", password: DEMO_PASSWORDS.bireysel },
   { label: "Kurumsal", email: "kurumsal@demo.com", password: DEMO_PASSWORDS.kurumsal },
-  { label: "Bayi (ZENWELD-BAYİ-A)", email: "bayi@zenweld-bayi-a.com", password: DEMO_PASSWORDS.bayi },
 ];
 
 function LoginInner() {

@@ -148,20 +148,12 @@ export function Header() {
                       >
                         {t.account.title}
                       </LocaleLink>
-                      {(user.role === "business" || user.role === "dealer") && (
+                      {user.role === "business" && (
                         <LocaleLink
                           href="/hesabim/tekliflerim"
                           className="block px-4 py-2 text-sm hover:bg-zw-grey-50"
                         >
                           {t.nav.myQuotes}
-                        </LocaleLink>
-                      )}
-                      {user.role === "dealer" && (
-                        <LocaleLink
-                          href="/hesabim/stok-bildirimi"
-                          className="block px-4 py-2 text-sm hover:bg-zw-grey-50"
-                        >
-                          {t.account.stockNotice}
                         </LocaleLink>
                       )}
                       <button

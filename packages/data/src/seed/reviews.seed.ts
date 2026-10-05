@@ -70,7 +70,7 @@ export const reviews: ProductReview[] = [
     "Kalın sacda saatlerce kaynak yapıyorum, torç ısınıp elimi yakmıyor. Fiyatına göre gayet iyi.",
     { featured: true }),
   // --- ZENWELD-BAYI-A magazasina ait yorumlar ---
-  // Bayi sahibi ana siteden giris yapip Hesabim > Yorumlar'dan yonetir.
+  // Bayi sahibi magaza panelinden (bayi sitesi /yonetim/yorumlar) yonetir.
   //
   // ONEMLI: Bu yorumlarin urunleri stock.seed.ts icinde magazanin
   // stogunda OLMAYA ZORLANIR (BAYI_REVIEW_PRODUCTS). Aksi halde yorum,

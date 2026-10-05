@@ -10,10 +10,10 @@ import {
   type ReactNode,
 } from "react";
 import type { User, UserRole } from "@zenweld/data";
-import { addUser, findUserByEmail, findUserById, saveUser, useDatabase } from "@zenweld/store";
+import { addUser, findUserById, getSnapshot, saveUser, useDatabase } from "@zenweld/store";
 import { demoHash, verifyPassword } from "./hash";
 
-/** Ana site (musteri ve bayi) oturumu. */
+/** Ana site (musteri) oturumu. */
 const SESSION_KEY = "zenweld.session.v1";
 
 export interface RegisterInput {
@@ -62,26 +62,57 @@ const AuthContext = createContext<AuthContextValue | null>(null);
  *     hesaplarini kabul etmez; panel yalnizca yonetici hesaplarini kabul
  *     eder. Izinsiz rol, "hesap bulunamadi" ile ayni mesaji alir — boylece
  *     ana sitenin giris formu yonetici e-postalarini ele vermez.
+ *   - storeId: hangi sitenin hesaplari. Bos = ana site (Zenweld). Bir bayi
+ *     magazasinin kimligi verilirse yalnizca o magazanin uyeleri (User.storeId)
+ *     ve o magazayi isleten bayi hesabi (User.retailerId) kabul edilir.
+ *     Kayit olan kullanici o magazanin uyesi olarak acilir.
+ *
+ *   ana site           roles: bireysel, kurumsal        storeId: -
+ *   ana yonetim paneli roles: yonetici                  storeId: -
+ *   bayi magazasi      roles: bireysel, kurumsal        storeId: magaza
+ *   bayi paneli        roles: bayi                      storeId: magaza
  */
 export function AuthProvider({
   children,
   sessionKey = SESSION_KEY,
   roles,
+  storeId,
 }: {
   children: ReactNode;
   sessionKey?: string;
   /** Bos birakilirsa tum roller giris yapabilir. */
   roles?: UserRole[];
+  /** Bayi magazasi (Retailer.id); bos ise ana site. */
+  storeId?: string;
 }) {
   const db = useDatabase();
   const [userId, setUserId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
   const allowed = useCallback(
-    (u: User) => !roles || roles.includes(u.role),
+    (u: User) => {
+      if (roles && !roles.includes(u.role)) return false;
+      // Bayi hesabi kendi magazasina, musteri uye oldugu siteye baglidir.
+      const site = u.role === "dealer" ? u.retailerId : u.storeId;
+      return (site || undefined) === (storeId || undefined);
+    },
     // roles dizisi her render'da yeniden olusabilir; icerigine bagliyoruz.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [roles?.join("|")],
+    [roles?.join("|"), storeId],
+  );
+
+  /**
+   * Bu sitenin hesaplari arasinda e-posta arar. Ayni e-posta ana sitede ve
+   * bir bayi magazasinda ayri ayri uye olabilir; ikisi farkli hesaptir.
+   */
+  const findHere = useCallback(
+    (email: string) => {
+      const wanted = email.toLowerCase().trim();
+      return getSnapshot().users.find(
+        (u) => u.email.toLowerCase() === wanted && allowed(u),
+      );
+    },
+    [allowed],
   );
 
   useEffect(() => {
@@ -100,8 +131,8 @@ export function AuthProvider({
   }, [userId, db, allowed]);
 
   const login = useCallback<AuthContextValue["login"]>((email, password) => {
-    const found = findUserByEmail(email);
-    if (!found || !allowed(found)) {
+    const found = findHere(email);
+    if (!found) {
       return { ok: false, error: "Bu e-posta ile kayıtlı bir hesap bulunamadı." };
     }
     if (!verifyPassword(password, found.passwordHash)) {
@@ -118,7 +149,7 @@ export function AuthProvider({
     }
     setUserId(found.id);
     return { ok: true, user: found };
-  }, [allowed, sessionKey]);
+  }, [findHere, sessionKey]);
 
   const logout = useCallback(() => {
     try {
@@ -130,7 +161,14 @@ export function AuthProvider({
   }, [sessionKey]);
 
   const register = useCallback<AuthContextValue["register"]>((input) => {
-    if (findUserByEmail(input.email)) {
+    // Kayit, bu sitenin (ana site ya da magaza) hesaplari arasinda tekil olmali.
+    const wanted = input.email.toLowerCase().trim();
+    const taken = getSnapshot().users.some(
+      (u) =>
+        u.email.toLowerCase() === wanted &&
+        ((u.role === "dealer" ? u.retailerId : u.storeId) || undefined) === (storeId || undefined),
+    );
+    if (taken) {
       return { ok: false, error: "Bu e-posta adresi zaten kayıtlı." };
     }
     if (input.password.length < 6) {
@@ -152,6 +190,7 @@ export function AuthProvider({
       taxNumber: input.taxNumber,
       sector: input.sector,
       dealerCode: input.dealerCode,
+      storeId,
       createdAt: new Date().toISOString(),
       newsletter: input.newsletter ?? false,
     };
@@ -163,7 +202,7 @@ export function AuthProvider({
     }
     setUserId(newUser.id);
     return { ok: true, user: newUser };
-  }, [sessionKey]);
+  }, [sessionKey, storeId]);
 
   const updateProfile = useCallback<AuthContextValue["updateProfile"]>(
     (patch) => {

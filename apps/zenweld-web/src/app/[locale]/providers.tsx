@@ -8,10 +8,14 @@ import { LocaleProvider } from "@/lib/i18n-client";
 import { QuoteListProvider } from "@/lib/quote-list";
 
 /**
- * Ana siteye giris yapabilecek roller. Yonetici hesaplari burada GECERSIZ;
- * yoneticiler yalnizca ayri yonetim panelinden (/yonetim) giris yapar.
+ * Ana siteye giris yapabilecek roller: bireysel ve kurumsal musteriler.
+ *   - Yoneticiler yalnizca ayri yonetim panelinden (/yonetim) giris yapar.
+ *   - Bayiler ana sitenin musterisi degildir; kendi e-ticaret
+ *     magazalarini bayi sitesinin panelinden (/yonetim) yonetir. Zenweld
+ *     ile bayiler arasindaki isler ileride ayri bir B2B uygulamasinda.
+ *   - Bayi magazalarinin uyeleri (User.storeId) ana siteye giris yapamaz.
  */
-const SITE_ROLES: UserRole[] = ["individual", "business", "dealer"];
+const SITE_ROLES: UserRole[] = ["individual", "business"];
 
 export function Providers({
   locale,

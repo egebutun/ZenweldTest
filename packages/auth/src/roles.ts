@@ -7,11 +7,15 @@ export const ROLE_LABELS: Record<UserRole, { tr: string; en: string }> = {
   admin: { tr: "Yönetici", en: "Admin" },
 };
 
-/** Hangi rol hangi hesap sekmelerini gorur. */
+/**
+ * Hangi rol ana sitenin "Hesabim" sekmelerini gorur. Bayi hesaplari ana
+ * siteye giris yapmaz; magazalarini bayi sitesinin panelinden (/yonetim)
+ * yonetir.
+ */
 export const ACCOUNT_TABS: Record<UserRole, string[]> = {
   individual: ["profil", "favorilerim", "garantilerim", "siparislerim", "adreslerim"],
   business: ["profil", "tekliflerim", "favorilerim", "garantilerim", "adreslerim"],
-  dealer: ["profil", "stok-bildirimi", "tekliflerim", "siparislerim", "adreslerim"],
+  dealer: [],
   admin: ["profil"],
 };
 
@@ -20,7 +24,7 @@ export function canAccessAdmin(role: UserRole | undefined): boolean {
 }
 
 export function canRequestQuote(role: UserRole | undefined): boolean {
-  return role === "business" || role === "dealer" || role === "admin" || role === undefined;
+  return role === "business" || role === "admin" || role === undefined;
 }
 
 export function canManageStock(role: UserRole | undefined): boolean {

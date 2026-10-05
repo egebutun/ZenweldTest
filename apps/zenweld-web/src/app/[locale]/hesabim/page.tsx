@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Heart, Package, ShieldCheck, Store } from "lucide-react";
+import { FileText, Heart, Package, ShieldCheck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { ordersForUser, quotesForUser, useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
@@ -20,11 +20,10 @@ export default function AccountHome() {
   const warranties = db.warranties.filter((w) => w.email === user.email);
 
   const cards = [
-    { href: "/hesabim/tekliflerim", label: t.account.myQuotes, value: quotes.length, Icon: FileText, show: user.role === "business" || user.role === "dealer" },
+    { href: "/hesabim/tekliflerim", label: t.account.myQuotes, value: quotes.length, Icon: FileText, show: user.role === "business" },
     { href: "/hesabim/siparislerim", label: t.account.myOrders, value: orders.length, Icon: Package, show: user.role !== "admin" },
     { href: "/hesabim/favorilerim", label: t.account.favourites, value: favourites.ids.length, Icon: Heart, show: true },
     { href: "/hesabim/garantilerim", label: t.account.warranties, value: warranties.length, Icon: ShieldCheck, show: user.role !== "admin" },
-    { href: "/hesabim/stok-bildirimi", label: t.account.stockNotice, value: "→", Icon: Store, show: user.role === "dealer" },
   ].filter((c) => c.show);
 
   return (

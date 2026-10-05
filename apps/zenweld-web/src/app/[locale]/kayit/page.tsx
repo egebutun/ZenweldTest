@@ -8,7 +8,7 @@ import { Alert, Button, Checkbox, FormRow, Input } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useHref, useT } from "@/lib/i18n-client";
 
-type AccountType = "individual" | "business" | "dealer";
+type AccountType = "individual" | "business";
 
 export default function RegisterPage() {
   const t = useT();
@@ -18,7 +18,6 @@ export default function RegisterPage() {
 
   const [type, setType] = useState<AccountType>("individual");
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -31,7 +30,6 @@ export default function RegisterPage() {
     taxOffice: "",
     taxNumber: "",
     sector: "",
-    dealerCode: "",
     newsletter: false,
   });
 
@@ -50,12 +48,6 @@ export default function RegisterPage() {
       label: t.auth.accountTypeBusiness,
       desc: t.auth.accountTypeBusinessDesc,
       Icon: Building2,
-    },
-    {
-      id: "dealer",
-      label: t.auth.accountTypeDealer,
-      desc: t.auth.accountTypeDealerDesc,
-      Icon: Store,
     },
   ];
 
@@ -85,7 +77,6 @@ export default function RegisterPage() {
             sector: form.sector,
           }
         : {}),
-      ...(type === "dealer" ? { dealerCode: form.dealerCode } : {}),
     };
 
     const result = register(input);
@@ -94,12 +85,7 @@ export default function RegisterPage() {
       return;
     }
 
-    if (type === "dealer") {
-      setNotice(t.auth.dealerPending);
-      setTimeout(() => router.push(href("/hesabim")), 2500);
-    } else {
-      router.push(href("/hesabim"));
-    }
+    router.push(href("/hesabim"));
   };
 
   return (
@@ -108,7 +94,7 @@ export default function RegisterPage() {
         <h1 className="font-display text-4xl font-bold uppercase">{t.auth.registerTitle}</h1>
         <p className="mt-2 text-sm text-zw-grey-600">{t.auth.registerSubtitle}</p>
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-3">
+        <div className="mt-7 grid gap-3 sm:grid-cols-2">
           {types.map(({ id, label, desc, Icon }) => (
             <button
               key={id}
@@ -127,9 +113,20 @@ export default function RegisterPage() {
           ))}
         </div>
 
+        {/* Bayiler ana sitede hesap acmaz; bayilik basvuru formuna yonlendirilir. */}
+        <p className="mt-3 flex items-center gap-2 text-sm text-zw-grey-600">
+          <Store size={16} className="text-zw-red-600" />
+          {t.dealerApply.homeTitle}{" "}
+          <LocaleLink
+            href="/kesfet/bayilik-basvurusu"
+            className="font-semibold text-zw-red-600 hover:underline"
+          >
+            {t.dealerApply.homeCta} →
+          </LocaleLink>
+        </p>
+
         <form onSubmit={submit} className="mt-8 space-y-4">
           {error && <Alert tone="danger">{error}</Alert>}
-          {notice && <Alert tone="success">{notice}</Alert>}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <FormRow label={t.auth.firstName} required>
@@ -177,18 +174,6 @@ export default function RegisterPage() {
           {type === "business" && (
             <FormRow label={t.auth.sector}>
               <Input value={form.sector} onChange={(e) => set("sector", e.target.value)} />
-            </FormRow>
-          )}
-
-          {type === "dealer" && (
-            <FormRow
-              label={t.auth.dealerCode}
-              hint="Bayi kodunuz yoksa boş bırakabilirsiniz; ekibimiz başvurunuzu değerlendirecektir."
-            >
-              <Input
-                value={form.dealerCode}
-                onChange={(e) => set("dealerCode", e.target.value)}
-              />
             </FormRow>
           )}
 
