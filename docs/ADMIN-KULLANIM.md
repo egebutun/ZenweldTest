@@ -4,8 +4,8 @@
 > mağazalarını yönettiği panel ayrıdır: `docs/MAGAZA-PANELI.md`.
 
 Menü sırası: Panel · Ürünler · Stok Matrisi · Siparişler · Teklifler · Bayiler ·
-Online Satıcılar · Üyeler · Etkinlikler · Haberler · Blog · Yorumlar · Görünüm ·
-Veri Yönetimi
+Online Satıcılar · Üyeler · Garantiler · Etkinlikler · Haberler · Blog · Yorumlar ·
+Görünüm · Veri Yönetimi
 
 Panel adresi: `http://localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`)
 Demo giriş: `admin@zenweld.com` / `admin123`
@@ -176,7 +176,23 @@ Yönetici hesapları silinemez.
 
 ---
 
-## 9. Veri Yönetimi ⭐
+## 9. Garantiler
+
+Ana sitede **Keşfet → Garanti → Garanti Kaydı** formuyla yapılan kayıtlar.
+Müşterinin `Hesabım → Garantilerim` sayfası ve sitedeki garanti sorgulama aynı
+kayıtları kullanır; burada yapılan değişiklik oralara anında yansır.
+
+- Seri no, isim veya e-posta ile arama; "garantisi devam eden / süresi dolan /
+  uzatılmış" filtresi
+- **Garanti bitişi** tarih kutusundan elle değiştirilebilir
+- **+12 ay** (uzatılmış garanti) işaretlenince / kaldırılınca bitiş tarihi ürünün
+  garanti süresine göre yeniden hesaplanır
+- Kaydı yapan kişi ana sitenin üyesiyse "Üye" etiketi görünür
+- Silme ve **CSV indir**
+
+---
+
+## 10. Veri Yönetimi ⭐
 
 | İşlem | Ne yapar |
 |---|---|
