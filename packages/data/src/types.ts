@@ -518,6 +518,50 @@ export interface WarrantyRecord {
 }
 
 /* ------------------------------------------------------------------ */
+/* Hakkimizda sayfasi ve satis temsilcileri (yonetim panelinden)       */
+/* ------------------------------------------------------------------ */
+
+/** Hakkimizda sayfasindaki bir metin bolumu. */
+export interface AboutSection {
+  id: string;
+  title: I18nText;
+  /** Bicimlendirme: "## ara baslik", "- madde", "**kalin**" (haberlerle ayni) */
+  body: I18nText;
+  /** Bolumun yaninda gosterilecek gorsel (istege bagli) */
+  imageUrl?: string;
+}
+
+/** Hakkimizda sayfasinin ustundeki rakam kutulari ("25+ Yillik Tecrube" gibi). */
+export interface AboutStat {
+  id: string;
+  value: string;
+  label: I18nText;
+}
+
+export interface AboutContent {
+  heroTitle: I18nText;
+  heroSubtitle: I18nText;
+  heroImage?: string;
+  stats: AboutStat[];
+  sections: AboutSection[];
+  updatedAt: string;
+}
+
+/** Kesfet > Satis Temsilcilerimiz */
+export interface SalesRep {
+  id: string;
+  name: string;
+  /** Sorumlu oldugu bolge veya gorevi ("Ege Bolge", "Demo ve Satis Sonrasi ...") */
+  region: I18nText;
+  phone: string;
+  email: string;
+  photoUrl?: string;
+  /** Listede siralama (kucuk olan once) */
+  order: number;
+  active: boolean;
+}
+
+/* ------------------------------------------------------------------ */
 /* Veritabani anlik goruntusu (localStorage'da tutulan sekil)          */
 /* ------------------------------------------------------------------ */
 
@@ -571,5 +615,7 @@ export interface ZenweldDatabase {
   faqs: FaqItem[];
   reviews: ProductReview[];
   warranties: WarrantyRecord[];
+  about: AboutContent;
+  salesReps: SalesRep[];
   settings: SiteSettings;
 }

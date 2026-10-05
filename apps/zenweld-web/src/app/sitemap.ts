@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/yetkili-bayi-ve-servis-agi", priority: 0.9, freq: "monthly" },
     { path: "/teklif-al", priority: 0.9, freq: "monthly" },
     { path: "/hakkimizda", priority: 0.6, freq: "yearly" },
+    { path: "/kesfet/satis-temsilcilerimiz", priority: 0.6, freq: "monthly" },
     { path: "/kesfet/welders-club", priority: 0.6, freq: "monthly" },
     { path: "/kesfet/bayilik-basvurusu", priority: 0.7, freq: "yearly" },
     { path: "/kesfet/garanti", priority: 0.6, freq: "yearly" },

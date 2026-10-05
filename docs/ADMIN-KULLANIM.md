@@ -4,8 +4,8 @@
 > mağazalarını yönettiği panel ayrıdır: `docs/MAGAZA-PANELI.md`.
 
 Menü sırası: Panel · Ürünler · Stok Matrisi · Siparişler · Teklifler · Bayiler ·
-Online Satıcılar · Üyeler · Garantiler · Etkinlikler · Haberler · Blog · Yorumlar ·
-Görünüm · Veri Yönetimi
+Online Satıcılar · Satış Temsilcileri · Üyeler · Garantiler · Etkinlikler ·
+Haberler · Blog · Hakkımızda · Yorumlar · Görünüm · Veri Yönetimi
 
 Panel adresi: `http://localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`)
 Demo giriş: `admin@zenweld.com` / `admin123`
@@ -160,7 +160,20 @@ Satıcıyı silmek, o satıcıya ait tüm stok kayıtlarını da siler.
 
 ---
 
-## 8. Üyeler
+## 8. Satış Temsilcileri
+
+Sitedeki **Keşfet → Satış Temsilcilerimiz** sayfasının listesi.
+
+- **Temsilci ekle / düzenle:** ad soyad, bölge veya görev (TR/EN), telefon,
+  e-posta, isteğe bağlı fotoğraf (yoksa baş harfler gösterilir)
+- **Sıra:** oklarla yukarı/aşağı taşınır; sitede bu sırayla görünür
+- **Sitede / Gizli:** rozete tıklayınca temsilci sitede gizlenir ama silinmez
+- Sitedeki bölge düğmeleri listedeki bölgelerden kendiliğinden oluşur
+- Telefon, sitede hem "Ara" hem "WhatsApp" düğmesine bağlanır
+
+---
+
+## 9. Üyeler
 
 Yalnızca **ana sitenin** üyeleri (bireysel, kurumsal) ve yönetici hesapları
 listelenir. Bayiler ana sitenin üyesi değildir; bayi mağazalarının müşterileri de
@@ -176,7 +189,7 @@ Yönetici hesapları silinemez.
 
 ---
 
-## 9. Garantiler
+## 10. Garantiler
 
 Ana sitede **Keşfet → Garanti → Garanti Kaydı** formuyla yapılan kayıtlar.
 Müşterinin `Hesabım → Garantilerim` sayfası ve sitedeki garanti sorgulama aynı
@@ -192,7 +205,22 @@ kayıtları kullanır; burada yapılan değişiklik oralara anında yansır.
 
 ---
 
-## 10. Veri Yönetimi ⭐
+## 11. Hakkımızda
+
+Sitedeki **Hakkımızda** sayfasının tamamı buradan yönetilir:
+
+- **Sayfa başlığı:** başlık, alt başlık (TR/EN) ve arka plan görseli
+- **Rakamlar:** "25+ Yıllık Tecrübe" gibi kutular; eklenir, silinir
+- **Bölümler:** başlık + metin (TR/EN) + isteğe bağlı görsel. Bölüm eklenir,
+  silinir, oklarla sıralanır. Metinde `## Ara başlık`, `- madde`, `**kalın**`
+  kullanılabilir. Görseli olan bölümler metin ve görsel yan yana gösterilir.
+- İngilizce alan boş bırakılırsa İngilizce sayfada Türkçe metin gösterilir.
+- Değişiklikler **Kaydet** ile sayfaya yansır; kaydedilmemiş değişiklik varsa
+  uyarı çıkar.
+
+---
+
+## 11. Veri Yönetimi ⭐
 
 | İşlem | Ne yapar |
 |---|---|

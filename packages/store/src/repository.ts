@@ -1,6 +1,7 @@
 "use client";
 
 import type {
+  AboutContent,
   BlogPost,
   Dealer,
   DealerStock,
@@ -12,6 +13,7 @@ import type {
   Retailer,
   RetailerStock,
   RichTextStyle,
+  SalesRep,
   User,
   WarrantyRecord,
   ZenweldDatabase,
@@ -901,4 +903,40 @@ export function toggleFeaturedReview(id: string): boolean {
     review.featured = !review.featured;
   });
   return ok;
+}
+
+/* ------------------------------------------------------------------ */
+/* Hakkimizda ve satis temsilcileri                                    */
+/* ------------------------------------------------------------------ */
+
+/** Hakkimizda sayfasinin tum icerigini kaydeder. */
+export function saveAbout(about: AboutContent): void {
+  mutate((db) => {
+    db.about = { ...about, updatedAt: nowIso() };
+  });
+}
+
+/** Sitede gorunen (aktif) temsilciler, siraya gore. */
+export function listSalesReps(db: ZenweldDatabase = getSnapshot(), includeInactive = false): SalesRep[] {
+  return [...(db.salesReps ?? [])]
+    .filter((r) => includeInactive || r.active)
+    .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, "tr"));
+}
+
+/** Ekler veya gunceller (id bos ise yeni kayit). */
+export function saveSalesRep(rep: SalesRep): SalesRep {
+  const record = { ...rep, id: rep.id || uid("sr") };
+  mutate((db) => {
+    db.salesReps = db.salesReps ?? [];
+    const idx = db.salesReps.findIndex((r) => r.id === record.id);
+    if (idx >= 0) db.salesReps[idx] = record;
+    else db.salesReps.push(record);
+  });
+  return record;
+}
+
+export function deleteSalesRep(id: string): void {
+  mutate((db) => {
+    db.salesReps = (db.salesReps ?? []).filter((r) => r.id !== id);
+  });
 }

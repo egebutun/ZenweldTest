@@ -1,6 +1,6 @@
 "use client";
 
-import type { Product, ZenweldDatabase } from "@zenweld/data";
+import { createSeedDatabase, type Product, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, replaceDatabase } from "./database";
 import { setRetailerStock } from "./repository";
 
@@ -44,6 +44,13 @@ export async function importDatabaseJson(file: File): Promise<void> {
   const parsed = JSON.parse(text) as ZenweldDatabase;
   if (!parsed.products || !parsed.retailers) {
     throw new Error("Geçersiz Zenweld veri dosyası.");
+  }
+  // Eski bir yedekte sonradan eklenen bolumler (or. Hakkimizda, satis
+  // temsilcileri) olmayabilir; eksikler baslangic verisinden tamamlanir.
+  const seed = createSeedDatabase() as unknown as Record<string, unknown>;
+  const target = parsed as unknown as Record<string, unknown>;
+  for (const key of Object.keys(seed)) {
+    if (target[key] === undefined) target[key] = seed[key];
   }
   replaceDatabase(parsed);
 }

@@ -106,6 +106,7 @@ export function useMainMenu(): TopMenu[] {
           href: "/hakkimizda",
           links: [
             { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
+            { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/kesfet/satis-temsilcilerimiz" },
             { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/kesfet/bayilik-basvurusu" },
             { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/kesfet/welders-club" },
             { label: t.explore.guide, description: t.explore.guideDesc, href: "/kesfet/kaynak-rehberi" },
@@ -168,6 +169,7 @@ export function useFooterMenu() {
         title: t.footer.company,
         links: [
           { label: t.footer.about, href: "/hakkimizda" },
+          { label: t.explore.salesReps, href: "/kesfet/satis-temsilcilerimiz" },
           { label: t.footer.findStore, href: "/yetkili-bayi-ve-servis-agi" },
           { label: t.dealerApply.title, href: "/kesfet/bayilik-basvurusu" },
           { label: t.footer.contact, href: "/destek/iletisim" },

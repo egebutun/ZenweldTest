@@ -13,6 +13,7 @@ export { reviews } from "./seed/reviews.seed";
 export { events, news } from "./seed/events.seed";
 export { stockPhotos } from "./seed/images";
 export { defaultSettings } from "./seed/settings.seed";
+export { about, salesReps } from "./seed/company.seed";
 
 import type { ZenweldDatabase } from "./types";
 import { categories, categoryGroups } from "./seed/categories.seed";
@@ -25,9 +26,10 @@ import { blogPosts, faqs, quotes, orders, warranties } from "./seed/content.seed
 import { reviews } from "./seed/reviews.seed";
 import { events, news } from "./seed/events.seed";
 import { defaultSettings } from "./seed/settings.seed";
+import { about, salesReps } from "./seed/company.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 34;
+export const DB_VERSION = 35;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(
@@ -50,6 +52,8 @@ export function createSeedDatabase(): ZenweldDatabase {
       faqs,
       reviews,
       warranties,
+      about,
+      salesReps,
       settings: defaultSettings,
     }),
   ) as ZenweldDatabase;
