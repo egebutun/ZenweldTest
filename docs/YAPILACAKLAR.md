@@ -44,13 +44,11 @@ birlikte karar verilmeli.
   bağlanır, `NEXT_PUBLIC_SITE_URL` = `https://zenweld.com` tanımlanır.
 - **Başka sunucuya geçilirse** (kendi sunucu, Türk barındırma firması,
   Azure, AWS…): Vercel'e özel parçalar kaldırılır (yaklaşık 10 dakika):
-  - `apps/zenweld-web/vercel.json`, `apps/admin/vercel.json`,
-    `apps/bayi-shop/vercel.json`
+  - `apps/zenweld-web/vercel.json`, `apps/bayi-shop/vercel.json`
   - İki sitenin `src/lib/seo.ts` dosyasındaki `getSiteUrl()` içinde
     `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` yedeği
   - README ve kod yorumlarındaki Vercel anlatımları
-  - Yeni sunucuda `ADMIN_URL` (yönetim panelinin adresi) ve
-    `NEXT_PUBLIC_SITE_URL` tanımlanır.
+  - Yeni sunucuda `NEXT_PUBLIC_SITE_URL` tanımlanır.
 
 Proje standart bir Next.js projesidir; Vercel'e bağımlı değildir ve her
 Node.js sunucusunda `npm run build` + `npm start` ile çalışır.

@@ -53,7 +53,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 /**
  * OTURUM SAGLAYICI
  *
- * Ana site ile yonetim paneli (apps/admin) ayni tarayici deposunu
+ * Ana site ile yonetim paneli (ana site /yonetim) ayni tarayici deposunu
  * paylasir, ama oturumlari AYRIDIR:
  *
  *   - sessionKey: her uygulama oturumu kendi anahtarinda tutar; panelden

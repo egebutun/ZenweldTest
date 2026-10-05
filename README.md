@@ -41,20 +41,24 @@ Bu değişkenler derleme sırasında koda gömülür; değiştirdikten sonra yen
 npm install
 
 # Ana Zenweld sitesi → http://localhost:3000
+# Zenweld yönetim paneli de bu uygulamanın içinde → http://localhost:3000/yonetim
 npm run dev:web
 
-# Yönetim paneli (ayrı uygulama) → http://localhost:3000/yonetim
-# Ayrı bir terminalde, ana site ile BİRLİKTE çalıştırın:
-npm run dev:admin
-
 # Bayi mağazası (ZENWELD-BAYİ-A) → http://localhost:3001
+# Mağaza paneli de bu uygulamanın içinde → http://localhost:3001/yonetim
 npm run dev:bayi
 ```
 
-**Yönetim paneli ayrı bir uygulamadır** (`apps/admin`), ama ana sitenin adresi
-altında açılır: `localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`). Paneli
-**her zaman bu adresten** açın. `localhost:3002` doğrudan açılırsa panel çalışır
-ama tarayıcı deposu ayrı olduğu için yaptığınız değişiklikler sitede görünmez.
+Her site kendi yönetim panelini içinde taşır; panelin ayrı bir adresi veya ayrı
+bir Vercel projesi yoktur:
+
+| Site | Paneli |
+|---|---|
+| Ana site (`apps/zenweld-web`) | `/yonetim` — Zenweld yönetimi |
+| Bayi mağazası (`apps/bayi-shop`) | `/yonetim` — mağaza yönetimi (bayi) |
+
+Paneller kendi giriş ekranına ve sitedeki müşteri oturumundan ayrı kendi
+oturumuna sahiptir.
 
 İki siteyi **aynı anda** çalıştırmak, ürün sayfasındaki "Ayrıca online alışveriş
 olarak şurada da mevcuttur" bölümünden bayi mağazasına geçişi denemek için gerekir.
@@ -230,7 +234,10 @@ ZenweldTest/
     │       │   │      · urun-secici · rehber
     │       │   ├── destek/                     sss · iletisim · servis-agi
     │       │   ├── kurumsal/                   kvkk · gizlilik · iade …
-    │       │   └── (yönetim paneli ayrı uygulamadır: apps/admin, /yonetim)
+    │       │   ├── (../yonetim/ — [locale] dışında) ZENWELD YÖNETİM PANELİ (yalnızca TR)
+    │       │   │   └── urunler · stok · siparisler · teklifler · bayiler · saticilar
+    │       │   │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
+    │       │   │      · gorunum · veri
     │       ├── components/
     │       │   ├── layout/    Header · MegaMenu · Footer · DemoRibbon
     │       │   ├── search/    SearchOverlay

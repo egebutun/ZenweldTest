@@ -10,7 +10,7 @@ Görünüm · Veri Yönetimi
 Panel adresi: `http://localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`)
 Demo giriş: `admin@zenweld.com` / `admin123`
 
-> Panel ana siteden **ayrı bir uygulamadır** ve kendi giriş ekranı vardır. Ana
+> Panel ana sitenin içinde, kendi bölümünde çalışır ve kendi giriş ekranı vardır. Ana
 > sitenin "Giriş Yap" sayfası yönetici hesaplarını kabul etmez; sitede panele
 > giden bir bağlantı da yoktur. Panelden çıkış yapmak sitedeki oturumu etkilemez.
 

@@ -6,7 +6,7 @@ import { Badge } from "./Badge";
 
 /**
  * Bir kampanyanin durumunu tek satirda gosterir: gecerli / planlandi /
- * bitti. Yonetim panelindeki (apps/admin) urun listesi ve urun formu ile
+ * bitti. Yonetim panelindeki (ana site /yonetim) urun listesi ve urun formu ile
  * ana sitedeki bayi Stok Bildirimi sayfasi ortak kullanir.
  */
 export function CampaignBadge({ discount: d, now }: { discount?: ProductDiscount; now: Date }) {
