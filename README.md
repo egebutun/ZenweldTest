@@ -377,8 +377,16 @@ tanımlamanız yeterlidir.
 
 ### Demoyu aramaya kapatmak
 
-Vercel'de `NEXT_PUBLIC_NOINDEX=1` tanımlarsanız `robots.txt` her şeyi engeller ve
-tüm sayfalara `noindex` eklenir. Demo bir `vercel.app` adresindeyken bu önerilir.
+Vercel'de `NEXT_PUBLIC_NOINDEX=1` tanımlarsanız (iki sitenin projesinde de) tüm
+sayfalara `<meta name="robots" content="noindex, nofollow">` eklenir ve site
+haritası `robots.txt`'den kaldırılır. Demo bir `vercel.app` adresindeyken bu önerilir.
+Değişken derleme sırasında okunur; ekledikten sonra **Redeploy** gerekir.
+
+`robots.txt` bu modda taramayı **engellemez**, bilerek: Google sayfayı tarayamazsa
+`noindex` etiketini de göremez ve adresi başka kaynaktan bulursa yine indeksleyebilir.
+`robots.txt` yalnızca yönetim panelini (`/yonetim`), hesap ve API sayfalarını kapatır.
+Yönetim panelleri değişkenden bağımsız olarak her zaman `noindex`'tir (etiket,
+`X-Robots-Tag` başlığı ve `robots.txt`).
 
 ---
 
