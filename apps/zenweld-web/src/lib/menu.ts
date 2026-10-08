@@ -96,23 +96,13 @@ export function useMainMenu(): TopMenu[] {
       };
     });
 
-    // Urun disi menuler. Alt basligi olmayan menuler (Garanti) tek, basliksiz
+    // Urun disi menuler. Alt basligi olmayan menuler (Destek, Garanti) tek, basliksiz
     // kolondan olusur (label: ""); mega menu bunu sol bolmesiz gosterir.
     const warranty: TopMenu = {
       id: "garanti",
       label: t.nav.warranty,
       href: "/garanti",
-      columns: [
-        {
-          label: "",
-          href: "/garanti",
-          links: [
-            { label: t.nav.warrantyRegister, description: t.explore.registerWarrantyDesc, href: "/garanti/kayit" },
-            { label: t.nav.warrantyCheck, description: t.explore.checkWarrantyDesc, href: "/garanti/sorgulama" },
-            { label: t.nav.warrantyTerms, description: t.nav.warrantyTermsDesc, href: "/garanti/kosullar" },
-          ],
-        },
-      ],
+      columns: [{ label: "", href: "/garanti", links: warrantyLinks(t) }],
     };
 
     const explore: TopMenu = {
@@ -122,12 +112,19 @@ export function useMainMenu(): TopMenu[] {
       columns: exploreColumns(t),
     };
 
-    return [...productMenus, warranty, explore];
+    const support: TopMenu = {
+      id: "destek",
+      label: t.nav.support,
+      href: "/sss",
+      columns: [{ label: "", href: "/sss", links: supportLinks(t) }],
+    };
+
+    return [...productMenus, explore, support, warranty];
   }, [db, locale, t]);
 }
 
 /**
- * Kesfet menusunun alt basliklari. Ust menu ve alt bilgi ayni listeyi
+ * Kesfet menusunun alt basliklari. Ust menu ve alt bilgi ayni listeleri
  * kullanir; bir baglanti eklendiginde iki yerde de gorunur.
  */
 function exploreColumns(t: Dictionary): MenuColumn[] {
@@ -138,14 +135,6 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
       links: [
         { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
         { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/satis-temsilcilerimiz" },
-        { label: t.support.contactTitle, description: t.support.contactCardText, href: "/iletisim" },
-      ],
-    },
-    {
-      label: t.nav.dealerNetwork,
-      href: "/yetkili-bayi-ve-servis-agi",
-      links: [
-        { label: t.nav.findDealerService, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi" },
         { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/bayilik-basvurusu" },
       ],
     },
@@ -161,9 +150,8 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
     },
     {
       label: t.nav.other,
-      href: "/sss",
+      href: "/urun-secici",
       links: [
-        { label: t.support.faqTitle, description: t.support.faqCardText, href: "/sss" },
         { label: t.explore.productSelector, description: t.explore.productSelectorDesc, href: "/urun-secici" },
         { label: t.explore.guide, description: t.explore.guideDesc, href: "/kaynak-rehberi" },
         { label: t.explore.msds, description: t.explore.msdsDesc, href: "/msds" },
@@ -173,28 +161,39 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
   ];
 }
 
+/** Garanti menusu (alt basliksiz). */
+function warrantyLinks(t: Dictionary): MenuLink[] {
+  return [
+    { label: t.nav.warrantyRegister, description: t.explore.registerWarrantyDesc, href: "/garanti/kayit" },
+    { label: t.nav.warrantyCheck, description: t.explore.checkWarrantyDesc, href: "/garanti/sorgulama" },
+    { label: t.nav.warrantyTerms, description: t.nav.warrantyTermsDesc, href: "/garanti/kosullar" },
+  ];
+}
+
+/** Destek menusu (alt basliksiz). */
+function supportLinks(t: Dictionary): MenuLink[] {
+  return [
+    { label: t.support.faqTitle, description: t.support.faqCardText, href: "/sss" },
+    { label: t.nav.findDealerService, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi" },
+    { label: t.support.contactTitle, description: t.support.contactCardText, href: "/iletisim" },
+  ];
+}
+
+const plainLinks = (links: MenuLink[]) => links.map(({ label, href }) => ({ label, href }));
+
 /**
  * ALT BILGI
  *
- * Ust menunun aynisi: Garanti + Kesfet'in alt basliklari, sonda
- * Politikalar & Yasal.
+ * Ust menunun aynisi ve ayni sirada: Kesfet'in alt basliklari, Destek,
+ * Garanti; sonda Politikalar & Yasal.
  */
 export function useFooterMenu() {
   const t = useT();
   return useMemo(
     () => [
-      {
-        title: t.nav.warranty,
-        links: [
-          { label: t.nav.warrantyRegister, href: "/garanti/kayit" },
-          { label: t.nav.warrantyCheck, href: "/garanti/sorgulama" },
-          { label: t.nav.warrantyTerms, href: "/garanti/kosullar" },
-        ],
-      },
-      ...exploreColumns(t).map((col) => ({
-        title: col.label,
-        links: col.links.map(({ label, href }) => ({ label, href })),
-      })),
+      ...exploreColumns(t).map((col) => ({ title: col.label, links: plainLinks(col.links) })),
+      { title: t.nav.support, links: plainLinks(supportLinks(t)) },
+      { title: t.nav.warranty, links: plainLinks(warrantyLinks(t)) },
       {
         title: t.footer.legal,
         links: [

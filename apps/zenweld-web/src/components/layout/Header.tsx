@@ -75,15 +75,15 @@ export function Header() {
             <ZenweldLogo className="h-7 w-auto sm:h-8" />
           </LocaleLink>
 
-          {/* Dar masaustunde (1024-1535px) yer acmak icin ok isareti gizlenir,
-              arama kutusu 1280px altinda simgeye kuculur. */}
-          <nav className="ml-4 hidden items-center gap-1 lg:flex">
+          {/* Dar masaustunde (1024-1535px) yer acmak icin ok isareti gizlenir;
+              1280px altinda basliklar sikisir, arama kutusu simgeye kuculur. */}
+          <nav className="ml-2 hidden items-center lg:flex xl:ml-4 xl:gap-1">
             {menus.map((menu) => (
               <button
                 key={menu.id}
                 onMouseEnter={() => setOpenMenu(menu.id)}
                 onClick={() => setOpenMenu(openMenu === menu.id ? null : menu.id)}
-                className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-sm xl:px-3 font-semibold transition-colors zw-focus ${
+                className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-sm xl:px-3 font-semibold transition-colors zw-focus ${
                   openMenu === menu.id
                     ? "bg-zw-grey-100 text-zw-ink"
                     : "text-zw-grey-700 hover:text-zw-ink"
