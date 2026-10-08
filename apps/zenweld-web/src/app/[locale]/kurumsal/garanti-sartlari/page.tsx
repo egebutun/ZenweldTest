@@ -3,9 +3,9 @@ import { isLocale, type Locale } from "@zenweld/i18n";
 import { SimpleContentPage } from "@/components/common/PageShell";
 import { placeholderPageMetadata } from "@/lib/seo";
 
-const TITLE = { tr: "Garanti Şartları", en: "Warranty Terms" };
+const TITLE = { tr: "Garanti Koşulları", en: "Warranty Terms" };
 const DESCRIPTION = {
-  tr: "Zenweld kaynak makineleri ve ekipmanları için garanti şartları.",
+  tr: "Zenweld kaynak makineleri ve ekipmanları için garanti koşulları.",
   en: "Warranty terms for Zenweld welding machines and equipment.",
 };
 

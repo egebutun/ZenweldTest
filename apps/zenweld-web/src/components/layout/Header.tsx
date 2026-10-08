@@ -64,7 +64,7 @@ export function Header() {
       >
         <div className="zw-container flex h-[72px] items-center gap-4">
           <button
-            className="-ml-1 rounded-[3px] p-2 text-zw-ink lg:hidden zw-focus"
+            className="-ml-1 rounded-[3px] p-2 text-zw-ink xl:hidden zw-focus"
             onClick={() => setDrawerOpen(true)}
             aria-label="Menü"
           >
@@ -75,23 +75,20 @@ export function Header() {
             <ZenweldLogo className="h-7 w-auto sm:h-8" />
           </LocaleLink>
 
-          <nav className="ml-4 hidden items-center gap-1 lg:flex">
+          {/* 8 baslik ancak 1280px ve uzerinde sigar; altinda yan menu acilir. */}
+          <nav className="ml-4 hidden items-center gap-1 xl:flex">
             {menus.map((menu) => (
               <button
                 key={menu.id}
                 onMouseEnter={() => setOpenMenu(menu.id)}
                 onClick={() => setOpenMenu(openMenu === menu.id ? null : menu.id)}
-                className={`flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-sm font-semibold transition-colors zw-focus ${
+                className={`flex items-center whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-semibold transition-colors zw-focus ${
                   openMenu === menu.id
                     ? "bg-zw-grey-100 text-zw-ink"
                     : "text-zw-grey-700 hover:text-zw-ink"
                 }`}
               >
                 {menu.label}
-                <ChevronDown
-                  size={16}
-                  className={`transition-transform ${openMenu === menu.id ? "rotate-180" : ""}`}
-                />
               </button>
             ))}
           </nav>
@@ -99,12 +96,12 @@ export function Header() {
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex h-10 items-center gap-2 rounded-[4px] border border-zw-grey-300 px-3 text-sm text-zw-grey-500 transition-colors hover:border-zw-ink md:w-44 xl:w-60 zw-focus"
+              className="flex h-10 items-center gap-2 rounded-[4px] border border-zw-grey-300 px-3 text-sm text-zw-grey-500 transition-colors hover:border-zw-ink md:w-44 xl:w-auto 2xl:w-44 zw-focus"
               aria-label={t.common.search}
             >
               <Search size={18} />
-              <span className="hidden truncate md:inline">{t.common.search}</span>
-              <kbd className="ml-auto hidden rounded border border-zw-grey-300 px-1 text-[10px] text-zw-grey-400 lg:inline">
+              <span className="hidden truncate md:inline xl:hidden 2xl:inline">{t.common.search}</span>
+              <kbd className="ml-auto hidden rounded border border-zw-grey-300 px-1 text-[10px] text-zw-grey-400 lg:inline xl:hidden 2xl:inline">
                 ⌘K
               </kbd>
             </button>
@@ -126,7 +123,7 @@ export function Header() {
               >
                 <UserIcon size={20} />
                 {user && (
-                  <span className="hidden max-w-24 truncate text-sm font-semibold sm:inline lg:hidden xl:inline">
+                  <span className="hidden max-w-24 truncate text-sm font-semibold sm:inline xl:hidden">
                     {user.firstName}
                   </span>
                 )}
@@ -208,7 +205,14 @@ export function Header() {
           </div>
         </div>
 
-        {openMenu && <MegaMenu menu={menus.find((m) => m.id === openMenu)!} />}
+        {openMenu && (
+          // key: menu degisince secili grup/kategori sifirlanir.
+          <MegaMenu
+            key={openMenu}
+            menu={menus.find((m) => m.id === openMenu)!}
+            onNavigate={() => setOpenMenu(null)}
+          />
+        )}
       </header>
 
       {drawerOpen && <MobileDrawer menus={menus} onClose={() => setDrawerOpen(false)} />}
@@ -224,14 +228,17 @@ export function Header() {
  * sagda secili kategorinin ilk 9 urunu 3x3 kart izgarasinda. Sag ustteki
  * baglanti kategorinin tum urunlerine goturur; urun sayisi 9'u asiyorsa
  * toplam sayi da gosterilir.
+ *
+ * Alt basligi olmayan menulerde (tek, basliksiz kolon) sol bolme gosterilmez.
  */
-function MegaMenu({ menu }: { menu: TopMenu }) {
+function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => void }) {
   const t = useT();
   const [activeColumn, setActiveColumn] = useState(0);
   const [activeLink, setActiveLink] = useState(0);
   const column = menu.columns[activeColumn];
   const link = column?.links[activeLink];
   const hasProducts = Boolean(link?.products);
+  const hasGroups = menu.columns.some((col) => col.label);
 
   // Grup degisince kategori secimi basa doner.
   const selectColumn = (i: number) => {
@@ -240,30 +247,36 @@ function MegaMenu({ menu }: { menu: TopMenu }) {
   };
 
   return (
-    <div className="absolute left-0 right-0 top-full hidden border-t border-zw-grey-200 bg-white shadow-xl lg:block">
+    <div className="absolute left-0 right-0 top-full hidden border-t border-zw-grey-200 bg-white shadow-xl xl:block">
       <div
         className={`zw-container grid gap-8 py-8 ${
-          hasProducts ? "grid-cols-[230px_260px_1fr]" : "grid-cols-[260px_1fr]"
+          hasProducts
+            ? "grid-cols-[230px_260px_1fr]"
+            : hasGroups
+              ? "grid-cols-[260px_1fr]"
+              : "grid-cols-1"
         }`}
       >
         {/* 1. bolme — gruplar */}
-        <div className="border-r border-zw-grey-200 pr-4">
-          {menu.columns.map((col, i) => (
-            <button
-              key={col.label}
-              onMouseEnter={() => selectColumn(i)}
-              onFocus={() => selectColumn(i)}
-              className={`flex w-full items-center justify-between rounded-[4px] px-4 py-3 text-left text-[15px] font-semibold transition-colors ${
-                i === activeColumn
-                  ? "bg-zw-grey-100 text-zw-ink"
-                  : "text-zw-grey-700 hover:text-zw-ink"
-              }`}
-            >
-              {col.label}
-              {i === activeColumn && <ChevronRight size={16} />}
-            </button>
-          ))}
-        </div>
+        {hasGroups && (
+          <div className="border-r border-zw-grey-200 pr-4">
+            {menu.columns.map((col, i) => (
+              <button
+                key={col.label}
+                onMouseEnter={() => selectColumn(i)}
+                onFocus={() => selectColumn(i)}
+                className={`flex w-full items-center justify-between rounded-[4px] px-4 py-3 text-left text-[15px] font-semibold transition-colors ${
+                  i === activeColumn
+                    ? "bg-zw-grey-100 text-zw-ink"
+                    : "text-zw-grey-700 hover:text-zw-ink"
+                }`}
+              >
+                {col.label}
+                {i === activeColumn && <ChevronRight size={16} />}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* 2. bolme — kategoriler (alt alta) */}
         <div className={hasProducts ? "border-r border-zw-grey-200 pr-4" : "grid grid-cols-3 gap-x-10 gap-y-7 pr-4"}>
@@ -272,6 +285,7 @@ function MegaMenu({ menu }: { menu: TopMenu }) {
               <LocaleLink
                 key={item.href}
                 href={item.href}
+                onClick={onNavigate}
                 onMouseEnter={() => setActiveLink(i)}
                 onFocus={() => setActiveLink(i)}
                 className={`flex items-center justify-between gap-2 rounded-[4px] px-3 py-2.5 text-left text-sm font-semibold transition-colors ${
@@ -287,7 +301,7 @@ function MegaMenu({ menu }: { menu: TopMenu }) {
                 </span>
               </LocaleLink>
             ) : (
-              <LocaleLink key={item.href} href={item.href} className="group block">
+              <LocaleLink key={item.href} href={item.href} onClick={onNavigate} className="group block">
                 <div className="font-display text-lg font-semibold text-zw-ink group-hover:text-zw-red-600">
                   {item.label}
                 </div>
@@ -318,6 +332,7 @@ function MegaMenu({ menu }: { menu: TopMenu }) {
               </div>
               <LocaleLink
                 href={link.href}
+                onClick={onNavigate}
                 className="flex shrink-0 items-center gap-1 text-sm font-semibold text-zw-red-600 hover:underline"
               >
                 {(link.productCount ?? 0) > (link.products?.length ?? 0)
@@ -334,6 +349,7 @@ function MegaMenu({ menu }: { menu: TopMenu }) {
                   <LocaleLink
                     key={product.id}
                     href={product.href}
+                    onClick={onNavigate}
                     className="group rounded-[4px] p-2.5 transition-colors hover:bg-zw-grey-50"
                   >
                     <div className="flex items-center gap-3">
@@ -380,7 +396,7 @@ function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: () => voi
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
-    <div className="fixed inset-0 z-[200] lg:hidden">
+    <div className="fixed inset-0 z-[200] xl:hidden">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="absolute left-0 top-0 h-full w-[88%] max-w-sm overflow-y-auto bg-white">
         <div className="flex items-center justify-between border-b border-zw-grey-200 px-4 py-4">
@@ -406,10 +422,12 @@ function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: () => voi
               {expanded === menu.id && (
                 <div className="bg-zw-grey-50 pb-2">
                   {menu.columns.map((col) => (
-                    <div key={col.label} className="px-4 py-2">
-                      <div className="mb-1 text-[11px] font-bold uppercase tracking-wider text-zw-grey-500">
-                        {col.label}
-                      </div>
+                    <div key={col.label || col.href} className="px-4 py-2">
+                      {col.label && (
+                        <div className="mb-1 text-[11px] font-bold uppercase tracking-wider text-zw-grey-500">
+                          {col.label}
+                        </div>
+                      )}
                       {col.links.map((link) => (
                         <LocaleLink
                           key={link.href}

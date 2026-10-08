@@ -33,7 +33,7 @@ export interface MenuLink {
 export const MENU_PRODUCT_LIMIT = 6;
 
 export interface MenuColumn {
-  /** Sol kolondaki grup (Unimig'deki "Welding Machines" gibi) */
+  /** Sol kolondaki grup (Unimig'deki "Welding Machines" gibi). Bos ise alt baslik yok. */
   label: string;
   href: string;
   links: MenuLink[];
@@ -96,27 +96,63 @@ export function useMainMenu(): TopMenu[] {
       };
     });
 
-    const explore: TopMenu = {
-      id: "kesfet",
-      label: t.nav.explore,
+    // Urun disi menuler. Alt basligi olmayan menuler tek, basliksiz
+    // kolondan olusur (label: ""); mega menu bunu sol bolmesiz gosterir.
+    const warranty: TopMenu = {
+      id: "garanti",
+      label: t.nav.warranty,
+      href: "/kesfet/garanti",
+      columns: [
+        {
+          label: "",
+          href: "/kesfet/garanti",
+          links: [
+            { label: t.nav.warrantyRegister, description: t.explore.registerWarrantyDesc, href: "/kesfet/garanti?islem=kayit" },
+            { label: t.nav.warrantyCheck, description: t.explore.checkWarrantyDesc, href: "/kesfet/garanti?islem=sorgula" },
+            { label: t.nav.warrantyTerms, description: t.nav.warrantyTermsDesc, href: "/kurumsal/garanti-sartlari" },
+          ],
+        },
+      ],
+    };
+
+    const dealerNetwork: TopMenu = {
+      id: "bayi-agi",
+      label: t.nav.dealerNetwork,
+      href: "/yetkili-bayi-ve-servis-agi",
+      columns: [
+        {
+          label: "",
+          href: "/yetkili-bayi-ve-servis-agi",
+          links: [
+            { label: t.nav.findDealerService, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi" },
+            { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/kesfet/bayilik-basvurusu" },
+          ],
+        },
+      ],
+    };
+
+    const corporate: TopMenu = {
+      id: "kurumsal",
+      label: t.nav.corporate,
       href: "/hakkimizda",
       columns: [
         {
-          label: t.nav.discover,
+          label: t.nav.ourCompany,
           href: "/hakkimizda",
           links: [
             { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
             { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/kesfet/satis-temsilcilerimiz" },
-            { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/kesfet/bayilik-basvurusu" },
-            { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/kesfet/welders-club" },
-            { label: t.explore.guide, description: t.explore.guideDesc, href: "/kesfet/kaynak-rehberi" },
-            { label: t.explore.blog, description: t.explore.blogDesc, href: "/kesfet/blog" },
-            { label: t.explore.events, description: t.explore.eventsDesc, href: "/kesfet/etkinlikler" },
+            { label: t.support.contactTitle, description: t.support.contactCardText, href: "/destek/iletisim" },
+          ],
+        },
+        {
+          label: t.nav.updates,
+          href: "/kesfet/haberler",
+          links: [
             { label: t.explore.news, description: t.explore.newsDesc, href: "/kesfet/haberler" },
-            { label: t.explore.msds, description: t.explore.msdsDesc, href: "/kesfet/msds" },
-            { label: t.explore.batchCertificates, description: t.explore.batchCertificatesDesc, href: "/kesfet/parti-sertifikalari" },
-            { label: t.explore.productSelector, description: t.explore.productSelectorDesc, href: "/kesfet/urun-secici" },
-            { label: t.explore.warranty, description: t.explore.warrantyDesc, href: "/kesfet/garanti" },
+            { label: t.explore.events, description: t.explore.eventsDesc, href: "/kesfet/etkinlikler" },
+            { label: t.explore.blog, description: t.explore.blogDesc, href: "/kesfet/blog" },
+            { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/kesfet/welders-club" },
           ],
         },
       ],
@@ -128,18 +164,20 @@ export function useMainMenu(): TopMenu[] {
       href: "/destek",
       columns: [
         {
-          label: t.nav.support,
+          label: "",
           href: "/destek",
           links: [
-            { label: t.nav.findDealer, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi" },
             { label: t.support.faqTitle, description: t.support.faqCardText, href: "/destek/sss" },
-            { label: t.support.contactTitle, description: t.support.contactCardText, href: "/destek/iletisim" },
+            { label: t.explore.productSelector, description: t.explore.productSelectorDesc, href: "/kesfet/urun-secici" },
+            { label: t.explore.guide, description: t.explore.guideDesc, href: "/kesfet/kaynak-rehberi" },
+            { label: t.explore.msds, description: t.explore.msdsDesc, href: "/kesfet/msds" },
+            { label: t.explore.batchCertificates, description: t.explore.batchCertificatesDesc, href: "/kesfet/parti-sertifikalari" },
           ],
         },
       ],
     };
 
-    return [...productMenus, explore, support];
+    return [...productMenus, warranty, dealerNetwork, corporate, support];
   }, [db, locale, t]);
 }
 

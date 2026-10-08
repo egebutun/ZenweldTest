@@ -162,7 +162,7 @@ Satıcıyı silmek, o satıcıya ait tüm stok kayıtlarını da siler.
 
 ## 8. Satış Temsilcileri
 
-Sitedeki **Keşfet → Satış Temsilcilerimiz** sayfasının listesi.
+Sitedeki **Kurumsal → Satış Temsilcilerimiz** sayfasının listesi.
 
 - **Temsilci ekle / düzenle:** ad soyad, bölge veya görev (TR/EN), telefon,
   e-posta, isteğe bağlı fotoğraf (yoksa baş harfler gösterilir)
@@ -191,7 +191,7 @@ Yönetici hesapları silinemez.
 
 ## 10. Garantiler
 
-Ana sitede **Keşfet → Garanti → Garanti Kaydı** formuyla yapılan kayıtlar.
+Ana sitede **Garanti → Garanti Kaydı** formuyla yapılan kayıtlar.
 Müşterinin `Hesabım → Garantilerim` sayfası ve sitedeki garanti sorgulama aynı
 kayıtları kullanır; burada yapılan değişiklik oralara anında yansır.
 

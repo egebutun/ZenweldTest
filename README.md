@@ -341,7 +341,7 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
 4. **Ürün teknik verileri doğrulanmalı.** Amper, devrede kalma oranı ve ağırlık
    gibi değerler internet kaynaklarından derlendi; `products.seed.ts` içinde
    `DOĞRULANMALI` notu bulunur. Resmî katalogla karşılaştırılmalıdır.
-5. **Yasal metinler** (KVKK, gizlilik, iade, garanti şartları) şu an lorem ipsum'dur.
+5. **Yasal metinler** (KVKK, gizlilik, iade, garanti koşulları) şu an lorem ipsum'dur.
 
 ---
 
