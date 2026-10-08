@@ -96,7 +96,7 @@ export function useMainMenu(): TopMenu[] {
       };
     });
 
-    // Urun disi menuler. Alt basligi olmayan menuler tek, basliksiz
+    // Urun disi menuler. Alt basligi olmayan menuler (Garanti) tek, basliksiz
     // kolondan olusur (label: ""); mega menu bunu sol bolmesiz gosterir.
     const warranty: TopMenu = {
       id: "garanti",
@@ -115,119 +115,86 @@ export function useMainMenu(): TopMenu[] {
       ],
     };
 
-    const dealerNetwork: TopMenu = {
-      id: "bayi-agi",
-      label: t.nav.dealerNetwork,
-      href: "/yetkili-bayi-ve-servis-agi",
-      columns: [
-        {
-          label: "",
-          href: "/yetkili-bayi-ve-servis-agi",
-          links: [
-            { label: t.nav.findDealerService, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi" },
-            { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/bayilik-basvurusu" },
-          ],
-        },
-      ],
-    };
-
-    const corporate: TopMenu = {
-      id: "kurumsal",
-      label: t.nav.corporate,
+    const explore: TopMenu = {
+      id: "kesfet",
+      label: t.nav.explore,
       href: "/hakkimizda",
-      columns: [
-        {
-          label: t.nav.ourCompany,
-          href: "/hakkimizda",
-          links: [
-            { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
-            { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/satis-temsilcilerimiz" },
-            { label: t.support.contactTitle, description: t.support.contactCardText, href: "/iletisim" },
-          ],
-        },
-        {
-          label: t.nav.updates,
-          href: "/haberler",
-          links: [
-            { label: t.explore.news, description: t.explore.newsDesc, href: "/haberler" },
-            { label: t.explore.events, description: t.explore.eventsDesc, href: "/etkinlikler" },
-            { label: t.explore.blog, description: t.explore.blogDesc, href: "/blog" },
-            { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/welders-club" },
-          ],
-        },
-      ],
+      columns: exploreColumns(t),
     };
 
-    const support: TopMenu = {
-      id: "destek",
-      label: t.nav.support,
-      href: "/destek",
-      columns: [
-        {
-          label: "",
-          href: "/destek",
-          links: [
-            { label: t.support.faqTitle, description: t.support.faqCardText, href: "/sss" },
-            { label: t.explore.productSelector, description: t.explore.productSelectorDesc, href: "/urun-secici" },
-            { label: t.explore.guide, description: t.explore.guideDesc, href: "/kaynak-rehberi" },
-            { label: t.explore.msds, description: t.explore.msdsDesc, href: "/msds" },
-            { label: t.explore.batchCertificates, description: t.explore.batchCertificatesDesc, href: "/parti-sertifikalari" },
-          ],
-        },
-      ],
-    };
-
-    return [...productMenus, warranty, dealerNetwork, corporate, support];
+    return [...productMenus, warranty, explore];
   }, [db, locale, t]);
 }
 
+/**
+ * Kesfet menusunun alt basliklari. Ust menu ve alt bilgi ayni listeyi
+ * kullanir; bir baglanti eklendiginde iki yerde de gorunur.
+ */
+function exploreColumns(t: Dictionary): MenuColumn[] {
+  return [
+    {
+      label: t.nav.corporate,
+      href: "/hakkimizda",
+      links: [
+        { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
+        { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/satis-temsilcilerimiz" },
+        { label: t.support.contactTitle, description: t.support.contactCardText, href: "/iletisim" },
+      ],
+    },
+    {
+      label: t.nav.dealerNetwork,
+      href: "/yetkili-bayi-ve-servis-agi",
+      links: [
+        { label: t.nav.findDealerService, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi" },
+        { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/bayilik-basvurusu" },
+      ],
+    },
+    {
+      label: t.nav.updates,
+      href: "/haberler",
+      links: [
+        { label: t.explore.news, description: t.explore.newsDesc, href: "/haberler" },
+        { label: t.explore.events, description: t.explore.eventsDesc, href: "/etkinlikler" },
+        { label: t.explore.blog, description: t.explore.blogDesc, href: "/blog" },
+        { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/welders-club" },
+      ],
+    },
+    {
+      label: t.nav.other,
+      href: "/sss",
+      links: [
+        { label: t.support.faqTitle, description: t.support.faqCardText, href: "/sss" },
+        { label: t.explore.productSelector, description: t.explore.productSelectorDesc, href: "/urun-secici" },
+        { label: t.explore.guide, description: t.explore.guideDesc, href: "/kaynak-rehberi" },
+        { label: t.explore.msds, description: t.explore.msdsDesc, href: "/msds" },
+        { label: t.explore.batchCertificates, description: t.explore.batchCertificatesDesc, href: "/parti-sertifikalari" },
+      ],
+    },
+  ];
+}
+
+/**
+ * ALT BILGI
+ *
+ * Ust menunun aynisi: Garanti + Kesfet'in alt basliklari, sonda
+ * Politikalar & Yasal.
+ */
 export function useFooterMenu() {
   const t = useT();
   return useMemo(
     () => [
       {
-        title: t.footer.support,
+        title: t.nav.warranty,
         links: [
-          { label: t.footer.helpCentre, href: "/destek" },
-          { label: t.explore.warranty, href: "/garanti" },
-          { label: t.footer.contact, href: "/iletisim" },
+          { label: t.nav.warrantyRegister, href: "/garanti/kayit" },
+          { label: t.nav.warrantyCheck, href: "/garanti/sorgulama" },
+          { label: t.nav.warrantyTerms, href: "/garanti/kosullar" },
         ],
       },
-      {
-        title: t.footer.tools,
-        links: [
-          { label: t.footer.msds, href: "/msds" },
-          { label: t.footer.batchCertificates, href: "/parti-sertifikalari" },
-          { label: t.footer.productSelector, href: "/urun-secici" },
-          { label: t.footer.guide, href: "/kaynak-rehberi" },
-        ],
-      },
-      {
-        title: t.footer.company,
-        links: [
-          { label: t.footer.about, href: "/hakkimizda" },
-          { label: t.explore.salesReps, href: "/satis-temsilcilerimiz" },
-          { label: t.footer.findStore, href: "/yetkili-bayi-ve-servis-agi" },
-          { label: t.dealerApply.title, href: "/bayilik-basvurusu" },
-          { label: t.footer.contact, href: "/iletisim" },
-        ],
-      },
-      {
-        title: t.footer.community,
-        links: [
-          { label: t.footer.blog, href: "/blog" },
-          { label: t.explore.events, href: "/etkinlikler" },
-          { label: t.explore.news, href: "/haberler" },
-          { label: t.footer.weldersClub, href: "/welders-club" },
-        ],
-      },
-      {
-        title: t.footer.account,
-        links: [
-          { label: t.footer.signIn, href: "/giris" },
-          { label: t.footer.createAccount, href: "/kayit" },
-        ],
-      },
+      ...exploreColumns(t).map((col) => ({
+        title: col.label,
+        links: col.links.map(({ label, href }) => ({ label, href })),
+      })),
       {
         title: t.footer.legal,
         links: [
@@ -242,4 +209,3 @@ export function useFooterMenu() {
     [t],
   );
 }
-

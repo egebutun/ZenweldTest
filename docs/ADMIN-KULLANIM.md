@@ -162,7 +162,7 @@ Satıcıyı silmek, o satıcıya ait tüm stok kayıtlarını da siler.
 
 ## 8. Satış Temsilcileri
 
-Sitedeki **Kurumsal → Satış Temsilcilerimiz** sayfasının listesi.
+Sitedeki **Keşfet → Kurumsal → Satış Temsilcilerimiz** sayfasının listesi.
 
 - **Temsilci ekle / düzenle:** ad soyad, bölge veya görev (TR/EN), telefon,
   e-posta, isteğe bağlı fotoğraf (yoksa baş harfler gösterilir)

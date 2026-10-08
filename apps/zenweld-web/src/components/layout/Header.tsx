@@ -64,7 +64,7 @@ export function Header() {
       >
         <div className="zw-container flex h-[72px] items-center gap-4">
           <button
-            className="-ml-1 rounded-[3px] p-2 text-zw-ink xl:hidden zw-focus"
+            className="-ml-1 rounded-[3px] p-2 text-zw-ink lg:hidden zw-focus"
             onClick={() => setDrawerOpen(true)}
             aria-label="Menü"
           >
@@ -75,20 +75,25 @@ export function Header() {
             <ZenweldLogo className="h-7 w-auto sm:h-8" />
           </LocaleLink>
 
-          {/* 8 baslik ancak 1280px ve uzerinde sigar; altinda yan menu acilir. */}
-          <nav className="ml-4 hidden items-center gap-1 xl:flex">
+          {/* Dar masaustunde (1024-1535px) yer acmak icin ok isareti gizlenir,
+              arama kutusu 1280px altinda simgeye kuculur. */}
+          <nav className="ml-4 hidden items-center gap-1 lg:flex">
             {menus.map((menu) => (
               <button
                 key={menu.id}
                 onMouseEnter={() => setOpenMenu(menu.id)}
                 onClick={() => setOpenMenu(openMenu === menu.id ? null : menu.id)}
-                className={`flex items-center whitespace-nowrap rounded-full px-2.5 py-2 text-sm font-semibold transition-colors zw-focus ${
+                className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 text-sm xl:px-3 font-semibold transition-colors zw-focus ${
                   openMenu === menu.id
                     ? "bg-zw-grey-100 text-zw-ink"
                     : "text-zw-grey-700 hover:text-zw-ink"
                 }`}
               >
                 {menu.label}
+                <ChevronDown
+                  size={16}
+                  className={`hidden transition-transform 2xl:block ${openMenu === menu.id ? "rotate-180" : ""}`}
+                />
               </button>
             ))}
           </nav>
@@ -96,12 +101,12 @@ export function Header() {
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex h-10 items-center gap-2 rounded-[4px] border border-zw-grey-300 px-3 text-sm text-zw-grey-500 transition-colors hover:border-zw-ink md:w-44 xl:w-auto 2xl:w-44 zw-focus"
+              className="flex h-10 items-center gap-2 rounded-[4px] border border-zw-grey-300 px-3 text-sm text-zw-grey-500 transition-colors hover:border-zw-ink md:w-44 lg:w-auto xl:w-44 2xl:w-60 zw-focus"
               aria-label={t.common.search}
             >
               <Search size={18} />
-              <span className="hidden truncate md:inline xl:hidden 2xl:inline">{t.common.search}</span>
-              <kbd className="ml-auto hidden rounded border border-zw-grey-300 px-1 text-[10px] text-zw-grey-400 lg:inline xl:hidden 2xl:inline">
+              <span className="hidden truncate md:inline lg:hidden xl:inline">{t.common.search}</span>
+              <kbd className="ml-auto hidden rounded border border-zw-grey-300 px-1 text-[10px] text-zw-grey-400 xl:inline">
                 ⌘K
               </kbd>
             </button>
@@ -123,7 +128,7 @@ export function Header() {
               >
                 <UserIcon size={20} />
                 {user && (
-                  <span className="hidden max-w-24 truncate text-sm font-semibold sm:inline xl:hidden">
+                  <span className="hidden max-w-24 truncate text-sm font-semibold sm:inline lg:hidden 2xl:inline">
                     {user.firstName}
                   </span>
                 )}
@@ -247,7 +252,7 @@ function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => void 
   };
 
   return (
-    <div className="absolute left-0 right-0 top-full hidden border-t border-zw-grey-200 bg-white shadow-xl xl:block">
+    <div className="absolute left-0 right-0 top-full hidden border-t border-zw-grey-200 bg-white shadow-xl lg:block">
       <div
         className={`zw-container grid gap-8 py-8 ${
           hasProducts
@@ -396,7 +401,7 @@ function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: () => voi
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
-    <div className="fixed inset-0 z-[200] xl:hidden">
+    <div className="fixed inset-0 z-[200] lg:hidden">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="absolute left-0 top-0 h-full w-[88%] max-w-sm overflow-y-auto bg-white">
         <div className="flex items-center justify-between border-b border-zw-grey-200 px-4 py-4">

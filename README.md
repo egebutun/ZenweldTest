@@ -233,7 +233,6 @@ ZenweldTest/
     │       │   ├── hakkimizda · satis-temsilcilerimiz · iletisim
     │       │   ├── haberler · etkinlikler · blog · welders-club
     │       │   ├── sss · urun-secici · kaynak-rehberi · msds · parti-sertifikalari
-    │       │   ├── destek/                     Yardım Merkezi (kartlar)
     │       │   ├── yasal/                      kvkk · gizlilik · kullanim-kosullari · iade
     │       │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
     │       │   ├── (../yonetim/ — [locale] dışında) ZENWELD YÖNETİM PANELİ (yalnızca TR)

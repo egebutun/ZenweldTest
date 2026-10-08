@@ -36,7 +36,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/kaynak-rehberi", priority: 0.6, freq: "yearly" },
     { path: "/msds", priority: 0.4, freq: "yearly" },
     { path: "/parti-sertifikalari", priority: 0.4, freq: "yearly" },
-    { path: "/destek", priority: 0.5, freq: "monthly" },
     { path: "/sss", priority: 0.5, freq: "monthly" },
     { path: "/iletisim", priority: 0.5, freq: "yearly" },
   ];

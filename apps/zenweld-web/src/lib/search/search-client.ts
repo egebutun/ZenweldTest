@@ -51,7 +51,7 @@ const STATIC_PAGES: { id: string; tr: string; en: string; href: string }[] = [
   { id: "page-msds", tr: "MSDS malzeme güvenlik bilgi formu", en: "MSDS material safety data sheet", href: "/msds" },
   { id: "page-sertifika", tr: "Parti Sertifikaları uygunluk belgesi", en: "Batch Certificates compliance", href: "/parti-sertifikalari" },
   { id: "page-secici", tr: "Ürün Seçici hangi makine bana uygun", en: "Product Selector which machine suits me", href: "/urun-secici" },
-  { id: "page-destek", tr: "Destek yardım servis iletişim", en: "Support help service contact", href: "/destek" },
+  { id: "page-iletisim", tr: "İletişim destek yardım servis telefon adres", en: "Contact support help service phone address", href: "/iletisim" },
   { id: "page-sss", tr: "Sık Sorulan Sorular SSS", en: "Frequently Asked Questions FAQ", href: "/sss" },
   { id: "page-hakkimizda", tr: "Hakkımızda kurumsal şirket", en: "About Us company", href: "/hakkimizda" },
   { id: "page-blog", tr: "Blog yazılar rehber ipuçları", en: "Blog articles guide tips", href: "/blog" },
