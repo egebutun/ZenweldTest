@@ -153,7 +153,6 @@ export function useFooterMenu() {
           { label: t.footer.helpCentre, href: "/destek" },
           { label: t.explore.warranty, href: "/kesfet/garanti" },
           { label: t.footer.contact, href: "/destek/iletisim" },
-          { label: t.footer.recall, href: "/destek/geri-cagirma" },
         ],
       },
       {

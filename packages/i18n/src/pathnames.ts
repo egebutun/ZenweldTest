@@ -67,7 +67,6 @@ const NESTED: Record<string, Record<string, string>> = {
   destek: {
     sss: "faq",
     iletisim: "contact",
-    "geri-cagirma": "recall",
   },
   kurumsal: {
     kvkk: "privacy-notice",
