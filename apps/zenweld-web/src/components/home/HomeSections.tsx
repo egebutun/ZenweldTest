@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowRight, Award, Building2, Compass, Flame, Factory, Handshake, Headphones, ShieldCheck, Truck, Wrench } from "lucide-react";
+import { ArrowRight, Award, Building2, Compass, Flame, Factory, Handshake, Headphones, Truck, Wrench } from "lucide-react";
 import { listBlogPosts, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, Button, SectionHeading } from "@zenweld/ui";
 import { blogSlug, discountPercent, isOnSale } from "@zenweld/data";
@@ -243,7 +243,6 @@ export function WhyZenweld() {
   const t = useT();
   const items = [
     { Icon: Factory, title: t.trust.industry },
-    { Icon: ShieldCheck, title: t.trust.local },
     { Icon: Award, title: t.trust.award },
     { Icon: Headphones, title: t.trust.support },
     { Icon: Wrench, title: t.explore.checkWarranty },

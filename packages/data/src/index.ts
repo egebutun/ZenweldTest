@@ -29,7 +29,7 @@ import { defaultSettings } from "./seed/settings.seed";
 import { about, salesReps } from "./seed/company.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 36;
+export const DB_VERSION = 37;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(

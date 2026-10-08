@@ -20,7 +20,6 @@ export const about: AboutContent = {
     { id: "s1", value: "30+", label: { tr: "Yetkili Bayi", en: "Authorised Dealers" } },
     { id: "s2", value: "60+", label: { tr: "Ürün", en: "Products" } },
     { id: "s3", value: "25+", label: { tr: "Yıllık Tecrübe", en: "Years of Experience" } },
-    { id: "s4", value: "%100", label: { tr: "Yerli Üretim", en: "Made in Türkiye" } },
   ],
   sections: [
     {

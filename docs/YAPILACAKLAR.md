@@ -69,16 +69,6 @@ kimin açıp yöneteceği de bu uygulamayla birlikte netleşecek.
   panelinde işaretlediği stoğu backend gelince görecek (şu an iki site ayrı
   tarayıcı deposu kullandığı için demoda birbirini görmez).
 
-## Google Haritalar anahtarı
-
-Bayi/servis haritası Google'a geçmeye hazır; Vercel'de
-`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` tanımlanınca devreye girer (tanımlı değilken
-OpenStreetMap gösterilir). Canlıda kendi Harita Kimliği (`NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID`)
-oluşturulmalı; `DEMO_MAP_ID` yalnızca deneme içindir. Anahtar alan adıyla
-sınırlandırılmalı ve günlük kota konmalı. Google haritaları çerez kullandığı için
-çerez/aydınlatma metninde belirtilmeli. Gerçek bayi listesi ve adresleri gelince
-`dealers.seed.ts` güncellenecek (şu anki bayiler demo).
-
 ## Kod incelemesi bulguları
 
 Ayrıntılı inceleme sohbette yapıldı; düzeltme zamanı ayrıca

@@ -18,13 +18,6 @@ Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur.
 `NEXT_PUBLIC_BAYI_SHOP_URL` (ana sitede) ve `NEXT_PUBLIC_ZENWELD_URL` (bayi mağazasında).
 Bu değişkenler derleme sırasında koda gömülür; değiştirdikten sonra yeniden deploy gerekir.
 
-Ana sitenin bayi/servis haritası (ana sayfa, Yetkili Bayi ve Servis Ağı, ürün
-sayfası) Google Haritalar ile çalışır:
-`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` (Maps JavaScript API anahtarı) ve isteğe bağlı
-`NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` (Harita Kimliği; tanımlı değilse Google'ın deneme
-kimliği `DEMO_MAP_ID` kullanılır). Anahtar tanımlı değilse, geçersizse ya da
-Google yüklenemezse harita otomatik olarak OpenStreetMap'e döner.
-
 ---
 
 ## İçindekiler

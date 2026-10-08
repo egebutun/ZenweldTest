@@ -216,7 +216,6 @@ export function TrustBadges() {
   const t = useT();
   const items = [
     { Icon: Factory, label: t.trust.industry },
-    { Icon: ShieldCheck, label: t.trust.local },
     { Icon: Award, label: t.trust.award },
     { Icon: Headphones, label: t.trust.support },
   ];

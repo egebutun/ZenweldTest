@@ -206,7 +206,6 @@ export const dictionaries = {
     },
     trust: {
       industry: "Sanayinin Tercihi",
-      local: "%100 Yerli Üretim",
       award: "Ödüllü Marka",
       support: "Kolay Destek",
     },
@@ -764,7 +763,6 @@ export const dictionaries = {
     },
     trust: {
       industry: "Trusted by Industry",
-      local: "100% Made in Türkiye",
       award: "Award Winning Brand",
       support: "Hassle-free Support",
     },
