@@ -1,30 +1,58 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Dealer } from "@zenweld/data";
 import "leaflet/dist/leaflet.css";
 import { TURKEY_CENTER } from "@/lib/geo";
+import { GoogleDealerMap } from "./GoogleDealerMap";
 
-/**
- * Leaflet + OpenStreetMap haritasi.
- *
- * API anahtari gerektirmez. Leaflet yalnizca tarayicida yuklenir (dinamik
- * import), varsayilan isaretci gorselleri yerine SVG divIcon kullanilir —
- * boylece bundler'da kirik ikon sorunu olusmaz.
- */
-export function DealerMap({
-  dealers,
-  selectedId,
-  onSelect,
-  userPosition,
-  className = "",
-}: {
+type DealerMapProps = {
   dealers: Dealer[];
   selectedId?: string | null;
   onSelect?: (id: string) => void;
   userPosition?: { lat: number; lng: number } | null;
   className?: string;
-}) {
+};
+
+/** Vercel'de tanimlanir; bkz. GoogleDealerMap.tsx */
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+/**
+ * BAYI VE SERVIS HARITASI
+ *
+ * Google Haritalar anahtari tanimliysa Google haritasi gosterilir. Anahtar
+ * yoksa veya Google yuklenemezse (gecersiz anahtar, yetkisiz alan adi,
+ * ag sorunu) OpenStreetMap haritasina donulur; sayfa hicbir zaman bos
+ * kalmaz.
+ */
+export function DealerMap(props: DealerMapProps) {
+  const [googleFailed, setGoogleFailed] = useState(false);
+  if (GOOGLE_MAPS_API_KEY && !googleFailed) {
+    return (
+      <GoogleDealerMap
+        {...props}
+        apiKey={GOOGLE_MAPS_API_KEY}
+        onFail={() => setGoogleFailed(true)}
+      />
+    );
+  }
+  return <LeafletDealerMap {...props} />;
+}
+
+/**
+ * Yedek harita: Leaflet + OpenStreetMap.
+ *
+ * API anahtari gerektirmez. Leaflet yalnizca tarayicida yuklenir (dinamik
+ * import), varsayilan isaretci gorselleri yerine SVG divIcon kullanilir —
+ * boylece bundler'da kirik ikon sorunu olusmaz.
+ */
+function LeafletDealerMap({
+  dealers,
+  selectedId,
+  onSelect,
+  userPosition,
+  className = "",
+}: DealerMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);

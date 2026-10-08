@@ -73,9 +73,16 @@ export function RichText({
   source,
   className = "",
   overrides,
+  lead = true,
 }: {
   source: string;
   className?: string;
+  /**
+   * Ilk paragraf giris paragrafi olarak buyuk gosterilsin mi. Birden fazla
+   * kisa bolumden olusan sayfalarda (Hakkimizda) kapatilir; boylece tum
+   * paragraflar ayni boyda olur.
+   */
+  lead?: boolean;
   /** Yonetim panelindeki onizleme icin kaydedilmemis ayarlar. */
   overrides?: RichTextStyle;
 }) {
@@ -137,12 +144,13 @@ export function RichText({
           );
         }
 
-        const isLead = !paragraphSeen;
+        const isLead = lead && !paragraphSeen;
+        const first = !paragraphSeen;
         paragraphSeen = true;
         return (
           <p
             key={i}
-            className={isLead ? "font-medium leading-relaxed" : "mt-4 leading-relaxed"}
+            className={isLead ? "font-medium leading-relaxed" : first ? "leading-relaxed" : "mt-4 leading-relaxed"}
             style={{
               fontSize: `${isLead ? style.leadSize : style.bodySize}px`,
               color: isLead ? style.headingColor : style.bodyColor,

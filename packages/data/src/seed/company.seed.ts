@@ -4,8 +4,10 @@ import { stockPhotos } from "./images";
 /**
  * HAKKIMIZDA SAYFASI — baslangic icerigi
  *
- * Yonetim panelinden (/yonetim/hakkimizda) duzenlenir. Bolumlerin metni
- * ornektir; Zenweld'in onayli metni geldiginde panelden degistirilir.
+ * Yonetim panelinden (/yonetim/hakkimizda) duzenlenir. Bolum metinleri
+ * Zenweld'in onayli metnidir (Ekim 2026), kelimesi kelimesine aktarildi;
+ * yalnizca paragraf araliklari ve "Degerlerimiz" maddelerindeki etiketlerin
+ * kalin yazilmasi icin bicimlendirme isaretleri eklendi.
  */
 export const about: AboutContent = {
   heroTitle: { tr: "Hakkımızda", en: "About Us" },
@@ -23,22 +25,42 @@ export const about: AboutContent = {
   sections: [
     {
       id: "a1",
-      title: { tr: "Biz Kimiz?", en: "Who We Are" },
+      title: { tr: "", en: "" },
       body: {
-        tr: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-        en: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+        tr: "Zenweld Kaynak, 2000 yılında teknik hırdavat alanında başlattığı faaliyetlerini yıllar içinde kaynak ve kesme teknolojilerine odaklayarak, bugün Türkiye'nin önde gelen kaynak çözümleri sağlayıcılarından biri haline gelmiştir. İstanbul merkezli kurumsal yapımız ve İzmir'deki fabrikamızla, sanayinin artan kalite, hız ve verimlilik beklentilerine en güncel teknolojiyle yanıt veriyoruz.\n\n2012 yılından bu yana, dünyanın önde gelen kaynak teknolojisi üreticilerinden Shenzhen Jasic'in Türkiye'deki yetkili distribütörü ve OEM çözüm ortağıyız. 2016 yılında İzmir'de hayata geçirdiğimiz fabrika yatırımıyla küresel teknolojiyi Türkiye'de üreterek yerli sanayinin gelişimine doğrudan katkı sağlıyoruz. Bu yapı, müşterilerimize hem küresel kalite standardını hem de yerel üretimin getirdiği esneklik, hız ve uygun maliyet avantajını bir arada sunmamıza olanak tanıyor.\n\nKaynak teknolojilerindeki gelişmeleri yakından takip ederek, lazer kaynak makinelerini Türkiye sanayisiyle buluşturan öncü firmalardan biri olduk. Hassas kaynak gerektiren endüstrilerde devrim niteliğinde çözümler sunan lazer kaynak teknolojisi, üretim süreçlerinde yüksek kalite ve verimliliği bir arada mümkün kılmaktadır. Zenweld olarak, Türkiye sanayisinin daha verimli, hızlı ve ekonomik kaynak sistemlerine erişimini sağlamayı temel misyonumuz olarak benimsedik.\n\nGeniş ürün yelpazemiz; MMA, MIG/MAG ve TIG kaynak makineleri, plazma kesim sistemleri, lazer kaynak makineleri ve Cobot tabanlı (Cobot/MIG, Cobot/Lazer) otomasyon çözümlerinden oluşan kapsamlı bir teknoloji portföyünü kapsamaktadır. Yüksek verimlilik, hassasiyet ve kaliteyi öne çıkaran bu yenilikçi çözümlerle müşterilerimizin üretim süreçlerini daha hızlı, daha güvenilir ve daha ekonomik hâle getiriyoruz.\n\nZenweld, yalnızca ürün tedarik eden bir firma değil; sanayicilere danışmanlık, teknik destek ve satış sonrası hizmet sunan bir çözüm ortağıdır. İzmir'de merkezîleştirdiğimiz satış sonrası hizmet altyapımız ve alanında uzman teknik ekibimizle, ürünün tedarikinden devreye alımına ve ömür boyu desteğine kadar tüm süreçte müşterilerimizin yanında yer alıyoruz. Ar-Ge yatırımlarımızı sürekli artırarak en güncel teknolojiye sahip sistemleri Türkiye pazarına kazandırıyor, işletmelerin rekabet gücünü yükseltmelerine destek oluyoruz.",
+        // Ingilizce metin henuz yok; onaylanana kadar Turkcesi gosterilir.
+        en: "Zenweld Kaynak, 2000 yılında teknik hırdavat alanında başlattığı faaliyetlerini yıllar içinde kaynak ve kesme teknolojilerine odaklayarak, bugün Türkiye'nin önde gelen kaynak çözümleri sağlayıcılarından biri haline gelmiştir. İstanbul merkezli kurumsal yapımız ve İzmir'deki fabrikamızla, sanayinin artan kalite, hız ve verimlilik beklentilerine en güncel teknolojiyle yanıt veriyoruz.\n\n2012 yılından bu yana, dünyanın önde gelen kaynak teknolojisi üreticilerinden Shenzhen Jasic'in Türkiye'deki yetkili distribütörü ve OEM çözüm ortağıyız. 2016 yılında İzmir'de hayata geçirdiğimiz fabrika yatırımıyla küresel teknolojiyi Türkiye'de üreterek yerli sanayinin gelişimine doğrudan katkı sağlıyoruz. Bu yapı, müşterilerimize hem küresel kalite standardını hem de yerel üretimin getirdiği esneklik, hız ve uygun maliyet avantajını bir arada sunmamıza olanak tanıyor.\n\nKaynak teknolojilerindeki gelişmeleri yakından takip ederek, lazer kaynak makinelerini Türkiye sanayisiyle buluşturan öncü firmalardan biri olduk. Hassas kaynak gerektiren endüstrilerde devrim niteliğinde çözümler sunan lazer kaynak teknolojisi, üretim süreçlerinde yüksek kalite ve verimliliği bir arada mümkün kılmaktadır. Zenweld olarak, Türkiye sanayisinin daha verimli, hızlı ve ekonomik kaynak sistemlerine erişimini sağlamayı temel misyonumuz olarak benimsedik.\n\nGeniş ürün yelpazemiz; MMA, MIG/MAG ve TIG kaynak makineleri, plazma kesim sistemleri, lazer kaynak makineleri ve Cobot tabanlı (Cobot/MIG, Cobot/Lazer) otomasyon çözümlerinden oluşan kapsamlı bir teknoloji portföyünü kapsamaktadır. Yüksek verimlilik, hassasiyet ve kaliteyi öne çıkaran bu yenilikçi çözümlerle müşterilerimizin üretim süreçlerini daha hızlı, daha güvenilir ve daha ekonomik hâle getiriyoruz.\n\nZenweld, yalnızca ürün tedarik eden bir firma değil; sanayicilere danışmanlık, teknik destek ve satış sonrası hizmet sunan bir çözüm ortağıdır. İzmir'de merkezîleştirdiğimiz satış sonrası hizmet altyapımız ve alanında uzman teknik ekibimizle, ürünün tedarikinden devreye alımına ve ömür boyu desteğine kadar tüm süreçte müşterilerimizin yanında yer alıyoruz. Ar-Ge yatırımlarımızı sürekli artırarak en güncel teknolojiye sahip sistemleri Türkiye pazarına kazandırıyor, işletmelerin rekabet gücünü yükseltmelerine destek oluyoruz.",
       },
     },
     {
       id: "a2",
-      title: { tr: "Vizyonumuz ve Misyonumuz", en: "Our Vision and Mission" },
+      title: { tr: "Vizyonumuz", en: "Vizyonumuz" },
       body: {
-        tr: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n\n- Lorem ipsum dolor sit amet\n- Consectetur adipiscing elit\n- Sed do eiusmod tempor",
-        en: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n\n- Lorem ipsum dolor sit amet\n- Consectetur adipiscing elit\n- Sed do eiusmod tempor",
+        tr: "Kaynak teknolojilerinde Türkiye'nin lider markası olmak ve küresel pazarda söz sahibi bir oyuncu hâline gelmek. Başta lazer kaynak teknolojileri olmak üzere yeni nesil kaynak ve otomasyon çözümlerinin sanayide yaygınlaşmasını sağlayarak, işletmelere daha yüksek kalite, verimlilik ve sürdürülebilir rekabet gücü kazandırmak önceliklerimiz arasındadır.",
+        // Ingilizce metin henuz yok; onaylanana kadar Turkcesi gosterilir.
+        en: "Kaynak teknolojilerinde Türkiye'nin lider markası olmak ve küresel pazarda söz sahibi bir oyuncu hâline gelmek. Başta lazer kaynak teknolojileri olmak üzere yeni nesil kaynak ve otomasyon çözümlerinin sanayide yaygınlaşmasını sağlayarak, işletmelere daha yüksek kalite, verimlilik ve sürdürülebilir rekabet gücü kazandırmak önceliklerimiz arasındadır.",
+      },
+    },
+    {
+      id: "a3",
+      title: { tr: "Misyonumuz", en: "Misyonumuz" },
+      body: {
+        tr: "Sanayicilere en güncel teknolojiye sahip kaynak ve kesme sistemlerini sunarak üretim süreçlerini optimize etmek. Yerel üretim gücümüz, güçlü teknoloji ortaklıklarımız ve uzman teknik kadromuzla, başta lazer kaynak teknolojisi olmak üzere ileri kaynak çözümlerini erişilebilir ve yaygın hâle getirerek Türkiye'nin sanayi gücünün artmasına katkı sağlamak.",
+        // Ingilizce metin henuz yok; onaylanana kadar Turkcesi gosterilir.
+        en: "Sanayicilere en güncel teknolojiye sahip kaynak ve kesme sistemlerini sunarak üretim süreçlerini optimize etmek. Yerel üretim gücümüz, güçlü teknoloji ortaklıklarımız ve uzman teknik kadromuzla, başta lazer kaynak teknolojisi olmak üzere ileri kaynak çözümlerini erişilebilir ve yaygın hâle getirerek Türkiye'nin sanayi gücünün artmasına katkı sağlamak.",
+      },
+    },
+    {
+      id: "a4",
+      title: { tr: "Değerlerimiz", en: "Değerlerimiz" },
+      body: {
+        tr: "- **Öncülük:** Sektördeki teknolojik gelişmeleri yakından izler, yeni nesil çözümleri Türkiye sanayisiyle ilk buluşturanlar arasında yer alırız.\n- **Kalite:** Küresel standartları yerel üretim disiplini ile birleştirir, her üründe yüksek kalite ve güvenilirliği esas alırız.\n- **Çözüm Ortaklığı:** Müşterilerimizi yalnızca alıcı değil, uzun vadeli iş ortağı olarak görür; danışmanlık ve teknik destekle her aşamada yanlarında oluruz.\n- **Güven:** Verdiğimiz sözün arkasında durur; şeffaflık, dürüstlük ve uzun vadeli iş birliği anlayışıyla müşterilerimizin ve iş ortaklarımızın güvenini esas alırız.\n- **Süreklilik:** Güçlü satış sonrası hizmet ağımız ve yedek parça altyapımızla ürünlerimizin ömür boyu performansını güvence altına alırız.",
+        // Ingilizce metin henuz yok; onaylanana kadar Turkcesi gosterilir.
+        en: "- **Öncülük:** Sektördeki teknolojik gelişmeleri yakından izler, yeni nesil çözümleri Türkiye sanayisiyle ilk buluşturanlar arasında yer alırız.\n- **Kalite:** Küresel standartları yerel üretim disiplini ile birleştirir, her üründe yüksek kalite ve güvenilirliği esas alırız.\n- **Çözüm Ortaklığı:** Müşterilerimizi yalnızca alıcı değil, uzun vadeli iş ortağı olarak görür; danışmanlık ve teknik destekle her aşamada yanlarında oluruz.\n- **Güven:** Verdiğimiz sözün arkasında durur; şeffaflık, dürüstlük ve uzun vadeli iş birliği anlayışıyla müşterilerimizin ve iş ortaklarımızın güvenini esas alırız.\n- **Süreklilik:** Güçlü satış sonrası hizmet ağımız ve yedek parça altyapımızla ürünlerimizin ömür boyu performansını güvence altına alırız.",
       },
     },
   ],
-  updatedAt: "2026-10-05T09:00:00+03:00",
+  updatedAt: "2026-10-08T09:00:00+03:00",
 };
 
 /**

@@ -56,7 +56,7 @@ export default function AboutPage() {
                   {text(section.title)}
                 </h2>
               )}
-              <RichText source={text(section.body)} className="mt-4" />
+              <RichText source={text(section.body)} lead={false} className="mt-4" />
             </div>
             {section.imageUrl && (
               <div className="overflow-hidden rounded-[4px] bg-zw-grey-100">
