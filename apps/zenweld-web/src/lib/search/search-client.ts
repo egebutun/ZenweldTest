@@ -45,18 +45,18 @@ export interface SearchHit extends SearchDoc {
 const STATIC_PAGES: { id: string; tr: string; en: string; href: string }[] = [
   { id: "page-teklif", tr: "Teklif Al kurumsal vadeli çek ödeme", en: "Request a Quote business deferred cheque payment", href: "/teklif-al" },
   { id: "page-bayi", tr: "Nereden Alabilirim bayi bul harita satış noktası", en: "Where to Buy find dealer map store locator", href: "/yetkili-bayi-ve-servis-agi" },
-  { id: "page-garanti-sorgula", tr: "Garanti Sorgula seri numarası", en: "Check Your Warranty serial number", href: "/kesfet/garanti?islem=sorgula" },
-  { id: "page-garanti-kayit", tr: "Garanti Kaydı uzatma kayıt", en: "Register Your Warranty extension", href: "/kesfet/garanti?islem=kayit" },
-  { id: "page-club", tr: "Welders Club topluluk üyelik", en: "Welders Club community membership", href: "/kesfet/welders-club" },
-  { id: "page-msds", tr: "MSDS malzeme güvenlik bilgi formu", en: "MSDS material safety data sheet", href: "/kesfet/msds" },
-  { id: "page-sertifika", tr: "Parti Sertifikaları uygunluk belgesi", en: "Batch Certificates compliance", href: "/kesfet/parti-sertifikalari" },
-  { id: "page-secici", tr: "Ürün Seçici hangi makine bana uygun", en: "Product Selector which machine suits me", href: "/kesfet/urun-secici" },
+  { id: "page-garanti-sorgula", tr: "Garanti Sorgula seri numarası", en: "Check Your Warranty serial number", href: "/garanti/sorgulama" },
+  { id: "page-garanti-kayit", tr: "Garanti Kaydı uzatma kayıt", en: "Register Your Warranty extension", href: "/garanti/kayit" },
+  { id: "page-club", tr: "Welders Club topluluk üyelik", en: "Welders Club community membership", href: "/welders-club" },
+  { id: "page-msds", tr: "MSDS malzeme güvenlik bilgi formu", en: "MSDS material safety data sheet", href: "/msds" },
+  { id: "page-sertifika", tr: "Parti Sertifikaları uygunluk belgesi", en: "Batch Certificates compliance", href: "/parti-sertifikalari" },
+  { id: "page-secici", tr: "Ürün Seçici hangi makine bana uygun", en: "Product Selector which machine suits me", href: "/urun-secici" },
   { id: "page-destek", tr: "Destek yardım servis iletişim", en: "Support help service contact", href: "/destek" },
-  { id: "page-sss", tr: "Sık Sorulan Sorular SSS", en: "Frequently Asked Questions FAQ", href: "/destek/sss" },
+  { id: "page-sss", tr: "Sık Sorulan Sorular SSS", en: "Frequently Asked Questions FAQ", href: "/sss" },
   { id: "page-hakkimizda", tr: "Hakkımızda kurumsal şirket", en: "About Us company", href: "/hakkimizda" },
-  { id: "page-blog", tr: "Blog yazılar rehber ipuçları", en: "Blog articles guide tips", href: "/kesfet/blog" },
-  { id: "page-etkinlikler", tr: "Etkinlikler etkinlik takvimi fuar fuarlar", en: "Events event calendar trade fairs", href: "/kesfet/etkinlikler" },
-  { id: "page-haberler", tr: "Haberler duyurular basın", en: "News announcements press", href: "/kesfet/haberler" },
+  { id: "page-blog", tr: "Blog yazılar rehber ipuçları", en: "Blog articles guide tips", href: "/blog" },
+  { id: "page-etkinlikler", tr: "Etkinlikler etkinlik takvimi fuar fuarlar", en: "Events event calendar trade fairs", href: "/etkinlikler" },
+  { id: "page-haberler", tr: "Haberler duyurular basın", en: "News announcements press", href: "/haberler" },
 ];
 
 export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[] {
@@ -110,7 +110,7 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
         subtitle: `${e.venue[locale]} · ${e.city}`,
         body: `${e.summary[locale]} ${e.description[locale]} ${e.city} ${e.country}`,
         sku: "",
-        href: `/kesfet/etkinlikler/${e.slug}`,
+        href: `/etkinlikler/${e.slug}`,
         image: e.logoUrl,
       });
     });
@@ -125,7 +125,7 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
         subtitle: n.summary[locale],
         body: `${n.summary[locale]} ${n.body[locale]}`,
         sku: "",
-        href: `/kesfet/haberler/${newsSlug(n, locale)}`,
+        href: `/haberler/${newsSlug(n, locale)}`,
         image: n.coverUrl,
       });
     });
@@ -139,7 +139,7 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
       subtitle: b.category[locale],
       body: b.excerpt[locale],
       sku: "",
-      href: `/kesfet/blog/${blogSlug(b, locale)}`,
+      href: `/blog/${blogSlug(b, locale)}`,
       image: b.coverUrl,
     });
   });

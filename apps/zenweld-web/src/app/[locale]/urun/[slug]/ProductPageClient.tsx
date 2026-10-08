@@ -173,13 +173,13 @@ export function ProductPageClient({ slug }: { slug: string }) {
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <LocaleLink
-                    href="/kesfet/garanti?islem=kayit"
+                    href="/garanti/kayit"
                     className="text-sm font-semibold text-zw-red-600 hover:underline"
                   >
                     {t.explore.registerWarranty} →
                   </LocaleLink>
                   <LocaleLink
-                    href="/kesfet/garanti?islem=sorgula"
+                    href="/garanti/sorgulama"
                     className="text-sm font-semibold text-zw-red-600 hover:underline"
                   >
                     {t.explore.checkWarranty} →

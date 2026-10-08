@@ -27,9 +27,23 @@ const TOP_LEVEL: Record<string, string> = {
   "yetkili-bayi-ve-servis-agi": "authorised-dealer-service-network",
   "teklif-al": "request-quote",
   arama: "search",
-  kesfet: "explore",
   destek: "support",
-  kurumsal: "legal",
+  yasal: "legal",
+
+  // Kurumsal, garanti, bayilik ve icerik sayfalari ust seviyededir. Adresler
+  // menu yapisina bagli degildir; menu yeniden duzenlense de adresler
+  // degismez (SEO icin kalici adres).
+  garanti: "warranty",
+  "bayilik-basvurusu": "become-a-dealer",
+  "satis-temsilcilerimiz": "sales-representatives",
+  haberler: "news",
+  etkinlikler: "events",
+  "welders-club": "welders-club",
+  sss: "faq",
+  "urun-secici": "product-selector",
+  "kaynak-rehberi": "welding-guide",
+  msds: "msds",
+  "parti-sertifikalari": "batch-certificates",
   giris: "login",
   kayit: "register",
   cikis: "logout",
@@ -38,8 +52,7 @@ const TOP_LEVEL: Record<string, string> = {
 
   // Bayi magazasina ozel segmentler
   magaza: "shop",
-  // Bayi magazasinda blog ust seviyededir (/blog); ana sitede
-  // /kesfet/blog altindadir — iki yazim da ayni kelimeye cevrilir.
+  // Blog iki sitede de ust seviyededir (/blog).
   blog: "blog",
   sepet: "cart",
   odeme: "checkout",
@@ -51,27 +64,18 @@ const TOP_LEVEL: Record<string, string> = {
 
 /** Ikinci seviye segmentler: yalnizca su ust segmentlerin altinda gecerli */
 const NESTED: Record<string, Record<string, string>> = {
-  kesfet: {
-    "bayilik-basvurusu": "become-a-dealer",
-    "welders-club": "welders-club",
-    garanti: "warranty",
-    blog: "blog",
-    etkinlikler: "events",
-    haberler: "news",
-    msds: "msds",
-    "parti-sertifikalari": "batch-certificates",
-    "urun-secici": "product-selector",
-    "kaynak-rehberi": "welding-guide",
-    "satis-temsilcilerimiz": "sales-representatives",
+  garanti: {
+    kayit: "registration",
+    sorgulama: "check",
+    kosullar: "terms",
   },
+  // Bayi magazasinin SSS sayfasi /destek/sss altindadir.
   destek: {
     sss: "faq",
-    iletisim: "contact",
   },
-  kurumsal: {
+  yasal: {
     kvkk: "privacy-notice",
     gizlilik: "privacy-policy",
-    "garanti-sartlari": "warranty-terms",
     "kullanim-kosullari": "terms",
     iade: "returns",
   },

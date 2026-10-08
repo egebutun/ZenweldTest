@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ClipboardCheck, Search } from "lucide-react";
 import { WarrantyCheck } from "./WarrantyCheck";
 import { WarrantyRegister } from "./WarrantyRegister";
-import { useT } from "@/lib/i18n-client";
+import { useHref, useT } from "@/lib/i18n-client";
 
-type Action = "kayit" | "sorgula";
+export type WarrantyAction = "kayit" | "sorgula";
+
+const ACTION_PATHS: Record<WarrantyAction, string> = {
+  kayit: "/garanti/kayit",
+  sorgula: "/garanti/sorgulama",
+};
 
 /**
  * GARANTI SAYFASI — SECIM
@@ -15,30 +19,20 @@ type Action = "kayit" | "sorgula";
  * Menude tek "Garanti" basligi var. Sayfa acilinca ziyaretci iki
  * secenekten birini secer, ilgili form HEMEN ALTINDA gorunur.
  *
- * Secim adres cubuguna da yazilir (?islem=kayit / ?islem=sorgula), bu
- * sayede dogrudan bir secenege baglanti verilebilir — urun sayfasindaki
- * "Garanti Kaydı →" baglantisi bunu kullanir.
+ * Her secenegin kendi adresi vardir (/garanti/kayit, /garanti/sorgulama);
+ * secim yapilinca o adrese gecilir. Urun sayfasindaki "Garanti Kaydı →"
+ * gibi baglantilar dogrudan bu adreslere gider.
  */
-export function WarrantyChooser() {
+export function WarrantyChooser({ selected: action }: { selected: WarrantyAction | null }) {
   const t = useT();
+  const href = useHref();
   const router = useRouter();
-  const params = useSearchParams();
-  const fromUrl = params.get("islem");
-  const [action, setAction] = useState<Action | null>(
-    fromUrl === "kayit" || fromUrl === "sorgula" ? fromUrl : null,
-  );
 
-  // Tarayicinin geri/ileri tuslari da secimi degistirsin.
-  useEffect(() => {
-    if (fromUrl === "kayit" || fromUrl === "sorgula") setAction(fromUrl);
-  }, [fromUrl]);
-
-  const choose = (next: Action) => {
-    setAction(next);
-    router.replace(`?islem=${next}`, { scroll: false });
+  const choose = (next: WarrantyAction) => {
+    router.push(href(ACTION_PATHS[next]), { scroll: false });
   };
 
-  const options: { id: Action; Icon: typeof Search; title: string; text: string }[] = [
+  const options: { id: WarrantyAction; Icon: typeof Search; title: string; text: string }[] = [
     {
       id: "kayit",
       Icon: ClipboardCheck,

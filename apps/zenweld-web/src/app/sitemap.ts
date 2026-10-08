@@ -23,20 +23,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/yetkili-bayi-ve-servis-agi", priority: 0.9, freq: "monthly" },
     { path: "/teklif-al", priority: 0.9, freq: "monthly" },
     { path: "/hakkimizda", priority: 0.6, freq: "yearly" },
-    { path: "/kesfet/satis-temsilcilerimiz", priority: 0.6, freq: "monthly" },
-    { path: "/kesfet/welders-club", priority: 0.6, freq: "monthly" },
-    { path: "/kesfet/bayilik-basvurusu", priority: 0.7, freq: "yearly" },
-    { path: "/kesfet/garanti", priority: 0.6, freq: "yearly" },
-    { path: "/kesfet/blog", priority: 0.6, freq: "weekly" },
-    { path: "/kesfet/etkinlikler", priority: 0.7, freq: "weekly" },
-    { path: "/kesfet/haberler", priority: 0.7, freq: "weekly" },
-    { path: "/kesfet/urun-secici", priority: 0.6, freq: "monthly" },
-    { path: "/kesfet/kaynak-rehberi", priority: 0.6, freq: "yearly" },
-    { path: "/kesfet/msds", priority: 0.4, freq: "yearly" },
-    { path: "/kesfet/parti-sertifikalari", priority: 0.4, freq: "yearly" },
+    { path: "/satis-temsilcilerimiz", priority: 0.6, freq: "monthly" },
+    { path: "/welders-club", priority: 0.6, freq: "monthly" },
+    { path: "/bayilik-basvurusu", priority: 0.7, freq: "yearly" },
+    { path: "/garanti", priority: 0.6, freq: "yearly" },
+    { path: "/garanti/kayit", priority: 0.6, freq: "yearly" },
+    { path: "/garanti/sorgulama", priority: 0.5, freq: "yearly" },
+    { path: "/blog", priority: 0.6, freq: "weekly" },
+    { path: "/etkinlikler", priority: 0.7, freq: "weekly" },
+    { path: "/haberler", priority: 0.7, freq: "weekly" },
+    { path: "/urun-secici", priority: 0.6, freq: "monthly" },
+    { path: "/kaynak-rehberi", priority: 0.6, freq: "yearly" },
+    { path: "/msds", priority: 0.4, freq: "yearly" },
+    { path: "/parti-sertifikalari", priority: 0.4, freq: "yearly" },
     { path: "/destek", priority: 0.5, freq: "monthly" },
-    { path: "/destek/sss", priority: 0.5, freq: "monthly" },
-    { path: "/destek/iletisim", priority: 0.5, freq: "yearly" },
+    { path: "/sss", priority: 0.5, freq: "monthly" },
+    { path: "/iletisim", priority: 0.5, freq: "yearly" },
   ];
 
   const entries: MetadataRoute.Sitemap = [];
@@ -108,16 +110,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Blog yazilarinin govdesi hala yer tutucu metin. Gercek yazilar
   // yazildiginda asagidaki blogun yorumu kaldirilir ve
-  // kesfet/blog/[slug]/layout.tsx icindeki noindex silinir.
+  // blog/[slug]/layout.tsx icindeki noindex silinir.
   // blogPosts.forEach((post) => {
-  //   push(`/kesfet/blog/${post.slug}`, 0.5, "monthly", new Date(post.publishedAt));
+  //   push(`/blog/${post.slug}`, 0.5, "monthly", new Date(post.publishedAt));
   //   (push her iki dili de uretir; blogSlug(post, locale) kullanilmali)
   // });
 
   events
     .filter((event) => event.active)
     .forEach((event) => {
-      push(`/kesfet/etkinlikler/${event.slug}`, 0.6, "monthly", new Date(event.startDate));
+      push(`/etkinlikler/${event.slug}`, 0.6, "monthly", new Date(event.startDate));
     });
 
   // Haberin adresi dile gore degisir (baslik cevriliyor), bu yuzden her
@@ -126,7 +128,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     .filter((item) => item.active)
     .forEach((item) => {
       pushPerLocale(
-        (locale) => `/kesfet/haberler/${newsSlug(item, locale)}`,
+        (locale) => `/haberler/${newsSlug(item, locale)}`,
         0.5,
         "monthly",
         new Date(item.publishedAt),

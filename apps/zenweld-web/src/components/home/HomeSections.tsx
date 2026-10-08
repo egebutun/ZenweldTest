@@ -151,7 +151,7 @@ export function HomeActionStrip() {
           Icon={Compass}
           title={t.finder.question}
           text={t.finder.hint}
-          href="/kesfet/urun-secici"
+          href="/urun-secici"
           cta={t.finder.cta}
         />
         <ActionRow
@@ -324,7 +324,7 @@ export function HomeFaq() {
           subtitle={t.home.faqSubtitle}
           action={
             <LocaleLink
-              href="/destek/sss"
+              href="/sss"
               className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
             >
               {t.common.viewAll} <ArrowRight size={16} />
@@ -363,7 +363,7 @@ export function DealerApplyBanner() {
             <p className="mt-2 max-w-2xl text-sm text-zw-grey-700">{t.dealerApply.homeText}</p>
           </div>
         </div>
-        <LocaleLink href="/kesfet/bayilik-basvurusu" className="shrink-0">
+        <LocaleLink href="/bayilik-basvurusu" className="shrink-0">
           <Button size="lg">{t.dealerApply.homeCta}</Button>
         </LocaleLink>
       </div>
@@ -384,7 +384,7 @@ export function BlogTeaser() {
         title={t.home.blogTitle}
         action={
           <LocaleLink
-            href="/kesfet/blog"
+            href="/blog"
             className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
           >
             {t.common.viewAll} <ArrowRight size={16} />
@@ -395,7 +395,7 @@ export function BlogTeaser() {
         {listBlogPosts(db).slice(0, 3).map((post) => (
           <LocaleLink
             key={post.id}
-            href={`/kesfet/blog/${blogSlug(post, locale)}`}
+            href={`/blog/${blogSlug(post, locale)}`}
             className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
           >
             <div className="aspect-[16/9] overflow-hidden bg-zw-grey-100">

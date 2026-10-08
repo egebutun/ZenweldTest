@@ -224,7 +224,7 @@ export function ProductSupportChat({ product }: { product: Product }) {
                   label={t.support.chatConsent}
                 />
                 <LocaleLink
-                  href="/kurumsal/kvkk"
+                  href="/yasal/kvkk"
                   className="mt-1 ml-6 block font-semibold text-zw-red-600 underline"
                 >
                   {t.support.chatConsentLink}

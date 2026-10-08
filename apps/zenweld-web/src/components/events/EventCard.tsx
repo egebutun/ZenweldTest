@@ -91,7 +91,7 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
           {text(event.venue)}
         </span>
         <LocaleLink
-          href={`/kesfet/etkinlikler/${event.slug}`}
+          href={`/etkinlikler/${event.slug}`}
           className="mt-3 inline-block rounded-[4px] bg-zw-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zw-red-700"
         >
           {t.events.details}

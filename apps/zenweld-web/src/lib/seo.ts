@@ -255,7 +255,7 @@ export function faqJsonLd(locale: Locale): Record<string, unknown> {
 
 /**
  * Adres parcasi dile gore DEGISEN sayfalar icin alternates.
- * (Blog yazilari: /tr/kesfet/blog/<tr-slug> ve /en/explore/blog/<en-slug>)
+ * (Blog yazilari: /tr/blog/<tr-slug> ve /en/blog/<en-slug>)
  *
  * pathFor, her dil icin IC rotayi dondurur; cevrim yine localizePath ile
  * yapilir, yalnizca slug disaridan gelir.
@@ -280,7 +280,7 @@ export function languageAlternatesFor(
 /**
  * og:url icin MUTLAK ve DILE GORE CEVRILMIS adres.
  *
- * Onceden `/${lang}/kesfet/haberler/...` gibi ic rota yaziliyordu;
+ * Onceden `/${lang}/haberler/...` gibi ic rota yaziliyordu;
  * Ingilizce sayfalar paylasildiginda og:url Turkce adresi gosteriyordu
  * (canonical dogruydu, yalnizca og:url yanlisti). Bu yardimci ayni
  * cevrimi canonical ile birlikte yapar.

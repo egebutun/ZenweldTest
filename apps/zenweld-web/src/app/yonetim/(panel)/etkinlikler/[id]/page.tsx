@@ -28,7 +28,7 @@ export default function EditEventPage({
         description={`${formatDate(event.startDate, "tr")} — ${formatDate(event.endDate, "tr")}`}
         action={
           <a
-            href={siteUrl(`/kesfet/etkinlikler/${event.slug}`)}
+            href={siteUrl(`/etkinlikler/${event.slug}`)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-semibold text-zw-red-600 hover:underline"

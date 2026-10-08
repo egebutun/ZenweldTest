@@ -379,10 +379,10 @@ export interface Order {
 
 export interface BlogPost {
   id: string;
-  /** Turkce adres parcasi: /tr/kesfet/blog/<slug> */
+  /** Turkce adres parcasi: /tr/blog/<slug> */
   slug: string;
   /**
-   * Ingilizce adres parcasi: /en/explore/blog/<slugEn>
+   * Ingilizce adres parcasi: /en/blog/<slugEn>
    * Bos birakilirsa Turkce slug kullanilir (baslik cevrilmemisse).
    */
   slugEn?: string;
@@ -484,10 +484,10 @@ export interface ZenweldEvent {
 
 export interface NewsItem {
   id: string;
-  /** Turkce adres parcasi: /tr/kesfet/haberler/<slug> */
+  /** Turkce adres parcasi: /tr/haberler/<slug> */
   slug: string;
   /**
-   * Ingilizce adres parcasi: /en/explore/news/<slugEn>
+   * Ingilizce adres parcasi: /en/news/<slugEn>
    * Bos birakilirsa Turkce slug kullanilir.
    */
   slugEn?: string;

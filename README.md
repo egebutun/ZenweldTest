@@ -222,18 +222,20 @@ ZenweldTest/
     │       │   │   └── [kategori]/page.tsx     Kategori listeleme
     │       │   ├── urun/[slug]/page.tsx        ÜRÜN DETAY
     │       │   ├── arama/page.tsx
-    │       │   ├── nereden-alabilirim/page.tsx Bayi bulucu (harita)
+    │       │   ├── yetkili-bayi-ve-servis-agi/ Bayi bulucu (harita)
     │       │   ├── teklif-al/page.tsx          4 adımlı teklif formu
     │       │   ├── giris | kayit | cikis | sifremi-unuttum/
     │       │   ├── hesabim/                    Müşteri hesabı (bireysel / kurumsal)
     │       │   │   └── profil · tekliflerim · siparislerim · favorilerim
     │       │   │      · garantilerim · adreslerim
-    │       │   ├── kesfet/                     KEŞFET menüsü
-    │       │   │   └── hakkimizda · welders-club · garanti-sorgula
-    │       │   │      · garanti-kayit · blog · msds · parti-sertifikalari
-    │       │   │      · urun-secici · rehber
-    │       │   ├── destek/                     sss · iletisim · servis-agi
-    │       │   ├── kurumsal/                   kvkk · gizlilik · iade …
+    │       │   ├── garanti/                    Garanti seçimi · kayit · sorgulama · kosullar
+    │       │   ├── bayilik-basvurusu/          Bayimiz Olun formu
+    │       │   ├── hakkimizda · satis-temsilcilerimiz · iletisim
+    │       │   ├── haberler · etkinlikler · blog · welders-club
+    │       │   ├── sss · urun-secici · kaynak-rehberi · msds · parti-sertifikalari
+    │       │   ├── destek/                     Yardım Merkezi (kartlar)
+    │       │   ├── yasal/                      kvkk · gizlilik · kullanim-kosullari · iade
+    │       │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
     │       │   ├── (../yonetim/ — [locale] dışında) ZENWELD YÖNETİM PANELİ (yalnızca TR)
     │       │   │   └── urunler · stok · siparisler · teklifler · bayiler · saticilar
     │       │   │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar

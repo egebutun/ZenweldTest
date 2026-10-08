@@ -156,12 +156,12 @@ export function BlogForm({ item }: { item?: BlogPost }) {
           {/* Her dilin kendi adresi olur; Ingilizce sayfada Turkce slug
               gorunmesi hem okunaksiz hem de SEO acisindan zayiftir. */}
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Türkçe adres (slug)" hint={`/tr/kesfet/blog/${draft.slug || "…"}`}>
+            <FormRow label="Türkçe adres (slug)" hint={`/tr/blog/${draft.slug || "…"}`}>
               <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
             </FormRow>
             <FormRow
               label="İngilizce adres (slug)"
-              hint={`/en/explore/blog/${draft.slugEn?.trim() || draft.slug || "…"}`}
+              hint={`/en/blog/${draft.slugEn?.trim() || draft.slug || "…"}`}
             >
               <Input
                 value={draft.slugEn ?? ""}

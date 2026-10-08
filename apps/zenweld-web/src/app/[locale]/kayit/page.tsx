@@ -118,7 +118,7 @@ export default function RegisterPage() {
           <Store size={16} className="text-zw-red-600" />
           {t.dealerApply.homeTitle}{" "}
           <LocaleLink
-            href="/kesfet/bayilik-basvurusu"
+            href="/bayilik-basvurusu"
             className="font-semibold text-zw-red-600 hover:underline"
           >
             {t.dealerApply.homeCta} →

@@ -27,7 +27,7 @@ export function EventDetail({ slug }: { slug: string }) {
       <div className="border-b border-zw-grey-200 bg-zw-grey-50">
         <div className="zw-container py-10">
           <LocaleLink
-            href="/kesfet/etkinlikler"
+            href="/etkinlikler"
             className="mb-5 inline-flex items-center gap-1.5 text-sm font-semibold text-zw-grey-600 hover:text-zw-red-600"
           >
             <ArrowLeft size={16} />

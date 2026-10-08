@@ -30,7 +30,7 @@ export function NewsDetail({ slug }: { slug: string }) {
 
   useEffect(() => {
     if (item && canonicalSlug && canonicalSlug !== slug) {
-      router.replace(href(`/kesfet/haberler/${canonicalSlug}`));
+      router.replace(href(`/haberler/${canonicalSlug}`));
     }
   }, [item, canonicalSlug, slug, router, href]);
 
@@ -39,7 +39,7 @@ export function NewsDetail({ slug }: { slug: string }) {
   return (
     <article className="zw-container py-10">
       <LocaleLink
-        href="/kesfet/haberler"
+        href="/haberler"
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-zw-grey-600 hover:text-zw-red-600"
       >
         <ArrowLeft size={16} />
@@ -104,7 +104,7 @@ export function NewsDetail({ slug }: { slug: string }) {
             {others.map((n) => (
               <LocaleLink
                 key={n.id}
-                href={`/kesfet/haberler/${newsSlug(n, locale)}`}
+                href={`/haberler/${newsSlug(n, locale)}`}
                 className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
               >
                 <div className="flex aspect-[16/9] items-center justify-center overflow-hidden bg-zw-grey-100">

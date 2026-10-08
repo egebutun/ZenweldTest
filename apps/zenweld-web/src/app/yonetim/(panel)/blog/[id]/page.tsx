@@ -28,7 +28,7 @@ export default function EditBlogPostPage({
         description={`${item.category.tr} · ${formatDate(item.publishedAt, "tr")}`}
         action={
           <a
-            href={siteUrl(`/kesfet/blog/${item.slug}`)}
+            href={siteUrl(`/blog/${item.slug}`)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-semibold text-zw-red-600 hover:underline"

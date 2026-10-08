@@ -28,7 +28,7 @@ export default function EditNewsPage({
         description={formatDate(item.publishedAt, "tr")}
         action={
           <a
-            href={siteUrl(`/kesfet/haberler/${item.slug}`)}
+            href={siteUrl(`/haberler/${item.slug}`)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-semibold text-zw-red-600 hover:underline"

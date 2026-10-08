@@ -147,7 +147,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
             />
           </FormRow>
 
-          <FormRow label="URL (slug)" hint={`/kesfet/etkinlikler/${draft.slug || "…"}`}>
+          <FormRow label="URL (slug)" hint={`/etkinlikler/${draft.slug || "…"}`}>
             <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
           </FormRow>
 

@@ -148,12 +148,12 @@ export function NewsForm({ item }: { item?: NewsItem }) {
           {/* Haber basligi iki dilde de yazildigi icin adres de dile gore
               degisir. (Etkinliklerde degismez: fuar adlari ozel isimdir.) */}
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Türkçe adres (slug)" hint={`/tr/kesfet/haberler/${draft.slug || "…"}`}>
+            <FormRow label="Türkçe adres (slug)" hint={`/tr/haberler/${draft.slug || "…"}`}>
               <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
             </FormRow>
             <FormRow
               label="İngilizce adres (slug)"
-              hint={`/en/explore/news/${draft.slugEn?.trim() || draft.slug || "…"}`}
+              hint={`/en/news/${draft.slugEn?.trim() || draft.slug || "…"}`}
             >
               <Input
                 value={draft.slugEn ?? ""}

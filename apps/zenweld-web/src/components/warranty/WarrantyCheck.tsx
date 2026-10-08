@@ -11,9 +11,9 @@ import { formatDate } from "@/lib/format";
 /**
  * GARANTI SORGULAMA
  *
- * Tek "Garanti" sayfasinin iki secenekinden biri. Onceden ayri bir
- * adresti (/kesfet/garanti-sorgula); ziyaretci kayit ile sorgulama
- * arasinda gidip gelmek zorunda kalmasin diye tek sayfada birlesti.
+ * Garanti sayfasinin iki secenekinden biri (/garanti/sorgulama). Secim
+ * kartlari her iki adreste de gorunur; ziyaretci kayit ile sorgulama
+ * arasinda kolayca gecer.
  */
 export function WarrantyCheck({ onRegister }: { onRegister: () => void }) {
   const t = useT();

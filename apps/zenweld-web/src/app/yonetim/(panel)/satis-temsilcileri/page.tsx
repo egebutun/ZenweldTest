@@ -81,7 +81,7 @@ export default function AdminSalesRepsPage() {
         action={
           <div className="flex items-center gap-3">
             <a
-              href={siteUrl("/kesfet/satis-temsilcilerimiz")}
+              href={siteUrl("/satis-temsilcilerimiz")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-zw-red-600 hover:underline"

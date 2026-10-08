@@ -11,9 +11,8 @@ import { useT } from "@/lib/i18n-client";
 /**
  * GARANTI KAYDI
  *
- * Tek "Garanti" sayfasinin iki secenekinden biri (onceden ayri adres:
- * /kesfet/garanti-kayit). Kayit tamamlaninca ziyaretci ayni sayfadan
- * sorgulama adimina gecebilir.
+ * Garanti sayfasinin iki secenekinden biri (/garanti/kayit). Kayit
+ * tamamlaninca ziyaretci sorgulama adimina gecebilir.
  */
 export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
   const t = useT();

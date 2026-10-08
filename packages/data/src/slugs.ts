@@ -7,8 +7,8 @@ import type { BlogPost, NewsItem } from "./types";
  * Ingilizce sayfada Turkce slug gormek hem okunaksiz hem de SEO
  * acisindan zayiftir:
  *
- *   /tr/kesfet/blog/mig-kaynaginda-gaz-secimi
- *   /en/explore/blog/choosing-the-right-gas-for-mig-welding
+ *   /tr/blog/mig-kaynaginda-gaz-secimi
+ *   /en/blog/choosing-the-right-gas-for-mig-welding
  *
  * Urun kategorileri ve gruplari da ayni kurala uyar:
  *
