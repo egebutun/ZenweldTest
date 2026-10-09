@@ -27,7 +27,6 @@ const TOP_LEVEL: Record<string, string> = {
   "yetkili-bayi-ve-servis-agi": "authorised-dealer-service-network",
   "teklif-al": "request-quote",
   arama: "search",
-  destek: "support",
   yasal: "legal",
 
   // Kurumsal, garanti, bayilik ve icerik sayfalari ust seviyededir. Adresler
@@ -49,17 +48,9 @@ const TOP_LEVEL: Record<string, string> = {
   cikis: "logout",
   "sifremi-unuttum": "forgot-password",
   hesabim: "account",
-
-  // Bayi magazasina ozel segmentler
-  magaza: "shop",
-  // Blog iki sitede de ust seviyededir (/blog).
   blog: "blog",
-  sepet: "cart",
-  odeme: "checkout",
-  "siparis-tamam": "order-complete",
   hakkimizda: "about",
   iletisim: "contact",
-  "kargo-iade": "shipping-returns",
 };
 
 /** Ikinci seviye segmentler: yalnizca su ust segmentlerin altinda gecerli */
@@ -68,10 +59,6 @@ const NESTED: Record<string, Record<string, string>> = {
     kayit: "registration",
     sorgulama: "check",
     kosullar: "terms",
-  },
-  // Bayi magazasinin SSS sayfasi /destek/sss altindadir.
-  destek: {
-    sss: "faq",
   },
   yasal: {
     kvkk: "privacy-notice",

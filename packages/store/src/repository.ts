@@ -136,14 +136,6 @@ export function retailersInStockFor(
     });
 }
 
-/** Bir saticinin tum stok kayitlari (bayi paneli / admin icin). */
-export function stockForRetailer(
-  retailerId: string,
-  db: ZenweldDatabase = getSnapshot(),
-): RetailerStock[] {
-  return db.retailerStock.filter((s) => s.retailerId === retailerId);
-}
-
 export function getRetailerStock(
   productId: string,
   retailerId: string,
@@ -327,11 +319,6 @@ export function siteMembers(db: ZenweldDatabase = getSnapshot()): User[] {
   return db.users.filter((u) => u.role !== "dealer" && !u.storeId);
 }
 
-/** Bir bayi magazasinin uyeleri (o magazada hesap acan musteriler). */
-export function storeMembers(retailerId: string, db: ZenweldDatabase = getSnapshot()): User[] {
-  return db.users.filter((u) => u.storeId === retailerId && u.role !== "dealer");
-}
-
 export function findUserByEmail(
   email: string,
   db: ZenweldDatabase = getSnapshot(),
@@ -433,11 +420,6 @@ export function siteOrders(db: ZenweldDatabase = getSnapshot()): Order[] {
   return listOrders(db).filter(
     (o) => o.channel === "zenweld" && (!o.userId || !dealerIds.has(o.userId)),
   );
-}
-
-/** Bir bayi magazasinin (e-ticaret sitesi) siparisleri. */
-export function storeOrders(retailerId: string, db: ZenweldDatabase = getSnapshot()): Order[] {
-  return listOrders(db).filter((o) => o.channel === "bayi-shop" && o.retailerId === retailerId);
 }
 
 export function ordersForUser(userId: string, db: ZenweldDatabase = getSnapshot()): Order[] {

@@ -126,16 +126,6 @@ işaretleyin; aksi halde hiçbir ürün sayfasında görünmez.
 
 ---
 
-## Yeni bir bayi mağazası (ikinci kopya) oluşturma
-
-1. `apps/bayi-shop` klasörünü kopyalayın (örn. `apps/bayi-shop-b`)
-2. `package.json` içindeki `name` ve port numarasını değiştirin
-3. `src/lib/store-config.ts` içindeki `retailerId`, `dealerId`, ad, telefon,
-   adres bilgilerini güncelleyin
-4. Kök `package.json` içine yeni bir `dev:` komutu ekleyin
-
----
-
 ## Metinleri değiştirme
 
 Arayüz metinleri: `packages/i18n/src/dictionaries.ts` (TR ve EN birlikte).

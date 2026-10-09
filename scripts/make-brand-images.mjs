@@ -1,7 +1,7 @@
 /**
  * MARKA GORSELLERI URETICI
  *
- * Bu betik iki sey uretir ve her iki uygulamanin public klasorune yazar:
+ * Bu betik iki sey uretir ve ana sitenin public klasorune yazar:
  *
  *   1. /images/brand/og-cover.png   1200x630  — WhatsApp, LinkedIn, X, Slack
  *      onizleme karti. Baglanti paylasildiginda gorunen gorsel budur.
@@ -23,7 +23,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
-const APPS = ["zenweld-web", "bayi-shop"];
+const APPS = ["zenweld-web"];
 
 const INK = "#141619";
 const RED = "#b82429";
@@ -50,46 +50,15 @@ function backgroundSvg() {
 }
 
 /**
- * Bayi kartindaki "BAYİ-A" eki.
- *
- * Ana sitede hicbir yazi yok, yalnizca logo var. Bayi sitesinin ana
- * sayfadaki logosu da logo + bayi adi seklinde oldugu icin kartta yalnizca
- * bu ek duruyor; aciklama satiri kaldirildi.
- */
-function suffixSvg(suffix) {
-  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="80">
-  <text x="0" y="52" font-family="Liberation Sans, DejaVu Sans, sans-serif"
-        font-size="46" font-weight="bold" fill="#ffffff" letter-spacing="4">${suffix}</text>
-</svg>`);
-}
-
-/**
  * Paylasim karti: koyu zemin uzerinde ortalanmis Zenweld logosu.
  * Sitenin ana sayfasindaki logonun aynisi kullanilir.
  */
-async function buildCard({ app, logoWidth, suffix }) {
+async function buildCard({ app, logoWidth }) {
   const logo = await renderLogo(logoWidth);
   const { width: lw, height: lh } = await sharp(logo).metadata();
-
-  const gap = 26;
-
-  // Ek yaziyi once kirp, GERCEK yuksekligini olc; blok yuksekligini ona
-  // gore hesapla. Sabit bir yukseklik varsaymak bloku yukari kaydiriyordu.
-  const sx = suffix ? await sharp(suffixSvg(suffix)).trim().toBuffer() : null;
-  const sm = sx ? await sharp(sx).metadata() : null;
-
-  const blockH = lh + (sm ? gap + sm.height : 0);
-  const top = Math.round((H - blockH) / 2);
+  const top = Math.round((H - lh) / 2);
 
   const layers = [{ input: logo, left: Math.round((W - lw) / 2), top }];
-
-  if (sx && sm) {
-    layers.push({
-      input: sx,
-      left: Math.round((W - sm.width) / 2),
-      top: top + lh + gap,
-    });
-  }
 
   const image = await sharp(backgroundSvg())
     .composite(layers)
@@ -115,7 +84,6 @@ async function buildLogoPng() {
 
 console.log("Marka gorselleri uretiliyor...");
 await buildCard({ app: "zenweld-web", logoWidth: 720 });
-await buildCard({ app: "bayi-shop", logoWidth: 620, suffix: "BAYİ-A" });
 await buildLogoPng();
 console.log("Bitti.");
 

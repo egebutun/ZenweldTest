@@ -15,10 +15,7 @@ import { join, extname, basename, dirname } from "node:path";
 const MAX_WIDTH = 800;
 const QUALITY = 80;
 
-const roots = [
-  "apps/zenweld-web/public/images",
-  "apps/bayi-shop/public/images",
-];
+const roots = ["apps/zenweld-web/public/images"];
 
 function walk(dir) {
   const out = [];

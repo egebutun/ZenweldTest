@@ -19,7 +19,7 @@ import { dirname, join } from "node:path";
 
 const ROOT = dirname(new URL(import.meta.url).pathname).replace(/\/scripts$/, "");
 const SOURCE = join(ROOT, "assets/brand-mark.svg");
-const APPS = ["apps/zenweld-web/src/app", "apps/bayi-shop/src/app"];
+const APPS = ["apps/zenweld-web/src/app"];
 
 const svg = readFileSync(SOURCE);
 
@@ -51,7 +51,7 @@ function buildIco(entries) {
 
 const png = (size) => sharp(svg).resize(size, size).png({ compressionLevel: 9 }).toBuffer();
 
-const ANDROID_DIRS = ["apps/zenweld-web/public/icons", "apps/bayi-shop/public/icons"];
+const ANDROID_DIRS = ["apps/zenweld-web/public/icons"];
 
 const icoSizes = [16, 32, 48];
 const icoEntries = [];

@@ -5,7 +5,7 @@ export { Modal } from "./components/Modal";
 export type { ModalProps } from "./components/Modal";
 export { Accordion } from "./components/Accordion";
 export { Tabs } from "./components/Tabs";
-export { ZenweldLogo, ZenweldBayiLogo } from "./components/Logo";
+export { ZenweldLogo } from "./components/Logo";
 export { Skeleton, SectionHeading, EmptyState, Alert } from "./components/Misc";
 export { StarRating } from "./components/StarRating";
 export { ReviewMarquee } from "./components/ReviewMarquee";

@@ -1,7 +1,6 @@
 # Yönetim Paneli Kullanım Kılavuzu
 
-> Bu kılavuz **Zenweld'in** yönetim panelidir. Bayilerin kendi e-ticaret
-> mağazalarını yönettiği panel ayrıdır: `docs/MAGAZA-PANELI.md`.
+> Bu kılavuz Zenweld ana sitesinin yönetim panelidir (`/yonetim`).
 
 Menü sırası: Panel · Ürünler · Stok Matrisi · Siparişler · Teklifler · Bayiler ·
 Online Satıcılar · Satış Temsilcileri · Üyeler · Garantiler · Etkinlikler ·
@@ -51,61 +50,10 @@ Beş sekme vardır:
 | **Kutu İçeriği** | TR/EN madde listesi |
 
 **Durum işaretleri:**
-- **Kampanya / indirim** — yalnızca **Zenweld ana sitesindeki** fiyatı etkiler.
-  Bayi mağazalarının fiyat ve kampanyalarını bayiler kendi mağaza panellerinden
-  yönetir (bkz. aşağıdaki *Bayi fiyat ve kampanyaları*).
+- **Kampanya / indirim** — Zenweld ana sitesindeki fiyatı etkiler.
 
 **Not:** Yeni ürün eklediğinizde hiçbir satıcıda stokta görünmez. Ürünün online
 satıcılarda çıkması için **Stok Matrisi**'nden işaretlemelisiniz.
-
----
-
-### Bayi fiyat ve kampanyaları
-
-Ana site ile bayi mağazasının fiyatları **ayrıdır**:
-
-| Fiyat | Kim belirler | Nereden |
-|---|---|---|
-| Zenweld ana sitesi fiyatı ve kampanyası | Zenweld yöneticisi | `Yönetim Paneli → Ürünler → Düzenle` |
-| Bayi mağazası fiyatı ve kampanyası | Bayi | Mağaza paneli → `Stok Bildirimi` (bayi sitesi `/yonetim`) |
-
-Bayi fiyat girmezse mağazada Zenweld liste fiyatı (KDV dahil) gösterilir.
-Zenweld kampanyası bayi mağazasına **uygulanmaz**; bayi isterse kendi
-kampanyasını ürün satırındaki **Kampanya ekle** bağlantısından tanımlar
-(indirim %, başlangıç, bitiş — kurallar yönetim panelindekiyle aynıdır).
-
----
-
-## 3. Stok Matrisi ⭐
-
-Projenin en kritik ekranı. Bir ürünün hangi online satıcıda stokta olduğunu
-belirler — ürün sayfasındaki *"Ayrıca online alışveriş olarak şurada da
-mevcuttur"* bölümü doğrudan buradan beslenir.
-
-### Matris modu (varsayılan)
-Satırlar ürün, sütunlar satıcıdır. Yeşil ✓ = stokta, gri ✕ = stokta değil.
-Hücreye tıklayarak anında değiştirirsiniz.
-
-### Tek satıcı modu
-Üstteki açılır menüden *"Sadece: Başak Hırdavat"* gibi bir satıcı seçtiğinizde
-yalnızca o satıcının sütunu kalır ve **adet + fiyat + son güncelleme** alanları
-açılır. "Tümünü işaretle / Tümünü temizle" butonları bu modda kullanışlıdır.
-
-### CSV ile toplu güncelleme
-1. CSV'nin ait olduğu satıcıyı seçin
-2. Dosyayı yükleyin
-
-Beklenen biçim (ayraç `;` veya `,`):
-
-```csv
-sku;stok;adet;fiyat
-ZW-U250MTC;1;4;49800
-ZW-ARC200;var;12;11880
-ZW-MC40CNC;0;0;
-```
-
-Stok sütununa `1`, `var`, `evet`, `true`, `stokta` yazılabilir. SKU eşleşmeyen
-satırlar atlanır ve kaç satırın atlandığı bildirilir.
 
 ---
 
@@ -114,10 +62,8 @@ satırlar atlanır ve kaç satırın atlandığı bildirilir.
 Ana sitenin siparişleri listelenir; durum açılır menüsünden güncellenir.
 Ana site şu an doğrudan satış yapmadığı için liste boştur.
 
-Burada **bayi kaydı yoktur**:
-- Bayi mağazalarının (ör. ZENWELD-BAYİ-A) müşteri siparişleri her bayinin kendi
-  mağaza panelinde tutulur (bkz. `docs/MAGAZA-PANELI.md`).
-- Zenweld ile bayiler arasındaki siparişler ileride ayrı B2B uygulamasında olacak.
+Burada bayi kaydı yoktur; Zenweld ile bayiler arasındaki siparişler ileride ayrı
+B2B uygulamasında olacak.
 
 ---
 
@@ -176,8 +122,7 @@ Sitedeki **Keşfet → Kurumsal → Satış Temsilcilerimiz** sayfasının liste
 ## 9. Üyeler
 
 Yalnızca **ana sitenin** üyeleri (bireysel, kurumsal) ve yönetici hesapları
-listelenir. Bayiler ana sitenin üyesi değildir; bayi mağazalarının müşterileri de
-burada görünmez (her bayi kendi mağaza panelinde görür).
+listelenir. Bayiler ana sitenin üyesi değildir.
 
 - Rol, durum ve metin araması ile filtreleme
 - Rol açılır menüsünden anında değiştirilebilir

@@ -1,4 +1,4 @@
-# ZENWELD — Kurumsal Katalog Sitesi + Bayi E-Ticaret Mağazası
+# ZENWELD — Kurumsal Katalog Sitesi
 
 Zenweld kaynak makineleri ve ekipmanları için hazırlanmış **frontend demo** projesi.
 Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur.
@@ -12,11 +12,7 @@ Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur.
 | Site | Adres |
 |---|---|
 | Ana Zenweld sitesi | https://zenweld-test-zenweld-web.vercel.app |
-| ZENWELD-BAYİ-A mağazası | https://zenweld-test-bayi-shop.vercel.app |
-
-İki site birbirine Vercel ortam değişkenleriyle bağlıdır:
-`NEXT_PUBLIC_BAYI_SHOP_URL` (ana sitede) ve `NEXT_PUBLIC_ZENWELD_URL` (bayi mağazasında).
-Bu değişkenler derleme sırasında koda gömülür; değiştirdikten sonra yeniden deploy gerekir.
+| Zenweld yönetim paneli | https://zenweld-test-zenweld-web.vercel.app/yonetim |
 
 ---
 
@@ -24,7 +20,7 @@ Bu değişkenler derleme sırasında koda gömülür; değiştirdikten sonra yen
 
 - [Hızlı Başlangıç](#hızlı-başlangıç)
 - [Demo Hesaplar](#demo-hesaplar)
-- [İki Site](#i̇ki-site)
+- [Site](#site)
 - [Öne Çıkan Özellikler](#öne-çıkan-özellikler)
 - [Proje Yapısı](#proje-yapısı)
 - [Veriler Nerede Saklanıyor?](#veriler-nerede-saklanıyor)
@@ -43,30 +39,16 @@ npm install
 # Ana Zenweld sitesi → http://localhost:3000
 # Zenweld yönetim paneli de bu uygulamanın içinde → http://localhost:3000/yonetim
 npm run dev:web
-
-# Bayi mağazası (ZENWELD-BAYİ-A) → http://localhost:3001
-# Mağaza paneli de bu uygulamanın içinde → http://localhost:3001/yonetim
-npm run dev:bayi
 ```
 
-Her site kendi yönetim panelini içinde taşır; panelin ayrı bir adresi veya ayrı
-bir Vercel projesi yoktur:
-
-| Site | Paneli |
-|---|---|
-| Ana site (`apps/zenweld-web`) | `/yonetim` — Zenweld yönetimi |
-| Bayi mağazası (`apps/bayi-shop`) | `/yonetim` — mağaza yönetimi (bayi) |
-
-Paneller kendi giriş ekranına ve sitedeki müşteri oturumundan ayrı kendi
-oturumuna sahiptir.
-
-İki siteyi **aynı anda** çalıştırmak, ürün sayfasındaki "Ayrıca online alışveriş
-olarak şurada da mevcuttur" bölümünden bayi mağazasına geçişi denemek için gerekir.
+Yönetim paneli sitenin içindedir (`/yonetim`); ayrı bir adresi veya ayrı bir
+Vercel projesi yoktur. Panelin kendi giriş ekranı ve sitedeki müşteri
+oturumundan ayrı kendi oturumu vardır.
 
 Diğer komutlar:
 
 ```bash
-npm run build       # üç uygulamanın da üretim derlemesi
+npm run build       # ana sitenin üretim derlemesi
 npm run typecheck   # TypeScript kontrolü
 ```
 
@@ -81,21 +63,15 @@ Giriş sayfasındaki kartlara tıklayarak formu otomatik doldurabilirsiniz.
 | **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca Zenweld yönetim paneli (ana site `/yonetim`) |
 | **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: favoriler, garanti kayıtları |
 | **Kurumsal** | `kurumsal@demo.com` | `demo123` | Ana site: teklif talepleri, vadeli/çek ödeme |
-| **Bayi (Murat Kaya)** | `bayi@zenweld-bayi-a.com` | `bayi123` | Yalnızca ZENWELD-BAYİ-A **mağaza paneli** (bayi sitesi `/yonetim`) |
-| **Mağaza üyesi** | `hakan.celik@demo.com` | `demo123` | Yalnızca ZENWELD-BAYİ-A mağazası (alışveriş, siparişlerim) |
 
-Hesaplar sitelere göre ayrıdır:
-- **Ana site** yalnızca bireysel ve kurumsal üyeleri kabul eder. Bayiler ana
-  sitenin müşterisi değildir; Zenweld ile bayiler arasındaki teklif/sipariş
-  işleri ileride ayrı bir **B2B uygulamasında** olacak.
-- **Bayi mağazasının** kendi üyeleri vardır (`User.storeId`); ana sitenin
-  üyeleriyle karışmaz. Mağaza yöneticisi (bayi) mağazanın paneline girer.
+Ana site yalnızca bireysel ve kurumsal üyeleri kabul eder. Bayiler ana sitenin
+müşterisi değildir; bayi olmak isteyenler **Bayilik Başvurusu** formunu doldurur.
 
 ---
 
-## İki Site
+## Site
 
-### 1. `apps/zenweld-web` — Ana Zenweld Sitesi (port 3000)
+### `apps/zenweld-web` — Ana Zenweld Sitesi (port 3000)
 
 Marka/katalog sitesidir, **sepet yoktur**. Ziyaretçi ürünü şu üç yoldan alır:
 
@@ -104,16 +80,6 @@ Marka/katalog sitesidir, **sepet yoktur**. Ziyaretçi ürünü şu üç yoldan a
    online satıcılara yönlendirilir
 3. **Teklif Al** → vadeli ödeme / çek isteyen kurumsal müşteriler için satış ekibi
    iletişime geçer
-
-### 2. `apps/bayi-shop` — ZENWELD-BAYİ-A (port 3001)
-
-E-ticaret sitesi olmayan bayiler için **beyaz etiket mağaza şablonu**. Sepet,
-mock ödeme akışı ve sipariş takibi vardır. Yeni bir bayi için yalnızca
-`apps/bayi-shop/src/lib/store-config.ts` dosyasındaki değerleri değiştirmek yeterlidir.
-
-Bayi mağazasını kendi **mağaza panelinden** yönetir: `<mağaza>/yonetim` —
-siparişler, stok/fiyat/kampanya, yorumlar, üyeler, profil. Ayrıntı:
-`docs/MAGAZA-PANELI.md`.
 
 ---
 
@@ -125,9 +91,8 @@ Her ürünün her satıcıdaki stok durumu ayrı tutulur. Bir ürün 7 sitede st
 olurken diğeri 2 sitede olabilir; ürün sayfasında **yalnızca stokta olan satıcılar**
 görünür. Hiçbirinde yoksa "en yakın bayiden temin edebilirsiniz" mesajı çıkar.
 
-Stok iki yerden güncellenir:
-- **Yönetici:** `/yonetim/stok` → ürün × satıcı matrisi (tek tek, toplu veya CSV)
-- **Bayi:** mağaza paneli → `Stok Bildirimi` (bayi sitesi `/yonetim/stok-bildirimi`)
+Stok yönetim panelinden güncellenir: `/yonetim/stok` → ürün × satıcı matrisi
+(tek tek, toplu veya CSV).
 
 ### Arama
 
@@ -157,7 +122,6 @@ olduğu bayiler" filtresi, yol tarifi ve WhatsApp bağlantıları.
 |---|---|
 | Bireysel | Ana site: favoriler, garanti kaydı |
 | Kurumsal | Ana site: teklif talebi (vadeli / çek), teklif geçmişi |
-| Bayi | Yalnızca kendi mağazasının paneli (bayi sitesi `/yonetim`) |
 | Yönetici | Zenweld yönetim panelinin tamamı (ana site `/yonetim`) |
 
 Ana sitede bayi hesabı açılmaz; bayi olmak isteyenler **Bayilik Başvurusu**
@@ -213,56 +177,44 @@ ZenweldTest/
 │       └── src/ theme.css · components/ (Button, Modal, Badge, Field…)
 │
 └── apps/
-    ├── zenweld-web/                ANA SİTE (port 3000)
-    │   └── src/
-    │       ├── app/[locale]/
-    │       │   ├── page.tsx                    Anasayfa
-    │       │   ├── ekipmanlar|guvenlik|aksesuarlar|dolgu-metalleri/
-    │       │   │   ├── page.tsx                Bölüm listeleme
-    │       │   │   └── [kategori]/page.tsx     Kategori listeleme
-    │       │   ├── urun/[slug]/page.tsx        ÜRÜN DETAY
-    │       │   ├── arama/page.tsx
-    │       │   ├── yetkili-bayi-ve-servis-agi/ Bayi bulucu (harita)
-    │       │   ├── teklif-al/page.tsx          4 adımlı teklif formu
-    │       │   ├── giris | kayit | cikis | sifremi-unuttum/
-    │       │   ├── hesabim/                    Müşteri hesabı (bireysel / kurumsal)
-    │       │   │   └── profil · tekliflerim · siparislerim · favorilerim
-    │       │   │      · garantilerim · adreslerim
-    │       │   ├── garanti/                    Garanti seçimi · kayit · sorgulama · kosullar
-    │       │   ├── bayilik-basvurusu/          Bayimiz Olun formu
-    │       │   ├── hakkimizda · satis-temsilcilerimiz · iletisim
-    │       │   ├── haberler · etkinlikler · blog · welders-club
-    │       │   ├── sss · urun-secici · kaynak-rehberi · msds · parti-sertifikalari
-    │       │   ├── yasal/                      kvkk · gizlilik · kullanim-kosullari · iade
-    │       │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
-    │       │   ├── (../yonetim/ — [locale] dışında) ZENWELD YÖNETİM PANELİ (yalnızca TR)
-    │       │   │   └── urunler · stok · siparisler · teklifler · bayiler · saticilar
-    │       │   │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
-    │       │   │      · gorunum · veri
-    │       ├── components/
-    │       │   ├── layout/    Header · MegaMenu · Footer · DemoRibbon
-    │       │   ├── search/    SearchOverlay
-    │       │   ├── product/   ProductCard · OnlineRetailers · ProductDetailParts
-    │       │   ├── dealers/   DealerFinder · DealerMap
-    │       │   ├── account/   AccountShell
-    │       │   ├── admin/     AdminShell · ProductForm
-    │       │   └── common/    LocaleLink · ProductImage · PageShell
-    │       └── lib/
-    │           ├── search/    search-client · tr-normalize · synonyms · use-search
-    │           ├── i18n-client.tsx · format.ts · geo.ts · menu.ts
-    │           └── quote-list.tsx · favourites.tsx
-    │
-    └── bayi-shop/                  BAYİ MAĞAZASI (port 3001)
+    └── zenweld-web/                ANA SİTE (port 3000)
         └── src/
             ├── app/[locale]/
-            │   ├── page.tsx · magaza · urun/[slug]
-            │   ├── sepet · odeme · siparis-tamam
-            │   ├── giris · kayit · hesabim       (mağazanın kendi üyeleri)
-            │   └── hakkimizda · iletisim · kargo-iade
-            ├── app/yonetim/                MAĞAZA PANELİ (bayi, yalnızca TR)
-            │   └── siparisler · stok-bildirimi · yorumlar · uyeler · profil
-            ├── components/ ShopHeader · ShopFooter · ShopProductCard · panel/PanelShell
-            └── lib/ cart.tsx · store-config.ts
+            │   ├── page.tsx                    Anasayfa
+            │   ├── ekipmanlar|guvenlik|aksesuarlar|dolgu-metalleri/
+            │   │   ├── page.tsx                Bölüm listeleme
+            │   │   └── [kategori]/page.tsx     Kategori listeleme
+            │   ├── urun/[slug]/page.tsx        ÜRÜN DETAY
+            │   ├── arama/page.tsx
+            │   ├── yetkili-bayi-ve-servis-agi/ Bayi bulucu (harita)
+            │   ├── teklif-al/page.tsx          4 adımlı teklif formu
+            │   ├── giris | kayit | cikis | sifremi-unuttum/
+            │   ├── hesabim/                    Müşteri hesabı (bireysel / kurumsal)
+            │   │   └── profil · tekliflerim · siparislerim · favorilerim
+            │   │      · garantilerim · adreslerim
+            │   ├── garanti/                    Garanti seçimi · kayit · sorgulama · kosullar
+            │   ├── bayilik-basvurusu/          Bayimiz Olun formu
+            │   ├── hakkimizda · satis-temsilcilerimiz · iletisim
+            │   ├── haberler · etkinlikler · blog · welders-club
+            │   ├── sss · urun-secici · kaynak-rehberi · msds · parti-sertifikalari
+            │   ├── yasal/                      kvkk · gizlilik · kullanim-kosullari · iade
+            │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
+            │   ├── (../yonetim/ — [locale] dışında) ZENWELD YÖNETİM PANELİ (yalnızca TR)
+            │   │   └── urunler · stok · siparisler · teklifler · bayiler · saticilar
+            │   │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
+            │   │      · gorunum · veri
+            ├── components/
+            │   ├── layout/    Header · MegaMenu · Footer · DemoRibbon
+            │   ├── search/    SearchOverlay
+            │   ├── product/   ProductCard · OnlineRetailers · ProductDetailParts
+            │   ├── dealers/   DealerFinder · DealerMap
+            │   ├── account/   AccountShell
+            │   ├── admin/     AdminShell · ProductForm
+            │   └── common/    LocaleLink · ProductImage · PageShell
+            └── lib/
+                ├── search/    search-client · tr-normalize · synonyms · use-search
+                ├── i18n-client.tsx · format.ts · geo.ts · menu.ts
+                └── quote-list.tsx · favourites.tsx
 ```
 
 ---
@@ -273,7 +225,7 @@ Backend olmadığı için:
 
 1. Uygulama açıldığında `packages/data` içindeki **başlangıç verisi** tarayıcının
    `localStorage`'ına yüklenir.
-2. Admin panelinde veya bayi stok bildiriminde yapılan her değişiklik
+2. Yönetim panelinde yapılan her değişiklik
    `localStorage`'a yazılır ve sayfalar anında güncellenir.
 3. Değişiklikler **yalnızca o tarayıcıda** görünür. Başka bilgisayarda görünmez.
 
@@ -281,23 +233,10 @@ Değişiklikleri kalıcı hale getirmek için: `/yonetim/veri` → **JSON Dışa
 → indirilen dosyayı yedekleyin veya seed dosyalarına aktarın.
 Aynı sayfadan **JSON İçe Aktar** ve **Başlangıca Dön** işlemleri de yapılabilir.
 
-> İki site farklı portlarda çalıştığı için ayrı `localStorage` alanları kullanır.
-> Ana sitedeki admin değişiklikleri bayi mağazasına otomatik yansımaz; iki site de
-> aynı başlangıç verisinden beslenir.
-
 ---
 
 ## Günlük Stok Güncelleme Akışı
 
-**Seçenek A — Bayi kendi girer (önerilen):**
-1. Bayi mağaza paneline `bayi@zenweld-bayi-a.com` ile giriş yapar
-2. Mağaza panelinde (bayi sitesi `/yonetim`) `Stok Bildirimi` sayfasında ürünleri işaretler veya CSV yükler;
-   aynı sayfada **kendi satış fiyatını ve kampanyasını** (indirim %, başlangıç,
-   bitiş) girer. Bu fiyat ve kampanyalar yalnızca bayi mağazasında geçerlidir;
-   ana sitenin fiyatlarını yönetici belirler.
-3. İşaretlenen ürünler ana sitedeki ürün sayfalarında o bayinin logosuyla görünür
-
-**Seçenek B — Yönetici girer:**
 1. `admin@zenweld.com` ile giriş → `Yönetim Paneli → Stok Matrisi`
 2. Satıcıyı seçip tek tek işaretleyin, ya da "Tümünü işaretle / temizle" kullanın
 3. Bayiden Excel geldiyse `sku;stok;adet;fiyat` biçiminde CSV olarak yükleyin
@@ -338,23 +277,22 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
 2. **Veri gerçek bir veritabanına taşınmalı.** `packages/store/src/database.ts`
    içindeki okuma/yazma fonksiyonları değiştirilerek tüm uygulama aynı kalacak
    şekilde Supabase/Firebase/PostgreSQL'e bağlanabilir.
-3. **Ödeme entegrasyonu.** Bayi mağazasındaki ödeme akışı tamamen mock'tur.
-4. **Ürün teknik verileri doğrulanmalı.** Amper, devrede kalma oranı ve ağırlık
+3. **Ürün teknik verileri doğrulanmalı.** Amper, devrede kalma oranı ve ağırlık
    gibi değerler internet kaynaklarından derlendi; `products.seed.ts` içinde
    `DOĞRULANMALI` notu bulunur. Resmî katalogla karşılaştırılmalıdır.
-5. **Yasal metinler** (KVKK, gizlilik, iade, garanti koşulları) şu an lorem ipsum'dur.
+4. **Yasal metinler** (KVKK, gizlilik, iade, garanti koşulları) şu an lorem ipsum'dur.
 
 ---
 
 ## SEO
 
-Her iki sitede de aşağıdakiler hazırdır:
+Sitede aşağıdakiler hazırdır:
 
 - **Sayfa başlıkları ve açıklamaları** — ürün, kategori, blog ve içerik sayfalarının
   her biri kendi başlığını ve açıklamasını üretir (TR/EN ayrı)
 - **`/sitemap.xml`** — ürün, kategori ve blog sayfaları `packages/data` içindeki
   veriden otomatik üretilir; yeni ürün eklendiğinde kendiliğinden güncellenir
-- **`/robots.txt`** — yönetim paneli, hesap, sepet ve ödeme sayfaları taramaya kapalı
+- **`/robots.txt`** — yönetim paneli, hesap ve API sayfaları taramaya kapalı
 - **Dile göre adresler** — İngilizce sayfalar İngilizce adres kullanır:
   `/tr/urun/arc-200` ↔ `/en/products/arc-200`,
   `/tr/ekipmanlar/lazer-temizleme` ↔ `/en/equipment/laser-cleaning`.
@@ -367,8 +305,7 @@ Her iki sitede de aşağıdakiler hazırdır:
 - **Open Graph / Twitter Card** — WhatsApp, LinkedIn ve X'te paylaşınca başlık,
   açıklama ve görselle düzgün önizleme çıkar
 - **Yapısal veri (schema.org JSON-LD)** — `Product` (fiyat, SKU, stok durumu, marka,
-  teknik özellikler), `BreadcrumbList`, `Organization`; bayi mağazasında ayrıca
-  `Store` ve kargo bilgisi içeren `Offer`
+  teknik özellikler), `BreadcrumbList`, `Organization`
 
 ### Site adresi
 
@@ -378,7 +315,7 @@ tanımlamanız yeterlidir.
 
 ### Demoyu aramaya kapatmak
 
-Vercel'de `NEXT_PUBLIC_NOINDEX=1` tanımlarsanız (iki sitenin projesinde de) tüm
+Vercel'de `NEXT_PUBLIC_NOINDEX=1` tanımlarsanız tüm
 sayfalara `<meta name="robots" content="noindex, nofollow">` eklenir ve site
 haritası `robots.txt`'den kaldırılır. Demo bir `vercel.app` adresindeyken bu önerilir.
 Değişken derleme sırasında okunur; ekledikten sonra **Redeploy** gerekir.
@@ -386,7 +323,7 @@ Değişken derleme sırasında okunur; ekledikten sonra **Redeploy** gerekir.
 `robots.txt` bu modda taramayı **engellemez**, bilerek: Google sayfayı tarayamazsa
 `noindex` etiketini de göremez ve adresi başka kaynaktan bulursa yine indeksleyebilir.
 `robots.txt` yalnızca yönetim panelini (`/yonetim`), hesap ve API sayfalarını kapatır.
-Yönetim panelleri değişkenden bağımsız olarak her zaman `noindex`'tir (etiket,
+Yönetim paneli değişkenden bağımsız olarak her zaman `noindex`'tir (etiket,
 `X-Robots-Tag` başlığı ve `robots.txt`).
 
 ---
@@ -395,11 +332,11 @@ Yönetim panelleri değişkenden bağımsız olarak her zaman `noindex`'tir (eti
 
 | Varlık | Yer |
 |---|---|
-| Logo (kırmızı / beyaz) | `apps/*/public/images/brand/` |
+| Logo (kırmızı / beyaz) | `apps/zenweld-web/public/images/brand/` |
 | Kare marka işareti | `assets/brand-mark.svg` |
-| Favicon ve uygulama ikonları | `apps/*/src/app/` (favicon.ico, icon.png, apple-icon.png) |
-| Android ikonları | `apps/*/public/icons/` (icon-192.png, icon-512.png) |
-| Web app manifest | `apps/*/src/app/manifest.ts` |
+| Favicon ve uygulama ikonları | `apps/zenweld-web/src/app/` (favicon.ico, icon.png, apple-icon.png) |
+| Android ikonları | `apps/zenweld-web/public/icons/` (icon-192.png, icon-512.png) |
+| Web app manifest | `apps/zenweld-web/src/app/manifest.ts` |
 
 ### Platform kapsamı
 
@@ -415,7 +352,7 @@ Tüm buton, vurgu ve rozet renkleri bu tondan türetilir.
 
 **İkonları yeniden üretmek:** `assets/brand-mark.svg` dosyasını değiştirip
 `node scripts/generate-icons.mjs` çalıştırın; favicon.ico (16/32/48 px),
-icon.png ve apple-icon.png her iki uygulama için yeniden oluşturulur.
+icon.png ve apple-icon.png yeniden oluşturulur.
 
 ---
 
