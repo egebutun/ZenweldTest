@@ -28,9 +28,6 @@ export const DEMO_PASSWORDS = {
   admin: "admin123",
   bireysel: "demo123",
   kurumsal: "demo123",
-  bayi: "bayi123",
-  /** ZENWELD-BAYI-A magazasinin musteri hesaplari */
-  magazaUyesi: "demo123",
 } as const;
 
 export const users: User[] = [
