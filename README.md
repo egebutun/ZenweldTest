@@ -154,7 +154,7 @@ ZenweldTest/
 │   │       └── seed/
 │   │           ├── products.seed.ts    12 gerçek Zenweld modeli + 15 aksesuar
 │   │           ├── categories.seed.ts  Bölüm / grup / kategori ağacı
-│   │           ├── dealers.seed.ts     30 bayi (TR koordinatlı)
+│   │           ├── dealers.seed.ts     29 bayi (TR koordinatlı)
 │   │           ├── retailers.seed.ts   Online satıcılar (Başak Hırdavat vb.)
 │   │           ├── stock.seed.ts       Ürün × satıcı stok matrisi
 │   │           ├── users.seed.ts       Demo hesaplar
