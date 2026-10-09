@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Eye, EyeOff, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { deleteBlogPost, listAllBlogPosts, saveBlogPost, useDatabase } from "@zenweld/store";
-import { Alert, Badge, Button, Input } from "@zenweld/ui";
+import { Badge, Button, Input } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import Link from "next/link";
 import { ProductImage } from "@zenweld/ui";
@@ -12,8 +12,7 @@ import { formatDate } from "@zenweld/utils";
 /**
  * BLOG YONETIMI
  *
- * Yazilar tek yerden yonetilir; ana site ve bayi magazasi ayni listeyi
- * okudugu icin buradaki her degisiklik iki sitede birden gorunur.
+ * Buradaki her degisiklik sitedeki blog sayfalarinda hemen gorunur.
  */
 export default function AdminBlogPage() {
   const db = useDatabase();
@@ -42,12 +41,6 @@ export default function AdminBlogPage() {
         }
       />
 
-      <div className="mb-4">
-        <Alert tone="info">
-          Buradaki yazılar hem zenweld.com&apos;da hem de bayi mağazalarının blog bölümünde
-          görünür. Bayilerin yazı ekleme veya düzenleme yetkisi yoktur.
-        </Alert>
-      </div>
 
       <div className="relative mb-4">
         <Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-zw-grey-400" />

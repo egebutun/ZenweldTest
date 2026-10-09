@@ -12,7 +12,7 @@ import {
   Store,
   Users,
 } from "lucide-react";
-import { siteMembers, siteOrders, siteQuotes, useDatabase } from "@zenweld/store";
+import { listOrders, listQuotes, listUsers, useDatabase } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
 import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
 import Link from "next/link";
@@ -29,8 +29,8 @@ export default function AdminDashboard() {
       (p) => !db.retailerStock.some((s) => s.productId === p.id && s.inStock),
     );
     // Uye, teklif ve siparisler yalnizca ana sitenin kayitlari (bayi kayitlari haric).
-    const members = siteMembers(db);
-    const quotes = siteQuotes(db);
+    const members = listUsers(db);
+    const quotes = listQuotes(db);
     return {
       products: activeProducts.length,
       users: members.length,
@@ -38,7 +38,7 @@ export default function AdminDashboard() {
       retailers: db.retailers.filter((r) => r.active).length,
       newQuotes: quotes.filter((q) => q.status === "new").length,
       quotes: quotes.length,
-      orders: siteOrders(db).length,
+      orders: listOrders(db).length,
       events: db.events.filter((e) => e.active).length,
       upcomingEvents: db.events.filter(
         (e) => e.active && e.endDate >= new Date().toISOString().slice(0, 10),
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
         <AdminCard>
           <h2 className="font-display text-xl font-bold uppercase">Son Teklifler</h2>
           <div className="mt-3 divide-y divide-zw-grey-100">
-            {siteQuotes(db).slice(0, 5).map((q) => (
+            {listQuotes(db).slice(0, 5).map((q) => (
               <Link
                 key={q.id}
                 href="/yonetim/teklifler"
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
                 </span>
               </Link>
             ))}
-            {siteQuotes(db).length === 0 && (
+            {listQuotes(db).length === 0 && (
               <p className="py-3 text-sm text-zw-grey-500">Henüz teklif yok.</p>
             )}
           </div>
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
         <AdminCard>
           <h2 className="font-display text-xl font-bold uppercase">Son Siparişler</h2>
           <div className="mt-3 divide-y divide-zw-grey-100">
-            {siteOrders(db).slice(0, 5).map((o) => (
+            {listOrders(db).slice(0, 5).map((o) => (
               <Link
                 key={o.id}
                 href="/yonetim/siparisler"
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
                 </span>
               </Link>
             ))}
-            {siteOrders(db).length === 0 && (
+            {listOrders(db).length === 0 && (
               <p className="py-3 text-sm text-zw-grey-500">Henüz sipariş yok.</p>
             )}
           </div>

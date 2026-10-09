@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Download, Search, Trash2 } from "lucide-react";
-import { deleteUser, downloadCsv, saveUser, siteMembers, useDatabase } from "@zenweld/store";
+import { deleteUser, downloadCsv, listUsers, saveUser, useDatabase } from "@zenweld/store";
 import type { UserRole, UserStatus } from "@zenweld/data";
 import { ROLE_LABELS } from "@zenweld/auth";
 import { Badge, Button, Input, Select } from "@zenweld/ui";
@@ -23,9 +23,7 @@ export default function AdminUsersPage() {
 
   const users = useMemo(() => {
     const q = query.trim().toLocaleLowerCase("tr");
-    // Yalnizca ana sitenin uyeleri: bayi hesaplari ve bayi magazalarinin
-    // uyeleri (her bayinin kendi panelinde) listelenmez.
-    return siteMembers(db).filter(
+    return listUsers(db).filter(
       (u) =>
         (!role || u.role === role) &&
         (!status || u.status === status) &&

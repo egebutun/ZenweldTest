@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { Product, ProductReview } from "@zenweld/data";
+import type { Product } from "@zenweld/data";
 import { createReview, listProductReviews, reviewSummary, useDatabase } from "@zenweld/store";
 import { useAuth } from "@zenweld/auth";
 import { ProductReviews, type ReviewMediaInput } from "@zenweld/ui";
@@ -15,20 +15,14 @@ import { optimizeImageFile } from "@/lib/slugify";
  * baglantisi ve dosya kucultme yapilir. Yeni yorumlar dogrudan
  * yayinlanmaz, yonetim panelinde onay bekler.
  */
-export function ProductReviewsSection({
-  product,
-  site,
-}: {
-  product: Product;
-  site: ProductReview["site"];
-}) {
+export function ProductReviewsSection({ product }: { product: Product }) {
   const t = useT();
   const locale = useLocale();
   const db = useDatabase();
   const { user } = useAuth();
 
-  const items = useMemo(() => listProductReviews(product.id, site, db), [product.id, site, db]);
-  const summary = useMemo(() => reviewSummary(product.id, site, db), [product.id, site, db]);
+  const items = useMemo(() => listProductReviews(product.id, db), [product.id, db]);
+  const summary = useMemo(() => reviewSummary(product.id, db), [product.id, db]);
 
   return (
     <ProductReviews
@@ -49,7 +43,6 @@ export function ProductReviewsSection({
           // Uye girisi olanlar "dogrulanmis alici" sayilir; gercek
           // sistemde siparis kaydiyla eslestirilmeli.
           verifiedPurchase: Boolean(user),
-          site,
         })
       }
       onPickMedia={(files, add) => {

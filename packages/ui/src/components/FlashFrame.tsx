@@ -27,9 +27,7 @@ const FLAME_SPOTS: { left: string; bottom: string; delay: number }[] = [
  * FLAS INDIRIM CERCEVESI
  *
  * Esigi asan urun kartini alevli cercevenin icine alir. Stiller
- * packages/ui/src/theme.css icinde (.zw-flash / .zw-flame). Iki site de
- * ayni bileseni kullanir ki bayi magazasinda alev gorunumu ana siteden
- * sapmasin.
+ * packages/ui/src/theme.css icinde (.zw-flash / .zw-flame).
  */
 export function FlashFrame({ children }: { children: ReactNode }) {
   return (

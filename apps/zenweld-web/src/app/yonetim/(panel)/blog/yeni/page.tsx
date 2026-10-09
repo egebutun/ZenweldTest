@@ -8,7 +8,7 @@ export default function NewBlogPostPage() {
     <>
       <AdminPageHeader
         title="Yeni Blog Yazısı"
-        description="Yazı ana sitede ve bayi mağazalarında aynı anda yayınlanır."
+        description="Kaydedilen yazı sitede yayınlanır."
       />
       <BlogForm />
     </>

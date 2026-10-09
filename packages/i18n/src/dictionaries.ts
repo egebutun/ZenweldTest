@@ -203,7 +203,6 @@ export const dictionaries = {
       warrantyMonths: "{months} ay garanti",
       highlights: "Öne Çıkan Özellikler",
       goToStore: "Siteye Git",
-      ownStore: "Zenweld Bayi Mağazası",
     },
     trust: {
       industry: "Sanayinin Tercihi",
@@ -344,13 +343,10 @@ export const dictionaries = {
       taxOffice: "Vergi Dairesi",
       taxNumber: "Vergi No",
       sector: "Sektör",
-      dealerCode: "Bayi Kodu",
       accountTypeIndividual: "Bireysel",
       accountTypeBusiness: "Kurumsal",
-      accountTypeDealer: "Bayi",
       accountTypeIndividualDesc: "Kişisel kullanım, garanti kaydı ve favoriler",
       accountTypeBusinessDesc: "Vadeli/çek ile ödeme ve kurumsal teklif talebi",
-      accountTypeDealerDesc: "Bayi fiyat listesi, sipariş ve stok bildirimi",
       newsletter: "Zenweld'den haber ve kampanya e-postaları almak istiyorum",
       submitLogin: "Giriş Yap",
       submitRegister: "Hesap Oluştur",
@@ -360,8 +356,6 @@ export const dictionaries = {
       demoAccounts: "Demo Hesaplar",
       demoHint: "Sunum için hazır hesaplar — tıklayarak bilgileri forma doldurabilirsiniz.",
       passwordMismatch: "Şifreler eşleşmiyor.",
-      dealerPending:
-        "Bayi başvurunuz alındı. Hesabınız Zenweld ekibi tarafından onaylandıktan sonra bayi özellikleri açılacaktır.",
       logoutSuccess: "Çıkış yaptınız.",
     },
     account: {
@@ -403,8 +397,6 @@ export const dictionaries = {
       stockNoticeDesc:
         "Mağazanızda stokta olan ürünleri işaretleyin, kendi satış fiyatınızı ve kampanyalarınızı girin. İşaretlediğiniz ürünler Zenweld ürün sayfalarında sizin siteniz üzerinden satın alınabilir olarak görünür. Buradaki fiyat ve kampanyalar yalnızca sizin mağazanızda geçerlidir; Zenweld ana sitesindeki fiyatları değiştirmez.",
       stockSaved: "Stok bilgisi güncellendi.",
-      notDealerYet:
-        "Bayi hesabınız henüz onaylanmadı. Onay sonrası stok bildirimi yapabilirsiniz.",
     },
     warranty: {
       checkTitle: "Garanti Sorgula",
@@ -721,7 +713,6 @@ export const dictionaries = {
       warrantyMonths: "{months} months warranty",
       highlights: "Key Features",
       goToStore: "Go to Store",
-      ownStore: "Zenweld Dealer Store",
     },
     trust: {
       industry: "Trusted by Industry",
@@ -861,13 +852,10 @@ export const dictionaries = {
       taxOffice: "Tax Office",
       taxNumber: "Tax Number",
       sector: "Sector",
-      dealerCode: "Dealer Code",
       accountTypeIndividual: "Individual",
       accountTypeBusiness: "Business",
-      accountTypeDealer: "Dealer",
       accountTypeIndividualDesc: "Personal use, warranty registration and favourites",
       accountTypeBusinessDesc: "Deferred/cheque payment and corporate quote requests",
-      accountTypeDealerDesc: "Dealer price list, orders and stock updates",
       newsletter: "I would like to receive news and campaign emails from Zenweld",
       submitLogin: "Sign In",
       submitRegister: "Create Account",
@@ -877,8 +865,6 @@ export const dictionaries = {
       demoAccounts: "Demo Accounts",
       demoHint: "Ready-made accounts for the demo — click to fill the form.",
       passwordMismatch: "Passwords do not match.",
-      dealerPending:
-        "Your dealer application has been received. Dealer features unlock once the Zenweld team approves your account.",
       logoutSuccess: "You have been signed out.",
     },
     account: {
@@ -920,8 +906,6 @@ export const dictionaries = {
       stockNoticeDesc:
         "Mark the products you have in stock and set your own selling prices and campaigns. Marked products appear on Zenweld product pages as buyable through your store. Prices and campaigns set here apply only to your store; they do not change prices on the Zenweld website.",
       stockSaved: "Stock information updated.",
-      notDealerYet:
-        "Your dealer account is not approved yet. You can submit stock updates after approval.",
     },
     warranty: {
       checkTitle: "Check Your Warranty",

@@ -99,7 +99,7 @@ alanından eşleştirin.
 
 - **Logo Metni:** kutuda görünen kısa yazı (örn. `BAŞAK HIRDAVAT`)
 - **Site Adresi:** ürün bağlantıları bu adresin altına kurulur
-- **Kendi bayi mağazası:** işaretlenirse kırmızı rozetle en başta gösterilir
+- **Kendi mağazamız:** Zenweld'in kendi online mağazası olursa işaretlenir; kırmızı rozetle en başta gösterilir
 - **Aktif:** kapatılırsa hiçbir ürün sayfasında görünmez
 
 Satıcıyı silmek, o satıcıya ait tüm stok kayıtlarını da siler.

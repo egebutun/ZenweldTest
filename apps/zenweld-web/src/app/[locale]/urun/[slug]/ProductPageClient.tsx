@@ -204,7 +204,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
         </div>
 
         <div className="mt-14">
-          <ProductReviewsSection product={product} site="zenweld" />
+          <ProductReviewsSection product={product} />
         </div>
 
         {related.length > 0 && (

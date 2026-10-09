@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Download, Trash2 } from "lucide-react";
 import type { Quote, QuoteStatus } from "@zenweld/data";
-import { deleteQuote, downloadCsv, saveQuote, siteQuotes, useDatabase } from "@zenweld/store";
+import { deleteQuote, downloadCsv, listQuotes, saveQuote, useDatabase } from "@zenweld/store";
 import { Badge, Button, Input, Select, Textarea } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { formatDateTime } from "@zenweld/utils";
@@ -31,7 +31,7 @@ export default function AdminQuotesPage() {
   const quotes = useMemo(
     () =>
       // Bayilerin teklifleri burada yok: Zenweld - bayi isleri ileride B2B uygulamasinda.
-      siteQuotes(db).filter((q) => !status || q.status === status),
+      listQuotes(db).filter((q) => !status || q.status === status),
     [db, status],
   );
 

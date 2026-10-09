@@ -199,7 +199,7 @@ export interface Retailer {
   /** Logo yerine kullanilacak kisa metin (logo dosyasi yoksa) */
   logoText: string;
   logoUrl?: string;
-  /** Zenweld'in kendi bayi magazasi mi (ic link) */
+  /** Zenweld'in kendi online magazasi mi (urun sayfasinda kirmizi rozetle en basta) */
   isOwnStore: boolean;
   city?: string;
   active: boolean;
@@ -248,7 +248,7 @@ export interface DealerStock {
 /* Kullanicilar                                                        */
 /* ------------------------------------------------------------------ */
 
-export type UserRole = "individual" | "business" | "dealer" | "admin";
+export type UserRole = "individual" | "business" | "admin";
 export type UserStatus = "active" | "pending" | "suspended";
 
 export interface User {
@@ -261,23 +261,11 @@ export interface User {
   firstName: string;
   lastName: string;
   phone: string;
-  /** Kurumsal ve bayi hesaplar icin */
+  /** Kurumsal hesaplar icin */
   companyName?: string;
   taxOffice?: string;
   taxNumber?: string;
   sector?: string;
-  /** Bayi hesaplar icin — hangi bayi kaydina bagli */
-  dealerId?: string;
-  dealerCode?: string;
-  /** Bayi hesabi online magaza isletiyorsa — bayi bu magazanin panelini yonetir */
-  retailerId?: string;
-  /**
-   * Hesap bir bayinin e-ticaret magazasinda acildiysa o magazanin kimligi
-   * (Retailer.id). Magaza uyeleri yalnizca o magazaya giris yapar; ana
-   * sitenin uyeleri (storeId bos) magazaya, magaza uyeleri ana siteye
-   * giris yapamaz. Ana sitenin ve her magazanin "Uyeler" listesi ayridir.
-   */
-  storeId?: string;
   city?: string;
   createdAt: string;
   lastLoginAt?: string;
@@ -349,16 +337,6 @@ export interface Order {
   id: string;
   code: string;
   userId?: string;
-  /**
-   * Siparisin geldigi kanal:
-   *   zenweld   — ana site (su an dogrudan satis yok)
-   *   bayi-shop — bir bayinin e-ticaret magazasi (retailerId hangisi oldugunu soyler)
-   * Zenweld ile bayiler arasindaki siparisler bu sistemde tutulmaz; ileride
-   * ayri B2B uygulamasinda olacak.
-   */
-  channel: "zenweld" | "bayi-shop";
-  /** Bayi magazasi siparisinde magazanin kimligi (Retailer.id) */
-  retailerId?: string;
   status: OrderStatus;
   customerName: string;
   email: string;
@@ -394,8 +372,7 @@ export interface BlogPost {
   author: string;
   publishedAt: string;
   /**
-   * Yayinda mi? Yonetim panelinden kapatilan yazi iki sitede de
-   * gorunmez. Eski kayitlarda alan yoksa yayinda sayilir.
+   * Yayinda mi? Yonetim panelinden kapatilan yazi sitede gorunmez. Eski kayitlarda alan yoksa yayinda sayilir.
    */
   active?: boolean;
 }
@@ -424,17 +401,6 @@ export interface ProductReview {
   media: ReviewMedia[];
   /** Urunu gercekten satin almis mi (dogrulanmis alici rozeti). */
   verifiedPurchase?: boolean;
-  /**
-   * Hangi siteye ait: ana site mi bayi magazasi mi. Iki site ayni
-   * veritabanini paylastigi icin yorumlar bu alanla ayriliyor.
-   */
-  site: "zenweld" | "bayi";
-  /**
-   * Bayi magazasina ait yorumlarda hangi bayinin magazasi oldugunu
-   * soyler. Bayi sahibi magaza panelinde (bayi sitesi /yonetim) yalnizca
-   * kendi magazasinin yorumlarini yonetir.
-   */
-  retailerId?: string;
   /** Yonetim panelinde onaylandi mi; yalnizca onaylilar yayinda. */
   approved: boolean;
   /** Anasayfadaki kayan seritte gosterilsin mi (en fazla 10 tane). */

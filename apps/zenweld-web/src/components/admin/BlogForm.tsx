@@ -21,8 +21,7 @@ const toLocalInput = (iso: string) => {
  * BLOG YAZISI FORMU
  *
  * Haber formunun aynisi; blog yazisinda galeri yerine kategori ve
- * yazar alanlari var. Kaydedilen yazi ANA SITEDE ve BAYI MAGAZASINDA
- * ayni anda gorunur — iki site de ayni listeyi okur.
+ * yazar alanlari var.
  */
 export function BlogForm({ item }: { item?: BlogPost }) {
   const db = useDatabase();
@@ -211,7 +210,7 @@ export function BlogForm({ item }: { item?: BlogPost }) {
           </div>
 
           <Checkbox
-            label="Yayında (ana sitede ve bayi mağazasında görünür)"
+            label="Yayında (sitede görünür)"
             checked={draft.active !== false}
             onChange={(e) => set("active", e.target.checked)}
           />

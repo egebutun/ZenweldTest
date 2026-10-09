@@ -91,7 +91,7 @@ retailerStock.push({
   name: "Yeni Satıcı A.Ş.",
   websiteUrl: "https://www.yenisatici.com/",
   logoText: "YENİ SATICI",        // ürün sayfasındaki kutuda görünen yazı
-  isOwnStore: false,               // bizim bayi mağazamız mı
+  isOwnStore: false,               // kendi online mağazamız mı
   city: "İstanbul",
   active: true,
 }

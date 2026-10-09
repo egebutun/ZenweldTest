@@ -9,11 +9,7 @@ import { QuoteListProvider } from "@/lib/quote-list";
 
 /**
  * Ana siteye giris yapabilecek roller: bireysel ve kurumsal musteriler.
- *   - Yoneticiler yalnizca ayri yonetim panelinden (/yonetim) giris yapar.
- *   - Bayiler ana sitenin musterisi degildir; kendi e-ticaret
- *     magazalarini bayi sitesinin panelinden (/yonetim) yonetir. Zenweld
- *     ile bayiler arasindaki isler ileride ayri bir B2B uygulamasinda.
- *   - Bayi magazalarinin uyeleri (User.storeId) ana siteye giris yapamaz.
+ * Yoneticiler yalnizca yonetim panelinden (/yonetim) giris yapar.
  */
 const SITE_ROLES: UserRole[] = ["individual", "business"];
 

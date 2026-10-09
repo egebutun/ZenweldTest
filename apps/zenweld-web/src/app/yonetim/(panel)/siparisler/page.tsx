@@ -1,7 +1,7 @@
 "use client";
 
 import type { OrderStatus } from "@zenweld/data";
-import { saveOrder, siteOrders, useDatabase } from "@zenweld/store";
+import { listOrders, saveOrder, useDatabase } from "@zenweld/store";
 import { Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { formatDateTime, formatPrice } from "@zenweld/utils";
@@ -15,15 +15,12 @@ const STATUS: { id: OrderStatus; label: string }[] = [
 ];
 
 /**
- * Ana sitenin siparisleri. Bayi kayitlari burada yer almaz:
- *   - bayi magazalarinin (e-ticaret) siparisleri her bayinin kendi
- *     panelinde (bayi sitesi /yonetim/siparisler) tutulur;
- *   - Zenweld ile bayiler arasindaki siparisler ileride ayri B2B
- *     uygulamasinda olacak.
+ * Ana sitenin siparisleri. Zenweld ile bayiler arasindaki siparisler
+ * burada yer almaz; ileride ayri B2B uygulamasinda olacak.
  */
 export default function AdminOrdersPage() {
   const db = useDatabase();
-  const orders = siteOrders(db);
+  const orders = listOrders(db);
 
   return (
     <>
@@ -84,9 +81,8 @@ export default function AdminOrdersPage() {
                 <td colSpan={5} className="px-4 py-10 text-center text-zw-grey-500">
                   <div className="font-semibold text-zw-grey-700">Henüz sipariş yok.</div>
                   <div className="mx-auto mt-1 max-w-xl text-xs">
-                    Ana site şu an doğrudan satış yapmıyor. Bayi mağazalarının siparişleri
-                    her bayinin kendi panelinde, Zenweld ile bayiler arasındaki siparişler
-                    ileride B2B uygulamasında tutulacak.
+                    Ana site şu an doğrudan satış yapmıyor. Zenweld ile bayiler arasındaki
+                    siparişler ileride ayrı B2B uygulamasında tutulacak.
                   </div>
                 </td>
               </tr>

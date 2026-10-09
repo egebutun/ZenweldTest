@@ -2,7 +2,6 @@ import type { DealerStock, RetailerStock } from "../types";
 import { products } from "./products.seed";
 import { retailers } from "./retailers.seed";
 import { dealers } from "./dealers.seed";
-import { reviews } from "./reviews.seed";
 
 /**
  * Urun x Satici stok matrisi.
@@ -11,8 +10,7 @@ import { reviews } from "./reviews.seed";
  * B urunu 2 sitede stokta olabilir. Urun sayfasi sadece inStock === true
  * olan saticilarin logosunu gosterir.
  *
- * Bu veriler yonetim panelinden (/yonetim/stok) ve bayi hesaplarinin kendi
- * magaza panelinden (bayi sitesi /yonetim/stok-bildirimi) guncellenir.
+ * Bu veriler yonetim panelinden (/yonetim/stok) guncellenir.
  */
 
 const STAMP = "2026-09-16T08:00:00+03:00";
@@ -25,10 +23,8 @@ function hash(a: string, b: string): number {
   return h;
 }
 
-function slugForUrl(retailerUrl: string, productSlug: string, isOwnStore = false): string {
-  const base = retailerUrl.replace(/\/$/, "");
-  // Kendi bayi magazamiz dil on eki kullanir: /tr/urun/<slug>
-  return isOwnStore ? `${base}/tr/urun/${productSlug}` : `${base}/urun/${productSlug}`;
+function slugForUrl(retailerUrl: string, productSlug: string): string {
+  return `${retailerUrl.replace(/\/$/, "")}/urun/${productSlug}`;
 }
 
 export const retailerStock: RetailerStock[] = [];
@@ -36,11 +32,9 @@ export const retailerStock: RetailerStock[] = [];
 products.forEach((product) => {
   retailers.forEach((retailer) => {
     const h = hash(product.id, retailer.id);
-    // Kendi bayi magazamiz urunlerin cogunu tutar, digerleri degisken.
-    const threshold = retailer.isOwnStore ? 88 : 55;
-    const inStock = h % 100 < threshold;
+    const inStock = h % 100 < 55;
     // Stok kaydi olmayan kombinasyonlari hic yazmiyoruz (matris seyrek kalsin).
-    if (h % 100 >= 92 && !retailer.isOwnStore) return;
+    if (h % 100 >= 92) return;
 
     retailerStock.push({
       productId: product.id,
@@ -54,58 +48,10 @@ products.forEach((product) => {
             (product.priceExVat * (1 + product.vatRate / 100) * (0.96 + ((h % 9) / 100))) / 10,
           ) * 10
         : undefined,
-      productUrl: slugForUrl(retailer.websiteUrl, product.slug, retailer.isOwnStore),
+      productUrl: slugForUrl(retailer.websiteUrl, product.slug),
       updatedAt: STAMP,
     });
   });
-});
-
-/**
- * KAMPANYALI VE YENI URUNLER, MARKANIN KENDI MAGAZASINDA SATISTA OLMALI
- *
- * Bayi sitesinin anasayfasindaki "Kampanyali Urunler" ve "Yeni Gelenler"
- * seritleri yalnizca magazada stokta olan urunleri gosterir. Stok matrisi
- * hash ile uretildigi icin bu urunler tesadufen "stokta yok" cikip
- * seritten dusuyordu; burada stokta olmaya zorlanir.
- *
- * Kampanya: magaza kampanyasini bayi kendi hesabindan belirler
- * (stock.discount; Zenweld kampanyasi magazayi etkilemez). Demo verisinde
- * magaza, Zenweld'in kampanyalarinin aynisini yurutuyor; boylece bayi
- * anasayfasindaki kampanya bolumu bos kalmiyor.
- */
-retailerStock.forEach((row) => {
-  const retailer = retailers.find((r) => r.id === row.retailerId);
-  if (!retailer?.isOwnStore) return;
-  const product = products.find((p) => p.id === row.productId);
-  if (!product?.discount && !product?.isNew) return;
-  if (!row.inStock) {
-    row.inStock = true;
-    row.quantity = 6;
-    row.price = Math.round((product.priceExVat * (1 + product.vatRate / 100)) / 10) * 10;
-  }
-  if (product.discount) row.discount = { ...product.discount };
-});
-
-/**
- * YORUMU OLAN URUN, O MAGAZADA MUTLAKA SATISTA OLMALI
- *
- * Stok matrisi hash ile uretildigi icin bir bayi yorumunun urunu
- * tesadufen "stokta yok" cikabiliyordu; yorum, magazada bulunmayan bir
- * urunun sayfasinda kaliyordu. Yorumu olan urun/satici ciftleri burada
- * stokta olmaya zorlanir.
- */
-reviews.forEach((review) => {
-  if (review.site !== "bayi" || !review.retailerId) return;
-  const row = retailerStock.find(
-    (s) => s.productId === review.productId && s.retailerId === review.retailerId,
-  );
-  const product = products.find((p) => p.id === review.productId);
-  if (!row || !product) return;
-  if (row.inStock) return;
-  row.inStock = true;
-  row.quantity = 4;
-  row.price =
-    Math.round((product.priceExVat * (1 + product.vatRate / 100)) / 10) * 10;
 });
 
 /** Fiziksel bayi stogu — "sadece stokta olan bayiler" filtresi icin. */

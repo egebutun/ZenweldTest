@@ -6,8 +6,8 @@ import type { WarrantyRecord } from "@zenweld/data";
 import {
   deleteWarranty,
   downloadCsv,
+  listUsers,
   saveWarranty,
-  siteMembers,
   useDatabase,
   warrantyExpiry,
 } from "@zenweld/store";
@@ -29,7 +29,7 @@ export default function AdminWarrantiesPage() {
   const today = new Date().toISOString().slice(0, 10);
 
   const memberEmails = useMemo(
-    () => new Set(siteMembers(db).map((u) => u.email.toLowerCase())),
+    () => new Set(listUsers(db).map((u) => u.email.toLowerCase())),
     [db],
   );
 

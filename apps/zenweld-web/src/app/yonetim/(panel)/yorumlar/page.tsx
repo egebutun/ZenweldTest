@@ -29,7 +29,7 @@ export default function AdminReviewsPage() {
 
   const reviews = useMemo(() => {
     const q = query.trim().toLocaleLowerCase("tr");
-    return listAllReviews("zenweld", db).filter((r) => {
+    return listAllReviews(db).filter((r) => {
       if (onlyPending && r.approved) return false;
       if (!q) return true;
       return (
@@ -39,8 +39,8 @@ export default function AdminReviewsPage() {
     });
   }, [db, query, onlyPending]);
 
-  const featuredCount = db.reviews.filter((r) => r.site === "zenweld" && r.featured).length;
-  const pendingCount = db.reviews.filter((r) => r.site === "zenweld" && !r.approved).length;
+  const featuredCount = db.reviews.filter((r) => r.featured).length;
+  const pendingCount = db.reviews.filter((r) => !r.approved).length;
   const productName = (id: string) => db.products.find((p) => p.id === id)?.name ?? id;
 
   return (

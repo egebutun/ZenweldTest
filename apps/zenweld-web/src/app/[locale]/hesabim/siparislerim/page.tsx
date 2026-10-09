@@ -37,9 +37,6 @@ export default function MyOrdersPage() {
             <Badge tone={o.status === "delivered" ? "green" : "grey"}>
               {STATUS_LABEL[o.status]}
             </Badge>
-            <Badge tone="outline">
-              {o.channel === "zenweld" ? "Zenweld" : "ZENWELD-BAYİ-A"}
-            </Badge>
             <span className="ml-auto text-sm text-zw-grey-500">
               {formatDate(o.createdAt, locale)}
             </span>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import type { ProductReview } from "@zenweld/data";
 import { featuredReviews, useDatabase } from "@zenweld/store";
 import { ReviewMarquee as ReviewMarqueeUI } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
@@ -11,15 +10,14 @@ import { useT } from "@/lib/i18n-client";
  *
  * Yonetim panelinde "anasayfada goster" isaretlenmis en fazla 10 yorumu
  * yavasca yana kaydirir. Gorsel kisim @zenweld/ui icindeki paylasilan
- * bilesende; burada yalnizca veri baglanir (bayi magazasi da ayni
- * bileseni kendi yorumlariyla kullanir).
+ * bilesende; burada yalnizca veri baglanir.
  */
-export function ReviewMarquee({ site = "zenweld" }: { site?: ProductReview["site"] }) {
+export function ReviewMarquee() {
   const t = useT();
   const db = useDatabase();
   const items = useMemo(
     () =>
-      featuredReviews(site, db).map((r) => ({
+      featuredReviews(db).map((r) => ({
         id: r.id,
         rating: r.rating,
         title: r.title,
@@ -27,7 +25,7 @@ export function ReviewMarquee({ site = "zenweld" }: { site?: ProductReview["site
         authorName: r.authorName,
         productName: db.products.find((p) => p.id === r.productId)?.name,
       })),
-    [site, db],
+    [db],
   );
 
   return (

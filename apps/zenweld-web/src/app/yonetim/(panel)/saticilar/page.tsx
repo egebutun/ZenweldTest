@@ -128,7 +128,7 @@ export default function AdminRetailersPage() {
               />
             </FormRow>
             <Checkbox
-              label="Zenweld'in kendi bayi mağazası (iç bağlantı olarak açılır)"
+              label="Zenweld'in kendi online mağazası (ürün sayfasında kırmızı rozetle en başta)"
               checked={editing.isOwnStore}
               onChange={(e) => setEditing({ ...editing, isOwnStore: e.target.checked })}
             />

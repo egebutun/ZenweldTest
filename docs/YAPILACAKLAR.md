@@ -24,26 +24,6 @@ Bu iş yapılırken: `packages/store/src/repository.ts` içindeki
 `stockQuantity` alanlarını kopyalamıyor. Panele bu alanlar eklendiğinde
 bu fonksiyon da güncellenmeli; yoksa yeni ürünlerde sessizce kaybolurlar.
 
-## Bayi sitesinden kalanlar — karar bekliyor
-
-Bayi e-ticaret sitesi (`apps/bayi-shop`) ve mağaza paneli kaldırıldı. Ana
-sitede o sisteme ait şu parçalar duruyor; ne yapılacağına karar verilecek:
-
-1. **ZENWELD-BAYİ-A online satıcı kaydı** (`retailers.seed.ts`): ürün
-   sayfasındaki online satıcılar listesinde kırmızı "kendi mağazamız"
-   rozetiyle görünüyor ve kapatılan bayi sitesine bağlantı veriyor.
-   Yönetim panelindeki **Online Satıcılar → "Kendi bayi mağazası"**
-   işareti de bunun için vardı.
-   - Bu kayıt kaldırılınca Vercel'deki ana site projesinden
-     **`NEXT_PUBLIC_BAYI_SHOP_URL`** ortam değişkeni de silinmeli
-     (yalnızca bu kaydın adresi için okunuyor).
-2. **Örnek veriler:** 2 bayi giriş hesabı, 3 mağaza üyesi, 4 mağaza
-   siparişi, 3 mağaza yorumu — artık hiçbir yerde görünmüyor.
-3. **Veri yapısındaki bayi sitesi alanları:** üyelerde `storeId`,
-   siparişlerde `bayi-shop` kanalı ve `retailerId`, yorumlarda `bayi`
-   sitesi, girişte mağazaya göre ayırma (`storeId`). "Bayi" rolü ileride
-   B2B uygulaması için gerekebilir.
-
 ## Canlı sunucu (hosting) kararı ve Vercel temizliği
 
 Demo şu an Vercel'de yayında; derleme sunucusu ABD'de (Washington, D.C.).

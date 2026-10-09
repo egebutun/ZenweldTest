@@ -30,7 +30,7 @@ const SPEED = 22;
  * kendi x'i modulo ile hesaplaniyor: soldan cikan kart sagdan geri
  * girer. Boylece DOM'da her yorum YALNIZCA BIR KEZ bulunur.
  *
- * Yorumlar ekrani doldurmuyorsa (orn. 3 yorumlu bayi magazasi) halka
+ * Yorumlar ekrani doldurmuyorsa (orn. yalnizca 3 yorum varsa) halka
  * donmez — kaydirilacak bir sey yoktur, kartlar sabit satirda durur.
  * Hareketi azaltma tercihi acik olan cihazlarda da ayni sekilde.
  */

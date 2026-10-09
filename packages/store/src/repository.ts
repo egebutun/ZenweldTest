@@ -311,14 +311,6 @@ export function listUsers(db: ZenweldDatabase = getSnapshot()): User[] {
   return db.users;
 }
 
-/**
- * Ana sitenin uyeleri: bir bayi magazasina ait olmayan bireysel, kurumsal
- * ve yonetici hesaplari. Bayi hesaplari ve magaza uyeleri listelenmez.
- */
-export function siteMembers(db: ZenweldDatabase = getSnapshot()): User[] {
-  return db.users.filter((u) => u.role !== "dealer" && !u.storeId);
-}
-
 export function findUserByEmail(
   email: string,
   db: ZenweldDatabase = getSnapshot(),
@@ -361,16 +353,6 @@ export function listQuotes(db: ZenweldDatabase = getSnapshot()): Quote[] {
   return [...db.quotes].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
-/**
- * Ana sitenin teklif talepleri. Bayi hesaplarinin talepleri sayilmaz:
- * Zenweld ile bayiler arasindaki teklif/siparis isleri ileride ayri B2B
- * uygulamasinda yurutulecek.
- */
-export function siteQuotes(db: ZenweldDatabase = getSnapshot()): Quote[] {
-  const dealerIds = new Set(db.users.filter((u) => u.role === "dealer").map((u) => u.id));
-  return listQuotes(db).filter((q) => !q.userId || !dealerIds.has(q.userId));
-}
-
 export function quotesForUser(
   userId: string,
   db: ZenweldDatabase = getSnapshot(),
@@ -409,17 +391,6 @@ export function deleteQuote(id: string): void {
 
 export function listOrders(db: ZenweldDatabase = getSnapshot()): Order[] {
   return [...db.orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-/**
- * Ana sitenin siparisleri (kanal "zenweld"). Bayi hesaplarinin siparisleri
- * (B2B) ve bayi magazalarinin siparisleri burada yer almaz.
- */
-export function siteOrders(db: ZenweldDatabase = getSnapshot()): Order[] {
-  const dealerIds = new Set(db.users.filter((u) => u.role === "dealer").map((u) => u.id));
-  return listOrders(db).filter(
-    (o) => o.channel === "zenweld" && (!o.userId || !dealerIds.has(o.userId)),
-  );
 }
 
 export function ordersForUser(userId: string, db: ZenweldDatabase = getSnapshot()): Order[] {
@@ -654,9 +625,7 @@ export function deleteNews(id: string): void {
 /* ------------------------------------------------------------------ */
 /* Blog                                                               */
 /*                                                                    */
-/* Yazilar TEK KAYNAKTAN yonetilir: Zenweld merkez yonetim paneli.    */
-/* Ana site ve bayi magazasi ayni listeyi okur, bayinin yazma yetkisi  */
-/* yoktur.                                                            */
+/* Yazilar yonetim panelinden yonetilir.                              */
 /* ------------------------------------------------------------------ */
 
 /** Sitede gorunen yazilar: yayinda olanlar, yeniden eskiye. */
@@ -757,67 +726,38 @@ export function resetRichTextStyle(): void {
 /** Anasayfadaki kayan seritte en fazla bu kadar yorum gosterilir. */
 export const FEATURED_REVIEW_LIMIT = 10;
 
-/**
- * Bir urunun yayindaki yorumlari (en yeni once).
- * retailerId verilirse yalnizca o bayinin magazasina ait olanlar doner.
- */
+/** Bir urunun yayindaki yorumlari (en yeni once). */
 export function listProductReviews(
   productId: string,
-  site: ProductReview["site"],
   db: ZenweldDatabase = getSnapshot(),
-  retailerId?: string,
 ): ProductReview[] {
   return db.reviews
-    .filter(
-      (r) =>
-        r.productId === productId &&
-        r.site === site &&
-        r.approved &&
-        (!retailerId || r.retailerId === retailerId),
-    )
+    .filter((r) => r.productId === productId && r.approved)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 /** Ortalama puan ve yorum sayisi. */
 export function reviewSummary(
   productId: string,
-  site: ProductReview["site"],
   db: ZenweldDatabase = getSnapshot(),
-  retailerId?: string,
 ): { average: number; count: number } {
-  const list = listProductReviews(productId, site, db, retailerId);
+  const list = listProductReviews(productId, db);
   if (list.length === 0) return { average: 0, count: 0 };
   const total = list.reduce((sum, r) => sum + r.rating, 0);
   return { average: Math.round((total / list.length) * 10) / 10, count: list.length };
 }
 
 /** Anasayfada gosterilecek, isaretlenmis yorumlar. */
-export function featuredReviews(
-  site: ProductReview["site"],
-  db: ZenweldDatabase = getSnapshot(),
-  retailerId?: string,
-): ProductReview[] {
+export function featuredReviews(db: ZenweldDatabase = getSnapshot()): ProductReview[] {
   return db.reviews
-    .filter(
-      (r) =>
-        r.site === site &&
-        r.approved &&
-        r.featured &&
-        (!retailerId || r.retailerId === retailerId),
-    )
+    .filter((r) => r.approved && r.featured)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, FEATURED_REVIEW_LIMIT);
 }
 
 /** Yonetim panelindeki tam liste (onay bekleyenler dahil). */
-export function listAllReviews(
-  site: ProductReview["site"],
-  db: ZenweldDatabase = getSnapshot(),
-  retailerId?: string,
-): ProductReview[] {
-  return db.reviews
-    .filter((r) => r.site === site && (!retailerId || r.retailerId === retailerId))
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+export function listAllReviews(db: ZenweldDatabase = getSnapshot()): ProductReview[] {
+  return [...db.reviews].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 export function createReview(partial: Partial<ProductReview>): ProductReview {
@@ -831,10 +771,6 @@ export function createReview(partial: Partial<ProductReview>): ProductReview {
     body: partial.body ?? "",
     media: partial.media ?? [],
     verifiedPurchase: partial.verifiedPurchase ?? false,
-    site: partial.site ?? "zenweld",
-    // Bayi magazasindan gelen yorum hangi magazaya aitse orada kalir;
-    // bu alan yazilmazsa bayi kendi yorumunu panelinde goremez.
-    retailerId: partial.retailerId,
     // Yeni yorumlar once yonetim panelinde onaylanir.
     approved: partial.approved ?? false,
     featured: false,
@@ -871,12 +807,7 @@ export function toggleFeaturedReview(id: string): boolean {
     const review = db.reviews.find((r) => r.id === id);
     if (!review) return;
     if (!review.featured) {
-      const count = db.reviews.filter(
-        (r) =>
-          r.site === review.site &&
-          r.featured &&
-          (review.retailerId ? r.retailerId === review.retailerId : true),
-      ).length;
+      const count = db.reviews.filter((r) => r.featured).length;
       if (count >= FEATURED_REVIEW_LIMIT) {
         ok = false;
         return;
