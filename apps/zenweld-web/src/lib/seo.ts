@@ -32,9 +32,24 @@ export function getSiteUrl(): string {
   return "http://localhost:3000";
 }
 
-/** Demo ortaminda arama motorlarina kapatmak icin: NEXT_PUBLIC_NOINDEX=1 */
+/**
+ * ARAMA MOTORLARINA ACIK ALAN ADLARI
+ *
+ * Site YALNIZCA bu adreslerden birinde yayindayken Google'a aciktir.
+ * Diger her yerde (vercel.app demo adresi, Vercel onizleme surumleri,
+ * localhost) her sayfa "noindex" etiketi alir ve site haritasi
+ * bildirilmez. Varsayilan kapali oldugu icin bir ayar unutulsa bile demo
+ * aramaya dusmez.
+ *
+ * Gercek alan adi farkliysa (ornegin zenweld.com.tr) bu listeye eklenmeli.
+ * Vercel disinda bir sunucuda NEXT_PUBLIC_SITE_URL bu adres olmalidir.
+ */
+const INDEXABLE_HOSTS = ["zenweld.com", "www.zenweld.com"];
+
 export function isNoIndex(): boolean {
-  return process.env.NEXT_PUBLIC_NOINDEX === "1";
+  // Onizleme surumleri gercek alan adiyla derlense de aramaya kapali kalir.
+  if (process.env.VERCEL_ENV === "preview") return true;
+  return !INDEXABLE_HOSTS.includes(new URL(getSiteUrl()).hostname);
 }
 
 export function absoluteUrl(path: string): string {
@@ -233,7 +248,6 @@ export function pageMetadata(opts: {
       siteName: SITE_NAME,
       url: `/${opts.locale}${opts.path}`,
     },
-    ...(isNoIndex() ? { robots: { index: false, follow: false } } : {}),
   };
 }
 

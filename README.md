@@ -292,7 +292,7 @@ Sitede aşağıdakiler hazırdır:
   her biri kendi başlığını ve açıklamasını üretir (TR/EN ayrı)
 - **`/sitemap.xml`** — ürün, kategori ve blog sayfaları `packages/data` içindeki
   veriden otomatik üretilir; yeni ürün eklendiğinde kendiliğinden güncellenir
-- **`/robots.txt`** — yönetim paneli, hesap ve API sayfaları taramaya kapalı
+- **`/robots.txt`** — site haritasını bildirir (site aramaya açıkken); bkz. aşağıdaki *Arama motorlarına açık / kapalı*
 - **Dile göre adresler** — İngilizce sayfalar İngilizce adres kullanır:
   `/tr/urun/arc-200` ↔ `/en/products/arc-200`,
   `/tr/ekipmanlar/lazer-temizleme` ↔ `/en/equipment/laser-cleaning`.
@@ -310,21 +310,29 @@ Sitede aşağıdakiler hazırdır:
 ### Site adresi
 
 Adres sırasıyla `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik değişkeni →
-`localhost` olarak çözülür. Kendi alan adınıza geçince `NEXT_PUBLIC_SITE_URL`
-tanımlamanız yeterlidir.
+`localhost` olarak çözülür. Vercel'de alan adını projeye bağlamanız yeterlidir;
+başka bir sunucuda `NEXT_PUBLIC_SITE_URL` tanımlanır. Bu adres aynı zamanda
+sitenin aramaya açılıp açılmayacağını belirler (aşağıya bakın).
 
-### Demoyu aramaya kapatmak
+### Arama motorlarına açık / kapalı
 
-Vercel'de `NEXT_PUBLIC_NOINDEX=1` tanımlarsanız tüm
-sayfalara `<meta name="robots" content="noindex, nofollow">` eklenir ve site
-haritası `robots.txt`'den kaldırılır. Demo bir `vercel.app` adresindeyken bu önerilir.
-Değişken derleme sırasında okunur; ekledikten sonra **Redeploy** gerekir.
+Site **varsayılan olarak arama motorlarına kapalıdır.** Yalnızca gerçek alan
+adında (`zenweld.com` veya `www.zenweld.com`) yayındayken açılır; bunun için
+ayrıca bir ayar yapmak gerekmez. Demo `vercel.app` adresi, Vercel önizleme
+sürümleri ve `localhost` her zaman kapalıdır. Liste `apps/zenweld-web/src/lib/seo.ts`
+içindeki `INDEXABLE_HOSTS`'tadır; gerçek alan adı farklıysa (örn. `zenweld.com.tr`)
+oraya eklenmelidir.
 
-`robots.txt` bu modda taramayı **engellemez**, bilerek: Google sayfayı tarayamazsa
-`noindex` etiketini de göremez ve adresi başka kaynaktan bulursa yine indeksleyebilir.
-`robots.txt` yalnızca yönetim panelini (`/yonetim`), hesap ve API sayfalarını kapatır.
-Yönetim paneli değişkenden bağımsız olarak her zaman `noindex`'tir (etiket,
-`X-Robots-Tag` başlığı ve `robots.txt`).
+Kapalıyken her sayfaya `<meta name="robots" content="noindex, nofollow">`
+eklenir ve site haritası `robots.txt`'de bildirilmez.
+
+`robots.txt` gizli sayfaları **engellemez**, bilerek: Google sayfayı tarayamazsa
+`noindex` etiketini de göremez ve adresi başka kaynaktan bulursa yine
+indeksleyebilir. Bu yüzden yalnızca `/api/` kapalıdır.
+
+Site açıkken de her zaman `noindex` olan sayfalar: yönetim paneli (etiket +
+`X-Robots-Tag` başlığı), giriş, kayıt, şifremi unuttum, hesabım, arama, çıkış,
+henüz yer tutucu metinli sayfalar (yasal metinler vb.) ve blog yazıları.
 
 ---
 

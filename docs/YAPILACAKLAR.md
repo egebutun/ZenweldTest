@@ -36,6 +36,8 @@ birlikte karar verilmeli.
   konuşulmalı. Bu karar sunucu yerini belirleyebilir.
 - **Vercel'de kalınırsa:** Kod olduğu gibi kalır. Gerçek alan adı
   bağlanır, `NEXT_PUBLIC_SITE_URL` = `https://zenweld.com` tanımlanır.
+  Site bu alan adında kendiliğinden arama motorlarına açılır; alan adı
+  `zenweld.com` değilse `src/lib/seo.ts` içindeki `INDEXABLE_HOSTS` güncellenmeli.
 - **Başka sunucuya geçilirse** (kendi sunucu, Türk barındırma firması,
   Azure, AWS…): Vercel'e özel parçalar kaldırılır (yaklaşık 10 dakika):
   - `apps/zenweld-web/vercel.json`

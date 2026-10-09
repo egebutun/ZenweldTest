@@ -8,9 +8,8 @@ import "../globals.css";
 import { Providers } from "./providers";
 
 /**
- * Panel arama motorlarina tamamen kapali: hem bu meta etiketi hem de
- * next.config icindeki X-Robots-Tag basligi. Ana sitenin robots.txt
- * dosyasi da /yonetim adresini taramaya kapatir.
+ * Panel arama motorlarina her zaman kapali (site acik olsa bile): bu meta
+ * etiketi ve next.config icindeki X-Robots-Tag basligi.
  */
 export const metadata: Metadata = {
   title: { default: "Zenweld Yönetim Paneli", template: "%s | Zenweld Yönetim" },

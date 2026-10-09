@@ -4,12 +4,14 @@ import { getSiteUrl, isNoIndex } from "@/lib/seo";
 /**
  * /robots.txt
  *
- * NEXT_PUBLIC_NOINDEX=1 iken sayfalar taramaya ACIK kalir ama her sayfaya
- * <meta name="robots" content="noindex"> eklenir. Sebep: robots.txt ile
- * taramayi engellersek Google sayfayi okuyamaz, dolayisiyla noindex etiketini
- * de goremez ve URL'yi baska kaynaklardan indeksleyebilir. Indekslemeyi
- * durdurmanin dogru yolu, taramaya izin verip noindex etiketi koymaktir.
- * Bu durumda yalnizca site haritasi bildirilmez.
+ * Gizli tutulacak sayfalar (demo sitenin tamami, yonetim paneli, hesap,
+ * giris vb.) robots.txt ile ENGELLENMEZ; bunun yerine "noindex" etiketi
+ * tasir (bkz. isNoIndex, sayfa layout'lari, next.config). Sebep: robots.txt
+ * taramayi engellerse Google sayfayi okuyamaz, noindex etiketini de goremez
+ * ve adresi baska kaynaklardan bulursa yine listeleyebilir. Ayrica
+ * robots.txt herkese acik oldugu icin panel adresini ilan etmemis oluruz.
+ *
+ * Site aramaya kapaliyken (isNoIndex) site haritasi da bildirilmez.
  */
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
@@ -19,9 +21,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Yonetim paneli (ayri uygulama, /yonetim) ve hesap sayfalari
-        // aramada cikmasin.
-        disallow: ["/yonetim", "/tr/hesabim", "/en/account", "/api/"],
+        // API uclari sayfa degil; taranmalarina gerek yok.
+        disallow: ["/api/"],
       },
     ],
     ...(isNoIndex() ? {} : { sitemap: `${siteUrl}/sitemap.xml` }),

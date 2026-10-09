@@ -19,7 +19,8 @@ const nextConfig = {
    * YONETIM PANELI (/yonetim)
    *
    * Panel bu sitenin icinde calisir (src/app/yonetim). Arama motorlarina
-   * kapali: bu baslik, panelin meta etiketi ve robots.txt.
+   * her zaman kapali: bu baslik ve panelin meta etiketi. Baslik, sayfa
+   * olmayan yanitlari da (gorsel vb.) kapsar.
    */
   async headers() {
     const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }];
