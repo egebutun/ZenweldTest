@@ -4,11 +4,9 @@ import { useMemo, useState } from "react";
 import { Eye, EyeOff, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { isDiscountActive, salePriceExVat } from "@zenweld/data";
 import { deleteProduct, saveProduct, useDatabase, useNow } from "@zenweld/store";
-import { Badge, Button, Input, Select } from "@zenweld/ui";
+import { Badge, Button, CampaignBadge, Input, ProductImage, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { CampaignBadge } from "@zenweld/ui";
 import Link from "next/link";
-import { ProductImage } from "@zenweld/ui";
 import { formatPrice, priceWithVat } from "@zenweld/utils";
 
 export default function AdminProductsPage() {

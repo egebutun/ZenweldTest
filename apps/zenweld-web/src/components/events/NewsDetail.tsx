@@ -6,10 +6,9 @@ import { ArrowLeft } from "lucide-react";
 import { matchesNewsSlug, newsSlug } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { ProductImage } from "@/components/common/ProductImage";
-import { RichText } from "./RichText";
+import { ProductImage, RichText } from "@zenweld/ui";
 import { useHref, useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate } from "@zenweld/utils";
 
 export function NewsDetail({ slug }: { slug: string }) {
   const t = useT();

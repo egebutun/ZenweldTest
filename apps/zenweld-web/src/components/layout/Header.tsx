@@ -12,11 +12,10 @@ import {
   User as UserIcon,
   X,
 } from "lucide-react";
-import { ZenweldLogo } from "@zenweld/ui";
+import { ProductImage, ZenweldLogo } from "@zenweld/ui";
 import { useAuth } from "@zenweld/auth";
 import { locales, localeNames, switchLocaleInPath, type Locale } from "@zenweld/i18n";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { ProductImage } from "@/components/common/ProductImage";
 import { SearchOverlay } from "@/components/search/SearchOverlay";
 import { useHref, useLocale, useT } from "@/lib/i18n-client";
 import { useMainMenu, type TopMenu } from "@/lib/menu";

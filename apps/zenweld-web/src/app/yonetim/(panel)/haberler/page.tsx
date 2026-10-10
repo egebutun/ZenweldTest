@@ -3,10 +3,9 @@
 import { useMemo, useState } from "react";
 import { Eye, EyeOff, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { deleteNews, saveNews, useDatabase } from "@zenweld/store";
-import { Badge, Button, Input } from "@zenweld/ui";
+import { Badge, Button, Input, ProductImage } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import Link from "next/link";
-import { ProductImage } from "@zenweld/ui";
 import { formatDate } from "@zenweld/utils";
 
 export default function AdminNewsPage() {

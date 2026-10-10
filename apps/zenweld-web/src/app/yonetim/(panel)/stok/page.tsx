@@ -11,9 +11,8 @@ import {
   setRetailerStock,
   useDatabase,
 } from "@zenweld/store";
-import { Alert, Badge, Button, Input, Select } from "@zenweld/ui";
+import { Alert, Badge, Button, Input, ProductImage, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { ProductImage } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
 
 /**

@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { defaultSettings, type RichTextStyle } from "@zenweld/data";
 import { getRichTextStyle, saveRichTextStyle, useDatabase } from "@zenweld/store";
-import { Alert, Button, Checkbox, FormRow, Input } from "@zenweld/ui";
+import { Alert, Button, Checkbox, FormRow, Input, RichText } from "@zenweld/ui";
 import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
-import { RichText } from "@zenweld/ui";
 
 /** Ayarların etkisini canlı göstermek için kullanılan örnek metin. */
 const PREVIEW = `Zenweld olarak, sektörün en prestijli etkinliklerinden birinde yerimizi alıyoruz. Bu giriş paragrafıdır ve metnin ilk paragrafı her zaman biraz daha büyük gösterilir.

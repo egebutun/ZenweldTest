@@ -9,11 +9,10 @@ import {
   type Product,
 } from "@zenweld/data";
 import { useNow } from "@zenweld/store";
-import { Badge, FlashFrame } from "@zenweld/ui";
+import { Badge, FlashFrame, ProductImage } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { ProductImage } from "@/components/common/ProductImage";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatPrice, priceWithVat } from "@/lib/format";
+import { formatPrice, priceWithVat } from "@zenweld/utils";
 import { useFavourites } from "@/lib/favourites";
 
 export function ProductCard({

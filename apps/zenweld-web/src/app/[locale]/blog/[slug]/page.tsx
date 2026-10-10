@@ -5,10 +5,10 @@ import { notFound, useRouter } from "next/navigation";
 import { blogSlug, matchesBlogSlug } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { PageHero } from "@/components/common/PageShell";
-import { RichText } from "@/components/events/RichText";
+import { RichText } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useHref, useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate } from "@zenweld/utils";
 
 export default function BlogPostPage({
   params,

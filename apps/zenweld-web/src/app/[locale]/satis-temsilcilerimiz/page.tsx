@@ -3,9 +3,8 @@
 import { useMemo, useState } from "react";
 import { Mail, MessageCircle, Phone } from "lucide-react";
 import { listSalesReps, useDatabase } from "@zenweld/store";
-import { EmptyState } from "@zenweld/ui";
+import { EmptyState, ProductImage } from "@zenweld/ui";
 import { PageHero } from "@/components/common/PageShell";
-import { ProductImage } from "@/components/common/ProductImage";
 import { useT, useText } from "@/lib/i18n-client";
 
 /** "Murat Kapucu" -> "MK" (fotograf yoksa gosterilen bas harfler) */

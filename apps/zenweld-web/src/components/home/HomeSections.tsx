@@ -3,14 +3,13 @@
 import { useMemo } from "react";
 import { ArrowRight, Award, Building2, Compass, Flame, Factory, Handshake, Headphones, Truck, Wrench } from "lucide-react";
 import { listBlogPosts, useDatabase, useNow } from "@zenweld/store";
-import { Accordion, Button, SectionHeading } from "@zenweld/ui";
+import { Accordion, Button, ProductImage, SectionHeading } from "@zenweld/ui";
 import { blogSlug, discountPercent, isOnSale } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { ProductImage } from "@/components/common/ProductImage";
 import { ProductMarquee } from "@/components/product/ProductMarquee";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate } from "@zenweld/utils";
 
 /** Anasayfa tanitim alani arka plani (public/images/hero). */
 const HERO_PHOTO = "/images/hero/kaynak-atolyesi.webp";

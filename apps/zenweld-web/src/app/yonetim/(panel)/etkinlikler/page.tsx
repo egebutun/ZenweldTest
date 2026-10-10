@@ -3,12 +3,10 @@
 import { useMemo, useState } from "react";
 import { Eye, EyeOff, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { deleteEvent, saveEvent, useDatabase } from "@zenweld/store";
-import { Badge, Button, Input, Select } from "@zenweld/ui";
+import { Badge, Button, Input, ProductImage, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import Link from "next/link";
-import { ProductImage } from "@zenweld/ui";
-import { logoAlternates } from "@zenweld/utils";
-import { formatDate } from "@zenweld/utils";
+import { formatDate, logoAlternates } from "@zenweld/utils";
 
 export default function AdminEventsPage() {
   const db = useDatabase();

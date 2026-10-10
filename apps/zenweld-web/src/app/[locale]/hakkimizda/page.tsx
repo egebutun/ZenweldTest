@@ -3,8 +3,7 @@
 import { about as defaultAbout } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { PageHero } from "@/components/common/PageShell";
-import { ProductImage } from "@/components/common/ProductImage";
-import { RichText } from "@/components/events/RichText";
+import { ProductImage, RichText } from "@zenweld/ui";
 import { useText } from "@/lib/i18n-client";
 
 /**

@@ -18,13 +18,12 @@ import {
   type Product,
 } from "@zenweld/data";
 import { useNow } from "@zenweld/store";
-import { Badge, Button, Modal } from "@zenweld/ui";
+import { Badge, Button, Modal, ProductImage } from "@zenweld/ui";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
-import { ProductImage } from "@/components/common/ProductImage";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { openSupportChat } from "@/lib/support-chat";
-import { formatDateTime, formatPrice, priceWithVat } from "@/lib/format";
+import { formatDateTime, formatPrice, priceWithVat } from "@zenweld/utils";
 
 /* ---------------------------------------------------------------- */
 

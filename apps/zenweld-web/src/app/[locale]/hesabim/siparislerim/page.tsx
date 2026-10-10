@@ -5,7 +5,7 @@ import { ordersForUser, useDatabase } from "@zenweld/store";
 import { Badge, EmptyState } from "@zenweld/ui";
 import { Package } from "lucide-react";
 import { useLocale, useT } from "@/lib/i18n-client";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatDate, formatPrice } from "@zenweld/utils";
 
 const STATUS_LABEL: Record<string, string> = {
   pending: "Hazırlanıyor",

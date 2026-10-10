@@ -4,12 +4,11 @@ import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { newsSlug } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
-import { EmptyState } from "@zenweld/ui";
+import { EmptyState, ProductImage } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { ProductImage } from "@/components/common/ProductImage";
 import { PageHero } from "@/components/common/PageShell";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate } from "@zenweld/utils";
 
 export function NewsList() {
   const t = useT();

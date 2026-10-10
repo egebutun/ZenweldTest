@@ -6,7 +6,7 @@ import { createReview, listProductReviews, reviewSummary, useDatabase } from "@z
 import { useAuth } from "@zenweld/auth";
 import { ProductReviews, type ReviewMediaInput } from "@zenweld/ui";
 import { useLocale, useT } from "@/lib/i18n-client";
-import { optimizeImageFile } from "@/lib/slugify";
+import { optimizeImageFile } from "@zenweld/utils";
 
 /**
  * Urun sayfasindaki degerlendirme bolumu.

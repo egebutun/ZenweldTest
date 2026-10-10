@@ -6,7 +6,7 @@ import { useDatabase } from "@zenweld/store";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useLocale, useT } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate } from "@zenweld/utils";
 
 export default function MyWarrantiesPage() {
   const t = useT();

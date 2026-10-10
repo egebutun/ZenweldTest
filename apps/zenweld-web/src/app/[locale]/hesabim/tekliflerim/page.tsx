@@ -5,7 +5,7 @@ import { quotesForUser, useDatabase } from "@zenweld/store";
 import { Badge, EmptyState } from "@zenweld/ui";
 import { FileText } from "lucide-react";
 import { useLocale, useT } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate } from "@zenweld/utils";
 
 const STATUS_TONE = {
   new: "amber",

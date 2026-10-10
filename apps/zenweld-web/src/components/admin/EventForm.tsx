@@ -5,10 +5,18 @@ import { useRouter } from "next/navigation";
 import { ImagePlus, Trash2, Upload } from "lucide-react";
 import type { ZenweldEvent } from "@zenweld/data";
 import { createEvent, saveEvent, useDatabase } from "@zenweld/store";
-import { Alert, Badge, Button, Checkbox, FormRow, Input, Tabs, Textarea } from "@zenweld/ui";
-import { ProductImage } from "@zenweld/ui";
-import { logoAlternates } from "@zenweld/utils";
-import { readImageFiles, slugify } from "@zenweld/utils";
+import {
+  Alert,
+  Badge,
+  Button,
+  Checkbox,
+  FormRow,
+  Input,
+  ProductImage,
+  Tabs,
+  Textarea,
+} from "@zenweld/ui";
+import { logoAlternates, readImageFiles, slugify } from "@zenweld/utils";
 
 const COUNTRIES = [
   "Türkiye",

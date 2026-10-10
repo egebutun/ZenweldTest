@@ -6,7 +6,7 @@ import { applyDiscount, discountPercentOf, type Product } from "@zenweld/data";
 import { lastStockUpdate, retailersInStockFor, useDatabase, useNow } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
 import { useLocale, useT } from "@/lib/i18n-client";
-import { formatDate, formatPrice } from "@/lib/format";
+import { formatDate, formatPrice } from "@zenweld/utils";
 
 /**
  * "Ayrica online alisveris olarak surada da mevcuttur"

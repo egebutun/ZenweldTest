@@ -3,10 +3,10 @@
 import { blogSlug } from "@zenweld/data";
 import { listBlogPosts, useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { ProductImage } from "@/components/common/ProductImage";
+import { ProductImage } from "@zenweld/ui";
 import { PageHero } from "@/components/common/PageShell";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate } from "@zenweld/utils";
 
 export default function BlogPage() {
   const t = useT();

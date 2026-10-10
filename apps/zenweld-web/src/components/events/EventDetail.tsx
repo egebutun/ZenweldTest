@@ -5,11 +5,10 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, ExternalLink, MapPin } from "lucide-react";
 import { useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { ProductImage } from "@/components/common/ProductImage";
+import { ProductImage, RichText } from "@zenweld/ui";
 import { EventLogo } from "./EventLogo";
-import { RichText } from "./RichText";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate } from "@zenweld/utils";
 import { countryName } from "@/lib/country";
 
 export function EventDetail({ slug }: { slug: string }) {

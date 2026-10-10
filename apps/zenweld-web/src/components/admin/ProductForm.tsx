@@ -14,11 +14,27 @@ import {
   validateDiscount,
 } from "@zenweld/data";
 import { createProduct, saveProduct, useDatabase, useNow } from "@zenweld/store";
-import { Alert, Badge, Button, Checkbox, FormRow, Input, Select, Tabs, Textarea } from "@zenweld/ui";
-import { CampaignBadge } from "@zenweld/ui";
-import { ProductImage } from "@zenweld/ui";
-import { formatPrice, fromDateTimeLocal, priceWithVat, toDateTimeLocal } from "@zenweld/utils";
-import { readImageFiles, slugify } from "@zenweld/utils";
+import {
+  Alert,
+  Badge,
+  Button,
+  CampaignBadge,
+  Checkbox,
+  FormRow,
+  Input,
+  ProductImage,
+  Select,
+  Tabs,
+  Textarea,
+} from "@zenweld/ui";
+import {
+  formatPrice,
+  fromDateTimeLocal,
+  priceWithVat,
+  readImageFiles,
+  slugify,
+  toDateTimeLocal,
+} from "@zenweld/utils";
 
 const PROCESSES: WeldingProcess[] = ["MULTI", "MIG", "MAG", "PULSE", "TIG", "MMA", "PLAZMA"];
 const SECTIONS: { id: TopLevelSection; label: string }[] = [

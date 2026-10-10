@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ProductImage } from "@/components/common/ProductImage";
-import { logoAlternates } from "@/lib/event-logo";
+import { ProductImage } from "@zenweld/ui";
+import { logoAlternates } from "@zenweld/utils";
 
 /**
  * ETKINLIK LOGOSU — HEPSI AYNI BUYUKLUKTE GORUNUR

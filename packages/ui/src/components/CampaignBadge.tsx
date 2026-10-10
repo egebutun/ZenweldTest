@@ -1,7 +1,7 @@
 "use client";
 
 import { discountStatusOf, FLASH_DISCOUNT_THRESHOLD, type ProductDiscount } from "@zenweld/data";
-import { formatDateTime } from "@zenweld/utils/src/format";
+import { formatDateTime } from "@zenweld/utils";
 import { Badge } from "./Badge";
 
 /**

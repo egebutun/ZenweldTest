@@ -5,8 +5,17 @@ import { useRouter } from "next/navigation";
 import { ImagePlus, Trash2, Upload } from "lucide-react";
 import type { NewsItem } from "@zenweld/data";
 import { createNews, saveNews, useDatabase } from "@zenweld/store";
-import { Alert, Badge, Button, Checkbox, FormRow, Input, Tabs, Textarea } from "@zenweld/ui";
-import { ProductImage } from "@zenweld/ui";
+import {
+  Alert,
+  Badge,
+  Button,
+  Checkbox,
+  FormRow,
+  Input,
+  ProductImage,
+  Tabs,
+  Textarea,
+} from "@zenweld/ui";
 import { readImageFiles, slugify } from "@zenweld/utils";
 
 /** "2026-08-12T09:00:00+03:00" -> "2026-08-12T09:00" (datetime-local girdisi) */

@@ -6,7 +6,7 @@ import { findWarranty, useDatabase } from "@zenweld/store";
 import type { WarrantyRecord } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input } from "@zenweld/ui";
 import { useLocale, useT } from "@/lib/i18n-client";
-import { formatDate } from "@/lib/format";
+import { formatDate } from "@zenweld/utils";
 
 /**
  * GARANTI SORGULAMA

@@ -1,10 +1,8 @@
 /**
  * ORTAK YARDIMCILAR
  *
- * Ana site ile yonetim paneli (/yonetim) ayni bicimlendirme ve gorsel
- * yukleme kurallarini kullanir. Tek kopya burada; uygulamalardaki
- * @/lib/format, @/lib/slugify ve @/lib/event-logo dosyalari buraya
- * yonlendirir.
+ * Bicimlendirme (fiyat, tarih), slug/gorsel kucultme ve etkinlik logosu
+ * yardimcilari. Site ve yonetim paneli dogrudan "@zenweld/utils"den alir.
  */
 export * from "./format";
 export * from "./images";

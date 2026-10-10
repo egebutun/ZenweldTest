@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { Search, X, Package, FolderOpen, FileText, File } from "lucide-react";
 import { useSearch } from "@/lib/search/use-search";
 import { useHref, useLocale, useT } from "@/lib/i18n-client";
-import { formatPrice, priceWithVat } from "@/lib/format";
-import { ProductImage } from "@/components/common/ProductImage";
+import { formatPrice, priceWithVat } from "@zenweld/utils";
+import { ProductImage } from "@zenweld/ui";
 import type { SearchDocType } from "@/lib/search/search-client";
 
 const ICONS: Record<SearchDocType, typeof Package> = {

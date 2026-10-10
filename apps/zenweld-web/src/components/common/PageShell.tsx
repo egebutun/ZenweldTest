@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { ProductImage } from "./ProductImage";
+import { ProductImage } from "@zenweld/ui";
 
 export function PageHero({
   title,
