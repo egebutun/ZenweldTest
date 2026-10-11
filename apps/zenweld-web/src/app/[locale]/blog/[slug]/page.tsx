@@ -2,8 +2,8 @@
 
 import { use, useEffect } from "react";
 import { notFound, useRouter } from "next/navigation";
-import { blogSlug, matchesBlogSlug } from "@zenweld/data";
-import { useDatabase } from "@zenweld/store";
+import { blogSlug } from "@zenweld/data";
+import { findBlogPostBySlug, useDatabase } from "@zenweld/store";
 import { PageHero } from "@/components/common/PageShell";
 import { RichText } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
@@ -26,7 +26,7 @@ export default function BlogPostPage({
   // Yayindan kaldirilan yazi sitede gorunmez. Adres parcasi iki dilde
   // farklidir; dil degistirilince gelen "obur dilin" slug'i da kabul
   // edilir, sonra adres kendi diline cevrilir.
-  const post = db.blogPosts.find((p) => matchesBlogSlug(p, slug) && p.active !== false);
+  const post = findBlogPostBySlug(slug, db);
   const canonicalSlug = post ? blogSlug(post, locale) : "";
 
   useEffect(() => {

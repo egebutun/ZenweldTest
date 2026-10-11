@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useDatabase } from "@zenweld/store";
+import { listProducts, useDatabase } from "@zenweld/store";
 import { localeSlug, productHighlights, type TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
 import { useLocale, useT } from "./i18n-client";
@@ -59,6 +59,7 @@ export function useMainMenu(): TopMenu[] {
   const t = useT();
 
   return useMemo(() => {
+    const visible = listProducts(db);
     const productMenus: TopMenu[] = SECTIONS.map(({ id, labelKey }) => {
       const groups = db.categoryGroups
         .filter((g) => g.section === id)
@@ -75,9 +76,7 @@ export function useMainMenu(): TopMenu[] {
             .filter((c) => c.section === id && c.group === group.slug)
             .sort((a, b) => a.order - b.order)
             .map((c) => {
-              const inCategory = db.products.filter(
-                (p) => p.active && p.categorySlug === c.slug,
-              );
+              const inCategory = visible.filter((p) => p.categorySlug === c.slug);
               return {
                 label: c.name[locale],
                 description: c.description[locale],

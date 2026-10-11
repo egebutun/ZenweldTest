@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CalendarDays } from "lucide-react";
-import { useDatabase } from "@zenweld/store";
+import { listEvents, useDatabase } from "@zenweld/store";
 import { Button, EmptyState, Select } from "@zenweld/ui";
 import { EventCard } from "./EventCard";
 import { useLocale, useT } from "@/lib/i18n-client";
@@ -26,7 +26,7 @@ export function EventList() {
   const [country, setCountry] = useState("");
   const [sort, setSort] = useState<"newest" | "oldest">("newest");
 
-  const all = useMemo(() => db.events.filter((e) => e.active), [db]);
+  const all = useMemo(() => listEvents(db), [db]);
 
   const countries = useMemo(
     () =>

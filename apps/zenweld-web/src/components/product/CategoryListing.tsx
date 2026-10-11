@@ -4,7 +4,7 @@ import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PackageOpen, SlidersHorizontal, X } from "lucide-react";
 import { localeSlug, matchesLocaleSlug, type TopLevelSection, type WeldingProcess } from "@zenweld/data";
-import { useDatabase, useNow } from "@zenweld/store";
+import { listProducts, useDatabase, useNow } from "@zenweld/store";
 import { Button, EmptyState } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductGrid } from "./ProductGrid";
@@ -116,9 +116,8 @@ function Listing({
 
   const scoped = useMemo(
     () =>
-      db.products.filter(
+      listProducts(db).filter(
         (p) =>
-          p.active &&
           p.section === section &&
           (categorySlug
             ? p.categorySlug === categorySlug

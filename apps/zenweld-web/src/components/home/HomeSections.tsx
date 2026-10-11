@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { ArrowRight, Award, Building2, Compass, Flame, Factory, Handshake, Headphones, Truck, Wrench } from "lucide-react";
-import { listBlogPosts, useDatabase, useNow } from "@zenweld/store";
+import { listBlogPosts, listProducts, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, Button, ProductImage, SectionHeading } from "@zenweld/ui";
 import { blogSlug, discountPercent, isOnSale } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
@@ -84,8 +84,8 @@ export function HotSale() {
   const now = useNow();
   const items = useMemo(
     () =>
-      db.products
-        .filter((p) => p.active && isOnSale(p, now))
+      listProducts(db)
+        .filter((p) => isOnSale(p, now))
         .sort((a, b) => discountPercent(b, now) - discountPercent(a, now))
         .slice(0, 12),
     [db, now],
@@ -210,7 +210,7 @@ export function NewArrivals() {
   const t = useT();
   const db = useDatabase();
   const items = useMemo(
-    () => db.products.filter((p) => p.active && p.isNew).slice(0, 12),
+    () => listProducts(db).filter((p) => p.isNew).slice(0, 12),
     [db],
   );
 

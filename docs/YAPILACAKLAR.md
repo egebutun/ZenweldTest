@@ -19,7 +19,7 @@ kullanması.
 Gerçek ürünler (SKU, teknik özellikler, açıklama) ve hangi ürünlerin
 seçenekli olduğu belirlendikten sonra panele seçenek yönetimi eklenecek.
 
-Bu iş yapılırken: `packages/store/src/repository.ts` içindeki
+Bu iş yapılırken: `packages/store/src/repo/products.ts` içindeki
 `createProduct` fonksiyonu yeni ürün oluştururken `variantGroups` ve
 `stockQuantity` alanlarını kopyalamıyor. Panele bu alanlar eklendiğinde
 bu fonksiyon da güncellenmeli; yoksa yeni ürünlerde sessizce kaybolurlar.

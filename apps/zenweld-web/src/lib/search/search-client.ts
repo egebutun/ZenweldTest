@@ -3,6 +3,7 @@
 import MiniSearch, { type SearchResult as MiniSearchResult } from "minisearch";
 import type { Locale } from "@zenweld/i18n";
 import { blogSlug, localeSlug, newsSlug, salePriceExVat, type ZenweldDatabase } from "@zenweld/data";
+import { listBlogPosts, listEvents, listNews, listProducts } from "@zenweld/store";
 import { trNormalize, trTokenize } from "./tr-normalize";
 import { expandQuery } from "./synonyms";
 
@@ -62,31 +63,30 @@ const STATIC_PAGES: { id: string; tr: string; en: string; href: string }[] = [
 export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[] {
   const docs: SearchDoc[] = [];
 
-  db.products
-    .filter((p) => p.active)
-    .forEach((p) => {
-      const category = db.categories.find((c) => c.slug === p.categorySlug);
-      docs.push({
-        id: `product:${p.id}`,
-        type: "product",
-        title: p.name,
-        subtitle: category ? category.name[locale] : "",
-        body: [
-          p.shortDescription[locale],
-          p.description[locale],
-          p.processes.join(" "),
-          p.modelCode ?? "",
-          p.specs.map((s) => `${s.label[locale]} ${s.value[locale]}`).join(" "),
-        ].join(" "),
-        sku: p.sku,
-        href: `/urun/${p.slug}`,
-        image: p.images[0]?.url,
-        // Sonuclarda musterinin odeyecegi (kampanyali) fiyat gorunur.
-        // Arama yalnizca kullanici acinca cizildigi icin anlik saat kullanilir.
-        price: salePriceExVat(p),
-        inStock: p.inStock,
-      });
+  // Yalnizca yayindaki icerik aranir.
+  listProducts(db).forEach((p) => {
+    const category = db.categories.find((c) => c.slug === p.categorySlug);
+    docs.push({
+      id: `product:${p.id}`,
+      type: "product",
+      title: p.name,
+      subtitle: category ? category.name[locale] : "",
+      body: [
+        p.shortDescription[locale],
+        p.description[locale],
+        p.processes.join(" "),
+        p.modelCode ?? "",
+        p.specs.map((s) => `${s.label[locale]} ${s.value[locale]}`).join(" "),
+      ].join(" "),
+      sku: p.sku,
+      href: `/urun/${p.slug}`,
+      image: p.images[0]?.url,
+      // Sonuclarda musterinin odeyecegi (kampanyali) fiyat gorunur.
+      // Arama yalnizca kullanici acinca cizildigi icin anlik saat kullanilir.
+      price: salePriceExVat(p),
+      inStock: p.inStock,
     });
+  });
 
   db.categories.forEach((c) => {
     docs.push({
@@ -100,38 +100,33 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
     });
   });
 
-  db.events
-    .filter((e) => e.active)
-    .forEach((e) => {
-      docs.push({
-        id: `article:event-${e.id}`,
-        type: "article",
-        title: e.title,
-        subtitle: `${e.venue[locale]} · ${e.city}`,
-        body: `${e.summary[locale]} ${e.description[locale]} ${e.city} ${e.country}`,
-        sku: "",
-        href: `/etkinlikler/${e.slug}`,
-        image: e.logoUrl,
-      });
+  listEvents(db).forEach((e) => {
+    docs.push({
+      id: `article:event-${e.id}`,
+      type: "article",
+      title: e.title,
+      subtitle: `${e.venue[locale]} · ${e.city}`,
+      body: `${e.summary[locale]} ${e.description[locale]} ${e.city} ${e.country}`,
+      sku: "",
+      href: `/etkinlikler/${e.slug}`,
+      image: e.logoUrl,
     });
+  });
 
-  db.news
-    .filter((n) => n.active)
-    .forEach((n) => {
-      docs.push({
-        id: `article:news-${n.id}`,
-        type: "article",
-        title: n.title[locale],
-        subtitle: n.summary[locale],
-        body: `${n.summary[locale]} ${n.body[locale]}`,
-        sku: "",
-        href: `/haberler/${newsSlug(n, locale)}`,
-        image: n.coverUrl,
-      });
+  listNews(db).forEach((n) => {
+    docs.push({
+      id: `article:news-${n.id}`,
+      type: "article",
+      title: n.title[locale],
+      subtitle: n.summary[locale],
+      body: `${n.summary[locale]} ${n.body[locale]}`,
+      sku: "",
+      href: `/haberler/${newsSlug(n, locale)}`,
+      image: n.coverUrl,
     });
+  });
 
-  // Yayindan kaldirilan yazi arama sonuclarinda cikmaz.
-  db.blogPosts.filter((b) => b.active !== false).forEach((b) => {
+  listBlogPosts(db).forEach((b) => {
     docs.push({
       id: `article:${b.id}`,
       type: "article",

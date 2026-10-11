@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { registerWarranty, useDatabase } from "@zenweld/store";
+import { listDealers, listProducts, registerWarranty, useDatabase } from "@zenweld/store";
 import { Alert, Button, Checkbox, FormRow, Input, Select } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useT } from "@/lib/i18n-client";
@@ -72,8 +72,8 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
       <FormRow label={t.warranty.product} required>
         <Select required value={form.productId} onChange={(e) => set("productId", e.target.value)}>
           <option value="">Seçiniz…</option>
-          {db.products
-            .filter((p) => p.active && p.section === "ekipmanlar")
+          {listProducts(db)
+            .filter((p) => p.section === "ekipmanlar")
             .map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
@@ -125,7 +125,7 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
             list="dealers"
           />
           <datalist id="dealers">
-            {db.dealers.map((d) => (
+            {listDealers(db).map((d) => (
               <option key={d.id} value={d.name} />
             ))}
           </datalist>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ShieldCheck, ShieldX } from "lucide-react";
-import { findWarranty, useDatabase } from "@zenweld/store";
+import { findProductById, findWarranty, useDatabase } from "@zenweld/store";
 import type { WarrantyRecord } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input } from "@zenweld/ui";
 import { useLocale, useT } from "@/lib/i18n-client";
@@ -22,7 +22,7 @@ export function WarrantyCheck({ onRegister }: { onRegister: () => void }) {
   const [serial, setSerial] = useState("");
   const [result, setResult] = useState<WarrantyRecord | null | undefined>(undefined);
 
-  const product = result ? db.products.find((p) => p.id === result.productId) : undefined;
+  const product = result ? findProductById(result.productId, db) : undefined;
   const expired = result ? new Date(result.expiresAt) < new Date() : false;
 
   return (

@@ -133,7 +133,7 @@ function emit(): void {
 /** Veritabanini degistirir, kaydeder ve abonelere haber verir. */
 export function mutate(updater: (db: ZenweldDatabase) => ZenweldDatabase | void): void {
   const current = getSnapshot();
-  const draft: ZenweldDatabase = JSON.parse(JSON.stringify(current));
+  const draft = structuredClone(current);
   const result = updater(draft) ?? draft;
   memoryDb = result;
   if (isBrowser()) {

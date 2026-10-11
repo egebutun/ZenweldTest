@@ -16,7 +16,14 @@ const ICONS: Record<SearchDocType, typeof Package> = {
   page: File,
 };
 
-export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
+/**
+ * ARAMA PENCERESI
+ *
+ * Yalnizca acikken ekranda bulunur (Header, ilk acilista bu dosyayi ve
+ * arama kutuphanesini ayrica yukler). Boylece arama dizini her sayfa
+ * acilisinda degil, yalnizca kullanici aramaya basladiginda kurulur.
+ */
+export function SearchOverlay({ onClose }: { onClose: () => void }) {
   const t = useT();
   const locale = useLocale();
   const href = useHref();
@@ -44,22 +51,14 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
   );
 
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      setActiveIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 30);
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    inputRef.current?.focus();
+    document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, []);
 
   useEffect(() => setActiveIndex(0), [query]);
-
-  if (!open) return null;
 
   const go = (path: string) => {
     onClose();

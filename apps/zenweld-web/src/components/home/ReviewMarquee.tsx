@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { featuredReviews, useDatabase } from "@zenweld/store";
+import { featuredReviews, findProductById, useDatabase } from "@zenweld/store";
 import { ReviewMarquee as ReviewMarqueeUI } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 
@@ -23,7 +23,7 @@ export function ReviewMarquee() {
         title: r.title,
         body: r.body,
         authorName: r.authorName,
-        productName: db.products.find((p) => p.id === r.productId)?.name,
+        productName: findProductById(r.productId, db)?.name,
       })),
     [db],
   );

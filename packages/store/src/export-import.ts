@@ -2,7 +2,7 @@
 
 import { createSeedDatabase, type Product, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, replaceDatabase } from "./database";
-import { setRetailerStock } from "./repository";
+import { setRetailerStocks } from "./repo";
 
 /** Tum veritabanini JSON dosyasi olarak indirir. */
 export function downloadDatabaseJson(filename = "zenweld-veri.json"): void {
@@ -100,15 +100,16 @@ export function parseStockCsv(text: string): CsvStockRow[] {
 
 /** Ayristirilmis CSV satirlarini bir saticinin stogu olarak uygular. */
 export function applyStockCsv(retailerId: string, rows: CsvStockRow[]): number {
-  let applied = 0;
-  rows.forEach((row) => {
-    if (!row.matchedProduct) return;
-    setRetailerStock(row.matchedProduct.id, retailerId, {
-      inStock: row.inStock,
-      quantity: row.quantity,
-      price: row.price,
-    });
-    applied++;
-  });
-  return applied;
+  const updates = rows.flatMap((row) =>
+    row.matchedProduct
+      ? [
+          {
+            productId: row.matchedProduct.id,
+            patch: { inStock: row.inStock, quantity: row.quantity, price: row.price },
+          },
+        ]
+      : [],
+  );
+  setRetailerStocks(retailerId, updates);
+  return updates.length;
 }

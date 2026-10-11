@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, ExternalLink, MapPin } from "lucide-react";
-import { useDatabase } from "@zenweld/store";
+import { findEventBySlug, useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage, RichText } from "@zenweld/ui";
 import { EventLogo } from "./EventLogo";
@@ -17,7 +17,7 @@ export function EventDetail({ slug }: { slug: string }) {
   const text = useText();
   const db = useDatabase();
 
-  const event = useMemo(() => db.events.find((e) => e.slug === slug), [db, slug]);
+  const event = useMemo(() => findEventBySlug(slug, db), [db, slug]);
 
   if (!event) notFound();
 

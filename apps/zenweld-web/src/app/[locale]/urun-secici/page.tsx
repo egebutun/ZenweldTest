@@ -4,7 +4,7 @@ import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { salePriceExVat, type Product, type WeldingProcess } from "@zenweld/data";
-import { useDatabase, useNow } from "@zenweld/store";
+import { listProducts, useDatabase, useNow } from "@zenweld/store";
 import { Button } from "@zenweld/ui";
 import { PageHero } from "@/components/common/PageShell";
 import { ProductGrid } from "@/components/product/ProductGrid";
@@ -88,8 +88,8 @@ function ProductSelector({ preset = "" }: { preset?: string }) {
       );
     };
 
-    return db.products.filter((p) => {
-      if (!p.active || p.section !== "ekipmanlar") return false;
+    return listProducts(db).filter((p) => {
+      if (p.section !== "ekipmanlar") return false;
       if (!p.processes.some((proc) => wanted.has(proc as WeldingProcess))) return false;
       // Butce, musterinin odeyecegi (kampanyali) fiyatla karsilastirilir.
       if (salePriceExVat(p, now) > budget) return false;

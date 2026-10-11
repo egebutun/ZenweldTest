@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Check, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { createQuote, useDatabase } from "@zenweld/store";
+import { createQuote, listProducts, useDatabase } from "@zenweld/store";
 import type { PaymentPreference } from "@zenweld/data";
 import { Alert, Badge, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
@@ -40,7 +40,7 @@ export default function QuotePage() {
     setForm((f) => ({ ...f, [k]: v }));
 
   const quotableProducts = useMemo(
-    () => db.products.filter((p) => p.active && p.quotable),
+    () => listProducts(db).filter((p) => p.quotable),
     [db],
   );
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronDown,
@@ -16,9 +17,14 @@ import { ProductImage, ZenweldLogo } from "@zenweld/ui";
 import { useAuth } from "@zenweld/auth";
 import { locales, localeNames, switchLocaleInPath, type Locale } from "@zenweld/i18n";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { SearchOverlay } from "@/components/search/SearchOverlay";
 import { useHref, useLocale, useT } from "@/lib/i18n-client";
 import { useMainMenu, type TopMenu } from "@/lib/menu";
+
+// Arama penceresi ve arama kutuphanesi yalnizca ilk acilista yuklenir.
+const SearchOverlay = dynamic(
+  () => import("@/components/search/SearchOverlay").then((m) => m.SearchOverlay),
+  { ssr: false },
+);
 
 export function Header() {
   const t = useT();
@@ -220,7 +226,7 @@ export function Header() {
       </header>
 
       {drawerOpen && <MobileDrawer menus={menus} onClose={() => setDrawerOpen(false)} />}
-      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
     </>
   );
 }

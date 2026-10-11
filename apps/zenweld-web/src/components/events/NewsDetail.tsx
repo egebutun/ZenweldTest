@@ -3,8 +3,8 @@
 import { useEffect, useMemo } from "react";
 import { notFound, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { matchesNewsSlug, newsSlug } from "@zenweld/data";
-import { useDatabase } from "@zenweld/store";
+import { newsSlug } from "@zenweld/data";
+import { findNewsBySlug, listNews, useDatabase } from "@zenweld/store";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductImage, RichText } from "@zenweld/ui";
 import { useHref, useLocale, useT, useText } from "@/lib/i18n-client";
@@ -20,10 +20,10 @@ export function NewsDetail({ slug }: { slug: string }) {
 
   // Adres parcasi iki dilde farklidir; dil degistirilince gelen "obur
   // dilin" slug'i da kabul edilir, sonra adres kendi diline cevrilir.
-  const item = useMemo(() => db.news.find((n) => matchesNewsSlug(n, slug)), [db, slug]);
+  const item = useMemo(() => findNewsBySlug(slug, db), [db, slug]);
   const others = useMemo(
-    () => db.news.filter((n) => n.active && !matchesNewsSlug(n, slug)).slice(0, 3),
-    [db, slug],
+    () => listNews(db).filter((n) => n.id !== item?.id).slice(0, 3),
+    [db, item],
   );
   const canonicalSlug = item ? newsSlug(item, locale) : "";
 

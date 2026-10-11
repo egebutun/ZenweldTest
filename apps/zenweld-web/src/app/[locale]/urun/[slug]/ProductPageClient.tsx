@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { notFound } from "next/navigation";
 import { ChevronRight, FileText } from "lucide-react";
 import { localeSlug } from "@zenweld/data";
-import { findProductBySlug, useDatabase } from "@zenweld/store";
+import { findProductBySlug, listProducts, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { OnlineRetailers } from "@/components/product/OnlineRetailers";
@@ -38,8 +38,8 @@ export function ProductPageClient({ slug }: { slug: string }) {
 
   const related = useMemo(() => {
     if (!product) return [];
-    return db.products
-      .filter((p) => p.active && p.id !== product.id && p.categorySlug === product.categorySlug)
+    return listProducts(db)
+      .filter((p) => p.id !== product.id && p.categorySlug === product.categorySlug)
       .slice(0, 4);
   }, [product, db]);
 

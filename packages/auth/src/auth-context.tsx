@@ -109,7 +109,8 @@ export function AuthProvider({
   const user = useMemo(() => {
     if (!userId) return null;
     const found = findUserById(userId, db);
-    return found && allowed(found) ? found : null;
+    // Yonetici hesabi askiya alirsa acik oturum da hemen kapanir.
+    return found && allowed(found) && found.status !== "suspended" ? found : null;
   }, [userId, db, allowed]);
 
   const login = useCallback<AuthContextValue["login"]>((email, password) => {

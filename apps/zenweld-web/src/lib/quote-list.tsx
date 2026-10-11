@@ -9,12 +9,16 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useDatabase } from "@zenweld/store";
 
 /**
  * "Teklif Listesi" — sepet DEGILDIR.
  *
  * Ana sitede dogrudan satis yapilmadigi icin kullanici urunleri sepete degil,
  * teklif listesine ekler; Teklif Al formu bu listeyle doldurulur.
+ *
+ * Liste tarayicida saklanir. Icindeki bir urun sonradan yayindan
+ * kaldirilirsa listede gorunmez ve teklife eklenmez.
  */
 
 export interface QuoteLineItem {
@@ -37,7 +41,12 @@ const STORAGE_KEY = "zenweld.quotelist.v1";
 const QuoteListContext = createContext<QuoteListValue | null>(null);
 
 export function QuoteListProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<QuoteLineItem[]>([]);
+  const db = useDatabase();
+  const [stored, setItems] = useState<QuoteLineItem[]>([]);
+  const items = useMemo(
+    () => stored.filter((i) => db.products.some((p) => p.id === i.productId && p.active)),
+    [stored, db],
+  );
 
   useEffect(() => {
     try {

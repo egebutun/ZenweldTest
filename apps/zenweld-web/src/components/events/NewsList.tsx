@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { newsSlug } from "@zenweld/data";
-import { useDatabase } from "@zenweld/store";
+import { listNews, useDatabase } from "@zenweld/store";
 import { EmptyState, ProductImage } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { PageHero } from "@/components/common/PageShell";
@@ -16,13 +16,7 @@ export function NewsList() {
   const text = useText();
   const db = useDatabase();
 
-  const items = useMemo(
-    () =>
-      db.news
-        .filter((n) => n.active)
-        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)),
-    [db],
-  );
+  const items = useMemo(() => listNews(db), [db]);
 
   const [lead, ...rest] = items;
 

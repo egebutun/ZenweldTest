@@ -2,7 +2,7 @@
 
 import { ShieldCheck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { useDatabase } from "@zenweld/store";
+import { findProductById, useDatabase } from "@zenweld/store";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useLocale, useT } from "@/lib/i18n-client";
@@ -34,7 +34,7 @@ export default function MyWarrantiesPage() {
   return (
     <div className="space-y-4">
       {records.map((w) => {
-        const product = db.products.find((p) => p.id === w.productId);
+        const product = findProductById(w.productId, db);
         return (
           <div key={w.id} className="rounded-[4px] border border-zw-grey-200 p-5">
             <div className="flex flex-wrap items-center gap-3">

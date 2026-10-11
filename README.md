@@ -164,7 +164,7 @@ ZenweldTest/
 │   ├── store/                      Backend yerine geçen veri katmanı
 │   │   └── src/
 │   │       ├── database.ts         localStorage motoru + abonelik
-│   │       ├── repository.ts       Sorgu ve güncelleme fonksiyonları
+│   │       ├── repo/               Veri işlemleri, konuya göre (ürün, stok, bayi, içerik…)
 │   │       ├── hooks.ts            useDatabase() — değişiklikler anında yansır
 │   │       └── export-import.ts    JSON/CSV dışa-içe aktarma
 │   │
