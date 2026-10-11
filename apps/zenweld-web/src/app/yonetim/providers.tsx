@@ -8,7 +8,7 @@ import { AuthProvider } from "@zenweld/auth";
  * yonetici hesaplari giris yapabilir. Ana siteye giris yapmis bir musteri
  * paneli acarsa giris ekranini gorur.
  */
-export const ADMIN_SESSION_KEY = "zenweld.admin.session.v1";
+const ADMIN_SESSION_KEY = "zenweld.admin.session.v1";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (

@@ -4,7 +4,6 @@ import { createContext, useContext, useMemo, type ReactNode } from "react";
 import {
   defaultLocale,
   getDictionary,
-  interpolate,
   localizePath,
   type Dictionary,
   type Locale,
@@ -47,12 +46,6 @@ export function useText() {
   return (value: I18nText | undefined) => (value ? value[locale] : "");
 }
 
-/** Sablonlu metin: tr("{count} bayi bulundu", { count: 12 }) */
-export function useFormatMessage() {
-  return (template: string, values: Record<string, string | number>) =>
-    interpolate(template, values);
-}
-
 /**
  * Locale on ekli, dile cevrilmis link uretir.
  *   href("/urun/arc-200")  ->  "/tr/urun/arc-200"      (TR)
@@ -71,8 +64,3 @@ export function useHref() {
   };
 }
 
-export function localeHref(locale: Locale, path: string): string {
-  if (path.startsWith("http") || path.startsWith("#")) return path;
-  const clean = path.startsWith("/") ? path : `/${path}`;
-  return `/${locale}${localizePath(clean, locale)}`;
-}

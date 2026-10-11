@@ -8,10 +8,6 @@ export function formatPrice(amount: number, locale: Locale = "tr"): string {
   }).format(amount);
 }
 
-export function formatNumber(value: number, locale: Locale = "tr"): string {
-  return new Intl.NumberFormat(locale === "tr" ? "tr-TR" : "en-US").format(value);
-}
-
 export function formatDate(iso: string, locale: Locale = "tr"): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;

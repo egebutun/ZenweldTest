@@ -6,7 +6,7 @@ import { useLocale } from "../i18n-client";
 import { buildDocuments, createIndex, search, suggest, type SearchHit } from "./search-client";
 
 /** Veritabani veya dil degistiginde index yeniden kurulur. */
-export function useSearchIndex() {
+function useSearchIndex() {
   const db = useDatabase();
   const locale = useLocale();
 

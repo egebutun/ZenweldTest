@@ -11,13 +11,6 @@ export function listUsers(db: ZenweldDatabase = getSnapshot()): User[] {
   return db.users;
 }
 
-export function findUserByEmail(
-  email: string,
-  db: ZenweldDatabase = getSnapshot(),
-): User | undefined {
-  return db.users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
-}
-
 export function findUserById(
   id: string,
   db: ZenweldDatabase = getSnapshot(),

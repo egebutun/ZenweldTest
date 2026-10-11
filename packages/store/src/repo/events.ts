@@ -13,10 +13,6 @@ export function listEvents(db: ZenweldDatabase = getSnapshot()): ZenweldEvent[] 
   return db.events.filter((e) => e.active);
 }
 
-export function listAllEvents(db: ZenweldDatabase = getSnapshot()): ZenweldEvent[] {
-  return db.events;
-}
-
 export function findEventById(
   id: string,
   db: ZenweldDatabase = getSnapshot(),

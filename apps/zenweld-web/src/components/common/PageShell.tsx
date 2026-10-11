@@ -42,7 +42,7 @@ export function PageHero({
   );
 }
 
-export function Prose({ children }: { children: ReactNode }) {
+function Prose({ children }: { children: ReactNode }) {
   return (
     <div className="zw-container py-12">
       <div className="max-w-3xl space-y-4 text-[15px] leading-relaxed text-zw-grey-700">
@@ -55,7 +55,7 @@ export function Prose({ children }: { children: ReactNode }) {
 const LOREM =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-export function LoremParagraphs({ count = 4 }: { count?: number }) {
+function LoremParagraphs({ count = 4 }: { count?: number }) {
   return (
     <>
       {Array.from({ length: count }).map((_, i) => (

@@ -12,7 +12,7 @@ export function slugify(value: string): string {
 }
 
 /** Tarayici deposuna yazilabilecek en buyuk gorsel boyutu. */
-export const MAX_UPLOAD_BYTES = 1_500_000;
+const MAX_UPLOAD_BYTES = 1_500_000;
 
 /** Bu boyutun altindaki dosyalara dokunulmaz (yeniden kodlamak buyutebilir). */
 const KEEP_ORIGINAL_UNDER = 300_000;

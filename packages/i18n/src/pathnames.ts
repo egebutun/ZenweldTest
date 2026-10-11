@@ -124,6 +124,3 @@ export function internalizePath(path: string): string {
 
   return "/" + [internalFirst, internalSecond, ...rest].filter(Boolean).join("/");
 }
-
-/** Ingilizce adreslerin tamami (middleware'in hangi yollari cevirecegini bilmesi icin) */
-export const ENGLISH_TOP_SEGMENTS = Object.values(TOP_LEVEL);

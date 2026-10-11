@@ -30,7 +30,7 @@ export interface MenuLink {
 }
 
 /** Mega menude gosterilecek en fazla urun sayisi (3 sutun x 2 satir). */
-export const MENU_PRODUCT_LIMIT = 6;
+const MENU_PRODUCT_LIMIT = 6;
 
 export interface MenuColumn {
   /** Sol kolondaki grup (Unimig'deki "Welding Machines" gibi). Bos ise alt baslik yok. */

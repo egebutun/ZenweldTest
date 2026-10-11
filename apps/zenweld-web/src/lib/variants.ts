@@ -17,7 +17,7 @@ export interface VariantSelection {
  * Bir grup icin secim yapilmamissa o grubun ilk secenegi varsayilir;
  * boylece sayfa acilir acilmaz gecerli bir fiyat gosterilir.
  */
-export function selectedOptions(
+function selectedOptions(
   product: Product,
   selection: VariantSelection,
 ): ProductVariantOption[] {

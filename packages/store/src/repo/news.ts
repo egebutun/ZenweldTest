@@ -15,11 +15,6 @@ export function listNews(db: ZenweldDatabase = getSnapshot()): NewsItem[] {
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
-/** Yonetim paneli: yayinda olmayanlar dahil tum haberler. */
-export function listAllNews(db: ZenweldDatabase = getSnapshot()): NewsItem[] {
-  return db.news;
-}
-
 export function findNewsById(
   id: string,
   db: ZenweldDatabase = getSnapshot(),

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import type { Product } from "@zenweld/data";
 import { createReview, listProductReviews, reviewSummary, useDatabase } from "@zenweld/store";
 import { useAuth } from "@zenweld/auth";
-import { ProductReviews, type ReviewMediaInput } from "@zenweld/ui";
+import { ProductReviews } from "@zenweld/ui";
 import { useLocale, useT } from "@/lib/i18n-client";
 import { optimizeImageFile } from "@zenweld/utils";
 

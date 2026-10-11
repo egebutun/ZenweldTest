@@ -5,7 +5,7 @@
  * "cubuk" yazdiginda elektrotlar gelsin diye sorgu genisletmede kullanilir.
  * Anahtarlar ve degerler normalize edilmis (Turkce karaktersiz) yazilir.
  */
-export const SYNONYMS: Record<string, string[]> = {
+const SYNONYMS: Record<string, string[]> = {
   mig: ["gazalti", "gmaw", "gaz alti", "telli"],
   gazalti: ["mig", "gmaw"],
   gmaw: ["mig", "gazalti"],

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { categories, localeSlug, products } from "@zenweld/data";
 import { isLocale, localizePath, type Locale } from "@zenweld/i18n";
 import { JsonLd } from "@/components/common/JsonLd";

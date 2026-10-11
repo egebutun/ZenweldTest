@@ -72,14 +72,12 @@ export function validateDiscount(d: ProductDiscount): string | null {
   return null;
 }
 
-/** Zenweld kampanyasinin (product.discount) verilen andaki durumu. */
-export function campaignStatus(product: Product, at?: Date): CampaignStatus {
-  return discountStatusOf(product.discount, at);
-}
-
-/** Kampanya su an gecerli mi? */
+/**
+ * Kampanya su an gecerli mi? Anasayfadaki "Hot Sale" bolumu de bunu
+ * kullanir; kampanya baslayinca urun bolume kendiliginden girer, bitince cikar.
+ */
 export function isDiscountActive(product: Product, at?: Date): boolean {
-  return campaignStatus(product, at) === "active";
+  return discountStatusOf(product.discount, at) === "active";
 }
 
 /** Gecerli indirim yuzdesi; kampanya yoksa ya da suresi disindaysa 0. */
@@ -101,15 +99,4 @@ export function salePriceExVat(product: Product, at?: Date): number {
   return applyDiscount(product.priceExVat, discountPercent(product, at));
 }
 
-/** Indirim esigi asildi mi? (flas indirim gorunumu) */
-export function isFlashDeal(product: Product, at?: Date): boolean {
-  return discountPercent(product, at) >= FLASH_DISCOUNT_THRESHOLD;
-}
 
-/**
- * Kampanyada mi? Anasayfadaki "Hot Sale" bolumu bunu kullanir; kampanya
- * baslayinca urun bolume kendiliginden girer, bitince cikar.
- */
-export function isOnSale(product: Product, at?: Date): boolean {
-  return isDiscountActive(product, at);
-}

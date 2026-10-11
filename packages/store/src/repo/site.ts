@@ -23,12 +23,6 @@ export function saveRichTextStyle(style: RichTextStyle): void {
   });
 }
 
-export function resetRichTextStyle(): void {
-  mutate((db) => {
-    db.settings = { ...db.settings, richText: { ...defaultSettings.richText } };
-  });
-}
-
 /* ------------------------------------------------------------------ */
 /* Hakkimizda ve satis temsilcileri                                    */
 /* ------------------------------------------------------------------ */

@@ -13,11 +13,6 @@ export function listProducts(db: ZenweldDatabase = getSnapshot()): Product[] {
   return db.products.filter((p) => p.active);
 }
 
-/** Yonetim paneli: yayinda olmayanlar dahil tum urunler. */
-export function listAllProducts(db: ZenweldDatabase = getSnapshot()): Product[] {
-  return db.products;
-}
-
 /** Sitedeki urun sayfasi icin: yalnizca yayindaki urun. */
 export function findProductBySlug(
   slug: string,

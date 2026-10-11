@@ -2,7 +2,7 @@
 
 import { MapPin } from "lucide-react";
 import type { ZenweldEvent } from "@zenweld/data";
-import { Badge, ProductImage } from "@zenweld/ui";
+import { Badge } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { EventLogo } from "./EventLogo";
 import { useLocale, useT, useText } from "@/lib/i18n-client";

@@ -120,10 +120,6 @@ export function lastStockUpdate(
 /* Saticilar                                                           */
 /* ------------------------------------------------------------------ */
 
-export function listRetailers(db: ZenweldDatabase = getSnapshot()): Retailer[] {
-  return db.retailers;
-}
-
 export function saveRetailer(retailer: Retailer): void {
   mutate((db) => {
     const idx = db.retailers.findIndex((r) => r.id === retailer.id);

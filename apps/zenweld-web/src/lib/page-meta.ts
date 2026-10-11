@@ -103,7 +103,7 @@ const PAGES = {
 
 export type StaticPagePath = keyof typeof PAGES;
 
-export function staticPageMetadata(path: StaticPagePath, locale: Locale): Metadata {
+function staticPageMetadata(path: StaticPagePath, locale: Locale): Metadata {
   const page: PageMeta = PAGES[path];
   const [title, description] = page[locale];
   if (page.noindex) {

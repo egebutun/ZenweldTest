@@ -207,8 +207,8 @@ export function jsonLdScript(data: Record<string, unknown>): string {
  * yazildiginda da eski hali bir sure aramada kalir. Bu yuzden gercek
  * icerik gelene kadar noindex isaretliyoruz.
  *
- * Gercek metin eklendiginde: ilgili sayfada bu fonksiyon yerine
- * pageMetadata() kullanin, sayfa aramaya acilir.
+ * Gercek metin eklendiginde: sayfayi lib/page-meta.ts tablosuna ekleyip
+ * pageMetadataFor() kullanin, sayfa aramaya acilir.
  */
 export function placeholderPageMetadata(opts: {
   path: string;
@@ -221,33 +221,6 @@ export function placeholderPageMetadata(opts: {
     description: opts.description[opts.locale],
     alternates: languageAlternates(opts.path, opts.locale),
     robots: { index: false, follow: true },
-  };
-}
-
-/**
- * Icerigi hazir sayfalar icin metadata.
- * Her sayfanin kendi basligi ve aciklamasi olur; aksi halde tum sayfalar
- * aramada anasayfanin basligiyla cikar.
- */
-export function pageMetadata(opts: {
-  path: string;
-  locale: Locale;
-  title: { tr: string; en: string };
-  description: { tr: string; en: string };
-}) {
-  const title = opts.title[opts.locale];
-  const description = opts.description[opts.locale];
-
-  return {
-    title,
-    description,
-    alternates: languageAlternates(opts.path, opts.locale),
-    openGraph: {
-      title,
-      description,
-      siteName: SITE_NAME,
-      url: `/${opts.locale}${opts.path}`,
-    },
   };
 }
 

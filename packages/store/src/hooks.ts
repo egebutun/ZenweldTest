@@ -9,15 +9,6 @@ export function useDatabase(): ZenweldDatabase {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
-/** Hydration tamamlandi mi — localStorage verisine guvenle bakabilir miyiz? */
-export function useIsHydrated(): boolean {
-  return useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
-}
-
 /* ------------------------------------------------------------------ */
 /* Saat — kampanya tarihleri icin                                      */
 /* ------------------------------------------------------------------ */
