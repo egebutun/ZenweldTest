@@ -3,41 +3,23 @@
 import { use } from "react";
 import { findBlogPostById, useDatabase } from "@zenweld/store";
 import { Alert } from "@zenweld/ui";
-import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { BlogForm } from "@/components/admin/BlogForm";
 import { formatDate } from "@zenweld/utils";
-import { siteUrl } from "@/lib/admin-links";
+import { BlogForm } from "@/components/admin/BlogForm";
+import { EditPageFrame } from "@/components/admin/content-form";
 
-export default function EditBlogPostPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const db = useDatabase();
-  const item = findBlogPostById(id, db);
-
-  if (!item) {
-    return <Alert tone="danger">Yazı bulunamadı.</Alert>;
-  }
+  const item = findBlogPostById(id, useDatabase());
+  if (!item) return <Alert tone="danger">Yazı bulunamadı.</Alert>;
 
   return (
-    <>
-      <AdminPageHeader
-        title={item.title.tr}
-        description={`${item.category.tr} · ${formatDate(item.publishedAt, "tr")}`}
-        action={
-          <a
-            href={siteUrl(`/blog/${item.slug}`)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-semibold text-zw-red-600 hover:underline"
-          >
-            Yazı sayfasını gör ↗
-          </a>
-        }
-      />
+    <EditPageFrame
+      title={item.title.tr}
+      description={`${item.category.tr} · ${formatDate(item.publishedAt, "tr")}`}
+      sitePath={`/blog/${item.slug}`}
+      siteLinkLabel="Yazı sayfasını gör"
+    >
       <BlogForm item={item} />
-    </>
+    </EditPageFrame>
   );
 }

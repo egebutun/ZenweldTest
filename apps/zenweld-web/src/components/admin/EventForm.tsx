@@ -1,22 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ImagePlus, Trash2, Upload } from "lucide-react";
 import type { ZenweldEvent } from "@zenweld/data";
 import { createEvent, saveEvent, useDatabase } from "@zenweld/store";
+import { Alert, Checkbox, FormRow, Input } from "@zenweld/ui";
+import { logoAlternates, slugify } from "@zenweld/utils";
 import {
-  Alert,
-  Badge,
-  Button,
-  Checkbox,
-  FormRow,
-  Input,
-  ProductImage,
-  Tabs,
-  Textarea,
-} from "@zenweld/ui";
-import { logoAlternates, readImageFiles, slugify } from "@zenweld/utils";
+  ContentFormShell,
+  FormPanel,
+  GalleryField,
+  LocalizedTextFields,
+  SingleImageField,
+  useContentForm,
+  withTrFallback,
+} from "./content-form";
 
 const COUNTRIES = [
   "Türkiye",
@@ -31,115 +28,82 @@ const COUNTRIES = [
   "Azerbaycan",
 ];
 
+const EMPTY: ZenweldEvent = {
+  id: "",
+  slug: "",
+  title: "",
+  summary: { tr: "", en: "" },
+  description: { tr: "", en: "" },
+  startDate: "",
+  endDate: "",
+  venue: { tr: "", en: "" },
+  city: "",
+  country: "Türkiye",
+  logoUrl: "",
+  images: [],
+  featured: false,
+  active: true,
+};
+
+/**
+ * ETKINLIK FORMU
+ *
+ * Etkinlik adi ozel isimdir (fuar adlari cevrilmez); bu yuzden tek basligi
+ * ve tek adresi vardir. Tarih, mekan ve logo alanlari haber/blog
+ * formlarindan farklidir.
+ */
 export function EventForm({ event }: { event?: ZenweldEvent }) {
   const db = useDatabase();
   const router = useRouter();
   const isNew = !event;
-
-  const [tab, setTab] = useState("temel");
-  const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
-  const [logoInput, setLogoInput] = useState("");
-  const [imageInput, setImageInput] = useState("");
-
   const today = new Date().toISOString().slice(0, 10);
-
-  const [draft, setDraft] = useState<ZenweldEvent>(
-    event ?? {
-      id: "",
-      slug: "",
-      title: "",
-      summary: { tr: "", en: "" },
-      description: { tr: "", en: "" },
-      startDate: today,
-      endDate: today,
-      venue: { tr: "", en: "" },
-      city: "",
-      country: "Türkiye",
-      logoUrl: "",
-      images: [],
-      featured: false,
-      active: true,
-    },
+  const form = useContentForm<ZenweldEvent>(
+    event ?? { ...EMPTY, startDate: today, endDate: today },
   );
+  const { draft, set, setI18n } = form;
 
-  const set = <K extends keyof ZenweldEvent>(key: K, value: ZenweldEvent[K]) =>
-    setDraft((d) => ({ ...d, [key]: value }));
-
-  const setI18n = (key: "summary" | "description" | "venue", lang: "tr" | "en", value: string) =>
-    setDraft((d) => ({ ...d, [key]: { ...d[key], [lang]: value } }));
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    if (!draft.title.trim()) {
-      setError("Etkinlik adı zorunludur.");
-      setTab("temel");
-      return;
-    }
+  const submit = () => {
+    form.setError(null);
+    if (!draft.title.trim()) return form.fail("Etkinlik adı zorunludur.");
     if (draft.endDate < draft.startDate) {
-      setError("Bitiş tarihi başlangıç tarihinden önce olamaz.");
-      setTab("temel");
-      return;
+      return form.fail("Bitiş tarihi başlangıç tarihinden önce olamaz.");
     }
 
     const slug = draft.slug.trim() || slugify(draft.title);
-    const clash = db.events.find((x) => x.slug === slug && x.id !== draft.id);
-    if (clash) {
-      setError(`"${slug}" adresi başka bir etkinlikte kullanılıyor.`);
-      setTab("temel");
-      return;
+    if (db.events.some((x) => x.slug === slug && x.id !== draft.id)) {
+      return form.fail(`"${slug}" adresi başka bir etkinlikte kullanılıyor.`);
     }
 
-    // Ingilizce alanlar bos birakilirsa Turkce metin kullanilir.
     const next: ZenweldEvent = {
       ...draft,
       slug,
-      summary: { tr: draft.summary.tr, en: draft.summary.en.trim() || draft.summary.tr },
-      description: {
-        tr: draft.description.tr,
-        en: draft.description.en.trim() || draft.description.tr,
-      },
-      venue: { tr: draft.venue.tr, en: draft.venue.en.trim() || draft.venue.tr },
+      summary: withTrFallback(draft.summary),
+      description: withTrFallback(draft.description),
+      venue: withTrFallback(draft.venue),
     };
 
     if (isNew) {
-      const created = createEvent(next);
-      router.push(`/yonetim/etkinlikler/${created.id}`);
+      router.push(`/yonetim/etkinlikler/${createEvent(next).id}`);
     } else {
       saveEvent(next);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
+      form.flashSaved();
     }
   };
 
   return (
-    <form onSubmit={submit}>
-      {error && (
-        <div className="mb-4">
-          <Alert tone="danger">{error}</Alert>
-        </div>
-      )}
-      {saved && (
-        <div className="mb-4">
-          <Alert tone="success">Etkinlik kaydedildi.</Alert>
-        </div>
-      )}
-
-      <Tabs
-        className="mb-6"
-        active={tab}
-        onChange={setTab}
-        tabs={[
-          { id: "temel", label: "Temel Bilgiler" },
-          { id: "aciklama", label: "Açıklamalar" },
-          { id: "gorseller", label: "Logo & Fotoğraflar", badge: draft.images.length },
-        ]}
-      />
-
-      {tab === "temel" && (
-        <div className="space-y-4 rounded-[4px] border border-zw-grey-200 bg-white p-5">
+    <ContentFormShell
+      form={form}
+      onSubmit={submit}
+      savedText="Etkinlik kaydedildi."
+      submitLabel={isNew ? "Etkinliği Oluştur" : "Değişiklikleri Kaydet"}
+      tabs={[
+        { id: "temel", label: "Temel Bilgiler" },
+        { id: "aciklama", label: "Açıklamalar" },
+        { id: "gorseller", label: "Logo & Fotoğraflar", badge: draft.images.length },
+      ]}
+    >
+      {form.tab === "temel" && (
+        <FormPanel>
           <FormRow
             label="Etkinlik Adı"
             required
@@ -167,7 +131,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
                 value={draft.startDate}
                 onChange={(e) => {
                   const startDate = e.target.value;
-                  setDraft((d) => ({
+                  form.setDraft((d) => ({
                     ...d,
                     startDate,
                     endDate: d.endDate < startDate ? startDate : d.endDate,
@@ -240,49 +204,26 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
               onChange={(e) => set("featured", e.target.checked)}
             />
           </div>
-        </div>
+        </FormPanel>
       )}
 
-      {tab === "aciklama" && (
-        <div className="space-y-5 rounded-[4px] border border-zw-grey-200 bg-white p-5">
-          <Alert tone="info">
-            Kısa açıklama etkinlik kartında, detaylı açıklama etkinlik sayfasında görünür.
-            Detaylı açıklamada boş satır bırakarak paragraf oluşturabilirsiniz. Biçimlendirme
-            için: satır başına <code>## </code> koyarsanız ara başlık, <code>- </code> koyarsanız
-            madde olur; <code>**kelime**</code> yazarsanız kalın görünür.
-          </Alert>
-          {(["tr", "en"] as const).map((lang) => (
-            <div key={lang} className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Badge tone="dark">{lang.toUpperCase()}</Badge>
-                <span className="text-sm font-semibold text-zw-grey-600">
-                  {lang === "tr" ? "Türkçe içerik" : "İngilizce içerik (boşsa Türkçesi kullanılır)"}
-                </span>
-              </div>
-              <FormRow label="Kısa Açıklama">
-                <Textarea
-                  className="min-h-20"
-                  value={draft.summary[lang]}
-                  onChange={(e) => setI18n("summary", lang, e.target.value)}
-                />
-              </FormRow>
-              <FormRow label="Detaylı Açıklama">
-                <Textarea
-                  className="min-h-48"
-                  value={draft.description[lang]}
-                  onChange={(e) => setI18n("description", lang, e.target.value)}
-                />
-              </FormRow>
-            </div>
-          ))}
-        </div>
+      {form.tab === "aciklama" && (
+        <LocalizedTextFields
+          intro="Kısa açıklama etkinlik kartında, detaylı açıklama etkinlik sayfasında görünür."
+          fields={[
+            { key: "summary", label: "Kısa Açıklama" },
+            { key: "description", label: "Detaylı Açıklama", tall: true },
+          ]}
+          values={draft}
+          onChange={setI18n}
+        />
       )}
 
-      {tab === "gorseller" && (
-        <div className="space-y-6 rounded-[4px] border border-zw-grey-200 bg-white p-5">
+      {form.tab === "gorseller" && (
+        <FormPanel>
           <Alert tone="info">
-            Logo ve fotoğraflar için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen
-            dosyalar otomatik olarak küçültülüp WebP'ye çevrilir; boyutla uğraşmanıza gerek yok. Kalıcı
+            Logo ve fotoğraflar için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar
+            otomatik olarak küçültülüp WebP&apos;ye çevrilir; boyutla uğraşmanıza gerek yok. Kalıcı
             kullanım için görselleri <code>public/images/events/</code> klasörüne koyup
             <code> /images/events/dosya.png</code> yolunu girin.
           </Alert>
@@ -291,148 +232,31 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
             <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
               Etkinlik Logosu
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-              <div className="flex h-24 w-48 shrink-0 items-center justify-center rounded-[4px] border border-zw-grey-200 bg-zw-grey-50 p-2">
-                <ProductImage
-                  src={draft.logoUrl}
-                  alternates={logoAlternates(draft.logoUrl)}
-                  alt={draft.title}
-                  label={draft.title || "Logo"}
-                  className="max-h-full max-w-full object-contain"
-                />
-              </div>
-              <div className="flex-1 space-y-2">
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <Input
-                    placeholder="/images/events/etkinlik.png"
-                    value={logoInput}
-                    onChange={(e) => setLogoInput(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    leftIcon={<ImagePlus size={16} />}
-                    onClick={() => {
-                      if (!logoInput.trim()) return;
-                      set("logoUrl", logoInput.trim());
-                      setLogoInput("");
-                    }}
-                  >
-                    URL Kullan
-                  </Button>
-                  <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-[4px] border border-zw-grey-300 px-4 text-sm font-semibold hover:border-zw-ink">
-                    <Upload size={16} />
-                    Dosya Yükle
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        // Logo yuklenirken cevresindeki bos beyaz kenar otomatik kesilir,
-                        // boylece detay sayfasinda digerleriyle ayni agirlikta gorunur.
-                        readImageFiles(e.target.files, (url) => set("logoUrl", url), setError, {
-                          trimEdges: true,
-                        });
-                        e.target.value = "";
-                      }}
-                    />
-                  </label>
-                </div>
-                {draft.logoUrl && (
-                  <button
-                    type="button"
-                    onClick={() => set("logoUrl", "")}
-                    className="text-sm font-semibold text-zw-red-600 hover:underline"
-                  >
-                    Logoyu kaldır
-                  </button>
-                )}
-              </div>
-            </div>
+            {/* Logo yuklenirken cevresindeki bos beyaz kenar otomatik kesilir,
+                boylece detay sayfasinda digerleriyle ayni agirlikta gorunur. */}
+            <SingleImageField
+              value={draft.logoUrl}
+              onChange={(url) => set("logoUrl", url)}
+              onError={form.setError}
+              alt={draft.title}
+              placeholder="/images/events/etkinlik.png"
+              previewClassName="flex h-24 w-48 items-center justify-center p-2"
+              imageClassName="max-h-full max-w-full object-contain"
+              alternates={logoAlternates(draft.logoUrl)}
+              trimEdges
+              removeLabel="Logoyu kaldır"
+            />
           </div>
 
-          <div>
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-              Fotoğraf Galerisi
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <Input
-                placeholder="/images/events/etkinlik/1.jpg"
-                value={imageInput}
-                onChange={(e) => setImageInput(e.target.value)}
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                leftIcon={<ImagePlus size={16} />}
-                onClick={() => {
-                  if (!imageInput.trim()) return;
-                  set("images", [...draft.images, imageInput.trim()]);
-                  setImageInput("");
-                }}
-              >
-                URL Ekle
-              </Button>
-              <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-[4px] border border-zw-grey-300 px-4 text-sm font-semibold hover:border-zw-ink">
-                <Upload size={16} />
-                Dosya Yükle
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => {
-                    readImageFiles(
-                      e.target.files,
-                      (url) => setDraft((d) => ({ ...d, images: [...d.images, url] })),
-                      setError,
-                    );
-                    e.target.value = "";
-                  }}
-                />
-              </label>
-            </div>
-
-            <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {draft.images.map((img, i) => (
-                <div key={i} className="rounded-[4px] border border-zw-grey-200 p-2">
-                  <div className="aspect-[4/3] overflow-hidden rounded-[3px] bg-zw-grey-50">
-                    <ProductImage
-                      src={img}
-                      alt={`${draft.title} — ${i + 1}`}
-                      label={draft.title || "Fotoğraf"}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => set("images", draft.images.filter((_, x) => x !== i))}
-                    className="mt-2 w-full rounded-[3px] border border-zw-grey-300 py-1 text-xs text-zw-red-600 hover:border-zw-red-600"
-                  >
-                    <Trash2 size={13} className="mx-auto" />
-                  </button>
-                </div>
-              ))}
-              {draft.images.length === 0 && (
-                <p className="col-span-full py-6 text-center text-sm text-zw-grey-500">
-                  Henüz fotoğraf eklenmedi.
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
+          <GalleryField
+            images={draft.images}
+            onChange={(update) => form.setDraft((d) => ({ ...d, images: update(d.images) }))}
+            onError={form.setError}
+            alt={draft.title}
+            placeholder="/images/events/etkinlik/1.jpg"
+          />
+        </FormPanel>
       )}
-
-      <div className="sticky bottom-0 mt-6 flex gap-3 border-t border-zw-grey-200 bg-zw-grey-50 py-4">
-        <Button type="submit" size="lg">
-          {isNew ? "Etkinliği Oluştur" : "Değişiklikleri Kaydet"}
-        </Button>
-        <Button type="button" variant="outline" onClick={() => router.back()}>
-          Vazgeç
-        </Button>
-      </div>
-    </form>
+    </ContentFormShell>
   );
 }

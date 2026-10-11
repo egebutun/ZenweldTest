@@ -3,41 +3,23 @@
 import { use } from "react";
 import { findNewsById, useDatabase } from "@zenweld/store";
 import { Alert } from "@zenweld/ui";
-import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { NewsForm } from "@/components/admin/NewsForm";
 import { formatDate } from "@zenweld/utils";
-import { siteUrl } from "@/lib/admin-links";
+import { NewsForm } from "@/components/admin/NewsForm";
+import { EditPageFrame } from "@/components/admin/content-form";
 
-export default function EditNewsPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default function EditNewsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const db = useDatabase();
-  const item = findNewsById(id, db);
-
-  if (!item) {
-    return <Alert tone="danger">Haber bulunamadı.</Alert>;
-  }
+  const item = findNewsById(id, useDatabase());
+  if (!item) return <Alert tone="danger">Haber bulunamadı.</Alert>;
 
   return (
-    <>
-      <AdminPageHeader
-        title={item.title.tr}
-        description={formatDate(item.publishedAt, "tr")}
-        action={
-          <a
-            href={siteUrl(`/haberler/${item.slug}`)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-semibold text-zw-red-600 hover:underline"
-          >
-            Haber sayfasını gör ↗
-          </a>
-        }
-      />
+    <EditPageFrame
+      title={item.title.tr}
+      description={formatDate(item.publishedAt, "tr")}
+      sitePath={`/haberler/${item.slug}`}
+      siteLinkLabel="Haber sayfasını gör"
+    >
       <NewsForm item={item} />
-    </>
+    </EditPageFrame>
   );
 }
