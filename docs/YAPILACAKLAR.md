@@ -56,6 +56,30 @@ alması) ana siteden çıkarıldı. Bunlar için ayrı bir B2B uygulaması
 geliştirilecek. Bayi hesaplarını kimin açıp yöneteceği de bu uygulamayla
 birlikte netleşecek.
 
+## Online satış — canlıya çıkmadan önce
+
+Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı için:
+
+1. **Ödeme kuruluşu** (iyzico, PayTR veya bankanın sanal POS'u): 3D Secure,
+   kartın BIN'ine göre gerçek taksit oranları, iade/iptal. Kart bilgisi hiçbir
+   zaman bizim sunucumuza gelmemeli (kuruluşun ödeme formu kullanılmalı).
+2. **Fiyat ve tutarlar sunucuda yeniden hesaplanmalı**; tarayıcıdan gelen
+   tutara güvenilmez. Sipariş numarası sunucuda üretilmeli.
+3. **Hukuk metinleri**: Ön Bilgilendirme Formu, Mesafeli Satış Sözleşmesi,
+   İade/Cayma koşulları — şu anki metinler taslak, hukuk danışmanı yazmalı.
+   Kurumsal (ticari) alıcılara cayma hakkının uygulanıp uygulanmayacağı netleşmeli.
+4. **ETBİS kaydı** (Ticaret Bakanlığı e-ticaret bilgi sistemi) ve satıcının
+   MERSİS numarası sözleşmelere eklenmeli.
+5. **e-Arşiv / e-Fatura** entegrasyonu (muhasebe yazılımı veya entegratör).
+6. **E-posta bildirimleri**: sipariş onayı + sözleşme kopyası (zorunlu), havale
+   hatırlatması, kargoya verildi, teslim edildi.
+7. **Zamanlanmış iş**: süresi dolan havale siparişlerini iptal eden günlük iş
+   (demoda sipariş sayfaları açılınca yapılıyor).
+8. **Kargo entegrasyonu** (isteğe bağlı): takip numarasından takip bağlantısı,
+   kargo etiketinin panelden oluşturulması.
+9. **Gerçek kargo ücreti, vade farkı oranları ve IBAN'lar** Mağaza Ayarları'na
+   girilmeli (şu an örnek değerler).
+
 ## Kod incelemesi bulguları
 
 Ayrıntılı inceleme sohbette yapıldı; düzeltme zamanı ayrıca
@@ -65,22 +89,19 @@ kararlaştırılacak. Başlıklar:
    kimlik doğrulama şart
 2. `/api/destek` ve `/api/bayilik` için istek sınırı, uzunluk sınırı ve
    e-posta doğrulaması yok
-3. KVKK onay kutusu üyelik (`/kayit`) ve bayi ödeme (`/odeme`)
-   formlarında yok
+3. KVKK onay kutusu üyelik (`/kayit`) formunda yok
 4. Yayından kaldırılan ürün, haber ve etkinliğin sayfası doğrudan
    adresle hâlâ açılıyor
-5. Bayi ödemesinde KDV sabit `1.2` ile hesaplanıyor
-6. Sepetteki fiyat eklendiği anda sabitleniyor; stok sınırı yok
-7. `createProduct` bazı alanları kopyalamıyor (yukarıdaki not)
-8. Tarayıcı deposu dolunca kayıt başarısız oluyor ama kullanıcıya
+5. `createProduct` bazı alanları kopyalamıyor (yukarıdaki not)
+6. Tarayıcı deposu dolunca kayıt başarısız oluyor ama kullanıcıya
    uyarı gösterilmiyor
-9. Arama dizini her sayfa açılışında kuruluyor
-10. Her değişiklikte tüm veritabanı (≈545 KB) yeniden yazılıyor
-11. Yorumlara yüklenen foto/videoda boyut sınırı ve sıkıştırma yok
-12. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
-13. `/yetkili-bayi-ve-servis-agi` sayfa başlığı eski adı taşıyor
-14. İngilizce sayfalar Türkçe yolla da açılıyor (`/en/urun/...`)
-15. 17 dosyada hâlâ Lorem ipsum var
-16. ESLint kurulu değil, test ve CI yok
-17. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
-18. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
+7. Arama dizini her sayfa açılışında kuruluyor
+8. Her değişiklikte tüm veritabanı (≈545 KB) yeniden yazılıyor
+9. Yorumlara yüklenen foto/videoda boyut sınırı ve sıkıştırma yok
+10. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
+11. `/yetkili-bayi-ve-servis-agi` sayfa başlığı eski adı taşıyor
+12. İngilizce sayfalar Türkçe yolla da açılıyor (`/en/urun/...`)
+13. 17 dosyada hâlâ Lorem ipsum var
+14. ESLint kurulu değil, test ve CI yok
+15. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
+16. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil

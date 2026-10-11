@@ -130,9 +130,8 @@ export function productJsonLd(
       priceCurrency: "TRY",
       price: priceIncVat,
       ...(endsAt ? { priceValidUntil: endsAt.slice(0, 10) } : {}),
-      availability: product.inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+      // Zenweld deposunda her urun her zaman bulunur.
+      availability: "https://schema.org/InStock",
       itemCondition: "https://schema.org/NewCondition",
       seller: { "@type": "Organization", name: SITE_NAME },
     },

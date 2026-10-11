@@ -79,7 +79,6 @@ export const products: Product[] = [
       { tr: "DCEN kutup değiştirme özelliği", en: "DCEN polarity change" },
       { tr: "Monofaze şebekede 250 A performans", en: "250 A output on single-phase power" },
     ],
-    inStock: true,
     quotable: true,
     featured: true,
     isNew: false,
@@ -133,7 +132,6 @@ export const products: Product[] = [
       { tr: "Yüksek devrede kalma oranı", en: "High duty cycle" },
       { tr: "Alüminyum uyumlu tel besleme", en: "Aluminium-ready wire feed" },
     ],
-    inStock: true,
     quotable: true,
     featured: true,
     isNew: false,
@@ -186,7 +184,6 @@ export const products: Product[] = [
       { tr: "Ayrı tel besleme ünitesi", en: "Separate wire feed unit" },
       { tr: "Seri imalat için yüksek dayanım", en: "Built for serial production" },
     ],
-    inStock: true,
     quotable: true,
     featured: false,
     isNew: false,
@@ -238,7 +235,6 @@ export const products: Product[] = [
       { tr: "Gazlı ve gazsız kaynak", en: "Gas and gasless welding" },
       { tr: "Saha ve servis için taşınabilir", en: "Portable for field and service" },
     ],
-    inStock: true,
     quotable: true,
     featured: true,
     isNew: false,
@@ -293,7 +289,6 @@ export const products: Product[] = [
       { tr: "Alüminyumda dekoratif dikiş", en: "Decorative bead on aluminium" },
       { tr: "Minimum sıçrantı", en: "Minimal spatter" },
     ],
-    inStock: true,
     quotable: true,
     featured: true,
     isNew: true,
@@ -349,7 +344,6 @@ export const products: Product[] = [
       { tr: "Ayarlanabilir AC frekansı ve denge", en: "Adjustable AC frequency and balance" },
       { tr: "Pulse TIG fonksiyonu", en: "Pulse TIG function" },
     ],
-    inStock: true,
     quotable: true,
     featured: true,
     isNew: false,
@@ -402,7 +396,6 @@ export const products: Product[] = [
       { tr: "HF ateşleme ile temiz ark başlangıcı", en: "Clean arc start with HF ignition" },
       { tr: "TIG ve MMA tek makinede", en: "TIG and MMA in one machine" },
     ],
-    inStock: true,
     quotable: true,
     featured: false,
     isNew: false,
@@ -455,7 +448,6 @@ export const products: Product[] = [
       { tr: "Gaz gerektirmez — dış mekan kaynağı", en: "No gas required — outdoor welding" },
       { tr: "Hot Start / Arc Force / Anti-Stick", en: "Hot Start / Arc Force / Anti-Stick" },
     ],
-    inStock: true,
     quotable: true,
     featured: true,
     isNew: false,
@@ -506,7 +498,6 @@ export const products: Product[] = [
       { tr: "3.5 kg kompakt gövde", en: "3.5 kg compact body" },
       { tr: "Ev tipi şebekede çalışır", en: "Runs on domestic power" },
     ],
-    inStock: true,
     quotable: false,
     featured: false,
     isNew: false,
@@ -559,7 +550,6 @@ export const products: Product[] = [
       { tr: "Lift TIG desteği", en: "Lift TIG support" },
       { tr: "Selülozik elektrot uyumlu", en: "Cellulosic electrode compatible" },
     ],
-    inStock: true,
     quotable: true,
     featured: false,
     isNew: false,
@@ -617,7 +607,6 @@ export const products: Product[] = [
       { tr: "Yüksek frekanssız güvenli ateşleme", en: "Safe high-frequency-free ignition" },
       { tr: "PFC ile düşük enerji tüketimi", en: "Low energy consumption with PFC" },
     ],
-    inStock: true,
     quotable: true,
     featured: true,
     isNew: false,
@@ -672,7 +661,6 @@ export const products: Product[] = [
       { tr: "Merkezi torç bağlantısı", en: "Central torch connection" },
       { tr: "Trifaze endüstriyel güç", en: "Three-phase industrial power" },
     ],
-    inStock: false,
     quotable: true,
     featured: false,
     isNew: false,
@@ -908,7 +896,6 @@ accessorySeeds.forEach((a, i) => {
     ],
     inTheBox: [{ tr: "1 x " + a.name, en: "1 x " + a.name }],
     highlights: a.highlights ?? [],
-    inStock: i % 7 !== 0,
     quotable: true,
     featured: false,
     isNew: i < 2,
@@ -920,11 +907,11 @@ accessorySeeds.forEach((a, i) => {
 });
 
 /* ------------------------------------------------------------------ */
-/* Kampanyalar ve depo stok adetleri — !! DEMO VERISI, DOGRULANMALI !! */
+/* Kampanyalar — !! DEMO VERISI, DOGRULANMALI !!                       */
 /*                                                                     */
-/* Anasayfadaki "Hot Sale" ve "Stokta Azalanlar" bolumlerini beslemek  */
-/* icin kullanilir. Kampanyalar yonetim panelinde Urunler > urun >     */
-/* "Kampanya / Indirim" bolumunden duzenlenir veya kaldirilir.         */
+/* Anasayfadaki "Hot Sale" bolumunu beslemek icin kullanilir.          */
+/* Kampanyalar yonetim panelinde Urunler > urun > "Kampanya /         */
+/* Indirim" bolumunden duzenlenir veya kaldirilir.                     */
 /* ------------------------------------------------------------------ */
 
 /**
@@ -939,18 +926,6 @@ const HOT_SALE: Record<string, number> = {
   "mig-torcu-mb25": 18,
   "zenmask-auto-9000": 25,
   "gazalti-teli-sg2-08": 10,
-};
-
-/** Stogu azalan urunler: slug -> kalan adet */
-const LOW_STOCK: Record<string, number> = {
-  "ultimate-355-mtc": 2,
-  "ultimate-205-acdc-tig": 3,
-  "multicut-60-s": 1,
-  "arc-120": 4,
-  "mig-torcu-mb36": 4,
-  "zenmask-basic-500": 2,
-  "tig-cubugu-308l": 3,
-  "mig-torcu-mb501-su": 2,
 };
 
 /**
@@ -970,12 +945,10 @@ const NEW_ARRIVALS = new Set([
   "tig-torcu-wp26",
 ]);
 
-products.forEach((p, i) => {
+products.forEach((p) => {
   if (NEW_ARRIVALS.has(p.slug)) p.isNew = true;
   const percent = HOT_SALE[p.slug];
   if (percent) {
-    // Kampanyadaki urun stokta olmali.
-    p.inStock = true;
     // Urunde NORMAL fiyat saklanir, indirim gosterimde uygulanir.
     // Yukaridaki fiyatlar musterinin odedigi (indirimli) tutarlar olarak
     // yazilmisti; ekranda ayni tutarlar gorunsun diye normal fiyat
@@ -983,8 +956,6 @@ products.forEach((p, i) => {
     p.priceExVat = Math.round(p.priceExVat / (1 - percent / 100) / 10) * 10;
     p.discount = { percent };
   }
-  // Stok adedi: azalanlar elle, digerleri sabit bir dagilimla.
-  p.stockQuantity = LOW_STOCK[p.slug] ?? (p.inStock ? 12 + ((i * 7) % 48) : 0);
 });
 
 /* ------------------------------------------------------------------ */

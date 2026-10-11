@@ -39,7 +39,6 @@ export function ProductForm({ product }: { product?: Product }) {
       specs: [],
       inTheBox: [],
       highlights: [],
-      inStock: true,
       quotable: true,
       featured: false,
       isNew: true,

@@ -12,13 +12,14 @@ import {
 import { useAuth, ROLE_LABELS } from "@zenweld/auth";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useHref, useLocale, useT } from "@/lib/i18n-client";
 
 export function AccountShell({ children }: { children: React.ReactNode }) {
   const t = useT();
   const locale = useLocale();
   const { user, ready } = useAuth();
   const pathname = usePathname();
+  const localHref = useHref();
 
   if (!ready) {
     return <div className="zw-container py-20 text-center text-zw-grey-500">{t.common.loading}</div>;
@@ -44,7 +45,7 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
   const items = [
     { href: "/hesabim/profil", label: t.account.profile, Icon: UserIcon, roles: ["individual", "business"] },
     { href: "/hesabim/tekliflerim", label: t.account.myQuotes, Icon: FileText, roles: ["business"] },
-    { href: "/hesabim/siparislerim", label: t.account.myOrders, Icon: Package, roles: ["individual"] },
+    { href: "/hesabim/siparislerim", label: t.account.myOrders, Icon: Package, roles: ["individual", "business"] },
     { href: "/hesabim/favorilerim", label: t.account.favourites, Icon: Heart, roles: ["individual", "business"] },
     { href: "/hesabim/garantilerim", label: t.account.warranties, Icon: ShieldCheck, roles: ["individual", "business"] },
     { href: "/hesabim/adreslerim", label: t.account.addresses, Icon: MapPin, roles: ["individual", "business"] },
@@ -65,7 +66,9 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
         <aside>
           <nav className="space-y-1">
             {items.map(({ href, label, Icon }) => {
-              const active = pathname.endsWith(href);
+              // Alt sayfalarda da (siparis detayi gibi) sekme secili kalir.
+              const target = localHref(href);
+              const active = pathname === target || pathname.startsWith(`${target}/`);
               return (
                 <LocaleLink
                   key={href}

@@ -1,4 +1,4 @@
-import type { BlogPost, FaqItem, Order, Quote, WarrantyRecord } from "../types";
+import type { BlogPost, FaqItem, Quote, WarrantyRecord } from "../types";
 import { stockPhotos } from "./images";
 
 const lorem = {
@@ -21,7 +21,7 @@ export const blogPosts: BlogPost[] = [
 ];
 
 export const faqs: FaqItem[] = [
-  { id: "f1", topic: "genel", question: { tr: "Zenweld ürünlerini doğrudan siteden satın alabilir miyim?", en: "Can I buy Zenweld products directly from this website?" }, answer: { tr: "Hayır. Zenweld ürünleri yetkili bayilerimiz ve anlaşmalı online satış noktaları üzerinden satılmaktadır. Ürün sayfasındaki \"Nereden Alabilirim\" butonundan size en yakın bayiyi bulabilir veya stokta olan online satıcılara yönlenebilirsiniz.", en: "No. Zenweld products are sold through our authorised dealers and partner online stores. Use the \"Where to Buy\" button on any product page to find your nearest dealer or jump to an online retailer that has stock." } },
+  { id: "f1", topic: "genel", question: { tr: "Zenweld ürünlerini doğrudan siteden satın alabilir miyim?", en: "Can I buy Zenweld products directly from this website?" }, answer: { tr: "Evet. Üye girişi yaparak ürünleri sepete ekleyip kredi kartı (taksit seçenekleriyle) veya havale/EFT ile ödeyebilirsiniz. Siparişinizin durumunu ve kargo takip numarasını Hesabım > Siparişlerim sayfasından izlersiniz. Ürünlerimiz ayrıca yetkili bayilerimizde ve anlaşmalı online satıcılarda da bulunur; ürün sayfasındaki \"Stoktaki Bayileri Gör\" butonundan size en yakın bayiyi bulabilirsiniz.", en: "Yes. Sign in, add products to your cart and pay by credit card (with instalment options) or bank transfer. You can follow your order status and tracking number on Account > My Orders. Our products are also available from authorised dealers and partner online stores; use the \"See Dealers in Stock\" button on any product page to find your nearest dealer." } },
   { id: "f2", topic: "siparis", question: { tr: "Vadeli veya çekle ödeme yapabilir miyim?", en: "Can I pay on deferred terms or by cheque?" }, answer: { tr: "Kurumsal müşterilerimiz için vadeli ödeme ve çek ile ödeme seçenekleri mevcuttur. \"Teklif Al\" formunu doldurduğunuzda satış ekibimiz sizinle iletişime geçer.", en: "Deferred payment and payment by cheque are available for corporate customers. Fill in the \"Request a Quote\" form and our sales team will contact you." } },
   { id: "f3", topic: "garanti", question: { tr: "Makinemin garantisi ne kadar?", en: "How long is my machine's warranty?" }, answer: { tr: "Zenweld kaynak makineleri 24 ay, aksesuar ve sarf ürünleri 12 ay garantilidir. Ürününüzü online kaydettirerek garanti sürenizi uzatabilirsiniz.", en: "Zenweld welding machines carry a 24-month warranty; accessories and consumables carry 12 months. Register your product online to extend your warranty." } },
   { id: "f4", topic: "garanti", question: { tr: "Garanti kaydımı nasıl yaparım?", en: "How do I register my warranty?" }, answer: { tr: "Keşfet > Garanti Kaydı sayfasından seri numaranız ve satın alma bilgilerinizle kayıt oluşturabilirsiniz.", en: "Go to Explore > Register Your Warranty and create a record with your serial number and purchase details." } },
@@ -56,13 +56,6 @@ export const quotes: Quote[] = [
     createdAt: "2026-09-15T15:02:00+03:00", updatedAt: "2026-09-15T15:02:00+03:00",
   },
 ];
-
-/**
- * Siparisler. Ana site su an dogrudan satis yapmiyor; liste bos. Zenweld
- * ile bayiler arasindaki siparis ve teklifler bu sistemde tutulmaz
- * (ileride ayri B2B uygulamasi).
- */
-export const orders: Order[] = [];
 
 export const warranties: WarrantyRecord[] = [
   {

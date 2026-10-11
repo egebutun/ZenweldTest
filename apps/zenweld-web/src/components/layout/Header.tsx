@@ -3,13 +3,22 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, LogOut, MapPin, Menu, Search, User as UserIcon } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  MapPin,
+  Menu,
+  Search,
+  ShoppingCart,
+  User as UserIcon,
+} from "lucide-react";
 import { ZenweldLogo } from "@zenweld/ui";
 import { locales, localeNames, switchLocaleInPath, type Locale } from "@zenweld/i18n";
 import { useAuth } from "@zenweld/auth";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useHref, useLocale, useT } from "@/lib/i18n-client";
 import { useMainMenu } from "@/lib/menu";
+import { useCart } from "@/lib/cart";
 import { MegaMenu } from "./MegaMenu";
 import { MobileDrawer } from "./MobileDrawer";
 
@@ -27,6 +36,7 @@ export function Header() {
   const router = useRouter();
   const menus = useMainMenu();
   const { user, logout } = useAuth();
+  const cart = useCart();
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -109,13 +119,29 @@ export function Header() {
               </kbd>
             </button>
 
+            {/* 1024-1279px arasinda sepet simgesine yer acmak icin gizlenir;
+                bayi bulma Destek menusunde de var. */}
             <LocaleLink
               href="/yetkili-bayi-ve-servis-agi"
-              className="rounded-[4px] p-2 text-zw-ink transition-colors hover:bg-zw-grey-100"
+              className="rounded-[4px] p-2 text-zw-ink transition-colors hover:bg-zw-grey-100 lg:hidden xl:block"
               aria-label={t.nav.findDealer}
               title={t.nav.findDealer}
             >
               <MapPin size={20} />
+            </LocaleLink>
+
+            <LocaleLink
+              href="/sepet"
+              className="relative rounded-[4px] p-2 text-zw-ink transition-colors hover:bg-zw-grey-100"
+              aria-label={t.cart.title}
+              title={t.cart.title}
+            >
+              <ShoppingCart size={20} />
+              {cart.count > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-zw-red-600 px-1 text-[10px] font-bold leading-none text-white">
+                  {cart.count > 99 ? "99+" : cart.count}
+                </span>
+              )}
             </LocaleLink>
 
             <div className="relative">
@@ -147,6 +173,12 @@ export function Header() {
                         className="block px-4 py-2 text-sm hover:bg-zw-grey-50"
                       >
                         {t.account.title}
+                      </LocaleLink>
+                      <LocaleLink
+                        href="/hesabim/siparislerim"
+                        className="block px-4 py-2 text-sm hover:bg-zw-grey-50"
+                      >
+                        {t.account.myOrders}
                       </LocaleLink>
                       {user.role === "business" && (
                         <LocaleLink

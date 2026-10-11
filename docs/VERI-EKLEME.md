@@ -52,7 +52,6 @@ kullanılmaya devam eder.
   ],
   inTheBox: [{ tr: "1 x Ana Ünite", en: "1 x Power Source" }],
   highlights: [{ tr: "…", en: "…" }],
-  inStock: true,
   quotable: true,      // Teklif Al akışında seçilebilsin mi
   featured: false,     // Anasayfada öne çıksın mı
   isNew: true,

@@ -73,8 +73,6 @@ export interface ProductVariantOption {
   sku?: string;
   /** Ayni etiketli satir varsa uzerine yazar, yoksa listeye eklenir. */
   specOverrides?: SpecRow[];
-  /** Zenweld deposunda bu secenek var mi (yoksa urunun genel durumu). */
-  inStock?: boolean;
 }
 
 export interface ProductVariantGroup {
@@ -137,10 +135,6 @@ export interface Product {
   /** "Kutu Icerigi" maddeleri */
   inTheBox: I18nText[];
   highlights: I18nText[];
-  /** Zenweld ana deposunda stok var mi */
-  inStock: boolean;
-  /** Zenweld deposundaki adet — anasayfadaki "azalan stok" bolumu bunu kullanir */
-  stockQuantity?: number;
   /**
    * Kampanya / indirim. Gecerli oldugu surece urun indirimli fiyatla
    * gosterilir ve anasayfadaki "Hot Sale" bolumune kendiliginden girer;
@@ -220,9 +214,7 @@ export interface RetailerStock {
   price?: number;
   /**
    * Saticinin KENDI kampanyasi — yalnizca bu saticinin fiyatina uygulanir.
-   * Zenweld'in urun kampanyasindan (Product.discount) bagimsizdir: bayi
-   * kendi magazasinin fiyatini ve kampanyasini Hesabim > Stok Bildirimi
-   * sayfasindan yonetir, Zenweld ana site fiyatlarini yonetim panelinden.
+   * Zenweld'in urun kampanyasindan (Product.discount) bagimsizdir.
    */
   discount?: ProductDiscount;
   /** Urunun o sitedeki dogrudan linki */
@@ -319,9 +311,20 @@ export interface Quote {
   updatedAt: string;
 }
 
+/* ------------------------------------------------------------------ */
+/* Online siparisler (ana sitedeki magaza)                             */
+/*                                                                     */
+/* Siparisi yalnizca uye musteriler verir. Akis:                       */
+/*   kartla odeme   -> preparing                                       */
+/*   havale/EFT     -> awaiting_payment -> (odeme alindi) preparing    */
+/*   preparing -> shipped (kargo firmasi + takip no) -> delivered      */
+/* Her durum degisikligi history'ye yazilir; musteri Hesabim >         */
+/* Siparislerim'de bu zaman cizelgesini gorur.                         */
+/* ------------------------------------------------------------------ */
+
 export type OrderStatus =
-  | "pending"
-  | "confirmed"
+  | "awaiting_payment"
+  | "preparing"
   | "shipped"
   | "delivered"
   | "cancelled";
@@ -329,26 +332,100 @@ export type OrderStatus =
 export interface OrderItem {
   productId: string;
   productName: string;
+  sku: string;
+  /** Secili secenekler, orn. "Torç Uzunluğu: 5 m" */
+  variantLabel?: I18nText;
   quantity: number;
+  /** Siparis anindaki birim fiyat (KDV haric, indirim uygulanmis) */
+  unitPriceExVat: number;
+  vatRate: number;
+  /** Siparis anindaki birim fiyat (KDV dahil) */
   unitPrice: number;
+}
+
+export interface OrderAddress {
+  fullName: string;
+  phone: string;
+  city: string;
+  district: string;
+  line: string;
+}
+
+/** Fatura bilgileri (e-Arsiv / e-Fatura icin). */
+export interface OrderInvoice {
+  type: "individual" | "corporate";
+  /** Bireysel: ad soyad */
+  fullName?: string;
+  /** Bireysel: T.C. kimlik no */
+  tcKimlikNo?: string;
+  /** Kurumsal */
+  companyName?: string;
+  taxOffice?: string;
+  taxNumber?: string;
+  address: OrderAddress;
+}
+
+export type PaymentMethod = "card" | "transfer";
+
+export interface OrderPayment {
+  method: PaymentMethod;
+  /** Kart: taksit sayisi (1 = tek cekim) */
+  installments?: number;
+  /** Kart: "Visa", "Mastercard", "Troy" */
+  cardBrand?: string;
+  /** Kart: banka kart programi (Bonus, World ...) */
+  cardProgram?: string;
+  cardLast4?: string;
+  /** Odeme alindigi an. Havalede yonetici "Odeme alindi" deyince dolar. */
+  paidAt?: string;
+  /** Havale: bu tarihe kadar odenmezse siparis iptal edilir. */
+  dueAt?: string;
+}
+
+export interface OrderShipment {
+  carrier: string;
+  trackingNumber: string;
+  shippedAt: string;
+  deliveredAt?: string;
+}
+
+export interface OrderStatusEvent {
+  status: OrderStatus;
+  at: string;
+  note?: string;
 }
 
 export interface Order {
   id: string;
   code: string;
-  userId?: string;
+  userId: string;
   status: OrderStatus;
   customerName: string;
   email: string;
   phone: string;
-  city: string;
-  address: string;
+  shippingAddress: OrderAddress;
+  invoice: OrderInvoice;
   items: OrderItem[];
+  /** Urunler toplami (KDV dahil) */
   subtotal: number;
+  /** subtotal icindeki KDV tutari (bilgi amacli) */
   vat: number;
+  /** Kargo ucreti (KDV dahil); esigin uzerinde 0 */
   shipping: number;
+  /** Taksitli odemede vade farki */
+  installmentFee: number;
+  /** Musterinin odedigi toplam */
   total: number;
+  payment: OrderPayment;
+  shipment?: OrderShipment;
+  history: OrderStatusEvent[];
+  customerNote?: string;
+  /** Yalnizca yonetim panelinde gorunur */
+  adminNote?: string;
+  /** Musteri on bilgilendirme formu ve mesafeli satis sozlesmesini onayladi */
+  termsAcceptedAt: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -558,8 +635,43 @@ export interface RichTextStyle {
   strongColor: string;
 }
 
+/* ------------------------------------------------------------------ */
+/* Magaza ayarlari (kargo, taksit, havale)                             */
+/* ------------------------------------------------------------------ */
+
+export interface InstallmentOption {
+  /** Taksit sayisi: 2, 3, 6, 9, 12 */
+  count: number;
+  /** Musteriye yansitilan vade farki (%). 0 = pesin fiyatina taksit. */
+  ratePercent: number;
+  enabled: boolean;
+}
+
+export interface BankAccount {
+  id: string;
+  bankName: string;
+  accountHolder: string;
+  iban: string;
+}
+
+export interface ShopSettings {
+  /** Bu tutar ve ustu (KDV dahil sepet) kargo bedava */
+  freeShippingThreshold: number;
+  /** Esigin altindaki siparislerde kargo ucreti (KDV dahil) */
+  shippingFee: number;
+  installments: InstallmentOption[];
+  /** Taksit secenekleri bu tutarin altindaki siparislerde gosterilmez */
+  minInstallmentAmount: number;
+  bankAccounts: BankAccount[];
+  /** Havale/EFT icin odeme suresi (gun); dolunca siparis iptal edilir */
+  transferDueDays: number;
+  /** Kargo firmalari (siparise takip no girilirken secilir) */
+  carriers: string[];
+}
+
 export interface SiteSettings {
   richText: RichTextStyle;
+  shop: ShopSettings;
 }
 
 export interface ZenweldDatabase {

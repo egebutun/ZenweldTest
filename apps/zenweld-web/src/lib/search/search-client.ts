@@ -36,7 +36,6 @@ export interface SearchDoc {
   href: string;
   image?: string;
   price?: number;
-  inStock?: boolean;
 }
 
 export interface SearchHit extends SearchDoc {
@@ -84,7 +83,6 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
       // Sonuclarda musterinin odeyecegi (kampanyali) fiyat gorunur.
       // Arama yalnizca kullanici acinca cizildigi icin anlik saat kullanilir.
       price: salePriceExVat(p),
-      inStock: p.inStock,
     });
   });
 
@@ -158,7 +156,7 @@ export function createIndex(docs: SearchDoc[]): MiniSearch<SearchDoc> {
   const mini = new MiniSearch<SearchDoc>({
     idField: "id",
     fields: ["title", "sku", "subtitle", "body"],
-    storeFields: ["id", "type", "title", "subtitle", "href", "image", "price", "inStock", "sku"],
+    storeFields: ["id", "type", "title", "subtitle", "href", "image", "price", "sku"],
     processTerm: (term) => {
       const normalized = trNormalize(term);
       return normalized.length > 1 || /\d/.test(normalized) ? normalized : null;
@@ -211,7 +209,6 @@ export function search(
     href: r.href,
     image: r.image,
     price: r.price,
-    inStock: r.inStock,
     score: r.score,
   }));
 }

@@ -12,10 +12,10 @@ import {
 import { useDatabase } from "@zenweld/store";
 
 /**
- * "Teklif Listesi" — sepet DEGILDIR.
+ * "Teklif Listesi" — alisveris sepetinden (lib/cart.tsx) ayridir.
  *
- * Ana sitede dogrudan satis yapilmadigi icin kullanici urunleri sepete degil,
- * teklif listesine ekler; Teklif Al formu bu listeyle doldurulur.
+ * Vadeli odeme veya cekle almak isteyen kurumsal musteri urunleri Teklif Al
+ * sayfasinda bu listeye ekler; satis ekibi teklifi ayrica hazirlar.
  *
  * Liste tarayicida saklanir. Icindeki bir urun sonradan yayindan
  * kaldirilirsa listede gorunmez ve teklife eklenmez.

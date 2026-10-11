@@ -1,6 +1,7 @@
 "use client";
 
-import { Flame, Heart } from "lucide-react";
+import { useState } from "react";
+import { Check, Flame, Heart, ShoppingCart } from "lucide-react";
 import {
   discountPercent,
   FLASH_DISCOUNT_THRESHOLD,
@@ -14,6 +15,7 @@ import { LocaleLink } from "@/components/common/LocaleLink";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@zenweld/utils";
 import { useFavourites } from "@/lib/favourites";
+import { useCart } from "@/lib/cart";
 
 export function ProductCard({
   product,
@@ -74,7 +76,6 @@ export function ProductCard({
             {product.isNew && (
               <Badge tone={discount > 0 ? "dark" : "red"}>{t.product.new}</Badge>
             )}
-            {!product.inStock && <Badge tone="outline">{t.product.outOfStock}</Badge>}
           </div>
         </div>
       </LocaleLink>
@@ -132,12 +133,7 @@ export function ProductCard({
           <div className="mt-1 text-xs text-zw-grey-500">
             {t.product.priceIncVat} · {formatPrice(sale, locale)} {t.product.priceExVat}
           </div>
-          <LocaleLink
-            href={`/urun/${product.slug}`}
-            className="mt-3 block rounded-[4px] bg-zw-ink py-2.5 text-center text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-zw-red-600"
-          >
-            {t.product.whereToBuy}
-          </LocaleLink>
+          <CardCartButton product={product} />
         </div>
       </div>
     </div>
@@ -148,4 +144,48 @@ export function ProductCard({
   if (!flash) return card;
 
   return <FlashFrame>{card}</FlashFrame>;
+}
+
+/**
+ * Kartin altindaki dugme. Seceneksiz urun dogrudan sepete eklenir;
+ * secenekli urunde (3 m / 5 m torc gibi) once secim yapilsin diye urun
+ * sayfasina gidilir.
+ */
+function CardCartButton({ product }: { product: Product }) {
+  const t = useT();
+  const cart = useCart();
+  const [added, setAdded] = useState(false);
+  const className =
+    "mt-3 flex w-full items-center justify-center gap-2 rounded-[4px] py-2.5 text-center text-xs font-bold uppercase tracking-wide text-white transition-colors";
+
+  if (product.variantGroups?.length) {
+    return (
+      <LocaleLink href={`/urun/${product.slug}`} className={`${className} bg-zw-ink hover:bg-zw-red-600`}>
+        {t.cart.chooseOptions}
+      </LocaleLink>
+    );
+  }
+
+  if (added) {
+    return (
+      <LocaleLink href="/sepet" className={`${className} bg-emerald-600 hover:bg-emerald-700`}>
+        <Check size={15} />
+        {t.cart.goToCart}
+      </LocaleLink>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        cart.add(product.id, {});
+        setAdded(true);
+      }}
+      className={`${className} bg-zw-ink hover:bg-zw-red-600`}
+    >
+      <ShoppingCart size={15} />
+      {t.cart.addToCart}
+    </button>
+  );
 }

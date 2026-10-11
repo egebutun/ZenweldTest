@@ -1,6 +1,12 @@
 "use client";
 
-import type { AboutContent, RichTextStyle, SalesRep, ZenweldDatabase } from "@zenweld/data";
+import type {
+  AboutContent,
+  RichTextStyle,
+  SalesRep,
+  ShopSettings,
+  ZenweldDatabase,
+} from "@zenweld/data";
 import { defaultSettings } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nowIso } from "./shared";
@@ -20,6 +26,20 @@ export function getRichTextStyle(db: ZenweldDatabase = getSnapshot()): RichTextS
 export function saveRichTextStyle(style: RichTextStyle): void {
   mutate((db) => {
     db.settings = { ...db.settings, richText: style };
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Magaza ayarlari (kargo, taksit, havale)                             */
+/* ------------------------------------------------------------------ */
+
+export function getShopSettings(db: ZenweldDatabase = getSnapshot()): ShopSettings {
+  return { ...defaultSettings.shop, ...(db.settings?.shop ?? {}) };
+}
+
+export function saveShopSettings(shop: ShopSettings): void {
+  mutate((db) => {
+    db.settings = { ...db.settings, shop };
   });
 }
 

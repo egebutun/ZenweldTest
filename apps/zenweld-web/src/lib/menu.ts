@@ -201,6 +201,8 @@ export function useFooterMenu() {
           { label: t.footer.privacy, href: "/yasal/gizlilik" },
           { label: t.footer.kvkk, href: "/yasal/kvkk" },
           { label: t.footer.returns, href: "/yasal/iade" },
+          { label: t.footer.preInfo, href: "/yasal/on-bilgilendirme-formu" },
+          { label: t.footer.distanceContract, href: "/yasal/mesafeli-satis-sozlesmesi" },
         ],
       },
     ],

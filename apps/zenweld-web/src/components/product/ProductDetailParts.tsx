@@ -9,7 +9,10 @@ import {
   Headphones,
   MapPin,
   MessageCircle,
+  Minus,
+  Plus,
   ShieldCheck,
+  ShoppingCart,
 } from "lucide-react";
 import {
   discountPercent,
@@ -23,6 +26,8 @@ import { DealerFinder } from "@/components/dealers/DealerFinder";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useLocale, useT, useText } from "@/lib/i18n-client";
 import { openSupportChat } from "@/lib/support-chat";
+import { MAX_LINE_QUANTITY, useCart } from "@/lib/cart";
+import type { VariantSelection } from "@/lib/variants";
 import { formatDateTime, formatPrice, priceWithVat } from "@zenweld/utils";
 
 /* ---------------------------------------------------------------- */
@@ -132,6 +137,88 @@ export function PriceBlock({ product }: { product: Product }) {
 
 /* ---------------------------------------------------------------- */
 
+/** Adet secimi + Sepete Ekle. Secili urun secenekleriyle birlikte eklenir. */
+export function AddToCart({
+  product,
+  selection,
+}: {
+  product: Product;
+  selection: VariantSelection;
+}) {
+  const t = useT();
+  const cart = useCart();
+  const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
+
+  return (
+    <div>
+      <div className="flex gap-3">
+        <QuantityStepper value={quantity} onChange={setQuantity} size="lg" />
+        <Button
+          size="lg"
+          fullWidth
+          leftIcon={<ShoppingCart size={20} />}
+          onClick={() => {
+            cart.add(product.id, selection, quantity);
+            setAdded(true);
+          }}
+        >
+          {t.cart.addToCart}
+        </Button>
+      </div>
+      {added && (
+        <div className="mt-3 flex items-center justify-between gap-3 rounded-[4px] border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
+          <span className="flex items-center gap-2">
+            <Check size={16} />
+            {t.cart.added}
+          </span>
+          <LocaleLink href="/sepet" className="underline underline-offset-2 hover:text-emerald-950">
+            {t.cart.goToCart} →
+          </LocaleLink>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** - [adet] + kutusu; sepet ve urun sayfasinda ortak. */
+export function QuantityStepper({
+  value,
+  onChange,
+  size = "md",
+}: {
+  value: number;
+  onChange: (value: number) => void;
+  size?: "md" | "lg";
+}) {
+  const t = useT();
+  const height = size === "lg" ? "h-14" : "h-10";
+  const set = (n: number) => onChange(Math.max(1, Math.min(MAX_LINE_QUANTITY, n || 1)));
+  const button = "flex w-10 items-center justify-center text-zw-grey-600 hover:text-zw-ink disabled:opacity-30";
+  return (
+    <div className={`flex shrink-0 items-stretch rounded-[4px] border border-zw-grey-300 bg-white ${height}`}>
+      <button type="button" aria-label={t.cart.decrease} className={button} disabled={value <= 1} onClick={() => set(value - 1)}>
+        <Minus size={16} />
+      </button>
+      <input
+        type="number"
+        inputMode="numeric"
+        min={1}
+        max={MAX_LINE_QUANTITY}
+        aria-label={t.cart.quantity}
+        value={value}
+        onChange={(e) => set(Number(e.target.value))}
+        className="w-12 border-x border-zw-grey-200 text-center text-sm font-semibold [appearance:textfield] focus:outline-none [&::-webkit-inner-spin-button]:appearance-none"
+      />
+      <button type="button" aria-label={t.cart.increase} className={button} disabled={value >= MAX_LINE_QUANTITY} onClick={() => set(value + 1)}>
+        <Plus size={16} />
+      </button>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------- */
+
 export function WhereToBuyButton({
   product,
   /** Secili urun secenegi; bayi listesi buna gore filtrelenir. */
@@ -146,7 +233,7 @@ export function WhereToBuyButton({
   return (
     <>
       <Button
-        variant="dark"
+        variant="outline"
         size="lg"
         fullWidth
         onClick={() => setOpen(true)}
@@ -281,9 +368,6 @@ export function ProductMeta({ product }: { product: Product }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       {product.isNew && <Badge tone="red">{t.product.new}</Badge>}
-      <Badge tone={product.inStock ? "green" : "outline"}>
-        {product.inStock ? t.product.inStock : t.product.outOfStock}
-      </Badge>
       <Badge tone="grey">
         <ShieldCheck size={11} />
         {t.product.warrantyMonths.replace("{months}", String(product.warrantyMonths))}

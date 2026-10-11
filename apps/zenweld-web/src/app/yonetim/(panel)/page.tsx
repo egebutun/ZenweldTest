@@ -39,6 +39,10 @@ export default function AdminDashboard() {
       newQuotes: quotes.filter((q) => q.status === "new").length,
       quotes: quotes.length,
       orders: listOrders(db).length,
+      // Islem bekleyen: havale onayi veya kargoya verilecek.
+      openOrders: listOrders(db).filter(
+        (o) => o.status === "awaiting_payment" || o.status === "preparing",
+      ).length,
       events: db.events.filter((e) => e.active).length,
       upcomingEvents: db.events.filter(
         (e) => e.active && e.endDate >= new Date().toISOString().slice(0, 10),
@@ -53,7 +57,7 @@ export default function AdminDashboard() {
     { href: "/yonetim/uyeler", label: "Üye", value: stats.users, Icon: Users, note: stats.pendingUsers ? `${stats.pendingUsers} onay bekliyor` : undefined },
     { href: "/yonetim/saticilar", label: "Online Satıcı", value: stats.retailers, Icon: Store },
     { href: "/yonetim/teklifler", label: "Teklif", value: stats.quotes, Icon: FileText, note: stats.newQuotes ? `${stats.newQuotes} yeni` : undefined },
-    { href: "/yonetim/siparisler", label: "Sipariş", value: stats.orders, Icon: ShoppingCart },
+    { href: "/yonetim/siparisler", label: "Sipariş", value: stats.orders, Icon: ShoppingCart, note: stats.openOrders ? `${stats.openOrders} işlem bekliyor` : undefined },
     { href: "/yonetim/garantiler", label: "Garanti Kaydı", value: db.warranties.length, Icon: ShieldCheck },
     { href: "/yonetim/etkinlikler", label: "Etkinlik", value: stats.events, Icon: CalendarDays, note: stats.upcomingEvents ? `${stats.upcomingEvents} yaklaşan` : "yaklaşan etkinlik yok" },
     { href: "/yonetim/haberler", label: "Haber", value: stats.news, Icon: Newspaper },
@@ -139,7 +143,7 @@ export default function AdminDashboard() {
             {listOrders(db).slice(0, 5).map((o) => (
               <Link
                 key={o.id}
-                href="/yonetim/siparisler"
+                href={`/yonetim/siparisler/${o.id}`}
                 className="flex items-center gap-3 py-2.5 text-sm hover:text-zw-red-600"
               >
                 <span className="font-semibold">{o.code}</span>

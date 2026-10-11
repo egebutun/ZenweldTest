@@ -155,11 +155,6 @@ export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolea
           onChange={(e) => set("active", e.target.checked)}
         />
         <Checkbox
-          label="Zenweld deposunda stokta"
-          checked={draft.inStock}
-          onChange={(e) => set("inStock", e.target.checked)}
-        />
-        <Checkbox
           label="Teklife açık"
           checked={draft.quotable}
           onChange={(e) => set("quotable", e.target.checked)}

@@ -1,4 +1,4 @@
-# ZENWELD — Kurumsal Katalog Sitesi
+# ZENWELD — Kurumsal Site ve Online Mağaza
 
 Zenweld kaynak makineleri ve ekipmanları için hazırlanmış **frontend demo** projesi.
 Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur.
@@ -61,8 +61,8 @@ Giriş sayfasındaki kartlara tıklayarak formu otomatik doldurabilirsiniz.
 | Rol | E-posta | Şifre | Neler görebilir |
 |---|---|---|---|
 | **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca Zenweld yönetim paneli (ana site `/yonetim`) |
-| **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: favoriler, garanti kayıtları |
-| **Kurumsal** | `kurumsal@demo.com` | `demo123` | Ana site: teklif talepleri, vadeli/çek ödeme |
+| **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: online alışveriş, sipariş takibi, favoriler, garanti kayıtları |
+| **Kurumsal** | `kurumsal@demo.com` | `demo123` | Ana site: online alışveriş (kurumsal fatura), teklif talepleri, vadeli/çek ödeme |
 
 Ana site yalnızca bireysel ve kurumsal üyeleri kabul eder. Bayiler ana sitenin
 müşterisi değildir; bayi olmak isteyenler **Bayilik Başvurusu** formunu doldurur.
@@ -73,13 +73,32 @@ müşterisi değildir; bayi olmak isteyenler **Bayilik Başvurusu** formunu dold
 
 ### `apps/zenweld-web` — Ana Zenweld Sitesi (port 3000)
 
-Marka/katalog sitesidir, **sepet yoktur**. Ziyaretçi ürünü şu üç yoldan alır:
+Marka sitesi ve **online mağazadır**. Ziyaretçi ürünü şu yollardan alır:
 
-1. **Nereden Alabilirim** → haritada en yakın bayiyi bulur, yerinde satın alır
-2. **Ayrıca online alışveriş olarak şurada da mevcuttur** → o üründe **stoğu olan**
+1. **Sepete Ekle** → üye girişiyle sitede satın alır (aşağıda *Online mağaza*)
+2. **Stoktaki Bayileri Gör** → haritada o ürünü **stokta tutan** en yakın bayiyi bulur
+3. **Ayrıca online alışveriş olarak şurada da mevcuttur** → o üründe **stoğu olan**
    online satıcılara yönlendirilir
-3. **Teklif Al** → vadeli ödeme / çek isteyen kurumsal müşteriler için satış ekibi
+4. **Teklif Al** → vadeli ödeme / çek isteyen kurumsal müşteriler için satış ekibi
    iletişime geçer
+
+### Online mağaza
+
+- Her ürün her zaman satıştadır (Zenweld deposunda stok tükenmez); bayi ve online
+  satıcı stokları ürün sayfasında ayrıca gösterilir.
+- **Sepet** tarayıcıda tutulur; fiyat her zaman ürünün güncel (kampanyalı) fiyatıdır.
+  Sepet tutarı **5.000 ₺** ve üzerindeyse kargo ücretsiz (Mağaza Ayarları'ndan değişir).
+- **Ödeme** (`/odeme`) yalnızca üyelere açıktır: teslimat adresi, fatura bilgisi
+  (bireysel: T.C. kimlik no · kurumsal: unvan, vergi dairesi, VKN), ödeme yöntemi ve
+  Ön Bilgilendirme Formu + Mesafeli Satış Sözleşmesi onayı.
+- **Kartla ödeme + taksit**: kart numarası girilince kart programı ve taksit
+  tablosu (tek çekim, 2–12 taksit, vade farkı) çıkar. *Demo: para çekilmez;*
+  gerçek ödeme kuruluşu (iyzico / PayTR / banka sanal POS) backend ile bağlanacak.
+- **Havale / EFT**: sipariş "Ödeme Bekleniyor" olarak açılır, IBAN'lar gösterilir;
+  yönetici "Ödeme Alındı" deyince hazırlanmaya geçer. Süre dolarsa iptal edilir.
+- **Sipariş takibi**: Hesabım › Siparişlerim — durum çizelgesi
+  (Ödeme Bekleniyor → Hazırlanıyor → Kargoya Verildi → Teslim Edildi), kargo firması
+  ve takip numarası, sözleşmelerin siparişe özel kopyası.
 
 ---
 
@@ -129,9 +148,11 @@ formunu doldurur.
 
 ### Yönetim paneli (yalnızca Türkçe)
 
-`/yonetim` — ürün CRUD (görsel yükleme dahil), stok matrisi + CSV içe aktarma,
-online satıcı ve bayi yönetimi, üye yönetimi (rol değiştirme, onaylama, askıya
-alma, CSV dışa aktarma), teklif ve sipariş takibi, JSON yedekleme.
+`/yonetim` — ürün CRUD (görsel yükleme dahil), stok matrisi (online satıcılar +
+CSV içe aktarma, fiziksel bayiler), online satıcı ve bayi yönetimi, üye yönetimi
+(rol değiştirme, onaylama, askıya alma, CSV dışa aktarma), sipariş yönetimi
+(havale onayı, kargo takip no, teslim, iptal), mağaza ayarları (kargo, taksit,
+IBAN), teklif takibi, JSON yedekleme.
 
 ### Çift dil (TR / EN)
 
@@ -197,16 +218,21 @@ ZenweldTest/
             │   ├── hakkimizda · satis-temsilcilerimiz · iletisim
             │   ├── haberler · etkinlikler · blog · welders-club
             │   ├── sss · urun-secici · kaynak-rehberi · msds · parti-sertifikalari
+            │   ├── sepet/ · odeme/             Sepet ve ödeme (yalnızca üyeler)
+            │   ├── hesabim/siparislerim/[code] Sipariş detayı ve kargo takibi
             │   ├── yasal/                      kvkk · gizlilik · kullanim-kosullari · iade
+            │   │                               · on-bilgilendirme-formu · mesafeli-satis-sozlesmesi
             │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
             │   ├── (../yonetim/ — [locale] dışında) ZENWELD YÖNETİM PANELİ (yalnızca TR)
-            │   │   └── urunler · stok · siparisler · teklifler · bayiler · saticilar
+            │   │   └── urunler · stok · siparisler · magaza · teklifler · bayiler · saticilar
             │   │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
             │   │      · gorunum · veri
             ├── components/
             │   ├── layout/    Header · MegaMenu · MobileDrawer · Footer · DemoRibbon
             │   ├── search/    SearchOverlay
             │   ├── product/   ProductCard · OnlineRetailers · ProductDetailParts
+            │   ├── shop/      OrderSummary · CardPayment · BankAccounts · OrderParts
+            │   │              · LegalDocument (ön bilgilendirme / mesafeli satış)
             │   ├── dealers/   DealerFinder · DealerMap
             │   ├── account/   AccountShell
             │   ├── admin/     AdminShell · content-form (haber/blog/etkinlik ortak) · ProductForm + product/ (sekmeler)
@@ -240,7 +266,9 @@ Aynı sayfadan **JSON İçe Aktar** ve **Başlangıca Dön** işlemleri de yapı
 ## Günlük Stok Güncelleme Akışı
 
 1. `admin@zenweld.com` ile giriş → `Yönetim Paneli → Stok Matrisi`
-2. Satıcıyı seçip tek tek işaretleyin, ya da "Tümünü işaretle / temizle" kullanın
+2. **Online Satıcılar** sekmesi: satıcıyı seçip tek tek işaretleyin, ya da
+   "Tümünü işaretle / temizle" kullanın
+   **Fiziksel Bayiler** sekmesi: bayiyi seçip stokta olan ürünleri işaretleyin
 3. Bayiden Excel geldiyse `sku;stok;adet;fiyat` biçiminde CSV olarak yükleyin
 
 CSV örneği:

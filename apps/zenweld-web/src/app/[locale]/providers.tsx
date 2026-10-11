@@ -5,6 +5,7 @@ import type { UserRole } from "@zenweld/data";
 import { AuthProvider } from "@zenweld/auth";
 import type { Locale } from "@zenweld/i18n";
 import { LocaleProvider } from "@/lib/i18n-client";
+import { CartProvider } from "@/lib/cart";
 import { QuoteListProvider } from "@/lib/quote-list";
 
 /**
@@ -23,7 +24,9 @@ export function Providers({
   return (
     <LocaleProvider locale={locale}>
       <AuthProvider roles={SITE_ROLES}>
-        <QuoteListProvider>{children}</QuoteListProvider>
+        <CartProvider>
+          <QuoteListProvider>{children}</QuoteListProvider>
+        </CartProvider>
       </AuthProvider>
     </LocaleProvider>
   );

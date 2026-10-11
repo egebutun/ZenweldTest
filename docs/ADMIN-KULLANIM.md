@@ -2,7 +2,7 @@
 
 > Bu kılavuz Zenweld ana sitesinin yönetim panelidir (`/yonetim`).
 
-Menü sırası: Panel · Ürünler · Stok Matrisi · Siparişler · Teklifler · Bayiler ·
+Menü sırası: Panel · Ürünler · Stok Matrisi · Siparişler · Mağaza Ayarları · Teklifler · Bayiler ·
 Online Satıcılar · Satış Temsilcileri · Üyeler · Garantiler · Etkinlikler ·
 Haberler · Blog · Hakkımızda · Yorumlar · Görünüm · Veri Yönetimi
 
@@ -22,7 +22,8 @@ Demo giriş: `admin@zenweld.com` / `admin123`
 
 Özet kartlar: aktif ürün, üye, online satıcı, teklif ve sipariş sayıları
 (üye, teklif ve sipariş yalnızca ana sitenin kayıtlarıdır; bayi kayıtları sayılmaz).
-Onay bekleyen üye ve yeni teklif varsa kartta uyarı rozeti çıkar.
+Onay bekleyen üye, yeni teklif ve işlem bekleyen sipariş (havale onayı veya
+kargoya verilecek) varsa kartta uyarı rozeti çıkar.
 
 Altta **"Hiçbir online satıcıda stokta olmayan ürünler"** listesi vardır. Bu
 ürünlerin sayfasında online satıcı bölümü boş görünür — listeye tıklayarak
@@ -52,18 +53,60 @@ Beş sekme vardır:
 **Durum işaretleri:**
 - **Kampanya / indirim** — Zenweld ana sitesindeki fiyatı etkiler.
 
-**Not:** Yeni ürün eklediğinizde hiçbir satıcıda stokta görünmez. Ürünün online
-satıcılarda çıkması için **Stok Matrisi**'nden işaretlemelisiniz.
+**Not:** Yeni ürün eklediğinizde hiçbir satıcıda ve bayide stokta görünmez. Ürünün
+online satıcılarda ve bayi haritasında çıkması için **Stok Matrisi**'nden
+işaretlemelisiniz. Sitede satın alınabilmesi için ayrıca bir şey gerekmez: her
+yayındaki ürün sepete eklenebilir.
+
+---
+
+## 3. Stok Matrisi
+
+Ürün sayfasında gösterilen iki listenin stoğu buradan yönetilir. Zenweld'in kendi
+deposu burada yoktur; sitede her ürün her zaman satıştadır.
+
+- **Online Satıcılar** sekmesi — ürün × satıcı matrisi. İşaretli satıcı, ürün
+  sayfasındaki "Ayrıca online alışveriş olarak şurada da mevcuttur" bölümünde
+  görünür. Bir satıcı seçilince adet, fiyat ve toplu işaretleme açılır; CSV ile
+  toplu güncelleme yapılabilir.
+- **Fiziksel Bayiler** sekmesi — bayiyi seçip o bayide stokta olan ürünleri
+  işaretleyin. Ürün sayfasındaki **Stoktaki Bayileri Gör** haritası bu bilgiyi
+  kullanır. Seçenekli ürünlerde (3 m / 5 m torç gibi) her seçenek ayrı satırdır.
+  "Toplam bayi" sütunu ürünün kaç bayide bulunduğunu gösterir.
 
 ---
 
 ## 4. Siparişler
 
-Ana sitenin siparişleri listelenir; durum açılır menüsünden güncellenir.
-Ana site şu an doğrudan satış yapmadığı için liste boştur.
+Üyelerin sitede verdiği online siparişler. Üstteki sekmelerle duruma göre
+süzülür; sipariş no, müşteri veya e-posta ile aranır. Siparişe tıklayınca detay
+açılır:
 
-Burada bayi kaydı yoktur; Zenweld ile bayiler arasındaki siparişler ileride ayrı
-B2B uygulamasında olacak.
+| Durum | Ne yapılır |
+|---|---|
+| **Ödeme Bekleniyor** (havale/EFT) | Açıklamasında sipariş no yazan ödeme hesaba geçince **Ödeme Alındı**. Son ödeme tarihi geçerse sipariş kendiliğinden iptal olur. |
+| **Hazırlanıyor** | Kargoya verince kargo firmasını seçip takip numarasını girin → **Kargoya Ver** |
+| **Kargoda** | Takip numarası düzeltilebilir; teslim edilince **Teslim Edildi** |
+| Teslim edilmemiş her sipariş | **Siparişi İptal Et** (neden yazılırsa müşteri görür). Ödemesi alınmış siparişin iadesi banka / ödeme kuruluşu üzerinden ayrıca yapılır. |
+
+Müşteri her adımı ve takip numarasını Hesabım › Siparişlerim'de görür. Detayda
+fatura bilgileri (TCKN veya VKN), ödeme (kart, taksit sayısı), sözleşme onay
+zamanı ve yalnızca panelde görünen **İç Not** alanı bulunur.
+
+> Demoda kartla ödeme gerçek değildir; sipariş kaydı ve akış gösterim içindir.
+
+---
+
+## 4b. Mağaza Ayarları
+
+- **Kargo** — ücretsiz kargo sınırı (varsayılan 5.000 ₺), altındaki siparişlerde
+  kargo ücreti, kargo firmaları listesi
+- **Kartla Taksit** — sunulacak taksit sayıları ve her biri için vade farkı (%0 =
+  peşin fiyatına taksit), taksit için en düşük sipariş tutarı
+- **Havale / EFT** — IBAN'lar ve ödeme süresi (gün)
+
+> Varsayılan kargo ücreti, vade farkı oranları ve IBAN'lar **örnektir**; gerçek
+> değerler girilmelidir.
 
 ---
 

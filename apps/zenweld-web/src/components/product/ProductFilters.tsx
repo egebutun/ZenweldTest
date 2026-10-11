@@ -8,14 +8,12 @@ export type SortKey = "featured" | "priceAsc" | "priceDesc" | "nameAsc" | "newes
 
 export interface FilterState {
   processes: WeldingProcess[];
-  inStockOnly: boolean;
   sort: SortKey;
   maxPrice: number | null;
 }
 
 export const DEFAULT_FILTERS: FilterState = {
   processes: [],
-  inStockOnly: false,
   sort: "featured",
   maxPrice: null,
 };
@@ -97,17 +95,6 @@ export function ProductFilters({
         </div>
       )}
 
-      <div>
-        <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-          {t.filters.availability}
-        </div>
-        <Checkbox
-          label={t.filters.inStockOnly}
-          checked={value.inStockOnly}
-          onChange={(e) => onChange({ ...value, inStockOnly: e.target.checked })}
-        />
-      </div>
-
       <div className="rounded-[4px] bg-zw-grey-50 px-3 py-2 text-sm text-zw-grey-600">
         {t.filters.productCount.replace("{count}", String(resultCount))}
       </div>
@@ -127,7 +114,6 @@ export function applyFilters(items: Product[], filters: FilterState, now?: Date)
   if (filters.processes.length > 0) {
     out = out.filter((p) => p.processes.some((proc) => filters.processes.includes(proc)));
   }
-  if (filters.inStockOnly) out = out.filter((p) => p.inStock);
   if (filters.maxPrice != null) out = out.filter((p) => price(p) <= filters.maxPrice!);
 
   const sorted = [...out];

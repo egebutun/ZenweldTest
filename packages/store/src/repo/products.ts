@@ -74,7 +74,6 @@ export function createProduct(partial: Partial<Product>): Product {
     specs: partial.specs ?? [],
     inTheBox: partial.inTheBox ?? [],
     highlights: partial.highlights ?? [],
-    inStock: partial.inStock ?? true,
     quotable: partial.quotable ?? true,
     featured: partial.featured ?? false,
     isNew: partial.isNew ?? true,

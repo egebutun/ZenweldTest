@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check, Search, Upload, X } from "lucide-react";
 import {
   applyStockCsv,
@@ -13,16 +13,68 @@ import {
 } from "@zenweld/store";
 import { Alert, Badge, Button, Input, ProductImage, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { DealerStockPanel } from "@/components/admin/DealerStockPanel";
 import { formatDateTime } from "@zenweld/utils";
 
 /**
- * STOK MATRISI — Urun x Online Satici
+ * STOK MATRISI
  *
- * Bir urunun hangi online magazalarda stokta oldugunu buradan isaretlersiniz.
- * Isaretli olan satici, o urunun sayfasinda "Ayrica online alisveris olarak
- * surada da mevcuttur" bolumunde gorunur; isaretsiz olan gorunmez.
+ * Urun sayfasinda gosterilen iki listenin stogu buradan yonetilir:
+ *
+ *   Online Saticilar  — "Ayrica online alisveris olarak surada da
+ *                       mevcuttur" bolumu (urun x satici matrisi)
+ *   Fiziksel Bayiler  — "Stoktaki Bayileri Gor" haritasi
+ *
+ * Zenweld'in kendi deposu burada yok: sitede her urun her zaman satista.
  */
+type StockTab = "online" | "bayiler";
+
 function StockMatrixInner() {
+  const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const tab: StockTab = params.get("sekme") === "bayiler" ? "bayiler" : "online";
+
+  const tabs: { id: StockTab; label: string }[] = [
+    { id: "online", label: "Online Satıcılar" },
+    { id: "bayiler", label: "Fiziksel Bayiler" },
+  ];
+
+  return (
+    <>
+      <AdminPageHeader
+        title="Stok Matrisi"
+        description={
+          tab === "online"
+            ? "Her ürünün hangi online satıcıda stokta olduğunu işaretleyin. Yalnızca işaretli satıcılar ürün sayfasında görünür."
+            : "Bayi seçin ve o bayide stokta olan ürünleri işaretleyin. Ürün sayfasındaki bayi haritası bu bilgiyi kullanır."
+        }
+      />
+
+      <div className="mb-5 flex gap-1 border-b border-zw-grey-200">
+        {tabs.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => router.replace(t.id === "online" ? pathname : `${pathname}?sekme=${t.id}`)}
+            className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold ${
+              tab === t.id
+                ? "border-zw-red-600 text-zw-ink"
+                : "border-transparent text-zw-grey-500 hover:text-zw-ink"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "online" ? <RetailerStockMatrix /> : <DealerStockPanel />}
+    </>
+  );
+}
+
+/** Urun x online satici matrisi. */
+function RetailerStockMatrix() {
   const db = useDatabase();
   const params = useSearchParams();
 
@@ -63,11 +115,6 @@ function StockMatrixInner() {
 
   return (
     <>
-      <AdminPageHeader
-        title="Stok Matrisi"
-        description="Her ürünün hangi online satıcıda stokta olduğunu işaretleyin. Yalnızca işaretli satıcılar ürün sayfasında görünür."
-      />
-
       <div className="mb-4 grid gap-3 lg:grid-cols-[1fr_auto_auto]">
         <div className="relative">
           <Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-zw-grey-400" />

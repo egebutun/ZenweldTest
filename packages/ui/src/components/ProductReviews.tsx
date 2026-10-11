@@ -110,7 +110,7 @@ export function ProductReviews({
   return (
     <div>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <h2 className="font-display text-2xl font-bold uppercase">{texts.heading}</h2>
           {items.length > 0 && (
             <span className="flex items-center gap-2 text-sm text-zw-grey-600">

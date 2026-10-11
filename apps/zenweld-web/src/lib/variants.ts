@@ -1,4 +1,4 @@
-import type { Product, ProductVariantOption, SpecRow } from "@zenweld/data";
+import type { I18nText, Product, ProductVariantOption, SpecRow } from "@zenweld/data";
 
 /**
  * URUN SECENEKLERI (VARYANTLAR)
@@ -36,7 +36,7 @@ export function activeOptionId(
   return selection[groupId] ?? group?.options[0]?.id;
 }
 
-/** Secimin urune uyguladigi sonuc: fiyat, kod, ozellikler, stok. */
+/** Secimin urune uyguladigi sonuc: fiyat, kod, ozellikler. */
 export function resolveVariant(product: Product, selection: VariantSelection) {
   const options = selectedOptions(product, selection);
 
@@ -57,9 +57,28 @@ export function resolveVariant(product: Product, selection: VariantSelection) {
   }
 
   const sku = options.find((o) => o.sku)?.sku ?? product.sku;
-  const inStock = options.every((o) => o.inStock ?? true) && product.inStock;
   // Bayi stogu tek boyutlu tutuluyor; ilk grubun secimi kullanilir.
   const variantId = options[0]?.id;
 
-  return { priceExVat, specs, sku, inStock, variantId, options };
+  return { priceExVat, specs, sku, variantId, options };
+}
+
+/** Secili seceneklerin okunur hali: "Torç Uzunluğu: 5 m". Seceneksiz urunde bos. */
+export function variantLabel(product: Product, selection: VariantSelection): I18nText | undefined {
+  const groups = product.variantGroups ?? [];
+  if (groups.length === 0) return undefined;
+  const parts = groups.map((g) => {
+    const option = g.options.find((o) => o.id === selection[g.id]) ?? g.options[0];
+    return { group: g.label, option: option?.label };
+  });
+  const join = (lang: keyof I18nText) =>
+    parts.map((p) => `${p.group[lang]}: ${p.option?.[lang] ?? ""}`).join(" · ");
+  return { tr: join("tr"), en: join("en") };
+}
+
+/** Tum gruplar icin secimi tamamlar (secilmeyen grupta ilk secenek). */
+export function completeSelection(product: Product, selection: VariantSelection): VariantSelection {
+  return Object.fromEntries(
+    (product.variantGroups ?? []).map((g) => [g.id, activeOptionId(g.id, product, selection) ?? ""]),
+  );
 }

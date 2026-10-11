@@ -26,6 +26,8 @@ const TOP_LEVEL: Record<string, string> = {
   "dolgu-metalleri": "filler-metals",
   "yetkili-bayi-ve-servis-agi": "authorised-dealer-service-network",
   "teklif-al": "request-quote",
+  sepet: "cart",
+  odeme: "checkout",
   arama: "search",
   yasal: "legal",
 
@@ -65,6 +67,8 @@ const NESTED: Record<string, Record<string, string>> = {
     gizlilik: "privacy-policy",
     "kullanim-kosullari": "terms",
     iade: "returns",
+    "mesafeli-satis-sozlesmesi": "distance-sales-contract",
+    "on-bilgilendirme-formu": "pre-information-form",
   },
   hesabim: {
     profil: "profile",

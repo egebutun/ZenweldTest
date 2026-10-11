@@ -116,9 +116,6 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex flex-wrap gap-1">
-                      <Badge tone={p.inStock ? "green" : "outline"}>
-                        {p.inStock ? "Stokta" : "Stok yok"}
-                      </Badge>
                       <CampaignBadge discount={p.discount} now={now} />
                       {!p.active && <Badge tone="grey">Yayında değil</Badge>}
                     </div>

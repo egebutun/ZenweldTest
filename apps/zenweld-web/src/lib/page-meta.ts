@@ -95,6 +95,14 @@ const PAGES = {
     tr: ["Çıkış", "Oturum kapatılıyor."],
     en: ["Sign Out", "Signing out."], noindex: true,
   },
+  "/sepet": {
+    tr: ["Sepetim", "Zenweld alışveriş sepeti."],
+    en: ["My Cart", "Zenweld shopping cart."], noindex: true,
+  },
+  "/odeme": {
+    tr: ["Ödeme", "Siparişinizi tamamlayın."],
+    en: ["Checkout", "Complete your order."], noindex: true,
+  },
   "/arama": {
     tr: ["Arama", "Zenweld ürünlerinde arama yapın."],
     en: ["Search", "Search Zenweld products."], noindex: true,

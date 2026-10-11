@@ -2,13 +2,15 @@ export * from "./types";
 export * from "./highlights";
 export * from "./discount";
 export * from "./slugs";
+export * from "./checkout";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";
 export { retailers } from "./seed/retailers.seed";
 export { retailerStock, dealerStock } from "./seed/stock.seed";
 export { users, addresses, DEMO_PASSWORDS } from "./seed/users.seed";
-export { blogPosts, faqs, quotes, orders, warranties } from "./seed/content.seed";
+export { blogPosts, faqs, quotes, warranties } from "./seed/content.seed";
+export { orders } from "./seed/orders.seed";
 export { reviews } from "./seed/reviews.seed";
 export { events, news } from "./seed/events.seed";
 export { stockPhotos } from "./seed/images";
@@ -22,14 +24,15 @@ import { dealers } from "./seed/dealers.seed";
 import { retailers } from "./seed/retailers.seed";
 import { retailerStock, dealerStock } from "./seed/stock.seed";
 import { users, addresses } from "./seed/users.seed";
-import { blogPosts, faqs, quotes, orders, warranties } from "./seed/content.seed";
+import { blogPosts, faqs, quotes, warranties } from "./seed/content.seed";
+import { orders } from "./seed/orders.seed";
 import { reviews } from "./seed/reviews.seed";
 import { events, news } from "./seed/events.seed";
 import { defaultSettings } from "./seed/settings.seed";
 import { about, salesReps } from "./seed/company.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 39;
+export const DB_VERSION = 40;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(

@@ -9,6 +9,7 @@ import { Accordion, Tabs } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { OnlineRetailers } from "@/components/product/OnlineRetailers";
 import {
+  AddToCart,
   InTheBoxList,
   PriceBlock,
   ProductGallery,
@@ -50,8 +51,8 @@ export function ProductPageClient({ slug }: { slug: string }) {
 
   if (!product) notFound();
 
-  // Secilen secenek fiyati, urun kodunu, teknik ozellikleri ve stok
-  // durumunu degistirir. Alt bilesenlerin imzasini degistirmemek icin
+  // Secilen secenek fiyati, urun kodunu ve teknik ozellikleri
+  // degistirir. Alt bilesenlerin imzasini degistirmemek icin
   // secimi uygulanmis bir urun nesnesi turetiyoruz. priceExVat secenegin
   // NORMAL fiyatidir; kampanya indirimi gosterimde uygulanir.
   const variant = resolveVariant(product, selection);
@@ -60,7 +61,6 @@ export function ProductPageClient({ slug }: { slug: string }) {
     priceExVat: variant.priceExVat,
     specs: variant.specs,
     sku: variant.sku,
-    inStock: variant.inStock,
   };
 
   const tabs = [
@@ -125,7 +125,8 @@ export function ProductPageClient({ slug }: { slug: string }) {
             <ProductHighlights product={product} />
             <InTheBoxList product={product} />
 
-            <div className="mt-8">
+            <div className="mt-8 space-y-3">
+              <AddToCart product={product} selection={selection} />
               <WhereToBuyButton product={shown} variantId={variant.variantId} />
             </div>
 
