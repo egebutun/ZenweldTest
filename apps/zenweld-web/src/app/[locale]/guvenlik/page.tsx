@@ -1,29 +1,6 @@
-import type { Metadata } from "next";
-import { isLocale, type Locale } from "@zenweld/i18n";
-import { CategoryListing } from "@/components/product/CategoryListing";
-import { languageAlternates, ogUrl } from "@/lib/seo";
+import { sectionRoute } from "@/lib/section-routes";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const lang = (isLocale(locale) ? locale : "tr") as Locale;
-  const title = lang === "tr" ? "Güvenlik Ekipmanları" : "Safety Equipment";
-  const description =
-    lang === "tr"
-      ? "Zenweld güvenlik ekipmanları ürünlerini inceleyin, size en yakın yetkili bayiden satın alın."
-      : "Browse Zenweld safety equipment, and buy from your nearest authorised dealer.";
+const route = sectionRoute("guvenlik");
 
-  return {
-    title,
-    description,
-    alternates: languageAlternates("/guvenlik", lang),
-    openGraph: { title, description, url: ogUrl(`/guvenlik`, lang) },
-  };
-}
-
-export default function SectionPage() {
-  return <CategoryListing section="guvenlik" />;
-}
+export const generateMetadata = route.generateMetadata;
+export default route.Page;

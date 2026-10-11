@@ -1,27 +1,6 @@
-import type { Metadata } from "next";
-import { isLocale, type Locale } from "@zenweld/i18n";
-import { languageAlternates, ogUrl } from "@/lib/seo";
+import { pageMetadataFor } from "@/lib/page-meta";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const lang = (isLocale(locale) ? locale : "tr") as Locale;
-  const title = lang === "tr" ? "Welders Club" : "Welders Club";
-  const description =
-    lang === "tr"
-      ? "Binlerce kaynakçının buluştuğu Zenweld topluluğuna katılın; üyelere özel indirimler, eğitim içerikleri ve etkinlik davetiyeleri."
-      : "Join the Zenweld community of thousands of welders — member discounts, training content and event invitations.";
-
-  return {
-    title,
-    description,
-    alternates: languageAlternates("/welders-club", lang),
-    openGraph: { title, description, url: ogUrl(`/welders-club`, lang) },
-  };
-}
+export const generateMetadata = pageMetadataFor("/welders-club");
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

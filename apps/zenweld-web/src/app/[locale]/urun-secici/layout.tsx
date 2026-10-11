@@ -1,27 +1,6 @@
-import type { Metadata } from "next";
-import { isLocale, type Locale } from "@zenweld/i18n";
-import { languageAlternates, ogUrl } from "@/lib/seo";
+import { pageMetadataFor } from "@/lib/page-meta";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const lang = (isLocale(locale) ? locale : "tr") as Locale;
-  const title = lang === "tr" ? "Ürün Seçici" : "Product Selector";
-  const description =
-    lang === "tr"
-      ? "Üç soruda ihtiyacınıza uygun Zenweld kaynak makinesini bulun."
-      : "Find the right Zenweld welding machine for your needs in three questions.";
-
-  return {
-    title,
-    description,
-    alternates: languageAlternates("/urun-secici", lang),
-    openGraph: { title, description, url: ogUrl(`/urun-secici`, lang) },
-  };
-}
+export const generateMetadata = pageMetadataFor("/urun-secici");
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

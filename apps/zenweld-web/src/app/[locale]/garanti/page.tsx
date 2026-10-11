@@ -1,13 +1,9 @@
-import { WarrantyPage, warrantyMetadata } from "@/components/warranty/WarrantyPage";
+import { WarrantyPage } from "@/components/warranty/WarrantyPage";
+import { pageMetadataFor } from "@/lib/page-meta";
 
-type Props = { params: Promise<{ locale: string }> };
+export const generateMetadata = pageMetadataFor("/garanti");
 
-export async function generateMetadata({ params }: Props) {
-  const { locale } = await params;
-  return warrantyMetadata(null, locale);
-}
-
-export default async function WarrantyIndexPage({ params }: Props) {
+export default async function WarrantyIndexPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   return <WarrantyPage action={null} locale={locale} />;
 }
