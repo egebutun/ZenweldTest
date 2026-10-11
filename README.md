@@ -171,7 +171,7 @@ ZenweldTest/
 │   ├── auth/                       Demo kimlik doğrulama
 │   │   └── src/ auth-context.tsx · guards.tsx · roles.ts · hash.ts
 │   │
-│   ├── i18n/                       TR/EN sözlükleri ve dil yapılandırması
+│   ├── i18n/                       tr.ts · en.ts (İngilizce eksikse derleme hata verir) · adres çevirileri
 │   │
 │   └── ui/                         Ortak tasarım sistemi
 │       └── src/ theme.css · components/ (Button, Modal, Badge, Field…)
@@ -204,16 +204,18 @@ ZenweldTest/
             │   │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
             │   │      · gorunum · veri
             ├── components/
-            │   ├── layout/    Header · MegaMenu · Footer · DemoRibbon
+            │   ├── layout/    Header · MegaMenu · MobileDrawer · Footer · DemoRibbon
             │   ├── search/    SearchOverlay
             │   ├── product/   ProductCard · OnlineRetailers · ProductDetailParts
             │   ├── dealers/   DealerFinder · DealerMap
             │   ├── account/   AccountShell
-            │   ├── admin/     AdminShell · ProductForm
-            │   └── common/    LocaleLink · ProductImage · PageShell
+            │   ├── admin/     AdminShell · content-form (haber/blog/etkinlik ortak) · ProductForm + product/ (sekmeler)
+            │   └── common/    LocaleLink · PageShell · JsonLd
             └── lib/
                 ├── search/    search-client · tr-normalize · synonyms · use-search
-                ├── i18n-client.tsx · format.ts · geo.ts · menu.ts
+                ├── page-meta.ts      Sabit sayfaların arama başlıkları (tek tablo)
+                ├── section-routes.tsx Ürün bölümü/kategori sayfalarının ortak kodu
+                ├── i18n-client.tsx · seo.ts · geo.ts · menu.ts
                 └── quote-list.tsx · favourites.tsx
 ```
 
