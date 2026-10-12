@@ -586,7 +586,6 @@ export const en: Dictionary = {
   },
   filters: {
     title: "Filters",
-    process: "Welding Process",
     sort: "Sort",
     sortFeatured: "Recommended",
     sortPriceAsc: "Price (low to high)",

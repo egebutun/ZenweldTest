@@ -1,46 +1,31 @@
 "use client";
 
-import { salePriceExVat, type Product, type WeldingProcess } from "@zenweld/data";
+import { salePriceExVat, type Product } from "@zenweld/data";
 import { useT } from "@/lib/i18n-client";
-import { Checkbox, Select } from "@zenweld/ui";
+import { Select } from "@zenweld/ui";
 
 export type SortKey = "featured" | "priceAsc" | "priceDesc" | "nameAsc" | "newest";
 
 export interface FilterState {
-  processes: WeldingProcess[];
   sort: SortKey;
   maxPrice: number | null;
 }
 
 export const DEFAULT_FILTERS: FilterState = {
-  processes: [],
   sort: "featured",
   maxPrice: null,
 };
 
-const ALL_PROCESSES: WeldingProcess[] = [
-  "MULTI",
-  "MIG",
-  "MAG",
-  "PULSE",
-  "TIG",
-  "MMA",
-  "PLAZMA",
-];
-
 export function ProductFilters({
   value,
   onChange,
-  availableProcesses,
   resultCount,
 }: {
   value: FilterState;
   onChange: (next: FilterState) => void;
-  availableProcesses: WeldingProcess[];
   resultCount: number;
 }) {
   const t = useT();
-  const processes = ALL_PROCESSES.filter((p) => availableProcesses.includes(p));
 
   return (
     <div className="space-y-6">
@@ -70,30 +55,6 @@ export function ProductFilters({
         </Select>
       </div>
 
-      {processes.length > 0 && (
-        <div>
-          <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-            {t.filters.process}
-          </div>
-          <div className="space-y-2">
-            {processes.map((p) => (
-              <Checkbox
-                key={p}
-                label={p}
-                checked={value.processes.includes(p)}
-                onChange={(e) =>
-                  onChange({
-                    ...value,
-                    processes: e.target.checked
-                      ? [...value.processes, p]
-                      : value.processes.filter((x) => x !== p),
-                  })
-                }
-              />
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="rounded-[4px] bg-zw-grey-50 px-3 py-2 text-sm text-zw-grey-600">
         {t.filters.productCount.replace("{count}", String(resultCount))}
@@ -111,9 +72,6 @@ export function applyFilters(items: Product[], filters: FilterState, now?: Date)
   let out = items;
   const price = (p: Product) => salePriceExVat(p, now);
 
-  if (filters.processes.length > 0) {
-    out = out.filter((p) => p.processes.some((proc) => filters.processes.includes(proc)));
-  }
   if (filters.maxPrice != null) out = out.filter((p) => price(p) <= filters.maxPrice!);
 
   const sorted = [...out];

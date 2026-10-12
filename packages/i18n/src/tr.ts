@@ -588,7 +588,6 @@ export const tr = {
   },
   filters: {
     title: "Filtreler",
-    process: "Kaynak Yöntemi",
     sort: "Sırala",
     sortFeatured: "Önerilen",
     sortPriceAsc: "Fiyat (artan)",

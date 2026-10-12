@@ -44,7 +44,7 @@ Beş sekme vardır:
 
 | Sekme | İçerik |
 |---|---|
-| **Temel Bilgiler** | Ad, URL (slug), SKU, model kodu, bölüm, kategori, kaynak yöntemleri, fiyat (KDV hariç → dahil otomatik hesaplanır), durum işaretleri, kılavuz PDF bağlantısı |
+| **Temel Bilgiler** | Ad, URL (slug), SKU, model kodu, bölüm, kategori, fiyat (KDV hariç → dahil otomatik hesaplanır), durum işaretleri, kılavuz PDF bağlantısı |
 | **Açıklamalar** | TR ve EN kısa/detaylı açıklama, öne çıkan özellikler |
 | **Görseller** | URL ile ekleme veya dosya yükleme, sıralama, kapak seçimi |
 | **Teknik Özellikler** | Satır satır TR/EN özellik–değer tablosu |

@@ -105,3 +105,11 @@ kararlaştırılacak. Başlıklar:
 14. ESLint kurulu değil, test ve CI yok
 15. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
 16. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
+
+## Ürün Seçici ve arama — yeniden tasarlanacak
+
+Kaynak yöntemi etiketleri (MIG, TIG, MMA…) ürün formundan, ürün kartından ve
+kategori filtresinden kaldırıldı. Ürün Seçici soruları ve aramadaki yöntem
+eşleşmesi hâlâ ürünlerdeki eski `processes` verisine bakıyor; panelden eklenen
+yeni ürünlerde bu alan boş kalır. Ürün Seçici'nin soruları ve eşleştirme mantığı
+yeniden kurulunca `processes` alanı tamamen kaldırılmalı.

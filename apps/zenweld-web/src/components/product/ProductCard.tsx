@@ -82,7 +82,7 @@ export function ProductCard({
 
       <div className={`flex flex-1 flex-col ${compact ? "p-3" : "p-4"}`}>
         <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-zw-grey-500">
-          {product.processes.slice(0, 3).join(" · ") || product.sku}
+          {product.sku}
         </div>
         <LocaleLink href={`/urun/${product.slug}`}>
           <h3

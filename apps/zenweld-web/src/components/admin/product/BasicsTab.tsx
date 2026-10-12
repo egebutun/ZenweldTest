@@ -1,6 +1,6 @@
 "use client";
 
-import type { TopLevelSection, WeldingProcess } from "@zenweld/data";
+import type { TopLevelSection } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { Checkbox, FormRow, Input, Select } from "@zenweld/ui";
 import { priceWithVat, slugify } from "@zenweld/utils";
@@ -8,7 +8,6 @@ import { FormPanel } from "../content-form";
 import { DiscountFields } from "./DiscountFields";
 import type { ProductTabProps } from "./types";
 
-const PROCESSES: WeldingProcess[] = ["MULTI", "MIG", "MAG", "PULSE", "TIG", "MMA", "PLAZMA"];
 const SECTIONS: { id: TopLevelSection; label: string }[] = [
   { id: "ekipmanlar", label: "Ekipmanlar" },
   { id: "guvenlik", label: "Güvenlik" },
@@ -94,31 +93,6 @@ export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolea
         </FormRow>
       </div>
 
-      <FormRow label="Kaynak Yöntemleri">
-        <div className="flex flex-wrap gap-2">
-          {PROCESSES.map((p) => (
-            <button
-              key={p}
-              type="button"
-              onClick={() =>
-                set(
-                  "processes",
-                  draft.processes.includes(p)
-                    ? draft.processes.filter((x) => x !== p)
-                    : [...draft.processes, p],
-                )
-              }
-              className={`rounded-[3px] border px-3 py-1.5 text-sm font-semibold transition-colors ${
-                draft.processes.includes(p)
-                  ? "border-zw-red-600 bg-zw-red-50 text-zw-red-700"
-                  : "border-zw-grey-300 text-zw-grey-600 hover:border-zw-ink"
-              }`}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-      </FormRow>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <FormRow label="Normal fiyat (KDV hariç, ₺)" required hint="İndirimsiz fiyat">

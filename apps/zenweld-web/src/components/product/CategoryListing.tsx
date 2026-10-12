@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { PackageOpen, SlidersHorizontal, X } from "lucide-react";
-import { localeSlug, matchesLocaleSlug, type TopLevelSection, type WeldingProcess } from "@zenweld/data";
+import { localeSlug, matchesLocaleSlug, type TopLevelSection } from "@zenweld/data";
 import { listProducts, useDatabase, useNow } from "@zenweld/store";
 import { Button, EmptyState } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
@@ -126,11 +126,6 @@ function Listing({
     [db, section, categorySlug, sectionCategories],
   );
 
-  const availableProcesses = useMemo(
-    () =>
-      Array.from(new Set(scoped.flatMap((p) => p.processes))) as WeldingProcess[],
-    [scoped],
-  );
 
   const filtered = useMemo(() => applyFilters(scoped, filters, now), [scoped, filters, now]);
 
@@ -205,7 +200,6 @@ function Listing({
               <ProductFilters
                 value={filters}
                 onChange={setFilters}
-                availableProcesses={availableProcesses}
                 resultCount={filtered.length}
               />
             </div>
@@ -239,7 +233,6 @@ function Listing({
             <ProductFilters
               value={filters}
               onChange={setFilters}
-              availableProcesses={availableProcesses}
               resultCount={filtered.length}
             />
             <Button
