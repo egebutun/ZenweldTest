@@ -32,15 +32,6 @@ Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur.
 
 ## Hızlı Başlangıç
 
-**Mac'te tek tıkla:** Proje klasöründeki `Zenweld-Baslat.command` dosyasına
-Finder'da çift tıklayın. GitHub'daki son değişiklikleri indirir, gerekirse
-paketleri kurar ve siteyi http://localhost:3000 adresinde açar. Pencere açık
-kaldıkça 5 dakikada bir GitHub'ı kontrol eder; yeni değişiklikler kendiliğinden
-iner ve açık sayfa yenilenir. Bilgisayarda [Node.js](https://nodejs.org) (LTS)
-kurulu olmalıdır.
-
-Elle çalıştırmak için:
-
 ```bash
 # Gereksinim: Node.js 20+ (proje Node 22 ile geliştirildi)
 npm install
