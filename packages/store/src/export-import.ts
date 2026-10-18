@@ -1,16 +1,8 @@
 "use client";
 
-import { createSeedDatabase, type Product, type ZenweldDatabase } from "@zenweld/data";
-import { getSnapshot, replaceDatabase } from "./database";
+import type { Product } from "@zenweld/data";
+import { getSnapshot } from "./database";
 import { setRetailerStocks } from "./repo";
-
-/** Tum veritabanini JSON dosyasi olarak indirir. */
-export function downloadDatabaseJson(filename = "zenweld-veri.json"): void {
-  const blob = new Blob([JSON.stringify(getSnapshot(), null, 2)], {
-    type: "application/json",
-  });
-  triggerDownload(blob, filename);
-}
 
 /** Secili tabloyu CSV olarak indirir. */
 export function downloadCsv(rows: Record<string, unknown>[], filename: string): void {
@@ -36,23 +28,6 @@ function triggerDownload(blob: Blob, filename: string): void {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-}
-
-/** JSON dosyasindan tum veritabanini geri yukler. */
-export async function importDatabaseJson(file: File): Promise<void> {
-  const text = await file.text();
-  const parsed = JSON.parse(text) as ZenweldDatabase;
-  if (!parsed.products || !parsed.retailers) {
-    throw new Error("Geçersiz Zenweld veri dosyası.");
-  }
-  // Eski bir yedekte sonradan eklenen bolumler (or. Hakkimizda, satis
-  // temsilcileri) olmayabilir; eksikler baslangic verisinden tamamlanir.
-  const seed = createSeedDatabase() as unknown as Record<string, unknown>;
-  const target = parsed as unknown as Record<string, unknown>;
-  for (const key of Object.keys(seed)) {
-    if (target[key] === undefined) target[key] = seed[key];
-  }
-  replaceDatabase(parsed);
 }
 
 export interface CsvStockRow {

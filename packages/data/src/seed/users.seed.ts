@@ -24,12 +24,6 @@ function demoHash(input: string): string {
   return `zw1$${h1.toString(16)}${h2.toString(16)}`;
 }
 
-export const DEMO_PASSWORDS = {
-  admin: "admin123",
-  bireysel: "demo123",
-  kurumsal: "demo123",
-} as const;
-
 export const users: User[] = [
   {
     id: "u-admin",

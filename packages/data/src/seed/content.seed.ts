@@ -59,15 +59,15 @@ export const quotes: Quote[] = [
 
 export const warranties: WarrantyRecord[] = [
   {
-    id: "w1", serialNumber: "ZW250-2026-004821", productId: "p-ultimate-250-mtc",
+    id: "w1", serialNumber: "ZW250-2026-004821", categorySlug: "mig-gazalti-kaynak-makineleri", productId: "p-ultimate-250-mtc",
     ownerName: "Ahmet Yılmaz", email: "bireysel@demo.com", phone: "+90 532 111 11 11",
-    purchaseDate: "2026-04-18", dealerName: "Başak Hırdavat",
-    registeredAt: "2026-04-20T12:00:00+03:00", expiresAt: "2029-04-18", extended: true,
+    city: "İstanbul", postalCode: "34840", address: "Lorem Mah. 12. Sok. No:5 D:8 Maltepe", sellerTaxNumber: "1112223334",
+    registeredAt: "2026-04-20T12:00:00+03:00", expiresAt: "2029-04-20", extended: true,
   },
   {
-    id: "w2", serialNumber: "ZWARC-2025-113407", productId: "p-arc-200",
+    id: "w2", serialNumber: "ZWARC-2025-113407", categorySlug: "mma-ortulu-elektrod-kaynak-makineleri", productId: "p-arc-200",
     ownerName: "Zeynep Arslan", email: "hobi@demo.com", phone: "+90 536 444 44 44",
-    purchaseDate: "2025-12-02", dealerName: "Ostim Kaynak Ekipmanları",
-    registeredAt: "2025-12-05T09:20:00+03:00", expiresAt: "2027-12-02", extended: false,
+    city: "Ankara", postalCode: "06370", address: "Lorem Cad. No:3 Yenimahalle", sellerTaxNumber: "5556667778",
+    registeredAt: "2025-12-05T09:20:00+03:00", expiresAt: "2027-12-05", extended: false,
   },
 ];

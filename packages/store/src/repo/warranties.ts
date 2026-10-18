@@ -8,38 +8,33 @@ import { nowIso } from "./shared";
 /* Garanti kayitlari                                                   */
 /* ------------------------------------------------------------------ */
 
-export function registerWarranty(record: {
-  serialNumber: string;
-  productId: string;
-  ownerName: string;
-  email: string;
-  phone: string;
-  purchaseDate: string;
-  dealerName: string;
-  extended: boolean;
-}): void {
+export function registerWarranty(
+  record: Omit<WarrantyRecord, "id" | "registeredAt" | "expiresAt">,
+): void {
+  const registeredAt = nowIso();
   mutate((db) => {
     db.warranties.unshift({
       ...record,
       id: uid("w"),
-      registeredAt: nowIso(),
-      expiresAt: warrantyExpiry(record.purchaseDate, record.productId, record.extended, db),
+      registeredAt,
+      expiresAt: warrantyExpiry(registeredAt, record.productId, record.extended, db),
     });
   });
 }
 
 /**
- * Garanti bitis tarihi (YYYY-AA-GG): satin alma tarihi + urunun garanti
- * suresi, uzatilmis garantide +12 ay.
+ * Garanti bitis tarihi (YYYY-AA-GG): kayit tarihi + urunun garanti
+ * suresi, uzatilmis garantide +12 ay. (Formda satin alma tarihi
+ * sorulmadigi icin sure kayit tarihinden baslar.)
  */
 export function warrantyExpiry(
-  purchaseDate: string,
+  startDate: string,
   productId: string,
   extended: boolean,
   db: ZenweldDatabase = getSnapshot(),
 ): string {
   const months = db.products.find((p) => p.id === productId)?.warrantyMonths ?? 24;
-  const expires = new Date(purchaseDate);
+  const expires = new Date(startDate);
   expires.setMonth(expires.getMonth() + months + (extended ? 12 : 0));
   return expires.toISOString().slice(0, 10);
 }

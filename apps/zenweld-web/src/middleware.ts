@@ -9,9 +9,19 @@ import { internalizePath } from "@zenweld/i18n";
  *
  * Adres cubugunda Ingilizce adres kalir (rewrite, redirect degil).
  * Turkce adresler dokunulmadan gecer.
+ *
+ * Eski urun grubu sayfalari (/ekipmanlar?grup=lazer-makineleri) kaldirildi;
+ * "?grup=" iceren her adres 404 doner.
  */
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
+
+  if (searchParams.has("grup")) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${pathname.startsWith("/en") ? "en" : "tr"}/__sayfa-yok`;
+    url.search = "";
+    return NextResponse.rewrite(url);
+  }
 
   if (!pathname.startsWith("/en/") && pathname !== "/en") {
     return NextResponse.next();
@@ -28,5 +38,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/en/:path*"],
+  matcher: ["/en/:path*", "/tr/:path*"],
 };

@@ -549,12 +549,19 @@ export interface NewsItem {
 export interface WarrantyRecord {
   id: string;
   serialNumber: string;
+  /** Urun kategorisi (slug) */
+  categorySlug: string;
+  /** Model (urun) */
   productId: string;
   ownerName: string;
   email: string;
   phone: string;
-  purchaseDate: string;
-  dealerName: string;
+  city: string;
+  postalCode: string;
+  address: string;
+  /** Urunu satan firmanin vergi kimlik numarasi */
+  sellerTaxNumber: string;
+  /** Garanti suresi kayit tarihinden baslar. */
   registeredAt: string;
   expiresAt: string;
   extended: boolean;

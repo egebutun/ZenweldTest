@@ -91,22 +91,4 @@ export function mutate(updater: (db: ZenweldDatabase) => ZenweldDatabase | void)
   emit();
 }
 
-/** Tum veriyi seed haline dondurur. */
-export function resetDatabase(): void {
-  memoryDb = createSeedDatabase();
-  if (isBrowser()) {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryDb));
-  }
-  emit();
-}
-
-/** Disaridan gelen tam veritabanini yukler (JSON ice aktarma). */
-export function replaceDatabase(db: ZenweldDatabase): void {
-  memoryDb = db;
-  if (isBrowser()) {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-  }
-  emit();
-}
-
 export { STORAGE_KEY };

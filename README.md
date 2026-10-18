@@ -152,7 +152,7 @@ formunu doldurur.
 CSV içe aktarma, fiziksel bayiler), online satıcı ve bayi yönetimi, üye yönetimi
 (rol değiştirme, onaylama, askıya alma, CSV dışa aktarma), sipariş yönetimi
 (havale onayı, kargo takip no, teslim, iptal), mağaza ayarları (kargo, taksit,
-IBAN), teklif takibi, JSON yedekleme.
+IBAN), teklif takibi, sık sorulan sorular, yasal metinler.
 
 ### Çift dil (TR / EN)
 
@@ -187,7 +187,7 @@ ZenweldTest/
 │   │       ├── database.ts         localStorage motoru + abonelik
 │   │       ├── repo/               Veri işlemleri, konuya göre (ürün, stok, bayi, içerik…)
 │   │       ├── hooks.ts            useDatabase() — değişiklikler anında yansır
-│   │       └── export-import.ts    JSON/CSV dışa-içe aktarma
+│   │       └── export-import.ts    CSV indirme, stok CSV içe aktarma
 │   │
 │   ├── auth/                       Demo kimlik doğrulama
 │   │   └── src/ auth-context.tsx · guards.tsx · roles.ts · hash.ts
@@ -230,7 +230,7 @@ ZenweldTest/
             │   │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
             │   │      · gorunum · veri
             ├── components/
-            │   ├── layout/    Header · MegaMenu · MobileDrawer · Footer · DemoRibbon
+            │   ├── layout/    Header · MegaMenu · MobileDrawer · Footer · CookieBanner
             │   ├── search/    SearchOverlay
             │   ├── product/   ProductCard · OnlineRetailers · ProductDetailParts
             │   ├── shop/      OrderSummary · CardPayment · BankAccounts · OrderParts
@@ -259,9 +259,8 @@ Backend olmadığı için:
    `localStorage`'a yazılır ve sayfalar anında güncellenir.
 3. Değişiklikler **yalnızca o tarayıcıda** görünür. Başka bilgisayarda görünmez.
 
-Değişiklikleri kalıcı hale getirmek için: `/yonetim/veri` → **JSON Dışa Aktar**
-→ indirilen dosyayı yedekleyin veya seed dosyalarına aktarın.
-Aynı sayfadan **JSON İçe Aktar** ve **Başlangıca Dön** işlemleri de yapılabilir.
+Backend gelene kadar panelde yapılan değişiklikler yalnızca o tarayıcıda kalır;
+kalıcı veri için başlangıç (seed) dosyaları güncellenir.
 
 ---
 

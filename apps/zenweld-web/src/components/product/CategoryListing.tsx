@@ -1,12 +1,10 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 import { PackageOpen, SlidersHorizontal, X } from "lucide-react";
-import { localeSlug, matchesLocaleSlug, type TopLevelSection } from "@zenweld/data";
+import type { TopLevelSection } from "@zenweld/data";
 import { listProducts, useDatabase, useNow } from "@zenweld/store";
 import { Button, EmptyState } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
 import { ProductGrid } from "./ProductGrid";
 import {
   applyFilters,
@@ -22,28 +20,11 @@ interface ListingProps {
 }
 
 /**
- * Mega menudeki grup basligi buraya "?grup=lazer-makineleri" seklinde yonlendirir.
- * useSearchParams statik on-uretimde Suspense sinirini gerektirir; sinir
- * cozulene kadar gruplanmamis liste gosterilir.
+ * Urun listesi: bolum sayfasi (/ekipmanlar) ya da kategori sayfasi
+ * (/ekipmanlar/mma-...). Kategori sayfasinda ayni gruptaki diger
+ * kategoriler gosterilmez; her kategorinin ileride kendi filtreleri olacak.
  */
-export function CategoryListing(props: ListingProps) {
-  return (
-    <Suspense fallback={<Listing {...props} />}>
-      <ListingWithGroupParam {...props} />
-    </Suspense>
-  );
-}
-
-function ListingWithGroupParam(props: ListingProps) {
-  const groupSlug = useSearchParams().get("grup") ?? undefined;
-  return <Listing {...props} groupSlug={groupSlug} />;
-}
-
-function Listing({
-  section,
-  categorySlug,
-  groupSlug,
-}: ListingProps & { groupSlug?: string }) {
+export function CategoryListing({ section, categorySlug }: ListingProps) {
   const t = useT();
   const locale = useLocale();
   const db = useDatabase();
@@ -56,63 +37,17 @@ function Listing({
     [db, categorySlug],
   );
 
-  const group = useMemo(
-    // ?grup= Turkce veya Ingilizce slug olabilir (dil degistirilince ikisi de gelir).
-    () =>
-      groupSlug
-        ? db.categoryGroups.find((g) => g.section === section && matchesLocaleSlug(g, groupSlug))
-        : undefined,
-    [db, groupSlug, section],
-  );
-
-  /**
-   * Ust seritteki kisayollar. Bolum sayfasinda gruplar (Lazer Makineleri,
-   * Kaynak Makineleri ...), grup veya kategori sayfasinda o grubun
-   * kategorileri listelenir. Tum kategorileri tek seride dizmek
-   * (Aksesuarlar'da 20 kategori) ekrandan tasiyordu.
-   */
-  const chipGroup = useMemo(
-    () =>
-      group ??
-      (category
-        ? db.categoryGroups.find((g) => g.section === section && g.slug === category.group)
-        : undefined),
-    [db, group, category, section],
-  );
-  const chips = useMemo(() => {
-    if (chipGroup) {
-      return db.categories
-        .filter((c) => c.section === section && c.group === chipGroup.slug)
-        .sort((a, b) => a.order - b.order)
-        .map((c) => ({
-          id: c.id,
-          label: c.name[locale],
-          href: `/${section}/${localeSlug(c, locale)}`,
-          active: categorySlug === c.slug,
-        }));
-    }
-    return db.categoryGroups
-      .filter((g) => g.section === section)
-      .sort((a, b) => a.order - b.order)
-      .map((g) => ({
-        id: g.id,
-        label: g.name[locale],
-        href: `/${section}?grup=${localeSlug(g, locale)}`,
-        active: false,
-      }));
-  }, [db, section, chipGroup, categorySlug, locale]);
-
   // Kategoriler once ait olduklari grubun sirasina, sonra kendi siralarina gore.
   const sectionCategories = useMemo(() => {
     const groupOrder = new Map(db.categoryGroups.map((g) => [g.slug, g.order]));
     return db.categories
-      .filter((c) => c.section === section && (group ? c.group === group.slug : true))
+      .filter((c) => c.section === section)
       .sort(
         (a, b) =>
           (groupOrder.get(a.group) ?? 99) - (groupOrder.get(b.group) ?? 99) ||
           a.order - b.order,
       );
-  }, [db, section, group]);
+  }, [db, section]);
 
   const scoped = useMemo(
     () =>
@@ -136,11 +71,7 @@ function Listing({
     "dolgu-metalleri": t.nav.fillerMetals,
   };
 
-  const title = category
-    ? category.name[locale]
-    : group
-      ? group.name[locale]
-      : sectionTitles[section];
+  const title = category ? category.name[locale] : sectionTitles[section];
   const description = category
     ? category.description[locale]
     : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.";
@@ -154,33 +85,6 @@ function Listing({
         </div>
       </div>
 
-      <div className="border-b border-zw-grey-200">
-        <div className="zw-container flex gap-2 overflow-x-auto py-3">
-          <LocaleLink
-            href={chipGroup ? `/${section}?grup=${localeSlug(chipGroup, locale)}` : `/${section}`}
-            className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
-              !categorySlug
-                ? "bg-zw-ink text-white"
-                : "bg-zw-grey-100 text-zw-grey-700 hover:bg-zw-grey-200"
-            }`}
-          >
-            {t.common.all}
-          </LocaleLink>
-          {chips.map((c) => (
-            <LocaleLink
-              key={c.id}
-              href={c.href}
-              className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
-                c.active
-                  ? "bg-zw-ink text-white"
-                  : "bg-zw-grey-100 text-zw-grey-700 hover:bg-zw-grey-200"
-              }`}
-            >
-              {c.label}
-            </LocaleLink>
-          ))}
-        </div>
-      </div>
 
       <div className="zw-container py-8">
         <div className="mb-5 lg:hidden">

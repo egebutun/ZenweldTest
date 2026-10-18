@@ -93,12 +93,8 @@ export function WarrantyCheck({ onRegister }: { onRegister: () => void }) {
               <dd className="font-semibold">{result.ownerName}</dd>
             </div>
             <div>
-              <dt className="text-zw-grey-500">{t.warranty.dealer}</dt>
-              <dd className="font-semibold">{result.dealerName}</dd>
-            </div>
-            <div>
-              <dt className="text-zw-grey-500">{t.warranty.purchaseDate}</dt>
-              <dd className="font-semibold">{formatDate(result.purchaseDate, locale)}</dd>
+              <dt className="text-zw-grey-500">{t.warranty.registeredAt}</dt>
+              <dd className="font-semibold">{formatDate(result.registeredAt, locale)}</dd>
             </div>
             <div>
               <dt className="text-zw-grey-500">{t.warranty.expiresAt}</dt>

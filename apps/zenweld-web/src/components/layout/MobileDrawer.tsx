@@ -43,7 +43,7 @@ export function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: ()
               {expanded === menu.id && (
                 <div className="bg-zw-grey-50 pb-2">
                   {menu.columns.map((col) => (
-                    <div key={col.label || col.href} className="px-4 py-2">
+                    <div key={col.label} className="px-4 py-2">
                       {col.label && (
                         <div className="mb-1 text-[11px] font-bold uppercase tracking-wider text-zw-grey-500">
                           {col.label}

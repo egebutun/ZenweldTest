@@ -47,12 +47,8 @@ export default function MyWarrantiesPage() {
                 <dd className="font-semibold">{w.serialNumber}</dd>
               </div>
               <div>
-                <dt className="text-zw-grey-500">{t.warranty.dealer}</dt>
-                <dd className="font-semibold">{w.dealerName}</dd>
-              </div>
-              <div>
-                <dt className="text-zw-grey-500">{t.warranty.purchaseDate}</dt>
-                <dd className="font-semibold">{formatDate(w.purchaseDate, locale)}</dd>
+                <dt className="text-zw-grey-500">{t.warranty.registeredAt}</dt>
+                <dd className="font-semibold">{formatDate(w.registeredAt, locale)}</dd>
               </div>
               <div>
                 <dt className="text-zw-grey-500">{t.warranty.expiresAt}</dt>

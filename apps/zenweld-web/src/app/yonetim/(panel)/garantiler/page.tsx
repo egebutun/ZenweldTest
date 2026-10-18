@@ -59,7 +59,7 @@ export default function AdminWarrantiesPage() {
     saveWarranty({
       ...w,
       extended,
-      expiresAt: warrantyExpiry(w.purchaseDate, w.productId, extended, db),
+      expiresAt: warrantyExpiry(w.registeredAt, w.productId, extended, db),
     });
   };
 
@@ -82,8 +82,10 @@ export default function AdminWarrantiesPage() {
                   sahibi: w.ownerName,
                   eposta: w.email,
                   telefon: w.phone,
-                  satin_alinan_yer: w.dealerName,
-                  satin_alma: w.purchaseDate,
+                  sehir: w.city,
+                  posta_kodu: w.postalCode,
+                  adres: w.address,
+                  satici_vkn: w.sellerTaxNumber,
                   bitis: w.expiresAt,
                   uzatilmis: w.extended ? "evet" : "hayır",
                   kayit: w.registeredAt,
@@ -123,8 +125,8 @@ export default function AdminWarrantiesPage() {
             <tr>
               <th className="px-4 py-3">Ürün / Seri No</th>
               <th className="px-4 py-3">Sahibi</th>
-              <th className="px-4 py-3">Satın Alınan Yer</th>
-              <th className="px-4 py-3">Satın Alma</th>
+              <th className="px-4 py-3">Adres</th>
+              <th className="px-4 py-3">Satıcı VKN / Kayıt</th>
               <th className="px-4 py-3">Garanti Bitişi</th>
               <th className="px-4 py-3">Uzatılmış</th>
               <th className="px-4 py-3" />
@@ -151,9 +153,14 @@ export default function AdminWarrantiesPage() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-2.5 text-xs">{w.dealerName}</td>
                   <td className="px-4 py-2.5 text-xs">
-                    {formatDate(w.purchaseDate, "tr")}
+                    {w.address}
+                    <div className="text-zw-grey-500">
+                      {w.postalCode} {w.city}
+                    </div>
+                  </td>
+                  <td className="px-4 py-2.5 text-xs">
+                    <span className="font-mono">{w.sellerTaxNumber}</span>
                     <div className="text-zw-grey-400">
                       Kayıt: {formatDate(w.registeredAt, "tr")}
                     </div>

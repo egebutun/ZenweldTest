@@ -8,9 +8,9 @@ import {
   CalendarDays,
   ChevronDown,
   Contact,
-  Database,
   ExternalLink,
   FileText,
+  HelpCircle,
   Info,
   LayoutDashboard,
   LogOut,
@@ -31,7 +31,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { Alert, ZenweldLogo } from "@zenweld/ui";
+import { ZenweldLogo } from "@zenweld/ui";
 import { siteUrl } from "@/lib/admin-links";
 
 /**
@@ -103,6 +103,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/yonetim/etkinlikler", label: "Etkinlikler", Icon: CalendarDays },
       { href: "/yonetim/blog", label: "Blog", Icon: PenLine },
       { href: "/yonetim/hakkimizda", label: "Hakkımızda", Icon: Info },
+      { href: "/yonetim/sss", label: "Sık Sorulan Sorular", Icon: HelpCircle },
       { href: "/yonetim/yasal-metinler", label: "Yasal Metinler", Icon: Scale },
     ],
   },
@@ -112,7 +113,6 @@ const NAV_GROUPS: NavGroup[] = [
     Icon: Settings,
     items: [
       { href: "/yonetim/gorunum", label: "Görünüm", Icon: Palette },
-      { href: "/yonetim/veri", label: "Veri Yönetimi", Icon: Database },
     ],
   },
 ];
@@ -224,9 +224,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               Yönetim Paneli
             </span>
           </Link>
-          <span className="rounded-[3px] border border-white/30 px-2 py-0.5 text-[11px] font-bold uppercase text-white/80">
-            Demo
-          </span>
 
           <div className="ml-auto flex items-center gap-4 text-sm">
             <a
@@ -261,17 +258,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
           <aside>
             <AdminNav />
-
-            <div className="mt-5">
-              <Alert tone="warning">
-                <strong className="block">Demo uyarısı</strong>
-                Değişiklikler yalnızca bu tarayıcıda saklanır. Kalıcı hale getirmek için{" "}
-                <Link href="/yonetim/veri" className="underline">
-                  Veri Yönetimi
-                </Link>{" "}
-                sayfasından JSON dışa aktarın.
-              </Alert>
-            </div>
           </aside>
 
           <div className="min-w-0">{children}</div>

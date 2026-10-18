@@ -22,10 +22,23 @@ const EMPTY: Dealer = {
 };
 
 const BADGES: { id: DealerBadge; label: string }[] = [
-  { id: "yetkili-satici", label: "Yetkili Satıcı" },
+  { id: "yetkili-satici", label: "Yetkili Bayi" },
   { id: "yetkili-servis", label: "Yetkili Servis" },
   { id: "showroom", label: "Showroom" },
 ];
+
+/** Bayi turu: Yetkili Bayi, Yetkili Servis ya da ikisi birden. */
+const DEALER_TYPES: { id: string; label: string; badges: DealerBadge[] }[] = [
+  { id: "bayi", label: "Yetkili Bayi", badges: ["yetkili-satici"] },
+  { id: "servis", label: "Yetkili Servis", badges: ["yetkili-servis"] },
+  { id: "ikisi", label: "Yetkili Bayi + Yetkili Servis", badges: ["yetkili-satici", "yetkili-servis"] },
+];
+
+const dealerType = (d: Dealer) => {
+  const seller = d.badges.includes("yetkili-satici");
+  const service = d.badges.includes("yetkili-servis");
+  return seller && service ? "ikisi" : service ? "servis" : seller ? "bayi" : "";
+};
 
 export default function AdminDealersPage() {
   const db = useDatabase();
@@ -37,8 +50,12 @@ export default function AdminDealersPage() {
   );
   const dealers = city ? db.dealers.filter((d) => d.city === city) : db.dealers;
 
+  const [error, setError] = useState<string | null>(null);
+
   const save = () => {
     if (!editing) return;
+    if (!dealerType(editing)) return setError("Bayi türünü seçin: Yetkili Bayi, Yetkili Servis ya da ikisi.");
+    setError(null);
     saveDealer({ ...editing, id: editing.id || `d-${Date.now().toString(36)}` });
     setEditing(null);
   };
@@ -47,7 +64,7 @@ export default function AdminDealersPage() {
     <>
       <AdminPageHeader
         title="Bayiler"
-        description="“Nereden Alabilirim” haritasında görünen fiziksel satış ve servis noktaları."
+        description="Yetkili Bayi ve Servis Ağı haritasında ve ürün sayfasındaki “Stoktaki Bayileri Gör” penceresinde görünen satış ve servis noktaları."
         action={
           <Button leftIcon={<Plus size={17} />} onClick={() => setEditing({ ...EMPTY })}>
             Yeni Bayi
@@ -121,7 +138,10 @@ export default function AdminDealersPage() {
 
       <Modal
         open={Boolean(editing)}
-        onClose={() => setEditing(null)}
+        onClose={() => {
+          setEditing(null);
+          setError(null);
+        }}
         title={editing?.id ? "Bayiyi Düzenle" : "Yeni Bayi"}
       >
         {editing && (
@@ -212,26 +232,44 @@ export default function AdminDealersPage() {
             </FormRow>
             <div>
               <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-                Rozetler
+                Bayi Türü <span className="text-zw-red-600">*</span>
               </div>
               <div className="space-y-2">
-                {BADGES.map((b) => (
-                  <Checkbox
-                    key={b.id}
-                    label={b.label}
-                    checked={editing.badges.includes(b.id)}
-                    onChange={(e) =>
-                      setEditing({
-                        ...editing,
-                        badges: e.target.checked
-                          ? [...editing.badges, b.id]
-                          : editing.badges.filter((x) => x !== b.id),
-                      })
-                    }
-                  />
+                {DEALER_TYPES.map((type) => (
+                  <label key={type.id} className="flex items-center gap-2.5 text-sm text-zw-grey-700">
+                    <input
+                      type="radio"
+                      name="dealer-type"
+                      className="accent-zw-red-600"
+                      checked={dealerType(editing) === type.id}
+                      onChange={() =>
+                        setEditing({
+                          ...editing,
+                          badges: [
+                            ...type.badges,
+                            ...editing.badges.filter((b) => b === "showroom"),
+                          ],
+                        })
+                      }
+                    />
+                    {type.label}
+                  </label>
                 ))}
               </div>
             </div>
+            <Checkbox
+              label="Showroom var"
+              checked={editing.badges.includes("showroom")}
+              onChange={(e) =>
+                setEditing({
+                  ...editing,
+                  badges: e.target.checked
+                    ? [...editing.badges, "showroom"]
+                    : editing.badges.filter((b) => b !== "showroom"),
+                })
+              }
+            />
+            {error && <p className="text-sm font-semibold text-zw-red-600">{error}</p>}
             <Checkbox
               label="Aktif"
               checked={editing.active}
@@ -239,7 +277,13 @@ export default function AdminDealersPage() {
             />
             <div className="flex gap-3 pt-2">
               <Button onClick={save}>Kaydet</Button>
-              <Button variant="outline" onClick={() => setEditing(null)}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditing(null);
+                  setError(null);
+                }}
+              >
                 Vazgeç
               </Button>
             </div>

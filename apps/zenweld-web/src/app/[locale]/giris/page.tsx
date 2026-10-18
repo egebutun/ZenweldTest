@@ -3,17 +3,10 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@zenweld/auth";
-import { DEMO_PASSWORDS } from "@zenweld/data";
 import { Alert, Button, FormRow, Input } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useHref, useT } from "@/lib/i18n-client";
 
-const DEMO_ACCOUNTS = [
-  // Ana siteye yalnizca bireysel ve kurumsal musteriler girer. Yonetici
-  // /yonetim, bayi kendi magazasinin panelinden giris yapar.
-  { label: "Bireysel", email: "bireysel@demo.com", password: DEMO_PASSWORDS.bireysel },
-  { label: "Kurumsal", email: "kurumsal@demo.com", password: DEMO_PASSWORDS.kurumsal },
-];
 
 function LoginInner() {
   const t = useT();
@@ -43,8 +36,8 @@ function LoginInner() {
 
   return (
     <div className="zw-container py-14">
-      <div className="mx-auto grid max-w-5xl gap-10 lg:grid-cols-[1fr_360px]">
-        <div className="mx-auto w-full max-w-md lg:mx-0">
+      <div className="mx-auto max-w-md">
+        <div>
           <h1 className="font-display text-4xl font-bold uppercase">{t.auth.loginTitle}</h1>
           <p className="mt-2 text-sm text-zw-grey-600">{t.auth.loginSubtitle}</p>
 
@@ -95,27 +88,6 @@ function LoginInner() {
           </form>
         </div>
 
-        <aside className="rounded-[4px] border border-zw-grey-200 bg-zw-grey-50 p-5">
-          <h2 className="font-display text-lg font-bold uppercase">{t.auth.demoAccounts}</h2>
-          <p className="mt-1 text-xs text-zw-grey-500">{t.auth.demoHint}</p>
-          <div className="mt-4 space-y-2">
-            {DEMO_ACCOUNTS.map((acc) => (
-              <button
-                key={acc.email}
-                type="button"
-                onClick={() => {
-                  setEmail(acc.email);
-                  setPassword(acc.password);
-                }}
-                className="w-full rounded-[4px] border border-zw-grey-300 bg-white px-3 py-2.5 text-left transition-colors hover:border-zw-ink"
-              >
-                <div className="text-sm font-semibold">{acc.label}</div>
-                <div className="truncate text-xs text-zw-grey-500">{acc.email}</div>
-                <div className="text-xs text-zw-grey-400">şifre: {acc.password}</div>
-              </button>
-            ))}
-          </div>
-        </aside>
       </div>
     </div>
   );

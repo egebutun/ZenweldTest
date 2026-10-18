@@ -11,7 +11,6 @@ import { SITE_NAME, getSiteUrl, isNoIndex, languageAlternates, ogUrl, siteDescri
 import { Providers } from "./providers";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { DemoRibbon } from "@/components/layout/DemoRibbon";
 import { WelcomeGate } from "@/components/layout/WelcomeGate";
 import { CookieBanner } from "@/components/layout/CookieBanner";
 
@@ -91,7 +90,6 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body className="min-h-screen bg-white antialiased">
         <Providers locale={locale as Locale}>
-          <DemoRibbon />
           <WelcomeGate />
           <Header />
           <main className="min-h-[60vh]">{children}</main>

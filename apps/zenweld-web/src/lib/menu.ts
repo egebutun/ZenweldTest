@@ -33,16 +33,14 @@ export interface MenuLink {
 const MENU_PRODUCT_LIMIT = 6;
 
 export interface MenuColumn {
-  /** Sol kolondaki grup (Unimig'deki "Welding Machines" gibi). Bos ise alt baslik yok. */
+  /** Sol kolondaki grup (Unimig'deki "Welding Machines" gibi). Tiklanmaz; kategorileri acar. */
   label: string;
-  href: string;
   links: MenuLink[];
 }
 
 export interface TopMenu {
   id: string;
   label: string;
-  href: string;
   columns: MenuColumn[];
 }
 
@@ -68,10 +66,8 @@ export function useMainMenu(): TopMenu[] {
       return {
         id,
         label: t.nav[labelKey],
-        href: `/${id}`,
         columns: groups.map((group) => ({
           label: group.name[locale],
-          href: `/${id}?grup=${localeSlug(group, locale)}`,
           links: db.categories
             .filter((c) => c.section === id && c.group === group.slug)
             .sort((a, b) => a.order - b.order)
@@ -100,17 +96,15 @@ export function useMainMenu(): TopMenu[] {
     const explore: TopMenu = {
       id: "kesfet",
       label: t.nav.explore,
-      href: "/hakkimizda",
       columns: exploreColumns(t),
     };
 
     const supportWarranty: TopMenu = {
       id: "destek-garanti",
       label: t.nav.supportWarranty,
-      href: "/sss",
       columns: [
-        { label: t.nav.support, href: "/sss", links: supportLinks(t) },
-        { label: t.nav.warranty, href: "/garanti", links: warrantyLinks(t) },
+        { label: t.nav.support, links: supportLinks(t) },
+        { label: t.nav.warranty, links: warrantyLinks(t) },
       ],
     };
 
@@ -126,7 +120,6 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
   return [
     {
       label: t.nav.corporate,
-      href: "/hakkimizda",
       links: [
         { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
         { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/satis-temsilcilerimiz" },
@@ -136,7 +129,6 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
     },
     {
       label: t.nav.updates,
-      href: "/haberler",
       links: [
         { label: t.explore.news, description: t.explore.newsDesc, href: "/haberler" },
         { label: t.explore.events, description: t.explore.eventsDesc, href: "/etkinlikler" },
@@ -146,7 +138,6 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
     },
     {
       label: t.nav.other,
-      href: "/urun-secici",
       links: [
         { label: t.explore.productSelector, description: t.explore.productSelectorDesc, href: "/urun-secici" },
         { label: t.explore.guide, description: t.explore.guideDesc, href: "/kaynak-rehberi" },

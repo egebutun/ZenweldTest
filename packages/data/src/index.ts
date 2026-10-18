@@ -9,7 +9,7 @@ export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";
 export { retailers } from "./seed/retailers.seed";
 export { retailerStock, dealerStock } from "./seed/stock.seed";
-export { users, addresses, DEMO_PASSWORDS } from "./seed/users.seed";
+export { users, addresses } from "./seed/users.seed";
 export { blogPosts, faqs, quotes, warranties } from "./seed/content.seed";
 export { orders } from "./seed/orders.seed";
 export { reviews } from "./seed/reviews.seed";
@@ -35,7 +35,7 @@ import { about, salesReps } from "./seed/company.seed";
 import { legalPages } from "./seed/legal.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 41;
+export const DB_VERSION = 42;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(

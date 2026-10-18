@@ -16,8 +16,7 @@ export default function ForgotPasswordPage() {
 
         {sent ? (
           <Alert tone="success">
-            Şifre sıfırlama bağlantısı e-posta adresinize gönderildi. (DEMO — gerçek e-posta
-            gönderilmez.)
+            Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.
           </Alert>
         ) : (
           <form

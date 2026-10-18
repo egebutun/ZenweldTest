@@ -160,9 +160,6 @@ export function CardPayment({
         <Lock size={14} className="mt-px shrink-0" />
         {t.checkout.secure}
       </p>
-      <p className="rounded-[4px] border border-dashed border-zw-grey-300 px-3 py-2 text-xs text-zw-grey-600">
-        {t.checkout.demoCard}
-      </p>
     </div>
   );
 }

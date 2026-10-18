@@ -133,7 +133,6 @@ export function Footer() {
         <div className="zw-container flex flex-col gap-3 py-5 text-xs text-zw-grey-600 sm:flex-row sm:items-center sm:justify-between">
           {/* Yil elle yazilmaz; her 1 Ocak'ta kendiliginden guncellenir. */}
           <span>{t.footer.rights.replace("{year}", String(new Date().getFullYear()))}</span>
-          <span className="max-w-xl text-zw-grey-500">{t.footer.demoDisclaimer}</span>
           <div className="flex items-center gap-2">
             {locales.map((l) => (
               <button

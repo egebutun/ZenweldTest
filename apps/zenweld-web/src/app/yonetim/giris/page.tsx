@@ -84,10 +84,6 @@ function LoginForm() {
           <Button type="submit" size="lg" fullWidth>
             Giriş Yap
           </Button>
-
-          <p className="rounded-[4px] bg-zw-grey-50 px-3 py-2 text-xs text-zw-grey-600">
-            Demo hesabı: admin@zenweld.com / admin123
-          </p>
         </form>
 
         <p className="mt-4 text-center text-xs text-zw-grey-400">

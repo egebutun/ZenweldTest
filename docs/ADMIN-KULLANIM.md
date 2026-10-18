@@ -12,8 +12,8 @@ olan sayfanın grubu kendiliğinden açık gelir:
 | Ürünler | Ürünler · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler |
-| İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Yasal Metinler |
-| Ayarlar | Görünüm · Veri Yönetimi |
+| İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Yasal Metinler |
+| Ayarlar | Görünüm |
 
 Panel adresi: `http://localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`)
 Demo giriş: `admin@zenweld.com` / `admin123`
@@ -22,8 +22,8 @@ Demo giriş: `admin@zenweld.com` / `admin123`
 > sitenin "Giriş Yap" sayfası yönetici hesaplarını kabul etmez; sitede panele
 > giden bir bağlantı da yoktur. Panelden çıkış yapmak sitedeki oturumu etkilemez.
 
-> Panel yalnızca Türkçedir. Tüm değişiklikler tarayıcının yerel deposunda saklanır;
-> kalıcı hale getirmek için **Veri Yönetimi → JSON Dışa Aktar** kullanın.
+> Panel yalnızca Türkçedir. Backend gelene kadar değişiklikler tarayıcının yerel
+> deposunda saklanır; başlangıç verisi `packages/data` içindeki örnek verilerdir.
 
 ---
 
@@ -126,7 +126,13 @@ model, talep nedeni (kurulum, bakım, onarım, eğitim), müşteri şikayeti ve 
 bilgileri. Satıra tıklayınca detay açılır; durum (Yeni → İşlemde → Tamamlandı) ve
 yalnızca panelde görünen iç not buradan kaydedilir.
 
-## 4d. Yasal Metinler
+## 4d. Sık Sorulan Sorular
+
+Soru ekle, düzenle (TR/EN soru ve cevap, konu), sil ve oklarla sırala. Sorular
+sitedeki SSS sayfasında, ürün sayfalarının SSS sekmesinde ve anasayfada (ilk 8
+soru) bu sırayla görünür. İngilizce alanlar boş bırakılırsa Türkçesi kullanılır.
+
+## 4e. Yasal Metinler
 
 Alt bilgideki **Politikalar & Yasal** listesindeki 11 sayfanın başlığı ve metni
 buradan düzenlenir (TR/EN). Sayfa adresleri ve sıralaması sabittir. Biçimlendirme
@@ -156,11 +162,13 @@ arasındaki teklif ve siparişler ileride ayrı bir **B2B uygulamasında** yür�
 
 ## 6. Bayiler
 
-"Nereden Alabilirim" haritasındaki fiziksel satış/servis noktaları.
+Yetkili Bayi ve Servis Ağı haritasındaki ve ürün sayfasındaki "Stoktaki Bayileri
+Gör" penceresindeki fiziksel satış/servis noktaları.
 
 Enlem–boylam değerlerini Google Maps'te konuma sağ tıklayıp kopyalayabilirsiniz.
-Rozetler (Yetkili Satıcı / Yetkili Servis / Showroom) hem haritada hem servis ağı
-sayfasında kullanılır. Bayinin online mağazası varsa **Bağlı olduğu online mağaza**
+**Bayi Türü** zorunludur: *Yetkili Bayi*, *Yetkili Servis* ya da *Yetkili Bayi +
+Yetkili Servis*. Ayrıca **Showroom var** işaretlenebilir. Bunlar haritada ve servis
+ağı sayfasında rozet olarak görünür. Bayinin online mağazası varsa **Bağlı olduğu online mağaza**
 alanından eşleştirin.
 
 ---
@@ -208,7 +216,10 @@ Yönetici hesapları silinemez.
 
 ## 10. Garantiler
 
-Ana sitede **Garanti → Garanti Kaydı** formuyla yapılan kayıtlar.
+Ana sitede **Destek ve Garanti → Garanti Kaydı** formuyla yapılan kayıtlar. Form:
+Ad Soyad, e-posta, telefon, şehir, posta kodu, adres, ürün kategorisi, model,
+seri numarası, satıcı VKN ve "12 ay ücretsiz garanti uzatması" seçeneği.
+Satın alma tarihi sorulmadığı için **garanti süresi kayıt tarihinden başlar**.
 Müşterinin `Hesabım → Garantilerim` sayfası ve sitedeki garanti sorgulama aynı
 kayıtları kullanır; burada yapılan değişiklik oralara anında yansır.
 
@@ -234,19 +245,3 @@ Sitedeki **Hakkımızda** sayfasının tamamı buradan yönetilir:
 - İngilizce alan boş bırakılırsa İngilizce sayfada Türkçe metin gösterilir.
 - Değişiklikler **Kaydet** ile sayfaya yansır; kaydedilmemiş değişiklik varsa
   uyarı çıkar.
-
----
-
-## 12. Veri Yönetimi ⭐
-
-| İşlem | Ne yapar |
-|---|---|
-| **JSON Dışa Aktar** | Tüm veritabanını tek dosya olarak indirir |
-| **JSON İçe Aktar** | Daha önce indirilen yedeği geri yükler (mevcut veri değişir) |
-| **Sıfırla** | Projeyle gelen başlangıç verisine döner |
-
-**Sunum öncesi öneri:** Demoyu anlatmadan hemen önce **Sıfırla** deyip temiz bir
-başlangıç yapın; böylece önceki denemeler ekranda görünmez.
-
-**Günlük çalışma önerisi:** Stok güncellemelerini bitirdikten sonra **JSON Dışa
-Aktar** ile yedek alın.
