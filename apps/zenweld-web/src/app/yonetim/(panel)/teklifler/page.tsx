@@ -50,7 +50,7 @@ export default function AdminQuotesPage() {
               downloadCsv(
                 quotes.map((q) => ({
                   kod: q.code,
-                  firma: q.companyName,
+                  firma: q.companyName || q.contactName,
                   yetkili: q.contactName,
                   eposta: q.email,
                   telefon: q.phone,
@@ -95,7 +95,7 @@ export default function AdminQuotesPage() {
                 <Badge tone={statusMeta?.tone ?? "grey"}>{statusMeta?.label}</Badge>
                 <Badge tone="outline">{PAYMENT_LABEL[q.paymentPreference]}</Badge>
                 <span className="truncate text-sm font-semibold text-zw-grey-700">
-                  {q.companyName}
+                  {q.companyName || q.contactName}
                 </span>
                 <span className="ml-auto text-xs text-zw-grey-500">
                   {formatDateTime(q.createdAt, "tr")}

@@ -43,13 +43,13 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
   }
 
   const items = [
-    { href: "/hesabim/profil", label: t.account.profile, Icon: UserIcon, roles: ["individual", "business"] },
-    { href: "/hesabim/tekliflerim", label: t.account.myQuotes, Icon: FileText, roles: ["business"] },
-    { href: "/hesabim/siparislerim", label: t.account.myOrders, Icon: Package, roles: ["individual", "business"] },
-    { href: "/hesabim/favorilerim", label: t.account.favourites, Icon: Heart, roles: ["individual", "business"] },
-    { href: "/hesabim/garantilerim", label: t.account.warranties, Icon: ShieldCheck, roles: ["individual", "business"] },
-    { href: "/hesabim/adreslerim", label: t.account.addresses, Icon: MapPin, roles: ["individual", "business"] },
-  ].filter((i) => i.roles.includes(user.role));
+    { href: "/hesabim/profil", label: t.account.profile, Icon: UserIcon },
+    { href: "/hesabim/tekliflerim", label: t.account.myQuotes, Icon: FileText },
+    { href: "/hesabim/siparislerim", label: t.account.myOrders, Icon: Package },
+    { href: "/hesabim/favorilerim", label: t.account.favourites, Icon: Heart },
+    { href: "/hesabim/garantilerim", label: t.account.warranties, Icon: ShieldCheck },
+    { href: "/hesabim/adreslerim", label: t.account.addresses, Icon: MapPin },
+  ];
 
   return (
     <div className="zw-container py-10">

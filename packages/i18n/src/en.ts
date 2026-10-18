@@ -184,8 +184,6 @@ export const en: Dictionary = {
     related: "Related Products",
     priceExVat: "Excl. VAT",
     priceIncVat: "Incl. VAT",
-    deferredNote:
-      "Request a quote from our sales team for deferred payment or payment by cheque.",
     sku: "Product Code",
     model: "Model",
     inStock: "In Stock",

@@ -128,9 +128,6 @@ export function PriceBlock({ product }: { product: Product }) {
           {t.product.campaignEnds.replace("{date}", formatDateTime(endsAt, locale))}
         </p>
       )}
-      <p className="mt-3 rounded-[4px] bg-zw-grey-50 px-3 py-2 text-xs text-zw-grey-600">
-        {t.product.deferredNote}
-      </p>
     </div>
   );
 }

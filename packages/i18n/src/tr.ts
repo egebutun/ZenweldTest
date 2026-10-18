@@ -184,8 +184,6 @@ export const tr = {
     related: "İlgili Ürünler",
     priceExVat: "KDV Hariç",
     priceIncVat: "KDV Dahil",
-    deferredNote:
-      "Vadeli ödeme veya çek ile satın almak için satış ekibimizden teklif alın.",
     sku: "Ürün Kodu",
     model: "Model",
     inStock: "Stokta",

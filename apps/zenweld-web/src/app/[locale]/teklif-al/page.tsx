@@ -136,9 +136,10 @@ export default function QuotePage() {
 
           {step === 1 && (
             <>
-              <FormRow label={t.quote.companyName} required>
+              {/* Bireysel uyede firma unvani istege bagli. */}
+              <FormRow label={t.quote.companyName} required={user?.role !== "individual"}>
                 <Input
-                  required
+                  required={user?.role !== "individual"}
                   value={form.companyName}
                   onChange={(e) => set("companyName", e.target.value)}
                 />

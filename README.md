@@ -61,7 +61,7 @@ Giriş sayfasındaki kartlara tıklayarak formu otomatik doldurabilirsiniz.
 | Rol | E-posta | Şifre | Neler görebilir |
 |---|---|---|---|
 | **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca Zenweld yönetim paneli (ana site `/yonetim`) |
-| **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: online alışveriş, sipariş takibi, favoriler, garanti kayıtları |
+| **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: online alışveriş, sipariş takibi, teklif talepleri, favoriler, garanti kayıtları |
 | **Kurumsal** | `kurumsal@demo.com` | `demo123` | Ana site: online alışveriş (kurumsal fatura), teklif talepleri, vadeli/çek ödeme |
 
 Ana site yalnızca bireysel ve kurumsal üyeleri kabul eder. Bayiler ana sitenin

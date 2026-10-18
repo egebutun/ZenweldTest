@@ -180,14 +180,6 @@ export function Header() {
                       >
                         {t.account.myOrders}
                       </LocaleLink>
-                      {user.role === "business" && (
-                        <LocaleLink
-                          href="/hesabim/tekliflerim"
-                          className="block px-4 py-2 text-sm hover:bg-zw-grey-50"
-                        >
-                          {t.nav.myQuotes}
-                        </LocaleLink>
-                      )}
                       <button
                         onClick={() => {
                           logout();

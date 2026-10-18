@@ -125,7 +125,7 @@ export default function AdminDashboard() {
                 className="flex items-center gap-3 py-2.5 text-sm hover:text-zw-red-600"
               >
                 <span className="font-semibold">{q.code}</span>
-                <span className="truncate text-zw-grey-600">{q.companyName}</span>
+                <span className="truncate text-zw-grey-600">{q.companyName || q.contactName}</span>
                 <span className="ml-auto shrink-0 text-xs text-zw-grey-400">
                   {formatDate(q.createdAt, locale)}
                 </span>
