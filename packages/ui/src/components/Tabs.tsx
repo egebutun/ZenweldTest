@@ -7,11 +7,14 @@ export function Tabs({
   active,
   onChange,
   className = "",
+  size = "md",
 }: {
   tabs: { id: string; label: ReactNode; badge?: ReactNode }[];
   active: string;
   onChange: (id: string) => void;
   className?: string;
+  /** sm: dar alanlar icin (urun sayfasindaki sekmeler) */
+  size?: "sm" | "md";
 }) {
   return (
     <div className={`flex gap-1 overflow-x-auto border-b border-zw-grey-200 ${className}`}>
@@ -24,7 +27,8 @@ export function Tabs({
           type="button"
           onClick={() => onChange(t.id)}
           className={[
-            "shrink-0 border-b-2 px-4 py-3 text-sm font-semibold uppercase tracking-wide transition-colors zw-focus",
+            "shrink-0 border-b-2 font-semibold transition-colors zw-focus",
+            size === "sm" ? "px-2 py-2.5 text-[13px] xl:px-3" : "px-4 py-3 text-sm uppercase tracking-wide",
             active === t.id
               ? "border-zw-red-600 text-zw-ink"
               : "border-transparent text-zw-grey-500 hover:text-zw-ink",

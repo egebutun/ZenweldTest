@@ -179,6 +179,7 @@ export const en: Dictionary = {
     description: "Product Description",
     warranty: "Warranty",
     faq: "Frequently Asked Questions",
+    faqShort: "FAQ",
     manual: "Operating Manual",
     related: "Related Products",
     priceExVat: "Excl. VAT",

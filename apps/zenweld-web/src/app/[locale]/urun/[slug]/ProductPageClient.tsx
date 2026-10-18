@@ -66,8 +66,9 @@ export function ProductPageClient({ slug }: { slug: string }) {
   const tabs = [
     { id: "specs", label: t.product.specs },
     { id: "description", label: t.product.description },
+    ...(product.inTheBox.length > 0 ? [{ id: "box", label: t.product.inTheBox }] : []),
     { id: "warranty", label: t.product.warranty },
-    { id: "faq", label: t.product.faq },
+    { id: "faq", label: t.product.faqShort },
   ];
 
   return (
@@ -98,16 +99,23 @@ export function ProductPageClient({ slug }: { slug: string }) {
         </div>
       </div>
 
-      <div className="zw-container py-8 lg:py-12">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-          <ProductGallery product={product} />
+      <div className="zw-container py-6 lg:py-10">
+        {/* Masaustunde: solda fotograf ve altinda sekmeler, sagda urun bilgisi.
+            Telefonda sira: fotograf, urun bilgisi, sekmeler. Ikinci satir (1fr)
+            sag kolon uzun oldugunda fotografin altinda bosluk kalmasini onler. */}
+        <div className="grid gap-8 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-8">
+          <div className="lg:col-start-1 lg:row-start-1">
+            <ProductGallery product={product} />
+          </div>
 
-          <div>
+          <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
             {/* Urun adi ozel isim: CSS uppercase Turkce yerelde i -> İ cevirir */}
-            <h1 className="font-display text-3xl font-bold leading-tight sm:text-4xl">
+            <h1 className="font-display text-2xl font-bold leading-tight sm:text-3xl">
               {product.name}
             </h1>
-            <p className="mt-3 text-zw-grey-600">{text(product.shortDescription)}</p>
+            <p className="mt-2 text-sm leading-relaxed text-zw-grey-600 sm:text-base">
+              {text(product.shortDescription)}
+            </p>
 
             <div className="mt-4">
               <ProductMeta product={shown} />
@@ -123,9 +131,8 @@ export function ProductPageClient({ slug }: { slug: string }) {
 
             <PriceBlock product={shown} />
             <ProductHighlights product={product} />
-            <InTheBoxList product={product} />
 
-            <div className="mt-8 space-y-3">
+            <div className="mt-6 space-y-3">
               <AddToCart product={product} selection={selection} />
               <WhereToBuyButton product={shown} variantId={variant.variantId} />
             </div>
@@ -134,16 +141,17 @@ export function ProductPageClient({ slug }: { slug: string }) {
             <TrustBadges />
             <SupportCta />
           </div>
-        </div>
 
-        {/* Sekmeler */}
-        <div className="mt-14">
-          <Tabs tabs={tabs} active={tab} onChange={setTab} />
-          <div className="py-8">
+          {/* Sekmeler: Teknik Ozellikler, Aciklama, Kutu Icerigi, Garanti, SSS */}
+          <div className="min-w-0 lg:col-start-1 lg:row-start-2">
+          <Tabs tabs={tabs} active={tab} onChange={setTab} size="sm" />
+          <div className="py-6">
             {tab === "specs" && <SpecTable product={shown} />}
 
+            {tab === "box" && <InTheBoxList product={product} />}
+
             {tab === "description" && (
-              <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-zw-grey-700">
+              <div className="space-y-4 text-sm leading-relaxed text-zw-grey-700">
                 <p>{text(product.description)}</p>
                 {product.manualUrl && (
                   <a
@@ -158,7 +166,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
             )}
 
             {tab === "warranty" && (
-              <div className="max-w-3xl space-y-4 text-sm leading-relaxed text-zw-grey-700">
+              <div className="space-y-4 text-sm leading-relaxed text-zw-grey-700">
                 <p>
                   <strong>
                     {t.product.warrantyMonths.replace(
@@ -190,7 +198,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
             )}
 
             {tab === "faq" && (
-              <div className="max-w-3xl">
+              <div>
                 <Accordion
                   // Tum sorular gosteriliyor; onceden ilk 6 ile sinirliydi.
                   items={db.faqs.map((f) => ({
@@ -202,9 +210,10 @@ export function ProductPageClient({ slug }: { slug: string }) {
               </div>
             )}
           </div>
+          </div>
         </div>
 
-        <div className="mt-14">
+        <div className="mt-12">
           <ProductReviewsSection product={product} />
         </div>
 

@@ -179,6 +179,7 @@ export const tr = {
     description: "Ürün Açıklaması",
     warranty: "Garanti",
     faq: "Sık Sorulan Sorular",
+    faqShort: "SSS",
     manual: "Kullanım Kılavuzu",
     related: "İlgili Ürünler",
     priceExVat: "KDV Hariç",

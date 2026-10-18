@@ -39,18 +39,18 @@ export function ProductGallery({ product }: { product: Product }) {
 
   return (
     <div className="grid gap-3">
-      <div className="aspect-square overflow-hidden rounded-[4px] bg-zw-grey-50">
+      <div className="aspect-[5/4] overflow-hidden rounded-[4px] bg-zw-grey-50">
         <ProductImage
           src={images[active]?.url}
           alt={text(images[active]?.alt) || product.name}
           label={product.name}
           priority
-          className="h-full w-full object-contain p-6"
+          className="h-full w-full object-contain p-4"
         />
       </div>
 
       {images.length > 1 && (
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-5 gap-2">
           {images.map((img, i) => (
             <button
               key={i}
@@ -92,7 +92,7 @@ export function PriceBlock({ product }: { product: Product }) {
   const endsAt = percent > 0 ? product.discount?.endsAt : undefined;
 
   return (
-    <div className="mt-5 border-y border-zw-grey-200 py-5">
+    <div className="mt-4 border-y border-zw-grey-200 py-4">
       {percent > 0 && (
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1 rounded-[3px] bg-zw-red-600 px-2 py-1 text-xs font-bold uppercase tracking-wide text-white">
@@ -110,7 +110,7 @@ export function PriceBlock({ product }: { product: Product }) {
       )}
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span
-          className={`font-display text-4xl font-bold tracking-tight ${
+          className={`font-display text-3xl font-bold tracking-tight ${
             percent > 0 ? "rounded-[4px] bg-zw-red-600 px-3 py-1 text-white" : ""
           }`}
         >
@@ -253,14 +253,12 @@ export function WhereToBuyButton({
 
 /* ---------------------------------------------------------------- */
 
+/** Urun sayfasindaki "Kutu Icerigi" sekmesi. */
 export function InTheBoxList({ product }: { product: Product }) {
-  const t = useT();
   const text = useText();
-  if (product.inTheBox.length === 0) return null;
 
   return (
-    <div className="mt-6">
-      <h2 className="mb-2 text-sm font-semibold text-zw-ink">{t.product.inTheBox}</h2>
+    <div>
       <ul className="space-y-1.5 text-sm text-zw-grey-700">
         {product.inTheBox.map((item, i) => (
           <li key={i} className="flex gap-2">
@@ -304,7 +302,7 @@ export function TrustBadges() {
   ];
 
   return (
-    <div className="mt-8 grid grid-cols-1 gap-4 rounded-[4px] bg-zw-grey-100 px-5 py-5 sm:grid-cols-2">
+    <div className="mt-6 grid grid-cols-1 gap-4 rounded-[4px] bg-zw-grey-100 px-5 py-4 sm:grid-cols-2">
       {items.map(({ Icon, label }) => (
         <div key={label} className="flex items-center gap-3 text-sm font-medium text-zw-ink">
           <Icon size={22} className="shrink-0 text-zw-grey-600" />
