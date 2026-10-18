@@ -142,3 +142,12 @@ kategori filtresinden kaldırıldı. Ürün Seçici soruları ve aramadaki yönt
 eşleşmesi hâlâ ürünlerdeki eski `processes` verisine bakıyor; panelden eklenen
 yeni ürünlerde bu alan boş kalır. Ürün Seçici'nin soruları ve eşleştirme mantığı
 yeniden kurulunca `processes` alanı tamamen kaldırılmalı.
+
+## Ürün grupları (Kaynak Makineleri, Lazer Makineleri …)
+
+1. Bölüm sayfasındaki (`/ekipmanlar` vb.) grup kartının görseli şimdilik
+   gruptaki ilk ürünün fotoğrafı. Gruba özel görsel seçilebilsin.
+2. Grup sayfasının açıklaması kategorilerin adlarından otomatik üretiliyor;
+   arama motoru için gruba özel bir tanıtım metni yazılabilsin.
+3. Grup ve kategoriler panelden yönetilemiyor (ekleme, ad, sıra); şu an
+   `packages/data/src/seed/categories.seed.ts` dosyasında.

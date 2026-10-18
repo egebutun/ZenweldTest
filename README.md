@@ -202,8 +202,8 @@ ZenweldTest/
             ├── app/(site)/                     Sitenin sayfaları (adreste görünmez)
             │   ├── page.tsx                    Anasayfa
             │   ├── ekipmanlar|guvenlik|aksesuarlar|dolgu-metalleri/
-            │   │   ├── page.tsx                Bölüm listeleme
-            │   │   └── [kategori]/page.tsx     Kategori listeleme
+            │   │   ├── page.tsx                Bölüm: grupların resimli kartları
+            │   │   └── [kategori]/page.tsx     Grup (ör. kaynak-makineleri) veya kategori listeleme
             │   ├── urun/[slug]/page.tsx        ÜRÜN DETAY
             │   ├── arama/page.tsx
             │   ├── yetkili-bayi-ve-servis-agi/ Bayi bulucu (harita)
@@ -241,7 +241,8 @@ ZenweldTest/
             └── lib/
                 ├── search/    search-client · tr-normalize · synonyms · use-search
                 ├── page-meta.ts      Sabit sayfaların arama başlıkları (tek tablo)
-                ├── section-routes.tsx Ürün bölümü/kategori sayfalarının ortak kodu
+                ├── section-routes.tsx Ürün bölümü/grup/kategori sayfalarının ortak kodu
+                ├── catalog.ts        Katalog seviyeleri (bölüm › grup › kategori) ve konum satırı
                 ├── i18n-client.tsx · seo.ts · geo.ts · menu.ts
                 └── quote-list.tsx · favourites.tsx
 ```
@@ -320,7 +321,10 @@ Sitede aşağıdakiler hazırdır:
 
 - **Sayfa başlıkları ve açıklamaları** — ürün, kategori, blog ve içerik sayfalarının
   her biri kendi başlığını ve açıklamasını üretir
-- **`/sitemap.xml`** — ürün, kategori ve blog sayfaları `packages/data` içindeki
+- **Dört seviyeli katalog** — Bölüm (`/ekipmanlar`, grup kartları) › Grup
+  (`/ekipmanlar/kaynak-makineleri`) › Kategori (`/ekipmanlar/mig-gazalti-...`) › Ürün.
+  Her seviyede görünür konum satırı ve `BreadcrumbList` yapısal verisi var.
+- **`/sitemap.xml`** — ürün, grup, kategori ve blog sayfaları `packages/data` içindeki
   veriden otomatik üretilir; yeni ürün eklendiğinde kendiliğinden güncellenir
 - **`/robots.txt`** — site haritasını bildirir (site aramaya açıkken); bkz. aşağıdaki *Arama motorlarına açık / kapalı*
 - **`canonical`** — her sayfa kendi adresini asıl adres olarak bildirir

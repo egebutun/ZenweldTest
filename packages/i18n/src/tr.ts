@@ -23,6 +23,7 @@ export const tr = {
     yes: "Evet",
     no: "Hayır",
     viewAll: "Tümünü Gör",
+    viewProducts: "Ürünleri İncele",
     noResults: "Sonuç bulunamadı.",
     km: "km",
   },

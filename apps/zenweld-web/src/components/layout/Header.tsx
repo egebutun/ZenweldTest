@@ -79,24 +79,43 @@ export function Header() {
           {/* Dar masaustunde (1024-1535px) yer acmak icin ok isareti gizlenir;
               1280px altinda basliklar sikisir, arama kutusu simgeye kuculur. */}
           <nav className="ml-2 hidden items-center lg:flex xl:ml-4 xl:gap-1">
-            {menus.map((menu) => (
-              <button
-                key={menu.id}
-                onMouseEnter={() => setOpenMenu(menu.id)}
-                onClick={() => setOpenMenu(openMenu === menu.id ? null : menu.id)}
-                className={`flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-sm xl:px-3 font-semibold transition-colors zw-focus ${
-                  openMenu === menu.id
-                    ? "bg-zw-grey-100 text-zw-ink"
-                    : "text-zw-grey-700 hover:text-zw-ink"
-                }`}
-              >
-                {menu.label}
-                <ChevronDown
-                  size={16}
-                  className={`hidden transition-transform 2xl:block ${openMenu === menu.id ? "rotate-180" : ""}`}
-                />
-              </button>
-            ))}
+            {menus.map((menu) => {
+              const className = `flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-sm xl:px-3 font-semibold transition-colors zw-focus ${
+                openMenu === menu.id
+                  ? "bg-zw-grey-100 text-zw-ink"
+                  : "text-zw-grey-700 hover:text-zw-ink"
+              }`;
+              const content = (
+                <>
+                  {menu.label}
+                  <ChevronDown
+                    size={16}
+                    className={`hidden transition-transform 2xl:block ${openMenu === menu.id ? "rotate-180" : ""}`}
+                  />
+                </>
+              );
+              // Urun menulerinin basligi bolum sayfasina gider; ustune gelince menu acilir.
+              return menu.href ? (
+                <Link
+                  key={menu.id}
+                  href={menu.href}
+                  onMouseEnter={() => setOpenMenu(menu.id)}
+                  onClick={() => setOpenMenu(null)}
+                  className={className}
+                >
+                  {content}
+                </Link>
+              ) : (
+                <button
+                  key={menu.id}
+                  onMouseEnter={() => setOpenMenu(menu.id)}
+                  onClick={() => setOpenMenu(openMenu === menu.id ? null : menu.id)}
+                  className={className}
+                >
+                  {content}
+                </button>
+              );
+            })}
           </nav>
 
           <div className="ml-auto flex items-center gap-1 sm:gap-2">

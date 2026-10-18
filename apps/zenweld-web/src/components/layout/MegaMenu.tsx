@@ -10,7 +10,7 @@ import type { TopMenu } from "@/lib/menu";
 /**
  * MEGA MENU
  *
- * Uc bolmeli: solda gruplar, ortada o grubun kategorileri (alt alta),
+ * Uc bolmeli: solda gruplar (tiklaninca grup sayfasi), ortada o grubun kategorileri (alt alta),
  * sagda secili kategorinin ilk 9 urunu 3x3 kart izgarasinda. Sag ustteki
  * baglanti kategorinin tum urunlerine goturur; urun sayisi 9'u asiyorsa
  * toplam sayi da gosterilir.
@@ -46,21 +46,40 @@ export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () =
         {/* 1. bolme — gruplar */}
         {hasGroups && (
           <div className="border-r border-zw-grey-200 pr-4">
-            {menu.columns.map((col, i) => (
-              <button
-                key={col.label}
-                onMouseEnter={() => selectColumn(i)}
-                onFocus={() => selectColumn(i)}
-                className={`flex w-full items-center justify-between rounded-[4px] px-4 py-3 text-left text-[15px] font-semibold transition-colors ${
-                  i === activeColumn
-                    ? "bg-zw-grey-100 text-zw-ink"
-                    : "text-zw-grey-700 hover:text-zw-ink"
-                }`}
-              >
-                {col.label}
-                {i === activeColumn && <ChevronRight size={16} />}
-              </button>
-            ))}
+            {menu.columns.map((col, i) => {
+              const className = `flex w-full items-center justify-between rounded-[4px] px-4 py-3 text-left text-[15px] font-semibold transition-colors ${
+                i === activeColumn
+                  ? "bg-zw-grey-100 text-zw-ink"
+                  : "text-zw-grey-700 hover:text-zw-ink"
+              }`;
+              const content = (
+                <>
+                  {col.label}
+                  {i === activeColumn && <ChevronRight size={16} />}
+                </>
+              );
+              return col.href ? (
+                <Link
+                  key={col.label}
+                  href={col.href}
+                  onClick={onNavigate}
+                  onMouseEnter={() => selectColumn(i)}
+                  onFocus={() => selectColumn(i)}
+                  className={className}
+                >
+                  {content}
+                </Link>
+              ) : (
+                <button
+                  key={col.label}
+                  onMouseEnter={() => selectColumn(i)}
+                  onFocus={() => selectColumn(i)}
+                  className={className}
+                >
+                  {content}
+                </button>
+              );
+            })}
           </div>
         )}
 

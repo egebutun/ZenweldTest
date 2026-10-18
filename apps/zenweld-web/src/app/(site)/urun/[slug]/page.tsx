@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { categories, products } from "@zenweld/data";
 import { JsonLd } from "@/components/common/JsonLd";
+import { catalogTrail } from "@/lib/catalog";
 import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical, productJsonLd } from "@/lib/seo";
 import { ProductPageClient } from "./ProductPageClient";
 
@@ -80,7 +81,6 @@ export default async function ProductPage({
   }
 
   const category = categories.find((c) => c.slug === product.categorySlug);
-  const sectionLabel = product.section.replace("-", " ");
 
   return (
     <>
@@ -88,15 +88,10 @@ export default async function ProductPage({
       <JsonLd
         data={breadcrumbJsonLd([
           { name: SITE_NAME, path: "/" },
-          { name: sectionLabel, path: `/${product.section}` },
-          ...(category
-            ? [
-                {
-                  name: category.name,
-                  path: `/${product.section}/${category.slug}`,
-                },
-              ]
-            : []),
+          ...catalogTrail(product.section, { categorySlug: product.categorySlug }).map((c) => ({
+            name: c.label,
+            path: c.href,
+          })),
           { name: product.name, path: `/urun/${product.slug}` },
         ])}
       />

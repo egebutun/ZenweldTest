@@ -13,18 +13,21 @@ import {
   type FilterState,
 } from "./ProductFilters";
 import { useT } from "@/lib/i18n-client";
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
+import { catalogTrail, findGroup, groupCategories, groupDescription } from "@/lib/catalog";
 
-interface ListingProps {
-  section: TopLevelSection;
-  categorySlug?: string;
-}
+type ListingProps = { section: TopLevelSection } & (
+  | { groupSlug: string; categorySlug?: undefined }
+  | { categorySlug: string; groupSlug?: undefined }
+);
 
 /**
- * Urun listesi: bolum sayfasi (/ekipmanlar) ya da kategori sayfasi
- * (/ekipmanlar/mma-...). Kategori sayfasinda ayni gruptaki diger
- * kategoriler gosterilmez; her kategorinin ileride kendi filtreleri olacak.
+ * Urun listesi: grup sayfasi (/ekipmanlar/kaynak-makineleri, gruptaki tum
+ * kategorilerin urunleri) ya da kategori sayfasi (/ekipmanlar/mma-...).
+ * Kategori sayfasinda ayni gruptaki diger kategoriler gosterilmez; her
+ * kategorinin ileride kendi filtreleri olacak.
  */
-export function CategoryListing({ section, categorySlug }: ListingProps) {
+export function CategoryListing({ section, groupSlug, categorySlug }: ListingProps) {
   const t = useT();
   const db = useDatabase();
   const now = useNow();
@@ -35,51 +38,40 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
     () => (categorySlug ? db.categories.find((c) => c.slug === categorySlug) : undefined),
     [db, categorySlug],
   );
-
-  // Kategoriler once ait olduklari grubun sirasina, sonra kendi siralarina gore.
-  const sectionCategories = useMemo(() => {
-    const groupOrder = new Map(db.categoryGroups.map((g) => [g.slug, g.order]));
-    return db.categories
-      .filter((c) => c.section === section)
-      .sort(
-        (a, b) =>
-          (groupOrder.get(a.group) ?? 99) - (groupOrder.get(b.group) ?? 99) ||
-          a.order - b.order,
-      );
-  }, [db, section]);
-
-  const scoped = useMemo(
-    () =>
-      listProducts(db).filter(
-        (p) =>
-          p.section === section &&
-          (categorySlug
-            ? p.categorySlug === categorySlug
-            : sectionCategories.some((c) => c.slug === p.categorySlug)),
-      ),
-    [db, section, categorySlug, sectionCategories],
+  const group = useMemo(
+    () => (groupSlug ? findGroup(section, groupSlug, db.categoryGroups) : undefined),
+    [db, section, groupSlug],
   );
+
+  // Grup sayfasinda urunler kategorilerin menudeki sirasiyla gelir.
+  const scoped = useMemo(() => {
+    const slugs = group
+      ? groupCategories(group, db.categories).map((c) => c.slug)
+      : [categorySlug ?? ""];
+    return listProducts(db)
+      .filter((p) => p.section === section && slugs.includes(p.categorySlug))
+      .sort((a, b) => slugs.indexOf(a.categorySlug) - slugs.indexOf(b.categorySlug));
+  }, [db, section, group, categorySlug]);
 
 
   const filtered = useMemo(() => applyFilters(scoped, filters, now), [scoped, filters, now]);
 
-  const sectionTitles: Record<TopLevelSection, string> = {
-    ekipmanlar: t.nav.equipment,
-    guvenlik: t.nav.safety,
-    aksesuarlar: t.nav.accessories,
-    "dolgu-metalleri": t.nav.fillerMetals,
-  };
-
-  const title = category ? category.name : sectionTitles[section];
-  const description = category
-    ? category.description
-    : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.";
+  const title = group?.name ?? category?.name ?? "";
+  const description = group
+    ? groupDescription(group, db.categories)
+    : (category?.description ?? "");
+  const trail = catalogTrail(
+    section,
+    { groupSlug, categorySlug },
+    { categories: db.categories, groups: db.categoryGroups },
+  ).slice(0, -1);
 
   return (
     <>
       <div className="border-b border-zw-grey-200 bg-zw-grey-50">
-        <div className="zw-container py-10">
-          <h1 className="font-display text-4xl font-bold uppercase sm:text-5xl">{title}</h1>
+        <div className="zw-container pb-10 pt-4">
+          <Breadcrumbs trail={trail} current={title} />
+          <h1 className="mt-6 font-display text-4xl font-bold uppercase sm:text-5xl">{title}</h1>
           <p className="mt-3 max-w-2xl text-zw-grey-600">{description}</p>
         </div>
       </div>

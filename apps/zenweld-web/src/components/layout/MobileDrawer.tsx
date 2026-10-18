@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { ZenweldLogo } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
@@ -37,13 +37,32 @@ export function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: ()
               </button>
               {expanded === menu.id && (
                 <div className="bg-zw-grey-50 pb-2">
+                  {menu.href && (
+                    <Link
+                      href={menu.href}
+                      onClick={onClose}
+                      className="block px-4 pb-1 pt-3 text-sm font-semibold text-zw-red-600"
+                    >
+                      {t.nav.seeAll}
+                    </Link>
+                  )}
                   {menu.columns.map((col) => (
                     <div key={col.label} className="px-4 py-2">
-                      {col.label && (
-                        <div className="mb-1 text-[11px] font-bold uppercase tracking-wider text-zw-grey-500">
-                          {col.label}
-                        </div>
-                      )}
+                      {col.label &&
+                        (col.href ? (
+                          <Link
+                            href={col.href}
+                            onClick={onClose}
+                            className="mb-1 flex items-center gap-0.5 text-[11px] font-bold uppercase tracking-wider text-zw-grey-600"
+                          >
+                            {col.label}
+                            <ChevronRight size={13} />
+                          </Link>
+                        ) : (
+                          <div className="mb-1 text-[11px] font-bold uppercase tracking-wider text-zw-grey-500">
+                            {col.label}
+                          </div>
+                        ))}
                       {col.links.map((link) => (
                         <Link
                           key={link.href}

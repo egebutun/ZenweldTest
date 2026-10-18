@@ -1,79 +1,106 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { categories, type TopLevelSection } from "@zenweld/data";
+import { categories, categoryGroups, type TopLevelSection } from "@zenweld/data";
 import { CategoryListing } from "@/components/product/CategoryListing";
-import { absoluteUrl, canonical } from "@/lib/seo";
+import { SectionHub } from "@/components/product/SectionHub";
+import { JsonLd } from "@/components/common/JsonLd";
+import {
+  SECTION_DESCRIPTIONS,
+  SECTION_TITLES,
+  catalogTrail,
+  findGroup,
+  groupDescription,
+  type Crumb,
+} from "@/lib/catalog";
+import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical } from "@/lib/seo";
 
 /**
- * URUN BOLUMU VE KATEGORI SAYFALARI — ORTAK KOD
+ * URUN BOLUMU, GRUP VE KATEGORI SAYFALARI — ORTAK KOD
  *
  * Dort bolumun (ekipmanlar, guvenlik, aksesuarlar, dolgu-metalleri) sayfa
  * dosyalari yalnizca bu fonksiyonlari cagirir:
  *
- *   const route = sectionRoute("ekipmanlar");          // /ekipmanlar
- *   const route = categoryRoute("ekipmanlar");         // /ekipmanlar/[kategori]
+ *   const route = sectionRoute("ekipmanlar");    // /ekipmanlar (grup kartlari)
+ *   const route = categoryRoute("ekipmanlar");   // /ekipmanlar/[kategori] (grup veya kategori)
  */
-const SECTION_META: Record<TopLevelSection, [title: string, description: string]> = {
-  ekipmanlar: ["Ekipmanlar", "Zenweld ekipmanlar ürünlerini inceleyin, size en yakın yetkili bayiden satın alın."],
-  guvenlik: ["Güvenlik Ekipmanları", "Zenweld güvenlik ekipmanları ürünlerini inceleyin, size en yakın yetkili bayiden satın alın."],
-  aksesuarlar: ["Aksesuarlar", "Zenweld aksesuarlar ürünlerini inceleyin, size en yakın yetkili bayiden satın alın."],
-  "dolgu-metalleri": ["Dolgu Metalleri", "Zenweld dolgu metalleri ürünlerini inceleyin, size en yakın yetkili bayiden satın alın."],
-};
 
 type CategoryParams = { params: Promise<{ kategori: string }> };
 
-/** /<bolum> sayfasi. */
+const metadata = (path: string, title: string, description: string): Metadata => ({
+  title,
+  description,
+  alternates: canonical(path),
+  openGraph: { title, description, url: absoluteUrl(path) },
+});
+
+/** Konum satirinin arama motoru icin yapisal hali. */
+const trailJsonLd = (trail: Crumb[]) =>
+  breadcrumbJsonLd([
+    { name: SITE_NAME, path: "/" },
+    ...trail.map((c) => ({ name: c.label, path: c.href })),
+  ]);
+
+/** /<bolum> sayfasi: bolumun gruplari resimli kartlar halinde. */
 export function sectionRoute(section: TopLevelSection) {
   return {
     generateMetadata(): Metadata {
-      const [title, description] = SECTION_META[section];
-      return {
-        title,
-        description,
-        alternates: canonical(`/${section}`),
-        openGraph: { title, description, url: absoluteUrl(`/${section}`) },
-      };
+      return metadata(`/${section}`, SECTION_TITLES[section], SECTION_DESCRIPTIONS[section]);
     },
     Page() {
-      return <CategoryListing section={section} />;
+      return (
+        <>
+          <JsonLd data={trailJsonLd(catalogTrail(section))} />
+          <SectionHub section={section} />
+        </>
+      );
     },
   };
 }
 
-/** /<bolum>/[kategori] sayfasi. */
+/** /<bolum>/[kategori] sayfasi: adres bir grubu ya da bir kategoriyi gosterir. */
 export function categoryRoute(section: TopLevelSection) {
-  const findCategory = (kategori: string) =>
-    categories.find((c) => c.section === section && c.slug === kategori);
+  const findCategory = (slug: string) =>
+    categories.find((c) => c.section === section && c.slug === slug);
 
   return {
     generateStaticParams() {
-      return categories
-        .filter((category) => category.section === section)
-        .map((category) => ({ kategori: category.slug }));
+      return [
+        ...categoryGroups.filter((g) => g.section === section),
+        ...categories.filter((c) => c.section === section),
+      ].map((x) => ({ kategori: x.slug }));
     },
 
     async generateMetadata({ params }: CategoryParams): Promise<Metadata> {
-      const category = findCategory((await params).kategori);
-      if (!category) return { title: "Kategori" };
-
-      const path = `/${section}/${category.slug}`;
-      const title = category.name;
-      const description = category.description;
-      return {
-        title,
-        description,
-        alternates: canonical(path),
-        openGraph: { title, description, url: absoluteUrl(path) },
-      };
+      const slug = (await params).kategori;
+      const group = findGroup(section, slug);
+      if (group) return metadata(`/${section}/${slug}`, group.name, groupDescription(group));
+      const category = findCategory(slug);
+      if (category) return metadata(`/${section}/${slug}`, category.name, category.description);
+      return { title: "Kategori" };
     },
 
     async Page({ params }: CategoryParams) {
-      const category = findCategory((await params).kategori);
+      const slug = (await params).kategori;
+      const group = findGroup(section, slug);
+      const category = group ? undefined : findCategory(slug);
 
-      // Bilinmeyen veya kaldirilmis kategori adresi 404 doner.
-      if (!category) notFound();
+      // Bilinmeyen veya kaldirilmis adres 404 doner.
+      if (!group && !category) notFound();
 
-      return <CategoryListing section={section} categorySlug={category.slug} />;
+      const trail = catalogTrail(
+        section,
+        group ? { groupSlug: group.slug } : { categorySlug: category!.slug },
+      );
+      return (
+        <>
+          <JsonLd data={trailJsonLd(trail)} />
+          {group ? (
+            <CategoryListing section={section} groupSlug={group.slug} />
+          ) : (
+            <CategoryListing section={section} categorySlug={category!.slug} />
+          )}
+        </>
+      );
     },
   };
 }

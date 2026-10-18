@@ -33,14 +33,18 @@ export interface MenuLink {
 const MENU_PRODUCT_LIMIT = 6;
 
 export interface MenuColumn {
-  /** Sol kolondaki grup (Unimig'deki "Welding Machines" gibi). Tiklanmaz; kategorileri acar. */
+  /** Sol kolondaki grup ("Kaynak Makineleri" gibi). Ustune gelince kategorileri acar. */
   label: string;
+  /** Urun menulerinde grup sayfasi: /ekipmanlar/kaynak-makineleri */
+  href?: string;
   links: MenuLink[];
 }
 
 export interface TopMenu {
   id: string;
   label: string;
+  /** Urun menulerinde bolum sayfasi: /ekipmanlar */
+  href?: string;
   columns: MenuColumn[];
 }
 
@@ -65,8 +69,10 @@ export function useMainMenu(): TopMenu[] {
       return {
         id,
         label: t.nav[labelKey],
+        href: `/${id}`,
         columns: groups.map((group) => ({
           label: group.name,
+          href: `/${id}/${group.slug}`,
           links: db.categories
             .filter((c) => c.section === id && c.group === group.slug)
             .sort((a, b) => a.order - b.order)

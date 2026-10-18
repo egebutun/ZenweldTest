@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
-import { categories, products, events, news } from "@zenweld/data";
+import { categories, categoryGroups, products, events, news } from "@zenweld/data";
 import { getSiteUrl } from "@/lib/seo";
 
 /**
  * /sitemap.xml
  *
- * Urun, kategori ve blog sayfalari packages/data icindeki veriden otomatik
+ * Urun, grup, kategori ve blog sayfalari packages/data icindeki veriden otomatik
  * uretilir; yeni urun eklendiginde site haritasi kendiliginden guncellenir.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -50,6 +50,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   };
 
   staticPaths.forEach((p) => push(p.path, p.priority, p.freq));
+
+  categoryGroups.forEach((group) => {
+    push(`/${group.section}/${group.slug}`, 0.8, "weekly");
+  });
 
   categories.forEach((category) => {
     push(`/${category.section}/${category.slug}`, 0.8, "weekly");

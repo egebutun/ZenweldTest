@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { notFound } from "next/navigation";
-import { ChevronRight, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { findProductBySlug, listProducts, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
 import Link from "next/link";
@@ -25,6 +25,8 @@ import { VariantPicker } from "@/components/product/VariantPicker";
 import { ProductReviewsSection } from "@/components/product/ProductReviewsSection";
 import { resolveVariant, type VariantSelection } from "@/lib/variants";
 import { useT } from "@/lib/i18n-client";
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
+import { catalogTrail } from "@/lib/catalog";
 
 export function ProductPageClient({ slug }: { slug: string }) {
   const t = useT();
@@ -40,11 +42,6 @@ export function ProductPageClient({ slug }: { slug: string }) {
       .filter((p) => p.id !== product.id && p.categorySlug === product.categorySlug)
       .slice(0, 4);
   }, [product, db]);
-
-  const category = useMemo(
-    () => db.categories.find((c) => c.slug === product?.categorySlug),
-    [product, db],
-  );
 
   if (!product) notFound();
 
@@ -72,27 +69,15 @@ export function ProductPageClient({ slug }: { slug: string }) {
     <>
       {/* Breadcrumb */}
       <div className="border-b border-zw-grey-200 bg-zw-grey-50">
-        <div className="zw-container flex items-center gap-1.5 overflow-x-auto py-3 text-xs text-zw-grey-500">
-          <Link href="/" className="shrink-0 hover:text-zw-ink">
-            {t.common.brand}
-          </Link>
-          <ChevronRight size={13} className="shrink-0" />
-          <Link href={`/${product.section}`} className="shrink-0 capitalize hover:text-zw-ink">
-            {product.section.replace("-", " ")}
-          </Link>
-          {category && (
-            <>
-              <ChevronRight size={13} className="shrink-0" />
-              <Link
-                href={`/${product.section}/${category.slug}`}
-                className="shrink-0 hover:text-zw-ink"
-              >
-                {category.name}
-              </Link>
-            </>
-          )}
-          <ChevronRight size={13} className="shrink-0" />
-          <span className="shrink-0 font-semibold text-zw-ink">{product.name}</span>
+        <div className="zw-container py-3">
+          <Breadcrumbs
+            trail={catalogTrail(
+              product.section,
+              { categorySlug: product.categorySlug },
+              { categories: db.categories, groups: db.categoryGroups },
+            )}
+            current={product.name}
+          />
         </div>
       </div>
 
