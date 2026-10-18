@@ -7,6 +7,7 @@ import { listDealers, listProducts, registerWarranty, useDatabase } from "@zenwe
 import { Alert, Button, Checkbox, FormRow, Input, Select } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useT } from "@/lib/i18n-client";
+import { KvkkNotice } from "@/components/legal/LegalLink";
 
 /**
  * GARANTI KAYDI
@@ -137,6 +138,8 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
         checked={form.extended}
         onChange={(e) => set("extended", e.target.checked)}
       />
+
+      <KvkkNotice />
 
       <Button type="submit" size="lg" fullWidth>
         {t.warranty.submit}

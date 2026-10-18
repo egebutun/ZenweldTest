@@ -7,6 +7,7 @@ import { useAuth } from "@zenweld/auth";
 import { ProductReviews } from "@zenweld/ui";
 import { useLocale, useT } from "@/lib/i18n-client";
 import { optimizeImageFile } from "@zenweld/utils";
+import { KvkkNotice } from "@/components/legal/LegalLink";
 
 /**
  * Urun sayfasindaki degerlendirme bolumu.
@@ -31,6 +32,7 @@ export function ProductReviewsSection({ product }: { product: Product }) {
       locale={locale}
       defaultName={user ? `${user.firstName} ${user.lastName}`.trim() : ""}
       texts={t.reviews}
+      notice={<KvkkNotice />}
       onSubmit={(input) =>
         createReview({
           productId: product.id,

@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { MessageCircle, Send, X } from "lucide-react";
 import type { Product } from "@zenweld/data";
 import { useAuth } from "@zenweld/auth";
-import { Button, Checkbox, Input, Textarea } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
+import { Button, Input, Textarea } from "@zenweld/ui";
 import { useLocale, useT } from "@/lib/i18n-client";
 import { onOpenSupportChat } from "@/lib/support-chat";
+import { KvkkNotice } from "@/components/legal/LegalLink";
 
 /**
  * URUN DESTEK SOHBETI
@@ -46,7 +46,6 @@ export function ProductSupportChat({ product }: { product: Product }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [consent, setConsent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -89,7 +88,6 @@ export function ProductSupportChat({ product }: { product: Product }) {
 
     if (!question.trim()) return setError(t.support.chatErrorEmpty);
     if (!email.trim() && !phone.trim()) return setError(t.support.chatErrorContact);
-    if (!consent) return setError(t.support.chatErrorConsent);
 
     setSending(true);
     setMessages((m) => [...m, { from: "user", text: question.trim() }]);
@@ -217,21 +215,7 @@ export function ProductSupportChat({ product }: { product: Product }) {
                 </div>
               )}
 
-              <div className="text-[11px] leading-snug text-zw-grey-600">
-                <Checkbox
-                  checked={consent}
-                  onChange={(e) => setConsent(e.target.checked)}
-                  label={t.support.chatConsent}
-                />
-                <LocaleLink
-                  href="/yasal/kvkk"
-                target="_blank"
-                rel="noopener noreferrer"
-                  className="mt-1 ml-6 block font-semibold text-zw-red-600 underline"
-                >
-                  {t.support.chatConsentLink}
-                </LocaleLink>
-              </div>
+              <KvkkNotice className="text-[11px]" />
 
               <Button type="submit" fullWidth disabled={sending} leftIcon={<Send size={16} />}>
                 {sending ? t.support.chatSending : t.support.chatSend}

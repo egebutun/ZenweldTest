@@ -5,10 +5,11 @@ import { Check, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { createQuote, listProducts, useDatabase } from "@zenweld/store";
 import type { PaymentPreference } from "@zenweld/data";
-import { Alert, Badge, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
+import { Alert, Badge, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useT } from "@/lib/i18n-client";
 import { useQuoteList } from "@/lib/quote-list";
+import { KvkkNotice } from "@/components/legal/LegalLink";
 
 const STEPS = 4;
 
@@ -22,7 +23,6 @@ export default function QuotePage() {
   const [code, setCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [addProductId, setAddProductId] = useState("");
-  const [kvkk, setKvkk] = useState(false);
 
   const [form, setForm] = useState({
     companyName: user?.companyName ?? "",
@@ -79,10 +79,6 @@ export default function QuotePage() {
     if (quoteList.items.length === 0) {
       setError(t.quote.emptyList);
       setStep(2);
-      return;
-    }
-    if (!kvkk) {
-      setError("Devam etmek için KVKK aydınlatma metnini onaylamalısınız.");
       return;
     }
 
@@ -369,16 +365,7 @@ export default function QuotePage() {
                 )}
               </div>
 
-              <Checkbox
-                label={
-                  <>
-                    KVKK aydınlatma metnini okudum ve kişisel verilerimin işlenmesini kabul
-                    ediyorum.
-                  </>
-                }
-                checked={kvkk}
-                onChange={(e) => setKvkk(e.target.checked)}
-              />
+              <KvkkNotice className="mt-4" />
             </div>
           )}
         </div>

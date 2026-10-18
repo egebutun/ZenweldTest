@@ -15,6 +15,7 @@ import { addAddress, addressesForUser, getShopSettings, placeOrder, useDatabase 
 import { Alert, Button, EmptyState, FormRow, Input, Modal, Textarea } from "@zenweld/ui";
 import { formatPrice } from "@zenweld/utils";
 import { LocaleLink } from "@/components/common/LocaleLink";
+import { KvkkNotice } from "@/components/legal/LegalLink";
 import { BankAccounts } from "@/components/shop/BankAccounts";
 import { CardPayment, EMPTY_CARD, type CardDraft } from "@/components/shop/CardPayment";
 import {
@@ -469,6 +470,7 @@ export default function CheckoutPage() {
                 {t.checkout.consentAfter}
               </span>
             </label>
+            <KvkkNotice className="mt-2" />
 
             {error && (
               <div className="mt-4">

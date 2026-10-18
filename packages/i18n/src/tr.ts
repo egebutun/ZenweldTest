@@ -250,9 +250,6 @@ export const tr = {
     email: "E-posta",
     phone: "Telefon",
     message: "Eklemek İstedikleriniz",
-    consent: "Başvurumun değerlendirilmesi için bilgilerimin işlenmesini kabul ediyorum.",
-    consentLink: "KVKK Aydınlatma Metni",
-    errorConsent: "Devam etmek için onay kutusunu işaretleyin.",
     sending: "Gönderiliyor…",
     send: "Gönder",
     backHome: "Anasayfaya Dön",
@@ -416,13 +413,9 @@ export const tr = {
     chatSend: "Gönder",
     chatSending: "Gönderiliyor…",
     chatAnswer: "Destek ekibimiz size en kısa sürede dönüş yapacaktır. İyi günler dileriz.",
-    chatConsent:
-      "Sorumu yanıtlayabilmeniz için iletişim bilgilerimin işlenmesini kabul ediyorum.",
-    chatConsentLink: "KVKK Aydınlatma Metni",
     chatMemberNote: "Yanıtımız hesabınızdaki {contact} adresine iletilecek.",
     chatErrorEmpty: "Lütfen sorunuzu yazın.",
     chatErrorContact: "Size dönebilmemiz için e-posta veya telefon girin.",
-    chatErrorConsent: "Devam etmek için onay kutusunu işaretleyin.",
     chatMailFallback:
       "Mesajınız alındı. Acele bir durumsa info@zenweld.com adresine de yazabilirsiniz.",
     faqTitle: "Sık Sorulan Sorular",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { BadgeCheck, ImagePlus, Trash2 } from "lucide-react";
 import { StarRating } from "./StarRating";
 import { Button } from "./Button";
@@ -61,6 +61,7 @@ export function ProductReviews({
   defaultName = "",
   onSubmit,
   onPickMedia,
+  notice,
 }: {
   items: ReviewItem[];
   average: number;
@@ -76,6 +77,8 @@ export function ProductReviews({
   }) => void;
   /** Dosya secildiginde cagrilir; kucultme/donusturme cagiranda yapilir. */
   onPickMedia?: (files: FileList | null, add: (m: ReviewMediaInput) => void) => void;
+  /** Gonder dugmesinin ustundeki bilgilendirme (KVKK notu gibi). */
+  notice?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(0);
@@ -230,6 +233,8 @@ export function ProductReviews({
               )}
             </div>
           )}
+
+          {notice}
 
           <div className="flex gap-3">
             <Button type="submit">{texts.submit}</Button>

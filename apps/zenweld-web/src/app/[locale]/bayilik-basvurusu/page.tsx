@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { CheckCircle2, Handshake } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
+import { Alert, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
+import { KvkkNotice } from "@/components/legal/LegalLink";
 import { PageHero } from "@/components/common/PageShell";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { useT } from "@/lib/i18n-client";
@@ -25,7 +26,6 @@ export default function DealerApplicationPage() {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [consent, setConsent] = useState(false);
 
   const [form, setForm] = useState({
     company: "",
@@ -48,7 +48,6 @@ export default function DealerApplicationPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!consent) return setError(t.dealerApply.errorConsent);
 
     setSending(true);
     try {
@@ -157,21 +156,7 @@ export default function DealerApplicationPage() {
               </div>
             </div>
 
-            <div className="rounded-[6px] border border-zw-grey-200 bg-zw-grey-50 p-5">
-              <Checkbox
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-                label={t.dealerApply.consent}
-              />
-              <LocaleLink
-                href="/yasal/kvkk"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 ml-6 block text-xs font-semibold text-zw-red-600 underline"
-              >
-                {t.dealerApply.consentLink}
-              </LocaleLink>
-            </div>
+            <KvkkNotice />
 
             <Button type="submit" size="lg" disabled={sending} leftIcon={<Handshake size={18} />}>
               {sending ? t.dealerApply.sending : t.dealerApply.send}
