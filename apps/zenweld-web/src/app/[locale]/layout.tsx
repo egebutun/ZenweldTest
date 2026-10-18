@@ -13,6 +13,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { DemoRibbon } from "@/components/layout/DemoRibbon";
 import { WelcomeGate } from "@/components/layout/WelcomeGate";
+import { CookieBanner } from "@/components/layout/CookieBanner";
 
 /** Android Chrome ve iOS Safari tarayıcı çubuğunu marka rengine boyar. */
 export const viewport: Viewport = {
@@ -95,6 +96,7 @@ export default async function LocaleLayout({
           <Header />
           <main className="min-h-[60vh]">{children}</main>
           <Footer />
+          <CookieBanner />
         </Providers>
       </body>
     </html>

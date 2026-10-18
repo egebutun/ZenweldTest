@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Boxes,
   CalendarDays,
+  ChevronDown,
   Contact,
   Database,
   ExternalLink,
@@ -18,12 +19,16 @@ import {
   Package,
   Palette,
   PenLine,
+  Scale,
+  Settings,
   ShieldCheck,
   ShoppingCart,
   SlidersHorizontal,
   Star,
   Store,
   Users,
+  Wrench,
+  type LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { Alert, ZenweldLogo } from "@zenweld/ui";
@@ -44,26 +49,152 @@ import { siteUrl } from "@/lib/admin-links";
  * cikmadan once sunucu tarafi kimlik dogrulama/yetkilendirme sarttir.
  */
 
-const NAV = [
-  { href: "/yonetim", label: "Panel", Icon: LayoutDashboard, exact: true },
-  { href: "/yonetim/urunler", label: "Ürünler", Icon: Package },
-  { href: "/yonetim/stok", label: "Stok Matrisi", Icon: Boxes },
-  { href: "/yonetim/siparisler", label: "Siparişler", Icon: ShoppingCart },
-  { href: "/yonetim/magaza", label: "Mağaza Ayarları", Icon: SlidersHorizontal },
-  { href: "/yonetim/teklifler", label: "Teklifler", Icon: FileText },
-  { href: "/yonetim/bayiler", label: "Bayiler", Icon: MapPin },
-  { href: "/yonetim/saticilar", label: "Online Satıcılar", Icon: Store },
-  { href: "/yonetim/satis-temsilcileri", label: "Satış Temsilcileri", Icon: Contact },
-  { href: "/yonetim/uyeler", label: "Üyeler", Icon: Users },
-  { href: "/yonetim/garantiler", label: "Garantiler", Icon: ShieldCheck },
-  { href: "/yonetim/etkinlikler", label: "Etkinlikler", Icon: CalendarDays },
-  { href: "/yonetim/haberler", label: "Haberler", Icon: Newspaper },
-  { href: "/yonetim/blog", label: "Blog", Icon: PenLine },
-  { href: "/yonetim/hakkimizda", label: "Hakkımızda", Icon: Info },
-  { href: "/yonetim/yorumlar", label: "Yorumlar", Icon: Star },
-  { href: "/yonetim/gorunum", label: "Görünüm", Icon: Palette },
-  { href: "/yonetim/veri", label: "Veri Yönetimi", Icon: Database },
+/**
+ * Sol menu gruplari. Grup basligina tiklayinca altindaki sayfalar acilir;
+ * acik sayfanin grubu kendiliginden acik gelir.
+ */
+const NAV_GROUPS: NavGroup[] = [
+  {
+    id: "satis",
+    label: "Satış",
+    Icon: ShoppingCart,
+    items: [
+      { href: "/yonetim/siparisler", label: "Siparişler", Icon: ShoppingCart },
+      { href: "/yonetim/teklifler", label: "Teklifler", Icon: FileText },
+      { href: "/yonetim/magaza", label: "Mağaza Ayarları", Icon: SlidersHorizontal },
+    ],
+  },
+  {
+    id: "urunler",
+    label: "Ürünler",
+    Icon: Package,
+    items: [
+      { href: "/yonetim/urunler", label: "Ürünler", Icon: Package },
+      { href: "/yonetim/stok", label: "Stok Matrisi", Icon: Boxes },
+      { href: "/yonetim/yorumlar", label: "Yorumlar", Icon: Star },
+    ],
+  },
+  {
+    id: "ag",
+    label: "Bayi ve Satış Ağı",
+    Icon: MapPin,
+    items: [
+      { href: "/yonetim/bayiler", label: "Bayiler", Icon: MapPin },
+      { href: "/yonetim/saticilar", label: "Online Satıcılar", Icon: Store },
+      { href: "/yonetim/satis-temsilcileri", label: "Satış Temsilcileri", Icon: Contact },
+    ],
+  },
+  {
+    id: "musteriler",
+    label: "Müşteriler ve Servis",
+    Icon: Users,
+    items: [
+      { href: "/yonetim/uyeler", label: "Üyeler", Icon: Users },
+      { href: "/yonetim/servis-talepleri", label: "Servis Talepleri", Icon: Wrench },
+      { href: "/yonetim/garantiler", label: "Garantiler", Icon: ShieldCheck },
+    ],
+  },
+  {
+    id: "icerik",
+    label: "İçerik",
+    Icon: Newspaper,
+    items: [
+      { href: "/yonetim/haberler", label: "Haberler", Icon: Newspaper },
+      { href: "/yonetim/etkinlikler", label: "Etkinlikler", Icon: CalendarDays },
+      { href: "/yonetim/blog", label: "Blog", Icon: PenLine },
+      { href: "/yonetim/hakkimizda", label: "Hakkımızda", Icon: Info },
+      { href: "/yonetim/yasal-metinler", label: "Yasal Metinler", Icon: Scale },
+    ],
+  },
+  {
+    id: "ayarlar",
+    label: "Ayarlar",
+    Icon: Settings,
+    items: [
+      { href: "/yonetim/gorunum", label: "Görünüm", Icon: Palette },
+      { href: "/yonetim/veri", label: "Veri Yönetimi", Icon: Database },
+    ],
+  },
 ];
+
+interface NavItem {
+  href: string;
+  label: string;
+  Icon: LucideIcon;
+}
+
+interface NavGroup {
+  id: string;
+  label: string;
+  Icon: LucideIcon;
+  items: NavItem[];
+}
+
+const isActive = (pathname: string, href: string) =>
+  pathname === href || pathname.startsWith(`${href}/`);
+
+function AdminNav() {
+  const pathname = usePathname();
+  const current = NAV_GROUPS.find((g) => g.items.some((i) => isActive(pathname, i.href)))?.id;
+  const [open, setOpen] = useState<Set<string>>(() => new Set(current ? [current] : []));
+
+  // Baska bir gruptaki sayfaya gidilince o grup da acilir.
+  useEffect(() => {
+    if (current) setOpen((prev) => (prev.has(current) ? prev : new Set(prev).add(current)));
+  }, [current]);
+
+  const toggle = (id: string) =>
+    setOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const linkClass = (active: boolean) =>
+    `flex items-center gap-2.5 rounded-[4px] px-3 py-2 text-sm font-semibold transition-colors ${
+      active ? "bg-zw-ink text-white" : "text-zw-grey-700 hover:bg-zw-grey-200"
+    }`;
+
+  return (
+    <nav className="space-y-1">
+      <Link href="/yonetim" className={linkClass(pathname === "/yonetim")}>
+        <LayoutDashboard size={17} />
+        Panel
+      </Link>
+
+      {NAV_GROUPS.map((group) => {
+        const expanded = open.has(group.id);
+        return (
+          <div key={group.id}>
+            <button
+              type="button"
+              onClick={() => toggle(group.id)}
+              aria-expanded={expanded}
+              className={`flex w-full items-center gap-2.5 rounded-[4px] px-3 py-2.5 text-left text-sm font-bold transition-colors hover:bg-zw-grey-200 ${
+                group.id === current ? "text-zw-red-700" : "text-zw-ink"
+              }`}
+            >
+              <group.Icon size={17} />
+              <span className="flex-1">{group.label}</span>
+              <ChevronDown size={15} className={`transition-transform ${expanded ? "rotate-180" : ""}`} />
+            </button>
+            {expanded && (
+              <div className="mb-1 ml-4 space-y-0.5 border-l border-zw-grey-200 pl-2">
+                {group.items.map(({ href, label, Icon }) => (
+                  <Link key={href} href={href} className={linkClass(isActive(pathname, href))}>
+                    <Icon size={15} />
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </nav>
+  );
+}
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const { user, ready, logout } = useAuth();
@@ -129,23 +260,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <div className="zw-container py-8">
         <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
           <aside>
-            <nav className="space-y-1">
-              {NAV.map(({ href, label, Icon, exact }) => {
-                const active = exact ? pathname === href : pathname.startsWith(href);
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={`flex items-center gap-2.5 rounded-[4px] px-3 py-2.5 text-sm font-semibold transition-colors ${
-                      active ? "bg-zw-ink text-white" : "text-zw-grey-700 hover:bg-zw-grey-200"
-                    }`}
-                  >
-                    <Icon size={17} />
-                    {label}
-                  </Link>
-                );
-              })}
-            </nav>
+            <AdminNav />
 
             <div className="mt-5">
               <Alert tone="warning">

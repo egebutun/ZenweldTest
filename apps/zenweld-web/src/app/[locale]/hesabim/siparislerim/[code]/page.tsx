@@ -11,7 +11,7 @@ import { formatDate, formatDateTime, formatPrice } from "@zenweld/utils";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { BankAccounts, CopyButton } from "@/components/shop/BankAccounts";
 import {
-  documentTitle,
+  useDocumentTitle,
   LegalDocument,
   type LegalContext,
   type LegalDocumentKind,
@@ -30,6 +30,7 @@ function OrderDetail() {
   const params = useParams<{ code: string }>();
   const isNew = useSearchParams().get("yeni") === "1";
   const [doc, setDoc] = useState<LegalDocumentKind | null>(null);
+  const docTitle = useDocumentTitle();
 
   useEffect(() => cancelExpiredTransfers(), []);
 
@@ -164,7 +165,7 @@ function OrderDetail() {
         </div>
       </Box>
 
-      <Modal open={doc !== null} onClose={() => setDoc(null)} title={doc ? documentTitle(doc, locale) : ""}>
+      <Modal open={doc !== null} onClose={() => setDoc(null)} title={doc ? docTitle(doc) : ""}>
         {doc && <LegalDocument kind={doc} context={orderLegalContext(order, paymentText, text)} />}
       </Modal>
     </div>

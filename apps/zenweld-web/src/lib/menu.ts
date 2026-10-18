@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { listProducts, useDatabase } from "@zenweld/store";
-import { localeSlug, productHighlights, type TopLevelSection } from "@zenweld/data";
+import { listLegalPages, listProducts, useDatabase } from "@zenweld/store";
+import { legalPath, localeSlug, productHighlights, type LegalPageId, type TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
-import { useLocale, useT } from "./i18n-client";
+import { useLocale, useT, useText } from "./i18n-client";
 
 // Geriye donuk uyumluluk: iletisim verisi artik contact.ts icinde.
 export { CONTACT, OFFICES, officeQuery, mapEmbedUrl, mapDirectionsUrl, type Office } from "./contact";
@@ -95,15 +95,8 @@ export function useMainMenu(): TopMenu[] {
       };
     });
 
-    // Urun disi menuler. Alt basligi olmayan menuler (Destek, Garanti) tek, basliksiz
-    // kolondan olusur (label: ""); mega menu bunu sol bolmesiz gosterir.
-    const warranty: TopMenu = {
-      id: "garanti",
-      label: t.nav.warranty,
-      href: "/garanti",
-      columns: [{ label: "", href: "/garanti", links: warrantyLinks(t) }],
-    };
-
+    // Urun disi menuler; alt basliklari (Kurumsal, Destek, Garanti ...) mega
+    // menude sol kolonda durur.
     const explore: TopMenu = {
       id: "kesfet",
       label: t.nav.explore,
@@ -111,14 +104,17 @@ export function useMainMenu(): TopMenu[] {
       columns: exploreColumns(t),
     };
 
-    const support: TopMenu = {
-      id: "destek",
-      label: t.nav.support,
+    const supportWarranty: TopMenu = {
+      id: "destek-garanti",
+      label: t.nav.supportWarranty,
       href: "/sss",
-      columns: [{ label: "", href: "/sss", links: supportLinks(t) }],
+      columns: [
+        { label: t.nav.support, href: "/sss", links: supportLinks(t) },
+        { label: t.nav.warranty, href: "/garanti", links: warrantyLinks(t) },
+      ],
     };
 
-    return [...productMenus, explore, support, warranty];
+    return [...productMenus, explore, supportWarranty];
   }, [db, locale, t]);
 }
 
@@ -135,6 +131,7 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
         { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
         { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/satis-temsilcilerimiz" },
         { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/bayilik-basvurusu" },
+        { label: t.support.contactTitle, description: t.support.contactCardText, href: "/iletisim" },
       ],
     },
     {
@@ -160,7 +157,7 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
   ];
 }
 
-/** Garanti menusu (alt basliksiz). */
+/** Destek ve Garanti > Garanti */
 function warrantyLinks(t: Dictionary): MenuLink[] {
   return [
     { label: t.nav.warrantyRegister, description: t.explore.registerWarrantyDesc, href: "/garanti/kayit" },
@@ -169,12 +166,12 @@ function warrantyLinks(t: Dictionary): MenuLink[] {
   ];
 }
 
-/** Destek menusu (alt basliksiz). */
+/** Destek ve Garanti > Destek */
 function supportLinks(t: Dictionary): MenuLink[] {
   return [
     { label: t.support.faqTitle, description: t.support.faqCardText, href: "/sss" },
     { label: t.nav.findDealerService, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi" },
-    { label: t.support.contactTitle, description: t.support.contactCardText, href: "/iletisim" },
+    { label: t.service.title, description: t.service.menuText, href: "/servis-talebi" },
   ];
 }
 
@@ -184,10 +181,13 @@ const plainLinks = (links: MenuLink[]) => links.map(({ label, href }) => ({ labe
  * ALT BILGI
  *
  * Ust menunun aynisi ve ayni sirada: Kesfet'in alt basliklari, Destek,
- * Garanti; sonda Politikalar & Yasal.
+ * Garanti; sonda Politikalar & Yasal. Yasal metinlerin adlari yonetim
+ * panelinden (Yasal Metinler) degisebildigi icin veritabanindan okunur.
  */
 export function useFooterMenu() {
   const t = useT();
+  const text = useText();
+  const db = useDatabase();
   return useMemo(
     () => [
       ...exploreColumns(t).map((col) => ({ title: col.label, links: plainLinks(col.links) })),
@@ -195,17 +195,12 @@ export function useFooterMenu() {
       { title: t.nav.warranty, links: plainLinks(warrantyLinks(t)) },
       {
         title: t.footer.legal,
-        links: [
-          { label: t.footer.terms, href: "/yasal/kullanim-kosullari" },
-          { label: t.footer.warrantyTerms, href: "/garanti/kosullar" },
-          { label: t.footer.privacy, href: "/yasal/gizlilik" },
-          { label: t.footer.kvkk, href: "/yasal/kvkk" },
-          { label: t.footer.returns, href: "/yasal/iade" },
-          { label: t.footer.preInfo, href: "/yasal/on-bilgilendirme-formu" },
-          { label: t.footer.distanceContract, href: "/yasal/mesafeli-satis-sozlesmesi" },
-        ],
+        links: listLegalPages(db).map((p) => ({
+          label: text(p.title),
+          href: legalPath(p.id as LegalPageId),
+        })),
       },
     ],
-    [t],
+    [t, text, db],
   );
 }

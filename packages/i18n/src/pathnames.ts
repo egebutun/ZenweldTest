@@ -28,6 +28,7 @@ const TOP_LEVEL: Record<string, string> = {
   "teklif-al": "request-quote",
   sepet: "cart",
   odeme: "checkout",
+  "servis-talebi": "service-request",
   arama: "search",
   yasal: "legal",
 
@@ -69,6 +70,10 @@ const NESTED: Record<string, Record<string, string>> = {
     iade: "returns",
     "mesafeli-satis-sozlesmesi": "distance-sales-contract",
     "on-bilgilendirme-formu": "pre-information-form",
+    "cerez-politikasi": "cookie-policy",
+    "kisisel-verilerin-islenmesi-politikasi": "personal-data-processing-policy",
+    "kisisel-veri-saklama-ve-imha-politikasi": "data-retention-and-destruction-policy",
+    "fiziksel-guvenlik-aydinlatma-metni": "physical-security-notice",
   },
   hesabim: {
     profil: "profile",

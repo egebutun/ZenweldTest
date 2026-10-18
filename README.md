@@ -218,13 +218,15 @@ ZenweldTest/
             │   ├── hakkimizda · satis-temsilcilerimiz · iletisim
             │   ├── haberler · etkinlikler · blog · welders-club
             │   ├── sss · urun-secici · kaynak-rehberi · msds · parti-sertifikalari
+            │   ├── servis-talebi/              Servis talep formu (Destek ve Garanti menüsü)
             │   ├── sepet/ · odeme/             Sepet ve ödeme (yalnızca üyeler)
             │   ├── hesabim/siparislerim/[code] Sipariş detayı ve kargo takibi
-            │   ├── yasal/                      kvkk · gizlilik · kullanim-kosullari · iade
-            │   │                               · on-bilgilendirme-formu · mesafeli-satis-sozlesmesi
+            │   ├── yasal/                      Politikalar & Yasal sayfaları (metinler panelden
+            │   │                               düzenlenir; adresler packages/data/src/legal.ts)
             │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
             │   ├── (../yonetim/ — [locale] dışında) ZENWELD YÖNETİM PANELİ (yalnızca TR)
             │   │   └── urunler · stok · siparisler · magaza · teklifler · bayiler · saticilar
+            │   │      · servis-talepleri · yasal-metinler
             │   │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
             │   │      · gorunum · veri
             ├── components/

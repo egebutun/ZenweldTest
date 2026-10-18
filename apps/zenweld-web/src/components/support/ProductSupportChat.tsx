@@ -225,6 +225,8 @@ export function ProductSupportChat({ product }: { product: Product }) {
                 />
                 <LocaleLink
                   href="/yasal/kvkk"
+                target="_blank"
+                rel="noopener noreferrer"
                   className="mt-1 ml-6 block font-semibold text-zw-red-600 underline"
                 >
                   {t.support.chatConsentLink}

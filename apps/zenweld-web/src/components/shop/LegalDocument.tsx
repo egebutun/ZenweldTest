@@ -1,10 +1,13 @@
 "use client";
 
 import type { ReactNode } from "react";
+import type { LegalPageId } from "@zenweld/data";
 import type { Locale } from "@zenweld/i18n";
+import { findLegalPage, useDatabase } from "@zenweld/store";
+import { RichText } from "@zenweld/ui";
 import { formatDate, formatPrice } from "@zenweld/utils";
 import { CONTACT, OFFICES } from "@/lib/contact";
-import { useLocale } from "@/lib/i18n-client";
+import { useLocale, useText } from "@/lib/i18n-client";
 
 /**
  * ON BILGILENDIRME FORMU ve MESAFELI SATIS SOZLESMESI
@@ -14,11 +17,17 @@ import { useLocale } from "@/lib/i18n-client";
  * o siparisin bilgileriyle (alici, urunler, tutarlar) doldurulur; /yasal
  * altindaki sayfalarda bos sablon gosterilir.
  *
- * !! TASLAK: Metnin yapisi yonetmelikteki basliklara gore kuruldu; nihai
- * hukuki metni Zenweld'in hukuk danismani yazmalidir.
+ * Satici, alici ve urun tablolari otomatiktir; altindaki metin (teslimat,
+ * cayma hakki ...) yonetim panelindeki "Yasal Metinler"den duzenlenir.
  */
 
 export type LegalDocumentKind = "preInfo" | "contract";
+
+/** Panelde duzenlenen metnin kimligi. */
+const DOC_ID: Record<LegalDocumentKind, LegalPageId> = {
+  preInfo: "on-bilgilendirme-formu",
+  contract: "mesafeli-satis-sozlesmesi",
+};
 
 export interface LegalContext {
   buyer: { name: string; email: string; phone: string };
@@ -37,9 +46,6 @@ const SELLER = OFFICES[0];
 
 const TEXT = {
   tr: {
-    preInfo: "Ön Bilgilendirme Formu",
-    contract: "Mesafeli Satış Sözleşmesi",
-    draft: "TASLAK — Bu metin örnektir; yayına almadan önce hukuk danışmanınız tarafından hazırlanmalıdır.",
     seller: "Satıcı",
     buyer: "Alıcı",
     title: "Unvan",
@@ -63,34 +69,8 @@ const TEXT = {
     date: "Sipariş tarihi",
     filledAtCheckout: "Sipariş sırasında doldurulur",
     free: "Ücretsiz",
-    sections: {
-      deliveryTitle: "Teslimat",
-      delivery:
-        "Ürünler, sipariş onayından itibaren en geç 30 gün içinde Alıcı'nın bildirdiği teslimat adresine kargo ile teslim edilir. Kargo firması ve takip numarası, ürün kargoya verildiğinde Alıcı'nın Hesabım > Siparişlerim sayfasında gösterilir.",
-      withdrawalTitle: "Cayma hakkı",
-      withdrawal:
-        "Alıcı, ürünü teslim aldığı tarihten itibaren 14 gün içinde hiçbir gerekçe göstermeksizin ve cezai şart ödemeksizin cayma hakkını kullanabilir. Cayma bildirimi e-posta ile Satıcı'ya iletilir; Satıcı bildirimi aldıktan sonra 14 gün içinde ödemeyi iade eder. Cayma hakkının kullanılamayacağı ürünler ve iade kargo masrafları hukuk danışmanı tarafından belirlenecektir.",
-      corporateTitle: "Kurumsal alıcılar",
-      corporate:
-        "Ürünü ticari veya mesleki amaçla satın alan Alıcı, tüketici sayılmaz; bu durumda cayma hakkı ve tüketici mevzuatına ilişkin hükümler uygulanmayabilir.",
-      warrantyTitle: "Garanti",
-      warranty:
-        "Ürünler, ürün sayfasında belirtilen süre boyunca Zenweld garantisi altındadır. Garanti koşulları için Garanti Koşulları sayfasına bakınız.",
-      disputeTitle: "Şikâyet ve uyuşmazlık",
-      dispute:
-        "Alıcı, şikâyetlerini Satıcı'nın iletişim bilgilerine iletebilir. Uyuşmazlıklarda, Ticaret Bakanlığınca her yıl ilan edilen parasal sınırlar dahilinde Alıcı'nın yerleşim yerindeki Tüketici Hakem Heyetleri, bu sınırları aşan durumlarda Tüketici Mahkemeleri yetkilidir.",
-      subjectTitle: "Sözleşmenin konusu",
-      subject:
-        "Bu sözleşme, Alıcı'nın Satıcı'ya ait zenweld.com internet sitesinden elektronik ortamda sipariş verdiği, aşağıda nitelikleri ve satış fiyatı belirtilen ürünlerin satışı ve teslimine ilişkin tarafların hak ve yükümlülüklerini düzenler.",
-      generalTitle: "Genel hükümler",
-      general:
-        "Alıcı, ürünün temel nitelikleri, satış fiyatı, ödeme şekli ve teslimata ilişkin ön bilgileri okuyup bilgi sahibi olduğunu ve elektronik ortamda gerekli onayı verdiğini kabul eder. Sözleşme, Alıcı'nın siparişi onaylamasıyla yürürlüğe girer; bir kopyası Alıcı'nın e-posta adresine gönderilir.",
-    },
   },
   en: {
-    preInfo: "Pre-Information Form",
-    contract: "Distance Sales Contract",
-    draft: "DRAFT — This text is a sample; it must be prepared by your legal adviser before going live.",
     seller: "Seller",
     buyer: "Buyer",
     title: "Company",
@@ -114,34 +94,17 @@ const TEXT = {
     date: "Order date",
     filledAtCheckout: "Filled in at checkout",
     free: "Free",
-    sections: {
-      deliveryTitle: "Delivery",
-      delivery:
-        "Products are delivered by courier to the address given by the Buyer within 30 days of order confirmation at the latest. The carrier and tracking number are shown on the Buyer's Account > My Orders page once the product ships.",
-      withdrawalTitle: "Right of withdrawal",
-      withdrawal:
-        "The Buyer may withdraw from the contract within 14 days of receiving the product without giving any reason and without penalty. The withdrawal notice is sent to the Seller by email; the Seller refunds the payment within 14 days of receiving the notice. Products excluded from withdrawal and return shipping costs will be defined by the legal adviser.",
-      corporateTitle: "Corporate buyers",
-      corporate:
-        "A Buyer purchasing for commercial or professional purposes is not a consumer; in that case the right of withdrawal and consumer-law provisions may not apply.",
-      warrantyTitle: "Warranty",
-      warranty:
-        "Products are covered by the Zenweld warranty for the period stated on the product page. See the Warranty Terms page for conditions.",
-      disputeTitle: "Complaints and disputes",
-      dispute:
-        "The Buyer may send complaints to the Seller's contact details. Disputes are handled by the Consumer Arbitration Committees at the Buyer's place of residence within the monetary limits announced each year by the Ministry of Trade, and by Consumer Courts above those limits.",
-      subjectTitle: "Subject of the contract",
-      subject:
-        "This contract sets out the rights and obligations of the parties regarding the sale and delivery of the products below, ordered electronically by the Buyer on the Seller's website zenweld.com.",
-      generalTitle: "General provisions",
-      general:
-        "The Buyer confirms having read the preliminary information on the product's main characteristics, sale price, payment method and delivery, and having given the required electronic approval. The contract takes effect when the Buyer confirms the order; a copy is sent to the Buyer's email address.",
-    },
   },
 } satisfies Record<Locale, unknown>;
 
-export function documentTitle(kind: LegalDocumentKind, locale: Locale): string {
-  return TEXT[locale][kind];
+/** Belgenin panelde girilen basligi (modal basliklari icin). */
+export function useDocumentTitle() {
+  const db = useDatabase();
+  const text = useText();
+  return (kind: LegalDocumentKind) => {
+    const page = findLegalPage(DOC_ID[kind], db);
+    return page ? text(page.title) : "";
+  };
 }
 
 export function LegalDocument({
@@ -153,19 +116,14 @@ export function LegalDocument({
   context?: LegalContext;
 }) {
   const locale = useLocale();
+  const text = useText();
   const t = TEXT[locale];
+  const page = findLegalPage(DOC_ID[kind], useDatabase());
   const blank = <span className="italic text-zw-grey-400">[{t.filledAtCheckout}]</span>;
   const price = (n: number) => formatPrice(n, locale);
-  const s = t.sections;
 
   return (
     <article className="space-y-6 text-sm leading-relaxed text-zw-grey-700">
-      <p className="rounded-[4px] border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800">
-        {t.draft}
-      </p>
-
-      {kind === "contract" && <Section title={s.subjectTitle}>{s.subject}</Section>}
-
       <div className="grid gap-4 sm:grid-cols-2">
         <Section title={t.seller}>
           <Facts
@@ -235,12 +193,7 @@ export function LegalDocument({
         )}
       </Section>
 
-      {kind === "contract" && <Section title={s.generalTitle}>{s.general}</Section>}
-      <Section title={s.deliveryTitle}>{s.delivery}</Section>
-      <Section title={s.withdrawalTitle}>{s.withdrawal}</Section>
-      <Section title={s.corporateTitle}>{s.corporate}</Section>
-      <Section title={s.warrantyTitle}>{s.warranty}</Section>
-      <Section title={s.disputeTitle}>{s.dispute}</Section>
+      {page && <RichText source={text(page.body)} />}
     </article>
   );
 }

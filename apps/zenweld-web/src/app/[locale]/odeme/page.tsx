@@ -18,7 +18,7 @@ import { LocaleLink } from "@/components/common/LocaleLink";
 import { BankAccounts } from "@/components/shop/BankAccounts";
 import { CardPayment, EMPTY_CARD, type CardDraft } from "@/components/shop/CardPayment";
 import {
-  documentTitle,
+  useDocumentTitle,
   LegalDocument,
   type LegalContext,
   type LegalDocumentKind,
@@ -62,6 +62,7 @@ export default function CheckoutPage() {
   const cart = useCart();
   const { user, ready } = useAuth();
   const shop = getShopSettings(db);
+  const docTitle = useDocumentTitle();
 
   const saved = useMemo(() => (user ? addressesForUser(user.id, db) : []), [user, db]);
   const [addressId, setAddressId] = useState<string | null>(null);
@@ -486,7 +487,7 @@ export default function CheckoutPage() {
         </aside>
       </div>
 
-      <Modal open={doc !== null} onClose={() => setDoc(null)} title={doc ? documentTitle(doc, locale) : ""}>
+      <Modal open={doc !== null} onClose={() => setDoc(null)} title={doc ? docTitle(doc) : ""}>
         {doc && <LegalDocument kind={doc} context={legalContext} />}
       </Modal>
     </div>

@@ -106,6 +106,20 @@ kararlaştırılacak. Başlıklar:
 15. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
 16. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
 
+## Çerezler ve yasal metinler
+
+1. **Tanımlama Bilgisi Ayarları** penceresi şimdilik boş; analiz ve pazarlama
+   çerezleri için ayrı açma/kapama seçenekleri eklenecek.
+2. Google Analytics, Meta Pixel gibi kodlar eklendiğinde **yalnızca ziyaretçi
+   "Tümünü Kabul Et" dediyse** yüklenmeli (`getCookieConsent()`,
+   `components/layout/CookieBanner.tsx`).
+3. Çerez bandındaki açıklama metni, sitede gerçekten kullanılan çerezlere göre
+   güncellenmeli (şu an "reklam ve sosyal medya ortaklarıyla paylaşıyoruz" yazıyor;
+   böyle bir paylaşım henüz yok).
+4. 11 yasal metnin tamamı taslak; hukuk danışmanının metinleri panelden
+   (İçerik › Yasal Metinler) girilmeli.
+5. Servis talebi gelince servis ekibine e-posta bildirimi (backend ile).
+
 ## Ürün Seçici ve arama — yeniden tasarlanacak
 
 Kaynak yöntemi etiketleri (MIG, TIG, MMA…) ürün formundan, ürün kartından ve

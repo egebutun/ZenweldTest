@@ -49,6 +49,10 @@ const PAGES = {
     tr: ["Garanti Sorgulama", "Zenweld makinenizin garanti durumunu ve bitiş tarihini seri numarasıyla sorgulayın."],
     en: ["Warranty Check", "Check your Zenweld machine's warranty status and expiry date by serial number."],
   },
+  "/servis-talebi": {
+    tr: ["Servis Talebi", "Zenweld makineniz için kurulum, bakım, onarım veya kullanım eğitimi talebi oluşturun."],
+    en: ["Service Request", "Request installation, maintenance, repair or operation training for your Zenweld machine."],
+  },
   "/blog": {
     tr: ["Blog", "Kaynak dünyasından haberler, teknik rehberler ve uzman ipuçları."],
     en: ["Blog", "News, technical guides and expert tips from the world of welding."],

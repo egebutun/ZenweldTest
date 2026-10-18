@@ -2,9 +2,18 @@
 
 > Bu kılavuz Zenweld ana sitesinin yönetim panelidir (`/yonetim`).
 
-Menü sırası: Panel · Ürünler · Stok Matrisi · Siparişler · Mağaza Ayarları · Teklifler · Bayiler ·
-Online Satıcılar · Satış Temsilcileri · Üyeler · Garantiler · Etkinlikler ·
-Haberler · Blog · Hakkımızda · Yorumlar · Görünüm · Veri Yönetimi
+Sol menü gruplar halindedir; grup başlığına tıklayınca sayfaları açılır, açık
+olan sayfanın grubu kendiliğinden açık gelir:
+
+| Grup | Sayfalar |
+|---|---|
+| Panel | Özet |
+| Satış | Siparişler · Teklifler · Mağaza Ayarları |
+| Ürünler | Ürünler · Stok Matrisi · Yorumlar |
+| Bayi ve Satış Ağı | Bayiler · Online Satıcılar · Satış Temsilcileri |
+| Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler |
+| İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Yasal Metinler |
+| Ayarlar | Görünüm · Veri Yönetimi |
 
 Panel adresi: `http://localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`)
 Demo giriş: `admin@zenweld.com` / `admin123`
@@ -107,6 +116,26 @@ zamanı ve yalnızca panelde görünen **İç Not** alanı bulunur.
 
 > Varsayılan kargo ücreti, vade farkı oranları ve IBAN'lar **örnektir**; gerçek
 > değerler girilmelidir.
+
+---
+
+## 4c. Servis Talepleri
+
+Sitedeki **Destek ve Garanti › Servis Talebi** formundan gelen talepler: makine türü,
+model, talep nedeni (kurulum, bakım, onarım, eğitim), müşteri şikayeti ve iletişim
+bilgileri. Satıra tıklayınca detay açılır; durum (Yeni → İşlemde → Tamamlandı) ve
+yalnızca panelde görünen iç not buradan kaydedilir.
+
+## 4d. Yasal Metinler
+
+Alt bilgideki **Politikalar & Yasal** listesindeki 11 sayfanın başlığı ve metni
+buradan düzenlenir (TR/EN). Sayfa adresleri ve sıralaması sabittir. Biçimlendirme
+haberlerle aynıdır (`## ara başlık`, `- madde`, `**kalın**`).
+
+Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi'nde satıcı, alıcı ve ürün
+tabloları siparişten otomatik doldurulur; düzenlenen metin tabloların altında görünür.
+
+> Metinlerin tamamı **taslaktır**; hukuk danışmanının metinleriyle değiştirilmelidir.
 
 ---
 

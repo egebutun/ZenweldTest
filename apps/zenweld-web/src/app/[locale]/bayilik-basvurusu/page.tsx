@@ -165,6 +165,8 @@ export default function DealerApplicationPage() {
               />
               <LocaleLink
                 href="/yasal/kvkk"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mt-1 ml-6 block text-xs font-semibold text-zw-red-600 underline"
               >
                 {t.dealerApply.consentLink}

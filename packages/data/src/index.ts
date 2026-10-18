@@ -3,6 +3,7 @@ export * from "./highlights";
 export * from "./discount";
 export * from "./slugs";
 export * from "./checkout";
+export * from "./legal";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";
@@ -16,6 +17,7 @@ export { events, news } from "./seed/events.seed";
 export { stockPhotos } from "./seed/images";
 export { defaultSettings } from "./seed/settings.seed";
 export { about, salesReps } from "./seed/company.seed";
+export { legalPages } from "./seed/legal.seed";
 
 import type { ZenweldDatabase } from "./types";
 import { categories, categoryGroups } from "./seed/categories.seed";
@@ -30,9 +32,10 @@ import { reviews } from "./seed/reviews.seed";
 import { events, news } from "./seed/events.seed";
 import { defaultSettings } from "./seed/settings.seed";
 import { about, salesReps } from "./seed/company.seed";
+import { legalPages } from "./seed/legal.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 40;
+export const DB_VERSION = 41;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(
@@ -57,6 +60,8 @@ export function createSeedDatabase(): ZenweldDatabase {
       warranties,
       about,
       salesReps,
+      legalPages,
+      serviceRequests: [],
       settings: defaultSettings,
     }),
   ) as ZenweldDatabase;

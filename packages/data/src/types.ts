@@ -605,6 +605,55 @@ export interface SalesRep {
 }
 
 /* ------------------------------------------------------------------ */
+/* Yasal metinler (alt bilgideki Politikalar & Yasal)                  */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Yonetim panelinden duzenlenen yasal metin. Sayfanin adresi sabittir
+ * (id -> adres eslemesi: packages/data/src/legal.ts); baslik ve metin
+ * panelden degisir.
+ */
+export interface LegalPage {
+  id: string;
+  title: I18nText;
+  /** Bicimlendirme haberlerle ayni: "## ara baslik", "- madde", "**kalin**" */
+  body: I18nText;
+  updatedAt: string;
+}
+
+/* ------------------------------------------------------------------ */
+/* Servis talepleri (Destek ve Garanti > Servis Talebi)                */
+/* ------------------------------------------------------------------ */
+
+export type ServiceReason = "kurulum" | "bakim" | "onarim" | "egitim";
+export type ServiceRequestStatus = "new" | "in_progress" | "done";
+
+export interface ServiceRequest {
+  id: string;
+  code: string;
+  status: ServiceRequestStatus;
+  /** Makine turu: kategori slug'i (Kaynak / Lazer makineleri altinda) */
+  categorySlug: string;
+  productId: string;
+  productName: string;
+  reasons: ServiceReason[];
+  complaint: string;
+  companyName: string;
+  address: string;
+  city: string;
+  district: string;
+  email: string;
+  phone: string;
+  contactName: string;
+  contactGsm: string;
+  /** Uye giris yapmissa */
+  userId?: string;
+  adminNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/* ------------------------------------------------------------------ */
 /* Veritabani anlik goruntusu (localStorage'da tutulan sekil)          */
 /* ------------------------------------------------------------------ */
 
@@ -695,5 +744,7 @@ export interface ZenweldDatabase {
   warranties: WarrantyRecord[];
   about: AboutContent;
   salesReps: SalesRep[];
+  legalPages: LegalPage[];
+  serviceRequests: ServiceRequest[];
   settings: SiteSettings;
 }
