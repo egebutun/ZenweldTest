@@ -63,8 +63,8 @@ export function createProduct(partial: Partial<Product>): Product {
     section: partial.section ?? "ekipmanlar",
     categorySlug: partial.categorySlug ?? "cok-fonksiyonlu-kaynak-makineleri",
     processes: partial.processes ?? [],
-    shortDescription: partial.shortDescription ?? { tr: "", en: "" },
-    description: partial.description ?? { tr: "", en: "" },
+    shortDescription: partial.shortDescription ?? "",
+    description: partial.description ?? "",
     priceExVat: partial.priceExVat ?? 0,
     // Yeni urun olustururken girilen kampanya kaybolmasin.
     discount: partial.discount,

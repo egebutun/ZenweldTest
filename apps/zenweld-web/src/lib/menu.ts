@@ -2,9 +2,9 @@
 
 import { useMemo } from "react";
 import { listLegalPages, listProducts, useDatabase } from "@zenweld/store";
-import { legalPath, localeSlug, productHighlights, type LegalPageId, type TopLevelSection } from "@zenweld/data";
+import { legalPath, productHighlights, type LegalPageId, type TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
-import { useLocale, useT, useText } from "./i18n-client";
+import { useT } from "./i18n-client";
 
 // Geriye donuk uyumluluk: iletisim verisi artik contact.ts icinde.
 export { CONTACT, OFFICES, officeQuery, mapEmbedUrl, mapDirectionsUrl, type Office } from "./contact";
@@ -53,7 +53,6 @@ const SECTIONS: { id: TopLevelSection; labelKey: keyof Dictionary["nav"] }[] = [
 
 export function useMainMenu(): TopMenu[] {
   const db = useDatabase();
-  const locale = useLocale();
   const t = useT();
 
   return useMemo(() => {
@@ -67,23 +66,23 @@ export function useMainMenu(): TopMenu[] {
         id,
         label: t.nav[labelKey],
         columns: groups.map((group) => ({
-          label: group.name[locale],
+          label: group.name,
           links: db.categories
             .filter((c) => c.section === id && c.group === group.slug)
             .sort((a, b) => a.order - b.order)
             .map((c) => {
               const inCategory = visible.filter((p) => p.categorySlug === c.slug);
               return {
-                label: c.name[locale],
-                description: c.description[locale],
-                href: `/${id}/${localeSlug(c, locale)}`,
+                label: c.name,
+                description: c.description,
+                href: `/${id}/${c.slug}`,
                 productCount: inCategory.length,
                 products: inCategory.slice(0, MENU_PRODUCT_LIMIT).map((p) => ({
                   id: p.id,
                   name: p.name,
                   href: `/urun/${p.slug}`,
                   imageUrl: p.images[0]?.url,
-                  highlights: productHighlights(p, locale, 3),
+                  highlights: productHighlights(p),
                 })),
               };
             }),
@@ -109,7 +108,7 @@ export function useMainMenu(): TopMenu[] {
     };
 
     return [...productMenus, explore, supportWarranty];
-  }, [db, locale, t]);
+  }, [db, t]);
 }
 
 /**
@@ -177,7 +176,6 @@ const plainLinks = (links: MenuLink[]) => links.map(({ label, href }) => ({ labe
  */
 export function useFooterMenu() {
   const t = useT();
-  const text = useText();
   const db = useDatabase();
   return useMemo(
     () => [
@@ -187,11 +185,11 @@ export function useFooterMenu() {
       {
         title: t.footer.legal,
         links: listLegalPages(db).map((p) => ({
-          label: text(p.title),
+          label: p.title,
           href: legalPath(p.id as LegalPageId),
         })),
       },
     ],
-    [t, text, db],
+    [t, db],
   );
 }

@@ -1,27 +1,25 @@
-import type { Locale } from "@zenweld/i18n";
-
-export function formatPrice(amount: number, locale: Locale = "tr"): string {
-  return new Intl.NumberFormat(locale === "tr" ? "tr-TR" : "en-US", {
+export function formatPrice(amount: number): string {
+  return new Intl.NumberFormat("tr-TR", {
     style: "currency",
     currency: "TRY",
     maximumFractionDigits: 0,
   }).format(amount);
 }
 
-export function formatDate(iso: string, locale: Locale = "tr"): string {
+export function formatDate(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat(locale === "tr" ? "tr-TR" : "en-GB", {
+  return new Intl.DateTimeFormat("tr-TR", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   }).format(d);
 }
 
-export function formatDateTime(iso: string, locale: Locale = "tr"): string {
+export function formatDateTime(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat(locale === "tr" ? "tr-TR" : "en-GB", {
+  return new Intl.DateTimeFormat("tr-TR", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

@@ -1,4 +1,3 @@
-import { localizePath, type Locale } from "@zenweld/i18n";
 import {
   faqs,
   isDiscountActive,
@@ -57,44 +56,15 @@ export function absoluteUrl(path: string): string {
   return `${getSiteUrl()}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-/**
- * Ayni sayfanin TR ve EN adresleri.
- *
- * canonical: icinde bulunulan dilin adresi (dil on ekiyle birlikte)
- * languages: hreflang etiketleri
- */
-export function languageAlternates(
-  path: string,
-  locale: Locale = "tr",
-): {
-  canonical: string;
-  languages: Record<string, string>;
-} {
-  const clean = path.startsWith("/") ? path : `/${path}`;
-  // Her dil kendi adres yazimini kullanir: /tr/urun/... ve /en/products/...
-  const forLocale = (target: Locale) =>
-    absoluteUrl(`/${target}${clean === "/" ? "" : localizePath(clean, target)}`);
-
-  return {
-    canonical: forLocale(locale),
-    languages: {
-      "tr-TR": forLocale("tr"),
-      "en-US": forLocale("en"),
-      "x-default": forLocale("tr"),
-    },
-  };
+/** Sayfanin kalici (canonical) adresi. */
+export function canonical(path: string): { canonical: string } {
+  return { canonical: absoluteUrl(path) };
 }
 
 export const SITE_NAME = "ZENWELD";
 
-const DESCRIPTIONS: Record<Locale, string> = {
-  tr: "Zenweld kaynak makineleri, plazma kesme sistemleri ve kaynak ekipmanları. Türkiye geneli yetkili bayi ağı, kurumsal teklif ve teknik destek.",
-  en: "Zenweld welding machines, plasma cutting systems and welding equipment. Authorised dealer network across Türkiye, corporate quotes and technical support.",
-};
-
-export function siteDescription(locale: Locale): string {
-  return DESCRIPTIONS[locale];
-}
+export const SITE_DESCRIPTION =
+  "Zenweld kaynak makineleri, plazma kesme sistemleri ve kaynak ekipmanları. Türkiye geneli yetkili bayi ağı, kurumsal teklif ve teknik destek.";
 
 /* ------------------------------------------------------------------ */
 /* Yapisal veri (JSON-LD)                                              */
@@ -102,7 +72,6 @@ export function siteDescription(locale: Locale): string {
 
 export function productJsonLd(
   product: Product,
-  locale: Locale,
   category?: Category,
 ): Record<string, unknown> {
   // Google'a musterinin odedigi fiyat bildirilir. Kampanyanin bitis tarihi
@@ -116,17 +85,15 @@ export function productJsonLd(
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
-    description: product.shortDescription[locale],
+    description: product.shortDescription,
     sku: product.sku,
     mpn: product.modelCode ?? product.sku,
     image: product.images.map((img) => absoluteUrl(img.url)),
     brand: { "@type": "Brand", name: "Zenweld" },
-    category: category?.name[locale],
+    category: category?.name,
     offers: {
       "@type": "Offer",
-      // Dile gore cevrilmis adres (/en/products/...); onceden Ingilizce
-      // sayfada ic rota (/en/urun/...) yaziliyordu.
-      url: ogUrl(`/urun/${product.slug}`, locale),
+      url: absoluteUrl(`/urun/${product.slug}`),
       priceCurrency: "TRY",
       price: priceIncVat,
       ...(endsAt ? { priceValidUntil: endsAt.slice(0, 10) } : {}),
@@ -137,8 +104,8 @@ export function productJsonLd(
     },
     additionalProperty: product.specs.map((spec) => ({
       "@type": "PropertyValue",
-      name: spec.label[locale],
-      value: spec.value[locale],
+      name: spec.label,
+      value: spec.value,
     })),
   };
 }
@@ -158,16 +125,16 @@ export function breadcrumbJsonLd(
   };
 }
 
-export function organizationJsonLd(locale: Locale): Record<string, unknown> {
+export function organizationJsonLd(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
-    url: absoluteUrl(`/${locale}`),
+    url: absoluteUrl("/"),
     // Raster bicim: paylasim onizlemeleri ve arama motorlari PNG'yi her
     // zaman isler, SVG'yi her arac islemez.
     logo: absoluteUrl("/images/brand/zenweld-logo.png"),
-    description: siteDescription(locale),
+    description: SITE_DESCRIPTION,
     // Resmi sosyal medya hesaplari — arama motorlari markayi bu hesaplarla
     // eslestirir. Tek kaynak CONTACT.social.
     sameAs: Object.values(CONTACT.social),
@@ -177,7 +144,7 @@ export function organizationJsonLd(locale: Locale): Record<string, unknown> {
       email: CONTACT.email,
       contactType: "customer service",
       areaServed: "TR",
-      availableLanguage: ["Turkish", "English"],
+      availableLanguage: ["Turkish"],
     },
     address: OFFICES.map((office) => ({
       "@type": "PostalAddress",
@@ -209,16 +176,11 @@ export function jsonLdScript(data: Record<string, unknown>): string {
  * Gercek metin eklendiginde: sayfayi lib/page-meta.ts tablosuna ekleyip
  * pageMetadataFor() kullanin, sayfa aramaya acilir.
  */
-export function placeholderPageMetadata(opts: {
-  path: string;
-  locale: Locale;
-  title: { tr: string; en: string };
-  description: { tr: string; en: string };
-}) {
+export function placeholderPageMetadata(opts: { path: string; title: string; description: string }) {
   return {
-    title: opts.title[opts.locale],
-    description: opts.description[opts.locale],
-    alternates: languageAlternates(opts.path, opts.locale),
+    title: opts.title,
+    description: opts.description,
+    alternates: canonical(opts.path),
     robots: { index: false, follow: true },
   };
 }
@@ -227,51 +189,14 @@ export function placeholderPageMetadata(opts: {
  * Anasayfadaki sik sorulan sorular icin FAQPage yapisal verisi.
  * Google bu sorulari arama sonucunda dogrudan gosterebiliyor.
  */
-export function faqJsonLd(locale: Locale): Record<string, unknown> {
+export function faqJsonLd(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: faqs.slice(0, 8).map((item) => ({
       "@type": "Question",
-      name: item.question[locale],
-      acceptedAnswer: { "@type": "Answer", text: item.answer[locale] },
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
     })),
   };
-}
-
-/**
- * Adres parcasi dile gore DEGISEN sayfalar icin alternates.
- * (Blog yazilari: /tr/blog/<tr-slug> ve /en/blog/<en-slug>)
- *
- * pathFor, her dil icin IC rotayi dondurur; cevrim yine localizePath ile
- * yapilir, yalnizca slug disaridan gelir.
- */
-export function languageAlternatesFor(
-  pathFor: (locale: Locale) => string,
-  locale: Locale = "tr",
-): { canonical: string; languages: Record<string, string> } {
-  const forLocale = (target: Locale) =>
-    absoluteUrl(`/${target}${localizePath(pathFor(target), target)}`);
-
-  return {
-    canonical: forLocale(locale),
-    languages: {
-      "tr-TR": forLocale("tr"),
-      "en-US": forLocale("en"),
-      "x-default": forLocale("tr"),
-    },
-  };
-}
-
-/**
- * og:url icin MUTLAK ve DILE GORE CEVRILMIS adres.
- *
- * Onceden `/${lang}/haberler/...` gibi ic rota yaziliyordu;
- * Ingilizce sayfalar paylasildiginda og:url Turkce adresi gosteriyordu
- * (canonical dogruydu, yalnizca og:url yanlisti). Bu yardimci ayni
- * cevrimi canonical ile birlikte yapar.
- */
-export function ogUrl(path: string, locale: Locale = "tr"): string {
-  const clean = path.startsWith("/") ? path : `/${path}`;
-  return absoluteUrl(`/${locale}${clean === "/" ? "" : localizePath(clean, locale)}`);
 }

@@ -91,7 +91,7 @@ export default function AdminProductsPage() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-2.5 text-zw-grey-600">{category?.name.tr ?? "—"}</td>
+                  <td className="px-4 py-2.5 text-zw-grey-600">{category?.name ?? "—"}</td>
                   <td className="px-4 py-2.5">
                     {/* Kampanya gecerliyse musterinin gordugu fiyat kirmizi,
                         normal fiyat ustu cizili; her durumda KDV haric normal
@@ -99,19 +99,19 @@ export default function AdminProductsPage() {
                     {isDiscountActive(p, now) ? (
                       <div className="flex flex-wrap items-baseline gap-x-2">
                         <span className="font-semibold text-zw-red-600">
-                          {formatPrice(priceWithVat(salePriceExVat(p, now), p.vatRate), "tr")}
+                          {formatPrice(priceWithVat(salePriceExVat(p, now), p.vatRate))}
                         </span>
                         <span className="text-xs text-zw-grey-500 line-through">
-                          {formatPrice(priceWithVat(p.priceExVat, p.vatRate), "tr")}
+                          {formatPrice(priceWithVat(p.priceExVat, p.vatRate))}
                         </span>
                       </div>
                     ) : (
                       <div className="font-semibold">
-                        {formatPrice(priceWithVat(p.priceExVat, p.vatRate), "tr")}
+                        {formatPrice(priceWithVat(p.priceExVat, p.vatRate))}
                       </div>
                     )}
                     <div className="text-xs text-zw-grey-500">
-                      {formatPrice(p.priceExVat, "tr")} + KDV
+                      {formatPrice(p.priceExVat)} + KDV
                     </div>
                   </td>
                   <td className="px-4 py-2.5">

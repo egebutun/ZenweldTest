@@ -98,7 +98,7 @@ export default function AdminQuotesPage() {
                   {q.companyName || q.contactName}
                 </span>
                 <span className="ml-auto text-xs text-zw-grey-500">
-                  {formatDateTime(q.createdAt, "tr")}
+                  {formatDateTime(q.createdAt)}
                 </span>
               </button>
 

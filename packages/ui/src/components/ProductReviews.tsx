@@ -57,7 +57,6 @@ export function ProductReviews({
   items,
   average,
   texts,
-  locale,
   defaultName = "",
   onSubmit,
   onPickMedia,
@@ -66,7 +65,6 @@ export function ProductReviews({
   items: ReviewItem[];
   average: number;
   texts: ReviewsTexts;
-  locale: string;
   defaultName?: string;
   onSubmit: (input: {
     authorName: string;
@@ -89,10 +87,7 @@ export function ProductReviews({
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
-  const fmt = useMemo(
-    () => new Intl.DateTimeFormat(locale === "tr" ? "tr-TR" : "en-GB", { dateStyle: "medium" }),
-    [locale],
-  );
+  const fmt = useMemo(() => new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium" }), []);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();

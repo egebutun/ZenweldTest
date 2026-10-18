@@ -92,8 +92,8 @@ export default function AdminEventsPage() {
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-4 py-2.5 text-zw-grey-600">
-                  {formatDate(e.startDate, "tr")}
-                  <div className="text-xs text-zw-grey-500">{formatDate(e.endDate, "tr")}</div>
+                  {formatDate(e.startDate)}
+                  <div className="text-xs text-zw-grey-500">{formatDate(e.endDate)}</div>
                 </td>
                 <td className="px-4 py-2.5 text-zw-grey-600">
                   {e.city}

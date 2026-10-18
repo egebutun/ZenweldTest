@@ -11,8 +11,8 @@ import {
 } from "@zenweld/data";
 import { useNow } from "@zenweld/store";
 import { Badge, FlashFrame, ProductImage } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+import Link from "next/link";
+import { useT } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@zenweld/utils";
 import { useFavourites } from "@/lib/favourites";
 import { useCart } from "@/lib/cart";
@@ -26,13 +26,11 @@ export function ProductCard({
   compact?: boolean;
 }) {
   const t = useT();
-  const locale = useLocale();
-  const text = useText();
   const favourites = useFavourites();
 
   const now = useNow();
 
-  const highlights = productHighlights(product, locale, 3);
+  const highlights = productHighlights(product);
   // Fiyat ve kampanya kurallari tek yerden gelir (packages/data/src/discount.ts).
   // Kampanya tarihleri "now" ile degerlendirilir.
   const discount = discountPercent(product, now);
@@ -52,13 +50,13 @@ export function ProductCard({
         />
       </button>
 
-      <LocaleLink href={`/urun/${product.slug}`} className="block">
+      <Link href={`/urun/${product.slug}`} className="block">
         <div
           className={`relative overflow-hidden bg-zw-grey-50 ${compact ? "aspect-[4/3]" : "aspect-square"}`}
         >
           <ProductImage
             src={product.images[0]?.url}
-            alt={text(product.images[0]?.alt) || product.name}
+            alt={product.images[0]?.alt || product.name}
             label={product.name}
             className={`h-full w-full object-contain transition-transform duration-300 group-hover:scale-105 ${compact ? "p-2" : "p-3"}`}
           />
@@ -78,19 +76,19 @@ export function ProductCard({
             )}
           </div>
         </div>
-      </LocaleLink>
+      </Link>
 
       <div className={`flex flex-1 flex-col ${compact ? "p-3" : "p-4"}`}>
         <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-zw-grey-500">
           {product.sku}
         </div>
-        <LocaleLink href={`/urun/${product.slug}`}>
+        <Link href={`/urun/${product.slug}`}>
           <h3
             className={`font-display font-semibold leading-tight text-zw-ink transition-colors group-hover:text-zw-red-600 ${compact ? "text-base" : "text-lg"}`}
           >
             {product.name}
           </h3>
-        </LocaleLink>
+        </Link>
         {/* Satista one cikan ilk 3 ozellik (yonetim panelinden duzenlenir) */}
         {highlights.length > 0 ? (
           <ul className="mt-2 space-y-1">
@@ -103,7 +101,7 @@ export function ProductCard({
           </ul>
         ) : (
           <p className="mt-1.5 line-clamp-2 text-sm text-zw-grey-500">
-            {text(product.shortDescription)}
+            {product.shortDescription}
           </p>
         )}
 
@@ -117,21 +115,21 @@ export function ProductCard({
                   compact ? "text-xl" : "text-2xl"
                 }`}
               >
-                {formatPrice(priceWithVat(sale, product.vatRate), locale)}
+                {formatPrice(priceWithVat(sale, product.vatRate))}
               </span>
               <span
                 className={`text-zw-grey-500 line-through ${compact ? "text-sm" : "text-base"}`}
               >
-                {formatPrice(priceWithVat(product.priceExVat, product.vatRate), locale)}
+                {formatPrice(priceWithVat(product.priceExVat, product.vatRate))}
               </span>
             </div>
           ) : (
             <div className={`font-bold text-zw-ink ${compact ? "text-xl" : "text-2xl"}`}>
-              {formatPrice(priceWithVat(sale, product.vatRate), locale)}
+              {formatPrice(priceWithVat(sale, product.vatRate))}
             </div>
           )}
           <div className="mt-1 text-xs text-zw-grey-500">
-            {t.product.priceIncVat} · {formatPrice(sale, locale)} {t.product.priceExVat}
+            {t.product.priceIncVat} · {formatPrice(sale)} {t.product.priceExVat}
           </div>
           <CardCartButton product={product} />
         </div>
@@ -160,18 +158,18 @@ function CardCartButton({ product }: { product: Product }) {
 
   if (product.variantGroups?.length) {
     return (
-      <LocaleLink href={`/urun/${product.slug}`} className={`${className} bg-zw-ink hover:bg-zw-red-600`}>
+      <Link href={`/urun/${product.slug}`} className={`${className} bg-zw-ink hover:bg-zw-red-600`}>
         {t.cart.chooseOptions}
-      </LocaleLink>
+      </Link>
     );
   }
 
   if (added) {
     return (
-      <LocaleLink href="/sepet" className={`${className} bg-emerald-600 hover:bg-emerald-700`}>
+      <Link href="/sepet" className={`${className} bg-emerald-600 hover:bg-emerald-700`}>
         <Check size={15} />
         {t.cart.goToCart}
-      </LocaleLink>
+      </Link>
     );
   }
 

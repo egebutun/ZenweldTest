@@ -17,8 +17,8 @@ const TOPICS: { id: FaqItem["topic"]; label: string }[] = [
 const EMPTY: FaqItem = {
   id: "",
   topic: "genel",
-  question: { tr: "", en: "" },
-  answer: { tr: "", en: "" },
+  question: "",
+  answer: "",
 };
 
 /**
@@ -39,19 +39,19 @@ export default function AdminFaqPage() {
 
   const save = () => {
     if (!editing) return;
-    if (!editing.question.tr.trim() || !editing.answer.tr.trim()) {
-      return setError("Soru ve cevap (TR) zorunludur.");
+    if (!editing.question.trim() || !editing.answer.trim()) {
+      return setError("Soru ve cevap zorunludur.");
     }
     saveFaq({
       ...editing,
-      question: { tr: editing.question.tr.trim(), en: editing.question.en.trim() || editing.question.tr.trim() },
-      answer: { tr: editing.answer.tr.trim(), en: editing.answer.en.trim() || editing.answer.tr.trim() },
+      question: editing.question.trim(),
+      answer: editing.answer.trim(),
     });
     close();
   };
 
-  const setText = (field: "question" | "answer", lang: "tr" | "en", value: string) =>
-    editing && setEditing({ ...editing, [field]: { ...editing[field], [lang]: value } });
+  const setText = (field: "question" | "answer", value: string) =>
+    editing && setEditing({ ...editing, [field]: value });
 
   return (
     <>
@@ -99,8 +99,8 @@ export default function AdminFaqPage() {
                   </div>
                 </td>
                 <td className="px-4 py-2.5">
-                  <div className="font-semibold">{f.question.tr}</div>
-                  <div className="line-clamp-1 text-xs text-zw-grey-500">{f.answer.tr}</div>
+                  <div className="font-semibold">{f.question}</div>
+                  <div className="line-clamp-1 text-xs text-zw-grey-500">{f.answer}</div>
                 </td>
                 <td className="px-4 py-2.5">
                   <Badge tone="grey">{TOPICS.find((t) => t.id === f.topic)?.label}</Badge>
@@ -153,17 +153,11 @@ export default function AdminFaqPage() {
                 ))}
               </Select>
             </FormRow>
-            <FormRow label="Soru (TR)" required>
-              <Input value={editing.question.tr} onChange={(e) => setText("question", "tr", e.target.value)} />
+            <FormRow label="Soru" required>
+              <Input value={editing.question} onChange={(e) => setText("question", e.target.value)} />
             </FormRow>
-            <FormRow label="Cevap (TR)" required>
-              <Textarea value={editing.answer.tr} onChange={(e) => setText("answer", "tr", e.target.value)} />
-            </FormRow>
-            <FormRow label="Soru (EN)" hint="Boş bırakılırsa Türkçesi kullanılır">
-              <Input value={editing.question.en} onChange={(e) => setText("question", "en", e.target.value)} />
-            </FormRow>
-            <FormRow label="Cevap (EN)" hint="Boş bırakılırsa Türkçesi kullanılır">
-              <Textarea value={editing.answer.en} onChange={(e) => setText("answer", "en", e.target.value)} />
+            <FormRow label="Cevap" required>
+              <Textarea value={editing.answer} onChange={(e) => setText("answer", e.target.value)} />
             </FormRow>
             {error && <p className="text-sm font-semibold text-zw-red-600">{error}</p>}
             <div className="flex gap-3 pt-2">

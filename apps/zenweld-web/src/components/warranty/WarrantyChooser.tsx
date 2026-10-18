@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { ClipboardCheck, Search } from "lucide-react";
 import { WarrantyCheck } from "./WarrantyCheck";
 import { WarrantyRegister } from "./WarrantyRegister";
-import { useHref, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 
 export type WarrantyAction = "kayit" | "sorgula";
 
@@ -25,11 +25,10 @@ const ACTION_PATHS: Record<WarrantyAction, string> = {
  */
 export function WarrantyChooser({ selected: action }: { selected: WarrantyAction | null }) {
   const t = useT();
-  const href = useHref();
   const router = useRouter();
 
   const choose = (next: WarrantyAction) => {
-    router.push(href(ACTION_PATHS[next]), { scroll: false });
+    router.push(ACTION_PATHS[next], { scroll: false });
   };
 
   const options: { id: WarrantyAction; Icon: typeof Search; title: string; text: string }[] = [

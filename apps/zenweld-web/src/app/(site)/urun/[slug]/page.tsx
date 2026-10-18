@@ -1,0 +1,106 @@
+import type { Metadata } from "next";
+import { categories, products } from "@zenweld/data";
+import { JsonLd } from "@/components/common/JsonLd";
+import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical, productJsonLd } from "@/lib/seo";
+import { ProductPageClient } from "./ProductPageClient";
+
+/**
+ * Urun sayfasi — sunucu bileseni.
+ *
+ * Sayfa basligi, aciklamasi, sosyal medya onizlemesi ve yapisal veri burada
+ * uretilir; etkilesimli kisim ProductPageClient bileseninde calisir.
+ */
+
+export function generateStaticParams() {
+  return products
+    .filter((product) => product.active)
+    .map((product) => ({ slug: product.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = products.find((p) => p.slug === slug);
+
+  if (!product) {
+    return { title: "Ürün bulunamadı" };
+  }
+
+  const category = categories.find((c) => c.slug === product.categorySlug);
+  const title = category
+    ? `${product.name} — ${category.name}`
+    : product.name;
+  const description = product.shortDescription;
+  // Urunun fotografi yoksa paylasim karti olarak markali gorsel kullanilir.
+  // Onceden 519 KB'lik dikey bir urun fotografi vardi; sosyal aglar bu
+  // olcuyu kirpiyordu.
+  const image = product.images[0]?.url ?? "/images/brand/og-cover.png";
+
+  return {
+    title,
+    description,
+    alternates: canonical(`/urun/${product.slug}`),
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      url: absoluteUrl(`/urun/${product.slug}`),
+      images: [{ url: image, alt: product.name }],
+      locale: "tr_TR",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${SITE_NAME}`,
+      description,
+      images: [image],
+    },
+    other: {
+      "product:brand": "Zenweld",
+      "product:retailer_item_id": product.sku,
+    },
+  };
+}
+
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const product = products.find((p) => p.slug === slug);
+
+  // Yonetim panelinden eklenen urunler yalnizca tarayicida bulunur; onlar icin
+  // yapisal veri uretmeden istemci bilesenini calistiriyoruz.
+  if (!product) {
+    return <ProductPageClient slug={slug} />;
+  }
+
+  const category = categories.find((c) => c.slug === product.categorySlug);
+  const sectionLabel = product.section.replace("-", " ");
+
+  return (
+    <>
+      <JsonLd data={productJsonLd(product, category)} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: SITE_NAME, path: "/" },
+          { name: sectionLabel, path: `/${product.section}` },
+          ...(category
+            ? [
+                {
+                  name: category.name,
+                  path: `/${product.section}/${category.slug}`,
+                },
+              ]
+            : []),
+          { name: product.name, path: `/urun/${product.slug}` },
+        ])}
+      />
+      <ProductPageClient slug={slug} />
+    </>
+  );
+}

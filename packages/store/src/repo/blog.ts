@@ -1,6 +1,6 @@
 "use client";
 
-import { matchesBlogSlug, type BlogPost, type ZenweldDatabase } from "@zenweld/data";
+import { type BlogPost, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nowIso } from "./shared";
 
@@ -29,12 +29,12 @@ export function findBlogPostById(
   return db.blogPosts.find((p) => p.id === id);
 }
 
-/** Sitedeki yazi sayfasi icin: yalnizca yayindaki yazi, iki dilin adresi de. */
+/** Sitedeki yazi sayfasi icin: yalnizca yayindaki yazi. */
 export function findBlogPostBySlug(
   slug: string,
   db: ZenweldDatabase = getSnapshot(),
 ): BlogPost | undefined {
-  return db.blogPosts.find((p) => p.active !== false && matchesBlogSlug(p, slug));
+  return db.blogPosts.find((p) => p.active !== false && p.slug === slug);
 }
 
 function sortBlogPosts(list: BlogPost[]): void {
@@ -55,12 +55,11 @@ export function createBlogPost(partial: Partial<BlogPost>): BlogPost {
   const item: BlogPost = {
     id,
     slug: partial.slug ?? id,
-    slugEn: partial.slugEn,
-    title: partial.title ?? { tr: "", en: "" },
-    excerpt: partial.excerpt ?? { tr: "", en: "" },
-    body: partial.body ?? { tr: "", en: "" },
+    title: partial.title ?? "",
+    excerpt: partial.excerpt ?? "",
+    body: partial.body ?? "",
     coverUrl: partial.coverUrl ?? "",
-    category: partial.category ?? { tr: "", en: "" },
+    category: partial.category ?? "",
     author: partial.author ?? "Zenweld",
     publishedAt: partial.publishedAt ?? nowIso(),
     active: partial.active ?? true,

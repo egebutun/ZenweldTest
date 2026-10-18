@@ -8,25 +8,23 @@ import { slugify } from "@zenweld/utils";
 import {
   ContentFormShell,
   FormPanel,
-  LocalizedTextFields,
+  ContentTextFields,
   PublishedAtField,
   SingleImageField,
-  SlugFields,
+  SlugField,
   findSlugClash,
-  resolveSlugs,
+  resolveSlug,
   useContentForm,
-  withTrFallback,
 } from "./content-form";
 
 const EMPTY: BlogPost = {
   id: "",
   slug: "",
-  slugEn: "",
-  title: { tr: "", en: "" },
-  excerpt: { tr: "", en: "" },
-  body: { tr: "", en: "" },
+  title: "",
+  excerpt: "",
+  body: "",
   coverUrl: "",
-  category: { tr: "", en: "" },
+  category: "",
   author: "Zenweld",
   publishedAt: "",
   active: true,
@@ -40,25 +38,20 @@ export function BlogForm({ item }: { item?: BlogPost }) {
   const form = useContentForm<BlogPost>(
     item ?? { ...EMPTY, publishedAt: new Date().toISOString() },
   );
-  const { draft, set, setI18n } = form;
+  const { draft, set } = form;
 
   const submit = () => {
     form.setError(null);
-    if (!draft.title.tr.trim()) return form.fail("Yazı başlığı (TR) zorunludur.");
+    if (!draft.title.trim()) return form.fail("Yazı başlığı zorunludur.");
 
-    const { slug, slugEn } = resolveSlugs(draft, draft.title);
-    const clash = findSlugClash(db.blogPosts, draft.id, [slug, slugEn]);
+    const slug = resolveSlug(draft.slug, draft.title);
+    const clash = findSlugClash(db.blogPosts, draft.id, slug);
     if (clash) return form.fail(`"${clash.slug}" adresi başka bir yazıda kullanılıyor.`);
 
     const next: BlogPost = {
       ...draft,
       slug,
-      slugEn: slugEn || undefined,
       author: draft.author.trim() || "Zenweld",
-      title: withTrFallback(draft.title),
-      excerpt: withTrFallback(draft.excerpt),
-      body: withTrFallback(draft.body),
-      category: withTrFallback(draft.category),
     };
 
     if (isNew) {
@@ -84,65 +77,40 @@ export function BlogForm({ item }: { item?: BlogPost }) {
       {form.tab === "temel" && (
         <FormPanel>
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Yazı Başlığı (TR)" required>
+            <FormRow label="Yazı Başlığı" required>
               <Input
                 required
-                value={draft.title.tr}
+                value={draft.title}
                 onChange={(e) => {
-                  setI18n("title", "tr", e.target.value);
+                  set("title", e.target.value);
                   if (isNew) set("slug", slugify(e.target.value));
                 }}
               />
             </FormRow>
-            <FormRow label="Yazı Başlığı (EN)" hint="Boş bırakılırsa Türkçe başlık kullanılır">
-              <Input
-                value={draft.title.en}
-                onChange={(e) => {
-                  setI18n("title", "en", e.target.value);
-                  // Ingilizce adres, Ingilizce basliktan kendiliginden uretilir.
-                  if (isNew) set("slugEn", slugify(e.target.value));
-                }}
-              />
-            </FormRow>
+            <SlugField slug={draft.slug} onChange={(v) => set("slug", v)} path="/blog" />
           </div>
 
-          <SlugFields
-            slug={draft.slug}
-            slugEn={draft.slugEn}
-            onChange={set}
-            trPath="/tr/blog"
-            enPath="/en/blog"
-          />
-
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Kategori (TR)" hint="Örn. Teknik Rehber, İpuçları, Bakım">
+            <FormRow label="Kategori" hint="Örn. Teknik Rehber, İpuçları, Bakım">
               <Input
-                value={draft.category.tr}
-                onChange={(e) => setI18n("category", "tr", e.target.value)}
+                value={draft.category}
+                onChange={(e) => set("category", e.target.value)}
                 list="blog-kategorileri"
               />
               <datalist id="blog-kategorileri">
-                {Array.from(new Set(db.blogPosts.map((p) => p.category.tr)))
+                {Array.from(new Set(db.blogPosts.map((p) => p.category)))
                   .filter(Boolean)
                   .map((c) => (
                     <option key={c} value={c} />
                   ))}
               </datalist>
             </FormRow>
-            <FormRow label="Kategori (EN)" hint="Boş bırakılırsa Türkçesi kullanılır">
-              <Input
-                value={draft.category.en}
-                onChange={(e) => setI18n("category", "en", e.target.value)}
-              />
-            </FormRow>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
             <FormRow label="Yazar">
               <Input value={draft.author} onChange={(e) => set("author", e.target.value)} />
             </FormRow>
-            <PublishedAtField value={draft.publishedAt} onChange={(v) => set("publishedAt", v)} />
           </div>
+
+          <PublishedAtField value={draft.publishedAt} onChange={(v) => set("publishedAt", v)} />
 
           <Checkbox
             label="Yayında (sitede görünür)"
@@ -153,14 +121,14 @@ export function BlogForm({ item }: { item?: BlogPost }) {
       )}
 
       {form.tab === "icerik" && (
-        <LocalizedTextFields
+        <ContentTextFields
           intro="Özet yazı kartında, metin yazı sayfasında görünür."
           fields={[
             { key: "excerpt", label: "Özet" },
             { key: "body", label: "Yazı Metni", tall: true },
           ]}
           values={draft}
-          onChange={setI18n}
+          onChange={set}
         />
       )}
 
@@ -174,7 +142,7 @@ export function BlogForm({ item }: { item?: BlogPost }) {
             value={draft.coverUrl}
             onChange={(url) => set("coverUrl", url)}
             onError={form.setError}
-            alt={draft.title.tr}
+            alt={draft.title}
             placeholder="https://… veya /images/blog/yazi.jpg"
             previewClassName="aspect-[16/9] w-64"
           />

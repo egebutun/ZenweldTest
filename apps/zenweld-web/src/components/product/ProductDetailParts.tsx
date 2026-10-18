@@ -23,8 +23,8 @@ import {
 import { useNow } from "@zenweld/store";
 import { Badge, Button, Modal, ProductImage } from "@zenweld/ui";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
-import { LocaleLink } from "@/components/common/LocaleLink";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+import Link from "next/link";
+import { useT } from "@/lib/i18n-client";
 import { openSupportChat } from "@/lib/support-chat";
 import { MAX_LINE_QUANTITY, useCart } from "@/lib/cart";
 import type { VariantSelection } from "@/lib/variants";
@@ -33,8 +33,7 @@ import { formatDateTime, formatPrice, priceWithVat } from "@zenweld/utils";
 /* ---------------------------------------------------------------- */
 
 export function ProductGallery({ product }: { product: Product }) {
-  const text = useText();
-  const images = product.images.length > 0 ? product.images : [{ url: "", alt: { tr: product.name, en: product.name } }];
+  const images = product.images.length > 0 ? product.images : [{ url: "", alt: product.name }];
   const [active, setActive] = useState(0);
 
   return (
@@ -42,7 +41,7 @@ export function ProductGallery({ product }: { product: Product }) {
       <div className="aspect-[5/4] overflow-hidden rounded-[4px] bg-zw-grey-50">
         <ProductImage
           src={images[active]?.url}
-          alt={text(images[active]?.alt) || product.name}
+          alt={images[active]?.alt || product.name}
           label={product.name}
           priority
           className="h-full w-full object-contain p-4"
@@ -61,7 +60,7 @@ export function ProductGallery({ product }: { product: Product }) {
             >
               <ProductImage
                 src={img.url}
-                alt={text(img.alt) || product.name}
+                alt={img.alt || product.name}
                 label={product.name}
                 className="h-full w-full object-contain p-2"
               />
@@ -83,7 +82,6 @@ export function ProductGallery({ product }: { product: Product }) {
  */
 export function PriceBlock({ product }: { product: Product }) {
   const t = useT();
-  const locale = useLocale();
   const now = useNow();
 
   const percent = discountPercent(product, now);
@@ -103,7 +101,7 @@ export function PriceBlock({ product }: { product: Product }) {
           <span className="text-sm text-zw-grey-500">
             {t.product.normalPrice}{" "}
             <span className="line-through">
-              {formatPrice(priceWithVat(product.priceExVat, product.vatRate), locale)}
+              {formatPrice(priceWithVat(product.priceExVat, product.vatRate))}
             </span>
           </span>
         </div>
@@ -114,18 +112,18 @@ export function PriceBlock({ product }: { product: Product }) {
             percent > 0 ? "rounded-[4px] bg-zw-red-600 px-3 py-1 text-white" : ""
           }`}
         >
-          {formatPrice(incVat, locale)}
+          {formatPrice(incVat)}
         </span>
         <span className="text-sm font-medium text-zw-grey-500">{t.product.priceIncVat}</span>
       </div>
       <div className="mt-1 text-sm text-zw-grey-500">
-        {formatPrice(sale, locale)} <span>{t.product.priceExVat}</span>
+        {formatPrice(sale)} <span>{t.product.priceExVat}</span>
         <span className="mx-2 text-zw-grey-300">·</span>
         KDV %{product.vatRate}
       </div>
       {endsAt && (
         <p className="mt-2 text-sm font-semibold text-zw-red-700">
-          {t.product.campaignEnds.replace("{date}", formatDateTime(endsAt, locale))}
+          {t.product.campaignEnds.replace("{date}", formatDateTime(endsAt))}
         </p>
       )}
     </div>
@@ -169,9 +167,9 @@ export function AddToCart({
             <Check size={16} />
             {t.cart.added}
           </span>
-          <LocaleLink href="/sepet" className="underline underline-offset-2 hover:text-emerald-950">
+          <Link href="/sepet" className="underline underline-offset-2 hover:text-emerald-950">
             {t.cart.goToCart} →
-          </LocaleLink>
+          </Link>
         </div>
       )}
     </div>
@@ -255,7 +253,6 @@ export function WhereToBuyButton({
 
 /** Urun sayfasindaki "Kutu Icerigi" sekmesi. */
 export function InTheBoxList({ product }: { product: Product }) {
-  const text = useText();
 
   return (
     <div>
@@ -263,7 +260,7 @@ export function InTheBoxList({ product }: { product: Product }) {
         {product.inTheBox.map((item, i) => (
           <li key={i} className="flex gap-2">
             <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-zw-grey-400" />
-            {text(item)}
+            {item}
           </li>
         ))}
       </ul>
@@ -274,16 +271,15 @@ export function InTheBoxList({ product }: { product: Product }) {
 /* ---------------------------------------------------------------- */
 
 export function SpecTable({ product }: { product: Product }) {
-  const text = useText();
   return (
     <table className="w-full text-sm">
       <tbody>
         {product.specs.map((row, i) => (
           <tr key={i} className="border-b border-zw-grey-200 last:border-0">
             <th className="w-2/5 py-3 pr-4 text-left font-semibold text-zw-grey-700">
-              {text(row.label)}
+              {row.label}
             </th>
-            <td className="py-3 text-zw-grey-600">{text(row.value)}</td>
+            <td className="py-3 text-zw-grey-600">{row.value}</td>
           </tr>
         ))}
       </tbody>
@@ -338,7 +334,6 @@ export function SupportCta() {
 
 export function ProductHighlights({ product }: { product: Product }) {
   const t = useT();
-  const text = useText();
   if (product.highlights.length === 0) return null;
 
   return (
@@ -348,7 +343,7 @@ export function ProductHighlights({ product }: { product: Product }) {
         {product.highlights.map((h, i) => (
           <div key={i} className="flex items-start gap-2 text-sm text-zw-grey-700">
             <Check size={16} className="mt-0.5 shrink-0 text-zw-red-600" />
-            {text(h)}
+            {h}
           </div>
         ))}
       </div>

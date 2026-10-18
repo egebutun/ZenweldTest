@@ -86,7 +86,7 @@ export default function AdminReviewsPage() {
               <StarRating value={r.rating} size={15} />
               <span className="font-semibold text-zw-ink">{r.authorName}</span>
               <span className="text-sm text-zw-grey-500">{productName(r.productId)}</span>
-              <span className="text-xs text-zw-grey-400">{formatDate(r.createdAt, "tr")}</span>
+              <span className="text-xs text-zw-grey-400">{formatDate(r.createdAt)}</span>
               {!r.approved && <Badge tone="outline">Onay bekliyor</Badge>}
               {r.featured && <Badge tone="red">Anasayfada</Badge>}
               {r.verifiedPurchase && <Badge tone="grey">Doğrulanmış alıcı</Badge>}

@@ -1,4 +1,4 @@
-import type { Locale, Product } from "./types";
+import type { Product } from "./types";
 
 /** Yer tutucu metinleri ayirt etmek icin kullanilan lorem ipsum kaliplari. */
 const LOREM = /\b(lorem|ipsum|dolor sit amet|consectetur|adipiscing|eiusmod|tempor|incididunt)\b/i;
@@ -10,12 +10,10 @@ const LOREM = /\b(lorem|ipsum|dolor sit amet|consectetur|adipiscing|eiusmod|temp
  * Yer tutucu (lorem ipsum) metinler elenir, hic gercek ozellik yoksa
  * kisa aciklamaya dusulur.
  */
-export function productHighlights(product: Product, locale: Locale, limit = 3): string[] {
-  const real = product.highlights
-    .map((h) => h[locale])
-    .filter((h) => h && !LOREM.test(h));
+export function productHighlights(product: Product, limit = 3): string[] {
+  const real = product.highlights.filter((h) => h && !LOREM.test(h));
   if (real.length > 0) return real.slice(0, limit);
 
-  const short = product.shortDescription[locale];
+  const short = product.shortDescription;
   return short && !LOREM.test(short) ? [short] : [];
 }

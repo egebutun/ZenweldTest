@@ -2,12 +2,10 @@
 
 import type { ReactNode } from "react";
 import type { LegalPageId } from "@zenweld/data";
-import type { Locale } from "@zenweld/i18n";
 import { findLegalPage, useDatabase } from "@zenweld/store";
 import { RichText } from "@zenweld/ui";
 import { formatDate, formatPrice } from "@zenweld/utils";
 import { CONTACT, OFFICES } from "@/lib/contact";
-import { useLocale, useText } from "@/lib/i18n-client";
 
 /**
  * ON BILGILENDIRME FORMU ve MESAFELI SATIS SOZLESMESI
@@ -45,65 +43,37 @@ export interface LegalContext {
 const SELLER = OFFICES[0];
 
 const TEXT = {
-  tr: {
-    seller: "Satıcı",
-    buyer: "Alıcı",
-    title: "Unvan",
-    address: "Adres",
-    phone: "Telefon",
-    email: "E-posta",
-    mersis: "MERSİS No",
-    name: "Ad Soyad / Unvan",
-    delivery: "Teslimat adresi",
-    invoice: "Fatura bilgileri",
-    products: "Sözleşme konusu ürünler",
-    product: "Ürün",
-    qty: "Adet",
-    unit: "Birim fiyat (KDV dahil)",
-    total: "Toplam",
-    subtotal: "Ürünler toplamı",
-    shipping: "Kargo ücreti",
-    installmentFee: "Vade farkı",
-    grandTotal: "Ödenecek toplam tutar (KDV dahil)",
-    payment: "Ödeme şekli",
-    date: "Sipariş tarihi",
-    filledAtCheckout: "Sipariş sırasında doldurulur",
-    free: "Ücretsiz",
-  },
-  en: {
-    seller: "Seller",
-    buyer: "Buyer",
-    title: "Company",
-    address: "Address",
-    phone: "Phone",
-    email: "Email",
-    mersis: "MERSIS No",
-    name: "Name / Company",
-    delivery: "Delivery address",
-    invoice: "Billing details",
-    products: "Products covered by the contract",
-    product: "Product",
-    qty: "Qty",
-    unit: "Unit price (incl. VAT)",
-    total: "Total",
-    subtotal: "Products total",
-    shipping: "Shipping fee",
-    installmentFee: "Instalment fee",
-    grandTotal: "Total amount payable (incl. VAT)",
-    payment: "Payment method",
-    date: "Order date",
-    filledAtCheckout: "Filled in at checkout",
-    free: "Free",
-  },
-} satisfies Record<Locale, unknown>;
+  seller: "Satıcı",
+  buyer: "Alıcı",
+  title: "Unvan",
+  address: "Adres",
+  phone: "Telefon",
+  email: "E-posta",
+  mersis: "MERSİS No",
+  name: "Ad Soyad / Unvan",
+  delivery: "Teslimat adresi",
+  invoice: "Fatura bilgileri",
+  products: "Sözleşme konusu ürünler",
+  product: "Ürün",
+  qty: "Adet",
+  unit: "Birim fiyat (KDV dahil)",
+  total: "Toplam",
+  subtotal: "Ürünler toplamı",
+  shipping: "Kargo ücreti",
+  installmentFee: "Vade farkı",
+  grandTotal: "Ödenecek toplam tutar (KDV dahil)",
+  payment: "Ödeme şekli",
+  date: "Sipariş tarihi",
+  filledAtCheckout: "Sipariş sırasında doldurulur",
+  free: "Ücretsiz",
+};
 
 /** Belgenin panelde girilen basligi (modal basliklari icin). */
 export function useDocumentTitle() {
   const db = useDatabase();
-  const text = useText();
   return (kind: LegalDocumentKind) => {
     const page = findLegalPage(DOC_ID[kind], db);
-    return page ? text(page.title) : "";
+    return page ? page.title : "";
   };
 }
 
@@ -115,12 +85,9 @@ export function LegalDocument({
   /** Yoksa bos sablon gosterilir */
   context?: LegalContext;
 }) {
-  const locale = useLocale();
-  const text = useText();
-  const t = TEXT[locale];
+  const t = TEXT;
   const page = findLegalPage(DOC_ID[kind], useDatabase());
   const blank = <span className="italic text-zw-grey-400">[{t.filledAtCheckout}]</span>;
-  const price = (n: number) => formatPrice(n, locale);
 
   return (
     <article className="space-y-6 text-sm leading-relaxed text-zw-grey-700">
@@ -169,22 +136,22 @@ export function LegalDocument({
                       {i.variant && <span className="text-zw-grey-500"> — {i.variant}</span>}
                     </td>
                     <td className="py-2 pr-3 text-right">{i.quantity}</td>
-                    <td className="py-2 pr-3 text-right">{price(i.unitPrice)}</td>
-                    <td className="py-2 text-right">{price(i.unitPrice * i.quantity)}</td>
+                    <td className="py-2 pr-3 text-right">{formatPrice(i.unitPrice)}</td>
+                    <td className="py-2 text-right">{formatPrice(i.unitPrice * i.quantity)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <Facts
               rows={[
-                [t.subtotal, price(context.subtotal)],
-                [t.shipping, context.shipping === 0 ? t.free : price(context.shipping)],
+                [t.subtotal, formatPrice(context.subtotal)],
+                [t.shipping, context.shipping === 0 ? t.free : formatPrice(context.shipping)],
                 ...(context.installmentFee > 0
-                  ? [[t.installmentFee, price(context.installmentFee)] as [string, ReactNode]]
+                  ? [[t.installmentFee, formatPrice(context.installmentFee)] as [string, ReactNode]]
                   : []),
-                [t.grandTotal, <strong key="t">{price(context.total)}</strong>],
+                [t.grandTotal, <strong key="t">{formatPrice(context.total)}</strong>],
                 [t.payment, context.payment],
-                [t.date, formatDate(context.date, locale)],
+                [t.date, formatDate(context.date)],
               ]}
             />
           </div>
@@ -193,7 +160,7 @@ export function LegalDocument({
         )}
       </Section>
 
-      {page && <RichText source={text(page.body)} />}
+      {page && <RichText source={page.body} />}
     </article>
   );
 }

@@ -93,7 +93,7 @@ export default function AdminOrdersPage() {
                   <Link href={`/yonetim/siparisler/${o.id}`} className="font-semibold text-zw-red-700 hover:underline">
                     {o.code}
                   </Link>
-                  <div className="text-xs text-zw-grey-500">{formatDateTime(o.createdAt, "tr")}</div>
+                  <div className="text-xs text-zw-grey-500">{formatDateTime(o.createdAt)}</div>
                 </td>
                 <td className="px-4 py-2.5">
                   <div className="font-semibold">{o.invoice.companyName ?? o.customerName}</div>
@@ -104,7 +104,7 @@ export default function AdminOrdersPage() {
                   {o.items.map((i, idx) => (
                     <div key={idx}>
                       {i.quantity} × {i.productName}
-                      {i.variantLabel && <span className="text-zw-grey-400"> ({i.variantLabel.tr})</span>}
+                      {i.variantLabel && <span className="text-zw-grey-400"> ({i.variantLabel})</span>}
                     </div>
                   ))}
                 </td>
@@ -121,7 +121,7 @@ export default function AdminOrdersPage() {
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-2.5 text-right font-semibold">{formatPrice(o.total, "tr")}</td>
+                <td className="px-4 py-2.5 text-right font-semibold">{formatPrice(o.total)}</td>
                 <td className="px-4 py-2.5">
                   <AdminOrderStatus status={o.status} />
                 </td>

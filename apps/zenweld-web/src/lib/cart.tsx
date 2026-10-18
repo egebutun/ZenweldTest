@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { cartTotals, salePriceExVat, type CartTotals, type I18nText, type Product } from "@zenweld/data";
+import { cartTotals, salePriceExVat, type CartTotals, type Product } from "@zenweld/data";
 import { getShopSettings, useDatabase, useNow } from "@zenweld/store";
 import { priceWithVat } from "@zenweld/utils";
 import { completeSelection, resolveVariant, variantLabel, type VariantSelection } from "./variants";
@@ -36,7 +36,7 @@ export interface CartLine {
   key: string;
   product: Product;
   selection: VariantSelection;
-  variantLabel?: I18nText;
+  variantLabel?: string;
   sku: string;
   quantity: number;
   unitExVat: number;

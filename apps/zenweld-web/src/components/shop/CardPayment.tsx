@@ -4,7 +4,7 @@ import { CreditCard, Lock } from "lucide-react";
 import { availableInstallments, installmentQuote, type ShopSettings } from "@zenweld/data";
 import { FormRow, Input } from "@zenweld/ui";
 import { formatPrice } from "@zenweld/utils";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { cardBrand, cardProgram, digitsOnly, formatCardNumber, formatExpiry } from "@/lib/payment";
 
 export interface CardDraft {
@@ -35,7 +35,6 @@ export function CardPayment({
   shop: ShopSettings;
 }) {
   const t = useT();
-  const locale = useLocale();
   const set = <K extends keyof CardDraft>(k: K, v: CardDraft[K]) => onChange({ ...card, [k]: v });
 
   const brand = cardBrand(card.number);
@@ -132,7 +131,7 @@ export function CardPayment({
                   <span className="flex-1 text-xs text-zw-grey-600">
                     {option.count > 1 &&
                       t.checkout.perMonth
-                        .replace("{amount}", formatPrice(quote.monthly, locale))
+                        .replace("{amount}", formatPrice(quote.monthly))
                         .replace("{count}", String(option.count))}
                     {option.count > 1 && option.ratePercent === 0 && (
                       <span className="ml-2 rounded-[3px] bg-emerald-50 px-1.5 py-0.5 font-semibold text-emerald-700">
@@ -140,7 +139,7 @@ export function CardPayment({
                       </span>
                     )}
                   </span>
-                  <span className="font-semibold">{formatPrice(quote.grandTotal, locale)}</span>
+                  <span className="font-semibold">{formatPrice(quote.grandTotal)}</span>
                 </label>
               );
             })}
@@ -150,7 +149,7 @@ export function CardPayment({
           <p className="mt-2 text-xs text-zw-grey-500">
             {t.checkout.installmentMin.replace(
               "{amount}",
-              formatPrice(shop.minInstallmentAmount, locale),
+              formatPrice(shop.minInstallmentAmount),
             )}
           </p>
         )}

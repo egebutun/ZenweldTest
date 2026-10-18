@@ -54,10 +54,10 @@ Beş sekme vardır:
 | Sekme | İçerik |
 |---|---|
 | **Temel Bilgiler** | Ad, URL (slug), SKU, model kodu, bölüm, kategori, fiyat (KDV hariç → dahil otomatik hesaplanır), durum işaretleri, kılavuz PDF bağlantısı |
-| **Açıklamalar** | TR ve EN kısa/detaylı açıklama, öne çıkan özellikler |
+| **Açıklamalar** | Kısa/detaylı açıklama, öne çıkan özellikler |
 | **Görseller** | URL ile ekleme veya dosya yükleme, sıralama, kapak seçimi |
-| **Teknik Özellikler** | Satır satır TR/EN özellik–değer tablosu |
-| **Kutu İçeriği** | TR/EN madde listesi |
+| **Teknik Özellikler** | Satır satır özellik–değer tablosu |
+| **Kutu İçeriği** | Madde listesi |
 
 **Durum işaretleri:**
 - **Kampanya / indirim** — Zenweld ana sitesindeki fiyatı etkiler.
@@ -128,14 +128,14 @@ yalnızca panelde görünen iç not buradan kaydedilir.
 
 ## 4d. Sık Sorulan Sorular
 
-Soru ekle, düzenle (TR/EN soru ve cevap, konu), sil ve oklarla sırala. Sorular
+Soru ekle, düzenle (soru, cevap, konu), sil ve oklarla sırala. Sorular
 sitedeki SSS sayfasında, ürün sayfalarının SSS sekmesinde ve anasayfada (ilk 8
-soru) bu sırayla görünür. İngilizce alanlar boş bırakılırsa Türkçesi kullanılır.
+soru) bu sırayla görünür.
 
 ## 4e. Yasal Metinler
 
 Alt bilgideki **Politikalar & Yasal** listesindeki 11 sayfanın başlığı ve metni
-buradan düzenlenir (TR/EN). Sayfa adresleri ve sıralaması sabittir. Biçimlendirme
+buradan düzenlenir. Sayfa adresleri ve sıralaması sabittir. Biçimlendirme
 haberlerle aynıdır (`## ara başlık`, `- madde`, `**kalın**`).
 
 Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi'nde satıcı, alıcı ve ürün
@@ -190,7 +190,7 @@ Satıcıyı silmek, o satıcıya ait tüm stok kayıtlarını da siler.
 
 Sitedeki **Keşfet → Kurumsal → Satış Temsilcilerimiz** sayfasının listesi.
 
-- **Temsilci ekle / düzenle:** ad soyad, bölge veya görev (TR/EN), telefon,
+- **Temsilci ekle / düzenle:** ad soyad, bölge veya görev, telefon,
   e-posta, isteğe bağlı fotoğraf (yoksa baş harfler gösterilir)
 - **Sıra:** oklarla yukarı/aşağı taşınır; sitede bu sırayla görünür
 - **Sitede / Gizli:** rozete tıklayınca temsilci sitede gizlenir ama silinmez
@@ -237,11 +237,10 @@ kayıtları kullanır; burada yapılan değişiklik oralara anında yansır.
 
 Sitedeki **Hakkımızda** sayfasının tamamı buradan yönetilir:
 
-- **Sayfa başlığı:** başlık, alt başlık (TR/EN) ve arka plan görseli
+- **Sayfa başlığı:** başlık, alt başlık ve arka plan görseli
 - **Rakamlar:** "25+ Yıllık Tecrübe" gibi kutular; eklenir, silinir
-- **Bölümler:** başlık + metin (TR/EN) + isteğe bağlı görsel. Bölüm eklenir,
+- **Bölümler:** başlık + metin + isteğe bağlı görsel. Bölüm eklenir,
   silinir, oklarla sıralanır. Metinde `## Ara başlık`, `- madde`, `**kalın**`
   kullanılabilir. Görseli olan bölümler metin ve görsel yan yana gösterilir.
-- İngilizce alan boş bırakılırsa İngilizce sayfada Türkçe metin gösterilir.
 - Değişiklikler **Kaydet** ile sayfaya yansır; kaydedilmemiş değişiklik varsa
   uyarı çıkar.

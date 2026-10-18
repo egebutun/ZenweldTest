@@ -1,4 +1,4 @@
-import { isLocale, getDictionary } from "@zenweld/i18n";
+import { tr as t } from "@zenweld/i18n";
 import { PageHero } from "@/components/common/PageShell";
 import { WarrantyChooser, type WarrantyAction } from "./WarrantyChooser";
 
@@ -12,8 +12,7 @@ import { WarrantyChooser, type WarrantyAction } from "./WarrantyChooser";
  * Kayit ve sorgulama ayri adreslerdir; her biri kendi basligi ve
  * aciklamasiyla aramada listelenebilir (bkz. lib/page-meta.ts).
  */
-export function WarrantyPage({ action, locale }: { action: WarrantyAction | null; locale: string }) {
-  const t = getDictionary(isLocale(locale) ? locale : "tr");
+export function WarrantyPage({ action }: { action: WarrantyAction | null }) {
   const title =
     action === "kayit"
       ? t.nav.warrantyRegister

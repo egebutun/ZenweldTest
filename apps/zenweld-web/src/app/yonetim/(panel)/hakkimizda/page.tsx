@@ -6,7 +6,6 @@ import {
   about as defaultAbout,
   type AboutContent,
   type AboutSection,
-  type I18nText,
 } from "@zenweld/data";
 import { saveAbout, uid, useDatabase } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, Textarea } from "@zenweld/ui";
@@ -15,8 +14,8 @@ import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
 import { ImageField } from "@/components/admin/ImageField";
 import { siteUrl } from "@/lib/admin-links";
 
-/** TR ve EN alanlarini yan yana gosteren cift alan. */
-function I18nInput({
+/** Tek satirlik veya cok satirlik metin alani. */
+function TextInput({
   label,
   value,
   onChange,
@@ -24,45 +23,36 @@ function I18nInput({
   required = false,
 }: {
   label: string;
-  value: I18nText;
-  onChange: (value: I18nText) => void;
+  value: string;
+  onChange: (value: string) => void;
   multiline?: boolean;
   required?: boolean;
 }) {
   const Field = multiline ? Textarea : Input;
   return (
-    <div className="grid gap-3 md:grid-cols-2">
-      {(["tr", "en"] as const).map((lang) => (
-        <FormRow
-          key={lang}
-          label={`${label} (${lang.toUpperCase()})`}
-          required={required && lang === "tr"}
-          hint={lang === "en" ? "Boş bırakılırsa Türkçe metin gösterilir" : undefined}
-        >
-          <Field
-            value={value[lang]}
-            rows={multiline ? 9 : undefined}
-            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-              onChange({ ...value, [lang]: e.target.value })
-            }
-          />
-        </FormRow>
-      ))}
-    </div>
+    <FormRow label={label} required={required}>
+      <Field
+        value={value}
+        rows={multiline ? 9 : undefined}
+        onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+          onChange(e.target.value)
+        }
+      />
+    </FormRow>
   );
 }
 
 const emptySection = (): AboutSection => ({
   id: uid("a"),
-  title: { tr: "", en: "" },
-  body: { tr: "", en: "" },
+  title: "",
+  body: "",
 });
 
 /**
  * HAKKIMIZDA SAYFASI DUZENLEYICI
  *
  * Ust baslik, rakam kutulari ve sirali metin bolumleri. "Kaydet" denince
- * sitedeki /tr/hakkimizda ve /en/about-us sayfalari guncellenir.
+ * sitedeki /hakkimizda sayfasi guncellenir.
  */
 export default function AdminAboutPage() {
   const db = useDatabase();
@@ -87,19 +77,11 @@ export default function AdminAboutPage() {
 
   const save = () => {
     setError(null);
-    if (!draft.heroTitle.tr.trim()) {
-      setError("Sayfa başlığı (TR) zorunludur.");
+    if (!draft.heroTitle.trim()) {
+      setError("Sayfa başlığı zorunludur.");
       return;
     }
-    // Ingilizce bos birakildiysa Turkce kullanilir.
-    const fill = (t: I18nText): I18nText => ({ tr: t.tr, en: t.en.trim() || t.tr });
-    saveAbout({
-      ...draft,
-      heroTitle: fill(draft.heroTitle),
-      heroSubtitle: fill(draft.heroSubtitle),
-      stats: draft.stats.filter((s) => s.value.trim()).map((s) => ({ ...s, label: fill(s.label) })),
-      sections: draft.sections.map((s) => ({ ...s, title: fill(s.title), body: fill(s.body) })),
-    });
+    saveAbout({ ...draft, stats: draft.stats.filter((s) => s.value.trim()) });
     setDirty(false);
     setSaved(true);
   };
@@ -108,7 +90,7 @@ export default function AdminAboutPage() {
     <>
       <AdminPageHeader
         title="Hakkımızda"
-        description={`Son kayıt: ${formatDateTime((db.about ?? defaultAbout).updatedAt, "tr")}`}
+        description={`Son kayıt: ${formatDateTime((db.about ?? defaultAbout).updatedAt)}`}
         action={
           <div className="flex items-center gap-3">
             <a
@@ -146,13 +128,13 @@ export default function AdminAboutPage() {
         <AdminCard>
           <h2 className="mb-4 font-display text-xl font-bold uppercase">Sayfa Başlığı</h2>
           <div className="space-y-4">
-            <I18nInput
+            <TextInput
               label="Başlık"
               required
               value={draft.heroTitle}
               onChange={(heroTitle) => update({ heroTitle })}
             />
-            <I18nInput
+            <TextInput
               label="Alt başlık"
               value={draft.heroSubtitle}
               onChange={(heroSubtitle) => update({ heroSubtitle })}
@@ -176,7 +158,7 @@ export default function AdminAboutPage() {
               leftIcon={<Plus size={14} />}
               onClick={() =>
                 update({
-                  stats: [...draft.stats, { id: uid("s"), value: "", label: { tr: "", en: "" } }],
+                  stats: [...draft.stats, { id: uid("s"), value: "", label: "" }],
                 })
               }
             >
@@ -185,7 +167,7 @@ export default function AdminAboutPage() {
           </div>
           <div className="space-y-3">
             {draft.stats.map((s) => (
-              <div key={s.id} className="grid items-end gap-3 md:grid-cols-[120px_1fr_1fr_auto]">
+              <div key={s.id} className="grid items-end gap-3 md:grid-cols-[120px_1fr_auto]">
                 <FormRow label="Değer">
                   <Input
                     value={s.value}
@@ -199,20 +181,18 @@ export default function AdminAboutPage() {
                     }
                   />
                 </FormRow>
-                {(["tr", "en"] as const).map((lang) => (
-                  <FormRow key={lang} label={`Açıklama (${lang.toUpperCase()})`}>
-                    <Input
-                      value={s.label[lang]}
-                      onChange={(e) =>
-                        update({
-                          stats: draft.stats.map((x) =>
-                            x.id === s.id ? { ...x, label: { ...x.label, [lang]: e.target.value } } : x,
-                          ),
-                        })
-                      }
-                    />
-                  </FormRow>
-                ))}
+                <FormRow label="Açıklama">
+                  <Input
+                    value={s.label}
+                    onChange={(e) =>
+                      update({
+                        stats: draft.stats.map((x) =>
+                          x.id === s.id ? { ...x, label: e.target.value } : x,
+                        ),
+                      })
+                    }
+                  />
+                </FormRow>
                 <button
                   type="button"
                   onClick={() => update({ stats: draft.stats.filter((x) => x.id !== s.id) })}
@@ -285,12 +265,12 @@ export default function AdminAboutPage() {
               </div>
             </div>
             <div className="space-y-4">
-              <I18nInput
+              <TextInput
                 label="Başlık"
                 value={section.title}
                 onChange={(title) => updateSection(section.id, { title })}
               />
-              <I18nInput
+              <TextInput
                 label="Metin"
                 multiline
                 value={section.body}

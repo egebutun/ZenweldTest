@@ -1,12 +1,4 @@
-/** Zenweld — paylasilan veri tipleri (TR/EN cift dilli) */
-
-export type Locale = "tr" | "en";
-
-/** Cift dilli metin alani */
-export interface I18nText {
-  tr: string;
-  en: string;
-}
+/** Zenweld — paylasilan veri tipleri */
 
 /* ------------------------------------------------------------------ */
 /* Kategori                                                            */
@@ -23,13 +15,11 @@ export interface Category {
   /** Kategori tablosundaki numara (or. "1.2.3"). */
   code?: string;
   slug: string;
-  /** Ingilizce adres parcasi (bos ise Turkce slug kullanilir). Bkz. slugs.ts */
-  slugEn?: string;
   section: TopLevelSection;
   /** Ust kategori slug'i (mega menude sol kolon) */
   group: string;
-  name: I18nText;
-  description: I18nText;
+  name: string;
+  description: string;
   icon?: string;
   order: number;
 }
@@ -40,10 +30,8 @@ export interface CategoryGroup {
   /** Kategori tablosundaki numara (or. "1.2"). */
   code?: string;
   slug: string;
-  /** Ingilizce adres parcasi (bos ise Turkce slug kullanilir). Bkz. slugs.ts */
-  slugEn?: string;
   section: TopLevelSection;
-  name: I18nText;
+  name: string;
   order: number;
 }
 
@@ -52,8 +40,8 @@ export interface CategoryGroup {
 /* ------------------------------------------------------------------ */
 
 export interface SpecRow {
-  label: I18nText;
-  value: I18nText;
+  label: string;
+  value: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -66,7 +54,7 @@ export interface SpecRow {
 
 export interface ProductVariantOption {
   id: string;
-  label: I18nText;
+  label: string;
   /** Taban fiyata eklenecek fark (KDV haric, TRY). Eksi de olabilir. */
   priceDeltaExVat: number;
   /** Varyanta ozel urun kodu; yoksa urunun kendi SKU'su kullanilir. */
@@ -78,14 +66,14 @@ export interface ProductVariantOption {
 export interface ProductVariantGroup {
   id: string;
   /** Orn. "Torç Uzunluğu" */
-  label: I18nText;
+  label: string;
   options: ProductVariantOption[];
 }
 
 export interface ProductImage {
   /** Uzak gorsel (Unsplash). Yuklenemezse markali SVG placeholder devreye girer. */
   url: string;
-  alt: I18nText;
+  alt: string;
 }
 
 export type WeldingProcess =
@@ -120,8 +108,8 @@ export interface Product {
   section: TopLevelSection;
   categorySlug: string;
   processes: WeldingProcess[];
-  shortDescription: I18nText;
-  description: I18nText;
+  shortDescription: string;
+  description: string;
   /**
    * KDV haric NORMAL fiyat (TRY) — indirimsiz, yonetim panelinde girilen.
    * Musterinin odedigi fiyat icin salePriceExVat() kullanilir; kampanya
@@ -133,8 +121,8 @@ export interface Product {
   images: ProductImage[];
   specs: SpecRow[];
   /** "Kutu Icerigi" maddeleri */
-  inTheBox: I18nText[];
-  highlights: I18nText[];
+  inTheBox: string[];
+  highlights: string[];
   /**
    * Kampanya / indirim. Gecerli oldugu surece urun indirimli fiyatla
    * gosterilir ve anasayfadaki "Hot Sale" bolumune kendiliginden girer;
@@ -175,7 +163,7 @@ export interface Dealer {
   lat: number;
   lng: number;
   badges: DealerBadge[];
-  workingHours: I18nText;
+  workingHours: string;
   /** Bu bayinin online magazasi varsa retailer id'si */
   retailerId?: string;
   active: boolean;
@@ -334,7 +322,7 @@ export interface OrderItem {
   productName: string;
   sku: string;
   /** Secili secenekler, orn. "Torç Uzunluğu: 5 m" */
-  variantLabel?: I18nText;
+  variantLabel?: string;
   quantity: number;
   /** Siparis anindaki birim fiyat (KDV haric, indirim uygulanmis) */
   unitPriceExVat: number;
@@ -434,18 +422,13 @@ export interface Order {
 
 export interface BlogPost {
   id: string;
-  /** Turkce adres parcasi: /tr/blog/<slug> */
+  /** Adres parcasi: /blog/<slug> */
   slug: string;
-  /**
-   * Ingilizce adres parcasi: /en/blog/<slugEn>
-   * Bos birakilirsa Turkce slug kullanilir (baslik cevrilmemisse).
-   */
-  slugEn?: string;
-  title: I18nText;
-  excerpt: I18nText;
-  body: I18nText;
+  title: string;
+  excerpt: string;
+  body: string;
   coverUrl: string;
-  category: I18nText;
+  category: string;
   author: string;
   publishedAt: string;
   /**
@@ -487,8 +470,8 @@ export interface ProductReview {
 
 export interface FaqItem {
   id: string;
-  question: I18nText;
-  answer: I18nText;
+  question: string;
+  answer: string;
   topic: "genel" | "garanti" | "siparis" | "teknik";
 }
 
@@ -499,17 +482,17 @@ export interface FaqItem {
 export interface ZenweldEvent {
   id: string;
   slug: string;
-  /** Etkinlik adi ozel isimdir, cevrilmez; iki dilde de ayni gosterilir. */
+  /** Etkinlik adi (fuar adi) */
   title: string;
   /** Kart uzerinde gorunen kisa aciklama */
-  summary: I18nText;
+  summary: string;
   /** Detay sayfasindaki uzun metin */
-  description: I18nText;
+  description: string;
   /** ISO tarih: "2025-06-16" */
   startDate: string;
   endDate: string;
   /** Etkinlik mekani, orn. "Istanbul Fuar Merkezi" */
-  venue: I18nText;
+  venue: string;
   city: string;
   country: string;
   /** Kart basligindaki etkinlik logosu */
@@ -527,16 +510,11 @@ export interface ZenweldEvent {
 
 export interface NewsItem {
   id: string;
-  /** Turkce adres parcasi: /tr/haberler/<slug> */
+  /** Adres parcasi: /haberler/<slug> */
   slug: string;
-  /**
-   * Ingilizce adres parcasi: /en/news/<slugEn>
-   * Bos birakilirsa Turkce slug kullanilir.
-   */
-  slugEn?: string;
-  title: I18nText;
-  summary: I18nText;
-  body: I18nText;
+  title: string;
+  summary: string;
+  body: string;
   /** Kart ve haber basindaki ana gorsel */
   coverUrl: string;
   /** Haber sayfasindaki fotograf galerisi (etkinliklerdeki gibi) */
@@ -574,9 +552,9 @@ export interface WarrantyRecord {
 /** Hakkimizda sayfasindaki bir metin bolumu. */
 export interface AboutSection {
   id: string;
-  title: I18nText;
+  title: string;
   /** Bicimlendirme: "## ara baslik", "- madde", "**kalin**" (haberlerle ayni) */
-  body: I18nText;
+  body: string;
   /** Bolumun yaninda gosterilecek gorsel (istege bagli) */
   imageUrl?: string;
 }
@@ -585,12 +563,12 @@ export interface AboutSection {
 export interface AboutStat {
   id: string;
   value: string;
-  label: I18nText;
+  label: string;
 }
 
 export interface AboutContent {
-  heroTitle: I18nText;
-  heroSubtitle: I18nText;
+  heroTitle: string;
+  heroSubtitle: string;
   heroImage?: string;
   stats: AboutStat[];
   sections: AboutSection[];
@@ -602,7 +580,7 @@ export interface SalesRep {
   id: string;
   name: string;
   /** Sorumlu oldugu bolge veya gorevi ("Ege Bolge", "Demo ve Satis Sonrasi ...") */
-  region: I18nText;
+  region: string;
   phone: string;
   email: string;
   photoUrl?: string;
@@ -622,9 +600,9 @@ export interface SalesRep {
  */
 export interface LegalPage {
   id: string;
-  title: I18nText;
+  title: string;
   /** Bicimlendirme haberlerle ayni: "## ara baslik", "- madde", "**kalin**" */
-  body: I18nText;
+  body: string;
   updatedAt: string;
 }
 

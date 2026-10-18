@@ -150,7 +150,7 @@ export function saveOrderAdminNote(id: string, adminNote: string): void {
   });
 }
 
-/** Suresi dolan havale siparisine yazilan not (musteri sayfasinda cevrilir). */
+/** Suresi dolan havale siparisine yazilan iptal notu. */
 export const PAYMENT_EXPIRED_NOTE = "Ödeme süresi doldu";
 
 /**

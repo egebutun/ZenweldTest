@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { LocaleLink } from "@/components/common/LocaleLink";
+import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 
 /**
@@ -10,14 +10,14 @@ import { useT } from "@/lib/i18n-client";
  */
 export function LegalLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <LocaleLink
+    <Link
       href={href}
       target="_blank"
       rel="noopener noreferrer"
       className="font-semibold text-zw-ink underline underline-offset-2 hover:text-zw-red-600"
     >
       {children}
-    </LocaleLink>
+    </Link>
   );
 }
 

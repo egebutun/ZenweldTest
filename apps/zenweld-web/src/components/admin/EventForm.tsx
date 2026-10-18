@@ -9,10 +9,9 @@ import {
   ContentFormShell,
   FormPanel,
   GalleryField,
-  LocalizedTextFields,
+  ContentTextFields,
   SingleImageField,
   useContentForm,
-  withTrFallback,
 } from "./content-form";
 
 const COUNTRIES = [
@@ -32,11 +31,11 @@ const EMPTY: ZenweldEvent = {
   id: "",
   slug: "",
   title: "",
-  summary: { tr: "", en: "" },
-  description: { tr: "", en: "" },
+  summary: "",
+  description: "",
   startDate: "",
   endDate: "",
-  venue: { tr: "", en: "" },
+  venue: "",
   city: "",
   country: "Türkiye",
   logoUrl: "",
@@ -48,9 +47,7 @@ const EMPTY: ZenweldEvent = {
 /**
  * ETKINLIK FORMU
  *
- * Etkinlik adi ozel isimdir (fuar adlari cevrilmez); bu yuzden tek basligi
- * ve tek adresi vardir. Tarih, mekan ve logo alanlari haber/blog
- * formlarindan farklidir.
+ * Tarih, mekan ve logo alanlari haber/blog formlarindan farklidir.
  */
 export function EventForm({ event }: { event?: ZenweldEvent }) {
   const db = useDatabase();
@@ -60,7 +57,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
   const form = useContentForm<ZenweldEvent>(
     event ?? { ...EMPTY, startDate: today, endDate: today },
   );
-  const { draft, set, setI18n } = form;
+  const { draft, set } = form;
 
   const submit = () => {
     form.setError(null);
@@ -74,13 +71,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
       return form.fail(`"${slug}" adresi başka bir etkinlikte kullanılıyor.`);
     }
 
-    const next: ZenweldEvent = {
-      ...draft,
-      slug,
-      summary: withTrFallback(draft.summary),
-      description: withTrFallback(draft.description),
-      venue: withTrFallback(draft.venue),
-    };
+    const next: ZenweldEvent = { ...draft, slug };
 
     if (isNew) {
       router.push(`/yonetim/etkinlikler/${createEvent(next).id}`);
@@ -104,11 +95,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
     >
       {form.tab === "temel" && (
         <FormPanel>
-          <FormRow
-            label="Etkinlik Adı"
-            required
-            hint="Özel isimdir; Türkçe ve İngilizce sitede aynı görünür, çevrilmez."
-          >
+          <FormRow label="Etkinlik Adı" required>
             <Input
               required
               value={draft.title}
@@ -150,20 +137,9 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
             </FormRow>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Mekan (TR)" hint="Örn. İstanbul Fuar Merkezi">
-              <Input
-                value={draft.venue.tr}
-                onChange={(e) => setI18n("venue", "tr", e.target.value)}
-              />
-            </FormRow>
-            <FormRow label="Mekan (EN)">
-              <Input
-                value={draft.venue.en}
-                onChange={(e) => setI18n("venue", "en", e.target.value)}
-              />
-            </FormRow>
-          </div>
+          <FormRow label="Mekan" hint="Örn. İstanbul Fuar Merkezi">
+            <Input value={draft.venue} onChange={(e) => set("venue", e.target.value)} />
+          </FormRow>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <FormRow label="Şehir">
@@ -208,14 +184,14 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
       )}
 
       {form.tab === "aciklama" && (
-        <LocalizedTextFields
+        <ContentTextFields
           intro="Kısa açıklama etkinlik kartında, detaylı açıklama etkinlik sayfasında görünür."
           fields={[
             { key: "summary", label: "Kısa Açıklama" },
             { key: "description", label: "Detaylı Açıklama", tall: true },
           ]}
           values={draft}
-          onChange={setI18n}
+          onChange={set}
         />
       )}
 

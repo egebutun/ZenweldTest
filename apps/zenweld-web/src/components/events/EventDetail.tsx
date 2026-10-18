@@ -4,17 +4,14 @@ import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, ExternalLink, MapPin } from "lucide-react";
 import { findEventBySlug, useDatabase } from "@zenweld/store";
-import { LocaleLink } from "@/components/common/LocaleLink";
+import Link from "next/link";
 import { ProductImage, RichText } from "@zenweld/ui";
 import { EventLogo } from "./EventLogo";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";
-import { countryName } from "@/lib/country";
 
 export function EventDetail({ slug }: { slug: string }) {
   const t = useT();
-  const locale = useLocale();
-  const text = useText();
   const db = useDatabase();
 
   const event = useMemo(() => findEventBySlug(slug, db), [db, slug]);
@@ -25,13 +22,13 @@ export function EventDetail({ slug }: { slug: string }) {
     <>
       <div className="border-b border-zw-grey-200 bg-zw-grey-50">
         <div className="zw-container py-10">
-          <LocaleLink
+          <Link
             href="/etkinlikler"
             className="mb-5 inline-flex items-center gap-1.5 text-sm font-semibold text-zw-grey-600 hover:text-zw-red-600"
           >
             <ArrowLeft size={16} />
             {t.events.backToList}
-          </LocaleLink>
+          </Link>
 
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="max-w-2xl">
@@ -40,7 +37,7 @@ export function EventDetail({ slug }: { slug: string }) {
               <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl">
                 {event.title}
               </h1>
-              <p className="mt-3 text-zw-grey-600">{text(event.summary)}</p>
+              <p className="mt-3 text-zw-grey-600">{event.summary}</p>
             </div>
             {/* Kutu logonun etrafini sarar (fit="hug"): yanlarda artik
                 bos beyaz alan kalmiyor. Yukseklik sabit oldugu icin butun
@@ -61,7 +58,7 @@ export function EventDetail({ slug }: { slug: string }) {
       <div className="zw-container py-10">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div>
-            <RichText source={text(event.description)} className="max-w-3xl" />
+            <RichText source={event.description} className="max-w-3xl" />
 
             {event.images.length > 0 && (
               <div className="mt-10">
@@ -95,7 +92,7 @@ export function EventDetail({ slug }: { slug: string }) {
                   {t.events.dates}
                 </dt>
                 <dd className="mt-1 font-semibold">
-                  {formatDate(event.startDate, locale)} — {formatDate(event.endDate, locale)}
+                  {formatDate(event.startDate)} — {formatDate(event.endDate)}
                 </dd>
               </div>
               <div>
@@ -103,9 +100,9 @@ export function EventDetail({ slug }: { slug: string }) {
                   <MapPin size={14} />
                   {t.events.venue}
                 </dt>
-                <dd className="mt-1 font-semibold">{text(event.venue)}</dd>
+                <dd className="mt-1 font-semibold">{event.venue}</dd>
                 <dd className="text-zw-grey-500">
-                  {event.city} · {countryName(event.country, locale)}
+                  {event.city} · {event.country}
                 </dd>
               </div>
               {event.websiteUrl && (

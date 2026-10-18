@@ -86,7 +86,7 @@ export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolea
           >
             {categories.map((c) => (
               <option key={c.id} value={c.slug}>
-                {c.name.tr}
+                {c.name}
               </option>
             ))}
           </Select>

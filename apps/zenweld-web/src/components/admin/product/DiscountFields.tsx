@@ -80,7 +80,7 @@ export function DiscountFields({ draft, set }: ProductTabProps) {
             <span className="text-zw-grey-600">
               Normal:{" "}
               <span className="line-through">
-                {formatPrice(priceWithVat(draft.priceExVat, draft.vatRate), "tr")}
+                {formatPrice(priceWithVat(draft.priceExVat, draft.vatRate))}
               </span>
             </span>
             <span className="font-semibold text-zw-ink">
@@ -91,7 +91,6 @@ export function DiscountFields({ draft, set }: ProductTabProps) {
                     applyDiscount(draft.priceExVat, draft.discount.percent),
                     draft.vatRate,
                   ),
-                  "tr",
                 )}
               </span>{" "}
               <span className="font-normal text-zw-grey-500">KDV dahil</span>

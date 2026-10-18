@@ -6,7 +6,7 @@ import { WelcomeOverlay } from "./WelcomeOverlay";
 /** Karşılama pop-up'ı yalnızca ziyaretçiye açık sayfalarda gösterilir. */
 export function WelcomeGate() {
   const pathname = usePathname();
-  const hidden = pathname.includes("/hesabim") || pathname.includes("/account");
+  const hidden = pathname.startsWith("/hesabim");
 
   if (hidden) return null;
   return <WelcomeOverlay />;

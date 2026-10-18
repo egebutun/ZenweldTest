@@ -2,18 +2,16 @@
 
 import { useMemo } from "react";
 import { useDatabase } from "@zenweld/store";
-import { useLocale } from "../i18n-client";
 import { buildDocuments, createIndex, search, suggest, type SearchHit } from "./search-client";
 
-/** Veritabani veya dil degistiginde index yeniden kurulur. */
+/** Veritabani degistiginde index yeniden kurulur. */
 function useSearchIndex() {
   const db = useDatabase();
-  const locale = useLocale();
 
   return useMemo(() => {
-    const docs = buildDocuments(db, locale);
+    const docs = buildDocuments(db);
     return createIndex(docs);
-  }, [db, locale]);
+  }, [db]);
 }
 
 export function useSearch(query: string, limit = 20): {

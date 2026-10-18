@@ -49,7 +49,7 @@ export default function AdminUsersPage() {
                   ad: u.firstName,
                   soyad: u.lastName,
                   eposta: u.email,
-                  rol: ROLE_LABELS[u.role].tr,
+                  rol: ROLE_LABELS[u.role],
                   durum: STATUS_LABEL[u.status],
                   firma: u.companyName ?? "",
                   vergiNo: u.taxNumber ?? "",
@@ -167,7 +167,7 @@ export default function AdminUsersPage() {
                   </div>
                 </td>
                 <td className="px-4 py-2.5 text-xs text-zw-grey-500">
-                  {formatDate(u.createdAt, "tr")}
+                  {formatDate(u.createdAt)}
                 </td>
                 <td className="px-4 py-2.5 text-right">
                   <button

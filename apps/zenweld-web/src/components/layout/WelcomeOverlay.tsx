@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, MapPin, X } from "lucide-react";
 import { Button, ZenweldLogo } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
+import Link from "next/link";
 import { WelderAnimation } from "@/components/common/WelderAnimation";
 import { useT } from "@/lib/i18n-client";
 
@@ -116,12 +116,12 @@ export function WelcomeOverlay() {
           </p>
 
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-            <LocaleLink href="/ekipmanlar" onClick={close}>
+            <Link href="/ekipmanlar" onClick={close}>
               <Button size="lg" fullWidth rightIcon={<ArrowRight size={18} />}>
                 {t.welcome.cta}
               </Button>
-            </LocaleLink>
-            <LocaleLink href="/yetkili-bayi-ve-servis-agi" onClick={close}>
+            </Link>
+            <Link href="/yetkili-bayi-ve-servis-agi" onClick={close}>
               <Button
                 size="lg"
                 fullWidth
@@ -131,7 +131,7 @@ export function WelcomeOverlay() {
               >
                 {t.welcome.secondary}
               </Button>
-            </LocaleLink>
+            </Link>
           </div>
         </div>
       </div>

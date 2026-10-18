@@ -1,7 +1,6 @@
 "use client";
 
 import type { Product } from "@zenweld/data";
-import { useText } from "@/lib/i18n-client";
 import { activeOptionId, type VariantSelection } from "@/lib/variants";
 
 /**
@@ -20,7 +19,6 @@ export function VariantPicker({
   selection: VariantSelection;
   onChange: (groupId: string, optionId: string) => void;
 }) {
-  const text = useText();
   if (!product.variantGroups?.length) return null;
 
   return (
@@ -30,7 +28,7 @@ export function VariantPicker({
         return (
           <div key={group.id}>
             <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-              {text(group.label)}
+              {group.label}
             </div>
             <div className="flex flex-wrap gap-2">
               {group.options.map((option) => {
@@ -47,7 +45,7 @@ export function VariantPicker({
                         : "border-zw-grey-200 text-zw-grey-700 hover:border-zw-grey-500"
                     }`}
                   >
-                    {text(option.label)}
+                    {option.label}
                   </button>
                 );
               })}

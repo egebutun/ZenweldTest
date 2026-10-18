@@ -1,7 +1,6 @@
 export * from "./types";
 export * from "./highlights";
 export * from "./discount";
-export * from "./slugs";
 export * from "./checkout";
 export * from "./legal";
 export { categories, categoryGroups } from "./seed/categories.seed";
@@ -35,7 +34,7 @@ import { about, salesReps } from "./seed/company.seed";
 import { legalPages } from "./seed/legal.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 42;
+export const DB_VERSION = 43;
 
 export function createSeedDatabase(): ZenweldDatabase {
   return JSON.parse(

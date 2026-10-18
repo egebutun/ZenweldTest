@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { ProductImage } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
+import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import type { TopMenu } from "@/lib/menu";
 
@@ -68,7 +68,7 @@ export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () =
         <div className={hasProducts ? "border-r border-zw-grey-200 pr-4" : "grid grid-cols-3 gap-x-10 gap-y-7 pr-4"}>
           {column?.links.map((item, i) =>
             hasProducts ? (
-              <LocaleLink
+              <Link
                 key={item.href}
                 href={item.href}
                 onClick={onNavigate}
@@ -85,9 +85,9 @@ export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () =
                   {item.productCount ?? 0}
                   {i === activeLink && <ChevronRight size={14} />}
                 </span>
-              </LocaleLink>
+              </Link>
             ) : (
-              <LocaleLink key={item.href} href={item.href} onClick={onNavigate} className="group block">
+              <Link key={item.href} href={item.href} onClick={onNavigate} className="group block">
                 <div className="font-display text-lg font-semibold text-zw-ink group-hover:text-zw-red-600">
                   {item.label}
                 </div>
@@ -96,7 +96,7 @@ export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () =
                     {item.description}
                   </p>
                 )}
-              </LocaleLink>
+              </Link>
             ),
           )}
           {column && column.links.length === 0 && (
@@ -116,7 +116,7 @@ export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () =
                   <p className="mt-0.5 truncate text-sm text-zw-grey-500">{link.description}</p>
                 )}
               </div>
-              <LocaleLink
+              <Link
                 href={link.href}
                 onClick={onNavigate}
                 className="flex shrink-0 items-center gap-1 text-sm font-semibold text-zw-red-600 hover:underline"
@@ -125,14 +125,14 @@ export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () =
                   ? t.nav.seeAllCount.replace("{count}", String(link.productCount))
                   : t.nav.seeAll}
                 <ChevronRight size={15} />
-              </LocaleLink>
+              </Link>
             </div>
 
             {link.products && link.products.length > 0 ? (
               /* 3 sutun x 2 satir; ozellikler fotografin altinda madde madde */
               <div className="grid grid-cols-3 gap-x-6 gap-y-5">
                 {link.products.map((product) => (
-                  <LocaleLink
+                  <Link
                     key={product.id}
                     href={product.href}
                     onClick={onNavigate}
@@ -161,7 +161,7 @@ export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () =
                         ))}
                       </ul>
                     )}
-                  </LocaleLink>
+                  </Link>
                 ))}
               </div>
             ) : (

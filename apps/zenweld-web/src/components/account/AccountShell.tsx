@@ -11,15 +11,13 @@ import {
 } from "lucide-react";
 import { useAuth, ROLE_LABELS } from "@zenweld/auth";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
-import { useHref, useLocale, useT } from "@/lib/i18n-client";
+import Link from "next/link";
+import { useT } from "@/lib/i18n-client";
 
 export function AccountShell({ children }: { children: React.ReactNode }) {
   const t = useT();
-  const locale = useLocale();
   const { user, ready } = useAuth();
   const pathname = usePathname();
-  const localHref = useHref();
 
   if (!ready) {
     return <div className="zw-container py-20 text-center text-zw-grey-500">{t.common.loading}</div>;
@@ -33,9 +31,9 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
           title={t.auth.loginTitle}
           text={t.auth.loginSubtitle}
           action={
-            <LocaleLink href="/giris">
+            <Link href="/giris">
               <Button size="lg">{t.nav.login}</Button>
-            </LocaleLink>
+            </Link>
           }
         />
       </div>
@@ -57,7 +55,7 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
         <h1 className="font-display text-4xl font-bold uppercase">{t.account.title}</h1>
         <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-zw-grey-600">
           {t.account.welcome.replace("{name}", `${user.firstName} ${user.lastName}`)}
-          <Badge tone="dark">{ROLE_LABELS[user.role][locale]}</Badge>
+          <Badge tone="dark">{ROLE_LABELS[user.role]}</Badge>
           {user.status === "pending" && <Badge tone="amber">Onay Bekliyor</Badge>}
         </p>
       </div>
@@ -67,10 +65,10 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
           <nav className="space-y-1">
             {items.map(({ href, label, Icon }) => {
               // Alt sayfalarda da (siparis detayi gibi) sekme secili kalir.
-              const target = localHref(href);
+              const target = href;
               const active = pathname === target || pathname.startsWith(`${target}/`);
               return (
-                <LocaleLink
+                <Link
                   key={href}
                   href={href}
                   className={`flex items-center gap-2.5 rounded-[4px] px-3 py-2.5 text-sm font-semibold transition-colors ${
@@ -81,15 +79,15 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
                 >
                   <Icon size={17} />
                   {label}
-                </LocaleLink>
+                </Link>
               );
             })}
-            <LocaleLink
+            <Link
               href="/cikis"
               className="mt-3 block rounded-[4px] border border-zw-grey-300 px-3 py-2.5 text-center text-sm font-semibold text-zw-grey-700 hover:border-zw-ink"
             >
               {t.nav.logout}
-            </LocaleLink>
+            </Link>
           </nav>
         </aside>
 

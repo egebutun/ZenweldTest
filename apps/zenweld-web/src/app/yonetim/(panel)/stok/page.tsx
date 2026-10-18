@@ -315,7 +315,6 @@ function RetailerStockMatrix() {
                         {getRetailerStock(p.id, focusRetailer, db)?.updatedAt
                           ? formatDateTime(
                               getRetailerStock(p.id, focusRetailer, db)!.updatedAt,
-                              "tr",
                             )
                           : "—"}
                       </td>

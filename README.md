@@ -154,11 +154,10 @@ CSV içe aktarma, fiziksel bayiler), online satıcı ve bayi yönetimi, üye yö
 (havale onayı, kargo takip no, teslim, iptal), mağaza ayarları (kargo, taksit,
 IBAN), teklif takibi, sık sorulan sorular, yasal metinler.
 
-### Çift dil (TR / EN)
+### Dil
 
-Tüm arayüz Türkçe ve İngilizce. URL'ler dil ön ekiyle çalışır: `/tr/...` ve `/en/...`.
-Ürün adları, açıklamaları ve teknik özellikleri iki dilde tutulur.
-**Yönetim paneli yalnızca Türkçedir.**
+Site ve yönetim paneli yalnızca Türkçedir. Adreslerde dil ön eki yoktur
+(`/urun/...`, `/ekipmanlar/...`).
 
 ---
 
@@ -192,7 +191,7 @@ ZenweldTest/
 │   ├── auth/                       Demo kimlik doğrulama
 │   │   └── src/ auth-context.tsx · guards.tsx · roles.ts · hash.ts
 │   │
-│   ├── i18n/                       tr.ts · en.ts (İngilizce eksikse derleme hata verir) · adres çevirileri
+│   ├── i18n/                       tr.ts — sitenin arayüz metinleri (düğme, başlık, uyarı…)
 │   │
 │   └── ui/                         Ortak tasarım sistemi
 │       └── src/ theme.css · components/ (Button, Modal, Badge, Field…)
@@ -200,7 +199,7 @@ ZenweldTest/
 └── apps/
     └── zenweld-web/                ANA SİTE (port 3000)
         └── src/
-            ├── app/[locale]/
+            ├── app/(site)/                     Sitenin sayfaları (adreste görünmez)
             │   ├── page.tsx                    Anasayfa
             │   ├── ekipmanlar|guvenlik|aksesuarlar|dolgu-metalleri/
             │   │   ├── page.tsx                Bölüm listeleme
@@ -224,11 +223,11 @@ ZenweldTest/
             │   ├── yasal/                      Politikalar & Yasal sayfaları (metinler panelden
             │   │                               düzenlenir; adresler packages/data/src/legal.ts)
             │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
-            │   ├── (../yonetim/ — [locale] dışında) ZENWELD YÖNETİM PANELİ (yalnızca TR)
-            │   │   └── urunler · stok · siparisler · magaza · teklifler · bayiler · saticilar
-            │   │      · servis-talepleri · yasal-metinler
-            │   │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
-            │   │      · gorunum · veri
+            ├── app/yonetim/                    ZENWELD YÖNETİM PANELİ
+            │   └── urunler · stok · siparisler · magaza · teklifler · bayiler · saticilar
+            │      · servis-talepleri · yasal-metinler · sss · hakkimizda · satis-temsilcileri
+            │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
+            │      · gorunum
             ├── components/
             │   ├── layout/    Header · MegaMenu · MobileDrawer · Footer · CookieBanner
             │   ├── search/    SearchOverlay
@@ -238,7 +237,7 @@ ZenweldTest/
             │   ├── dealers/   DealerFinder · DealerMap
             │   ├── account/   AccountShell
             │   ├── admin/     AdminShell · content-form (haber/blog/etkinlik ortak) · ProductForm + product/ (sekmeler)
-            │   └── common/    LocaleLink · PageShell · JsonLd
+            │   └── common/    PageShell · JsonLd
             └── lib/
                 ├── search/    search-client · tr-normalize · synonyms · use-search
                 ├── page-meta.ts      Sabit sayfaların arama başlıkları (tek tablo)
@@ -320,19 +319,11 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
 Sitede aşağıdakiler hazırdır:
 
 - **Sayfa başlıkları ve açıklamaları** — ürün, kategori, blog ve içerik sayfalarının
-  her biri kendi başlığını ve açıklamasını üretir (TR/EN ayrı)
+  her biri kendi başlığını ve açıklamasını üretir
 - **`/sitemap.xml`** — ürün, kategori ve blog sayfaları `packages/data` içindeki
   veriden otomatik üretilir; yeni ürün eklendiğinde kendiliğinden güncellenir
 - **`/robots.txt`** — site haritasını bildirir (site aramaya açıkken); bkz. aşağıdaki *Arama motorlarına açık / kapalı*
-- **Dile göre adresler** — İngilizce sayfalar İngilizce adres kullanır:
-  `/tr/urun/arc-200` ↔ `/en/products/arc-200`,
-  `/tr/ekipmanlar/lazer-temizleme` ↔ `/en/equipment/laser-cleaning`.
-  Kategori, blog ve haberlerde slug da çevrilir (`slugEn` alanı; bkz.
-  `packages/data/src/slugs.ts`). Ürün ve etkinlik slug'ları iki dilde aynıdır.
-  Çeviri tablosu `packages/i18n/src/pathnames.ts` dosyasındadır; uygulamanın iç
-  rota ağacı Türkçe kalır, `middleware.ts` İngilizce adresi iç rotaya bağlar.
-  Bileşenlerde her zaman Türkçe yol yazılır, çeviriyi `useHref()` yapar.
-- **`hreflang` + `canonical`** — her dil kendi adres yazımıyla işaretlenir
+- **`canonical`** — her sayfa kendi adresini asıl adres olarak bildirir
 - **Open Graph / Twitter Card** — WhatsApp, LinkedIn ve X'te paylaşınca başlık,
   açıklama ve görselle düzgün önizleme çıkar
 - **Yapısal veri (schema.org JSON-LD)** — `Product` (fiyat, SKU, stok durumu, marka,

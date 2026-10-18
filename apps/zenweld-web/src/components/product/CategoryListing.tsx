@@ -12,7 +12,7 @@ import {
   ProductFilters,
   type FilterState,
 } from "./ProductFilters";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 
 interface ListingProps {
   section: TopLevelSection;
@@ -26,7 +26,6 @@ interface ListingProps {
  */
 export function CategoryListing({ section, categorySlug }: ListingProps) {
   const t = useT();
-  const locale = useLocale();
   const db = useDatabase();
   const now = useNow();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
@@ -71,9 +70,9 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
     "dolgu-metalleri": t.nav.fillerMetals,
   };
 
-  const title = category ? category.name[locale] : sectionTitles[section];
+  const title = category ? category.name : sectionTitles[section];
   const description = category
-    ? category.description[locale]
+    ? category.description
     : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.";
 
   return (

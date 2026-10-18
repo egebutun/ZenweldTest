@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { categories, localeSlug, products, events, news, newsSlug } from "@zenweld/data";
-import { locales, localizePath } from "@zenweld/i18n";
+import { categories, products, events, news } from "@zenweld/data";
 import { getSiteUrl } from "@/lib/seo";
 
 /**
@@ -8,7 +7,6 @@ import { getSiteUrl } from "@/lib/seo";
  *
  * Urun, kategori ve blog sayfalari packages/data icindeki veriden otomatik
  * uretilir; yeni urun eklendiginde site haritasi kendiliginden guncellenir.
- * Her adres TR ve EN karsiligiyla birlikte listelenir (hreflang).
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteUrl();
@@ -48,57 +46,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     freq: MetadataRoute.Sitemap[number]["changeFrequency"],
     lastModified: Date = now,
   ) => {
-    locales.forEach((locale) => {
-      entries.push({
-        url: `${base}/${locale}${localizePath(path, locale)}`,
-        lastModified,
-        changeFrequency: freq,
-        priority,
-        alternates: {
-          languages: Object.fromEntries(
-            locales.map((alt) => [
-              alt === "tr" ? "tr-TR" : "en-US",
-              `${base}/${alt}${localizePath(path, alt)}`,
-            ]),
-          ),
-        },
-      });
-    });
-  };
-
-  /**
-   * Adres parcasi dile gore DEGISEN kayitlar icin (haberler).
-   * pathFor her dil icin ic rotayi dondurur.
-   */
-  const pushPerLocale = (
-    pathFor: (locale: (typeof locales)[number]) => string,
-    priority: number,
-    freq: MetadataRoute.Sitemap[number]["changeFrequency"],
-    lastModified: Date = now,
-  ) => {
-    locales.forEach((locale) => {
-      entries.push({
-        url: `${base}/${locale}${localizePath(pathFor(locale), locale)}`,
-        lastModified,
-        changeFrequency: freq,
-        priority,
-        alternates: {
-          languages: Object.fromEntries(
-            locales.map((alt) => [
-              alt === "tr" ? "tr-TR" : "en-US",
-              `${base}/${alt}${localizePath(pathFor(alt), alt)}`,
-            ]),
-          ),
-        },
-      });
-    });
+    entries.push({ url: `${base}${path}`, lastModified, changeFrequency: freq, priority });
   };
 
   staticPaths.forEach((p) => push(p.path, p.priority, p.freq));
 
-  // Kategori adresi dile gore degisir (Ingilizce slug), her dil kendi adresiyle.
   categories.forEach((category) => {
-    pushPerLocale((locale) => `/${category.section}/${localeSlug(category, locale)}`, 0.8, "weekly");
+    push(`/${category.section}/${category.slug}`, 0.8, "weekly");
   });
 
   products
@@ -112,7 +66,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // blog/[slug]/layout.tsx icindeki noindex silinir.
   // blogPosts.forEach((post) => {
   //   push(`/blog/${post.slug}`, 0.5, "monthly", new Date(post.publishedAt));
-  //   (push her iki dili de uretir; blogSlug(post, locale) kullanilmali)
   // });
 
   events
@@ -121,17 +74,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       push(`/etkinlikler/${event.slug}`, 0.6, "monthly", new Date(event.startDate));
     });
 
-  // Haberin adresi dile gore degisir (baslik cevriliyor), bu yuzden her
-  // dil kendi adresiyle listelenir.
   news
     .filter((item) => item.active)
     .forEach((item) => {
-      pushPerLocale(
-        (locale) => `/haberler/${newsSlug(item, locale)}`,
-        0.5,
-        "monthly",
-        new Date(item.publishedAt),
-      );
+      push(`/haberler/${item.slug}`, 0.5, "monthly", new Date(item.publishedAt));
     });
 
   return entries;

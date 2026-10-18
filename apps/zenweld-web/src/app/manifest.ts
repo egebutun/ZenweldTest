@@ -16,7 +16,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "ZENWELD",
     description:
       "Zenweld kaynak makineleri, plazma kesme sistemleri ve kaynak ekipmanları.",
-    start_url: "/tr",
+    start_url: "/",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

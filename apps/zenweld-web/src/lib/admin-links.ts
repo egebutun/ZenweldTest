@@ -8,8 +8,7 @@
  */
 const MAIN_SITE = (process.env.NEXT_PUBLIC_MAIN_SITE_URL ?? "").replace(/\/$/, "");
 
-/** Ana sitenin Turkce sayfasina mutlak adres: siteUrl("/urun/arc-200") */
+/** Ana sitenin sayfasina adres: siteUrl("/urun/arc-200") */
 export function siteUrl(path = "/"): string {
-  const clean = path === "/" ? "" : path.startsWith("/") ? path : `/${path}`;
-  return `${MAIN_SITE}/tr${clean}`;
+  return `${MAIN_SITE}${path.startsWith("/") ? path : `/${path}`}`;
 }

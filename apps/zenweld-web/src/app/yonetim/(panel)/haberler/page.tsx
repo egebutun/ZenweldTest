@@ -18,8 +18,8 @@ export default function AdminNewsPage() {
       .filter(
         (n) =>
           !q ||
-          n.title.tr.toLocaleLowerCase("tr").includes(q) ||
-          n.summary.tr.toLocaleLowerCase("tr").includes(q),
+          n.title.toLocaleLowerCase("tr").includes(q) ||
+          n.summary.toLocaleLowerCase("tr").includes(q),
       )
       .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   }, [db, query]);
@@ -63,18 +63,18 @@ export default function AdminNewsPage() {
                   <div className="flex items-center gap-3">
                     <ProductImage
                       src={n.coverUrl}
-                      alt={n.title.tr}
-                      label={n.title.tr}
+                      alt={n.title}
+                      label={n.title}
                       className="h-11 w-16 shrink-0 rounded-[3px] border border-zw-grey-200 object-cover"
                     />
                     <div className="min-w-0">
-                      <div className="truncate font-semibold">{n.title.tr}</div>
+                      <div className="truncate font-semibold">{n.title}</div>
                       <div className="text-xs text-zw-grey-500">/{n.slug}</div>
                     </div>
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-4 py-2.5 text-zw-grey-600">
-                  {formatDate(n.publishedAt, "tr")}
+                  {formatDate(n.publishedAt)}
                 </td>
                 <td className="px-4 py-2.5">
                   <div className="flex flex-wrap gap-1">
@@ -102,7 +102,7 @@ export default function AdminNewsPage() {
                     <button
                       title="Sil"
                       onClick={() => {
-                        if (confirm(`"${n.title.tr}" silinsin mi? Bu işlem geri alınamaz.`)) {
+                        if (confirm(`"${n.title}" silinsin mi? Bu işlem geri alınamaz.`)) {
                           deleteNews(n.id);
                         }
                       }}

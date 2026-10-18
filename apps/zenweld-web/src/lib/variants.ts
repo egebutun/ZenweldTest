@@ -1,4 +1,4 @@
-import type { I18nText, Product, ProductVariantOption, SpecRow } from "@zenweld/data";
+import type { Product, ProductVariantOption, SpecRow } from "@zenweld/data";
 
 /**
  * URUN SECENEKLERI (VARYANTLAR)
@@ -50,7 +50,7 @@ export function resolveVariant(product: Product, selection: VariantSelection) {
   const specs: SpecRow[] = product.specs.map((row) => ({ ...row }));
   for (const option of options) {
     for (const override of option.specOverrides ?? []) {
-      const i = specs.findIndex((row) => row.label.tr === override.label.tr);
+      const i = specs.findIndex((row) => row.label === override.label);
       if (i >= 0) specs[i] = override;
       else specs.push(override);
     }
@@ -64,16 +64,14 @@ export function resolveVariant(product: Product, selection: VariantSelection) {
 }
 
 /** Secili seceneklerin okunur hali: "Torç Uzunluğu: 5 m". Seceneksiz urunde bos. */
-export function variantLabel(product: Product, selection: VariantSelection): I18nText | undefined {
+export function variantLabel(product: Product, selection: VariantSelection): string | undefined {
   const groups = product.variantGroups ?? [];
   if (groups.length === 0) return undefined;
   const parts = groups.map((g) => {
     const option = g.options.find((o) => o.id === selection[g.id]) ?? g.options[0];
     return { group: g.label, option: option?.label };
   });
-  const join = (lang: keyof I18nText) =>
-    parts.map((p) => `${p.group[lang]}: ${p.option?.[lang] ?? ""}`).join(" · ");
-  return { tr: join("tr"), en: join("en") };
+  return parts.map((p) => `${p.group}: ${p.option ?? ""}`).join(" · ");
 }
 
 /** Tum gruplar icin secimi tamamlar (secilmeyen grupta ilk secenek). */

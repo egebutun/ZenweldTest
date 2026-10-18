@@ -5,7 +5,7 @@ import { ChevronDown, ExternalLink, Store } from "lucide-react";
 import { applyDiscount, discountPercentOf, type Product } from "@zenweld/data";
 import { lastStockUpdate, retailersInStockFor, useDatabase, useNow } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { formatDate, formatPrice } from "@zenweld/utils";
 
 /**
@@ -20,7 +20,6 @@ import { formatDate, formatPrice } from "@zenweld/utils";
  */
 export function OnlineRetailers({ product }: { product: Product }) {
   const t = useT();
-  const locale = useLocale();
   const db = useDatabase();
   const [expanded, setExpanded] = useState(false);
   const now = useNow();
@@ -86,7 +85,7 @@ export function OnlineRetailers({ product }: { product: Product }) {
 
       {updatedAt && (
         <p className="mt-3 text-xs text-zw-grey-400">
-          {t.product.stockUpdated.replace("{date}", formatDate(updatedAt, locale))}
+          {t.product.stockUpdated.replace("{date}", formatDate(updatedAt))}
         </p>
       )}
     </section>
@@ -95,14 +94,13 @@ export function OnlineRetailers({ product }: { product: Product }) {
 
 /** Saticinin fiyati; kampanyasi gecerliyse ustu cizili normal + indirimli fiyat. */
 function RetailerPrice({ price, percent }: { price: number; percent: number }) {
-  const locale = useLocale();
   if (percent <= 0) {
-    return <span className="text-xs font-semibold text-zw-grey-500">{formatPrice(price, locale)}</span>;
+    return <span className="text-xs font-semibold text-zw-grey-500">{formatPrice(price)}</span>;
   }
   return (
     <span className="text-xs font-semibold text-zw-red-600">
-      <span className="mr-1 font-normal text-zw-grey-400 line-through">{formatPrice(price, locale)}</span>
-      {formatPrice(applyDiscount(price, percent), locale)}
+      <span className="mr-1 font-normal text-zw-grey-400 line-through">{formatPrice(price)}</span>
+      {formatPrice(applyDiscount(price, percent))}
     </span>
   );
 }

@@ -3,20 +3,15 @@
 import { useState } from "react";
 import { Instagram, Linkedin, Youtube } from "lucide-react";
 import { ZenweldLogo } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
+import Link from "next/link";
 import { TikTokIcon } from "@/components/common/TikTokIcon";
 import { KvkkNotice } from "@/components/legal/LegalLink";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { CONTACT, useFooterMenu } from "@/lib/menu";
-import { locales, localeNames, switchLocaleInPath } from "@zenweld/i18n";
-import { usePathname, useRouter } from "next/navigation";
 
 export function Footer() {
   const t = useT();
-  const locale = useLocale();
   const columns = useFooterMenu();
-  const pathname = usePathname();
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   // Ticari ileti onayi bos gelir; isaretlenmeden kayit yapilmaz.
@@ -33,12 +28,12 @@ export function Footer() {
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.href + link.label}>
-                    <LocaleLink
+                    <Link
                       href={link.href}
                       className="text-sm text-zw-grey-600 transition-colors hover:text-zw-red-600"
                     >
                       {link.label}
-                    </LocaleLink>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -133,19 +128,6 @@ export function Footer() {
         <div className="zw-container flex flex-col gap-3 py-5 text-xs text-zw-grey-600 sm:flex-row sm:items-center sm:justify-between">
           {/* Yil elle yazilmaz; her 1 Ocak'ta kendiliginden guncellenir. */}
           <span>{t.footer.rights.replace("{year}", String(new Date().getFullYear()))}</span>
-          <div className="flex items-center gap-2">
-            {locales.map((l) => (
-              <button
-                key={l}
-                onClick={() => router.push(switchLocaleInPath(pathname, l))}
-                className={`rounded-[3px] px-2 py-1 font-semibold ${
-                  l === locale ? "bg-zw-ink text-white" : "hover:bg-zw-grey-200"
-                }`}
-              >
-                {localeNames[l]}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
     </footer>

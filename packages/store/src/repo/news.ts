@@ -1,6 +1,6 @@
 "use client";
 
-import { matchesNewsSlug, type NewsItem, type ZenweldDatabase } from "@zenweld/data";
+import { type NewsItem, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nowIso } from "./shared";
 
@@ -22,15 +22,12 @@ export function findNewsById(
   return db.news.find((n) => n.id === id);
 }
 
-/**
- * Sitedeki haber sayfasi icin: yalnizca yayindaki haber. Adres parcasi iki
- * dilde farkli olabilir; ikisi de kabul edilir.
- */
+/** Sitedeki haber sayfasi icin: yalnizca yayindaki haber. */
 export function findNewsBySlug(
   slug: string,
   db: ZenweldDatabase = getSnapshot(),
 ): NewsItem | undefined {
-  return db.news.find((n) => n.active && matchesNewsSlug(n, slug));
+  return db.news.find((n) => n.active && n.slug === slug);
 }
 
 /** Yayin tarihine gore yeniden eskiye siralar. */
@@ -52,10 +49,9 @@ export function createNews(partial: Partial<NewsItem>): NewsItem {
   const item: NewsItem = {
     id,
     slug: partial.slug ?? id,
-    slugEn: partial.slugEn,
-    title: partial.title ?? { tr: "", en: "" },
-    summary: partial.summary ?? { tr: "", en: "" },
-    body: partial.body ?? { tr: "", en: "" },
+    title: partial.title ?? "",
+    summary: partial.summary ?? "",
+    body: partial.body ?? "",
     coverUrl: partial.coverUrl ?? "",
     images: partial.images ?? [],
     publishedAt: partial.publishedAt ?? nowIso(),

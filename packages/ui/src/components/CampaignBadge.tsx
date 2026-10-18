@@ -16,7 +16,7 @@ export function CampaignBadge({ discount: d, now }: { discount?: ProductDiscount
   if (status === "scheduled") {
     return (
       <Badge tone="amber">
-        Planlandı %{d.percent} · {formatDateTime(d.startsAt!, "tr")} başlar
+        Planlandı %{d.percent} · {formatDateTime(d.startsAt!)} başlar
       </Badge>
     );
   }
@@ -26,7 +26,7 @@ export function CampaignBadge({ discount: d, now }: { discount?: ProductDiscount
   return (
     <Badge tone="red">
       {d.percent >= FLASH_DISCOUNT_THRESHOLD ? "Flaş " : ""}Kampanya %{d.percent}
-      {d.endsAt ? ` · ${formatDateTime(d.endsAt, "tr")}'e kadar` : " · süresiz"}
+      {d.endsAt ? ` · ${formatDateTime(d.endsAt)}'e kadar` : " · süresiz"}
     </Badge>
   );
 }

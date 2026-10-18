@@ -5,8 +5,7 @@ import { CalendarDays } from "lucide-react";
 import { listEvents, useDatabase } from "@zenweld/store";
 import { Button, EmptyState, Select } from "@zenweld/ui";
 import { EventCard } from "./EventCard";
-import { useLocale, useT } from "@/lib/i18n-client";
-import { countryName } from "@/lib/country";
+import { useT } from "@/lib/i18n-client";
 
 type StatusFilter = "" | "upcoming" | "past";
 
@@ -19,7 +18,6 @@ type StatusFilter = "" | "upcoming" | "past";
  */
 export function EventList() {
   const t = useT();
-  const locale = useLocale();
   const db = useDatabase();
 
   const [status, setStatus] = useState<StatusFilter>("");
@@ -31,9 +29,9 @@ export function EventList() {
   const countries = useMemo(
     () =>
       Array.from(new Set(all.map((e) => e.country))).sort((a, b) =>
-        countryName(a, locale).localeCompare(countryName(b, locale), locale),
+        a.localeCompare(b, "tr"),
       ),
-    [all, locale],
+    [all],
   );
 
   const events = useMemo(() => {
@@ -87,7 +85,7 @@ export function EventList() {
             <option value="">{t.events.allCountries}</option>
             {countries.map((c) => (
               <option key={c} value={c}>
-                {countryName(c, locale)}
+                {c}
               </option>
             ))}
           </Select>

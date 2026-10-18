@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Cookie } from "lucide-react";
 import { Button, Modal } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
+import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 
 /**
@@ -65,14 +65,14 @@ export function CookieBanner() {
             <Cookie size={22} className="mt-0.5 shrink-0 text-zw-red-600" />
             <p className="text-sm leading-relaxed text-zw-grey-700">
               <strong className="text-zw-ink">{t.cookies.title}.</strong> {t.cookies.text}{" "}
-              <LocaleLink
+              <Link
                 href="/yasal/cerez-politikasi"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-zw-ink underline underline-offset-2 hover:text-zw-red-600"
               >
                 {t.cookies.policyLink}
-              </LocaleLink>
+              </Link>
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">

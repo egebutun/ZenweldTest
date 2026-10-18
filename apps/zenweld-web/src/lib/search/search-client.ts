@@ -1,8 +1,7 @@
 "use client";
 
 import MiniSearch, { type SearchResult as MiniSearchResult } from "minisearch";
-import type { Locale } from "@zenweld/i18n";
-import { blogSlug, localeSlug, newsSlug, salePriceExVat, type ZenweldDatabase } from "@zenweld/data";
+import { salePriceExVat, type ZenweldDatabase } from "@zenweld/data";
 import { listBlogPosts, listEvents, listNews, listProducts } from "@zenweld/store";
 import { trNormalize, trTokenize } from "./tr-normalize";
 import { expandQuery } from "./synonyms";
@@ -42,24 +41,24 @@ export interface SearchHit extends SearchDoc {
   score: number;
 }
 
-const STATIC_PAGES: { id: string; tr: string; en: string; href: string }[] = [
-  { id: "page-teklif", tr: "Teklif Al kurumsal vadeli çek ödeme", en: "Request a Quote business deferred cheque payment", href: "/teklif-al" },
-  { id: "page-bayi", tr: "Nereden Alabilirim bayi bul harita satış noktası", en: "Where to Buy find dealer map store locator", href: "/yetkili-bayi-ve-servis-agi" },
-  { id: "page-garanti-sorgula", tr: "Garanti Sorgula seri numarası", en: "Check Your Warranty serial number", href: "/garanti/sorgulama" },
-  { id: "page-garanti-kayit", tr: "Garanti Kaydı uzatma kayıt", en: "Register Your Warranty extension", href: "/garanti/kayit" },
-  { id: "page-club", tr: "Welders Club topluluk üyelik", en: "Welders Club community membership", href: "/welders-club" },
-  { id: "page-msds", tr: "MSDS malzeme güvenlik bilgi formu", en: "MSDS material safety data sheet", href: "/msds" },
-  { id: "page-sertifika", tr: "Parti Sertifikaları uygunluk belgesi", en: "Batch Certificates compliance", href: "/parti-sertifikalari" },
-  { id: "page-secici", tr: "Ürün Seçici hangi makine bana uygun", en: "Product Selector which machine suits me", href: "/urun-secici" },
-  { id: "page-iletisim", tr: "İletişim destek yardım servis telefon adres", en: "Contact support help service phone address", href: "/iletisim" },
-  { id: "page-sss", tr: "Sık Sorulan Sorular SSS", en: "Frequently Asked Questions FAQ", href: "/sss" },
-  { id: "page-hakkimizda", tr: "Hakkımızda kurumsal şirket", en: "About Us company", href: "/hakkimizda" },
-  { id: "page-blog", tr: "Blog yazılar rehber ipuçları", en: "Blog articles guide tips", href: "/blog" },
-  { id: "page-etkinlikler", tr: "Etkinlikler etkinlik takvimi fuar fuarlar", en: "Events event calendar trade fairs", href: "/etkinlikler" },
-  { id: "page-haberler", tr: "Haberler duyurular basın", en: "News announcements press", href: "/haberler" },
+const STATIC_PAGES: { id: string; text: string; href: string }[] = [
+  { id: "page-teklif", text: "Teklif Al kurumsal vadeli çek ödeme", href: "/teklif-al" },
+  { id: "page-bayi", text: "Nereden Alabilirim bayi bul harita satış noktası", href: "/yetkili-bayi-ve-servis-agi" },
+  { id: "page-garanti-sorgula", text: "Garanti Sorgula seri numarası", href: "/garanti/sorgulama" },
+  { id: "page-garanti-kayit", text: "Garanti Kaydı uzatma kayıt", href: "/garanti/kayit" },
+  { id: "page-club", text: "Welders Club topluluk üyelik", href: "/welders-club" },
+  { id: "page-msds", text: "MSDS malzeme güvenlik bilgi formu", href: "/msds" },
+  { id: "page-sertifika", text: "Parti Sertifikaları uygunluk belgesi", href: "/parti-sertifikalari" },
+  { id: "page-secici", text: "Ürün Seçici hangi makine bana uygun", href: "/urun-secici" },
+  { id: "page-iletisim", text: "İletişim destek yardım servis telefon adres", href: "/iletisim" },
+  { id: "page-sss", text: "Sık Sorulan Sorular SSS", href: "/sss" },
+  { id: "page-hakkimizda", text: "Hakkımızda kurumsal şirket", href: "/hakkimizda" },
+  { id: "page-blog", text: "Blog yazılar rehber ipuçları", href: "/blog" },
+  { id: "page-etkinlikler", text: "Etkinlikler etkinlik takvimi fuar fuarlar", href: "/etkinlikler" },
+  { id: "page-haberler", text: "Haberler duyurular basın", href: "/haberler" },
 ];
 
-export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[] {
+export function buildDocuments(db: ZenweldDatabase): SearchDoc[] {
   const docs: SearchDoc[] = [];
 
   // Yalnizca yayindaki icerik aranir.
@@ -69,13 +68,13 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
       id: `product:${p.id}`,
       type: "product",
       title: p.name,
-      subtitle: category ? category.name[locale] : "",
+      subtitle: category ? category.name : "",
       body: [
-        p.shortDescription[locale],
-        p.description[locale],
+        p.shortDescription,
+        p.description,
         p.processes.join(" "),
         p.modelCode ?? "",
-        p.specs.map((s) => `${s.label[locale]} ${s.value[locale]}`).join(" "),
+        p.specs.map((s) => `${s.label} ${s.value}`).join(" "),
       ].join(" "),
       sku: p.sku,
       href: `/urun/${p.slug}`,
@@ -90,11 +89,11 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
     docs.push({
       id: `category:${c.id}`,
       type: "category",
-      title: c.name[locale],
-      subtitle: c.description[locale],
-      body: `${c.name.tr} ${c.name.en} ${c.description[locale]} ${c.group}`,
+      title: c.name,
+      subtitle: c.description,
+      body: `${c.name} ${c.description} ${c.group}`,
       sku: "",
-      href: `/${c.section}/${localeSlug(c, locale)}`,
+      href: `/${c.section}/${c.slug}`,
     });
   });
 
@@ -103,8 +102,8 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
       id: `article:event-${e.id}`,
       type: "article",
       title: e.title,
-      subtitle: `${e.venue[locale]} · ${e.city}`,
-      body: `${e.summary[locale]} ${e.description[locale]} ${e.city} ${e.country}`,
+      subtitle: `${e.venue} · ${e.city}`,
+      body: `${e.summary} ${e.description} ${e.city} ${e.country}`,
       sku: "",
       href: `/etkinlikler/${e.slug}`,
       image: e.logoUrl,
@@ -115,11 +114,11 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
     docs.push({
       id: `article:news-${n.id}`,
       type: "article",
-      title: n.title[locale],
-      subtitle: n.summary[locale],
-      body: `${n.summary[locale]} ${n.body[locale]}`,
+      title: n.title,
+      subtitle: n.summary,
+      body: `${n.summary} ${n.body}`,
       sku: "",
-      href: `/haberler/${newsSlug(n, locale)}`,
+      href: `/haberler/${n.slug}`,
       image: n.coverUrl,
     });
   });
@@ -128,11 +127,11 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
     docs.push({
       id: `article:${b.id}`,
       type: "article",
-      title: b.title[locale],
-      subtitle: b.category[locale],
-      body: b.excerpt[locale],
+      title: b.title,
+      subtitle: b.category,
+      body: b.excerpt,
       sku: "",
-      href: `/blog/${blogSlug(b, locale)}`,
+      href: `/blog/${b.slug}`,
       image: b.coverUrl,
     });
   });
@@ -141,9 +140,9 @@ export function buildDocuments(db: ZenweldDatabase, locale: Locale): SearchDoc[]
     docs.push({
       id: p.id,
       type: "page",
-      title: (locale === "tr" ? p.tr : p.en).split(" ").slice(0, 3).join(" "),
-      subtitle: locale === "tr" ? p.tr : p.en,
-      body: `${p.tr} ${p.en}`,
+      title: p.text.split(" ").slice(0, 3).join(" "),
+      subtitle: p.text,
+      body: p.text,
       sku: "",
       href: p.href,
     });

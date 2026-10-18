@@ -17,7 +17,7 @@ export function ImagesTab({ draft, set, setDraft, onError }: ProductTabProps & {
       (url) =>
         setDraft((d) => ({
           ...d,
-          images: [...d.images, { url, alt: { tr: d.name, en: d.name } }],
+          images: [...d.images, { url, alt: d.name }],
         })),
       onError,
     );
@@ -45,7 +45,7 @@ export function ImagesTab({ draft, set, setDraft, onError }: ProductTabProps & {
             if (!imageUrlInput.trim()) return;
             set("images", [
               ...draft.images,
-              { url: imageUrlInput.trim(), alt: { tr: draft.name, en: draft.name } },
+              { url: imageUrlInput.trim(), alt: draft.name },
             ]);
             setImageUrlInput("");
           }}
@@ -74,7 +74,7 @@ export function ImagesTab({ draft, set, setDraft, onError }: ProductTabProps & {
             <div className="relative aspect-square overflow-hidden rounded-[3px] bg-zw-grey-50">
               <ProductImage
                 src={img.url}
-                alt={img.alt.tr}
+                alt={img.alt}
                 label={draft.name}
                 className="h-full w-full object-contain p-1"
               />

@@ -5,8 +5,8 @@ import { Check } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { listProducts, registerWarranty, useDatabase } from "@zenweld/store";
 import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
-import { useLocale, useT } from "@/lib/i18n-client";
+import Link from "next/link";
+import { useT } from "@/lib/i18n-client";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 
 /**
@@ -17,7 +17,6 @@ import { KvkkNotice } from "@/components/legal/LegalLink";
  */
 export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
   const t = useT();
-  const locale = useLocale();
   const db = useDatabase();
   const { user } = useAuth();
   const [done, setDone] = useState(false);
@@ -64,9 +63,9 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
             {t.explore.checkWarranty}
           </Button>
           {user && (
-            <LocaleLink href="/hesabim/garantilerim">
+            <Link href="/hesabim/garantilerim">
               <Button>{t.account.warranties}</Button>
-            </LocaleLink>
+            </Link>
           )}
         </div>
       </div>
@@ -129,10 +128,10 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
         >
           <option value="">{t.warranty.categoryPlaceholder}</option>
           {groups.map(({ group, categories }) => (
-            <optgroup key={group.slug} label={group.name[locale]}>
+            <optgroup key={group.slug} label={group.name}>
               {categories.map((c) => (
                 <option key={c.slug} value={c.slug}>
-                  {c.name[locale]}
+                  {c.name}
                 </option>
               ))}
             </optgroup>

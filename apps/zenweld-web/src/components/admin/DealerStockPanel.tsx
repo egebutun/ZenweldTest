@@ -43,7 +43,7 @@ export function DealerStockPanel() {
             ...base,
             key: `${p.id}|${o.id}`,
             variantId: o.id,
-            variant: `${group.label.tr}: ${o.label.tr}`,
+            variant: `${group.label}: ${o.label}`,
             sku: o.sku ?? p.sku,
           }));
         }),

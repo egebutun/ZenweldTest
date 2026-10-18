@@ -5,7 +5,7 @@ import type { Product } from "@zenweld/data";
 import { createReview, listProductReviews, reviewSummary, useDatabase } from "@zenweld/store";
 import { useAuth } from "@zenweld/auth";
 import { ProductReviews } from "@zenweld/ui";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { optimizeImageFile } from "@zenweld/utils";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 
@@ -18,7 +18,6 @@ import { KvkkNotice } from "@/components/legal/LegalLink";
  */
 export function ProductReviewsSection({ product }: { product: Product }) {
   const t = useT();
-  const locale = useLocale();
   const db = useDatabase();
   const { user } = useAuth();
 
@@ -29,7 +28,6 @@ export function ProductReviewsSection({ product }: { product: Product }) {
     <ProductReviews
       items={items}
       average={summary.average}
-      locale={locale}
       defaultName={user ? `${user.firstName} ${user.lastName}`.trim() : ""}
       texts={t.reviews}
       notice={<KvkkNotice />}

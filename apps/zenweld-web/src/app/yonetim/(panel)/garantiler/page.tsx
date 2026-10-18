@@ -162,7 +162,7 @@ export default function AdminWarrantiesPage() {
                   <td className="px-4 py-2.5 text-xs">
                     <span className="font-mono">{w.sellerTaxNumber}</span>
                     <div className="text-zw-grey-400">
-                      Kayıt: {formatDate(w.registeredAt, "tr")}
+                      Kayıt: {formatDate(w.registeredAt)}
                     </div>
                   </td>
                   <td className="px-4 py-2.5">

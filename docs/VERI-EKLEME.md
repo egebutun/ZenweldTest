@@ -40,18 +40,17 @@ kullanılmaya devam eder.
   section: "ekipmanlar",           // ekipmanlar | guvenlik | aksesuarlar | dolgu-metalleri
   categorySlug: "mig-gazalti-kaynak-makineleri", // categories.seed.ts içindeki bir slug
   processes: ["MIG", "MAG"],
-  shortDescription: { tr: "…", en: "…" },
-  description: { tr: "…", en: "…" },
+  shortDescription: "…",
+  description: "…",
   priceExVat: 52000,               // KDV hariç
   vatRate: 20,
   currency: "TRY",
-  images: [{ url: stockPhotos.weldingSparks, alt: { tr: "…", en: "…" } }],
+  images: [{ url: stockPhotos.weldingSparks, alt: "…" }],
   specs: [
-    { label: { tr: "Kaynak Akımı", en: "Welding Current" },
-      value: { tr: "30 – 300 A", en: "30 – 300 A" } },
+    { label: "Kaynak Akımı", value: "30 – 300 A" },
   ],
-  inTheBox: [{ tr: "1 x Ana Ünite", en: "1 x Power Source" }],
-  highlights: [{ tr: "…", en: "…" }],
+  inTheBox: ["1 x Ana Ünite"],
+  highlights: ["…"],
   quotable: true,      // Teklif Al akışında seçilebilsin mi
   featured: false,     // Anasayfada öne çıksın mı
   isNew: true,
@@ -117,7 +116,7 @@ işaretleyin; aksi halde hiçbir ürün sayfasında görünmez.
   lat: 38.4696,                    // Google Maps'ten kopyalayın
   lng: 27.2168,
   badges: ["yetkili-satici", "yetkili-servis"],
-  workingHours: { tr: "…", en: "…" },
+  workingHours: "…",
   retailerId: "r-yeni-satici",     // online mağazası varsa
   active: true,
 }
@@ -127,6 +126,6 @@ işaretleyin; aksi halde hiçbir ürün sayfasında görünmez.
 
 ## Metinleri değiştirme
 
-Arayüz metinleri: `packages/i18n/src/dictionaries.ts` (TR ve EN birlikte).
+Arayüz metinleri: `packages/i18n/src/tr.ts`.
 Lorem ipsum içerikli sayfalar: ilgili `page.tsx` dosyaları ve
 `apps/zenweld-web/src/components/common/PageShell.tsx` içindeki `LOREM` sabiti.

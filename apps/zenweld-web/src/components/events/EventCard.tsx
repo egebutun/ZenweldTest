@@ -3,16 +3,16 @@
 import { MapPin } from "lucide-react";
 import type { ZenweldEvent } from "@zenweld/data";
 import { Badge } from "@zenweld/ui";
-import { LocaleLink } from "@/components/common/LocaleLink";
+import Link from "next/link";
 import { EventLogo } from "./EventLogo";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 
 /** Tarih bloğu: gün aralığı üstte, ay ortada, yıl altta. */
-function DateBlock({ event, locale }: { event: ZenweldEvent; locale: "tr" | "en" }) {
+function DateBlock({ event }: { event: ZenweldEvent }) {
   const start = new Date(event.startDate);
   const end = new Date(event.endDate);
 
-  const month = new Intl.DateTimeFormat(locale === "tr" ? "tr-TR" : "en-GB", {
+  const month = new Intl.DateTimeFormat("tr-TR", {
     month: "long",
   }).format(start);
 
@@ -36,8 +36,6 @@ function DateBlock({ event, locale }: { event: ZenweldEvent; locale: "tr" | "en"
 
 export function EventCard({ event }: { event: ZenweldEvent }) {
   const t = useT();
-  const locale = useLocale();
-  const text = useText();
 
   const now = new Date();
   const start = new Date(event.startDate);
@@ -49,7 +47,7 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
     <div className="flex h-full flex-col rounded-[4px] border border-zw-grey-200 bg-white p-5 transition-shadow hover:shadow-lg">
       {/* Üst şerit: tarih bloğu + etkinlik logosu */}
       <div className="flex items-start justify-between gap-4">
-        <DateBlock event={event} locale={locale} />
+        <DateBlock event={event} />
         <div className="flex h-[92px] flex-1 items-center justify-end">
           {/* Sabit kutu + esit alan: her etkinligin logosu ayni gorsel
               agirlikta gorunur, hicbiri kirpilmaz. */}
@@ -78,7 +76,7 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
       </h3>
 
       <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zw-grey-600">
-        {text(event.summary)}
+        {event.summary}
       </p>
 
       {/* Alt şerit: konum + Detaylar butonu.
@@ -87,14 +85,14 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
       <div className="mt-auto pt-5">
         <span className="flex items-start gap-1.5 text-sm text-zw-grey-600">
           <MapPin size={15} className="mt-0.5 shrink-0 text-zw-grey-500" />
-          {text(event.venue)}
+          {event.venue}
         </span>
-        <LocaleLink
+        <Link
           href={`/etkinlikler/${event.slug}`}
           className="mt-3 inline-block rounded-[4px] bg-zw-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zw-red-700"
         >
           {t.events.details}
-        </LocaleLink>
+        </Link>
       </div>
     </div>
   );

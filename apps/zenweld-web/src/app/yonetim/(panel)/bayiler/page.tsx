@@ -17,7 +17,7 @@ const EMPTY: Dealer = {
   lat: 39.1,
   lng: 35.6,
   badges: ["yetkili-satici"],
-  workingHours: { tr: "Hafta içi 09:00 – 18:00", en: "Weekdays 09:00 – 18:00" },
+  workingHours: "Hafta içi 09:00 – 18:00",
   active: true,
 };
 
@@ -203,15 +203,10 @@ export default function AdminDealersPage() {
                 />
               </FormRow>
             </div>
-            <FormRow label="Çalışma Saatleri (TR)">
+            <FormRow label="Çalışma Saatleri">
               <Input
-                value={editing.workingHours.tr}
-                onChange={(e) =>
-                  setEditing({
-                    ...editing,
-                    workingHours: { ...editing.workingHours, tr: e.target.value },
-                  })
-                }
+                value={editing.workingHours}
+                onChange={(e) => setEditing({ ...editing, workingHours: e.target.value })}
               />
             </FormRow>
             <FormRow label="Bağlı olduğu online mağaza">

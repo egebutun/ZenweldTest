@@ -26,7 +26,7 @@ export default function AdminServiceRequestsPage() {
   const db = useDatabase();
   const requests = listServiceRequests(db);
   const [open, setOpen] = useState<string | null>(null);
-  const category = (slug: string) => db.categories.find((c) => c.slug === slug)?.name.tr ?? slug;
+  const category = (slug: string) => db.categories.find((c) => c.slug === slug)?.name ?? slug;
 
   return (
     <>
@@ -53,7 +53,7 @@ export default function AdminServiceRequestsPage() {
                 <tr className="cursor-pointer hover:bg-zw-grey-50" onClick={() => setOpen(open === r.id ? null : r.id)}>
                   <td className="px-4 py-2.5">
                     <div className="font-semibold">{r.code}</div>
-                    <div className="text-xs text-zw-grey-500">{formatDateTime(r.createdAt, "tr")}</div>
+                    <div className="text-xs text-zw-grey-500">{formatDateTime(r.createdAt)}</div>
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="font-semibold">{r.companyName}</div>

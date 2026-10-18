@@ -20,8 +20,6 @@ import { formatDate, formatPrice } from "@zenweld/utils";
 
 export default function AdminDashboard() {
   const db = useDatabase();
-  // Panel yalnizca Turkce.
-  const locale = "tr" as const;
 
   const stats = useMemo(() => {
     const activeProducts = db.products.filter((p) => p.active);
@@ -127,7 +125,7 @@ export default function AdminDashboard() {
                 <span className="font-semibold">{q.code}</span>
                 <span className="truncate text-zw-grey-600">{q.companyName || q.contactName}</span>
                 <span className="ml-auto shrink-0 text-xs text-zw-grey-400">
-                  {formatDate(q.createdAt, locale)}
+                  {formatDate(q.createdAt)}
                 </span>
               </Link>
             ))}
@@ -149,7 +147,7 @@ export default function AdminDashboard() {
                 <span className="font-semibold">{o.code}</span>
                 <span className="truncate text-zw-grey-600">{o.customerName}</span>
                 <span className="ml-auto shrink-0 font-semibold">
-                  {formatPrice(o.total, locale)}
+                  {formatPrice(o.total)}
                 </span>
               </Link>
             ))}

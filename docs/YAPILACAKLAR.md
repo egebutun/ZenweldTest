@@ -100,11 +100,10 @@ kararlaştırılacak. Başlıklar:
 9. Yorumlara yüklenen foto/videoda boyut sınırı ve sıkıştırma yok
 10. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
 11. `/yetkili-bayi-ve-servis-agi` sayfa başlığı eski adı taşıyor
-12. İngilizce sayfalar Türkçe yolla da açılıyor (`/en/urun/...`)
-13. 17 dosyada hâlâ Lorem ipsum var
-14. ESLint kurulu değil, test ve CI yok
-15. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
-16. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
+12. 17 dosyada hâlâ Lorem ipsum var
+13. ESLint kurulu değil, test ve CI yok
+14. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
+15. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
 
 ## Çerezler ve yasal metinler
 
@@ -123,8 +122,7 @@ kararlaştırılacak. Başlıklar:
 ## Teklif Al metinleri — herkese hitap edecek şekilde güncellenecek
 
 Teklif Al artık bireysel üyelere de açık, ama bazı metinler hâlâ yalnızca
-kurumsal müşterilere hitap ediyor. Şimdilik bırakıldı; güncellenecek yerler
-(TR ve EN):
+kurumsal müşterilere hitap ediyor. Şimdilik bırakıldı; güncellenecek yerler:
 
 1. Teklif Al sayfasının açıklaması: "Kurumsal müşterilerimize vadeli ödeme ve
    çek ile ödeme seçenekleri sunuyoruz…" (`quote.subtitle`)

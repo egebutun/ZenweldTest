@@ -15,7 +15,7 @@ import {
 import type { Dealer } from "@zenweld/data";
 import { dealersWithProduct, listDealers, useDatabase } from "@zenweld/store";
 import { Badge, Button, Checkbox, Select, Skeleton } from "@zenweld/ui";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { CITY_CENTERS, haversineKm } from "@/lib/geo";
 
 const DealerMap = dynamic(() => import("./DealerMap").then((m) => m.DealerMap), {
@@ -84,8 +84,6 @@ export function DealerFinder({
   variant?: "full" | "home";
 }) {
   const t = useT();
-  const locale = useLocale();
-  const text = useText();
   const db = useDatabase();
 
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
@@ -170,7 +168,7 @@ export function DealerFinder({
       {productId && productName && (
         <div className="mb-5 rounded-[4px] border border-zw-grey-200 bg-zw-grey-50 px-4 py-3 text-sm">
           <span className="text-zw-grey-600">
-            {locale === "tr" ? "Aranan ürün:" : "Product:"}{" "}
+            {"Aranan ürün:"}{" "}
           </span>
           <strong>{productName}</strong>
         </div>
@@ -261,7 +259,7 @@ export function DealerFinder({
                   </p>
                   <p className="mt-1 flex items-center gap-1.5 text-sm text-zw-grey-600">
                     <Clock size={15} className="shrink-0" />
-                    {text(selected.workingHours)}
+                    {selected.workingHours}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -315,7 +313,7 @@ export function DealerFinder({
                 </p>
                 <p className="mt-1 flex items-center gap-1.5 text-sm text-zw-grey-600">
                   <Clock size={15} className="shrink-0" />
-                  {text(dealer.workingHours)}
+                  {dealer.workingHours}
                 </p>
 
                 <div className="mt-2.5 flex flex-wrap gap-1.5">

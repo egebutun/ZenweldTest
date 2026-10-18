@@ -14,8 +14,8 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
 
   return (
     <EditPageFrame
-      title={item.title.tr}
-      description={`${item.category.tr} · ${formatDate(item.publishedAt, "tr")}`}
+      title={item.title}
+      description={`${item.category} · ${formatDate(item.publishedAt)}`}
       sitePath={`/blog/${item.slug}`}
       siteLinkLabel="Yazı sayfasını gör"
     >

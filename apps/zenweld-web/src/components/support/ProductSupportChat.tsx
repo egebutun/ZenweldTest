@@ -5,7 +5,7 @@ import { MessageCircle, Send, X } from "lucide-react";
 import type { Product } from "@zenweld/data";
 import { useAuth } from "@zenweld/auth";
 import { Button, Input, Textarea } from "@zenweld/ui";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { onOpenSupportChat } from "@/lib/support-chat";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 
@@ -38,7 +38,6 @@ type Message = { from: "bot" | "user"; text: string };
 
 export function ProductSupportChat({ product }: { product: Product }) {
   const t = useT();
-  const locale = useLocale();
   const { user } = useAuth();
 
   const [open, setOpen] = useState(false);
@@ -100,7 +99,7 @@ export function ProductSupportChat({ product }: { product: Product }) {
           productName: product.name,
           productSku: product.sku,
           productUrl:
-            typeof window !== "undefined" ? window.location.href : `/${locale}/urun/${product.slug}`,
+            typeof window !== "undefined" ? window.location.href : `/urun/${product.slug}`,
           message: question.trim(),
           name,
           email,

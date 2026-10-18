@@ -1,44 +1,27 @@
 "use client";
 
 import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
-import { Badge, Button, FormRow, Input, Textarea } from "@zenweld/ui";
+import { Button, FormRow, Input, Textarea } from "@zenweld/ui";
 import type { ProductTabProps } from "./types";
 
-/** Aciklamalar sekmesi: TR/EN kisa ve detayli aciklama, one cikan ozellikler. */
+/** Aciklamalar sekmesi: kisa ve detayli aciklama, one cikan ozellikler. */
 export function DescriptionTab({ draft, set }: ProductTabProps) {
   return (
     <div className="space-y-5 rounded-[4px] border border-zw-grey-200 bg-white p-5">
-      {(["tr", "en"] as const).map((lang) => (
-        <div key={lang} className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Badge tone="dark">{lang.toUpperCase()}</Badge>
-            <span className="text-sm font-semibold text-zw-grey-600">
-              {lang === "tr" ? "Türkçe içerik" : "İngilizce içerik"}
-            </span>
-          </div>
-          <FormRow label="Kısa Açıklama">
-            <Textarea
-              className="min-h-20"
-              value={draft.shortDescription[lang]}
-              onChange={(e) =>
-                set("shortDescription", {
-                  ...draft.shortDescription,
-                  [lang]: e.target.value,
-                })
-              }
-            />
-          </FormRow>
-          <FormRow label="Detaylı Açıklama">
-            <Textarea
-              className="min-h-40"
-              value={draft.description[lang]}
-              onChange={(e) =>
-                set("description", { ...draft.description, [lang]: e.target.value })
-              }
-            />
-          </FormRow>
-        </div>
-      ))}
+      <FormRow label="Kısa Açıklama">
+        <Textarea
+          className="min-h-20"
+          value={draft.shortDescription}
+          onChange={(e) => set("shortDescription", e.target.value)}
+        />
+      </FormRow>
+      <FormRow label="Detaylı Açıklama">
+        <Textarea
+          className="min-h-40"
+          value={draft.description}
+          onChange={(e) => set("description", e.target.value)}
+        />
+      </FormRow>
 
       <div>
         <div className="mb-2 flex items-center justify-between">
@@ -57,7 +40,7 @@ export function DescriptionTab({ draft, set }: ProductTabProps) {
             variant="outline"
             leftIcon={<Plus size={14} />}
             onClick={() =>
-              set("highlights", [...draft.highlights, { tr: "", en: "" }])
+              set("highlights", [...draft.highlights, ""])
             }
           >
             Ekle
@@ -88,20 +71,10 @@ export function DescriptionTab({ draft, set }: ProductTabProps) {
                   {i + 1}
                 </span>
                 <Input
-                  placeholder="TR"
-                  value={h.tr}
+                  value={h}
                   onChange={(e) => {
                     const next = [...draft.highlights];
-                    next[i] = { ...next[i], tr: e.target.value };
-                    set("highlights", next);
-                  }}
-                />
-                <Input
-                  placeholder="EN"
-                  value={h.en}
-                  onChange={(e) => {
-                    const next = [...draft.highlights];
-                    next[i] = { ...next[i], en: e.target.value };
+                    next[i] = e.target.value;
                     set("highlights", next);
                   }}
                 />

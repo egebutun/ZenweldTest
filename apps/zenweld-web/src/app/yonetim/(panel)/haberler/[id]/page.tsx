@@ -14,8 +14,8 @@ export default function EditNewsPage({ params }: { params: Promise<{ id: string 
 
   return (
     <EditPageFrame
-      title={item.title.tr}
-      description={formatDate(item.publishedAt, "tr")}
+      title={item.title}
+      description={formatDate(item.publishedAt)}
       sitePath={`/haberler/${item.slug}`}
       siteLinkLabel="Haber sayfasını gör"
     >

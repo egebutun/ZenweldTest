@@ -39,7 +39,7 @@ export default function AdminLegalPagesPage() {
                 <tr key={p.id} className="hover:bg-zw-grey-50">
                   <td className="px-4 py-2.5">
                     <Link href={`/yonetim/yasal-metinler/${p.id}`} className="font-semibold hover:text-zw-red-600">
-                      {p.title.tr}
+                      {p.title}
                     </Link>
                   </td>
                   <td className="px-4 py-2.5 text-xs">
@@ -49,10 +49,10 @@ export default function AdminLegalPagesPage() {
                       rel="noopener noreferrer"
                       className="text-zw-grey-500 hover:text-zw-red-600 hover:underline"
                     >
-                      /tr{path} ↗
+                      {path} ↗
                     </a>
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-zw-grey-500">{formatDateTime(p.updatedAt, "tr")}</td>
+                  <td className="px-4 py-2.5 text-xs text-zw-grey-500">{formatDateTime(p.updatedAt)}</td>
                   <td className="px-4 py-2.5 text-right">
                     <Link
                       href={`/yonetim/yasal-metinler/${p.id}`}

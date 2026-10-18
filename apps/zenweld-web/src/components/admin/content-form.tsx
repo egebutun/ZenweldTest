@@ -3,8 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ImagePlus, Trash2, Upload } from "lucide-react";
-import type { I18nText } from "@zenweld/data";
-import { Alert, Badge, Button, FormRow, Input, ProductImage, Tabs, Textarea } from "@zenweld/ui";
+import { Alert, Button, FormRow, Input, ProductImage, Tabs, Textarea } from "@zenweld/ui";
 import { readImageFiles, slugify } from "@zenweld/utils";
 import { siteUrl } from "@/lib/admin-links";
 import { AdminPageHeader } from "./AdminShell";
@@ -13,15 +12,13 @@ import { AdminPageHeader } from "./AdminShell";
  * ICERIK FORMLARININ ORTAK PARCALARI
  *
  * Haber, blog ve etkinlik formlari ayni iskeleti kullanir: sekmeler,
- * hata/kaydedildi uyarilari, TR/EN metin alanlari, adres (slug) alanlari,
+ * hata/kaydedildi uyarilari, metin alanlari, adres (slug) alani,
  * kapak/logo secici, fotograf galerisi ve alttaki Kaydet/Vazgec cubugu.
  * Her form yalnizca kendine ozgu alanlari ekler.
  */
 
-type Lang = "tr" | "en";
-
-/** T icindeki iki dilli (I18nText) alanlarin adlari. */
-type I18nKeys<T> = { [K in keyof T]: T[K] extends I18nText ? K : never }[keyof T];
+/** T icindeki metin alanlarinin adlari. */
+type TextKeys<T> = { [K in keyof T]-?: T[K] extends string ? K : never }[keyof T];
 
 /* ------------------------------------------------------------------ */
 /* Durum                                                               */
@@ -43,9 +40,6 @@ export function useContentForm<T extends object>(initial: T, firstTab = "temel")
     setError,
     saved,
     set: <K extends keyof T>(key: K, value: T[K]) => setDraft((d) => ({ ...d, [key]: value })),
-    /** Iki dilli bir alanin tek dilini degistirir. */
-    setI18n: (key: I18nKeys<T>, lang: Lang, value: string) =>
-      setDraft((d) => ({ ...d, [key]: { ...(d[key] as I18nText), [lang]: value } })),
     /** Hatayi gosterir ve ilgili sekmeye gecer. */
     fail: (message: string, onTab = firstTab) => {
       setError(message);
@@ -63,37 +57,16 @@ export function useContentForm<T extends object>(initial: T, firstTab = "temel")
 /* Kayit oncesi yardimcilar                                            */
 /* ------------------------------------------------------------------ */
 
-/** Ingilizce metin bos birakildiysa Turkcesi kullanilir. */
-export const withTrFallback = (text: I18nText): I18nText => ({
-  tr: text.tr,
-  en: text.en.trim() || text.tr,
-});
+/** Adres bos birakildiysa basliktan uretilir. */
+export const resolveSlug = (slug: string, title: string) => slug.trim() || slugify(title);
 
-/**
- * Iki dilli icerigin adreslerini hazirlar. Turkce adres bos ise Turkce
- * basliktan; Ingilizce adres bos ise Ingilizce basliktan uretilir (baslik
- * da cevrilmemisse Ingilizce adres bos kalir, Turkcesi kullanilir).
- */
-export function resolveSlugs(
-  draft: { slug: string; slugEn?: string },
-  title: I18nText,
-): { slug: string; slugEn: string } {
-  return {
-    slug: draft.slug.trim() || slugify(title.tr),
-    slugEn: draft.slugEn?.trim() || (title.en.trim() ? slugify(title.en) : ""),
-  };
-}
-
-/** Verilen adreslerden birini kullanan baska kayit varsa onu dondurur. */
-export function findSlugClash<R extends { id: string; slug: string; slugEn?: string }>(
+/** Ayni adresi kullanan baska kayit varsa onu dondurur. */
+export function findSlugClash<R extends { id: string; slug: string }>(
   rows: R[],
   selfId: string,
-  slugs: string[],
+  slug: string,
 ): R | undefined {
-  const used = slugs.filter(Boolean);
-  return rows.find(
-    (r) => r.id !== selfId && (used.includes(r.slug) || (!!r.slugEn && used.includes(r.slugEn))),
-  );
+  return rows.find((r) => r.id !== selfId && r.slug === slug);
 }
 
 /* ------------------------------------------------------------------ */
@@ -162,35 +135,21 @@ export function FormPanel({ children }: { children: ReactNode }) {
 /* Alanlar                                                             */
 /* ------------------------------------------------------------------ */
 
-/** Turkce ve Ingilizce adres (slug) alanlari. */
-export function SlugFields({
+/** Sayfa adresi (slug) alani. */
+export function SlugField({
   slug,
-  slugEn,
   onChange,
-  trPath,
-  enPath,
+  path,
 }: {
   slug: string;
-  slugEn?: string;
-  onChange: (key: "slug" | "slugEn", value: string) => void;
-  /** Ornek: "/tr/haberler" */
-  trPath: string;
-  /** Ornek: "/en/news" */
-  enPath: string;
+  onChange: (value: string) => void;
+  /** Ornek: "/haberler" */
+  path: string;
 }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <FormRow label="Türkçe adres (slug)" hint={`${trPath}/${slug || "…"}`}>
-        <Input value={slug} onChange={(e) => onChange("slug", slugify(e.target.value))} />
-      </FormRow>
-      <FormRow label="İngilizce adres (slug)" hint={`${enPath}/${slugEn?.trim() || slug || "…"}`}>
-        <Input
-          value={slugEn ?? ""}
-          onChange={(e) => onChange("slugEn", slugify(e.target.value))}
-          placeholder="Boş bırakılırsa Türkçe adres kullanılır"
-        />
-      </FormRow>
-    </div>
+    <FormRow label="Adres (slug)" hint={`${path}/${slug || "…"}`}>
+      <Input value={slug} onChange={(e) => onChange(slugify(e.target.value))} />
+    </FormRow>
   );
 }
 
@@ -224,45 +183,35 @@ export function PublishedAtField({
 }
 
 /**
- * Icerik sekmesi: her dil icin ozet ve uzun metin. Biçimlendirme
- * aciklamasi tum formlarda aynidir; `intro` yalnizca ilk cumleyi verir.
+ * Icerik sekmesi: ozet ve uzun metin. Bicimlendirme aciklamasi tum
+ * formlarda aynidir; `intro` yalnizca ilk cumleyi verir.
  */
-export function LocalizedTextFields<T>({
+export function ContentTextFields<T>({
   intro,
   fields,
   values,
   onChange,
 }: {
   intro: string;
-  fields: { key: I18nKeys<T>; label: string; tall?: boolean }[];
+  fields: { key: TextKeys<T>; label: string; tall?: boolean }[];
   values: T;
-  onChange: (key: I18nKeys<T>, lang: Lang, value: string) => void;
+  onChange: (key: TextKeys<T>, value: string) => void;
 }) {
   return (
-    <div className="space-y-5 rounded-[4px] border border-zw-grey-200 bg-white p-5">
+    <div className="space-y-4 rounded-[4px] border border-zw-grey-200 bg-white p-5">
       <Alert tone="info">
         {intro} Metinde boş satır bırakarak paragraf oluşturabilirsiniz. Biçimlendirme için: satır
         başına <code>## </code> koyarsanız ara başlık, <code>- </code> koyarsanız madde olur;{" "}
         <code>**kelime**</code> yazarsanız kalın görünür.
       </Alert>
-      {(["tr", "en"] as const).map((lang) => (
-        <div key={lang} className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Badge tone="dark">{lang.toUpperCase()}</Badge>
-            <span className="text-sm font-semibold text-zw-grey-600">
-              {lang === "tr" ? "Türkçe içerik" : "İngilizce içerik (boşsa Türkçesi kullanılır)"}
-            </span>
-          </div>
-          {fields.map((f) => (
-            <FormRow key={String(f.key)} label={f.label}>
-              <Textarea
-                className={f.tall ? "min-h-56" : "min-h-20"}
-                value={(values[f.key] as I18nText)[lang]}
-                onChange={(e) => onChange(f.key, lang, e.target.value)}
-              />
-            </FormRow>
-          ))}
-        </div>
+      {fields.map((f) => (
+        <FormRow key={String(f.key)} label={f.label}>
+          <Textarea
+            className={f.tall ? "min-h-56" : "min-h-20"}
+            value={values[f.key] as string}
+            onChange={(e) => onChange(f.key, e.target.value)}
+          />
+        </FormRow>
       ))}
     </div>
   );

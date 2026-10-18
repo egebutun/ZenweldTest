@@ -13,10 +13,9 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { ZenweldLogo } from "@zenweld/ui";
-import { locales, localeNames, switchLocaleInPath, type Locale } from "@zenweld/i18n";
 import { useAuth } from "@zenweld/auth";
-import { LocaleLink } from "@/components/common/LocaleLink";
-import { useHref, useLocale, useT } from "@/lib/i18n-client";
+import Link from "next/link";
+import { useT } from "@/lib/i18n-client";
 import { useMainMenu } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
 import { MegaMenu } from "./MegaMenu";
@@ -30,8 +29,6 @@ const SearchOverlay = dynamic(
 
 export function Header() {
   const t = useT();
-  const locale = useLocale();
-  const href = useHref();
   const pathname = usePathname();
   const router = useRouter();
   const menus = useMainMenu();
@@ -60,10 +57,6 @@ export function Header() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const changeLocale = (next: Locale) => {
-    router.push(switchLocaleInPath(pathname, next));
-  };
-
   return (
     <>
       <header
@@ -79,9 +72,9 @@ export function Header() {
             <Menu size={22} />
           </button>
 
-          <LocaleLink href="/" className="shrink-0">
+          <Link href="/" className="shrink-0">
             <ZenweldLogo className="h-7 w-auto sm:h-8" />
-          </LocaleLink>
+          </Link>
 
           {/* Dar masaustunde (1024-1535px) yer acmak icin ok isareti gizlenir;
               1280px altinda basliklar sikisir, arama kutusu simgeye kuculur. */}
@@ -121,16 +114,16 @@ export function Header() {
 
             {/* 1024-1279px arasinda sepet simgesine yer acmak icin gizlenir;
                 bayi bulma Destek menusunde de var. */}
-            <LocaleLink
+            <Link
               href="/yetkili-bayi-ve-servis-agi"
               className="rounded-[4px] p-2 text-zw-ink transition-colors hover:bg-zw-grey-100 lg:hidden xl:block"
               aria-label={t.nav.findDealer}
               title={t.nav.findDealer}
             >
               <MapPin size={20} />
-            </LocaleLink>
+            </Link>
 
-            <LocaleLink
+            <Link
               href="/sepet"
               className="relative rounded-[4px] p-2 text-zw-ink transition-colors hover:bg-zw-grey-100"
               aria-label={t.cart.title}
@@ -142,7 +135,7 @@ export function Header() {
                   {cart.count > 99 ? "99+" : cart.count}
                 </span>
               )}
-            </LocaleLink>
+            </Link>
 
             <div className="relative">
               <button
@@ -168,23 +161,23 @@ export function Header() {
                         </div>
                         <div className="truncate text-xs text-zw-grey-500">{user.email}</div>
                       </div>
-                      <LocaleLink
+                      <Link
                         href="/hesabim"
                         className="block px-4 py-2 text-sm hover:bg-zw-grey-50"
                       >
                         {t.account.title}
-                      </LocaleLink>
-                      <LocaleLink
+                      </Link>
+                      <Link
                         href="/hesabim/siparislerim"
                         className="block px-4 py-2 text-sm hover:bg-zw-grey-50"
                       >
                         {t.account.myOrders}
-                      </LocaleLink>
+                      </Link>
                       <button
                         onClick={() => {
                           logout();
                           setAccountOpen(false);
-                          router.push(href("/"));
+                          router.push("/");
                         }}
                         className="flex w-full items-center gap-2 border-t border-zw-grey-100 px-4 py-2 text-left text-sm text-zw-grey-700 hover:bg-zw-grey-50"
                       >
@@ -194,38 +187,20 @@ export function Header() {
                     </>
                   ) : (
                     <>
-                      <LocaleLink
+                      <Link
                         href="/giris"
                         className="block px-4 py-2 text-sm font-semibold hover:bg-zw-grey-50"
                       >
                         {t.nav.login}
-                      </LocaleLink>
-                      <LocaleLink
+                      </Link>
+                      <Link
                         href="/kayit"
                         className="block px-4 py-2 text-sm hover:bg-zw-grey-50"
                       >
                         {t.nav.register}
-                      </LocaleLink>
+                      </Link>
                     </>
                   )}
-                  <div className="mt-1 flex items-center gap-1 border-t border-zw-grey-100 px-4 py-2">
-                    {locales.map((l) => (
-                      <button
-                        key={l}
-                        onClick={() => changeLocale(l)}
-                        className={`rounded-[3px] px-2 py-1 text-xs font-semibold uppercase ${
-                          l === locale
-                            ? "bg-zw-ink text-white"
-                            : "text-zw-grey-600 hover:bg-zw-grey-100"
-                        }`}
-                      >
-                        {l}
-                      </button>
-                    ))}
-                    <span className="ml-1 text-xs text-zw-grey-400">
-                      {localeNames[locale]}
-                    </span>
-                  </div>
                 </div>
               )}
             </div>

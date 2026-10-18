@@ -15,7 +15,7 @@ export default function EditEventPage({ params }: { params: Promise<{ id: string
   return (
     <EditPageFrame
       title={item.title}
-      description={`${formatDate(item.startDate, "tr")} — ${formatDate(item.endDate, "tr")}`}
+      description={`${formatDate(item.startDate)} — ${formatDate(item.endDate)}`}
       sitePath={`/etkinlikler/${item.slug}`}
       siteLinkLabel="Etkinlik sayfasını gör"
     >

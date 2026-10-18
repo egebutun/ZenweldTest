@@ -40,7 +40,7 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
     <>
       <AdminPageHeader
         title={order.code}
-        description={`${formatDateTime(order.createdAt, "tr")} · ${order.customerName}`}
+        description={`${formatDateTime(order.createdAt)} · ${order.customerName}`}
         action={
           <Link href="/yonetim/siparisler" className="text-sm font-semibold text-zw-grey-600 hover:text-zw-ink">
             ← Tüm siparişler
@@ -70,22 +70,22 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
                       <div className="font-semibold">{i.productName}</div>
                       <div className="text-xs text-zw-grey-500">
                         {i.sku}
-                        {i.variantLabel && ` · ${i.variantLabel.tr}`}
+                        {i.variantLabel && ` · ${i.variantLabel}`}
                       </div>
                     </td>
                     <td className="py-2 text-right">{i.quantity}</td>
-                    <td className="py-2 text-right">{formatPrice(i.unitPrice, "tr")}</td>
-                    <td className="py-2 text-right font-semibold">{formatPrice(i.unitPrice * i.quantity, "tr")}</td>
+                    <td className="py-2 text-right">{formatPrice(i.unitPrice)}</td>
+                    <td className="py-2 text-right font-semibold">{formatPrice(i.unitPrice * i.quantity)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <dl className="mt-3 space-y-1 border-t border-zw-grey-200 pt-3 text-sm">
-              <Row label="Ara toplam" value={formatPrice(order.subtotal, "tr")} />
-              <Row label="İçindeki KDV" value={formatPrice(order.vat, "tr")} muted />
-              <Row label="Kargo" value={order.shipping === 0 ? "Ücretsiz" : formatPrice(order.shipping, "tr")} />
-              {order.installmentFee > 0 && <Row label="Vade farkı" value={formatPrice(order.installmentFee, "tr")} />}
-              <Row label="Toplam" value={<strong>{formatPrice(order.total, "tr")}</strong>} />
+              <Row label="Ara toplam" value={formatPrice(order.subtotal)} />
+              <Row label="İçindeki KDV" value={formatPrice(order.vat)} muted />
+              <Row label="Kargo" value={order.shipping === 0 ? "Ücretsiz" : formatPrice(order.shipping)} />
+              {order.installmentFee > 0 && <Row label="Vade farkı" value={formatPrice(order.installmentFee)} />}
+              <Row label="Toplam" value={<strong>{formatPrice(order.total)}</strong>} />
             </dl>
           </AdminCard>
 
@@ -127,7 +127,7 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
                 <li key={idx}>
                   <div className="font-semibold">{ORDER_STATUS[h.status].label}</div>
                   <div className="text-xs text-zw-grey-500">
-                    {formatDateTime(h.at, "tr")}
+                    {formatDateTime(h.at)}
                     {h.note && ` — ${h.note}`}
                   </div>
                 </li>
@@ -192,7 +192,7 @@ function Actions({ order }: { order: Order }) {
         <div className="space-y-3">
           <Alert tone="warning">
             Havale/EFT bekleniyor. Son ödeme tarihi:{" "}
-            <strong>{order.payment.dueAt ? formatDate(order.payment.dueAt, "tr") : "—"}</strong>. Açıklamada{" "}
+            <strong>{order.payment.dueAt ? formatDate(order.payment.dueAt) : "—"}</strong>. Açıklamada{" "}
             <strong>{order.code}</strong> yazan ödeme hesaba geçince onaylayın.
           </Alert>
           <Button leftIcon={<CheckCircle2 size={17} />} onClick={() => markOrderPaid(order.id)}>
@@ -282,9 +282,9 @@ function PaymentInfo({ order }: { order: Order }) {
           <Row label="Taksit" value={(p.installments ?? 1) > 1 ? `${p.installments} taksit` : "Tek çekim"} />
         </>
       )}
-      {p.dueAt && <Row label="Son ödeme" value={formatDate(p.dueAt, "tr")} />}
-      <Row label="Ödendi" value={p.paidAt ? formatDateTime(p.paidAt, "tr") : "—"} />
-      <Row label="Sözleşme onayı" value={formatDateTime(order.termsAcceptedAt, "tr")} />
+      {p.dueAt && <Row label="Son ödeme" value={formatDate(p.dueAt)} />}
+      <Row label="Ödendi" value={p.paidAt ? formatDateTime(p.paidAt) : "—"} />
+      <Row label="Sözleşme onayı" value={formatDateTime(order.termsAcceptedAt)} />
     </dl>
   );
 }

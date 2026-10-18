@@ -2,10 +2,9 @@
 
 import { Check, X } from "lucide-react";
 import type { Order, OrderStatus } from "@zenweld/data";
-import { PAYMENT_EXPIRED_NOTE } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 
 const TONE: Record<OrderStatus, "amber" | "grey" | "dark" | "green" | "outline"> = {
   awaiting_payment: "amber",
@@ -27,7 +26,6 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
  */
 export function OrderTimeline({ order }: { order: Order }) {
   const t = useT();
-  const locale = useLocale();
   const reachedAt = (status: OrderStatus) => order.history.find((h) => h.status === status)?.at;
 
   const steps: OrderStatus[] = [
@@ -46,9 +44,9 @@ export function OrderTimeline({ order }: { order: Order }) {
           <div className="font-semibold">{t.orders.status.cancelled}</div>
           {cancelled && (
             <div className="text-xs text-zw-grey-500">
-              {formatDateTime(cancelled.at, locale)}
+              {formatDateTime(cancelled.at)}
               {cancelled.note &&
-                ` — ${cancelled.note === PAYMENT_EXPIRED_NOTE ? t.orders.paymentExpired : cancelled.note}`}
+                ` — ${cancelled.note}`}
             </div>
           )}
         </div>
@@ -86,7 +84,7 @@ export function OrderTimeline({ order }: { order: Order }) {
               <div className={`text-sm font-semibold ${done ? "text-zw-ink" : "text-zw-grey-400"}`}>
                 {t.orders.status[status]}
               </div>
-              {at && <div className="text-xs text-zw-grey-500">{formatDateTime(at, locale)}</div>}
+              {at && <div className="text-xs text-zw-grey-500">{formatDateTime(at)}</div>}
             </div>
           </li>
         );

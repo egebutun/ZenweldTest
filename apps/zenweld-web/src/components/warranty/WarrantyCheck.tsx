@@ -5,7 +5,7 @@ import { ShieldCheck, ShieldX } from "lucide-react";
 import { findProductById, findWarranty, useDatabase } from "@zenweld/store";
 import type { WarrantyRecord } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input } from "@zenweld/ui";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";
 
 /**
@@ -17,7 +17,6 @@ import { formatDate } from "@zenweld/utils";
  */
 export function WarrantyCheck({ onRegister }: { onRegister: () => void }) {
   const t = useT();
-  const locale = useLocale();
   const db = useDatabase();
   const [serial, setSerial] = useState("");
   const [result, setResult] = useState<WarrantyRecord | null | undefined>(undefined);
@@ -94,12 +93,12 @@ export function WarrantyCheck({ onRegister }: { onRegister: () => void }) {
             </div>
             <div>
               <dt className="text-zw-grey-500">{t.warranty.registeredAt}</dt>
-              <dd className="font-semibold">{formatDate(result.registeredAt, locale)}</dd>
+              <dd className="font-semibold">{formatDate(result.registeredAt)}</dd>
             </div>
             <div>
               <dt className="text-zw-grey-500">{t.warranty.expiresAt}</dt>
               <dd className={`font-semibold ${expired ? "text-zw-grey-500" : "text-emerald-700"}`}>
-                {formatDate(result.expiresAt, locale)}
+                {formatDate(result.expiresAt)}
               </dd>
             </div>
           </dl>

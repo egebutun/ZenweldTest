@@ -12,7 +12,7 @@ import { siteUrl } from "@/lib/admin-links";
 const EMPTY: SalesRep = {
   id: "",
   name: "",
-  region: { tr: "", en: "" },
+  region: "",
   phone: "",
   email: "",
   order: 0,
@@ -46,7 +46,7 @@ export default function AdminSalesRepsPage() {
     setError(null);
     const name = editing.name.trim();
     const email = editing.email.trim();
-    if (!name || !editing.region.tr.trim() || !editing.phone.trim() || !email) {
+    if (!name || !editing.region.trim() || !editing.phone.trim() || !email) {
       setError("Ad soyad, bölge / görev, telefon ve e-posta zorunludur.");
       return;
     }
@@ -63,10 +63,7 @@ export default function AdminSalesRepsPage() {
       name,
       email,
       phone: editing.phone.trim(),
-      region: {
-        tr: editing.region.tr.trim(),
-        en: editing.region.en.trim() || editing.region.tr.trim(),
-      },
+      region: editing.region.trim(),
       // Yeni kayit listenin sonuna eklenir.
       order: editing.id ? editing.order : (reps.at(-1)?.order ?? 0) + 1,
     });
@@ -139,12 +136,7 @@ export default function AdminSalesRepsPage() {
                   </div>
                 </td>
                 <td className="px-4 py-2.5 font-semibold">{r.name}</td>
-                <td className="px-4 py-2.5">
-                  <div>{r.region.tr}</div>
-                  {r.region.en !== r.region.tr && (
-                    <div className="text-xs text-zw-grey-400">{r.region.en}</div>
-                  )}
-                </td>
+                <td className="px-4 py-2.5">{r.region}</td>
                 <td className="px-4 py-2.5 text-xs">
                   <div>{r.phone}</div>
                   <div className="text-zw-grey-500">{r.email}</div>
@@ -166,7 +158,7 @@ export default function AdminSalesRepsPage() {
                       type="button"
                       onClick={() => {
                         setError(null);
-                        setEditing({ ...r, region: { ...r.region } });
+                        setEditing({ ...r });
                       }}
                       className="rounded-[3px] p-1.5 text-zw-grey-600 hover:bg-zw-grey-100 hover:text-zw-ink"
                       aria-label="Düzenle"
@@ -219,24 +211,12 @@ export default function AdminSalesRepsPage() {
                 onChange={(e) => setEditing({ ...editing, name: e.target.value })}
               />
             </FormRow>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <FormRow label="Bölge / Görev (TR)" required hint="ör. Ege Bölgesi">
-                <Input
-                  value={editing.region.tr}
-                  onChange={(e) =>
-                    setEditing({ ...editing, region: { ...editing.region, tr: e.target.value } })
-                  }
-                />
-              </FormRow>
-              <FormRow label="Bölge / Görev (EN)" hint="Boşsa Türkçesi gösterilir">
-                <Input
-                  value={editing.region.en}
-                  onChange={(e) =>
-                    setEditing({ ...editing, region: { ...editing.region, en: e.target.value } })
-                  }
-                />
-              </FormRow>
-            </div>
+            <FormRow label="Bölge / Görev" required hint="ör. Ege Bölgesi">
+              <Input
+                value={editing.region}
+                onChange={(e) => setEditing({ ...editing, region: e.target.value })}
+              />
+            </FormRow>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormRow label="Telefon" required hint="WhatsApp bu numaraya açılır">
                 <Input

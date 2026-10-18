@@ -1,19 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, X } from "lucide-react";
 import { ZenweldLogo } from "@zenweld/ui";
-import { locales, localeNames, switchLocaleInPath } from "@zenweld/i18n";
-import { LocaleLink } from "@/components/common/LocaleLink";
-import { useLocale, useT } from "@/lib/i18n-client";
+import Link from "next/link";
+import { useT } from "@/lib/i18n-client";
 import type { TopMenu } from "@/lib/menu";
 
 export function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: () => void }) {
   const t = useT();
-  const locale = useLocale();
-  const pathname = usePathname();
-  const router = useRouter();
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
@@ -50,14 +45,14 @@ export function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: ()
                         </div>
                       )}
                       {col.links.map((link) => (
-                        <LocaleLink
+                        <Link
                           key={link.href}
                           href={link.href}
                           onClick={onClose}
                           className="block py-1.5 text-sm text-zw-grey-700"
                         >
                           {link.label}
-                        </LocaleLink>
+                        </Link>
                       ))}
                     </div>
                   ))}
@@ -65,33 +60,14 @@ export function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: ()
               )}
             </div>
           ))}
-          <LocaleLink
+          <Link
             href="/teklif-al"
             onClick={onClose}
             className="block border-b border-zw-grey-100 px-4 py-3.5 font-semibold"
           >
             {t.product.requestQuote}
-          </LocaleLink>
+          </Link>
         </nav>
-
-        <div className="flex gap-2 p-4">
-          {locales.map((l) => (
-            <button
-              key={l}
-              onClick={() => {
-                router.push(switchLocaleInPath(pathname, l));
-                onClose();
-              }}
-              className={`flex-1 rounded-[4px] border px-3 py-2 text-sm font-semibold uppercase ${
-                l === locale
-                  ? "border-zw-ink bg-zw-ink text-white"
-                  : "border-zw-grey-300 text-zw-grey-600"
-              }`}
-            >
-              {localeNames[l]}
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   );

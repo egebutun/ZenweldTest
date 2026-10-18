@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X, Package, FolderOpen, FileText, File } from "lucide-react";
 import { useSearch } from "@/lib/search/use-search";
-import { useHref, useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@zenweld/utils";
 import { ProductImage } from "@zenweld/ui";
 import type { SearchDocType } from "@/lib/search/search-client";
@@ -25,8 +25,6 @@ const ICONS: Record<SearchDocType, typeof Package> = {
  */
 export function SearchOverlay({ onClose }: { onClose: () => void }) {
   const t = useT();
-  const locale = useLocale();
-  const href = useHref();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -62,7 +60,7 @@ export function SearchOverlay({ onClose }: { onClose: () => void }) {
 
   const go = (path: string) => {
     onClose();
-    router.push(href(path));
+    router.push(path);
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -191,7 +189,7 @@ export function SearchOverlay({ onClose }: { onClose: () => void }) {
                       </span>
                       {hit.type === "product" && hit.price != null && (
                         <span className="shrink-0 text-sm font-semibold text-zw-ink">
-                          {formatPrice(priceWithVat(hit.price, 20), locale)}
+                          {formatPrice(priceWithVat(hit.price, 20))}
                         </span>
                       )}
                     </button>

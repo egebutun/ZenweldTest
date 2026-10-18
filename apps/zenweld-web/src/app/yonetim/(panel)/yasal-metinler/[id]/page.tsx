@@ -8,9 +8,8 @@ import {
   ContentFormShell,
   EditPageFrame,
   FormPanel,
-  LocalizedTextFields,
+  ContentTextFields,
   useContentForm,
-  withTrFallback,
 } from "@/components/admin/content-form";
 
 /** Ön Bilgilendirme ve Mesafeli Satış'ta metnin üstünde otomatik tablolar var. */
@@ -23,7 +22,7 @@ export default function EditLegalPage({ params }: { params: Promise<{ id: string
 
   return (
     <EditPageFrame
-      title={page.title.tr}
+      title={page.title}
       description="Yasal metin"
       sitePath={legalPath(page.id as LegalPageId)}
       siteLinkLabel="Sayfayı gör"
@@ -35,13 +34,13 @@ export default function EditLegalPage({ params }: { params: Promise<{ id: string
 
 function LegalForm({ page }: { page: LegalPage }) {
   const form = useContentForm<LegalPage>(page, "metin");
-  const { draft, setI18n } = form;
+  const { draft, set } = form;
 
   const submit = () => {
     form.setError(null);
-    if (!draft.title.tr.trim()) return form.fail("Başlık (TR) zorunludur.", "baslik");
-    if (!draft.body.tr.trim()) return form.fail("Metin (TR) zorunludur.");
-    saveLegalPage({ ...draft, title: withTrFallback(draft.title), body: withTrFallback(draft.body) });
+    if (!draft.title.trim()) return form.fail("Başlık zorunludur.", "baslik");
+    if (!draft.body.trim()) return form.fail("Metin zorunludur.");
+    saveLegalPage(draft);
     form.flashSaved();
   };
 
@@ -57,7 +56,7 @@ function LegalForm({ page }: { page: LegalPage }) {
       ]}
     >
       {form.tab === "metin" && (
-        <LocalizedTextFields
+        <ContentTextFields
           intro={
             ORDER_DOCUMENTS.has(page.id)
               ? "Satıcı, alıcı ve ürün tabloları siparişten otomatik doldurulur; bu metin tabloların altında görünür."
@@ -65,7 +64,7 @@ function LegalForm({ page }: { page: LegalPage }) {
           }
           fields={[{ key: "body", label: "Metin", tall: true }]}
           values={draft}
-          onChange={setI18n}
+          onChange={set}
         />
       )}
       {form.tab === "baslik" && (
@@ -74,14 +73,9 @@ function LegalForm({ page }: { page: LegalPage }) {
             Başlık sayfada ve alt bilgideki Politikalar & Yasal listesinde görünür. Sayfanın adresi
             değişmez.
           </p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Başlık (TR)" required>
-              <Input value={draft.title.tr} onChange={(e) => setI18n("title", "tr", e.target.value)} />
-            </FormRow>
-            <FormRow label="Başlık (EN)" hint="Boş bırakılırsa Türkçe başlık kullanılır">
-              <Input value={draft.title.en} onChange={(e) => setI18n("title", "en", e.target.value)} />
-            </FormRow>
-          </div>
+          <FormRow label="Başlık" required>
+            <Input value={draft.title} onChange={(e) => set("title", e.target.value)} />
+          </FormRow>
         </FormPanel>
       )}
     </ContentFormShell>

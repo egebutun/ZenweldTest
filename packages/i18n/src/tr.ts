@@ -1,10 +1,9 @@
 /**
- * TURKCE ARAYUZ METINLERI — ana dil.
+ * SITENIN ARAYUZ METINLERI
  *
- * Yeni bir metin once buraya eklenir; en.ts ayni anahtarlari tasimak
- * zorundadir (eksik ya da fazla anahtar derlemede hata verir).
- * Yonetim paneli yalnizca Turkce oldugu icin panel metinleri burada degil,
- * panel sayfalarinin icindedir.
+ * Dugme, baslik, uyari gibi tum sabit metinler buradadir; bilesenler
+ * useT() ile okur. Yonetim panelinin metinleri burada degil, panel
+ * sayfalarinin icindedir.
  */
 export const tr = {
   common: {
@@ -573,7 +572,6 @@ export const tr = {
     successCard: "Ödemeniz onaylandı, siparişiniz hazırlanıyor. Kargoya verildiğinde takip numarası bu sayfada görünecek.",
     successTransfer: "Siparişiniz oluşturuldu. Ödemeniz hesabımıza geçtiğinde hazırlanmaya başlayacak.",
     documents: "Sözleşmeler",
-    paymentExpired: "Ödeme süresi doldu",
   },
   service: {
     title: "Servis Talebi",
@@ -647,5 +645,5 @@ export const tr = {
   },
 };
 
-/** Arayuz metinlerinin yapisi; Ingilizce sozluk bu tipe uymak zorundadir. */
+/** Arayuz metinlerinin yapisi. */
 export type Dictionary = typeof tr;

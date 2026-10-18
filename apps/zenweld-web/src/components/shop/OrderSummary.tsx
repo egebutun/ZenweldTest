@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Truck } from "lucide-react";
 import type { CartTotals } from "@zenweld/data";
 import { formatPrice } from "@zenweld/utils";
-import { useLocale, useT } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 
 /**
  * Sepet ve odeme sayfasindaki tutar ozeti. Taksitli odemede vade farki
@@ -20,7 +20,6 @@ export function OrderSummary({
   children?: ReactNode;
 }) {
   const t = useT();
-  const locale = useLocale();
   const row = "flex justify-between gap-4";
 
   return (
@@ -29,28 +28,28 @@ export function OrderSummary({
       <dl className="mt-4 space-y-2 text-sm">
         <div className={row}>
           <dt className="text-zw-grey-600">{t.cart.subtotal}</dt>
-          <dd className="font-semibold">{formatPrice(totals.subtotal, locale)}</dd>
+          <dd className="font-semibold">{formatPrice(totals.subtotal)}</dd>
         </div>
         <div className={`${row} text-xs text-zw-grey-500`}>
           <dt>{t.cart.vatIncluded}</dt>
-          <dd>{formatPrice(totals.vat, locale)}</dd>
+          <dd>{formatPrice(totals.vat)}</dd>
         </div>
         <div className={row}>
           <dt className="text-zw-grey-600">{t.cart.shipping}</dt>
           <dd className={totals.shipping === 0 ? "font-semibold text-emerald-700" : "font-semibold"}>
-            {totals.shipping === 0 ? t.cart.free : formatPrice(totals.shipping, locale)}
+            {totals.shipping === 0 ? t.cart.free : formatPrice(totals.shipping)}
           </dd>
         </div>
         {installmentFee > 0 && (
           <div className={row}>
             <dt className="text-zw-grey-600">{t.checkout.installmentFee}</dt>
-            <dd className="font-semibold">{formatPrice(installmentFee, locale)}</dd>
+            <dd className="font-semibold">{formatPrice(installmentFee)}</dd>
           </div>
         )}
         <div className={`${row} border-t border-zw-grey-200 pt-3 text-base`}>
           <dt className="font-bold">{t.cart.total}</dt>
           <dd className="font-display text-2xl font-bold">
-            {formatPrice(totals.total + installmentFee, locale)}
+            {formatPrice(totals.total + installmentFee)}
           </dd>
         </div>
       </dl>
@@ -67,7 +66,7 @@ export function OrderSummary({
           {totals.remainingForFreeShipping > 0
             ? t.cart.freeShippingLeft.replace(
                 "{amount}",
-                formatPrice(totals.remainingForFreeShipping, locale),
+                formatPrice(totals.remainingForFreeShipping),
               )
             : t.cart.freeShippingReached}
         </p>

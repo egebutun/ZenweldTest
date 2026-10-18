@@ -9,23 +9,21 @@ import {
   ContentFormShell,
   FormPanel,
   GalleryField,
-  LocalizedTextFields,
+  ContentTextFields,
   PublishedAtField,
   SingleImageField,
-  SlugFields,
+  SlugField,
   findSlugClash,
-  resolveSlugs,
+  resolveSlug,
   useContentForm,
-  withTrFallback,
 } from "./content-form";
 
 const EMPTY: NewsItem = {
   id: "",
   slug: "",
-  slugEn: "",
-  title: { tr: "", en: "" },
-  summary: { tr: "", en: "" },
-  body: { tr: "", en: "" },
+  title: "",
+  summary: "",
+  body: "",
   coverUrl: "",
   images: [],
   publishedAt: "",
@@ -40,24 +38,17 @@ export function NewsForm({ item }: { item?: NewsItem }) {
   const form = useContentForm<NewsItem>(
     item ?? { ...EMPTY, publishedAt: new Date().toISOString() },
   );
-  const { draft, set, setI18n } = form;
+  const { draft, set } = form;
 
   const submit = () => {
     form.setError(null);
-    if (!draft.title.tr.trim()) return form.fail("Haber başlığı (TR) zorunludur.");
+    if (!draft.title.trim()) return form.fail("Haber başlığı zorunludur.");
 
-    const { slug, slugEn } = resolveSlugs(draft, draft.title);
-    const clash = findSlugClash(db.news, draft.id, [slug, slugEn]);
+    const slug = resolveSlug(draft.slug, draft.title);
+    const clash = findSlugClash(db.news, draft.id, slug);
     if (clash) return form.fail(`"${clash.slug}" adresi başka bir haberde kullanılıyor.`);
 
-    const next: NewsItem = {
-      ...draft,
-      slug,
-      slugEn: slugEn || undefined,
-      title: withTrFallback(draft.title),
-      summary: withTrFallback(draft.summary),
-      body: withTrFallback(draft.body),
-    };
+    const next: NewsItem = { ...draft, slug };
 
     if (isNew) {
       router.push(`/yonetim/haberler/${createNews(next).id}`);
@@ -82,35 +73,18 @@ export function NewsForm({ item }: { item?: NewsItem }) {
       {form.tab === "temel" && (
         <FormPanel>
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Haber Başlığı (TR)" required>
+            <FormRow label="Haber Başlığı" required>
               <Input
                 required
-                value={draft.title.tr}
+                value={draft.title}
                 onChange={(e) => {
-                  setI18n("title", "tr", e.target.value);
+                  set("title", e.target.value);
                   if (isNew) set("slug", slugify(e.target.value));
                 }}
               />
             </FormRow>
-            <FormRow label="Haber Başlığı (EN)" hint="Boş bırakılırsa Türkçe başlık kullanılır">
-              <Input
-                value={draft.title.en}
-                onChange={(e) => {
-                  setI18n("title", "en", e.target.value);
-                  // Ingilizce adres, Ingilizce basliktan kendiliginden uretilir.
-                  if (isNew) set("slugEn", slugify(e.target.value));
-                }}
-              />
-            </FormRow>
+            <SlugField slug={draft.slug} onChange={(v) => set("slug", v)} path="/haberler" />
           </div>
-
-          <SlugFields
-            slug={draft.slug}
-            slugEn={draft.slugEn}
-            onChange={set}
-            trPath="/tr/haberler"
-            enPath="/en/news"
-          />
 
           <div className="grid gap-4 sm:grid-cols-2">
             <PublishedAtField value={draft.publishedAt} onChange={(v) => set("publishedAt", v)} />
@@ -132,14 +106,14 @@ export function NewsForm({ item }: { item?: NewsItem }) {
       )}
 
       {form.tab === "icerik" && (
-        <LocalizedTextFields
+        <ContentTextFields
           intro="Özet haber kartında, metin haber sayfasında görünür."
           fields={[
             { key: "summary", label: "Özet" },
             { key: "body", label: "Haber Metni", tall: true },
           ]}
           values={draft}
-          onChange={setI18n}
+          onChange={set}
         />
       )}
 
@@ -154,7 +128,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
             value={draft.coverUrl}
             onChange={(url) => set("coverUrl", url)}
             onError={form.setError}
-            alt={draft.title.tr}
+            alt={draft.title}
             placeholder="https://… veya /images/news/haber.jpg"
             previewClassName="aspect-[4/3] w-56"
           />
@@ -163,7 +137,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
               images={draft.images}
               onChange={(update) => form.setDraft((d) => ({ ...d, images: update(d.images) }))}
               onError={form.setError}
-              alt={draft.title.tr}
+              alt={draft.title}
               placeholder="/images/news/haber/1.jpg"
               description="Kapak görselinin yanı sıra habere istediğiniz kadar fotoğraf ekleyebilirsiniz. Bunlar haber sayfasının altında görünür."
             />

@@ -22,9 +22,9 @@ export default function AdminBlogPage() {
     return listAllBlogPosts(db).filter(
       (p) =>
         !q ||
-        p.title.tr.toLocaleLowerCase("tr").includes(q) ||
-        p.category.tr.toLocaleLowerCase("tr").includes(q) ||
-        p.excerpt.tr.toLocaleLowerCase("tr").includes(q),
+        p.title.toLocaleLowerCase("tr").includes(q) ||
+        p.category.toLocaleLowerCase("tr").includes(q) ||
+        p.excerpt.toLocaleLowerCase("tr").includes(q),
     );
   }, [db, query]);
 
@@ -71,21 +71,21 @@ export default function AdminBlogPage() {
                     <div className="flex items-center gap-3">
                       <ProductImage
                         src={p.coverUrl}
-                        alt={p.title.tr}
-                        label={p.title.tr}
+                        alt={p.title}
+                        label={p.title}
                         className="h-11 w-16 shrink-0 rounded-[3px] border border-zw-grey-200 object-cover"
                       />
                       <div className="min-w-0">
-                        <div className="truncate font-semibold">{p.title.tr}</div>
+                        <div className="truncate font-semibold">{p.title}</div>
                         <div className="text-xs text-zw-grey-500">/{p.slug}</div>
                       </div>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-4 py-2.5 text-zw-grey-600">
-                    {p.category.tr}
+                    {p.category}
                   </td>
                   <td className="whitespace-nowrap px-4 py-2.5 text-zw-grey-600">
-                    {formatDate(p.publishedAt, "tr")}
+                    {formatDate(p.publishedAt)}
                   </td>
                   <td className="px-4 py-2.5">
                     {live ? (
@@ -115,7 +115,7 @@ export default function AdminBlogPage() {
                         type="button"
                         title="Sil"
                         onClick={() => {
-                          if (confirm(`"${p.title.tr}" silinsin mi? Bu işlem geri alınamaz.`)) {
+                          if (confirm(`"${p.title}" silinsin mi? Bu işlem geri alınamaz.`)) {
                             deleteBlogPost(p.id);
                           }
                         }}

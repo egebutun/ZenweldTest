@@ -4,11 +4,11 @@ import { useMemo } from "react";
 import { ArrowRight, Award, Building2, Compass, Flame, Factory, Handshake, Headphones, Truck, Wrench } from "lucide-react";
 import { listBlogPosts, listProducts, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, Button, ProductImage, SectionHeading } from "@zenweld/ui";
-import { blogSlug, discountPercent, isDiscountActive } from "@zenweld/data";
+import { discountPercent, isDiscountActive } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
-import { LocaleLink } from "@/components/common/LocaleLink";
+import Link from "next/link";
 import { ProductMarquee } from "@/components/product/ProductMarquee";
-import { useLocale, useT, useText } from "@/lib/i18n-client";
+import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";
 
 /** Anasayfa tanitim alani arka plani (public/images/hero). */
@@ -52,12 +52,12 @@ export function Hero() {
           </p>
           <p className="mt-3 max-w-xl text-zw-grey-200">{t.home.heroSubtitle}</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <LocaleLink href="/ekipmanlar">
+            <Link href="/ekipmanlar">
               <Button size="lg" rightIcon={<ArrowRight size={18} />}>
                 {t.home.heroCta}
               </Button>
-            </LocaleLink>
-            <LocaleLink href="/teklif-al">
+            </Link>
+            <Link href="/teklif-al">
               <Button
                 size="lg"
                 variant="outline"
@@ -65,7 +65,7 @@ export function Hero() {
               >
                 {t.home.heroCtaSecondary}
               </Button>
-            </LocaleLink>
+            </Link>
           </div>
         </div>
       </div>
@@ -107,12 +107,12 @@ export function HotSale() {
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-zw-grey-300">{t.home.hotSaleSubtitle}</p>
           </div>
-          <LocaleLink
+          <Link
             href="/ekipmanlar"
             className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-white hover:text-zw-red-500 sm:flex"
           >
             {t.common.viewAll} <ArrowRight size={16} />
-          </LocaleLink>
+          </Link>
         </div>
 
         <ProductMarquee products={items} />
@@ -191,7 +191,7 @@ function ActionRow({
           <p className="mt-0.5 text-sm text-zw-grey-300">{text}</p>
         </div>
       </div>
-      <LocaleLink
+      <Link
         href={href}
         className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-zw-red-700 shadow-lg transition-colors hover:bg-zw-grey-100"
       >
@@ -200,7 +200,7 @@ function ActionRow({
           size={17}
           className="transition-transform duration-200 group-hover:translate-x-1"
         />
-      </LocaleLink>
+      </Link>
     </div>
   );
 }
@@ -224,12 +224,12 @@ export function NewArrivals() {
           title={t.home.newArrivalsTitle}
           subtitle={t.home.newArrivalsSubtitle}
           action={
-            <LocaleLink
+            <Link
               href="/ekipmanlar"
               className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
             >
               {t.common.viewAll} <ArrowRight size={16} />
-            </LocaleLink>
+            </Link>
           }
         />
         <ProductMarquee products={items} />
@@ -303,12 +303,11 @@ export function DealerStrip() {
  *
  * SEO icin onemli: sorular sayfanin HTML'inde duz metin olarak bulunur
  * ve ayrica FAQPage yapisal verisi olarak arama motoruna bildirilir
- * (bkz. app/[locale]/page.tsx). Google bu sorulari sonuc sayfasinda
+ * (bkz. app/(site)/page.tsx). Google bu sorulari sonuc sayfasinda
  * dogrudan gosterebiliyor.
  */
 export function HomeFaq() {
   const t = useT();
-  const text = useText();
   const db = useDatabase();
   const items = useMemo(() => db.faqs.slice(0, 8), [db]);
 
@@ -322,12 +321,12 @@ export function HomeFaq() {
           title={t.home.faqTitle}
           subtitle={t.home.faqSubtitle}
           action={
-            <LocaleLink
+            <Link
               href="/sss"
               className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
             >
               {t.common.viewAll} <ArrowRight size={16} />
-            </LocaleLink>
+            </Link>
           }
         />
         <div className="max-w-3xl">
@@ -335,8 +334,8 @@ export function HomeFaq() {
             icon="plus"
             items={items.map((f) => ({
               id: f.id,
-              title: text(f.question),
-              content: text(f.answer),
+              title: f.question,
+              content: f.answer,
             }))}
           />
         </div>
@@ -362,9 +361,9 @@ export function DealerApplyBanner() {
             <p className="mt-2 max-w-2xl text-sm text-zw-grey-700">{t.dealerApply.homeText}</p>
           </div>
         </div>
-        <LocaleLink href="/bayilik-basvurusu" className="shrink-0">
+        <Link href="/bayilik-basvurusu" className="shrink-0">
           <Button size="lg">{t.dealerApply.homeCta}</Button>
-        </LocaleLink>
+        </Link>
       </div>
     </section>
   );
@@ -372,8 +371,6 @@ export function DealerApplyBanner() {
 
 export function BlogTeaser() {
   const t = useT();
-  const locale = useLocale();
-  const text = useText();
   const db = useDatabase();
 
   return (
@@ -382,42 +379,42 @@ export function BlogTeaser() {
         eyebrow={t.home.blogSubtitle}
         title={t.home.blogTitle}
         action={
-          <LocaleLink
+          <Link
             href="/blog"
             className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
           >
             {t.common.viewAll} <ArrowRight size={16} />
-          </LocaleLink>
+          </Link>
         }
       />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {listBlogPosts(db).slice(0, 3).map((post) => (
-          <LocaleLink
+          <Link
             key={post.id}
-            href={`/blog/${blogSlug(post, locale)}`}
+            href={`/blog/${post.slug}`}
             className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
           >
             <div className="aspect-[16/9] overflow-hidden bg-zw-grey-100">
               <ProductImage
                 src={post.coverUrl}
-                alt={text(post.title)}
-                label={text(post.category)}
+                alt={post.title}
+                label={post.category}
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             </div>
             <div className="p-5">
               <div className="text-xs font-semibold uppercase tracking-wide text-zw-red-600">
-                {text(post.category)}
+                {post.category}
               </div>
               <h3 className="mt-2 font-display text-xl font-semibold leading-tight group-hover:text-zw-red-600">
-                {text(post.title)}
+                {post.title}
               </h3>
-              <p className="mt-2 line-clamp-2 text-sm text-zw-grey-500">{text(post.excerpt)}</p>
+              <p className="mt-2 line-clamp-2 text-sm text-zw-grey-500">{post.excerpt}</p>
               <div className="mt-3 text-xs text-zw-grey-400">
-                {formatDate(post.publishedAt, locale)}
+                {formatDate(post.publishedAt)}
               </div>
             </div>
-          </LocaleLink>
+          </Link>
         ))}
       </div>
     </section>
