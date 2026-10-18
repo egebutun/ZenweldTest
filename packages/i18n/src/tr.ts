@@ -24,6 +24,7 @@ export const tr = {
     no: "Hayır",
     viewAll: "Tümünü Gör",
     viewProducts: "Ürünleri İncele",
+    viewCategories: "Kategorileri Gör",
     noResults: "Sonuç bulunamadı.",
     km: "km",
   },

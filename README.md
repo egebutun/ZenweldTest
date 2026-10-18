@@ -203,7 +203,7 @@ ZenweldTest/
             │   ├── page.tsx                    Anasayfa
             │   ├── ekipmanlar|guvenlik|aksesuarlar|dolgu-metalleri/
             │   │   ├── page.tsx                Bölüm: grupların resimli kartları
-            │   │   └── [kategori]/page.tsx     Grup (ör. kaynak-makineleri) veya kategori listeleme
+            │   │   └── [kategori]/page.tsx     Grup: kategori kartları · Kategori: ürün listesi
             │   ├── urun/[slug]/page.tsx        ÜRÜN DETAY
             │   ├── arama/page.tsx
             │   ├── yetkili-bayi-ve-servis-agi/ Bayi bulucu (harita)
@@ -322,8 +322,11 @@ Sitede aşağıdakiler hazırdır:
 - **Sayfa başlıkları ve açıklamaları** — ürün, kategori, blog ve içerik sayfalarının
   her biri kendi başlığını ve açıklamasını üretir
 - **Dört seviyeli katalog** — Bölüm (`/ekipmanlar`, grup kartları) › Grup
-  (`/ekipmanlar/kaynak-makineleri`) › Kategori (`/ekipmanlar/mig-gazalti-...`) › Ürün.
-  Her seviyede görünür konum satırı ve `BreadcrumbList` yapısal verisi var.
+  (`/ekipmanlar/kaynak-makineleri`, kategori kartları) › Kategori
+  (`/ekipmanlar/mig-gazalti-...`, ürünler) › Ürün. Her seviyede görünür konum
+  satırı ve `BreadcrumbList` yapısal verisi var. Kart görselleri
+  `public/images/categories/` klasöründedir (kategori/grup kaydındaki `image`);
+  görseli olmayan kartta ilk ürünün fotoğrafı gösterilir.
 - **`/sitemap.xml`** — ürün, grup, kategori ve blog sayfaları `packages/data` içindeki
   veriden otomatik üretilir; yeni ürün eklendiğinde kendiliğinden güncellenir
 - **`/robots.txt`** — site haritasını bildirir (site aramaya açıkken); bkz. aşağıdaki *Arama motorlarına açık / kapalı*

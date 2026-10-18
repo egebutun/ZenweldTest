@@ -21,6 +21,8 @@ export interface Category {
   name: string;
   description: string;
   icon?: string;
+  /** Grup sayfasindaki kart gorseli; yoksa kategorinin ilk urununun fotografi */
+  image?: string;
   order: number;
 }
 
@@ -32,6 +34,8 @@ export interface CategoryGroup {
   slug: string;
   section: TopLevelSection;
   name: string;
+  /** Bolum sayfasindaki kart gorseli; yoksa gruptaki ilk urunun fotografi */
+  image?: string;
   order: number;
 }
 

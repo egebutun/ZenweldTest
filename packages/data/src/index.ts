@@ -35,7 +35,7 @@ import { legalPages } from "./seed/legal.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 44;
+export const DB_VERSION = 45;
 
 export function createSeedDatabase(): ZenweldDatabase {
   // Panel grafikleri icin son 90 gunun ornek hareketleri (bkz. sample-activity.seed.ts)

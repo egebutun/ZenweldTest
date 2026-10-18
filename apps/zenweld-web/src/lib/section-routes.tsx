@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { categories, categoryGroups, type TopLevelSection } from "@zenweld/data";
 import { CategoryListing } from "@/components/product/CategoryListing";
-import { SectionHub } from "@/components/product/SectionHub";
+import { GroupHub, SectionHub } from "@/components/product/CatalogHub";
 import { JsonLd } from "@/components/common/JsonLd";
 import {
   SECTION_DESCRIPTIONS,
@@ -21,7 +21,7 @@ import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical } from "@/lib/seo";
  * dosyalari yalnizca bu fonksiyonlari cagirir:
  *
  *   const route = sectionRoute("ekipmanlar");    // /ekipmanlar (grup kartlari)
- *   const route = categoryRoute("ekipmanlar");   // /ekipmanlar/[kategori] (grup veya kategori)
+ *   const route = categoryRoute("ekipmanlar");   // /ekipmanlar/[kategori]: grup (kategori kartlari) veya kategori (urunler)
  */
 
 type CategoryParams = { params: Promise<{ kategori: string }> };
@@ -95,7 +95,7 @@ export function categoryRoute(section: TopLevelSection) {
         <>
           <JsonLd data={trailJsonLd(trail)} />
           {group ? (
-            <CategoryListing section={section} groupSlug={group.slug} />
+            <GroupHub section={section} groupSlug={group.slug} />
           ) : (
             <CategoryListing section={section} categorySlug={category!.slug} />
           )}

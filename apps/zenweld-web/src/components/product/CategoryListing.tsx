@@ -14,20 +14,19 @@ import {
 } from "./ProductFilters";
 import { useT } from "@/lib/i18n-client";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
-import { catalogTrail, findGroup, groupCategories, groupDescription } from "@/lib/catalog";
+import { catalogTrail } from "@/lib/catalog";
 
-type ListingProps = { section: TopLevelSection } & (
-  | { groupSlug: string; categorySlug?: undefined }
-  | { categorySlug: string; groupSlug?: undefined }
-);
+interface ListingProps {
+  section: TopLevelSection;
+  categorySlug: string;
+}
 
 /**
- * Urun listesi: grup sayfasi (/ekipmanlar/kaynak-makineleri, gruptaki tum
- * kategorilerin urunleri) ya da kategori sayfasi (/ekipmanlar/mma-...).
- * Kategori sayfasinda ayni gruptaki diger kategoriler gosterilmez; her
- * kategorinin ileride kendi filtreleri olacak.
+ * Kategori sayfasi (/ekipmanlar/mma-...): kategorinin urunleri. Ayni
+ * gruptaki diger kategoriler gosterilmez; her kategorinin ileride kendi
+ * filtreleri olacak.
  */
-export function CategoryListing({ section, groupSlug, categorySlug }: ListingProps) {
+export function CategoryListing({ section, categorySlug }: ListingProps) {
   const t = useT();
   const db = useDatabase();
   const now = useNow();
@@ -35,34 +34,23 @@ export function CategoryListing({ section, groupSlug, categorySlug }: ListingPro
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const category = useMemo(
-    () => (categorySlug ? db.categories.find((c) => c.slug === categorySlug) : undefined),
+    () => db.categories.find((c) => c.slug === categorySlug),
     [db, categorySlug],
   );
-  const group = useMemo(
-    () => (groupSlug ? findGroup(section, groupSlug, db.categoryGroups) : undefined),
-    [db, section, groupSlug],
-  );
 
-  // Grup sayfasinda urunler kategorilerin menudeki sirasiyla gelir.
-  const scoped = useMemo(() => {
-    const slugs = group
-      ? groupCategories(group, db.categories).map((c) => c.slug)
-      : [categorySlug ?? ""];
-    return listProducts(db)
-      .filter((p) => p.section === section && slugs.includes(p.categorySlug))
-      .sort((a, b) => slugs.indexOf(a.categorySlug) - slugs.indexOf(b.categorySlug));
-  }, [db, section, group, categorySlug]);
+  const scoped = useMemo(
+    () => listProducts(db).filter((p) => p.section === section && p.categorySlug === categorySlug),
+    [db, section, categorySlug],
+  );
 
 
   const filtered = useMemo(() => applyFilters(scoped, filters, now), [scoped, filters, now]);
 
-  const title = group?.name ?? category?.name ?? "";
-  const description = group
-    ? groupDescription(group, db.categories)
-    : (category?.description ?? "");
+  const title = category?.name ?? "";
+  const description = category?.description ?? "";
   const trail = catalogTrail(
     section,
-    { groupSlug, categorySlug },
+    { categorySlug },
     { categories: db.categories, groups: db.categoryGroups },
   ).slice(0, -1);
 

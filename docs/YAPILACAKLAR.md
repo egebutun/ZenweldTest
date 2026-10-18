@@ -150,8 +150,11 @@ yeniden kurulunca `processes` alanı tamamen kaldırılmalı.
 
 ## Ürün grupları (Kaynak Makineleri, Lazer Makineleri …)
 
-1. Bölüm sayfasındaki (`/ekipmanlar` vb.) grup kartının görseli şimdilik
-   gruptaki ilk ürünün fotoğrafı. Gruba özel görsel seçilebilsin.
+1. Grup ve kategori kartlarındaki görseller şimdilik çizim (illüstrasyon);
+   gerçek ürün/uygulama fotoğrafları gelince `apps/zenweld-web/public/images/categories/`
+   içindeki aynı adlı dosyalarla değiştirilmeli (ör. `mig-torclari.svg` yerine
+   `mig-torclari.webp` konup `categories.seed.ts`'teki yol güncellenir).
+   Kaynak Makineleri kartı ilk ürünün fotoğrafını kullanıyor.
 2. Grup sayfasının açıklaması kategorilerin adlarından otomatik üretiliyor;
    arama motoru için gruba özel bir tanıtım metni yazılabilsin.
 3. Grup ve kategoriler panelden yönetilemiyor (ekleme, ad, sıra); şu an
