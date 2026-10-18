@@ -29,7 +29,7 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
     phone: user?.phone ?? "",
     purchaseDate: "",
     dealerName: "",
-    extended: true,
+    extended: false,
   });
 
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
