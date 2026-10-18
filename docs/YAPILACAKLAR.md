@@ -120,6 +120,23 @@ kararlaştırılacak. Başlıklar:
    (İçerik › Yasal Metinler) girilmeli.
 5. Servis talebi gelince servis ekibine e-posta bildirimi (backend ile).
 
+## Teklif Al metinleri — herkese hitap edecek şekilde güncellenecek
+
+Teklif Al artık bireysel üyelere de açık, ama bazı metinler hâlâ yalnızca
+kurumsal müşterilere hitap ediyor. Şimdilik bırakıldı; güncellenecek yerler
+(TR ve EN):
+
+1. Teklif Al sayfasının açıklaması: "Kurumsal müşterilerimize vadeli ödeme ve
+   çek ile ödeme seçenekleri sunuyoruz…" (`quote.subtitle`)
+2. Aynı cümlenin arama motoru açıklaması (`lib/page-meta.ts` → `/teklif-al`)
+3. Ana sayfadaki şerit: "Kurumsal alım mı yapacaksınız?" ve altındaki metin
+   (`home.quoteBannerTitle`, `home.quoteBannerText`)
+4. Üye ol sayfasındaki hesap türü açıklamaları: teklif talebi yalnızca
+   Kurumsal'da yazıyor (`auth.accountTypeBusinessDesc`,
+   `auth.accountTypeIndividualDesc`)
+5. Site aramasındaki Teklif Al anahtar kelimeleri: "kurumsal vadeli çek"
+   (`lib/search/search-client.ts`)
+
 ## Ürün Seçici ve arama — yeniden tasarlanacak
 
 Kaynak yöntemi etiketleri (MIG, TIG, MMA…) ürün formundan, ürün kartından ve
