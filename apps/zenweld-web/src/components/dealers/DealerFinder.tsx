@@ -154,11 +154,7 @@ export function DealerFinder({
   };
 
   const badgeLabel = (b: Dealer["badges"][number]) =>
-    b === "yetkili-servis"
-      ? t.dealers.badgeService
-      : b === "showroom"
-        ? t.dealers.badgeShowroom
-        : t.dealers.badgeSeller;
+    b === "yetkili-servis" ? t.dealers.badgeService : t.dealers.badgeSeller;
 
   return (
     <div className={compact ? "" : "zw-container zw-section"}>

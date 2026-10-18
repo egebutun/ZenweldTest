@@ -161,7 +161,7 @@ export interface Product {
 /* Bayiler (fiziksel satis noktalari)                                  */
 /* ------------------------------------------------------------------ */
 
-export type DealerBadge = "yetkili-satici" | "yetkili-servis" | "showroom";
+export type DealerBadge = "yetkili-satici" | "yetkili-servis";
 
 export interface Dealer {
   id: string;

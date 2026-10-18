@@ -24,7 +24,6 @@ const EMPTY: Dealer = {
 const BADGES: { id: DealerBadge; label: string }[] = [
   { id: "yetkili-satici", label: "Yetkili Bayi" },
   { id: "yetkili-servis", label: "Yetkili Servis" },
-  { id: "showroom", label: "Showroom" },
 ];
 
 /** Bayi turu: Yetkili Bayi, Yetkili Servis ya da ikisi birden. */
@@ -245,10 +244,7 @@ export default function AdminDealersPage() {
                       onChange={() =>
                         setEditing({
                           ...editing,
-                          badges: [
-                            ...type.badges,
-                            ...editing.badges.filter((b) => b === "showroom"),
-                          ],
+                          badges: type.badges,
                         })
                       }
                     />
@@ -257,18 +253,6 @@ export default function AdminDealersPage() {
                 ))}
               </div>
             </div>
-            <Checkbox
-              label="Showroom var"
-              checked={editing.badges.includes("showroom")}
-              onChange={(e) =>
-                setEditing({
-                  ...editing,
-                  badges: e.target.checked
-                    ? [...editing.badges, "showroom"]
-                    : editing.badges.filter((b) => b !== "showroom"),
-                })
-              }
-            />
             {error && <p className="text-sm font-semibold text-zw-red-600">{error}</p>}
             <Checkbox
               label="Aktif"

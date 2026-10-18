@@ -277,7 +277,6 @@ export const tr = {
     whatsapp: "WhatsApp",
     badgeSeller: "Yetkili Bayi",
     badgeService: "Yetkili Servis",
-    badgeShowroom: "Showroom",
     hasOnlineStore: "Online mağazası var",
     mapHint: "Haritada bayiyi seçmek için işaretçiye tıklayın.",
   },

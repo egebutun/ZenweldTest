@@ -276,7 +276,6 @@ export const en: Dictionary = {
     whatsapp: "WhatsApp",
     badgeSeller: "Authorised Dealer",
     badgeService: "Authorised Service",
-    badgeShowroom: "Showroom",
     hasOnlineStore: "Has an online store",
     mapHint: "Click a marker to select a dealer on the map.",
   },
