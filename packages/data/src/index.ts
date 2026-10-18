@@ -32,11 +32,14 @@ import { events, news } from "./seed/events.seed";
 import { defaultSettings } from "./seed/settings.seed";
 import { about, salesReps } from "./seed/company.seed";
 import { legalPages } from "./seed/legal.seed";
+import { createSampleActivity } from "./seed/sample-activity.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 43;
+export const DB_VERSION = 44;
 
 export function createSeedDatabase(): ZenweldDatabase {
+  // Panel grafikleri icin son 90 gunun ornek hareketleri (bkz. sample-activity.seed.ts)
+  const sample = createSampleActivity();
   return JSON.parse(
     JSON.stringify({
       version: DB_VERSION,
@@ -47,20 +50,20 @@ export function createSeedDatabase(): ZenweldDatabase {
       retailers,
       retailerStock,
       dealerStock,
-      users,
+      users: [...users, ...sample.users],
       addresses,
-      quotes,
-      orders,
+      quotes: [...quotes, ...sample.quotes],
+      orders: [...orders, ...sample.orders],
       blogPosts,
       events,
       news,
       faqs,
       reviews,
-      warranties,
+      warranties: [...warranties, ...sample.warranties],
       about,
       salesReps,
       legalPages,
-      serviceRequests: [],
+      serviceRequests: sample.serviceRequests,
       settings: defaultSettings,
     }),
   ) as ZenweldDatabase;

@@ -15,6 +15,7 @@ import {
 import { listOrders, listQuotes, listUsers, useDatabase } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
 import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
+import { DashboardCharts } from "@/components/admin/DashboardCharts";
 import Link from "next/link";
 import { formatDate, formatPrice } from "@zenweld/utils";
 
@@ -65,9 +66,12 @@ export default function AdminDashboard() {
     <>
       <AdminPageHeader
         title="Panel"
-        description="Zenweld yönetim paneline hoş geldiniz."
+        description="Satış, teklif ve müşteri özetleri."
       />
 
+      <DashboardCharts />
+
+      <h2 className="mb-4 mt-10 font-display text-2xl font-bold uppercase">Genel durum</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {cards.map(({ href, label, value, Icon, note }) => (
           <Link key={href} href={href}>
@@ -112,7 +116,7 @@ export default function AdminDashboard() {
         </AdminCard>
       )}
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <AdminCard>
           <h2 className="font-display text-xl font-bold uppercase">Son Teklifler</h2>
           <div className="mt-3 divide-y divide-zw-grey-100">
@@ -123,7 +127,7 @@ export default function AdminDashboard() {
                 className="flex items-center gap-3 py-2.5 text-sm hover:text-zw-red-600"
               >
                 <span className="font-semibold">{q.code}</span>
-                <span className="truncate text-zw-grey-600">{q.companyName || q.contactName}</span>
+                <span className="min-w-0 truncate text-zw-grey-600">{q.companyName || q.contactName}</span>
                 <span className="ml-auto shrink-0 text-xs text-zw-grey-400">
                   {formatDate(q.createdAt)}
                 </span>
@@ -145,7 +149,7 @@ export default function AdminDashboard() {
                 className="flex items-center gap-3 py-2.5 text-sm hover:text-zw-red-600"
               >
                 <span className="font-semibold">{o.code}</span>
-                <span className="truncate text-zw-grey-600">{o.customerName}</span>
+                <span className="min-w-0 truncate text-zw-grey-600">{o.customerName}</span>
                 <span className="ml-auto shrink-0 font-semibold">
                   {formatPrice(o.total)}
                 </span>

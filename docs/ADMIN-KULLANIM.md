@@ -29,7 +29,31 @@ Demo giriş: `admin@zenweld.com` / `admin123`
 
 ## 1. Panel (Dashboard)
 
-Özet kartlar: aktif ürün, üye, online satıcı, teklif ve sipariş sayıları
+En üstteki **Bugün / Son 7 gün / Son 30 gün / Son 90 gün** seçimi altındaki
+tüm grafikleri aynı döneme göre gösterir (seçim tarayıcıda hatırlanır).
+Değişim yüzdeleri bir önceki eşit uzunluktaki dönemle karşılaştırılır.
+
+| Grafik | Ne gösterir |
+|---|---|
+| **Özet kutuları** | Ciro, sipariş sayısı, ortalama sepet, yeni üye |
+| **Ciro** | Saatlik (Bugün), günlük (7/30 gün) veya haftalık (90 gün) ciro |
+| **Sipariş durumları** | Dönemde verilen siparişlerin şu anki durumu; işlem bekleyenler vurgulu |
+| **Ödeme yöntemi** | Kart tek çekim / taksitli / havale oranı ve taksit sayıları |
+| **En çok satan ürünler** | Ciroya göre ilk 5 ürün (üzerine gelince adet) |
+| **Ürün grubuna göre ciro** | Kaynak Makineleri, MIG Telleri … |
+| **Teklif hunisi** | Gelen → incelenen → teklif verilen → kazanılan; kazanma oranı |
+| **Yeni üyeler** | Bireysel ve kurumsal yeni kayıtlar |
+| **Şehirlere göre sipariş** | Teslimat adresine göre ilk 10 şehir |
+| **Servis ve garanti** | Servis talebi ve garanti kaydı sayısı; en çok talep gelen modeller |
+
+- **Ciro** = iptal edilmeyen siparişlerin toplamı (KDV ve vade farkı dahil).
+- Grafiklerin üzerine gelince ayrıntı kutusu açılır; "Tablo olarak göster" ile
+  tüm değerler tablo halinde görülür.
+- Grafiklerdeki örnek hareketler `packages/data/src/seed/sample-activity.seed.ts`
+  dosyasından gelir (son 90 güne yayılmış örnek üye, sipariş, teklif, servis
+  talebi ve garanti kaydı). Canlıya çıkmadan önce silinmelidir.
+
+Grafiklerin altında **Genel durum** kartları: aktif ürün, üye, online satıcı, teklif ve sipariş sayıları
 (üye, teklif ve sipariş yalnızca ana sitenin kayıtlarıdır; bayi kayıtları sayılmaz).
 Onay bekleyen üye, yeni teklif ve işlem bekleyen sipariş (havale onayı veya
 kargoya verilecek) varsa kartta uyarı rozeti çıkar.

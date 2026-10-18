@@ -79,6 +79,11 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
    kargo etiketinin panelden oluşturulması.
 9. **Gerçek kargo ücreti, vade farkı oranları ve IBAN'lar** Mağaza Ayarları'na
    girilmeli (şu an örnek değerler).
+10. **Örnek satış hareketleri silinmeli**: panel grafikleri için üretilen örnek
+    üye, sipariş, teklif, servis talebi ve garanti kayıtları
+    (`packages/data/src/seed/sample-activity.seed.ts` ve `index.ts`'teki çağrısı).
+11. **Ziyaretçi verileri** (ziyaret sayısı, ziyaretten siparişe dönüşüm, sepette
+    bırakılan ürünler) için Google Analytics vb. kurulmalı; çerez onayına bağlı yüklenmeli.
 
 ## Kod incelemesi bulguları
 
