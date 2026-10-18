@@ -630,6 +630,16 @@ export const tr = {
     settings: "Tanımlama Bilgisi Ayarları",
     settingsEmpty: "Çerez tercihleri yakında buradan ayarlanabilecek.",
   },
+  legal: {
+    kvkkNoticeBefore: "Kişisel verileriniz ",
+    kvkkNoticeLink: "KVKK Aydınlatma Metni",
+    kvkkNoticeAfter: " kapsamında işlenir.",
+    termsBefore: "",
+    termsLink: "Kullanım Koşulları",
+    termsAfter: "'nı okudum ve kabul ediyorum.",
+    termsRequired: "Üye olmak için Kullanım Koşulları'nı kabul etmelisiniz.",
+    newsletterRequired: "Bülten kaydı için onay kutusunu işaretleyin.",
+  },
   filters: {
     title: "Filtreler",
     sort: "Sırala",

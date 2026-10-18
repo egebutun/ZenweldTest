@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ExternalLink, Navigation } from "lucide-react";
 import { Alert, Button, FormRow, Input, Textarea } from "@zenweld/ui";
 import { PageHero } from "@/components/common/PageShell";
+import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useT } from "@/lib/i18n-client";
 import { CONTACT, mapDirectionsUrl, mapEmbedUrl, type Office } from "@/lib/menu";
 
@@ -41,6 +42,7 @@ export default function ContactPage() {
                 <FormRow label={t.support.message} required>
                   <Textarea required />
                 </FormRow>
+                <KvkkNotice />
                 <Button type="submit" size="lg">
                   {t.support.send}
                 </Button>

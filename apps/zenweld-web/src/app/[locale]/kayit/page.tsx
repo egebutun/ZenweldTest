@@ -6,6 +6,7 @@ import { Building2, Store, User as UserIcon } from "lucide-react";
 import { useAuth, type RegisterInput } from "@zenweld/auth";
 import { Alert, Button, Checkbox, FormRow, Input } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
+import { KvkkNotice, LegalLink } from "@/components/legal/LegalLink";
 import { useHref, useT } from "@/lib/i18n-client";
 
 type AccountType = "individual" | "business";
@@ -31,6 +32,7 @@ export default function RegisterPage() {
     taxNumber: "",
     sector: "",
     newsletter: false,
+    terms: false,
   });
 
   const set = (key: keyof typeof form, value: string | boolean) =>
@@ -57,6 +59,10 @@ export default function RegisterPage() {
 
     if (form.password !== form.passwordAgain) {
       setError(t.auth.passwordMismatch);
+      return;
+    }
+    if (!form.terms) {
+      setError(t.legal.termsRequired);
       return;
     }
 
@@ -219,11 +225,26 @@ export default function RegisterPage() {
             </FormRow>
           </div>
 
-          <Checkbox
-            label={t.auth.newsletter}
-            checked={form.newsletter}
-            onChange={(e) => set("newsletter", e.target.checked)}
-          />
+          {/* Kullanim Kosullari zorunlu; ticari ileti onayi ayri, istege bagli ve bos gelir. */}
+          <div className="space-y-3">
+            <Checkbox
+              label={
+                <>
+                  {t.legal.termsBefore}
+                  <LegalLink href="/yasal/kullanim-kosullari">{t.legal.termsLink}</LegalLink>
+                  {t.legal.termsAfter}
+                </>
+              }
+              checked={form.terms}
+              onChange={(e) => set("terms", e.target.checked)}
+            />
+            <Checkbox
+              label={t.auth.newsletter}
+              checked={form.newsletter}
+              onChange={(e) => set("newsletter", e.target.checked)}
+            />
+            <KvkkNotice />
+          </div>
 
           <Button type="submit" size="lg" fullWidth>
             {t.auth.submitRegister}

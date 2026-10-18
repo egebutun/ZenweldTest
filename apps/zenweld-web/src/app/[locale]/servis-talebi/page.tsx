@@ -8,6 +8,7 @@ import { createServiceRequest, listProducts, useDatabase } from "@zenweld/store"
 import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { PageHero } from "@/components/common/PageShell";
+import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useLocale, useT } from "@/lib/i18n-client";
 
 /** Makine turu bu gruplardaki kategorilerden secilir (Kaynak, Lazer). */
@@ -268,6 +269,7 @@ export default function ServiceRequestPage() {
               {t.service.consentAfter}
             </span>
           </label>
+          <KvkkNotice className="-mt-5 ml-6" />
 
           {error && <Alert tone="danger">{error}</Alert>}
 

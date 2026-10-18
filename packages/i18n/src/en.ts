@@ -628,6 +628,16 @@ export const en: Dictionary = {
     settings: "Cookie Settings",
     settingsEmpty: "Cookie preferences will soon be adjustable here.",
   },
+  legal: {
+    kvkkNoticeBefore: "Your personal data is processed in accordance with our ",
+    kvkkNoticeLink: "Personal Data Protection Notice",
+    kvkkNoticeAfter: ".",
+    termsBefore: "I have read and accept the ",
+    termsLink: "Terms of Use",
+    termsAfter: ".",
+    termsRequired: "You must accept the Terms of Use to register.",
+    newsletterRequired: "Please tick the consent box to subscribe.",
+  },
   filters: {
     title: "Filters",
     sort: "Sort",

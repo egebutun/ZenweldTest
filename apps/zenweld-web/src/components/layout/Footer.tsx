@@ -5,6 +5,7 @@ import { Instagram, Linkedin, Youtube } from "lucide-react";
 import { ZenweldLogo } from "@zenweld/ui";
 import { LocaleLink } from "@/components/common/LocaleLink";
 import { TikTokIcon } from "@/components/common/TikTokIcon";
+import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useLocale, useT } from "@/lib/i18n-client";
 import { CONTACT, useFooterMenu } from "@/lib/menu";
 import { locales, localeNames, switchLocaleInPath } from "@zenweld/i18n";
@@ -18,6 +19,9 @@ export function Footer() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  // Ticari ileti onayi bos gelir; isaretlenmeden kayit yapilmaz.
+  const [consent, setConsent] = useState(false);
+  const [consentError, setConsentError] = useState(false);
 
   return (
     <footer className="mt-16 border-t border-zw-grey-200 bg-white">
@@ -80,6 +84,7 @@ export function Footer() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
+                  if (!consent) return setConsentError(true);
                   if (email.trim()) setSubscribed(true);
                 }}
                 className="flex w-full max-w-md gap-2 lg:ml-auto"
@@ -100,10 +105,26 @@ export function Footer() {
                 </button>
               </form>
             )}
-            <label className="mt-3 flex items-start gap-2 text-xs text-zw-grey-500 lg:justify-end">
-              <input type="checkbox" defaultChecked className="mt-0.5 accent-zw-red-600" />
-              <span className="max-w-md">{t.footer.newsletterConsent}</span>
-            </label>
+            {!subscribed && (
+              <>
+                <label className="mt-3 flex items-start gap-2 text-xs text-zw-grey-500 lg:justify-end">
+                  <input
+                    type="checkbox"
+                    checked={consent}
+                    onChange={(e) => {
+                      setConsent(e.target.checked);
+                      setConsentError(false);
+                    }}
+                    className="mt-0.5 accent-zw-red-600"
+                  />
+                  <span className="max-w-md">{t.footer.newsletterConsent}</span>
+                </label>
+                {consentError && (
+                  <p className="mt-1 text-xs font-semibold text-zw-red-600">{t.legal.newsletterRequired}</p>
+                )}
+                <KvkkNotice className="mt-1" />
+              </>
+            )}
           </div>
         </div>
       </div>
