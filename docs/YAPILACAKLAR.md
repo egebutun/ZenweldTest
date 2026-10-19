@@ -85,6 +85,21 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
 11. **Ziyaretçi verileri** (ziyaret sayısı, ziyaretten siparişe dönüşüm, sepette
     bırakılan ürünler) için Google Analytics vb. kurulmalı; çerez onayına bağlı yüklenmeli.
 
+## Bayi ve satıcı stokları — backend
+
+Panel akışı hazır; veri şimdilik tarayıcıda. Tablolar, API uçları ve
+ayrıntılar: [STOK.md](STOK.md) › "Backend'e geçiş".
+
+1. `stock_levels`, `stock_imports`, `sku_aliases` tabloları; dosya yükleme tek
+   işlemde (transaction) uygulanmalı, dosya sunucuda yeniden doğrulanmalı.
+2. Yüklenen orijinal dosyalar denetim için saklanmalı.
+3. Ürün sayfaları önbellekte tutulmalı; yükleme uygulanınca yalnızca etkilenen
+   ürünlerin sayfaları yenilenmeli, ayrıca günde en az bir kez.
+4. İleride: bayilerin e-postayla gönderdiği dosyaların otomatik alınması
+   (`stok@zenweld.com` → e-posta servisi web kancası → aynı önizleme/uygulama).
+5. Dosyası hiç gelmeyen ya da süresi geçen kaynaklar için yöneticiye günlük
+   e-posta hatırlatması.
+
 ## Kod incelemesi bulguları
 
 Ayrıntılı inceleme sohbette yapıldı; düzeltme zamanı ayrıca

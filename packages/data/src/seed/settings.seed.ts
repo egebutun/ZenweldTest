@@ -47,4 +47,8 @@ export const defaultSettings: SiteSettings = {
     transferDueDays: 3,
     carriers: ["Yurtiçi Kargo", "Aras Kargo", "MNG Kargo", "PTT Kargo", "Sürat Kargo", "UPS"],
   },
+  stock: {
+    // Bayi/satici bu kadar gun dosya gondermezse stogu sitede gizlenir.
+    staleDays: 3,
+  },
 };

@@ -8,6 +8,7 @@
 export * from "./products";
 export * from "./retailers";
 export * from "./dealers";
+export * from "./stock";
 export * from "./users";
 export * from "./commerce";
 export * from "./warranties";

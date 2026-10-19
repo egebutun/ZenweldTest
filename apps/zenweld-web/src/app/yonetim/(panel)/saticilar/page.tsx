@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ExternalLink, Plus, Trash2 } from "lucide-react";
 import type { Retailer } from "@zenweld/data";
-import { deleteRetailer, saveRetailer, useDatabase } from "@zenweld/store";
+import { deleteRetailer, saveRetailer, sourceStatus, useDatabase } from "@zenweld/store";
 import { Badge, Button, Checkbox, FormRow, Input, Modal } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 
@@ -46,9 +46,7 @@ export default function AdminRetailersPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {db.retailers.map((r) => {
-          const stockCount = db.retailerStock.filter(
-            (s) => s.retailerId === r.id && s.inStock,
-          ).length;
+          const stockCount = sourceStatus("retailer", r.id, db).inStock;
           return (
             <div
               key={r.id}

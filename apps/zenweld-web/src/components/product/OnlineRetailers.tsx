@@ -2,21 +2,19 @@
 
 import { useMemo, useState } from "react";
 import { ChevronDown, ExternalLink, Store } from "lucide-react";
-import { applyDiscount, discountPercentOf, type Product } from "@zenweld/data";
+import type { Product } from "@zenweld/data";
 import { lastStockUpdate, retailersInStockFor, useDatabase, useNow } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
-import { formatDate, formatPrice } from "@zenweld/utils";
+import { formatDate } from "@zenweld/utils";
 
 /**
  * "Ayrica online alisveris olarak surada da mevcuttur"
  *
  * ONEMLI: Bu liste urune ozeldir. Yalnizca o urunu STOKTA TUTAN saticilar
- * gosterilir — A urunu 3 sitede, B urunu 2 sitede cikabilir. Stok bilgisi
- * yonetim panelinden (/yonetim/stok) guncellenir.
- *
- * Gosterilen fiyat saticinin kendi fiyatidir; saticinin gecerli bir
- * kampanyasi varsa (stock.discount) indirimli fiyat gosterilir.
+ * gosterilir (adet > 0 ve stok dosyasi panelde ayarlanan gunden eski
+ * degil). Stok, saticilarin gonderdigi dosyalarla yonetim panelinden
+ * (/yonetim/stok) guncellenir. Saticinin fiyati ve adedi gosterilmez.
  */
 export function OnlineRetailers({ product }: { product: Product }) {
   const t = useT();
@@ -24,8 +22,8 @@ export function OnlineRetailers({ product }: { product: Product }) {
   const [expanded, setExpanded] = useState(false);
   const now = useNow();
 
-  const inStock = useMemo(() => retailersInStockFor(product.id, db), [product.id, db]);
-  const updatedAt = useMemo(() => lastStockUpdate(product.id, db), [product.id, db]);
+  const inStock = useMemo(() => retailersInStockFor(product.id, db, now.getTime()), [product.id, db, now]);
+  const updatedAt = useMemo(() => lastStockUpdate(product.id, db, now.getTime()), [product.id, db, now]);
 
   if (inStock.length === 0) {
     return (
@@ -48,7 +46,7 @@ export function OnlineRetailers({ product }: { product: Product }) {
         {visible.map(({ retailer, stock }) => (
           <a
             key={retailer.id}
-            href={stock.productUrl}
+            href={stock.url ?? retailer.websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative flex h-24 flex-col items-center justify-center gap-1 rounded-[4px] border border-zw-grey-200 bg-white px-3 py-2 text-center transition-all hover:border-zw-ink hover:shadow-md"
@@ -66,9 +64,7 @@ export function OnlineRetailers({ product }: { product: Product }) {
             <span className="font-display text-[13px] font-bold uppercase leading-tight tracking-tight text-zw-grey-800 group-hover:text-zw-red-600">
               {retailer.logoText}
             </span>
-            {stock.price != null && (
-              <RetailerPrice price={stock.price} percent={discountPercentOf(stock.discount, now)} />
-            )}
+            <span className="text-xs font-semibold text-zw-success">{t.product.inStock}</span>
           </a>
         ))}
       </div>
@@ -89,18 +85,5 @@ export function OnlineRetailers({ product }: { product: Product }) {
         </p>
       )}
     </section>
-  );
-}
-
-/** Saticinin fiyati; kampanyasi gecerliyse ustu cizili normal + indirimli fiyat. */
-function RetailerPrice({ price, percent }: { price: number; percent: number }) {
-  if (percent <= 0) {
-    return <span className="text-xs font-semibold text-zw-grey-500">{formatPrice(price)}</span>;
-  }
-  return (
-    <span className="text-xs font-semibold text-zw-red-600">
-      <span className="mr-1 font-normal text-zw-grey-400 line-through">{formatPrice(price)}</span>
-      {formatPrice(applyDiscount(price, percent))}
-    </span>
   );
 }

@@ -192,40 +192,75 @@ export interface Retailer {
 }
 
 /* ------------------------------------------------------------------ */
-/* Stok — urun x satici matrisi                                        */
+/* Stok — bayi ve online satici stoklari (bkz. docs/STOK.md)           */
 /* ------------------------------------------------------------------ */
 
-export interface RetailerStock {
+export type StockSourceType = "dealer" | "retailer";
+
+/**
+ * Bir bayinin ya da online saticinin bir urundeki stogu (DB: stock_levels).
+ *
+ * Bayiler ve saticilar her gun SKU + adet listesi gonderir; liste panelden
+ * yuklenir. Sitede "stokta" sayilmasi icin: adet > 0 ve kayit, panelde
+ * ayarlanan gun sayisindan (settings.stock.staleDays) eski olmamali.
+ */
+export interface StockLevel {
+  sourceType: StockSourceType;
+  /** Dealer.id ya da Retailer.id */
+  sourceId: string;
   productId: string;
-  retailerId: string;
-  /** Belirli bir varyanta aitse secenegin id'si; bos ise tum secenekler. */
+  /** Secenekli urunde secenegin id'si; bos ise urunun tum secenekleri. */
   variantId?: string;
-  inStock: boolean;
-  quantity?: number;
-  /** Saticiya ozel fiyat (KDV dahil). Yoksa liste fiyati gosterilir. */
+  /** Dosyadaki kod (bizim SKU ya da bayinin kendi kodu) */
+  sku: string;
+  quantity: number;
+  /** Online satici: satis fiyati (KDV dahil). Sitede gosterilmez. */
   price?: number;
-  /**
-   * Saticinin KENDI kampanyasi — yalnizca bu saticinin fiyatina uygulanir.
-   * Zenweld'in urun kampanyasindan (Product.discount) bagimsizdir.
-   */
-  discount?: ProductDiscount;
-  /** Urunun o sitedeki dogrudan linki */
-  productUrl: string;
+  /** Online satici: urunun o sitedeki sayfasi */
+  url?: string;
   updatedAt: string;
 }
 
-/** Fiziksel bayi stogu — "sadece stokta olan bayiler" filtresi icin */
-export interface DealerStock {
+/** Stok dosyasi yuklemesi, elle duzeltme ya da geri alma kaydi (DB: stock_imports). */
+export interface StockImport {
+  id: string;
+  sourceType: StockSourceType;
+  sourceId: string;
+  kind: "file" | "manual" | "revert";
+  fileName?: string;
+  createdAt: string;
+  /** Islemi yapan yonetici */
+  createdBy?: string;
+  /** Elle duzeltmelerde degisikligin aciklamasi */
+  note?: string;
+  summary: StockImportSummary;
+  /** Geri alma icin: islemden onceki stok satirlari (son yuklemelerde tutulur) */
+  previous?: StockLevel[];
+  /** Geri alindiysa zamani */
+  revertedAt?: string;
+}
+
+export interface StockImportSummary {
+  /** Dosyadaki veri satiri sayisi */
+  rows: number;
+  matched: number;
+  unmatched: number;
+  invalid: number;
+  /** Stoga giren (0 -> adet) */
+  added: number;
+  /** Adedi ya da fiyati/linki degisen */
+  changed: number;
+  /** Stoktan cikan (adet -> 0 ya da dosyada yok) */
+  zeroed: number;
+}
+
+/** Bayinin kendi urun kodu -> bizim urunumuz (DB: sku_aliases). */
+export interface SkuAlias {
+  sourceId: string;
+  /** Bayinin dosyasindaki kod (buyuk harf, bosluksuz saklanir) */
+  code: string;
   productId: string;
-  dealerId: string;
-  /**
-   * Bu kayit belirli bir varyant icinse secenegin id'si. Bos birakilirsa
-   * kayit urunun tum secenekleri icin gecerli sayilir.
-   */
   variantId?: string;
-  inStock: boolean;
-  quantity?: number;
-  updatedAt: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -707,9 +742,15 @@ export interface ShopSettings {
   carriers: string[];
 }
 
+export interface StockSettings {
+  /** Bu kadar gunden eski stok kayitlari sitede gosterilmez (0 = sinir yok). */
+  staleDays: number;
+}
+
 export interface SiteSettings {
   richText: RichTextStyle;
   shop: ShopSettings;
+  stock: StockSettings;
 }
 
 export interface ZenweldDatabase {
@@ -719,8 +760,9 @@ export interface ZenweldDatabase {
   categoryGroups: CategoryGroup[];
   dealers: Dealer[];
   retailers: Retailer[];
-  retailerStock: RetailerStock[];
-  dealerStock: DealerStock[];
+  stockLevels: StockLevel[];
+  stockImports: StockImport[];
+  skuAliases: SkuAlias[];
   users: User[];
   addresses: Address[];
   quotes: Quote[];

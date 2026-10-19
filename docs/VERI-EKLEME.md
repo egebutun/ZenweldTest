@@ -15,7 +15,7 @@ Veriler iki yerden yönetilebilir:
 | `packages/data/src/seed/categories.seed.ts` | Bölüm / grup / kategori ağacı |
 | `packages/data/src/seed/dealers.seed.ts` | Fiziksel bayiler |
 | `packages/data/src/seed/retailers.seed.ts` | Online satıcılar |
-| `packages/data/src/seed/stock.seed.ts` | Ürün × satıcı stok matrisi |
+| `packages/data/src/seed/stock.seed.ts` | Bayi ve satıcıların örnek stok listeleri |
 | `packages/data/src/seed/users.seed.ts` | Demo hesaplar |
 | `packages/data/src/seed/content.seed.ts` | Blog, SSS, teklif, sipariş, garanti |
 | `packages/data/src/seed/images.ts` | Görsel havuzu |
@@ -61,21 +61,10 @@ kullanılmaya devam eder.
 }
 ```
 
-`stock.seed.ts` stok kayıtlarını ürün listesinden **otomatik üretir**, ayrıca bir
-şey yapmanız gerekmez. Belirli bir ürün–satıcı eşleşmesini elle sabitlemek
-isterseniz dosyanın sonuna ekleyebilirsiniz:
-
-```ts
-retailerStock.push({
-  productId: "p-yeni-model",
-  retailerId: "r-basak-hirdavat",
-  inStock: true,
-  quantity: 5,
-  price: 62400,
-  productUrl: "https://www.basakhirdavat.com/urun/yeni-model",
-  updatedAt: STAMP,
-});
-```
+`stock.seed.ts` her bayi ve satıcı için ürün listesinden **örnek stok üretir**;
+tarihler, veritabanının tarayıcıda oluşturulduğu ana göre ayarlanır. Ayrıca bir
+şey yapmanız gerekmez. Gerçek stok koda yazılmaz; bayi ve satıcıların gönderdiği
+dosyalar panelden yüklenir ([STOK.md](STOK.md)).
 
 ---
 
@@ -95,8 +84,8 @@ retailerStock.push({
 }
 ```
 
-Satıcı eklendikten sonra stok matrisinden hangi ürünlerde stokta olduğunu
-işaretleyin; aksi halde hiçbir ürün sayfasında görünmez.
+Satıcı eklendikten sonra **Stok Matrisi**'nden satıcının stok dosyasını yükleyin;
+aksi halde hiçbir ürün sayfasında görünmez.
 
 ---
 

@@ -3,11 +3,11 @@ export * from "./highlights";
 export * from "./discount";
 export * from "./checkout";
 export * from "./legal";
+export * from "./stock";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";
 export { retailers } from "./seed/retailers.seed";
-export { retailerStock, dealerStock } from "./seed/stock.seed";
 export { users, addresses } from "./seed/users.seed";
 export { blogPosts, faqs, quotes, warranties } from "./seed/content.seed";
 export { orders } from "./seed/orders.seed";
@@ -23,7 +23,7 @@ import { categories, categoryGroups } from "./seed/categories.seed";
 import { products } from "./seed/products.seed";
 import { dealers } from "./seed/dealers.seed";
 import { retailers } from "./seed/retailers.seed";
-import { retailerStock, dealerStock } from "./seed/stock.seed";
+import { createSampleStock } from "./seed/stock.seed";
 import { users, addresses } from "./seed/users.seed";
 import { blogPosts, faqs, quotes, warranties } from "./seed/content.seed";
 import { orders } from "./seed/orders.seed";
@@ -35,11 +35,16 @@ import { legalPages } from "./seed/legal.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 45;
+export const DB_VERSION = 46;
 
-export function createSeedDatabase(): ZenweldDatabase {
+/**
+ * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida
+ * kurulum ani; sunucu anlik goruntusunde derleme ani (hydration tutarli kalsin).
+ */
+export function createSeedDatabase(now: number = Date.now()): ZenweldDatabase {
   // Panel grafikleri icin son 90 gunun ornek hareketleri (bkz. sample-activity.seed.ts)
-  const sample = createSampleActivity();
+  const sample = createSampleActivity(now);
+  const stock = createSampleStock(now);
   return JSON.parse(
     JSON.stringify({
       version: DB_VERSION,
@@ -48,8 +53,9 @@ export function createSeedDatabase(): ZenweldDatabase {
       categoryGroups,
       dealers,
       retailers,
-      retailerStock,
-      dealerStock,
+      stockLevels: stock.stockLevels,
+      stockImports: stock.stockImports,
+      skuAliases: [],
       users: [...users, ...sample.users],
       addresses,
       quotes: [...quotes, ...sample.quotes],

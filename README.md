@@ -106,12 +106,13 @@ Marka sitesi ve **online mağazadır**. Ziyaretçi ürünü şu yollardan alır:
 
 ### Ürüne özel online satıcı listesi
 
-Her ürünün her satıcıdaki stok durumu ayrı tutulur. Bir ürün 7 sitede stokta
-olurken diğeri 2 sitede olabilir; ürün sayfasında **yalnızca stokta olan satıcılar**
-görünür. Hiçbirinde yoksa "en yakın bayiden temin edebilirsiniz" mesajı çıkar.
+Her ürünün her satıcıdaki ve bayideki stoğu ayrı tutulur. Ürün sayfasında
+**yalnızca stokta olan satıcılar** ("Stokta" yazısıyla; adet ve fiyat gösterilmez) ve
+haritada stokta olan bayiler görünür. Hiçbirinde yoksa "en yakın bayiden temin
+edebilirsiniz" mesajı çıkar.
 
-Stok yönetim panelinden güncellenir: `/yonetim/stok` → ürün × satıcı matrisi
-(tek tek, toplu veya CSV).
+Stok, bayi ve satıcıların gönderdiği CSV/XLSX dosyalarıyla panelden güncellenir:
+`/yonetim/stok`. Ayrıntılar: [docs/STOK.md](docs/STOK.md).
 
 ### Arama
 
@@ -148,8 +149,8 @@ formunu doldurur.
 
 ### Yönetim paneli (yalnızca Türkçe)
 
-`/yonetim` — ürün CRUD (görsel yükleme dahil), stok matrisi (online satıcılar +
-CSV içe aktarma, fiziksel bayiler), online satıcı ve bayi yönetimi, üye yönetimi
+`/yonetim` — ürün CRUD (görsel yükleme dahil), stok matrisi (bayi ve satıcıların
+CSV/XLSX stok dosyaları), online satıcı ve bayi yönetimi, üye yönetimi
 (rol değiştirme, onaylama, askıya alma, CSV dışa aktarma), sipariş yönetimi
 (havale onayı, kargo takip no, teslim, iptal), mağaza ayarları (kargo, taksit,
 IBAN), teklif takibi, sık sorulan sorular, yasal metinler.
@@ -170,13 +171,13 @@ ZenweldTest/
 ├── packages/
 │   ├── data/                       Paylaşılan veri modeli ve başlangıç verisi
 │   │   └── src/
-│   │       ├── types.ts            Product, Dealer, Retailer, RetailerStock, User…
+│   │       ├── types.ts            Product, Dealer, Retailer, StockLevel, User…
 │   │       └── seed/
 │   │           ├── products.seed.ts    12 gerçek Zenweld modeli + 15 aksesuar
 │   │           ├── categories.seed.ts  Bölüm / grup / kategori ağacı
 │   │           ├── dealers.seed.ts     29 bayi (TR koordinatlı)
 │   │           ├── retailers.seed.ts   Online satıcılar (Başak Hırdavat vb.)
-│   │           ├── stock.seed.ts       Ürün × satıcı stok matrisi
+│   │           ├── stock.seed.ts       Bayi ve satıcıların örnek stok listeleri
 │   │           ├── users.seed.ts       Demo hesaplar
 │   │           ├── content.seed.ts     Blog, SSS, teklif, sipariş, garanti
 │   │           └── images.ts           Unsplash görsel havuzu
@@ -186,7 +187,7 @@ ZenweldTest/
 │   │       ├── database.ts         localStorage motoru + abonelik
 │   │       ├── repo/               Veri işlemleri, konuya göre (ürün, stok, bayi, içerik…)
 │   │       ├── hooks.ts            useDatabase() — değişiklikler anında yansır
-│   │       └── export-import.ts    CSV indirme, stok CSV içe aktarma
+│   │       └── export-import.ts    CSV indirme
 │   │
 │   ├── auth/                       Demo kimlik doğrulama
 │   │   └── src/ auth-context.tsx · guards.tsx · roles.ts · hash.ts
@@ -267,19 +268,19 @@ kalıcı veri için başlangıç (seed) dosyaları güncellenir.
 ## Günlük Stok Güncelleme Akışı
 
 1. `admin@zenweld.com` ile giriş → `Yönetim Paneli → Stok Matrisi`
-2. **Online Satıcılar** sekmesi: satıcıyı seçip tek tek işaretleyin, ya da
-   "Tümünü işaretle / temizle" kullanın
-   **Fiziksel Bayiler** sekmesi: bayiyi seçip stokta olan ürünleri işaretleyin
-3. Bayiden Excel geldiyse `sku;stok;adet;fiyat` biçiminde CSV olarak yükleyin
+2. Dosyayı gönderen bayiyi/satıcıyı seçin → **Dosya Yükle (CSV / XLSX)**
+3. Önizlemeyi kontrol edin (tanınmayan kodları eşleştirin) → **Stoğu Güncelle**
 
-CSV örneği:
+Her dosya kaynağın tam listesidir; hatalı yükleme geri alınabilir. Son 3 gün
+(panelden değiştirilir) içinde güncellenmeyen stok sitede gösterilmez.
 
 ```csv
-sku;stok;adet;fiyat
-ZW-U250MTC;1;4;49800
-ZW-ARC200;var;12;11880
-ZW-MC40CNC;0;0;
+SKU;Ürün Adı;Adet
+ZW-U250MTC;Zenweld Ultimate 250 MTC;4
+ZW-ARC200;Zenweld ARC 200;12
 ```
+
+Dosya biçimi, kurallar ve backend'e geçiş (tablolar, API): [docs/STOK.md](docs/STOK.md).
 
 ---
 

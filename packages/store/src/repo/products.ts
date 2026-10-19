@@ -93,7 +93,7 @@ export function createProduct(partial: Partial<Product>): Product {
 export function deleteProduct(id: string): void {
   mutate((db) => {
     db.products = db.products.filter((p) => p.id !== id);
-    db.retailerStock = db.retailerStock.filter((s) => s.productId !== id);
-    db.dealerStock = db.dealerStock.filter((s) => s.productId !== id);
+    db.stockLevels = db.stockLevels.filter((l) => l.productId !== id);
+    db.skuAliases = db.skuAliases.filter((a) => a.productId !== id);
   });
 }

@@ -95,17 +95,32 @@ yayındaki ürün sepete eklenebilir.
 
 ## 3. Stok Matrisi
 
-Ürün sayfasında gösterilen iki listenin stoğu buradan yönetilir. Zenweld'in kendi
-deposu burada yoktur; sitede her ürün her zaman satıştadır.
+Bayilerin ve online satıcıların her gün gönderdiği stok listeleri buraya yüklenir.
+Ürün sayfasındaki **Stoktaki Bayileri Gör** haritası ve "Ayrıca online alışveriş
+olarak şurada da mevcuttur" listesi bu veriden gelir. Zenweld'in kendi deposu burada
+yoktur; sitede her ürün her zaman satıştadır. Ayrıntılar ve dosya biçimi:
+[STOK.md](STOK.md).
 
-- **Online Satıcılar** sekmesi — ürün × satıcı matrisi. İşaretli satıcı, ürün
-  sayfasındaki "Ayrıca online alışveriş olarak şurada da mevcuttur" bölümünde
-  görünür. Bir satıcı seçilince adet, fiyat ve toplu işaretleme açılır; CSV ile
-  toplu güncelleme yapılabilir.
-- **Fiziksel Bayiler** sekmesi — bayiyi seçip o bayide stokta olan ürünleri
-  işaretleyin. Ürün sayfasındaki **Stoktaki Bayileri Gör** haritası bu bilgiyi
-  kullanır. Seçenekli ürünlerde (3 m / 5 m torç gibi) her seçenek ayrı satırdır.
-  "Toplam bayi" sütunu ürünün kaç bayide bulunduğunu gösterir.
+- **Bayi ve Satıcılar** sekmesi:
+  - Her kaynağın stoktaki ürün sayısı, son güncelleme zamanı ve sitede görünüp
+    görünmediği listelenir. Güncellenmeyenler üstte, sarı uyarıyla durur.
+  - Üstteki **Stok geçerlilik süresi** (varsayılan 3 gün): bu süre içinde dosya
+    gelmeyen kaynağın stoğu sitede gösterilmez. 0 = sınırsız.
+- **Kaynak sayfası** (listede adına tıklayın):
+  - **Dosya Yükle (CSV / XLSX):** önce önizleme açılır (eşleşen, tanınmayan, hatalı
+    satırlar ve mevcut stokla fark). **Stoğu Güncelle** ile uygulanır.
+  - Her dosya o kaynağın **tam listesidir**; dosyada olmayan ürün stoktan çıkar.
+    Dosya öncekinden çok kısaysa onay istenir.
+  - **Tanınmayan kodlar** (bayinin kendi kodu) önizlemede bir ürüne eşleştirilir;
+    sonraki dosyalarda kendiliğinden tanınır.
+  - Tablodan adet (online satıcıda fiyat ve link) elle düzeltilir, satır eklenir/silinir.
+  - **Geçmiş:** yüklemeler ve elle düzeltmeler, yapanın adıyla. Son yükleme
+    **Bu yüklemeyi geri al** ile geri alınır.
+  - **Şablon İndir:** bizim SKU'larımızla dolu CSV; bayiye gönderilip doldurtulabilir.
+- **Ürün Bazında** sekmesi — bir ürünün hangi bayide/satıcıda kaç adet olduğu ve
+  sitede görünüp görünmediği. Yalnızca görüntüleme; düzeltme kaynak sayfasından.
+
+Sitede adet ve satıcı fiyatı gösterilmez; yalnızca "Stokta" yazar.
 
 ---
 

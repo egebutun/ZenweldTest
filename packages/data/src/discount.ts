@@ -11,9 +11,8 @@ import type { Product, ProductDiscount } from "./types";
  * Musteriye gosterilen her fiyat salePriceExVat() uzerinden gecmelidir.
  * product.priceExVat dogrudan gosterilirse kampanya gozden kacar.
  *
- * Ayni kurallar bayi kampanyalarinda da gecerlidir: bayi kendi magazasi
- * icin RetailerStock.discount girer; asagidaki *Of() fonksiyonlari
- * urune bagli olmadan bir kampanya kaydiyla calisir.
+ * Asagidaki *Of() fonksiyonlari urune bagli olmadan bir kampanya
+ * kaydiyla calisir.
  *
  * "at" parametresi: fiyatin hangi an icin hesaplanacagi. Istemci
  * bilesenleri useNow() ile verir (bkz. packages/store/src/hooks.ts) —

@@ -12,7 +12,7 @@ import {
   Store,
   Users,
 } from "lucide-react";
-import { listOrders, listQuotes, listUsers, useDatabase } from "@zenweld/store";
+import { listOrders, listQuotes, listUsers, productsWithoutOnlineStock, useDatabase } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
 import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
 import { DashboardCharts } from "@/components/admin/DashboardCharts";
@@ -24,9 +24,7 @@ export default function AdminDashboard() {
 
   const stats = useMemo(() => {
     const activeProducts = db.products.filter((p) => p.active);
-    const noOnlineStock = activeProducts.filter(
-      (p) => !db.retailerStock.some((s) => s.productId === p.id && s.inStock),
-    );
+    const noOnlineStock = productsWithoutOnlineStock(db);
     // Uye, teklif ve siparisler yalnizca ana sitenin kayitlari (bayi kayitlari haric).
     const members = listUsers(db);
     const quotes = listQuotes(db);
@@ -106,7 +104,7 @@ export default function AdminDashboard() {
             {stats.noOnlineStock.slice(0, 12).map((p) => (
               <Link
                 key={p.id}
-                href={`/yonetim/stok?urun=${p.id}`}
+                href={`/yonetim/stok?sekme=urun&urun=${p.id}`}
                 className="rounded-[3px] border border-zw-grey-300 px-2.5 py-1 text-xs font-semibold hover:border-zw-ink"
               >
                 {p.name}

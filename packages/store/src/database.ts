@@ -17,6 +17,15 @@ import { createSeedDatabase, DB_VERSION, type ZenweldDatabase } from "@zenweld/d
 
 const STORAGE_KEY = "zenweld.db.v1";
 
+/**
+ * Derleme ani. next.config icinde NEXT_PUBLIC_BUILD_TIME olarak tanimlanir
+ * ve sunucu ile tarayici paketine AYNI deger olarak gomulur.
+ */
+export const BUILD_TIME = (() => {
+  const parsed = new Date(process.env.NEXT_PUBLIC_BUILD_TIME ?? "");
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+})();
+
 let memoryDb: ZenweldDatabase | null = null;
 let serverSnapshot: ZenweldDatabase | null = null;
 
@@ -31,7 +40,7 @@ function isBrowser(): boolean {
 }
 
 function loadFromStorage(): ZenweldDatabase {
-  if (!isBrowser()) return createSeedDatabase();
+  if (!isBrowser()) return createSeedDatabase(BUILD_TIME.getTime());
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -62,7 +71,8 @@ export function getSnapshot(): ZenweldDatabase {
 
 /** Sunucu anlik goruntusu — her zaman seed. */
 export function getServerSnapshot(): ZenweldDatabase {
-  if (!serverSnapshot) serverSnapshot = createSeedDatabase();
+  // Sunucuda ve tarayicinin ilk ciziminde ayni tohum: tarihler derleme anina gore.
+  if (!serverSnapshot) serverSnapshot = createSeedDatabase(BUILD_TIME.getTime());
   return serverSnapshot;
 }
 

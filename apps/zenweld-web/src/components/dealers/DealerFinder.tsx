@@ -13,7 +13,7 @@ import {
   Wrench,
 } from "lucide-react";
 import type { Dealer } from "@zenweld/data";
-import { dealersWithProduct, listDealers, useDatabase } from "@zenweld/store";
+import { dealersWithProduct, listDealers, useDatabase, useNow } from "@zenweld/store";
 import { Badge, Button, Checkbox, Select, Skeleton } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { CITY_CENTERS, haversineKm } from "@/lib/geo";
@@ -94,9 +94,10 @@ export function DealerFinder({
   const [onlyInStock, setOnlyInStock] = useState(Boolean(productId));
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  const now = useNow();
   const stockedDealerIds = useMemo(
-    () => (productId ? dealersWithProduct(productId, db, variantId) : new Set<string>()),
-    [productId, db, variantId],
+    () => (productId ? dealersWithProduct(productId, db, variantId, now.getTime()) : new Set<string>()),
+    [productId, db, variantId, now],
   );
 
   const cities = useMemo(

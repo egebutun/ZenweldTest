@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import type { ZenweldDatabase } from "@zenweld/data";
-import { getServerSnapshot, getSnapshot, subscribe } from "./database";
+import { BUILD_TIME, getServerSnapshot, getSnapshot, subscribe } from "./database";
 
 /** Canli veritabani. Admin panelde yapilan degisiklikler aninda yansir. */
 export function useDatabase(): ZenweldDatabase {
@@ -12,15 +12,6 @@ export function useDatabase(): ZenweldDatabase {
 /* ------------------------------------------------------------------ */
 /* Saat — kampanya tarihleri icin                                      */
 /* ------------------------------------------------------------------ */
-
-/**
- * Derleme ani. next.config icinde NEXT_PUBLIC_BUILD_TIME olarak tanimlanir
- * ve sunucu ile tarayici paketine AYNI deger olarak gomulur.
- */
-const BUILD_TIME = (() => {
-  const parsed = new Date(process.env.NEXT_PUBLIC_BUILD_TIME ?? "");
-  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
-})();
 
 /** Saat bir dakikada bir ilerler; kampanya acik sayfada da zamaninda biter. */
 const TICK_MS = 60_000;
