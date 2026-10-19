@@ -148,6 +148,10 @@ eşleşmesi hâlâ ürünlerdeki eski `processes` verisine bakıyor; panelden ek
 yeni ürünlerde bu alan boş kalır. Ürün Seçici'nin soruları ve eşleştirme mantığı
 yeniden kurulunca `processes` alanı tamamen kaldırılmalı.
 
+Not: Bu alan silinmeden önce, aşağıdaki "Ürün önerileri" bölümündeki uyumlu
+aksesuar kurallarında (MIG makinesi → MIG aksesuarları gibi) kullanılıp
+kullanılamayacağı değerlendirilsin.
+
 ## Ürün grupları (Kaynak Makineleri, Lazer Makineleri …)
 
 1. Grup ve kategori kartlarındaki görseller şimdilik çizim (illüstrasyon);
@@ -159,3 +163,45 @@ yeniden kurulunca `processes` alanı tamamen kaldırılmalı.
    arama motoru için gruba özel bir tanıtım metni yazılabilsin.
 3. Grup ve kategoriler panelden yönetilemiyor (ekleme, ad, sıra); şu an
    `packages/data/src/seed/categories.seed.ts` dosyasında.
+
+## Ürün önerileri — ürün sayfasındaki "İlgili Ürünler" yeniden kurgulanacak
+
+Şu anki durum: aynı kategorideki ilk 4 ürün gösteriliyor, sıralama yok. Tek
+ürünlü kategoride bölüm hiç çıkmıyor (ör. Ultimate 250 MTC, Kaynak Eldiveni).
+Makine sayfasında aksesuar önerilmiyor
+(`apps/zenweld-web/src/app/(site)/urun/[slug]/ProductPageClient.tsx`).
+
+1. **İki ayrı satır:** "Tamamlayıcı ürünler" (birlikte alınanlar ve uyumlu
+   aksesuarlar) ile "Bu kategoride çok satanlar". *Karar bekliyor: tek satır mı,
+   iki satır mı.*
+2. **Sepet birliktelik analizi (ML):**
+   - Geçmiş siparişlerden "A alanlar B'yi de aldı" ilişkileri çıkarılır, lift
+     ölçüsüyle sıralanır.
+   - Belli sayıda siparişte birlikte görülmeyen çiftler gösterilmez.
+   - Hesaplama sunucuda, gece çalışan bir işle yapılır; her ürün için hazır bir
+     öneri listesi saklanır. *Backend gerekli.*
+3. **Teklif talepleri** birliktelik analizine daha düşük ağırlıkla dahil edilsin
+   mi? *Karar bekliyor.*
+4. **Uyumlu aksesuarlar:**
+   - Kural: MIG makinesi → MIG Aksesuarları ve MIG Telleri; TIG → TIG
+     Aksesuarları, Tungsten ve TIG Telleri; MMA → MMA Aksesuarları; Plazma →
+     Plazma Aksesuarları.
+   - Elle eşleştirme: panelde her makineye uyumlu aksesuar listesi. Torç, kontak
+     meme, sürme makarası gibi ölçüsü uymazsa iade sebebi olan parçalar için
+     gerekli. Listeleri Zenweld ekibi doldurur.
+   - *Karar bekliyor: başlangıçta yalnızca kural mı, kural ve elle eşleştirme
+     birlikte mi.*
+5. **Kategorinin çok satanları:**
+   - 2-3 ürün gösterilir. *Karar bekliyor: adet mi ciro mu, son kaç gün
+     (ör. 90).*
+   - Satışı olmayan kategoride yeni ve öne çıkan ürünler gösterilir; bölüm hiç
+     boş kalmaz.
+6. **Birleştirme kuralları:**
+   - Önce birlikte alınanlar, sonra uyumlu aksesuarlar.
+   - Sayfadaki ürün, sepette olan ürünler ve satıştan kaldırılanlar çıkarılır.
+   - Aynı ürün iki satırda görünmez; aynı kategoriden en fazla 2 ürün.
+7. **Ters yön:** aksesuar sayfasında "Uyumlu makineler" olsun mu? *Karar bekliyor.*
+8. **Ölçüm:** önerilerden tıklama ve sepete ekleme, makine siparişlerinde
+   aksesuar ekleme oranı. Panelde grafik olarak da gösterilebilir.
+9. **Demo verisi:** örnek siparişler şu an rastgele. Demoda gösterilecekse
+   "MIG makinesi + torç + tel" gibi gerçekçi birliktelik kalıpları eklenmeli.
