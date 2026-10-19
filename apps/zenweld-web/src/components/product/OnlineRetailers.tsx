@@ -49,7 +49,7 @@ export function OnlineRetailers({ product }: { product: Product }) {
             href={stock.url ?? retailer.websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative flex h-24 flex-col items-center justify-center gap-1 rounded-[4px] border border-zw-grey-200 bg-white px-3 py-2 text-center transition-all hover:border-zw-ink hover:shadow-md"
+            className="group relative flex h-24 flex-col items-center justify-center rounded-[4px] border border-zw-grey-200 bg-white px-3 py-2 text-center transition-all hover:border-zw-ink hover:shadow-md"
             title={`${retailer.name} — ${t.product.goToStore}`}
           >
             {retailer.isOwnStore && (
@@ -64,7 +64,6 @@ export function OnlineRetailers({ product }: { product: Product }) {
             <span className="font-display text-[13px] font-bold uppercase leading-tight tracking-tight text-zw-grey-800 group-hover:text-zw-red-600">
               {retailer.logoText}
             </span>
-            <span className="text-xs font-semibold text-zw-success">{t.product.inStock}</span>
           </a>
         ))}
       </div>
