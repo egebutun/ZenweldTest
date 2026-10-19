@@ -79,13 +79,6 @@ export function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: ()
               )}
             </div>
           ))}
-          <Link
-            href="/teklif-al"
-            onClick={onClose}
-            className="block border-b border-zw-grey-100 px-4 py-3.5 font-semibold"
-          >
-            {t.product.requestQuote}
-          </Link>
         </nav>
       </div>
     </div>
