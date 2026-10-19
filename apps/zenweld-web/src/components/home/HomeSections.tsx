@@ -109,7 +109,7 @@ export function HotSale() {
           </div>
           <Link
             href="/ekipmanlar"
-            className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-white hover:text-zw-red-500 sm:flex"
+            className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-white hover:text-zw-red-500 sm:self-auto"
           >
             {t.common.viewAll} <ArrowRight size={16} />
           </Link>
@@ -226,7 +226,7 @@ export function NewArrivals() {
           action={
             <Link
               href="/ekipmanlar"
-              className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+              className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:self-auto"
             >
               {t.common.viewAll} <ArrowRight size={16} />
             </Link>
@@ -323,7 +323,7 @@ export function HomeFaq() {
           action={
             <Link
               href="/sss"
-              className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+              className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:self-auto"
             >
               {t.common.viewAll} <ArrowRight size={16} />
             </Link>
@@ -381,7 +381,7 @@ export function BlogTeaser() {
         action={
           <Link
             href="/blog"
-            className="hidden items-center gap-1.5 text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:flex"
+            className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:self-auto"
           >
             {t.common.viewAll} <ArrowRight size={16} />
           </Link>
