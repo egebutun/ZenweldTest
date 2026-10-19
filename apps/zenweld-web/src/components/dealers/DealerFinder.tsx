@@ -25,7 +25,6 @@ const DealerMap = dynamic(() => import("./DealerMap").then((m) => m.DealerMap), 
 
 interface DealerWithDistance extends Dealer {
   distanceKm?: number;
-  hasProduct?: boolean;
 }
 
 /**
@@ -91,7 +90,6 @@ export function DealerFinder({
   const [geoError, setGeoError] = useState(false);
   const [city, setCity] = useState("");
   const [onlyService, setOnlyService] = useState(false);
-  const [onlyInStock, setOnlyInStock] = useState(Boolean(productId));
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const now = useNow();
@@ -106,12 +104,10 @@ export function DealerFinder({
   );
 
   const dealers = useMemo<DealerWithDistance[]>(() => {
-    let list: DealerWithDistance[] = listDealers(db).map((d) => ({
-      ...d,
-      hasProduct: productId ? stockedDealerIds.has(d.id) : undefined,
-    }));
+    let list: DealerWithDistance[] = listDealers(db);
 
-    if (productId && onlyInStock) list = list.filter((d) => d.hasProduct);
+    // Urun sayfasinda yalnizca urunu stokta tutan bayiler gosterilir.
+    if (productId) list = list.filter((d) => stockedDealerIds.has(d.id));
     if (city) list = list.filter((d) => d.city === city);
     // Butun noktalar zaten yetkili satici; ayirt edici tek ozellik
     // yetkili servis olup olmadigi. Bu yuzden tek onay kutusu var.
@@ -127,7 +123,7 @@ export function DealerFinder({
     }
 
     return list;
-  }, [db, productId, onlyInStock, city, onlyService, position, stockedDealerIds]);
+  }, [db, productId, city, onlyService, position, stockedDealerIds]);
 
   const selected = dealers.find((d) => d.id === selectedId) ?? null;
 
@@ -216,16 +212,6 @@ export function DealerFinder({
         <p className="mb-4 rounded-[4px] border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
           {t.dealers.locationDenied}
         </p>
-      )}
-
-      {productId && (
-        <div className="mb-5">
-          <Checkbox
-            label={t.dealers.onlyInStock}
-            checked={onlyInStock}
-            onChange={(e) => setOnlyInStock(e.target.checked)}
-          />
-        </div>
       )}
 
       {variant === "home" ? (
@@ -324,9 +310,6 @@ export function DealerFinder({
                       {badgeLabel(b)}
                     </Badge>
                   ))}
-                  {productId && dealer.hasProduct && (
-                    <Badge tone="green">{t.product.inStock}</Badge>
-                  )}
                   {dealer.retailerId && (
                     <Badge tone="outline">{t.dealers.hasOnlineStore}</Badge>
                   )}
