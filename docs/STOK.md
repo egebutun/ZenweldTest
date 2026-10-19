@@ -1,9 +1,9 @@
 # Bayi ve Online Satıcı Stokları
 
-Bayiler ve online satıcılar her gün stok listelerini (ürün kodu + adet) e-postayla
-gönderir. Liste yönetim panelinden **Stok Matrisi** ekranına yüklenir; ürün
-sayfalarındaki "Stoktaki Bayileri Gör" haritası ve "Ayrıca online alışveriş olarak
-şurada da mevcuttur" listesi bu veriden gelir.
+Bayilerin ve online satıcıların stok listeleri (ürün kodu + adet) yönetim
+panelinden **Stok Matrisi** ekranına yüklenir; ürün sayfalarındaki "Stoktaki
+Bayileri Gör" haritası ve "Ayrıca online alışveriş olarak şurada da mevcuttur"
+listesi bu veriden gelir.
 
 Zenweld'in kendi deposu bu akışın dışındadır: sitede her ürün her zaman satıştadır.
 
@@ -182,8 +182,5 @@ Notlar:
   - "Geçerlilik süresi" zamana bağlı olduğu için sayfalar ayrıca günde en az bir kez
     yenilenmelidir.
   - Sorgu indeksli ve küçüktür; performans sorunu beklenmez.
-- **Otomatik e-posta (ileride):** `stok@zenweld.com` adresine gelen ekler bir e-posta
-  servisinin (Postmark, SendGrid, Mailgun vb.) web kancasıyla alınır. Gönderen adresten
-  kaynak bulunur ve aynı önizleme/uygulama fonksiyonlarından geçirilir.
 - **Yetki:** tüm `/api/admin/stock/*` uçları yalnızca yönetici oturumuyla çalışır.
   Bugünkü panel girişi tarayıcı tarafında, gerçek güvenlik değildir.

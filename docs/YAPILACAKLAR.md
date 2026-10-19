@@ -95,10 +95,6 @@ ayrıntılar: [STOK.md](STOK.md) › "Backend'e geçiş".
 2. Yüklenen orijinal dosyalar denetim için saklanmalı.
 3. Ürün sayfaları önbellekte tutulmalı; yükleme uygulanınca yalnızca etkilenen
    ürünlerin sayfaları yenilenmeli, ayrıca günde en az bir kez.
-4. İleride: bayilerin e-postayla gönderdiği dosyaların otomatik alınması
-   (`stok@zenweld.com` → e-posta servisi web kancası → aynı önizleme/uygulama).
-5. Dosyası hiç gelmeyen ya da süresi geçen kaynaklar için yöneticiye günlük
-   e-posta hatırlatması.
 
 ## Kod incelemesi bulguları
 
