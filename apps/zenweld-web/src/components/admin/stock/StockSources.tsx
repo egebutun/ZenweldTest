@@ -80,6 +80,11 @@ export function StockSources() {
                 </td>
                 <td className="px-4 py-3">
                   <Badge tone={source.type === "dealer" ? "grey" : "outline"}>{SOURCE_TYPE_LABEL[source.type]}</Badge>
+                  {source.onlineStore && (
+                    <Badge tone="outline" className="ml-1">
+                      Online mağaza
+                    </Badge>
+                  )}
                   {source.isOwnStore && (
                     <Badge tone="red" className="ml-1">
                       Kendi mağazamız

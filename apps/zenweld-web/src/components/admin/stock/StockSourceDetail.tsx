@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Download, Plus, Search, Trash2, Undo2, Upload } from "lucide-react";
-import { stockTemplateRows, type StockImport, type StockLevel } from "@zenweld/data";
+import { stockTemplateRows, type StockImport, type StockRow } from "@zenweld/data";
 import {
   deleteStockLevel,
   downloadCsvRows,
@@ -36,9 +36,10 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
   const [query, setQuery] = useState("");
   const [onlyInStock, setOnlyInStock] = useState(false);
 
-  const isRetailer = source.type === "retailer";
+  const { withUrl } = source;
   const { staleDays } = getStockSettings(db);
   const status = sourceStatus(source.type, source.id, db, now);
+  const noLink = withUrl ? stockOfSource(source.type, source.id, db).filter((r) => r.quantity > 0 && !r.url).length : 0;
   const history = stockHistory(source.type, source.id, db);
   const revertable = revertableImport(source.type, source.id, db);
 
@@ -73,7 +74,7 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
 
   const downloadTemplate = () => {
     const products = db.products.filter((p) => p.active).sort((a, b) => a.name.localeCompare(b.name, "tr"));
-    downloadCsvRows(stockTemplateRows(products, stockOfSource(source.type, source.id, db), source.type), `${slugify(source.name)}-stok-sablonu.csv`);
+    downloadCsvRows(stockTemplateRows(products, stockOfSource(source.type, source.id, db), { withUrl }), `${slugify(source.name)}-stok-sablonu.csv`);
   };
 
   return (
@@ -83,7 +84,9 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
       </Link>
       <AdminPageHeader
         title={source.name}
-        description={`${SOURCE_TYPE_LABEL[source.type]}${source.city ? ` · ${source.city}` : ""}`}
+        description={`${SOURCE_TYPE_LABEL[source.type]}${source.city ? ` · ${source.city}` : ""}${
+          source.onlineStore ? ` · Online mağaza: ${source.onlineStore.name}` : ""
+        }`}
         action={
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" leftIcon={<Download size={16} />} onClick={downloadTemplate}>
@@ -118,6 +121,11 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
           <span className="text-zw-grey-400">({ageText(status.lastUpdate, now)})</span>
         </span>
         <FreshnessBadge status={status} staleDays={staleDays} />
+        {noLink > 0 && (
+          <span className="text-xs font-semibold text-amber-700">
+            {noLink} stoktaki ürünün linki yok · online satıcı kartında görünmez
+          </span>
+        )}
       </div>
 
       {message && (
@@ -127,17 +135,21 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
       )}
 
       <p className="mb-3 text-xs text-zw-grey-500">
-        Dosya biçimi: ilk satırda başlıklar — <strong>SKU</strong> (ya da Ürün Kodu / Stok Kodu) ve <strong>Adet</strong>
-        {isRetailer && (
+        Dosya biçimi: ilk satırda başlıklar — <strong>SKU</strong> (ya da Ürün Kodu / Stok Kodu), <strong>Adet</strong>{" "}
+        ve <strong>Fiyat</strong>
+        {withUrl && (
           <>
-            ; online satıcılar için ayrıca <strong>Fiyat</strong> ve <strong>Link</strong>
+            , ayrıca <strong>Link</strong> (ürünün sitedeki sayfası; linki olmayan ürün online satıcı kartında görünmez)
           </>
         )}
-        . Her dosya bu kaynağın tam listesi sayılır: dosyada olmayan ürün stoktan çıkar. Şablonu indirip
-        doldurtabilirsiniz; Excel'de .xlsx ya da .csv olarak kaydedilebilir.
+        . Fiyat sitede gösterilmez. Her dosya bu kaynağın tam listesi sayılır: dosyada olmayan ürün stoktan çıkar.
+        {source.onlineStore && (
+          <> Bu bayinin online mağazası da aynı dosyadan beslenir: stoktaki ürünler haritada, linkli olanlar ayrıca online satıcı kartında görünür.</>
+        )}{" "}
+        Şablonu indirip doldurtabilirsiniz; Excel'de .xlsx ya da .csv olarak kaydedilebilir.
       </p>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
+      <div className="grid gap-6 2xl:grid-cols-[1fr_340px]">
         <div className="min-w-0">
           <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center">
             <div className="relative sm:w-72">
@@ -157,8 +169,8 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
                   <th className="px-3 py-2.5">Kod</th>
                   <th className="px-3 py-2.5">Ürün</th>
                   <th className="px-3 py-2.5 text-right">Adet</th>
-                  {isRetailer && <th className="px-3 py-2.5 text-right">Fiyat (₺)</th>}
-                  {isRetailer && <th className="px-3 py-2.5">Ürün linki</th>}
+                  <th className="px-3 py-2.5 text-right">Fiyat (₺)</th>
+                  {withUrl && <th className="px-3 py-2.5">Ürün linki</th>}
                   <th className="px-3 py-2.5">Güncelleme</th>
                   <th className="px-3 py-2.5" />
                 </tr>
@@ -170,7 +182,7 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
                 ))}
                 {rows.length === 0 && (
                   <tr>
-                    <td colSpan={isRetailer ? 7 : 5} className="px-3 py-8 text-center text-zw-grey-500">
+                    <td colSpan={withUrl ? 7 : 6} className="px-3 py-8 text-center text-zw-grey-500">
                       {status.rows === 0 ? "Henüz stok yüklenmedi. Dosya yükleyin ya da aşağıdan satır ekleyin." : "Aramaya uyan satır yok."}
                     </td>
                   </tr>
@@ -229,7 +241,7 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
   );
 }
 
-/** Tek satir: adet (ve satici icin fiyat/link) yerinde duzeltilir; alandan cikinca kaydedilir. */
+/** Tek satir: adet, fiyat (ve link) yerinde duzeltilir; alandan cikinca kaydedilir. */
 function StockRow({
   level,
   label,
@@ -237,7 +249,7 @@ function StockRow({
   by,
   now,
 }: {
-  level: StockLevel;
+  level: StockRow;
   label: string;
   source: StockSource;
   by?: string;
@@ -246,7 +258,6 @@ function StockRow({
   const [qty, setQty] = useState(String(level.quantity));
   const [price, setPrice] = useState(level.price != null ? String(level.price) : "");
   const [url, setUrl] = useState(level.url ?? "");
-  const isRetailer = source.type === "retailer";
   const key = { sourceType: source.type, sourceId: source.id, productId: level.productId, variantId: level.variantId, by, label };
 
   const commitQty = () => {
@@ -268,8 +279,8 @@ function StockRow({
 
   return (
     <tr className={level.quantity > 0 ? undefined : "text-zw-grey-500"}>
-      <td className="px-3 py-1.5 text-xs">{level.sku}</td>
-      <td className="px-3 py-1.5">{label}</td>
+      <td className="whitespace-nowrap px-3 py-1.5 text-xs">{level.sku}</td>
+      <td className="min-w-[200px] px-3 py-1.5">{label}</td>
       <td className="px-3 py-1.5 text-right">
         <input
           type="number"
@@ -282,21 +293,19 @@ function StockRow({
           className="w-20 rounded-[3px] border border-zw-grey-300 px-2 py-1 text-right"
         />
       </td>
-      {isRetailer && (
-        <td className="px-3 py-1.5 text-right">
-          <input
-            inputMode="decimal"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            onBlur={commitPrice}
-            onKeyDown={onEnter}
-            title={level.price != null ? formatPrice(level.price) : undefined}
-            aria-label={`${label} fiyat`}
-            className="w-28 rounded-[3px] border border-zw-grey-300 px-2 py-1 text-right"
-          />
-        </td>
-      )}
-      {isRetailer && (
+      <td className="px-3 py-1.5 text-right">
+        <input
+          inputMode="decimal"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          onBlur={commitPrice}
+          onKeyDown={onEnter}
+          title={level.price != null ? formatPrice(level.price) : undefined}
+          aria-label={`${label} fiyat`}
+          className="w-28 rounded-[3px] border border-zw-grey-300 px-2 py-1 text-right"
+        />
+      </td>
+      {source.withUrl && (
         <td className="px-3 py-1.5">
           <input
             value={url}

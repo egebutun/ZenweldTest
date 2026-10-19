@@ -113,14 +113,22 @@ yoktur; sitede her ürün her zaman satıştadır. Ayrıntılar ve dosya biçimi
     Dosya öncekinden çok kısaysa onay istenir.
   - **Tanınmayan kodlar** (bayinin kendi kodu) önizlemede bir ürüne eşleştirilir;
     sonraki dosyalarda kendiliğinden tanınır.
-  - Tablodan adet (online satıcıda fiyat ve link) elle düzeltilir, satır eklenir/silinir.
+  - Tablodan adet, fiyat ve link elle düzeltilir, satır eklenir/silinir. Link sütunu
+    yalnızca online satıcılarda ve online mağazası olan bayilerde vardır.
   - **Geçmiş:** yüklemeler ve elle düzeltmeler, yapanın adıyla. Son yükleme
     **Bu yüklemeyi geri al** ile geri alınır.
   - **Şablon İndir:** bizim SKU'larımızla dolu CSV; bayiye gönderilip doldurtulabilir.
 - **Ürün Bazında** sekmesi — bir ürünün hangi bayide/satıcıda kaç adet olduğu ve
   sitede görünüp görünmediği. Yalnızca görüntüleme; düzeltme kaynak sayfasından.
 
-Sitede adet ve satıcı fiyatı gösterilmez; yalnızca "Stokta" yazar.
+**Online mağazası olan bayi** (Bayiler formunda "Bağlı olduğu online mağaza" seçili)
+tek dosya gönderir: Kod, Adet, Fiyat ve Link. Stoktaki ürünler haritada, linki olanlar
+ayrıca o mağazanın online satıcı kartında görünür. Mağaza listede ayrı satır olarak
+çıkmaz; listede bayinin yanında "Online mağaza" etiketi vardır.
+
+Sitede adet ve fiyat gösterilmez. Ürün sayfasında yalnızca stoğu olan bayiler ve
+online satıcılar listelenir; online satıcı kartı dosyadaki ürün linkine gider, linki
+olmayan ürün online kartta görünmez.
 
 ---
 
@@ -207,8 +215,10 @@ Gör" penceresindeki fiziksel satış/servis noktaları.
 Enlem–boylam değerlerini Google Maps'te konuma sağ tıklayıp kopyalayabilirsiniz.
 **Bayi Türü** zorunludur: *Yetkili Bayi*, *Yetkili Servis* ya da *Yetkili Bayi +
 Yetkili Servis*. Ayrıca **Showroom var** işaretlenebilir. Bunlar haritada ve servis
-ağı sayfasında rozet olarak görünür. Bayinin online mağazası varsa **Bağlı olduğu online mağaza**
-alanından eşleştirin.
+ağı sayfasında rozet olarak görünür. Bayinin online mağazası varsa önce mağazayı
+**Online Satıcılar**'a ekleyin, sonra burada **Bağlı olduğu online mağaza** alanından
+seçin. Bu bayi stok dosyasında ürün linklerini de gönderir; ürünler hem haritada hem
+o mağazanın online satıcı kartında görünür (bkz. Stok Matrisi).
 
 ---
 
@@ -217,11 +227,15 @@ alanından eşleştirin.
 Ürün sayfasında logosu çıkacak e-ticaret siteleri.
 
 - **Logo Metni:** kutuda görünen kısa yazı (örn. `BAŞAK HIRDAVAT`)
-- **Site Adresi:** ürün bağlantıları bu adresin altına kurulur
+- **Site Adresi:** satıcının ana sayfası; ürün kartı ise stok dosyasındaki ürün linkine gider
 - **Kendi mağazamız:** Zenweld'in kendi online mağazası olursa işaretlenir; kırmızı rozetle en başta gösterilir
 - **Aktif:** kapatılırsa hiçbir ürün sayfasında görünmez
 
-Satıcıyı silmek, o satıcıya ait tüm stok kayıtlarını da siler.
+Kartta satıcının kaç ürün sayfasında göründüğü yazar. Bir bayiye bağlı mağazada
+bayinin adı görünür; bu mağazanın stoğu bayinin dosyasından gelir.
+
+Satıcıyı silmek, o satıcıya ait tüm stok kayıtlarını da siler; bağlı olduğu bayinin
+online mağaza bağlantısı kalkar.
 
 ---
 

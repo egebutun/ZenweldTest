@@ -1,10 +1,4 @@
-import type {
-  Product,
-  SkuAlias,
-  StockImportSummary,
-  StockLevel,
-  StockSourceType,
-} from "./types";
+import type { Product, SkuAlias, StockImportSummary, StockRow } from "./types";
 
 /**
  * STOK DOSYASI — OKUMA, ESLESTIRME, FARK
@@ -38,8 +32,8 @@ export function isStockFresh(updatedAt: string, staleDays: number, now: number =
 }
 
 /** Sitede "stokta" sayilir mi: adet > 0 ve guncel. */
-export const isInStock = (level: StockLevel, staleDays: number, now?: number) =>
-  level.quantity > 0 && isStockFresh(level.updatedAt, staleDays, now);
+export const isInStock = (row: StockRow, staleDays: number, now?: number) =>
+  row.quantity > 0 && isStockFresh(row.updatedAt, staleDays, now);
 
 /**
  * Turkce ve Ingilizce sayi bicimleri: "12", "1.234", "1.234,50", "12,5",
@@ -137,8 +131,11 @@ export interface StockSheet {
   rows: StockFileRow[];
 }
 
-/** Okunan tabloyu satirlara cevirir. sourceType "dealer" ise fiyat/link okunmaz. */
-export function readStockSheet(table: unknown[][], sourceType: StockSourceType): StockSheet {
+/**
+ * Okunan tabloyu satirlara cevirir. Link sutunu yalnizca withUrl ise okunur
+ * (online saticilar ve online magazasi olan bayiler).
+ */
+export function readStockSheet(table: unknown[][], options: { withUrl: boolean }): StockSheet {
   const columns = detectStockColumns(table);
   const rows: StockFileRow[] = [];
   table.forEach((cells, index) => {
@@ -157,17 +154,15 @@ export function readStockSheet(table: unknown[][], sourceType: StockSourceType):
       row.warning = `Eksi adet (${qty}) 0 sayıldı`;
     } else row.quantity = qty;
 
-    if (sourceType === "retailer") {
-      if (columns.price !== undefined) {
-        const price = parseNumber(cells[columns.price]);
-        if (price !== null && price >= 0) row.price = price;
-      }
-      if (columns.url !== undefined) {
-        const url = asText(cells[columns.url]);
-        if (url) {
-          if (/^https?:\/\//i.test(url)) row.url = url;
-          else row.warning = [row.warning, "Link http(s):// ile başlamıyor, alınmadı"].filter(Boolean).join(" · ");
-        }
+    if (columns.price !== undefined) {
+      const price = parseNumber(cells[columns.price]);
+      if (price !== null && price >= 0) row.price = price;
+    }
+    if (options.withUrl && columns.url !== undefined) {
+      const url = asText(cells[columns.url]);
+      if (url) {
+        if (/^https?:\/\//i.test(url)) row.url = url;
+        else row.warning = [row.warning, "Link http(s):// ile başlamıyor, alınmadı"].filter(Boolean).join(" · ");
       }
     }
     rows.push(row);
@@ -210,7 +205,7 @@ export interface MatchedStockRow extends StockFileRow {
 export interface MatchedStockFile {
   rows: MatchedStockRow[];
   /** Uygulanacak stok satirlari (dosyanin son hali) */
-  incoming: StockLevel[];
+  incoming: StockRow[];
   unmatched: MatchedStockRow[];
   invalid: MatchedStockRow[];
   duplicates: MatchedStockRow[];
@@ -219,7 +214,6 @@ export interface MatchedStockFile {
 export function matchStockRows(
   sheet: StockSheet,
   ctx: {
-    sourceType: StockSourceType;
     sourceId: string;
     products: Product[];
     aliases: SkuAlias[];
@@ -240,11 +234,9 @@ export function matchStockRows(
     if (last !== r.line) r.duplicateOf = last;
   });
 
-  const incoming: StockLevel[] = rows
+  const incoming: StockRow[] = rows
     .filter((r) => r.match && !r.duplicateOf)
     .map((r) => ({
-      sourceType: ctx.sourceType,
-      sourceId: ctx.sourceId,
       productId: r.match!.productId,
       variantId: r.match!.variantId,
       sku: r.code,
@@ -271,8 +263,8 @@ export interface StockChange {
   key: string;
   productId: string;
   variantId?: string;
-  before?: StockLevel;
-  after?: StockLevel;
+  before?: StockRow;
+  after?: StockRow;
 }
 
 export interface StockDiff {
@@ -286,7 +278,7 @@ export interface StockDiff {
 }
 
 /** Tam liste mantigi: incoming, kaynagin yeni stogunun tamamidir. */
-export function diffStock(current: StockLevel[], incoming: StockLevel[]): StockDiff {
+export function diffStock(current: StockRow[], incoming: StockRow[]): StockDiff {
   const before = new Map(current.map((l) => [stockKey(l), l]));
   const after = new Map(incoming.map((l) => [stockKey(l), l]));
   const diff: StockDiff = { added: [], changed: [], zeroed: [], unchanged: 0 };
@@ -326,7 +318,7 @@ export function summarizeImport(file: MatchedStockFile, diff: StockDiff): StockI
  * Onceki listede en az 10 stoklu urun varken yeni dosya bunun yarisindan
  * azini iceriyorsa true.
  */
-export function looksTruncated(current: StockLevel[], incoming: StockLevel[]): boolean {
+export function looksTruncated(current: StockRow[], incoming: StockRow[]): boolean {
   const prev = current.filter((l) => l.quantity > 0).length;
   return prev >= 10 && incoming.length < prev / 2;
 }
@@ -337,25 +329,26 @@ export function looksTruncated(current: StockLevel[], incoming: StockLevel[]): b
 
 /**
  * Bayiye gonderilecek sablon: bizim SKU'larimiz, urun adi ve kaynagin
- * mevcut adetleri. Secenekli urunlerde her secenek ayri satirdir.
+ * mevcut adet ve fiyatlari (withUrl ise linkleri). Secenekli urunlerde her
+ * secenek ayri satirdir.
  */
 export function stockTemplateRows(
   products: Product[],
-  current: StockLevel[],
-  sourceType: StockSourceType,
+  current: StockRow[],
+  options: { withUrl: boolean },
 ): string[][] {
   const byKey = new Map(current.map((l) => [stockKey(l), l]));
-  const header = sourceType === "retailer" ? ["SKU", "Ürün Adı", "Adet", "Fiyat", "Link"] : ["SKU", "Ürün Adı", "Adet"];
+  const header = ["SKU", "Ürün Adı", "Adet", "Fiyat", ...(options.withUrl ? ["Link"] : [])];
   const rows: string[][] = [header];
   products.forEach((p) => {
-    const options = p.variantGroups?.[0]?.options;
-    const lines = options?.length
-      ? options.map((o) => ({ sku: o.sku ?? p.sku, name: `${p.name} (${o.label})`, variantId: o.id }))
+    const variants = p.variantGroups?.[0]?.options;
+    const lines = variants?.length
+      ? variants.map((o) => ({ sku: o.sku ?? p.sku, name: `${p.name} (${o.label})`, variantId: o.id }))
       : [{ sku: p.sku, name: p.name, variantId: undefined }];
     lines.forEach((l) => {
       const level = byKey.get(stockKey({ productId: p.id, variantId: l.variantId })) ?? byKey.get(stockKey({ productId: p.id }));
-      const row = [l.sku, l.name, String(level?.quantity ?? 0)];
-      if (sourceType === "retailer") row.push(level?.price != null ? String(level.price) : "", level?.url ?? "");
+      const row = [l.sku, l.name, String(level?.quantity ?? 0), level?.price != null ? String(level.price) : ""];
+      if (options.withUrl) row.push(level?.url ?? "");
       rows.push(row);
     });
   });

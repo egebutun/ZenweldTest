@@ -61,7 +61,8 @@ kullanılmaya devam eder.
 }
 ```
 
-`stock.seed.ts` her bayi ve satıcı için ürün listesinden **örnek stok üretir**;
+`stock.seed.ts` her bayi ve satıcı için ürün listesinden **örnek stok üretir**
+(`dealerStock`, `retailerStock`; online mağazası olan bayilerde ürün linkleriyle);
 tarihler, veritabanının tarayıcıda oluşturulduğu ana göre ayarlanır. Ayrıca bir
 şey yapmanız gerekmez. Gerçek stok koda yazılmaz; bayi ve satıcıların gönderdiği
 dosyalar panelden yüklenir ([STOK.md](STOK.md)).
@@ -85,7 +86,8 @@ dosyalar panelden yüklenir ([STOK.md](STOK.md)).
 ```
 
 Satıcı eklendikten sonra **Stok Matrisi**'nden satıcının stok dosyasını yükleyin;
-aksi halde hiçbir ürün sayfasında görünmez.
+aksi halde hiçbir ürün sayfasında görünmez. Satıcı bir bayinin online mağazasıysa
+bayinin `retailerId` alanına yazılır; stoğu bayinin dosyasından gelir.
 
 ---
 

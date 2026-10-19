@@ -168,7 +168,11 @@ export interface Dealer {
   lng: number;
   badges: DealerBadge[];
   workingHours: string;
-  /** Bu bayinin online magazasi varsa retailer id'si */
+  /**
+   * Bayinin online magazasi (Online Saticilar'daki kaydi). Varsa bayinin stok
+   * dosyasindaki Link sutunu da okunur; urunler hem haritada hem bu
+   * magazanin online satici kartinda gorunur.
+   */
   retailerId?: string;
   active: boolean;
 }
@@ -198,27 +202,41 @@ export interface Retailer {
 export type StockSourceType = "dealer" | "retailer";
 
 /**
- * Bir bayinin ya da online saticinin bir urundeki stogu (DB: stock_levels).
- *
- * Bayiler ve saticilar her gun SKU + adet listesi gonderir; liste panelden
- * yuklenir. Sitede "stokta" sayilmasi icin: adet > 0 ve kayit, panelde
- * ayarlanan gun sayisindan (settings.stock.staleDays) eski olmamali.
+ * Bir stok listesindeki bir urun satiri. Bayiler ve saticilar her gun
+ * kod + adet (+ fiyat, link) listesi gonderir; liste panelden yuklenir.
+ * Sitede "stokta" sayilmasi icin: adet > 0 ve kayit, panelde ayarlanan gun
+ * sayisindan (settings.stock.staleDays) eski olmamali.
  */
-export interface StockLevel {
-  sourceType: StockSourceType;
-  /** Dealer.id ya da Retailer.id */
-  sourceId: string;
+export interface StockRow {
   productId: string;
   /** Secenekli urunde secenegin id'si; bos ise urunun tum secenekleri. */
   variantId?: string;
   /** Dosyadaki kod (bizim SKU ya da bayinin kendi kodu) */
   sku: string;
   quantity: number;
-  /** Online satici: satis fiyati (KDV dahil). Sitede gosterilmez. */
+  /** Bayinin/saticinin satis fiyati (KDV dahil). Sitede gosterilmez. */
   price?: number;
-  /** Online satici: urunun o sitedeki sayfasi */
+  /**
+   * Urunun saticinin sitesindeki sayfasi. Online satici kartinda bu linke
+   * gidilir; link yoksa satici o urunde gosterilmez.
+   */
   url?: string;
   updatedAt: string;
+}
+
+/**
+ * Bayi stogu (DB: dealer_stock). Urun sayfasindaki "Stoktaki Bayileri Gor"
+ * haritasi buradan gelir. Bayinin online magazasi varsa (Dealer.retailerId)
+ * linkli satirlar o magazanin online satici kartinda da gorunur; bu
+ * bayiler tek dosya gonderir.
+ */
+export interface DealerStock extends StockRow {
+  dealerId: string;
+}
+
+/** Online satici stogu (DB: retailer_stock). Bir bayiye bagli olmayan saticilar. */
+export interface RetailerStock extends StockRow {
+  retailerId: string;
 }
 
 /** Stok dosyasi yuklemesi, elle duzeltme ya da geri alma kaydi (DB: stock_imports). */
@@ -235,7 +253,7 @@ export interface StockImport {
   note?: string;
   summary: StockImportSummary;
   /** Geri alma icin: islemden onceki stok satirlari (son yuklemelerde tutulur) */
-  previous?: StockLevel[];
+  previous?: StockRow[];
   /** Geri alindiysa zamani */
   revertedAt?: string;
 }
@@ -760,7 +778,8 @@ export interface ZenweldDatabase {
   categoryGroups: CategoryGroup[];
   dealers: Dealer[];
   retailers: Retailer[];
-  stockLevels: StockLevel[];
+  dealerStock: DealerStock[];
+  retailerStock: RetailerStock[];
   stockImports: StockImport[];
   skuAliases: SkuAlias[];
   users: User[];

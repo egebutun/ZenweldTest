@@ -13,7 +13,7 @@ import {
   type SkuAlias,
   type StockImport,
   type StockImportSummary,
-  type StockLevel,
+  type StockRow,
   type StockSettings,
   type StockSourceType,
   type ZenweldDatabase,
@@ -24,9 +24,14 @@ import { nowIso } from "./shared";
 /**
  * STOK — BAYI VE ONLINE SATICI STOKLARI
  *
- * Her fonksiyon ileride bir API ucuna karsilik gelir (bkz. docs/STOK.md):
- *   okuma  -> GET  /api/stock/...
- *   yazma  -> POST /api/stock/imports, PATCH /api/stock/levels ...
+ * Iki tablo (bkz. docs/STOK.md):
+ *   dealerStock    (DB: dealer_stock)    bayiler -> haritadaki "stoktaki bayiler"
+ *   retailerStock  (DB: retailer_stock)  bir bayiye bagli olmayan online saticilar
+ * Online magazasi olan bayi (Dealer.retailerId) tek dosya gonderir: satirlar
+ * dealerStock'a yazilir; linkli olanlar o magazanin online satici kartinda
+ * da gorunur.
+ *
+ * Her fonksiyon ileride bir API ucuna karsilik gelir (bkz. docs/STOK.md).
  * Sayfalar stoga yalnizca bu fonksiyonlar uzerinden ulasir.
  */
 
@@ -37,6 +42,29 @@ const KEEP_HISTORY = 60;
 
 const sameSource = (l: { sourceType: StockSourceType; sourceId: string }, type: StockSourceType, id: string) =>
   l.sourceType === type && l.sourceId === id;
+
+/** Kaynak kimligi olmadan satir (gecmisteki onceki-hal kopyalari icin) */
+const plain = ({ productId, variantId, sku, quantity, price, url, updatedAt }: StockRow): StockRow => ({
+  productId,
+  variantId,
+  sku,
+  quantity,
+  price,
+  url,
+  updatedAt,
+});
+
+/** Kaynagin stogunu verilen satirlarla degistirir (tam liste). */
+function replaceStock(db: ZenweldDatabase, type: StockSourceType, id: string, rows: StockRow[]) {
+  if (type === "dealer") {
+    db.dealerStock = [...db.dealerStock.filter((r) => r.dealerId !== id), ...rows.map((r) => ({ ...plain(r), dealerId: id }))];
+  } else {
+    db.retailerStock = [...db.retailerStock.filter((r) => r.retailerId !== id), ...rows.map((r) => ({ ...plain(r), retailerId: id }))];
+  }
+}
+
+/** Online saticisi bir bayiye bagli mi (stogu bayinin dosyasindan gelir) */
+const isDealerStore = (retailerId: string, db: ZenweldDatabase) => db.dealers.some((d) => d.retailerId === retailerId);
 
 /* ------------------------------------------------------------------ */
 /* Ayar                                                                */
@@ -58,25 +86,52 @@ export function saveStockSettings(stock: StockSettings): void {
 
 export interface RetailerInStock {
   retailer: Retailer;
-  stock: StockLevel;
+  stock: StockRow;
 }
 
-/** Urunu stokta tutan (adet > 0, guncel) aktif online saticilar; kendi magazamiz basta. */
+/**
+ * Sitede online satici kartinda gorunen satirlar: adet > 0, guncel ve
+ * linki olan. Saticinin kendi listesinden ya da online magazasi olan
+ * bayinin listesinden gelir.
+ */
+function onlineStock(
+  db: ZenweldDatabase,
+  now: number,
+  filter: { productId?: string; retailerId?: string },
+): RetailerInStock[] {
+  const { staleDays } = getStockSettings(db);
+  const visible = (row: StockRow) =>
+    (!filter.productId || row.productId === filter.productId) && Boolean(row.url) && isInStock(row, staleDays, now);
+  const activeRetailer = (id?: string) => db.retailers.find((r) => r.id === id && r.active);
+
+  const result: RetailerInStock[] = [];
+  db.retailerStock.forEach((row) => {
+    if (!visible(row) || isDealerStore(row.retailerId, db)) return;
+    const retailer = activeRetailer(row.retailerId);
+    if (retailer) result.push({ retailer, stock: row });
+  });
+  db.dealers
+    .filter((d) => d.active && d.retailerId)
+    .forEach((dealer) => {
+      const retailer = activeRetailer(dealer.retailerId);
+      if (!retailer) return;
+      db.dealerStock.forEach((row) => {
+        if (row.dealerId === dealer.id && visible(row)) result.push({ retailer, stock: row });
+      });
+    });
+  return filter.retailerId ? result.filter((r) => r.retailer.id === filter.retailerId) : result;
+}
+
+/** Urunu stokta tutan (adet > 0, guncel, linkli) aktif online saticilar; kendi magazamiz basta. */
 export function retailersInStockFor(
   productId: string,
   db: ZenweldDatabase = getSnapshot(),
   now: number = Date.now(),
 ): RetailerInStock[] {
-  const { staleDays } = getStockSettings(db);
-  const seen = new Set<string>();
-  return db.stockLevels
-    .filter((l) => l.sourceType === "retailer" && l.productId === productId && isInStock(l, staleDays, now))
-    .flatMap((stock) => {
-      const retailer = db.retailers.find((r) => r.id === stock.sourceId);
-      if (!retailer?.active || seen.has(retailer.id)) return [];
-      seen.add(retailer.id);
-      return [{ retailer, stock }];
-    })
+  // Ayni magaza birden fazla satirda (secenekler, birden fazla bayi) olabilir; bir kez gosterilir.
+  const byRetailer = new Map<string, RetailerInStock>();
+  onlineStock(db, now, { productId }).forEach((r) => byRetailer.has(r.retailer.id) || byRetailer.set(r.retailer.id, r));
+  return [...byRetailer.values()]
     .sort((a, b) =>
       a.retailer.isOwnStore !== b.retailer.isOwnStore
         ? a.retailer.isOwnStore
@@ -84,6 +139,15 @@ export function retailersInStockFor(
           : 1
         : a.retailer.name.localeCompare(b.retailer.name, "tr"),
     );
+}
+
+/** Online saticinin sitede kartinin gorundugu urun sayisi (panelde Online Saticilar). */
+export function onlineProductCount(
+  retailerId: string,
+  db: ZenweldDatabase = getSnapshot(),
+  now: number = Date.now(),
+): number {
+  return new Set(onlineStock(db, now, { retailerId }).map((r) => r.stock.productId)).size;
 }
 
 /**
@@ -98,15 +162,14 @@ export function dealersWithProduct(
 ): Set<string> {
   const { staleDays } = getStockSettings(db);
   return new Set(
-    db.stockLevels
+    db.dealerStock
       .filter(
         (l) =>
-          l.sourceType === "dealer" &&
           l.productId === productId &&
           (!variantId || !l.variantId || l.variantId === variantId) &&
           isInStock(l, staleDays, now),
       )
-      .map((l) => l.sourceId),
+      .map((l) => l.dealerId),
   );
 }
 
@@ -132,15 +195,27 @@ export interface StockSource {
   name: string;
   city?: string;
   isOwnStore?: boolean;
+  /** Bayinin online magazasi (Online Saticilar kaydi) */
+  onlineStore?: Retailer;
+  /** Dosyada Link sutunu okunur mu: online saticilar ve online magazasi olan bayiler */
+  withUrl: boolean;
 }
 
-/** Stok gonderen aktif bayiler ve online saticilar. */
+/**
+ * Stok gonderen aktif bayiler ve online saticilar. Bir bayiye bagli online
+ * satici ayri kaynak degildir; stogu bayinin dosyasindan gelir.
+ */
 export function listStockSources(db: ZenweldDatabase = getSnapshot()): StockSource[] {
   return [
-    ...db.dealers.filter((d) => d.active).map((d): StockSource => ({ type: "dealer", id: d.id, name: d.name, city: d.city })),
+    ...db.dealers
+      .filter((d) => d.active)
+      .map((d): StockSource => {
+        const onlineStore = db.retailers.find((r) => r.id === d.retailerId);
+        return { type: "dealer", id: d.id, name: d.name, city: d.city, onlineStore, withUrl: Boolean(onlineStore) };
+      }),
     ...db.retailers
-      .filter((r) => r.active)
-      .map((r): StockSource => ({ type: "retailer", id: r.id, name: r.name, city: r.city, isOwnStore: r.isOwnStore })),
+      .filter((r) => r.active && !isDealerStore(r.id, db))
+      .map((r): StockSource => ({ type: "retailer", id: r.id, name: r.name, city: r.city, isOwnStore: r.isOwnStore, withUrl: true })),
   ];
 }
 
@@ -148,8 +223,11 @@ export function findStockSource(type: StockSourceType, id: string, db: ZenweldDa
   return listStockSources(db).find((s) => s.type === type && s.id === id);
 }
 
-export function stockOfSource(type: StockSourceType, id: string, db: ZenweldDatabase = getSnapshot()): StockLevel[] {
-  return db.stockLevels.filter((l) => sameSource(l, type, id));
+/** Kaynagin satirlari (dizideki kayitlarin kendisi; mutate icinde degistirilebilir). */
+export function stockOfSource(type: StockSourceType, id: string, db: ZenweldDatabase = getSnapshot()): StockRow[] {
+  return type === "dealer"
+    ? db.dealerStock.filter((r) => r.dealerId === id)
+    : db.retailerStock.filter((r) => r.retailerId === id);
 }
 
 export interface SourceStatus {
@@ -199,9 +277,21 @@ export function productsWithoutOnlineStock(db: ZenweldDatabase = getSnapshot(), 
   return db.products.filter((p) => p.active && retailersInStockFor(p.id, db, now).length === 0);
 }
 
+export interface SourcedStockRow extends StockRow {
+  sourceType: StockSourceType;
+  sourceId: string;
+}
+
 /** Bir urunun tum kaynaklardaki stogu (panelde urun bazinda gorunum). */
-export function stockOfProduct(productId: string, db: ZenweldDatabase = getSnapshot()): StockLevel[] {
-  return db.stockLevels.filter((l) => l.productId === productId);
+export function stockOfProduct(productId: string, db: ZenweldDatabase = getSnapshot()): SourcedStockRow[] {
+  return [
+    ...db.dealerStock
+      .filter((r) => r.productId === productId)
+      .map((r): SourcedStockRow => ({ ...plain(r), sourceType: "dealer", sourceId: r.dealerId })),
+    ...db.retailerStock
+      .filter((r) => r.productId === productId)
+      .map((r): SourcedStockRow => ({ ...plain(r), sourceType: "retailer", sourceId: r.retailerId })),
+  ];
 }
 
 /* ------------------------------------------------------------------ */
@@ -250,11 +340,11 @@ export function applyStockImport(args: {
     summary: { rows: 0, matched: 0, unmatched: 0, invalid: 0, added: 0, changed: 0, zeroed: 0 },
   };
   mutate((db) => {
-    const current = stockOfSource(args.sourceType, args.sourceId, db);
-    const incoming = args.file.incoming.map((l) => ({ ...l, sourceType: args.sourceType, sourceId: args.sourceId, updatedAt: at }));
+    const current = stockOfSource(args.sourceType, args.sourceId, db).map(plain);
+    const incoming = args.file.incoming.map((l) => ({ ...l, updatedAt: at }));
     record.summary = summarizeImport(args.file, diffStock(current, incoming));
     record.previous = current;
-    db.stockLevels = [...db.stockLevels.filter((l) => !sameSource(l, args.sourceType, args.sourceId)), ...incoming];
+    replaceStock(db, args.sourceType, args.sourceId, incoming);
     db.stockImports.push(record);
     prune(db, args.sourceType, args.sourceId);
   });
@@ -271,7 +361,7 @@ export function revertStockImport(importId: string, by?: string): boolean {
     const current = stockOfSource(rec.sourceType, rec.sourceId, db);
     const restored = rec.previous ?? [];
     const diff = diffStock(current, restored);
-    db.stockLevels = [...db.stockLevels.filter((l) => !sameSource(l, rec.sourceType, rec.sourceId)), ...restored];
+    replaceStock(db, rec.sourceType, rec.sourceId, restored);
     rec.revertedAt = at;
     db.stockImports.push({
       id: uid("si"),
@@ -291,15 +381,15 @@ export function revertStockImport(importId: string, by?: string): boolean {
 const emptySummary = (): StockImportSummary => ({ rows: 1, matched: 1, unmatched: 0, invalid: 0, added: 0, changed: 0, zeroed: 0 });
 
 /**
- * Elle duzeltme: tek satirin adedi (online saticida fiyat/link) degisir ya
- * da satir eklenir. Degisiklik gecmise yazilir.
+ * Elle duzeltme: tek satirin adedi, fiyati ya da linki degisir veya satir
+ * eklenir. Degisiklik gecmise yazilir.
  */
 export function setStockLevel(args: {
   sourceType: StockSourceType;
   sourceId: string;
   productId: string;
   variantId?: string;
-  patch: Partial<Pick<StockLevel, "quantity" | "price" | "url" | "sku">>;
+  patch: Partial<Pick<StockRow, "quantity" | "price" | "url" | "sku">>;
   by?: string;
   /** Gecmiste gorunecek urun adi */
   label: string;
@@ -307,15 +397,14 @@ export function setStockLevel(args: {
   mutate((db) => {
     const at = nowIso();
     const key = stockKey(args);
-    const row = db.stockLevels.find((l) => sameSource(l, args.sourceType, args.sourceId) && stockKey(l) === key);
+    const find = () => stockOfSource(args.sourceType, args.sourceId, db).find((l) => stockKey(l) === key);
+    const row = find();
     const before = row ? { ...row } : undefined;
     if (row) Object.assign(row, args.patch, { updatedAt: at });
     else {
       const product = db.products.find((p) => p.id === args.productId);
       const option = product?.variantGroups?.[0]?.options.find((o) => o.id === args.variantId);
-      db.stockLevels.push({
-        sourceType: args.sourceType,
-        sourceId: args.sourceId,
+      const added: StockRow = {
         productId: args.productId,
         variantId: args.variantId,
         sku: args.patch.sku ?? option?.sku ?? product?.sku ?? "",
@@ -323,9 +412,11 @@ export function setStockLevel(args: {
         price: args.patch.price,
         url: args.patch.url,
         updatedAt: at,
-      });
+      };
+      if (args.sourceType === "dealer") db.dealerStock.push({ ...added, dealerId: args.sourceId });
+      else db.retailerStock.push({ ...added, retailerId: args.sourceId });
     }
-    const after = db.stockLevels.find((l) => sameSource(l, args.sourceType, args.sourceId) && stockKey(l) === key)!;
+    const after = find()!;
     const parts: string[] = [];
     if ((before?.quantity ?? 0) !== after.quantity || !before) parts.push(`adet ${before?.quantity ?? "—"} → ${after.quantity}`);
     if (before?.price !== after.price && args.patch.price !== undefined) parts.push(`fiyat ${before?.price ?? "—"} → ${after.price ?? "—"}`);
@@ -360,9 +451,10 @@ export function deleteStockLevel(args: {
 }): void {
   mutate((db) => {
     const key = stockKey(args);
-    const row = db.stockLevels.find((l) => sameSource(l, args.sourceType, args.sourceId) && stockKey(l) === key);
+    const rows = stockOfSource(args.sourceType, args.sourceId, db);
+    const row = rows.find((l) => stockKey(l) === key);
     if (!row) return;
-    db.stockLevels = db.stockLevels.filter((l) => l !== row && !(sameSource(l, args.sourceType, args.sourceId) && stockKey(l) === key));
+    replaceStock(db, args.sourceType, args.sourceId, rows.filter((l) => stockKey(l) !== key));
     const summary = emptySummary();
     if (row.quantity > 0) summary.zeroed = 1;
     db.stockImports.push({
@@ -406,7 +498,7 @@ export function deleteSkuAlias(sourceId: string, code: string): void {
 
 /** Kaynak silinince stoku, gecmisi ve eslestirmeleri de silinir. */
 export function removeStockOfSource(db: ZenweldDatabase, type: StockSourceType, id: string): void {
-  db.stockLevels = db.stockLevels.filter((l) => !sameSource(l, type, id));
+  replaceStock(db, type, id, []);
   db.stockImports = db.stockImports.filter((i) => !sameSource(i, type, id));
   db.skuAliases = db.skuAliases.filter((a) => a.sourceId !== id);
 }

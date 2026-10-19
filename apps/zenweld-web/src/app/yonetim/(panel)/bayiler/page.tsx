@@ -209,7 +209,10 @@ export default function AdminDealersPage() {
                 onChange={(e) => setEditing({ ...editing, workingHours: e.target.value })}
               />
             </FormRow>
-            <FormRow label="Bağlı olduğu online mağaza">
+            <FormRow
+              label="Bağlı olduğu online mağaza"
+              hint="Seçilirse bayinin stok dosyasındaki ürün linkleri de okunur; ürünler haritada ve bu mağazanın online satıcı kartında görünür."
+            >
               <Select
                 value={editing.retailerId ?? ""}
                 onChange={(e) =>

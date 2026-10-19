@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ExternalLink, Plus, Trash2 } from "lucide-react";
 import type { Retailer } from "@zenweld/data";
-import { deleteRetailer, saveRetailer, sourceStatus, useDatabase } from "@zenweld/store";
+import { deleteRetailer, onlineProductCount, saveRetailer, useDatabase, useNow } from "@zenweld/store";
 import { Badge, Button, Checkbox, FormRow, Input, Modal } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 
@@ -19,6 +20,7 @@ const EMPTY: Retailer = {
 
 export default function AdminRetailersPage() {
   const db = useDatabase();
+  const now = useNow().getTime();
   const [editing, setEditing] = useState<Retailer | null>(null);
 
   const save = () => {
@@ -46,7 +48,9 @@ export default function AdminRetailersPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {db.retailers.map((r) => {
-          const stockCount = sourceStatus("retailer", r.id, db).inStock;
+          const shownCount = onlineProductCount(r.id, db, now);
+          // Online magazasi bu satici olan bayi: stok bayinin dosyasindan gelir.
+          const dealer = db.dealers.find((d) => d.retailerId === r.id);
           return (
             <div
               key={r.id}
@@ -69,10 +73,19 @@ export default function AdminRetailersPage() {
                 {r.websiteUrl}
               </a>
               <div className="mt-3 flex flex-wrap gap-1.5">
-                <Badge tone="grey">{stockCount} üründe stokta</Badge>
+                <Badge tone="grey">{shownCount} ürün sayfasında</Badge>
                 {r.city && <Badge tone="outline">{r.city}</Badge>}
                 {!r.active && <Badge tone="grey">Pasif</Badge>}
               </div>
+              {dealer && (
+                <p className="mt-2 text-xs text-zw-grey-600">
+                  Bayi:{" "}
+                  <Link href={`/yonetim/stok?kaynak=dealer:${dealer.id}`} className="font-semibold hover:text-zw-red-600">
+                    {dealer.name}
+                  </Link>{" "}
+                  · stok bayinin dosyasından gelir
+                </p>
+              )}
               <div className="mt-4 flex gap-2">
                 <Button size="sm" variant="outline" onClick={() => setEditing(r)}>
                   Düzenle

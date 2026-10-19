@@ -35,7 +35,7 @@ import { legalPages } from "./seed/legal.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 46;
+export const DB_VERSION = 47;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida
@@ -53,7 +53,8 @@ export function createSeedDatabase(now: number = Date.now()): ZenweldDatabase {
       categoryGroups,
       dealers,
       retailers,
-      stockLevels: stock.stockLevels,
+      dealerStock: stock.dealerStock,
+      retailerStock: stock.retailerStock,
       stockImports: stock.stockImports,
       skuAliases: [],
       users: [...users, ...sample.users],

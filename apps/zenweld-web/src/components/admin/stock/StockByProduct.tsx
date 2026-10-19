@@ -4,7 +4,7 @@ import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Search } from "lucide-react";
 import { isInStock } from "@zenweld/data";
-import { getStockSettings, listStockSources, stockOfProduct, useDatabase, useNow } from "@zenweld/store";
+import { getStockSettings, listStockSources, retailersInStockFor, stockOfProduct, useDatabase, useNow } from "@zenweld/store";
 import { Input, ProductImage } from "@zenweld/ui";
 import { SOURCE_TYPE_LABEL, ageText, productLabel, sourceParam } from "./shared";
 
@@ -27,12 +27,12 @@ export function StockByProduct({ initialProduct }: { initialProduct?: string }) 
       .filter((p) => !q || p.name.toLocaleLowerCase("tr").includes(q) || p.sku.toLocaleLowerCase("tr").includes(q))
       .map((p) => {
         const levels = stockOfProduct(p.id, db).filter((l) => sources.has(`${l.sourceType}:${l.sourceId}`));
-        const live = levels.filter((l) => isInStock(l, staleDays, now));
+        const liveDealers = levels.filter((l) => l.sourceType === "dealer" && isInStock(l, staleDays, now));
         return {
           product: p,
           levels,
-          dealers: new Set(live.filter((l) => l.sourceType === "dealer").map((l) => l.sourceId)).size,
-          retailers: new Set(live.filter((l) => l.sourceType === "retailer").map((l) => l.sourceId)).size,
+          dealers: new Set(liveDealers.map((l) => l.sourceId)).size,
+          retailers: retailersInStockFor(p.id, db, now).length,
         };
       })
       .sort((a, b) => (a.product.id === initialProduct ? -1 : b.product.id === initialProduct ? 1 : a.product.name.localeCompare(b.product.name, "tr")));
@@ -45,7 +45,8 @@ export function StockByProduct({ initialProduct }: { initialProduct?: string }) 
         <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Ürün adı veya SKU ara…" className="pl-9" />
       </div>
       <p className="mb-3 text-xs text-zw-grey-500">
-        “Sitede” sayıları: adedi 0’dan büyük ve son {staleDays || "∞"} gün içinde güncellenmiş kaynaklar.
+        “Sitede” sayıları: adedi 0’dan büyük ve son {staleDays || "∞"} gün içinde güncellenmiş kaynaklar. Online
+        satıcı kartı için ürün linki de olmalı; online mağazası olan bayiler bu sayıya bayinin dosyasından girer.
       </p>
 
       <div className="overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white">
@@ -93,19 +94,24 @@ export function StockByProduct({ initialProduct }: { initialProduct?: string }) 
                                 .map((l) => {
                                   const s = sources.get(`${l.sourceType}:${l.sourceId}`)!;
                                   const live = isInStock(l, staleDays, now);
+                                  // Online saticida link yoksa kart gosterilmez.
+                                  const shown = live && (l.sourceType === "dealer" || Boolean(l.url));
                                   return (
                                     <tr key={`${l.sourceType}:${l.sourceId}:${l.variantId ?? ""}`}>
                                       <td className="py-1.5 pr-3">
                                         <Link href={`/yonetim/stok?kaynak=${sourceParam(l.sourceType, l.sourceId)}`} className="font-semibold hover:text-zw-red-600">
                                           {s.name}
                                         </Link>{" "}
-                                        <span className="text-zw-grey-500">· {SOURCE_TYPE_LABEL[l.sourceType]}</span>
+                                        <span className="text-zw-grey-500">
+                                          · {SOURCE_TYPE_LABEL[l.sourceType]}
+                                          {s.onlineStore && " + online mağaza"}
+                                        </span>
                                       </td>
                                       <td className="py-1.5 pr-3 text-zw-grey-600">{l.variantId ? productLabel(db, l.productId, l.variantId).replace(product.name, "").trim() : ""}</td>
                                       <td className="py-1.5 pr-3 text-right font-semibold">{l.quantity} adet</td>
                                       <td className="py-1.5 pr-3 text-zw-grey-500">{ageText(l.updatedAt, now)}</td>
-                                      <td className={`py-1.5 text-right font-semibold ${live ? "text-emerald-700" : "text-zw-grey-400"}`}>
-                                        {live ? "Sitede" : l.quantity > 0 ? "Eski · gizli" : "Stokta yok"}
+                                      <td className={`py-1.5 text-right font-semibold ${shown ? "text-emerald-700" : "text-zw-grey-400"}`}>
+                                        {shown ? "Sitede" : live ? "Link yok · gizli" : l.quantity > 0 ? "Eski · gizli" : "Stokta yok"}
                                       </td>
                                     </tr>
                                   );

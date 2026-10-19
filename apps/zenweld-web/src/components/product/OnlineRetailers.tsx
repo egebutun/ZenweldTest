@@ -12,9 +12,11 @@ import { formatDate } from "@zenweld/utils";
  * "Ayrica online alisveris olarak surada da mevcuttur"
  *
  * ONEMLI: Bu liste urune ozeldir. Yalnizca o urunu STOKTA TUTAN saticilar
- * gosterilir (adet > 0 ve stok dosyasi panelde ayarlanan gunden eski
- * degil). Stok, saticilarin gonderdigi dosyalarla yonetim panelinden
- * (/yonetim/stok) guncellenir. Saticinin fiyati ve adedi gosterilmez.
+ * gosterilir (adet > 0, stok dosyasi panelde ayarlanan gunden eski degil ve
+ * urun linki var). Online magazasi olan bayiler de burada; stoklari bayinin
+ * dosyasindan gelir. Kart, urunun saticinin sitesindeki sayfasina gider.
+ * Stok yonetim panelinden (/yonetim/stok) guncellenir. Saticinin fiyati ve
+ * adedi gosterilmez.
  */
 export function OnlineRetailers({ product }: { product: Product }) {
   const t = useT();
@@ -46,7 +48,7 @@ export function OnlineRetailers({ product }: { product: Product }) {
         {visible.map(({ retailer, stock }) => (
           <a
             key={retailer.id}
-            href={stock.url ?? retailer.websiteUrl}
+            href={stock.url}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative flex h-24 flex-col items-center justify-center rounded-[4px] border border-zw-grey-200 bg-white px-3 py-2 text-center transition-all hover:border-zw-ink hover:shadow-md"

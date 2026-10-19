@@ -90,7 +90,7 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
 Panel akışı hazır; veri şimdilik tarayıcıda. Tablolar, API uçları ve
 ayrıntılar: [STOK.md](STOK.md) › "Backend'e geçiş".
 
-1. `stock_levels`, `stock_imports`, `sku_aliases` tabloları; dosya yükleme tek
+1. `dealer_stock`, `retailer_stock`, `stock_imports`, `sku_aliases` tabloları; dosya yükleme tek
    işlemde (transaction) uygulanmalı, dosya sunucuda yeniden doğrulanmalı.
 2. Yüklenen orijinal dosyalar denetim için saklanmalı.
 3. Ürün sayfaları önbellekte tutulmalı; yükleme uygulanınca yalnızca etkilenen

@@ -106,10 +106,11 @@ Marka sitesi ve **online mağazadır**. Ziyaretçi ürünü şu yollardan alır:
 
 ### Ürüne özel online satıcı listesi
 
-Her ürünün her satıcıdaki ve bayideki stoğu ayrı tutulur. Ürün sayfasında
-**yalnızca stokta olan satıcılar** ("Stokta" yazısıyla; adet ve fiyat gösterilmez) ve
-haritada stokta olan bayiler görünür. Hiçbirinde yoksa "en yakın bayiden temin
-edebilirsiniz" mesajı çıkar.
+Her ürünün her bayideki ve online satıcıdaki stoğu ayrı tutulur. Ürün sayfasında
+**yalnızca stokta olan online satıcılar** (kart, ürünün o sitedeki sayfasına gider)
+ve "Stoktaki Bayileri Gör" haritasında yalnızca stokta olan bayiler görünür. Online
+mağazası olan bayi her ikisinde de görünür. Adet ve fiyat sitede gösterilmez.
+Hiçbir online satıcıda yoksa "en yakın bayiden temin edebilirsiniz" mesajı çıkar.
 
 Stok, bayi ve satıcıların gönderdiği CSV/XLSX dosyalarıyla panelden güncellenir:
 `/yonetim/stok`. Ayrıntılar: [docs/STOK.md](docs/STOK.md).
@@ -171,7 +172,7 @@ ZenweldTest/
 ├── packages/
 │   ├── data/                       Paylaşılan veri modeli ve başlangıç verisi
 │   │   └── src/
-│   │       ├── types.ts            Product, Dealer, Retailer, StockLevel, User…
+│   │       ├── types.ts            Product, Dealer, Retailer, DealerStock, RetailerStock, User…
 │   │       └── seed/
 │   │           ├── products.seed.ts    12 gerçek Zenweld modeli + 15 aksesuar
 │   │           ├── categories.seed.ts  Bölüm / grup / kategori ağacı
@@ -275,10 +276,12 @@ Her dosya kaynağın tam listesidir; hatalı yükleme geri alınabilir. Son 3 g�
 (panelden değiştirilir) içinde güncellenmeyen stok sitede gösterilmez.
 
 ```csv
-SKU;Ürün Adı;Adet
-ZW-U250MTC;Zenweld Ultimate 250 MTC;4
-ZW-ARC200;Zenweld ARC 200;12
+SKU;Ürün Adı;Adet;Fiyat;Link
+ZW-U250MTC;Zenweld Ultimate 250 MTC;4;53.900,00;https://www.satici.com/urun/ultimate-250-mtc
+ZW-ARC200;Zenweld ARC 200;12;12.450,00;https://www.satici.com/urun/arc-200
 ```
+
+Link sütunu yalnızca online satıcılarda ve online mağazası olan bayilerde okunur.
 
 Dosya biçimi, kurallar ve backend'e geçiş (tablolar, API): [docs/STOK.md](docs/STOK.md).
 

@@ -46,12 +46,12 @@ export function StockUpload({
   const [confirmTruncated, setConfirmTruncated] = useState(false);
   const [mapping, setMapping] = useState<Record<string, string>>({});
 
-  const sheet = useMemo(() => readStockSheet(table, source.type), [table, source.type]);
+  const { withUrl } = source;
+  const sheet = useMemo(() => readStockSheet(table, { withUrl }), [table, withUrl]);
   // Eslestirme tablosu (db.skuAliases) degisince yeniden eslesir.
   const file = useMemo(
     () =>
       matchStockRows(sheet, {
-        sourceType: source.type,
         sourceId: source.id,
         products: db.products,
         aliases: db.skuAliases,
@@ -63,6 +63,7 @@ export function StockUpload({
   const diff = useMemo(() => diffStock(current, file.incoming), [current, file.incoming]);
   const truncated = looksTruncated(current, file.incoming);
   const warnings = file.rows.filter((r) => r.warning);
+  const noLink = withUrl ? file.incoming.filter((r) => r.quantity > 0 && !r.url).length : 0;
   const choices = useMemo(() => productChoices(db), [db]);
 
   const changes: (StockChange & { kind: "added" | "changed" | "zeroed" })[] = [
@@ -71,7 +72,6 @@ export function StockUpload({
     ...diff.zeroed.map((c) => ({ ...c, kind: "zeroed" as const })),
   ];
   const canApply = file.incoming.length > 0 && (!truncated || confirmTruncated);
-  const isRetailer = source.type === "retailer";
   const { columns } = sheet;
 
   const apply = () => {
@@ -92,13 +92,13 @@ export function StockUpload({
             <>
               Başlık satırı {columns.headerRow + 1}. Okunan sütunlar: Kod = {colLetter(columns.code)}, Adet ={" "}
               {colLetter(columns.quantity)}
-              {isRetailer && columns.price !== undefined && <>, Fiyat = {colLetter(columns.price)}</>}
-              {isRetailer && columns.url !== undefined && <>, Link = {colLetter(columns.url)}</>}
-              {isRetailer && columns.price === undefined && <> · fiyat sütunu bulunamadı</>}
-              {isRetailer && columns.url === undefined && <> · link sütunu bulunamadı</>}
+              {columns.price !== undefined && <>, Fiyat = {colLetter(columns.price)}</>}
+              {withUrl && columns.url !== undefined && <>, Link = {colLetter(columns.url)}</>}
+              {columns.price === undefined && <> · fiyat sütunu bulunamadı</>}
+              {withUrl && columns.url === undefined && <> · link sütunu bulunamadı</>}
             </>
           ) : (
-            <>Başlık satırı bulunamadı; sütunlar şablon sırasıyla okundu (A = kod, B = adet{isRetailer ? ", C = fiyat, D = link" : ""}).</>
+            <>Başlık satırı bulunamadı; sütunlar şablon sırasıyla okundu (A = kod, B = adet, C = fiyat{withUrl ? ", D = link" : ""}).</>
           )}
         </div>
 
@@ -136,6 +136,12 @@ export function StockUpload({
               />
             </div>
           </div>
+        )}
+        {noLink > 0 && (
+          <Alert tone="warning">
+            Stoktaki {noLink} ürünün linki yok; bu ürünler online satıcı kartında görünmez
+            {source.type === "dealer" ? " (haritada görünür)" : ""}.
+          </Alert>
         )}
         {file.duplicates.length > 0 && (
           <Alert tone="warning">
@@ -181,7 +187,7 @@ export function StockUpload({
                   <th className="px-3 py-2">Ürün</th>
                   <th className="px-3 py-2 text-right">Önce</th>
                   <th className="px-3 py-2 text-right">Sonra</th>
-                  {isRetailer && <th className="px-3 py-2 text-right">Fiyat</th>}
+                  <th className="px-3 py-2 text-right">Fiyat</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zw-grey-100" style={{ fontVariantNumeric: "tabular-nums" }}>
@@ -198,20 +204,18 @@ export function StockUpload({
                     </td>
                     <td className="px-3 py-1.5 text-right">{c.before?.quantity ?? "—"}</td>
                     <td className="px-3 py-1.5 text-right font-semibold">{c.after?.quantity ?? 0}</td>
-                    {isRetailer && (
-                      <td className="px-3 py-1.5 text-right text-xs text-zw-grey-600">
-                        {c.before?.price !== c.after?.price && c.after?.price != null ? (
-                          <>
-                            {c.before?.price != null && <span className="text-zw-grey-400 line-through">{formatPrice(c.before.price)}</span>}{" "}
-                            {formatPrice(c.after.price)}
-                          </>
-                        ) : c.after?.price != null ? (
-                          formatPrice(c.after.price)
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                    )}
+                    <td className="px-3 py-1.5 text-right text-xs text-zw-grey-600">
+                      {c.before?.price !== c.after?.price && c.after?.price != null ? (
+                        <>
+                          {c.before?.price != null && <span className="text-zw-grey-400 line-through">{formatPrice(c.before.price)}</span>}{" "}
+                          {formatPrice(c.after.price)}
+                        </>
+                      ) : c.after?.price != null ? (
+                        formatPrice(c.after.price)
+                      ) : (
+                        "—"
+                      )}
+                    </td>
                   </tr>
                 ))}
                 {changes.length === 0 && (

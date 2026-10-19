@@ -1,11 +1,23 @@
 # Bayi ve Online Satıcı Stokları
 
-Bayilerin ve online satıcıların stok listeleri (ürün kodu + adet) yönetim
+Bayilerin ve online satıcıların stok listeleri (ürün kodu, adet, fiyat, link) yönetim
 panelinden **Stok Matrisi** ekranına yüklenir; ürün sayfalarındaki "Stoktaki
 Bayileri Gör" haritası ve "Ayrıca online alışveriş olarak şurada da mevcuttur"
 listesi bu veriden gelir.
 
 Zenweld'in kendi deposu bu akışın dışındadır: sitede her ürün her zaman satıştadır.
+
+| Kaynak | Dosyadaki sütunlar | Sitede nerede |
+|---|---|---|
+| **Bayi** | Kod, Adet, Fiyat | Ürün sayfası → **Stoktaki Bayileri Gör** (yalnızca o ürünü stokta tutan bayiler) |
+| **Online mağazası olan bayi** | Kod, Adet, Fiyat, Link | Haritada **ve** online satıcı kartında (linki olan ürünlerde) |
+| **Online satıcı** | Kod, Adet, Fiyat, Link | Ürün sayfası → online satıcı kartı (linki olan ürünlerde); kart ürünün o sitedeki sayfasına gider |
+
+**Online mağazası olan bayi:** Yönetim panelinde **Bayiler** formundaki "Bağlı olduğu
+online mağaza" alanında seçilen bayidir; mağazanın **Online Satıcılar**'da kaydı
+olmalıdır (kart adı ve logo yazısı oradan gelir). Bu bayi **tek dosya** gönderir:
+stoktaki ürünler haritada, linki olanlar ayrıca online satıcı kartında görünür.
+Mağazanın ayrıca stok dosyası olmaz; Stok Matrisi'nde ayrı satır olarak görünmez.
 
 ---
 
@@ -33,7 +45,8 @@ Zenweld'in kendi deposu bu akışın dışındadır: sitede her ürün her zaman
 | **Eksi adet** | 0 sayılır, uyarı verilir (bayi programları eksi stok gösterebilir). |
 | **Hatalı satır** | Kod boş, adet okunamıyor ya da tam sayı değil → satır uygulanmaz, nedeni gösterilir. |
 | **Geçerlilik süresi** | Son *N* gün içinde güncellenmemiş stok sitede gösterilmez (varsayılan 3 gün, panelden değiştirilir, 0 = sınırsız). Panelde "N gündür güncellenmedi · sitede gizli" uyarısı çıkar. |
-| **Sitede gösterim** | Yalnızca "Stokta" bilgisi gösterilir. Adet ve satıcı fiyatı sitede **gösterilmez**. Online satıcı kutusu, dosyadaki ürün linkine gider (link yoksa satıcının ana sayfasına). |
+| **Sitede gösterim** | Adet ve fiyat sitede **gösterilmez**; fiyat yalnızca panelde durur. Bayi haritasında yalnızca stoğu olan bayiler listelenir. Online satıcı kartı dosyadaki ürün linkine gider. |
+| **Link yoksa** | Linki boş olan ürün online satıcı kartında **görünmez** (ürün sayfasına yönlendirilemez). Önizlemede ve kaynak sayfasında "N ürünün linki yok" uyarısı çıkar. Online mağazası olan bayide ürün haritada görünmeye devam eder. |
 
 ---
 
@@ -46,8 +59,8 @@ Türkçe karakter farkı önemsizdir):
 |---|---|---|
 | Kod | SKU, Ürün Kodu, Stok Kodu, Kod, Malzeme Kodu, Model Kodu | Evet |
 | Adet | Adet, Stok, Stok Adedi, Miktar, Mevcut, Stok Miktarı | Evet |
-| Fiyat | Fiyat, Satış Fiyatı, KDV Dahil Fiyat (yalnızca online satıcılar) | Hayır |
-| Link | Link, URL, Ürün Linki, Ürün Adresi (yalnızca online satıcılar) | Hayır |
+| Fiyat | Fiyat, Satış Fiyatı, KDV Dahil Fiyat | Hayır |
+| Link | Link, URL, Ürün Linki, Ürün Adresi (yalnızca online satıcılar ve online mağazası olan bayiler; diğer bayilerde okunmaz) | Hayır; ama yoksa online kartta görünmez |
 
 Diğer sütunlar (ürün adı vb.) yok sayılır. Başlık bulunamazsa sütunlar şablon
 sırasıyla okunur: A = kod, B = adet, C = fiyat, D = link.
@@ -60,18 +73,19 @@ sırasıyla okunur: A = kod, B = adet, C = fiyat, D = link.
 - **Kod eşleşmesi:** ürün SKU'su, seçenek SKU'su (3 m / 5 m torç gibi) ya da
   kaynağa özel eşleştirme tablosu. Boşluklar ve büyük/küçük harf önemsizdir.
 - **Şablon:** kaynak sayfasındaki **Şablon İndir**, bizim SKU'larımızı, ürün adlarını
-  ve kaynağın mevcut adetlerini içeren CSV verir; bayiye gönderilip doldurtulabilir.
+  ve kaynağın mevcut adet, fiyat (ve link) değerlerini içeren CSV verir; bayiye
+  gönderilip doldurtulabilir.
 
 Örnek (bayi):
 
 ```csv
-SKU;Ürün Adı;Adet
-ZW-U250MTC;Zenweld Ultimate 250 MTC;4
-ZW-TRC-MB25-3;Zenweld MB-25 MIG Torcu (3 m);12
-ZW-ARC200;Zenweld ARC 200;0
+SKU;Ürün Adı;Adet;Fiyat
+ZW-U250MTC;Zenweld Ultimate 250 MTC;4;53.900,00
+ZW-TRC-MB25-3;Zenweld MB-25 MIG Torcu (3 m);12;1.980,00
+ZW-ARC200;Zenweld ARC 200;0;
 ```
 
-Örnek (online satıcı):
+Örnek (online satıcı ya da online mağazası olan bayi):
 
 ```csv
 SKU;Adet;Fiyat;Link
@@ -85,11 +99,11 @@ ZW-U250MTC;6;54.890,00;https://www.satici.com/urun/ultimate-250-mtc
 | Katman | Dosya | Görev |
 |---|---|---|
 | Saf mantık | `packages/data/src/stock.ts` | `readStockSheet` (tablo → satırlar), `matchStockRows` (kod → ürün), `diffStock` (fark), `looksTruncated`, `isInStock` / `isStockFresh`, `stockTemplateRows`. Tarayıcıya ya da veritabanına bağlı değil; backend'de aynen kullanılır. |
-| Tipler | `packages/data/src/types.ts` | `StockLevel`, `StockImport`, `SkuAlias`, `StockSettings` |
-| Veri işlemleri | `packages/store/src/repo/stock.ts` | Okuma (`retailersInStockFor`, `dealersWithProduct`, `sourceStatus` …) ve yazma (`applyStockImport`, `revertStockImport`, `setStockLevel`, `deleteStockLevel`, `saveSkuAlias`, `saveStockSettings`). Her fonksiyon bir API ucuna karşılık gelir (aşağıda). |
+| Tipler | `packages/data/src/types.ts` | `DealerStock`, `RetailerStock` (ortak alanlar `StockRow`), `StockImport`, `SkuAlias`, `StockSettings`; bayinin online mağazası `Dealer.retailerId` |
+| Veri işlemleri | `packages/store/src/repo/stock.ts` | Okuma (`retailersInStockFor`, `dealersWithProduct`, `sourceStatus`, `onlineProductCount` …) ve yazma (`applyStockImport`, `revertStockImport`, `setStockLevel`, `deleteStockLevel`, `saveSkuAlias`, `saveStockSettings`). Her fonksiyon bir API ucuna karşılık gelir (aşağıda). |
 | Dosya okuma | `apps/zenweld-web/src/lib/stock-file.ts` | Tarayıcıda `.csv` / `.xlsx` → satır × hücre tablosu (`read-excel-file` 8.0.3) |
 | Panel | `apps/zenweld-web/src/components/admin/stock/` | Kaynak listesi, kaynak sayfası, yükleme önizlemesi, ürün bazında görünüm |
-| Örnek veri | `packages/data/src/seed/stock.seed.ts` | Her kaynak için yakın tarihli örnek liste; bir bayi ve bir satıcı bilerek 5 gün eski |
+| Örnek veri | `packages/data/src/seed/stock.seed.ts` | Her kaynak için yakın tarihli örnek liste (online mağazalı bayilerde linkli); bir bayi ve bir satıcı bilerek 5 gün eski |
 
 ---
 
@@ -118,21 +132,33 @@ CREATE TABLE stock_imports (
 );
 CREATE INDEX stock_imports_source ON stock_imports (source_type, source_id, created_at DESC);
 
-CREATE TABLE stock_levels (
-  source_type  text NOT NULL CHECK (source_type IN ('dealer', 'retailer')),
-  source_id    text NOT NULL,
+CREATE TABLE dealer_stock (
+  dealer_id    text NOT NULL REFERENCES dealers (id) ON DELETE CASCADE,
   product_id   text NOT NULL REFERENCES products (id) ON DELETE CASCADE,
   variant_id   text NOT NULL DEFAULT '',   -- '' = ürünün tüm seçenekleri
   sku          text NOT NULL,              -- dosyadaki kod
   quantity     int  NOT NULL CHECK (quantity >= 0),
-  price        numeric(12, 2),             -- yalnızca online satıcı; sitede gösterilmez
-  url          text,                       -- yalnızca online satıcı
+  price        numeric(12, 2),             -- KDV dahil; sitede gösterilmez
+  url          text,                       -- yalnızca online mağazası olan bayi
   updated_at   timestamptz NOT NULL,
   import_id    text REFERENCES stock_imports (id),
-  PRIMARY KEY (source_type, source_id, product_id, variant_id)
+  PRIMARY KEY (dealer_id, product_id, variant_id)
 );
--- Ürün sayfası sorgusu: bu ürünü stokta tutan kaynaklar
-CREATE INDEX stock_levels_product ON stock_levels (product_id, updated_at) WHERE quantity > 0;
+CREATE INDEX dealer_stock_product ON dealer_stock (product_id, updated_at) WHERE quantity > 0;
+
+CREATE TABLE retailer_stock (
+  retailer_id  text NOT NULL REFERENCES retailers (id) ON DELETE CASCADE,
+  product_id   text NOT NULL REFERENCES products (id) ON DELETE CASCADE,
+  variant_id   text NOT NULL DEFAULT '',
+  sku          text NOT NULL,
+  quantity     int  NOT NULL CHECK (quantity >= 0),
+  price        numeric(12, 2),             -- KDV dahil; sitede gösterilmez
+  url          text,                       -- ürünün satıcının sitesindeki sayfası; yoksa kart gösterilmez
+  updated_at   timestamptz NOT NULL,
+  import_id    text REFERENCES stock_imports (id),
+  PRIMARY KEY (retailer_id, product_id, variant_id)
+);
+CREATE INDEX retailer_stock_product ON retailer_stock (product_id, updated_at) WHERE quantity > 0;
 
 CREATE TABLE sku_aliases (
   source_id    text NOT NULL,
@@ -142,22 +168,44 @@ CREATE TABLE sku_aliases (
   PRIMARY KEY (source_id, code)
 );
 
+-- Bayinin online mağazası: dealers.retailer_id text REFERENCES retailers (id) ON DELETE SET NULL
 -- Ayar: site_settings.stock_stale_days int NOT NULL DEFAULT 3
 ```
 
-Ürün sayfası sorgusu:
+`retailer_stock` yalnızca bir bayiye bağlı **olmayan** online satıcıların listesidir.
+Online mağazası olan bayinin satırları `dealer_stock`'ta durur (`url` dolu); aynı veri
+iki tabloya yazılmaz.
+
+Ürün sayfası sorguları (`$2` = stale_days, 0 = sınırsız):
 
 ```sql
-SELECT source_id, url FROM stock_levels
-WHERE product_id = $1 AND source_type = 'retailer' AND quantity > 0
-  AND ($2 = 0 OR updated_at > now() - make_interval(days => $2));  -- $2 = stale_days
+-- Stoktaki bayiler (harita); $3 = seçili seçenek ya da ''
+SELECT ds.dealer_id FROM dealer_stock ds
+JOIN dealers d ON d.id = ds.dealer_id AND d.active
+WHERE ds.product_id = $1 AND ds.quantity > 0
+  AND ($3 = '' OR ds.variant_id IN ('', $3))
+  AND ($2 = 0 OR ds.updated_at > now() - make_interval(days => $2));
+
+-- Online satıcı kartları: online satıcılar + online mağazası olan bayiler
+SELECT rs.retailer_id, rs.url FROM retailer_stock rs
+JOIN retailers r ON r.id = rs.retailer_id AND r.active
+WHERE rs.product_id = $1 AND rs.quantity > 0 AND rs.url IS NOT NULL
+  AND ($2 = 0 OR rs.updated_at > now() - make_interval(days => $2))
+  AND NOT EXISTS (SELECT 1 FROM dealers d WHERE d.retailer_id = rs.retailer_id)
+UNION ALL
+SELECT d.retailer_id, ds.url FROM dealer_stock ds
+JOIN dealers d ON d.id = ds.dealer_id AND d.active
+JOIN retailers r ON r.id = d.retailer_id AND r.active
+WHERE ds.product_id = $1 AND ds.quantity > 0 AND ds.url IS NOT NULL
+  AND ($2 = 0 OR ds.updated_at > now() - make_interval(days => $2));
+-- Aynı mağaza birden fazla satırda gelebilir (seçenekler); mağaza başına bir kart.
 ```
 
 ### API uçları
 
 | Uç | Karşılığı (bugün) |
 |---|---|
-| `GET  /api/admin/stock/sources` | `listStockSources`, `sourceStatus` |
+| `GET  /api/admin/stock/sources` | `listStockSources`, `sourceStatus` (`:type` = `dealer` → `dealer_stock`, `retailer` → `retailer_stock`) |
 | `GET  /api/admin/stock/:type/:id` | `stockOfSource`, `stockHistory` |
 | `POST /api/admin/stock/:type/:id/preview` (dosya) | `readStockSheet` → `matchStockRows` → `diffStock`; **yazmaz** |
 | `POST /api/admin/stock/:type/:id/imports` (dosya + `confirmTruncated`) | `applyStockImport` |
@@ -165,6 +213,7 @@ WHERE product_id = $1 AND source_type = 'retailer' AND quantity > 0
 | `PATCH / DELETE /api/admin/stock/:type/:id/levels/:productId[/:variantId]` | `setStockLevel`, `deleteStockLevel` |
 | `PUT / DELETE /api/admin/stock/aliases` | `saveSkuAlias`, `deleteSkuAlias` |
 | `PUT  /api/admin/settings/stock` | `saveStockSettings` |
+| `GET  /api/admin/retailers` (kartta ürün sayısı) | `onlineProductCount` |
 | Ürün sayfası (sunucu bileşeni ya da `GET /api/products/:id/availability`) | `retailersInStockFor`, `dealersWithProduct` |
 
 Notlar:
