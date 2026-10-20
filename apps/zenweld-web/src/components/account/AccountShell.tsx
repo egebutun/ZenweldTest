@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import {
   FileText,
   Heart,
+  LayoutDashboard,
   MapPin,
   Package,
   ShieldCheck,
@@ -41,6 +42,7 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
   }
 
   const items = [
+    { href: "/hesabim", label: t.account.overview, Icon: LayoutDashboard },
     { href: "/hesabim/profil", label: t.account.profile, Icon: UserIcon },
     { href: "/hesabim/tekliflerim", label: t.account.myQuotes, Icon: FileText },
     { href: "/hesabim/siparislerim", label: t.account.myOrders, Icon: Package },
@@ -64,9 +66,9 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
         <aside>
           <nav className="space-y-1">
             {items.map(({ href, label, Icon }) => {
-              // Alt sayfalarda da (siparis detayi gibi) sekme secili kalir.
-              const target = href;
-              const active = pathname === target || pathname.startsWith(`${target}/`);
+              // Alt sayfalarda da (siparis detayi gibi) sekme secili kalir;
+              // Genel Bakis yalnizca /hesabim'da secilidir.
+              const active = href === "/hesabim" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
               return (
                 <Link
                   key={href}

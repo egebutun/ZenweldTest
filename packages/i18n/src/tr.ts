@@ -340,6 +340,7 @@ export const tr = {
   account: {
     title: "Hesabım",
     welcome: "Hoş geldiniz, {name}",
+    overview: "Genel Bakış",
     profile: "Profil",
     myQuotes: "Tekliflerim",
     myOrders: "Siparişlerim",
