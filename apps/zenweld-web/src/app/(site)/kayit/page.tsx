@@ -37,17 +37,15 @@ export default function RegisterPage() {
   const set = (key: keyof typeof form, value: string | boolean) =>
     setForm((f) => ({ ...f, [key]: value }));
 
-  const types: { id: AccountType; label: string; desc: string; Icon: typeof UserIcon }[] = [
+  const types: { id: AccountType; label: string; Icon: typeof UserIcon }[] = [
     {
       id: "individual",
       label: t.auth.accountTypeIndividual,
-      desc: t.auth.accountTypeIndividualDesc,
       Icon: UserIcon,
     },
     {
       id: "business",
       label: t.auth.accountTypeBusiness,
-      desc: t.auth.accountTypeBusinessDesc,
       Icon: Building2,
     },
   ];
@@ -100,7 +98,7 @@ export default function RegisterPage() {
         <p className="mt-2 text-sm text-zw-grey-600">{t.auth.registerSubtitle}</p>
 
         <div className="mt-7 grid gap-3 sm:grid-cols-2">
-          {types.map(({ id, label, desc, Icon }) => (
+          {types.map(({ id, label, Icon }) => (
             <button
               key={id}
               type="button"
@@ -113,7 +111,6 @@ export default function RegisterPage() {
             >
               <Icon size={22} className={type === id ? "text-zw-red-600" : "text-zw-grey-500"} />
               <div className="mt-2 font-display text-lg font-semibold uppercase">{label}</div>
-              <p className="mt-1 text-xs leading-snug text-zw-grey-500">{desc}</p>
             </button>
           ))}
         </div>

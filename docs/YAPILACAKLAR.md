@@ -145,10 +145,7 @@ kurumsal müşterilere hitap ediyor. Şimdilik bırakıldı; güncellenecek yerl
 2. Aynı cümlenin arama motoru açıklaması (`lib/page-meta.ts` → `/teklif-al`)
 3. Ana sayfadaki şerit: "Kurumsal alım mı yapacaksınız?" ve altındaki metin
    (`home.quoteBannerTitle`, `home.quoteBannerText`)
-4. Üye ol sayfasındaki hesap türü açıklamaları: teklif talebi yalnızca
-   Kurumsal'da yazıyor (`auth.accountTypeBusinessDesc`,
-   `auth.accountTypeIndividualDesc`)
-5. Site aramasındaki Teklif Al anahtar kelimeleri: "kurumsal vadeli çek"
+4. Site aramasındaki Teklif Al anahtar kelimeleri: "kurumsal vadeli çek"
    (`lib/search/search-client.ts`)
 
 ## Ürün Seçici ve arama — yeniden tasarlanacak

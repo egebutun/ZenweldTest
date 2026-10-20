@@ -328,8 +328,6 @@ export const tr = {
     sector: "Sektör",
     accountTypeIndividual: "Bireysel",
     accountTypeBusiness: "Kurumsal",
-    accountTypeIndividualDesc: "Online alışveriş, sipariş takibi, garanti kaydı ve favoriler",
-    accountTypeBusinessDesc: "Online alışveriş, kurumsal fatura, vadeli/çek ile teklif talebi",
     newsletter: "Zenweld'den haber ve kampanya e-postaları almak istiyorum",
     submitLogin: "Giriş Yap",
     submitRegister: "Hesap Oluştur",
