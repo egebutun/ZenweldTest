@@ -58,6 +58,12 @@ kullanılmaya devam eder.
   createdAt: now,
   updatedAt: now,
   active: true,
+  // İsteğe bağlı; boş alanlarda otomatik değer kullanılır (panelde SEO sekmesi)
+  seo: {
+    title: "…",                       // sayfa başlığı (tam haliyle)
+    description: "…",                 // Google açıklaması
+    keywords: ["…", "…"],            // site araması + keywords etiketi
+  },
 }
 ```
 

@@ -23,21 +23,17 @@ export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolea
 
   return (
     <FormPanel>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <FormRow label="Ürün Adı" required>
-          <Input
-            required
-            value={draft.name}
-            onChange={(e) => {
-              set("name", e.target.value);
-              if (isNew) set("slug", slugify(e.target.value));
-            }}
-          />
-        </FormRow>
-        <FormRow label="URL (slug)" hint={`/urun/${draft.slug || "…"}`}>
-          <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
-        </FormRow>
-      </div>
+      {/* Urun linki SEO sekmesinde; yeni urunde addan otomatik olusur. */}
+      <FormRow label="Ürün Adı" required>
+        <Input
+          required
+          value={draft.name}
+          onChange={(e) => {
+            set("name", e.target.value);
+            if (isNew) set("slug", slugify(e.target.value));
+          }}
+        />
+      </FormRow>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <FormRow label="Ürün Kodu (SKU)" required>

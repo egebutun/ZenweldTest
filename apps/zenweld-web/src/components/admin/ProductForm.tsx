@@ -9,6 +9,7 @@ import { BasicsTab } from "./product/BasicsTab";
 import { DescriptionTab } from "./product/DescriptionTab";
 import { ImagesTab } from "./product/ImagesTab";
 import { InTheBoxTab, SpecsTab } from "./product/ListTabs";
+import { SeoTab } from "./product/SeoTab";
 
 /**
  * URUN FORMU
@@ -83,6 +84,7 @@ export function ProductForm({ product }: { product?: Product }) {
         { id: "gorseller", label: "Görseller", badge: draft.images.length },
         { id: "teknik", label: "Teknik Özellikler", badge: draft.specs.length },
         { id: "kutu", label: "Kutu İçeriği", badge: draft.inTheBox.length },
+        { id: "seo", label: "SEO" },
       ]}
     >
       {form.tab === "temel" && <BasicsTab {...tabProps} isNew={isNew} />}
@@ -90,6 +92,7 @@ export function ProductForm({ product }: { product?: Product }) {
       {form.tab === "gorseller" && <ImagesTab {...tabProps} onError={form.setError} />}
       {form.tab === "teknik" && <SpecsTab {...tabProps} />}
       {form.tab === "kutu" && <InTheBoxTab {...tabProps} />}
+      {form.tab === "seo" && <SeoTab {...tabProps} isNew={isNew} />}
     </ContentFormShell>
   );
 }

@@ -149,6 +149,19 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
   active: boolean;
+  /** Arama motoru bilgileri; bos alanlarda otomatik deger kullanilir */
+  seo?: ProductSeo;
+  /** Urunun eski adresleri (slug): link degisince eski adres yenisine yonlenir */
+  previousSlugs?: string[];
+}
+
+export interface ProductSeo {
+  /** Sayfa basligi (tam haliyle; bossa "Urun adi — Kategori | ZENWELD") */
+  title?: string;
+  /** Arama sonucunda basligin altindaki aciklama (bossa kisa aciklama) */
+  description?: string;
+  /** Site aramasinda ve keywords etiketinde kullanilir */
+  keywords?: string[];
 }
 
 /* ------------------------------------------------------------------ */

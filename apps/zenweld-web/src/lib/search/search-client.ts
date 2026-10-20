@@ -75,6 +75,8 @@ export function buildDocuments(db: ZenweldDatabase): SearchDoc[] {
         p.processes.join(" "),
         p.modelCode ?? "",
         p.specs.map((s) => `${s.label} ${s.value}`).join(" "),
+        // Paneldeki SEO sekmesinin anahtar kelimeleri
+        p.seo?.keywords?.join(" ") ?? "",
       ].join(" "),
       sku: p.sku,
       href: `/urun/${p.slug}`,

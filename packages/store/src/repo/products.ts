@@ -35,6 +35,11 @@ export function visibleProducts(
     .filter((p): p is Product => Boolean(p?.active));
 }
 
+/** Adresi degismis urun: eski adresle gelen ziyaretci yeni adrese yonlendirilir. */
+export function findMovedProduct(slug: string, db: ZenweldDatabase = getSnapshot()): Product | undefined {
+  return db.products.find((p) => p.active && p.previousSlugs?.includes(slug));
+}
+
 export function findProductById(
   id: string,
   db: ZenweldDatabase = getSnapshot(),
@@ -42,10 +47,25 @@ export function findProductById(
   return db.products.find((p) => p.id === id);
 }
 
+/**
+ * Linki degisen urunun eski adresi yenisine yonlenir (findMovedProduct). Bir
+ * urun baska bir urunun eski adresini alirsa o yonlendirme kalkar.
+ */
 export function saveProduct(product: Product): void {
   mutate((db) => {
     const idx = db.products.findIndex((p) => p.id === product.id);
-    const next = { ...product, updatedAt: nowIso() };
+    // Eski adresler kayitli urunden alinir: formdaki taslak, ayni ekranda
+    // ikinci kez link degistirilince eski kalmis olabilir.
+    const stored = idx >= 0 ? db.products[idx] : undefined;
+    const previousSlugs = [...new Set([...(stored?.previousSlugs ?? []), ...(stored ? [stored.slug] : [])])].filter(
+      (s) => s !== product.slug,
+    );
+    db.products.forEach((p) => {
+      if (p.id !== product.id && p.previousSlugs?.includes(product.slug)) {
+        p.previousSlugs = p.previousSlugs.filter((s) => s !== product.slug);
+      }
+    });
+    const next = { ...product, previousSlugs: previousSlugs.length ? previousSlugs : undefined, updatedAt: nowIso() };
     if (idx >= 0) db.products[idx] = next;
     else db.products.unshift({ ...next, createdAt: nowIso() });
   });
@@ -83,6 +103,7 @@ export function createProduct(partial: Partial<Product>): Product {
     active: partial.active ?? true,
     modelCode: partial.modelCode,
     manualUrl: partial.manualUrl,
+    seo: partial.seo,
   };
   mutate((db) => {
     db.products.unshift(product);

@@ -73,15 +73,31 @@ doğrudan stok matrisine gidebilirsiniz.
 - 🗑 simgesi: ürünü ve tüm stok kayıtlarını siler
 
 ### Ürün düzenleme / yeni ürün
-Beş sekme vardır:
+Altı sekme vardır:
 
 | Sekme | İçerik |
 |---|---|
-| **Temel Bilgiler** | Ad, URL (slug), SKU, model kodu, bölüm, kategori, fiyat (KDV hariç → dahil otomatik hesaplanır), durum işaretleri, kılavuz PDF bağlantısı |
+| **Temel Bilgiler** | Ad, SKU, model kodu, bölüm, kategori, fiyat (KDV hariç → dahil otomatik hesaplanır), durum işaretleri, kılavuz PDF bağlantısı |
 | **Açıklamalar** | Kısa/detaylı açıklama, öne çıkan özellikler |
 | **Görseller** | URL ile ekleme veya dosya yükleme, sıralama, kapak seçimi |
 | **Teknik Özellikler** | Satır satır özellik–değer tablosu |
 | **Kutu İçeriği** | Madde listesi |
+| **SEO** | Ürün linki, sayfa başlığı, açıklama, anahtar kelimeler, Google önizlemesi |
+
+**SEO sekmesi:**
+- **Ürün Linki:** Ürün sayfasının adresi (`/urun/…`). Yeni üründe addan otomatik
+  oluşur. Kayıtlı bir ürünün linki değiştirilirse eski link yeni linke
+  yönlendirilir; paylaşılmış bağlantılar ve Google'daki eski sonuç çalışmaya devam
+  eder. Yönlenen eski linkler sekmede listelenir. Başka bir ürün bu eski linki
+  alırsa yönlendirme kalkar, link o ürünü açar.
+- **Ürün Sayfa Başlığı:** Tarayıcı sekmesinde ve Google sonucunda görünen başlık.
+  Boş bırakılırsa "Ürün adı — Kategori | ZENWELD" kullanılır. 60 karakteri
+  geçmemesi önerilir.
+- **Açıklama:** Google sonucunda başlığın altında görünen metin. Boş bırakılırsa
+  ürünün kısa açıklaması kullanılır. 160 karakteri geçmemesi önerilir.
+- **Anahtar Kelimeler:** Virgülle ayrılır. Ürün site içi aramada bu kelimelerle de
+  bulunur ve sayfanın `keywords` etiketine yazılır. Google bu etiketi sıralamada
+  kullanmaz; görünürlüğü asıl belirleyen başlık, açıklama ve sayfa içeriğidir.
 
 **Durum işaretleri:**
 - **Kampanya / indirim** — Zenweld ana sitesindeki fiyatı etkiler.

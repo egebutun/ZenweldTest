@@ -99,6 +99,23 @@ ayrıntılar: [STOK.md](STOK.md) › "Backend'e geçiş".
 3. Ürün sayfaları önbellekte tutulmalı; yükleme uygulanınca yalnızca etkilenen
    ürünlerin sayfaları yenilenmeli, ayrıca günde en az bir kez.
 
+## Ürün SEO ve link yönlendirme — backend
+
+Panelde SEO sekmesi hazır; veri şimdilik tarayıcıda. Sunucu bugün ürün sayfasının
+başlığını, açıklamasını ve `keywords` etiketini koddaki örnek üründen üretiyor
+(`apps/zenweld-web/src/app/(site)/urun/[slug]/page.tsx`), paneldeki değişikliği
+göremiyor. Eski linkten yeni linke yönlendirme de demoda tarayıcıda yapılıyor.
+
+1. `products` tablosuna `seo_title`, `seo_description`, `seo_keywords` alanları;
+   eski linkler için `product_previous_slugs` (ürün, eski link) tablosu.
+2. Ürün sayfasının başlığı, açıklaması ve `keywords` etiketi veritabanından
+   okunmalı (`lib/seo.ts` → `productSeo`).
+3. Eski link sunucuda **301 (kalıcı)** ile yeni linke yönlendirilmeli; Google eski
+   sonucu yeni linkle değiştirir. Panelde değiştirilen yeni link sunucuda da
+   bulunmalı (bugün yalnızca tarayıcı biliyor; sunucu 404 kodu döndürüyor, sayfa
+   tarayıcıda açılıyor).
+4. Ürün kaydedilince o ürünün sayfası ve site haritası yenilenmeli.
+
 ## Belgeler (MSDS, Kaynak Rehberi, Parti Sertifikaları) — backend
 
 Panel ve site sayfaları hazır; dosyalar şimdilik yükleyen tarayıcıda

@@ -110,6 +110,25 @@ export function productJsonLd(
   };
 }
 
+/**
+ * Urun sayfasinin arama motoru bilgileri: panelde girilen SEO alanlari,
+ * bossa otomatik deger. Urun sayfasi (generateMetadata) ve paneldeki
+ * Google onizlemesi ayni sonucu kullanir.
+ */
+export function productSeo(product: Product, category?: Category) {
+  const autoTitle = category ? `${product.name} — ${category.name}` : product.name;
+  const customTitle = product.seo?.title?.trim();
+  return {
+    /** Sekmede ve aramada gorunen tam baslik */
+    title: customTitle || `${autoTitle} | ${SITE_NAME}`,
+    /** Ozel baslik yoksa sayfa sablonuyla birlesen kisa baslik */
+    autoTitle,
+    customTitle: Boolean(customTitle),
+    description: product.seo?.description?.trim() || product.shortDescription,
+    keywords: product.seo?.keywords ?? [],
+  };
+}
+
 export function breadcrumbJsonLd(
   items: { name: string; path: string }[],
 ): Record<string, unknown> {

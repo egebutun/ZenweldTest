@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { categories, products } from "@zenweld/data";
 import { JsonLd } from "@/components/common/JsonLd";
 import { catalogTrail } from "@/lib/catalog";
-import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical, productJsonLd } from "@/lib/seo";
+import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical, productJsonLd, productSeo } from "@/lib/seo";
 import { ProductPageClient } from "./ProductPageClient";
 
 /**
@@ -31,23 +31,24 @@ export async function generateMetadata({
   }
 
   const category = categories.find((c) => c.slug === product.categorySlug);
-  const title = category
-    ? `${product.name} — ${category.name}`
-    : product.name;
-  const description = product.shortDescription;
+  // Panelin SEO sekmesi: ozel baslik tam haliyle kullanilir, bos alanlar
+  // otomatik doldurulur.
+  const seo = productSeo(product, category);
+  const description = seo.description;
   // Urunun fotografi yoksa paylasim karti olarak markali gorsel kullanilir.
   // Onceden 519 KB'lik dikey bir urun fotografi vardi; sosyal aglar bu
   // olcuyu kirpiyordu.
   const image = product.images[0]?.url ?? "/images/brand/og-cover.png";
 
   return {
-    title,
+    title: seo.customTitle ? { absolute: seo.title } : seo.autoTitle,
     description,
+    keywords: seo.keywords.length > 0 ? seo.keywords : undefined,
     alternates: canonical(`/urun/${product.slug}`),
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
-      title: `${title} | ${SITE_NAME}`,
+      title: seo.title,
       description,
       url: absoluteUrl(`/urun/${product.slug}`),
       images: [{ url: image, alt: product.name }],
@@ -55,7 +56,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | ${SITE_NAME}`,
+      title: seo.title,
       description,
       images: [image],
     },
