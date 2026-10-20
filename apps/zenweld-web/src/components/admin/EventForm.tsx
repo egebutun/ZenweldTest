@@ -13,6 +13,8 @@ import {
   SingleImageField,
   useContentForm,
 } from "./content-form";
+import { SeoPanel } from "./SeoPanel";
+import { eventSeo } from "@/lib/seo";
 
 const COUNTRIES = [
   "Türkiye",
@@ -91,10 +93,12 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
         { id: "temel", label: "Temel Bilgiler" },
         { id: "aciklama", label: "Açıklamalar" },
         { id: "gorseller", label: "Logo & Fotoğraflar", badge: draft.images.length },
+        { id: "seo", label: "SEO" },
       ]}
     >
       {form.tab === "temel" && (
         <FormPanel>
+          {/* Etkinlik linki SEO sekmesinde; yeni etkinlikte addan otomatik olusur. */}
           <FormRow label="Etkinlik Adı" required>
             <Input
               required
@@ -104,10 +108,6 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
                 if (isNew) set("slug", slugify(e.target.value));
               }}
             />
-          </FormRow>
-
-          <FormRow label="URL (slug)" hint={`/etkinlikler/${draft.slug || "…"}`}>
-            <Input value={draft.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
           </FormRow>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -232,6 +232,20 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
             placeholder="/images/events/etkinlik/1.jpg"
           />
         </FormPanel>
+      )}
+
+      {form.tab === "seo" && (
+        <SeoPanel
+          noun="Etkinlik"
+          path="/etkinlikler"
+          slug={draft.slug}
+          onSlugChange={(v) => set("slug", v)}
+          stored={event && db.events.find((e) => e.id === event.id)}
+          value={draft.seo}
+          onChange={(seo) => set("seo", seo)}
+          compute={(seo) => eventSeo({ ...draft, seo })}
+          descriptionFallback="etkinliğin kısa açıklaması"
+        />
       )}
     </ContentFormShell>
   );

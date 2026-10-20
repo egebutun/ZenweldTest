@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { notFound, useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+import { notFound } from "next/navigation";
 import { FileText } from "lucide-react";
 import { findMovedProduct, findProductBySlug, listProducts, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
@@ -28,31 +28,20 @@ import { useT } from "@/lib/i18n-client";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { catalogTrail } from "@/lib/catalog";
 import { productSeo } from "@/lib/seo";
+import { useMovedRedirect, useSeoTitle } from "@/lib/page-seo-client";
 
 export function ProductPageClient({ slug }: { slug: string }) {
   const t = useT();
   const db = useDatabase();
-  const router = useRouter();
   const [tab, setTab] = useState("specs");
   const [selection, setSelection] = useState<VariantSelection>({});
 
   const product = useMemo(() => findProductBySlug(slug, db), [slug, db]);
-  // Linki panelden degismis urun: eski adres yeni adrese yonlenir. Demoda
-  // tarayicida yapiliyor; canlida sunucu 301 ile yonlendirecek.
   const moved = useMemo(() => (product ? undefined : findMovedProduct(slug, db)), [product, slug, db]);
-  useEffect(() => {
-    if (moved) router.replace(`/urun/${moved.slug}`);
-  }, [moved, router]);
-
-  // Panelde girilen sayfa basligi demoda sekmede de gorunsun. Arama motorlari
-  // basligi sunucunun urettigi sayfadan okur (bkz. page.tsx generateMetadata).
-  const seoTitle = useMemo(
-    () => product && productSeo(product, db.categories.find((c) => c.slug === product.categorySlug)).title,
-    [product, db],
+  useMovedRedirect(moved, "/urun");
+  useSeoTitle(
+    product && productSeo(product, db.categories.find((c) => c.slug === product.categorySlug)).title,
   );
-  useEffect(() => {
-    if (seoTitle) document.title = seoTitle;
-  }, [seoTitle]);
 
   const related = useMemo(() => {
     if (!product) return [];

@@ -9,7 +9,8 @@ import { BasicsTab } from "./product/BasicsTab";
 import { DescriptionTab } from "./product/DescriptionTab";
 import { ImagesTab } from "./product/ImagesTab";
 import { InTheBoxTab, SpecsTab } from "./product/ListTabs";
-import { SeoTab } from "./product/SeoTab";
+import { SeoPanel } from "./SeoPanel";
+import { productSeo } from "@/lib/seo";
 
 /**
  * URUN FORMU
@@ -92,7 +93,19 @@ export function ProductForm({ product }: { product?: Product }) {
       {form.tab === "gorseller" && <ImagesTab {...tabProps} onError={form.setError} />}
       {form.tab === "teknik" && <SpecsTab {...tabProps} />}
       {form.tab === "kutu" && <InTheBoxTab {...tabProps} />}
-      {form.tab === "seo" && <SeoTab {...tabProps} isNew={isNew} />}
+      {form.tab === "seo" && (
+        <SeoPanel
+          noun="Ürün"
+          path="/urun"
+          slug={draft.slug}
+          onSlugChange={(v) => form.set("slug", v)}
+          stored={product && db.products.find((p) => p.id === product.id)}
+          value={draft.seo}
+          onChange={(seo) => form.set("seo", seo)}
+          compute={(seo) => productSeo({ ...draft, seo }, db.categories.find((c) => c.slug === draft.categorySlug))}
+          descriptionFallback="ürünün kısa açıklaması"
+        />
+      )}
     </ContentFormShell>
   );
 }

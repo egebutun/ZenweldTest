@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { blogPosts } from "@zenweld/data";
-import { SITE_NAME, absoluteUrl, canonical } from "@/lib/seo";
+import { SITE_NAME, absoluteUrl, blogPostSeo, canonical, seoMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -12,12 +12,13 @@ export async function generateMetadata({
 
   if (!post) return { title: "Yazı" };
 
-  const title = post.title;
-  const description = post.excerpt;
+  // Panelin SEO sekmesi; bos alanlarda yazinin basligi ve ozeti.
+  const seo = blogPostSeo(post);
+  const title = seo.title;
+  const description = seo.description;
 
   return {
-    title,
-    description,
+    ...seoMetadata(seo),
     alternates: canonical(`/blog/${post.slug}`),
     openGraph: {
       type: "article",
@@ -27,7 +28,7 @@ export async function generateMetadata({
       url: absoluteUrl(`/blog/${post.slug}`),
       publishedTime: post.publishedAt,
       authors: [post.author],
-      images: [{ url: post.coverUrl, alt: title }],
+      images: [{ url: post.coverUrl, alt: post.title }],
     },
     twitter: { card: "summary_large_image", title, description, images: [post.coverUrl] },
     // Blog yazilari aramaya acik ve site haritasinda. Ornek yazilarin

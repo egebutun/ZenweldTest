@@ -3,20 +3,28 @@
 import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, ExternalLink, MapPin } from "lucide-react";
-import { findEventBySlug, useDatabase } from "@zenweld/store";
+import { findEventBySlug, findMovedEvent, useDatabase } from "@zenweld/store";
 import Link from "next/link";
 import { ProductImage, RichText } from "@zenweld/ui";
 import { EventLogo } from "./EventLogo";
 import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";
+import { eventSeo } from "@/lib/seo";
+import { useMovedRedirect, useSeoTitle } from "@/lib/page-seo-client";
 
 export function EventDetail({ slug }: { slug: string }) {
   const t = useT();
   const db = useDatabase();
 
   const event = useMemo(() => findEventBySlug(slug, db), [db, slug]);
+  const moved = useMemo(() => (event ? undefined : findMovedEvent(slug, db)), [event, slug, db]);
+  useMovedRedirect(moved, "/etkinlikler");
+  useSeoTitle(event && eventSeo(event).title);
 
-  if (!event) notFound();
+  if (!event) {
+    if (moved) return null;
+    notFound();
+  }
 
   return (
     <>

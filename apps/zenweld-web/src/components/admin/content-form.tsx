@@ -12,8 +12,8 @@ import { AdminPageHeader } from "./AdminShell";
  * ICERIK FORMLARININ ORTAK PARCALARI
  *
  * Haber, blog ve etkinlik formlari ayni iskeleti kullanir: sekmeler,
- * hata/kaydedildi uyarilari, metin alanlari, adres (slug) alani,
- * kapak/logo secici, fotograf galerisi ve alttaki Kaydet/Vazgec cubugu.
+ * hata/kaydedildi uyarilari, metin alanlari, kapak/logo secici, fotograf
+ * galerisi ve alttaki Kaydet/Vazgec cubugu. Link ve SEO alanlari SeoPanel'de.
  * Her form yalnizca kendine ozgu alanlari ekler.
  */
 
@@ -134,24 +134,6 @@ export function FormPanel({ children }: { children: ReactNode }) {
 /* ------------------------------------------------------------------ */
 /* Alanlar                                                             */
 /* ------------------------------------------------------------------ */
-
-/** Sayfa adresi (slug) alani. */
-export function SlugField({
-  slug,
-  onChange,
-  path,
-}: {
-  slug: string;
-  onChange: (value: string) => void;
-  /** Ornek: "/haberler" */
-  path: string;
-}) {
-  return (
-    <FormRow label="Adres (slug)" hint={`${path}/${slug || "…"}`}>
-      <Input value={slug} onChange={(e) => onChange(slugify(e.target.value))} />
-    </FormRow>
-  );
-}
 
 /** "2026-08-12T09:00:00+03:00" -> "2026-08-12T09:00" (datetime-local girdisi) */
 const toLocalInput = (iso: string) => {

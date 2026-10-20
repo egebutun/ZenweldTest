@@ -102,6 +102,11 @@ Altı sekme vardır:
   bulunur ve sayfanın `keywords` etiketine yazılır. Google bu etiketi sıralamada
   kullanmaz; görünürlüğü asıl belirleyen başlık, açıklama ve sayfa içeriğidir.
 
+Aynı **SEO sekmesi blog yazılarında, haberlerde ve etkinliklerde** de vardır
+(İçerik menüsü). Link, eski linkin yönlendirilmesi ve anahtar kelimeler ürünlerdeki
+gibi çalışır. Boş bırakılan başlık yerine "Başlık | ZENWELD", boş açıklama yerine
+yazının/haberin özeti ve etkinliğin kısa açıklaması kullanılır.
+
 **Durum işaretleri:**
 - **Kampanya / indirim** — Zenweld ana sitesindeki fiyatı etkiler.
 

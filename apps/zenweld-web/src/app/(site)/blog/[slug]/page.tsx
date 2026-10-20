@@ -2,12 +2,14 @@
 
 import { use } from "react";
 import { notFound } from "next/navigation";
-import { findBlogPostBySlug, useDatabase } from "@zenweld/store";
+import { findBlogPostBySlug, findMovedBlogPost, useDatabase } from "@zenweld/store";
 import { PageHero } from "@/components/common/PageShell";
 import { RichText } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";
+import { blogPostSeo } from "@/lib/seo";
+import { useMovedRedirect, useSeoTitle } from "@/lib/page-seo-client";
 
 export default function BlogPostPage({
   params,
@@ -20,8 +22,14 @@ export default function BlogPostPage({
 
   // Yayindan kaldirilan yazi sitede gorunmez.
   const post = findBlogPostBySlug(slug, db);
+  const moved = post ? undefined : findMovedBlogPost(slug, db);
+  useMovedRedirect(moved, "/blog");
+  useSeoTitle(post && blogPostSeo(post).title);
 
-  if (!post) notFound();
+  if (!post) {
+    if (moved) return null;
+    notFound();
+  }
 
   return (
     <>

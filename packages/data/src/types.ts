@@ -150,15 +150,16 @@ export interface Product {
   updatedAt: string;
   active: boolean;
   /** Arama motoru bilgileri; bos alanlarda otomatik deger kullanilir */
-  seo?: ProductSeo;
+  seo?: SeoFields;
   /** Urunun eski adresleri (slug): link degisince eski adres yenisine yonlenir */
   previousSlugs?: string[];
 }
 
-export interface ProductSeo {
-  /** Sayfa basligi (tam haliyle; bossa "Urun adi — Kategori | ZENWELD") */
+/** Panelin SEO sekmesi: urun, blog yazisi, haber ve etkinlik. */
+export interface SeoFields {
+  /** Sayfa basligi (tam haliyle; bossa otomatik, orn. "Urun adi — Kategori | ZENWELD") */
   title?: string;
-  /** Arama sonucunda basligin altindaki aciklama (bossa kisa aciklama) */
+  /** Arama sonucunda basligin altindaki aciklama (bossa kisa aciklama/ozet) */
   description?: string;
   /** Site aramasinda ve keywords etiketinde kullanilir */
   keywords?: string[];
@@ -513,6 +514,9 @@ export interface BlogPost {
    * Yayinda mi? Yonetim panelinden kapatilan yazi sitede gorunmez. Eski kayitlarda alan yoksa yayinda sayilir.
    */
   active?: boolean;
+  seo?: SeoFields;
+  /** Eski adresler: link degisince eski adres yenisine yonlenir */
+  previousSlugs?: string[];
 }
 
 /* ------------------------------------------------------------------ */
@@ -616,6 +620,9 @@ export interface ZenweldEvent {
   websiteUrl?: string;
   featured: boolean;
   active: boolean;
+  seo?: SeoFields;
+  /** Eski adresler: link degisince eski adres yenisine yonlenir */
+  previousSlugs?: string[];
 }
 
 /* ------------------------------------------------------------------ */
@@ -635,6 +642,9 @@ export interface NewsItem {
   images: string[];
   publishedAt: string;
   active: boolean;
+  seo?: SeoFields;
+  /** Eski adresler: link degisince eski adres yenisine yonlenir */
+  previousSlugs?: string[];
 }
 
 export interface WarrantyRecord {

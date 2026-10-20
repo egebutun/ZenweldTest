@@ -2,7 +2,7 @@
 
 import { type BlogPost, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
-import { nowIso } from "./shared";
+import { findMoved, nowIso, withPreviousSlugs } from "./shared";
 
 /* ------------------------------------------------------------------ */
 /* Blog                                                               */
@@ -37,6 +37,11 @@ export function findBlogPostBySlug(
   return db.blogPosts.find((p) => p.active !== false && p.slug === slug);
 }
 
+/** Adresi degismis yazi: eski adresle gelen ziyaretci yeni adrese yonlenir. */
+export function findMovedBlogPost(slug: string, db: ZenweldDatabase = getSnapshot()): BlogPost | undefined {
+  return findMoved(listBlogPosts(db), slug);
+}
+
 function sortBlogPosts(list: BlogPost[]): void {
   list.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
@@ -44,8 +49,9 @@ function sortBlogPosts(list: BlogPost[]): void {
 export function saveBlogPost(item: BlogPost): void {
   mutate((db) => {
     const idx = db.blogPosts.findIndex((p) => p.id === item.id);
-    if (idx >= 0) db.blogPosts[idx] = item;
-    else db.blogPosts.unshift(item);
+    const next = withPreviousSlugs(db.blogPosts, item);
+    if (idx >= 0) db.blogPosts[idx] = next;
+    else db.blogPosts.unshift(next);
     sortBlogPosts(db.blogPosts);
   });
 }
@@ -63,6 +69,7 @@ export function createBlogPost(partial: Partial<BlogPost>): BlogPost {
     author: partial.author ?? "Zenweld",
     publishedAt: partial.publishedAt ?? nowIso(),
     active: partial.active ?? true,
+    seo: partial.seo,
   };
   mutate((db) => {
     db.blogPosts.unshift(item);

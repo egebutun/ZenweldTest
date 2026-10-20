@@ -3,11 +3,13 @@
 import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { findNewsBySlug, listNews, useDatabase } from "@zenweld/store";
+import { findMovedNews, findNewsBySlug, listNews, useDatabase } from "@zenweld/store";
 import Link from "next/link";
 import { ProductImage, RichText } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";
+import { newsSeo } from "@/lib/seo";
+import { useMovedRedirect, useSeoTitle } from "@/lib/page-seo-client";
 
 export function NewsDetail({ slug }: { slug: string }) {
   const t = useT();
@@ -18,7 +20,14 @@ export function NewsDetail({ slug }: { slug: string }) {
     () => listNews(db).filter((n) => n.id !== item?.id).slice(0, 3),
     [db, item],
   );
-  if (!item) notFound();
+  const moved = useMemo(() => (item ? undefined : findMovedNews(slug, db)), [item, slug, db]);
+  useMovedRedirect(moved, "/haberler");
+  useSeoTitle(item && newsSeo(item).title);
+
+  if (!item) {
+    if (moved) return null;
+    notFound();
+  }
 
   return (
     <article className="zw-container py-10">

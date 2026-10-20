@@ -2,7 +2,7 @@
 
 import { type NewsItem, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
-import { nowIso } from "./shared";
+import { findMoved, nowIso, withPreviousSlugs } from "./shared";
 
 /* ------------------------------------------------------------------ */
 /* Haberler                                                            */
@@ -30,6 +30,11 @@ export function findNewsBySlug(
   return db.news.find((n) => n.active && n.slug === slug);
 }
 
+/** Adresi degismis haber: eski adresle gelen ziyaretci yeni adrese yonlenir. */
+export function findMovedNews(slug: string, db: ZenweldDatabase = getSnapshot()): NewsItem | undefined {
+  return findMoved(listNews(db), slug);
+}
+
 /** Yayin tarihine gore yeniden eskiye siralar. */
 function sortNews(list: NewsItem[]): void {
   list.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
@@ -38,8 +43,9 @@ function sortNews(list: NewsItem[]): void {
 export function saveNews(item: NewsItem): void {
   mutate((db) => {
     const idx = db.news.findIndex((n) => n.id === item.id);
-    if (idx >= 0) db.news[idx] = item;
-    else db.news.unshift(item);
+    const next = withPreviousSlugs(db.news, item);
+    if (idx >= 0) db.news[idx] = next;
+    else db.news.unshift(next);
     sortNews(db.news);
   });
 }
@@ -56,6 +62,7 @@ export function createNews(partial: Partial<NewsItem>): NewsItem {
     images: partial.images ?? [],
     publishedAt: partial.publishedAt ?? nowIso(),
     active: partial.active ?? true,
+    seo: partial.seo,
   };
   mutate((db) => {
     db.news.unshift(item);

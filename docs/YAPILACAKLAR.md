@@ -107,22 +107,24 @@ ayrıntılar: [STOK.md](STOK.md) › "Backend'e geçiş".
 3. Ürün sayfaları önbellekte tutulmalı; yükleme uygulanınca yalnızca etkilenen
    ürünlerin sayfaları yenilenmeli, ayrıca günde en az bir kez.
 
-## Ürün SEO ve link yönlendirme — backend
+## Ürün, blog, haber ve etkinlik SEO'su ve link yönlendirme — backend
 
-Panelde SEO sekmesi hazır; veri şimdilik tarayıcıda. Sunucu bugün ürün sayfasının
-başlığını, açıklamasını ve `keywords` etiketini koddaki örnek üründen üretiyor
-(`apps/zenweld-web/src/app/(site)/urun/[slug]/page.tsx`), paneldeki değişikliği
-göremiyor. Eski linkten yeni linke yönlendirme de demoda tarayıcıda yapılıyor.
+Panelde SEO sekmesi hazır (ürün, blog yazısı, haber, etkinlik); veri şimdilik
+tarayıcıda. Sunucu bugün bu sayfaların başlığını, açıklamasını ve `keywords`
+etiketini koddaki örnek veriden üretiyor (`generateMetadata`), paneldeki
+değişikliği göremiyor. Eski linkten yeni linke yönlendirme de demoda tarayıcıda
+yapılıyor (`lib/page-seo-client.ts`).
 
-1. `products` tablosuna `seo_title`, `seo_description`, `seo_keywords` alanları;
-   eski linkler için `product_previous_slugs` (ürün, eski link) tablosu.
-2. Ürün sayfasının başlığı, açıklaması ve `keywords` etiketi veritabanından
-   okunmalı (`lib/seo.ts` → `productSeo`).
+1. `products`, `blog_posts`, `news`, `events` tablolarına `seo_title`,
+   `seo_description`, `seo_keywords` alanları; eski linkler için tek bir
+   `previous_slugs` (tür, kayıt, eski link) tablosu.
+2. Sayfaların başlığı, açıklaması ve `keywords` etiketi veritabanından
+   okunmalı (`lib/seo.ts` → `productSeo`, `blogPostSeo`, `newsSeo`, `eventSeo`).
 3. Eski link sunucuda **301 (kalıcı)** ile yeni linke yönlendirilmeli; Google eski
    sonucu yeni linkle değiştirir. Panelde değiştirilen yeni link sunucuda da
    bulunmalı (bugün yalnızca tarayıcı biliyor; sunucu 404 kodu döndürüyor, sayfa
    tarayıcıda açılıyor).
-4. Ürün kaydedilince o ürünün sayfası ve site haritası yenilenmeli. Site
+4. Kayıt kaydedilince o sayfa ve site haritası yenilenmeli. Site
    haritası veritabanından üretilmeli: panelde eklenen ürünler ve blog yazıları
    girmeli, linki değişen üründe yalnızca yeni link yer almalı.
 

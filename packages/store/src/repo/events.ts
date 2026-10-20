@@ -2,7 +2,7 @@
 
 import type { ZenweldDatabase, ZenweldEvent } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
-import { nowIso } from "./shared";
+import { findMoved, nowIso, withPreviousSlugs } from "./shared";
 
 /* ------------------------------------------------------------------ */
 /* Etkinlikler                                                         */
@@ -28,6 +28,11 @@ export function findEventBySlug(
   return db.events.find((e) => e.active && e.slug === slug);
 }
 
+/** Adresi degismis etkinlik: eski adresle gelen ziyaretci yeni adrese yonlenir. */
+export function findMovedEvent(slug: string, db: ZenweldDatabase = getSnapshot()): ZenweldEvent | undefined {
+  return findMoved(listEvents(db), slug);
+}
+
 /** Baslangic tarihine gore yeniden eskiye siralar. */
 function sortEvents(list: ZenweldEvent[]): void {
   list.sort((a, b) => b.startDate.localeCompare(a.startDate));
@@ -36,8 +41,9 @@ function sortEvents(list: ZenweldEvent[]): void {
 export function saveEvent(event: ZenweldEvent): void {
   mutate((db) => {
     const idx = db.events.findIndex((e) => e.id === event.id);
-    if (idx >= 0) db.events[idx] = event;
-    else db.events.unshift(event);
+    const next = withPreviousSlugs(db.events, event);
+    if (idx >= 0) db.events[idx] = next;
+    else db.events.unshift(next);
     sortEvents(db.events);
   });
 }
@@ -61,6 +67,7 @@ export function createEvent(partial: Partial<ZenweldEvent>): ZenweldEvent {
     websiteUrl: partial.websiteUrl,
     featured: partial.featured ?? false,
     active: partial.active ?? true,
+    seo: partial.seo,
   };
   mutate((db) => {
     db.events.unshift(event);

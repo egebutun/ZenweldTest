@@ -1,14 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { CornerDownRight } from "lucide-react";
-import type { ProductSeo } from "@zenweld/data";
-import { useDatabase } from "@zenweld/store";
+import type { SeoFields } from "@zenweld/data";
 import { FormRow, Input, Textarea } from "@zenweld/ui";
 import { slugify } from "@zenweld/utils";
-import { productSeo } from "@/lib/seo";
-import { FormPanel } from "../content-form";
-import type { ProductTabProps } from "./types";
+import type { PageSeo } from "@/lib/seo";
+import { FormPanel } from "./content-form";
 
 /** Google'in arama sonucunda kesmeden gosterdigi yaklasik uzunluklar */
 const TITLE_MAX = 60;
@@ -20,50 +18,76 @@ const parseKeywords = (text: string) => [
 ];
 
 /**
- * SEO sekmesi: urun linki, sayfa basligi, aciklama, anahtar kelimeler ve
- * Google onizlemesi. Bos alanlarda otomatik deger kullanilir (lib/seo.ts).
+ * SEO SEKMESI (urun, blog yazisi, haber, etkinlik)
+ *
+ * Link, sayfa basligi, aciklama, anahtar kelimeler ve Google onizlemesi.
+ * Bos alanlarda otomatik deger kullanilir; `compute` sayfanin kendi
+ * hesaplamasidir (lib/seo.ts), boylece onizleme sitedeki sonucla aynidir.
+ * Kayitli bir kaydin linki degisirse eski link yeni linke yonlenir
+ * (store: withPreviousSlugs).
  */
-export function SeoTab({ draft, set, isNew }: ProductTabProps & { isNew: boolean }) {
-  const db = useDatabase();
-  const stored = db.products.find((p) => p.id === draft.id);
-  const category = db.categories.find((c) => c.slug === draft.categorySlug);
-  const seo = productSeo(draft, category);
-  const auto = productSeo({ ...draft, seo: undefined }, category);
+export function SeoPanel({
+  noun,
+  path,
+  slug,
+  onSlugChange,
+  stored,
+  value,
+  onChange,
+  compute,
+  descriptionFallback,
+}: {
+  /** Etiketlerde: "Ürün" -> "Ürün Linki", "Ürün Sayfa Başlığı" */
+  noun: string;
+  /** Adres oneki: "/urun" */
+  path: string;
+  slug: string;
+  onSlugChange: (slug: string) => void;
+  /** Kayitli hali (yeni kayitta yok) */
+  stored?: { slug: string; previousSlugs?: string[] };
+  value?: SeoFields;
+  onChange: (seo: SeoFields | undefined) => void;
+  compute: (seo: SeoFields | undefined) => PageSeo;
+  /** "ürünün kısa açıklaması" */
+  descriptionFallback: string;
+}) {
+  const seo = compute(value);
+  const auto = compute(undefined);
   // Virgul yazilirken bos kelime silinmesin diye metin ayrica tutulur.
-  const [keywordText, setKeywordText] = useState(draft.seo?.keywords?.join(", ") ?? "");
+  const [keywordText, setKeywordText] = useState(value?.keywords?.join(", ") ?? "");
 
-  const setSeo = (patch: Partial<ProductSeo>) => {
-    const next = { ...draft.seo, ...patch };
+  const setSeo = (patch: Partial<SeoFields>) => {
+    const next = { ...value, ...patch };
     const empty = !next.title?.trim() && !next.description?.trim() && !next.keywords?.length;
-    set("seo", empty ? undefined : next);
+    onChange(empty ? undefined : next);
   };
 
-  const slugChanged = !isNew && stored && draft.slug && draft.slug !== stored.slug;
-  const titleLength = (draft.seo?.title ?? "").length;
-  const descriptionLength = (draft.seo?.description ?? "").length;
+  const slugChanged = stored && slug && slug !== stored.slug;
+  const titleLength = (value?.title ?? "").length;
+  const descriptionLength = (value?.description ?? "").length;
 
   return (
     <div className="space-y-5">
       <FormPanel>
         <FormRow
-          label="Ürün Linki"
+          label={`${noun} Linki`}
           hint="Linkte Türkçe karakter ve boşluk kullanılmaz; yazdığınız metin otomatik düzeltilir."
         >
           <div className="flex">
             <span className="flex shrink-0 items-center rounded-l-[4px] border border-r-0 border-zw-grey-300 bg-zw-grey-50 px-3 text-sm text-zw-grey-500">
-              /urun/
+              {path}/
             </span>
             <Input
               className="rounded-l-none"
-              value={draft.slug}
-              onChange={(e) => set("slug", slugify(e.target.value))}
+              value={slug}
+              onChange={(e) => onSlugChange(slugify(e.target.value))}
             />
           </div>
         </FormRow>
 
         {slugChanged && (
           <p className="rounded-[4px] bg-amber-50 px-3 py-2 text-sm text-amber-800">
-            Kaydedince eski link <strong>/urun/{stored.slug}</strong> yeni linke yönlendirilir;
+            Kaydedince eski link <strong>{path}/{stored.slug}</strong> yeni linke yönlendirilir;
             paylaşılmış bağlantılar ve Google'daki eski sonuç çalışmaya devam eder.
           </p>
         )}
@@ -77,7 +101,7 @@ export function SeoTab({ draft, set, isNew }: ProductTabProps & { isNew: boolean
               {stored.previousSlugs.map((s) => (
                 <li key={s} className="flex items-center gap-1.5">
                   <CornerDownRight size={14} className="shrink-0 text-zw-grey-400" />
-                  /urun/{s}
+                  {path}/{s}
                 </li>
               ))}
             </ul>
@@ -87,7 +111,7 @@ export function SeoTab({ draft, set, isNew }: ProductTabProps & { isNew: boolean
 
       <FormPanel>
         <FormRow
-          label="Ürün Sayfa Başlığı"
+          label={`${noun} Sayfa Başlığı`}
           hint={
             <Counter length={titleLength} max={TITLE_MAX}>
               Boş bırakılırsa: {auto.title}
@@ -95,7 +119,7 @@ export function SeoTab({ draft, set, isNew }: ProductTabProps & { isNew: boolean
           }
         >
           <Input
-            value={draft.seo?.title ?? ""}
+            value={value?.title ?? ""}
             placeholder={auto.title}
             onChange={(e) => setSeo({ title: e.target.value })}
           />
@@ -105,13 +129,13 @@ export function SeoTab({ draft, set, isNew }: ProductTabProps & { isNew: boolean
           label="Açıklama"
           hint={
             <Counter length={descriptionLength} max={DESCRIPTION_MAX}>
-              Boş bırakılırsa ürünün kısa açıklaması kullanılır.
+              Boş bırakılırsa {descriptionFallback} kullanılır.
             </Counter>
           }
         >
           <Textarea
             className="min-h-20"
-            value={draft.seo?.description ?? ""}
+            value={value?.description ?? ""}
             placeholder={auto.description}
             onChange={(e) => setSeo({ description: e.target.value })}
           />
@@ -139,7 +163,7 @@ export function SeoTab({ draft, set, isNew }: ProductTabProps & { isNew: boolean
         {/* Gercek alan adiyla (lib/seo.ts INDEXABLE_HOSTS) gosterilir. */}
         <div className="max-w-[600px] font-sans">
           <div className="truncate text-sm text-zw-grey-700">
-            zenweld.com › urun › {draft.slug || "…"}
+            zenweld.com › {path.slice(1)} › {slug || "…"}
           </div>
           <div className="mt-1 truncate text-xl leading-snug text-[#1a0dab]">{seo.title}</div>
           <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-zw-grey-600">
@@ -152,7 +176,7 @@ export function SeoTab({ draft, set, isNew }: ProductTabProps & { isNew: boolean
 }
 
 /** Karakter sayaci: sinir asilinca kirmizi uyari verir. */
-function Counter({ length, max, children }: { length: number; max: number; children: React.ReactNode }) {
+function Counter({ length, max, children }: { length: number; max: number; children: ReactNode }) {
   return (
     <span className="flex flex-wrap justify-between gap-x-3">
       <span className="min-w-0">{children}</span>

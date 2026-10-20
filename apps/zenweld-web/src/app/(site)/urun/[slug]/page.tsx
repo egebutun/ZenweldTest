@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import { categories, products } from "@zenweld/data";
 import { JsonLd } from "@/components/common/JsonLd";
 import { catalogTrail } from "@/lib/catalog";
-import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical, productJsonLd, productSeo } from "@/lib/seo";
+import {
+  SITE_NAME,
+  absoluteUrl,
+  breadcrumbJsonLd,
+  canonical,
+  productJsonLd,
+  productSeo,
+  seoMetadata,
+} from "@/lib/seo";
 import { ProductPageClient } from "./ProductPageClient";
 
 /**
@@ -41,9 +49,7 @@ export async function generateMetadata({
   const image = product.images[0]?.url ?? "/images/brand/og-cover.png";
 
   return {
-    title: seo.customTitle ? { absolute: seo.title } : seo.autoTitle,
-    description,
-    keywords: seo.keywords.length > 0 ? seo.keywords : undefined,
+    ...seoMetadata(seo),
     alternates: canonical(`/urun/${product.slug}`),
     openGraph: {
       type: "website",

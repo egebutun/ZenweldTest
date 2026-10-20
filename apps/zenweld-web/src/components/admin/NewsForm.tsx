@@ -12,11 +12,12 @@ import {
   ContentTextFields,
   PublishedAtField,
   SingleImageField,
-  SlugField,
   findSlugClash,
   resolveSlug,
   useContentForm,
 } from "./content-form";
+import { SeoPanel } from "./SeoPanel";
+import { newsSeo } from "@/lib/seo";
 
 const EMPTY: NewsItem = {
   id: "",
@@ -67,23 +68,22 @@ export function NewsForm({ item }: { item?: NewsItem }) {
         { id: "temel", label: "Temel Bilgiler" },
         { id: "icerik", label: "İçerik" },
         { id: "gorsel", label: "Görseller" },
+        { id: "seo", label: "SEO" },
       ]}
     >
       {form.tab === "temel" && (
         <FormPanel>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Haber Başlığı" required>
-              <Input
-                required
-                value={draft.title}
-                onChange={(e) => {
-                  set("title", e.target.value);
-                  if (isNew) set("slug", slugify(e.target.value));
-                }}
-              />
-            </FormRow>
-            <SlugField slug={draft.slug} onChange={(v) => set("slug", v)} path="/haberler" />
-          </div>
+          {/* Haber linki SEO sekmesinde; yeni haberde basliktan otomatik olusur. */}
+          <FormRow label="Haber Başlığı" required>
+            <Input
+              required
+              value={draft.title}
+              onChange={(e) => {
+                set("title", e.target.value);
+                if (isNew) set("slug", slugify(e.target.value));
+              }}
+            />
+          </FormRow>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <PublishedAtField value={draft.publishedAt} onChange={(v) => set("publishedAt", v)} />
@@ -135,6 +135,20 @@ export function NewsForm({ item }: { item?: NewsItem }) {
             />
           </div>
         </FormPanel>
+      )}
+
+      {form.tab === "seo" && (
+        <SeoPanel
+          noun="Haber"
+          path="/haberler"
+          slug={draft.slug}
+          onSlugChange={(v) => set("slug", v)}
+          stored={item && db.news.find((n) => n.id === item.id)}
+          value={draft.seo}
+          onChange={(seo) => set("seo", seo)}
+          compute={(seo) => newsSeo({ ...draft, seo })}
+          descriptionFallback="haberin özeti"
+        />
       )}
     </ContentFormShell>
   );

@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import {
   faqs,
   isDiscountActive,
   salePriceExVat,
+  type BlogPost,
   type Category,
+  type NewsItem,
   type Product,
+  type SeoFields,
+  type ZenweldEvent,
 } from "@zenweld/data";
 import { CONTACT, OFFICES } from "@/lib/contact";
 
@@ -111,23 +116,40 @@ export function productJsonLd(
 }
 
 /**
- * Urun sayfasinin arama motoru bilgileri: panelde girilen SEO alanlari,
- * bossa otomatik deger. Urun sayfasi (generateMetadata) ve paneldeki
- * Google onizlemesi ayni sonucu kullanir.
+ * Sayfanin arama motoru bilgileri: panelin SEO sekmesinde girilen alanlar,
+ * bossa otomatik deger. Sayfanin generateMetadata'si ve paneldeki Google
+ * onizlemesi ayni sonucu kullanir.
  */
-export function productSeo(product: Product, category?: Category) {
-  const autoTitle = category ? `${product.name} — ${category.name}` : product.name;
-  const customTitle = product.seo?.title?.trim();
+export function pageSeo(seo: SeoFields | undefined, autoTitle: string, autoDescription: string) {
   return {
     /** Sekmede ve aramada gorunen tam baslik */
-    title: customTitle || `${autoTitle} | ${SITE_NAME}`,
-    /** Ozel baslik yoksa sayfa sablonuyla birlesen kisa baslik */
-    autoTitle,
-    customTitle: Boolean(customTitle),
-    description: product.seo?.description?.trim() || product.shortDescription,
-    keywords: product.seo?.keywords ?? [],
+    title: seo?.title?.trim() || `${autoTitle} | ${SITE_NAME}`,
+    description: seo?.description?.trim() || autoDescription,
+    keywords: seo?.keywords ?? [],
   };
 }
+
+export type PageSeo = ReturnType<typeof pageSeo>;
+
+/** generateMetadata icin baslik, aciklama ve keywords etiketi. */
+export function seoMetadata(seo: PageSeo): Pick<Metadata, "title" | "description" | "keywords"> {
+  return {
+    // Baslik tam haliyle yazilir; ust sayfanin baslik sablonuna bagli kalmaz
+    // (ornegin /blog sayfasi sablonu tasimiyor).
+    title: { absolute: seo.title },
+    description: seo.description,
+    keywords: seo.keywords.length > 0 ? seo.keywords : undefined,
+  };
+}
+
+export const productSeo = (product: Product, category?: Category) =>
+  pageSeo(product.seo, category ? `${product.name} — ${category.name}` : product.name, product.shortDescription);
+
+export const blogPostSeo = (post: BlogPost) => pageSeo(post.seo, post.title, post.excerpt);
+
+export const newsSeo = (item: NewsItem) => pageSeo(item.seo, item.title, item.summary);
+
+export const eventSeo = (event: ZenweldEvent) => pageSeo(event.seo, event.title, event.summary);
 
 export function breadcrumbJsonLd(
   items: { name: string; path: string }[],

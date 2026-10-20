@@ -2,7 +2,7 @@
 
 import type { Product, ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
-import { nowIso } from "./shared";
+import { findMoved, nowIso, withPreviousSlugs } from "./shared";
 
 /* ------------------------------------------------------------------ */
 /* Urunler                                                             */
@@ -37,7 +37,7 @@ export function visibleProducts(
 
 /** Adresi degismis urun: eski adresle gelen ziyaretci yeni adrese yonlendirilir. */
 export function findMovedProduct(slug: string, db: ZenweldDatabase = getSnapshot()): Product | undefined {
-  return db.products.find((p) => p.active && p.previousSlugs?.includes(slug));
+  return findMoved(listProducts(db), slug);
 }
 
 export function findProductById(
@@ -47,25 +47,11 @@ export function findProductById(
   return db.products.find((p) => p.id === id);
 }
 
-/**
- * Linki degisen urunun eski adresi yenisine yonlenir (findMovedProduct). Bir
- * urun baska bir urunun eski adresini alirsa o yonlendirme kalkar.
- */
+/** Linki degisen urunun eski adresi yenisine yonlenir (withPreviousSlugs). */
 export function saveProduct(product: Product): void {
   mutate((db) => {
     const idx = db.products.findIndex((p) => p.id === product.id);
-    // Eski adresler kayitli urunden alinir: formdaki taslak, ayni ekranda
-    // ikinci kez link degistirilince eski kalmis olabilir.
-    const stored = idx >= 0 ? db.products[idx] : undefined;
-    const previousSlugs = [...new Set([...(stored?.previousSlugs ?? []), ...(stored ? [stored.slug] : [])])].filter(
-      (s) => s !== product.slug,
-    );
-    db.products.forEach((p) => {
-      if (p.id !== product.id && p.previousSlugs?.includes(product.slug)) {
-        p.previousSlugs = p.previousSlugs.filter((s) => s !== product.slug);
-      }
-    });
-    const next = { ...product, previousSlugs: previousSlugs.length ? previousSlugs : undefined, updatedAt: nowIso() };
+    const next = { ...withPreviousSlugs(db.products, product), updatedAt: nowIso() };
     if (idx >= 0) db.products[idx] = next;
     else db.products.unshift({ ...next, createdAt: nowIso() });
   });

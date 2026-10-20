@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { events } from "@zenweld/data";
 import { JsonLd } from "@/components/common/JsonLd";
 import { EventDetail } from "@/components/events/EventDetail";
-import { SITE_NAME, absoluteUrl, canonical } from "@/lib/seo";
+import { SITE_NAME, absoluteUrl, canonical, eventSeo, seoMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return events.filter((e) => e.active).map((e) => ({ slug: e.slug }));
@@ -18,12 +18,13 @@ export async function generateMetadata({
 
   if (!event) return { title: "Etkinlik" };
 
-  const title = event.title;
-  const description = event.summary;
+  // Panelin SEO sekmesi; bos alanlarda etkinligin adi ve kisa aciklamasi.
+  const seo = eventSeo(event);
+  const title = seo.title;
+  const description = seo.description;
 
   return {
-    title,
-    description,
+    ...seoMetadata(seo),
     alternates: canonical(`/etkinlikler/${event.slug}`),
     openGraph: {
       type: "article",
@@ -31,7 +32,7 @@ export async function generateMetadata({
       title,
       description,
       url: absoluteUrl(`/etkinlikler/${event.slug}`),
-      images: [{ url: event.images[0] ?? event.logoUrl, alt: title }],
+      images: [{ url: event.images[0] ?? event.logoUrl, alt: event.title }],
     },
   };
 }

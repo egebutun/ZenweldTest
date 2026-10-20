@@ -11,11 +11,12 @@ import {
   ContentTextFields,
   PublishedAtField,
   SingleImageField,
-  SlugField,
   findSlugClash,
   resolveSlug,
   useContentForm,
 } from "./content-form";
+import { SeoPanel } from "./SeoPanel";
+import { blogPostSeo } from "@/lib/seo";
 
 const EMPTY: BlogPost = {
   id: "",
@@ -72,23 +73,22 @@ export function BlogForm({ item }: { item?: BlogPost }) {
         { id: "temel", label: "Temel Bilgiler" },
         { id: "icerik", label: "İçerik" },
         { id: "gorsel", label: "Kapak Görseli" },
+        { id: "seo", label: "SEO" },
       ]}
     >
       {form.tab === "temel" && (
         <FormPanel>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label="Yazı Başlığı" required>
-              <Input
-                required
-                value={draft.title}
-                onChange={(e) => {
-                  set("title", e.target.value);
-                  if (isNew) set("slug", slugify(e.target.value));
-                }}
-              />
-            </FormRow>
-            <SlugField slug={draft.slug} onChange={(v) => set("slug", v)} path="/blog" />
-          </div>
+          {/* Yazi linki SEO sekmesinde; yeni yazida basliktan otomatik olusur. */}
+          <FormRow label="Yazı Başlığı" required>
+            <Input
+              required
+              value={draft.title}
+              onChange={(e) => {
+                set("title", e.target.value);
+                if (isNew) set("slug", slugify(e.target.value));
+              }}
+            />
+          </FormRow>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <FormRow label="Kategori" hint="Örn. Teknik Rehber, İpuçları, Bakım">
@@ -147,6 +147,20 @@ export function BlogForm({ item }: { item?: BlogPost }) {
             previewClassName="aspect-[16/9] w-64"
           />
         </FormPanel>
+      )}
+
+      {form.tab === "seo" && (
+        <SeoPanel
+          noun="Yazı"
+          path="/blog"
+          slug={draft.slug}
+          onSlugChange={(v) => set("slug", v)}
+          stored={item && db.blogPosts.find((p) => p.id === item.id)}
+          value={draft.seo}
+          onChange={(seo) => set("seo", seo)}
+          compute={(seo) => blogPostSeo({ ...draft, seo })}
+          descriptionFallback="yazının özeti"
+        />
       )}
     </ContentFormShell>
   );

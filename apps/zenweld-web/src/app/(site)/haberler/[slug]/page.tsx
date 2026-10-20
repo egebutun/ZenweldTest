@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { news } from "@zenweld/data";
 import { JsonLd } from "@/components/common/JsonLd";
 import { NewsDetail } from "@/components/events/NewsDetail";
-import { SITE_NAME, absoluteUrl, canonical } from "@/lib/seo";
+import { SITE_NAME, absoluteUrl, canonical, newsSeo, seoMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return news.filter((n) => n.active).map((n) => ({ slug: n.slug }));
@@ -18,12 +18,13 @@ export async function generateMetadata({
 
   if (!item) return { title: "Haber" };
 
-  const title = item.title;
-  const description = item.summary;
+  // Panelin SEO sekmesi; bos alanlarda haberin basligi ve ozeti.
+  const seo = newsSeo(item);
+  const title = seo.title;
+  const description = seo.description;
 
   return {
-    title,
-    description,
+    ...seoMetadata(seo),
     alternates: canonical(`/haberler/${item.slug}`),
     openGraph: {
       type: "article",
@@ -32,7 +33,7 @@ export async function generateMetadata({
       description,
       url: absoluteUrl(`/haberler/${item.slug}`),
       publishedTime: item.publishedAt,
-      images: [{ url: item.coverUrl, alt: title }],
+      images: [{ url: item.coverUrl, alt: item.title }],
     },
   };
 }
