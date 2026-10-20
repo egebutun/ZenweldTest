@@ -96,6 +96,19 @@ ayrıntılar: [STOK.md](STOK.md) › "Backend'e geçiş".
 3. Ürün sayfaları önbellekte tutulmalı; yükleme uygulanınca yalnızca etkilenen
    ürünlerin sayfaları yenilenmeli, ayrıca günde en az bir kez.
 
+## Belgeler (MSDS, Kaynak Rehberi, Parti Sertifikaları) — backend
+
+Panel ve site sayfaları hazır; dosyalar şimdilik yükleyen tarayıcıda
+(`packages/store/src/files.ts`, kayıtlar `packages/store/src/repo/documents.ts`).
+
+1. `documents` tablosu (bölüm, başlık, ürün, parti no, dosya adı/türü/boyutu,
+   dosya yolu, sıra, yayında) ve `document_pages` (sayfa başlığı ve açıklaması).
+2. Dosyalar bir dosya sunucusuna (nesne deposu) yüklenmeli; site belgeleri bu
+   adresten açar. Yükleme sunucuda tür ve boyut (25 MB) kontrolünden geçmeli.
+3. Belge sayfalarının arama motoru başlığı şu an sabit
+   (`apps/zenweld-web/src/lib/page-meta.ts`); panelde değiştirilen başlık
+   sunucu tarafında okunabilir hale gelince oraya bağlanmalı.
+
 ## Kod incelemesi bulguları
 
 Ayrıntılı inceleme sohbette yapıldı; düzeltme zamanı ayrıca

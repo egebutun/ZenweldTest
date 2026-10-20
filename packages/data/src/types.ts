@@ -534,6 +534,42 @@ export interface FaqItem {
 }
 
 /* ------------------------------------------------------------------ */
+/* Belgeler — Kesfet > Diger: MSDS, Ultimate Kaynak Rehberi,            */
+/* Parti Sertifikalari (panelden yuklenir, sitede liste)                */
+/* ------------------------------------------------------------------ */
+
+export type DocumentSection = "msds" | "kaynak-rehberi" | "parti-sertifikalari";
+
+/** Belge sayfasinin panelden duzenlenen basligi ve aciklamasi. */
+export interface DocumentPage {
+  section: DocumentSection;
+  title: string;
+  subtitle: string;
+}
+
+export interface DocumentFile {
+  id: string;
+  section: DocumentSection;
+  title: string;
+  /** Belgenin ait oldugu urun (istege bagli) */
+  productId?: string;
+  /** Yalnizca parti sertifikalari: parti / lot numarasi */
+  lotNumber?: string;
+  fileName: string;
+  mimeType: string;
+  /** Bayt */
+  size: number;
+  /**
+   * Dosyanin icerigi nerede: demoda tarayicinin dosya deposundaki anahtar
+   * (bkz. packages/store/src/files.ts); backend'de dosya sunucusundaki yol.
+   */
+  fileKey: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/* ------------------------------------------------------------------ */
 /* Etkinlikler (fuarlar, sponsorluklar)                                */
 /* ------------------------------------------------------------------ */
 
@@ -790,6 +826,9 @@ export interface ZenweldDatabase {
   events: ZenweldEvent[];
   news: NewsItem[];
   faqs: FaqItem[];
+  documentPages: DocumentPage[];
+  /** Sitede listedeki sirayla gosterilir */
+  documents: DocumentFile[];
   reviews: ProductReview[];
   warranties: WarrantyRecord[];
   about: AboutContent;

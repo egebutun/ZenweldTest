@@ -96,5 +96,8 @@ export function deleteProduct(id: string): void {
     db.dealerStock = db.dealerStock.filter((l) => l.productId !== id);
     db.retailerStock = db.retailerStock.filter((l) => l.productId !== id);
     db.skuAliases = db.skuAliases.filter((a) => a.productId !== id);
+    db.documents.forEach((d) => {
+      if (d.productId === id) delete d.productId;
+    });
   });
 }

@@ -12,7 +12,7 @@ olan sayfanın grubu kendiliğinden açık gelir:
 | Ürünler | Ürünler · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler |
-| İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Yasal Metinler |
+| İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler |
 | Ayarlar | Görünüm |
 
 Panel adresi: `http://localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`)
@@ -178,6 +178,23 @@ yalnızca panelde görünen iç not buradan kaydedilir.
 Soru ekle, düzenle (soru, cevap, konu), sil ve oklarla sırala. Sorular
 sitedeki SSS sayfasında, ürün sayfalarının SSS sekmesinde ve anasayfada (ilk 8
 soru) bu sırayla görünür.
+
+## 4d-2. Belgeler
+
+Sitedeki **Keşfet › Diğer** menüsündeki üç belge sayfası: **MSDS**, **Ultimate Kaynak
+Rehberi** ve **Parti Sertifikaları**. Üstteki sekmelerle sayfa seçilir.
+
+- **Sayfa metni:** sayfanın başlığı ve kısa açıklaması.
+- **Belge Ekle:** dosya (PDF, Word, Excel, JPG, PNG veya ZIP; en fazla 25 MB), başlık
+  (boşsa dosya adından dolar), isteğe bağlı ürün ve yalnızca Parti Sertifikaları'nda
+  **Parti / Lot No**. Ziyaretçi belge adı, ürün adı, ürün kodu ve parti numarasıyla
+  arayabilir.
+- Listede oklarla sıralanır; "Yayında" etiketine tıklayınca yayından kalkar ya da
+  yayına alınır. Düzenlemede yeni dosya seçilirse eskisinin yerine geçer.
+- Sitede PDF'ler "Görüntüle" ile yeni sekmede açılır, diğer dosyalar "İndir" ile iner.
+
+> Backend gelene kadar yüklenen dosyalar da diğer veriler gibi yalnızca yükleyen
+> tarayıcıda saklanır ve görünür.
 
 ## 4e. Yasal Metinler
 

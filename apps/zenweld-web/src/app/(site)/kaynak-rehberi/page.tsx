@@ -1,11 +1,5 @@
-import { SimpleContentPage } from "@/components/common/PageShell";
+import { DocumentLibrary } from "@/components/documents/DocumentLibrary";
 
 export default function Page() {
-  return (
-    <SimpleContentPage
-      title="Ultimate Kaynak Rehberi"
-      subtitle="Ücretsiz dijital kopyayı edinin veya basılı sürümü sipariş edin."
-      paragraphs={5}
-    />
-  );
+  return <DocumentLibrary section="kaynak-rehberi" />;
 }

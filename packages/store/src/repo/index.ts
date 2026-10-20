@@ -20,3 +20,4 @@ export * from "./site";
 export * from "./legal";
 export * from "./service";
 export * from "./faqs";
+export * from "./documents";

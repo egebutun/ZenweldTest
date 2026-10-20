@@ -153,7 +153,8 @@ formunu doldurur.
 ### Yönetim paneli (yalnızca Türkçe)
 
 `/yonetim` — ürün CRUD (görsel yükleme dahil), stok matrisi (bayi ve satıcıların
-CSV/XLSX stok dosyaları), online satıcı ve bayi yönetimi, üye yönetimi
+CSV/XLSX stok dosyaları), belgeler (MSDS, kaynak rehberi, parti sertifikaları),
+online satıcı ve bayi yönetimi, üye yönetimi
 (rol değiştirme, onaylama, askıya alma, CSV dışa aktarma), sipariş yönetimi
 (havale onayı, kargo takip no, teslim, iptal), mağaza ayarları (kargo, taksit,
 IBAN), teklif takibi, sık sorulan sorular, yasal metinler.

@@ -1,11 +1,5 @@
-import { SimpleContentPage } from "@/components/common/PageShell";
+import { DocumentLibrary } from "@/components/documents/DocumentLibrary";
 
 export default function Page() {
-  return (
-    <SimpleContentPage
-      title="Parti Sertifikaları"
-      subtitle="Ürün uygunluk ve parti sertifikalarını indirin."
-      paragraphs={4}
-    />
-  );
+  return <DocumentLibrary section="parti-sertifikalari" />;
 }

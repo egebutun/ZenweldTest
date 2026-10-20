@@ -1,11 +1,5 @@
-import { SimpleContentPage } from "@/components/common/PageShell";
+import { DocumentLibrary } from "@/components/documents/DocumentLibrary";
 
 export default function Page() {
-  return (
-    <SimpleContentPage
-      title="MSDS — Malzeme Güvenlik Bilgi Formları"
-      subtitle="Ürünlerimize ait malzeme güvenlik bilgi formlarını buradan sorgulayabilirsiniz."
-      paragraphs={4}
-    />
-  );
+  return <DocumentLibrary section="msds" />;
 }
