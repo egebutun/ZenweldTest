@@ -10,6 +10,7 @@ import {
   HomeFaq,
   HotSale,
   NewArrivals,
+  QuoteBanner,
   WhyZenweld,
 } from "@/components/home/HomeSections";
 
@@ -24,10 +25,11 @@ export default async function HomePage() {
       <Hero />
       <HotSale />
       <NewArrivals />
+      <DealerStrip />
       <WhyZenweld />
       <ReviewMarquee />
       <HomeFaq />
-      <DealerStrip />
+      <QuoteBanner />
       <DealerApplyBanner />
       <BlogTeaser />
     </>

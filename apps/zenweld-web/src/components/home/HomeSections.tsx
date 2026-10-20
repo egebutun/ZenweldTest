@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowRight, Award, Building2, Compass, Flame, Factory, Handshake, Headphones, Truck, Wrench } from "lucide-react";
+import { ArrowRight, Award, Compass, Flame, Factory, Handshake, Headphones, Truck, Wrench } from "lucide-react";
 import { listBlogPosts, listProducts, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, Button, ProductImage, SectionHeading } from "@zenweld/ui";
 import { discountPercent, isDiscountActive } from "@zenweld/data";
@@ -17,7 +17,7 @@ const HERO_PHOTO = "/images/hero/kaynak-atolyesi.webp";
 /**
  * Buyuk tanitim alani.
  *
- * Ust banttan (urun secici + kurumsal teklif) sonra ilk ekranda TAMAMEN
+ * Ust banttan (urun secici) sonra ilk ekranda TAMAMEN
  * gorunecek kadar kisa tutulur. Fotograf solda koyulasir (yazi okunur),
  * sagda kaynakci ve kivilcimlar acik kalir.
  */
@@ -122,12 +122,8 @@ export function HotSale() {
 }
 
 /**
- * Baslik altindaki ust bant: urun secici + kurumsal teklif.
- *
- * Iki satir ayni tasarimdadir (ikon, baslik, aciklama, beyaz buton) ve
- * tek bir arka plan uzerinde ince bir cizgiyle ayrilir; ikisi tek bir
- * blok gibi gorunur. Ince tutulur ki buyuk tanitim alani ilk ekranda
- * gorunsun.
+ * Baslik altindaki ust bant: urun secici. Ince tutulur ki buyuk tanitim
+ * alani ilk ekranda gorunsun.
  */
 export function HomeActionStrip() {
   const t = useT();
@@ -145,20 +141,13 @@ export function HomeActionStrip() {
         }}
       />
 
-      <div className="zw-container relative divide-y divide-white/15">
+      <div className="zw-container relative">
         <ActionRow
           Icon={Compass}
           title={t.finder.question}
           text={t.finder.hint}
           href="/urun-secici"
           cta={t.finder.cta}
-        />
-        <ActionRow
-          Icon={Building2}
-          title={t.home.quoteBannerTitle}
-          text={t.home.quoteBannerText}
-          href="/teklif-al"
-          cta={t.home.quoteBannerCta}
         />
       </div>
     </section>
@@ -339,6 +328,31 @@ export function HomeFaq() {
             }))}
           />
         </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Kurumsal alim / teklif cagrisi: sade, logo kirmizisi zeminli kutu.
+ * Ust banttaki urun seciciden ayri tasarimdadir.
+ */
+export function QuoteBanner() {
+  const t = useT();
+  return (
+    <section className="zw-container pt-12">
+      <div className="flex flex-col items-start gap-6 rounded-[4px] bg-zw-red-600 px-8 py-10 text-white lg:flex-row lg:items-center lg:justify-between">
+        <div className="max-w-2xl">
+          <h2 className="font-display text-3xl font-bold uppercase leading-tight sm:text-4xl">
+            {t.home.quoteBannerTitle}
+          </h2>
+          <p className="mt-2 text-white/90">{t.home.quoteBannerText}</p>
+        </div>
+        <Link href="/teklif-al" className="shrink-0">
+          <Button size="lg" variant="light" rightIcon={<ArrowRight size={18} />}>
+            {t.home.quoteBannerCta}
+          </Button>
+        </Link>
       </div>
     </section>
   );

@@ -143,7 +143,7 @@ kurumsal müşterilere hitap ediyor. Şimdilik bırakıldı; güncellenecek yerl
 1. Teklif Al sayfasının açıklaması: "Kurumsal müşterilerimize vadeli ödeme ve
    çek ile ödeme seçenekleri sunuyoruz…" (`quote.subtitle`)
 2. Aynı cümlenin arama motoru açıklaması (`lib/page-meta.ts` → `/teklif-al`)
-3. Ana sayfadaki şerit: "Kurumsal alım mı yapacaksınız?" ve altındaki metin
+3. Ana sayfadaki kutu: "Kurumsal alım mı yapacaksınız?" ve altındaki metin
    (`home.quoteBannerTitle`, `home.quoteBannerText`)
 4. Site aramasındaki Teklif Al anahtar kelimeleri: "kurumsal vadeli çek"
    (`lib/search/search-client.ts`)
