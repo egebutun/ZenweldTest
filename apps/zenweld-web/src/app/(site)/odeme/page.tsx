@@ -16,6 +16,7 @@ import { Alert, Button, EmptyState, FormRow, Input, Modal, Textarea } from "@zen
 import { formatPrice } from "@zenweld/utils";
 import Link from "next/link";
 import { KvkkNotice } from "@/components/legal/LegalLink";
+import { AddressFields, EMPTY_ADDRESS, addressComplete } from "@/components/shop/AddressFields";
 import { BankAccounts } from "@/components/shop/BankAccounts";
 import { CardPayment, EMPTY_CARD, type CardDraft } from "@/components/shop/CardPayment";
 import {
@@ -37,11 +38,7 @@ import {
   isValidTcKimlikNo,
 } from "@/lib/payment";
 
-const EMPTY_ADDRESS: OrderAddress = { fullName: "", phone: "", city: "", district: "", line: "" };
-
 const addressText = (a: OrderAddress) => `${a.line}, ${a.district} / ${a.city}`;
-const addressComplete = (a: OrderAddress) =>
-  [a.fullName, a.phone, a.city, a.district, a.line].every((v) => v.trim());
 
 /** 3D Secure onayini taklit eden bekleme (demo). */
 const DEMO_3DS_MS = 1500;
@@ -535,41 +532,5 @@ function DocLink({ onClick, children }: { onClick: () => void; children: React.R
     <button type="button" onClick={onClick} className="font-semibold text-zw-red-700 underline underline-offset-2">
       {children}
     </button>
-  );
-}
-
-function AddressFields({
-  value,
-  onChange,
-}: {
-  value: OrderAddress;
-  onChange: (key: keyof OrderAddress, value: string) => void;
-}) {
-  const t = useT();
-  return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      <FormRow label={t.checkout.fullName} required>
-        <Input autoComplete="name" value={value.fullName} onChange={(e) => onChange("fullName", e.target.value)} />
-      </FormRow>
-      <FormRow label={t.checkout.phone} required>
-        <Input type="tel" autoComplete="tel" value={value.phone} onChange={(e) => onChange("phone", e.target.value)} />
-      </FormRow>
-      <FormRow label={t.checkout.city} required>
-        <Input value={value.city} onChange={(e) => onChange("city", e.target.value)} />
-      </FormRow>
-      <FormRow label={t.checkout.district} required>
-        <Input value={value.district} onChange={(e) => onChange("district", e.target.value)} />
-      </FormRow>
-      <div className="sm:col-span-2">
-        <FormRow label={t.checkout.addressLine} required>
-          <Textarea
-            autoComplete="street-address"
-            value={value.line}
-            onChange={(e) => onChange("line", e.target.value)}
-            className="min-h-20"
-          />
-        </FormRow>
-      </div>
-    </div>
   );
 }

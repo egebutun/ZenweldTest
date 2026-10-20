@@ -1,6 +1,6 @@
 "use client";
 
-import { ShieldCheck } from "lucide-react";
+import { Plus, ShieldCheck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { findProductById, useDatabase } from "@zenweld/store";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
@@ -32,6 +32,11 @@ export default function MyWarrantiesPage() {
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <Link href="/garanti/kayit">
+          <Button leftIcon={<Plus size={17} />}>{t.account.newWarranty}</Button>
+        </Link>
+      </div>
       {records.map((w) => {
         const product = findProductById(w.productId, db);
         return (
