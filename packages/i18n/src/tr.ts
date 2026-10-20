@@ -175,6 +175,8 @@ export const tr = {
     noOnlineStock:
       "Bu ürün şu anda online satıcılarda stokta değil. En yakın Zenweld bayisinden temin edebilirsiniz.",
     stockUpdated: "Stok bilgisi {date} itibarıyladır",
+    addFavourite: "Favorilere ekle",
+    removeFavourite: "Favorilerden çıkar",
     inTheBox: "Kutu İçeriği",
     specs: "Teknik Özellikler",
     description: "Ürün Açıklaması",

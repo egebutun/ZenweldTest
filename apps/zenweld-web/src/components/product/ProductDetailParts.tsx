@@ -7,6 +7,7 @@ import {
   Factory,
   Flame,
   Headphones,
+  Heart,
   MapPin,
   MessageCircle,
   Minus,
@@ -27,6 +28,7 @@ import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { openSupportChat } from "@/lib/support-chat";
 import { MAX_LINE_QUANTITY, useCart } from "@/lib/cart";
+import { useFavourites } from "@/lib/favourites";
 import type { VariantSelection } from "@/lib/variants";
 import { formatDateTime, formatPrice, priceWithVat } from "@zenweld/utils";
 
@@ -132,7 +134,10 @@ export function PriceBlock({ product }: { product: Product }) {
 
 /* ---------------------------------------------------------------- */
 
-/** Adet secimi + Sepete Ekle. Secili urun secenekleriyle birlikte eklenir. */
+/**
+ * Adet secimi + Sepete Ekle + Favorilere ekle. Secili urun secenekleriyle
+ * birlikte eklenir; favori urun bazindadir (Hesabim > Favorilerim).
+ */
 export function AddToCart({
   product,
   selection,
@@ -142,17 +147,22 @@ export function AddToCart({
 }) {
   const t = useT();
   const cart = useCart();
+  const favourites = useFavourites();
+  const favourite = favourites.has(product.id);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
   return (
     <div>
-      <div className="flex gap-3">
+      <div className="flex gap-2 sm:gap-3">
         <QuantityStepper value={quantity} onChange={setQuantity} size="lg" />
         <Button
           size="lg"
           fullWidth
-          leftIcon={<ShoppingCart size={20} />}
+          // Telefonda adet kutusu ve favori butonuyla ayni satira sigsin:
+          // yazi kuculur, cok dar ekranda sepet simgesi gizlenir.
+          className="max-sm:px-3 max-sm:text-sm"
+          leftIcon={<ShoppingCart size={20} className="max-[389px]:hidden" />}
           onClick={() => {
             cart.add(product.id, selection, quantity);
             setAdded(true);
@@ -160,6 +170,18 @@ export function AddToCart({
         >
           {t.cart.addToCart}
         </Button>
+        <button
+          type="button"
+          onClick={() => favourites.toggle(product.id)}
+          aria-pressed={favourite}
+          aria-label={favourite ? t.product.removeFavourite : t.product.addFavourite}
+          title={favourite ? t.product.removeFavourite : t.product.addFavourite}
+          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[4px] border bg-white transition-colors ${
+            favourite ? "border-zw-red-600 text-zw-red-600" : "border-zw-grey-300 text-zw-grey-700 hover:border-zw-ink"
+          }`}
+        >
+          <Heart size={22} className={favourite ? "fill-zw-red-600" : ""} />
+        </button>
       </div>
       {added && (
         <div className="mt-3 flex items-center justify-between gap-3 rounded-[4px] border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
