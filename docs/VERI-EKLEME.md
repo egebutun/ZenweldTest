@@ -118,5 +118,4 @@ bayinin `retailerId` alanına yazılır; stoğu bayinin dosyasından gelir.
 ## Metinleri değiştirme
 
 Arayüz metinleri: `packages/i18n/src/tr.ts`.
-Lorem ipsum içerikli sayfalar: ilgili `page.tsx` dosyaları ve
-`apps/zenweld-web/src/components/common/PageShell.tsx` içindeki `LOREM` sabiti.
+Lorem ipsum içerikli sayfalar: ilgili `page.tsx` dosyaları.
