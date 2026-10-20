@@ -54,8 +54,10 @@ export default function AdminDealersPage() {
   const save = () => {
     if (!editing) return;
     if (!dealerType(editing)) return setError("Bayi türünü seçin: Yetkili Bayi, Yetkili Servis ya da ikisi.");
+    if (!saveDealer({ ...editing, id: editing.id || `d-${Date.now().toString(36)}` })) {
+      return setError("Bu online mağaza başka bir bayiye bağlı. Bir online mağaza yalnızca bir bayiye bağlanabilir.");
+    }
     setError(null);
-    saveDealer({ ...editing, id: editing.id || `d-${Date.now().toString(36)}` });
     setEditing(null);
   };
 
@@ -211,7 +213,7 @@ export default function AdminDealersPage() {
             </FormRow>
             <FormRow
               label="Bağlı olduğu online mağaza"
-              hint="Seçilirse bayinin stok dosyasındaki ürün linkleri de okunur; ürünler haritada ve bu mağazanın online satıcı kartında görünür."
+              hint="Seçilirse bayinin stok dosyasındaki ürün linkleri de okunur; ürünler haritada ve bu mağazanın online satıcı kartında görünür. Bir mağaza yalnızca bir bayiye bağlanabilir."
             >
               <Select
                 value={editing.retailerId ?? ""}
@@ -220,11 +222,16 @@ export default function AdminDealersPage() {
                 }
               >
                 <option value="">Yok</option>
-                {db.retailers.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.name}
-                  </option>
-                ))}
+                {db.retailers.map((r) => {
+                  // Bir magaza yalnizca bir bayiye baglanabilir.
+                  const owner = db.dealers.find((d) => d.retailerId === r.id && d.id !== editing.id);
+                  return (
+                    <option key={r.id} value={r.id} disabled={Boolean(owner)}>
+                      {r.name}
+                      {owner ? ` — bağlı: ${owner.name}` : ""}
+                    </option>
+                  );
+                })}
               </Select>
             </FormRow>
             <div>

@@ -15,7 +15,8 @@ Zenweld'in kendi deposu bu akışın dışındadır: sitede her ürün her zaman
 
 **Online mağazası olan bayi:** Yönetim panelinde **Bayiler** formundaki "Bağlı olduğu
 online mağaza" alanında seçilen bayidir; mağazanın **Online Satıcılar**'da kaydı
-olmalıdır (kart adı ve logo yazısı oradan gelir). Bu bayi **tek dosya** gönderir:
+olmalıdır (kart adı ve logo yazısı oradan gelir). Her bayinin en fazla bir online
+mağazası olur, her mağaza da yalnızca bir bayiye bağlanır. Bu bayi **tek dosya** gönderir:
 stoktaki ürünler haritada, linki olanlar ayrıca online satıcı kartında görünür.
 Mağazanın ayrıca stok dosyası olmaz; Stok Matrisi'nde ayrı satır olarak görünmez.
 
@@ -168,7 +169,8 @@ CREATE TABLE sku_aliases (
   PRIMARY KEY (source_id, code)
 );
 
--- Bayinin online mağazası: dealers.retailer_id text REFERENCES retailers (id) ON DELETE SET NULL
+-- Bayinin online mağazası (bire bir: bir mağaza tek bayiye bağlanır):
+--   dealers.retailer_id text UNIQUE REFERENCES retailers (id) ON DELETE SET NULL
 -- Ayar: site_settings.stock_stale_days int NOT NULL DEFAULT 3
 ```
 

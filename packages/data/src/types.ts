@@ -171,7 +171,8 @@ export interface Dealer {
   /**
    * Bayinin online magazasi (Online Saticilar'daki kaydi). Varsa bayinin stok
    * dosyasindaki Link sutunu da okunur; urunler hem haritada hem bu
-   * magazanin online satici kartinda gorunur.
+   * magazanin online satici kartinda gorunur. Bir magaza yalnizca bir
+   * bayiye baglanabilir (bkz. saveDealer).
    */
   retailerId?: string;
   active: boolean;

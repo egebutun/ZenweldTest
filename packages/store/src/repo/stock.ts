@@ -128,7 +128,7 @@ export function retailersInStockFor(
   db: ZenweldDatabase = getSnapshot(),
   now: number = Date.now(),
 ): RetailerInStock[] {
-  // Ayni magaza birden fazla satirda (secenekler, birden fazla bayi) olabilir; bir kez gosterilir.
+  // Ayni magaza birden fazla satirda (secenekler) olabilir; bir kez gosterilir.
   const byRetailer = new Map<string, RetailerInStock>();
   onlineStock(db, now, { productId }).forEach((r) => byRetailer.has(r.retailer.id) || byRetailer.set(r.retailer.id, r));
   return [...byRetailer.values()]

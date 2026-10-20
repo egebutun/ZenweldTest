@@ -217,7 +217,8 @@ Enlem–boylam değerlerini Google Maps'te konuma sağ tıklayıp kopyalayabilir
 Yetkili Servis*. Ayrıca **Showroom var** işaretlenebilir. Bunlar haritada ve servis
 ağı sayfasında rozet olarak görünür. Bayinin online mağazası varsa önce mağazayı
 **Online Satıcılar**'a ekleyin, sonra burada **Bağlı olduğu online mağaza** alanından
-seçin. Bu bayi stok dosyasında ürün linklerini de gönderir; ürünler hem haritada hem
+seçin. Bir mağaza yalnızca bir bayiye bağlanabilir; başka bayiye bağlı mağaza listede
+seçilemez. Bu bayi stok dosyasında ürün linklerini de gönderir; ürünler hem haritada hem
 o mağazanın online satıcı kartında görünür (bkz. Stok Matrisi).
 
 ---
