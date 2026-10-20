@@ -60,3 +60,36 @@ export function addAddress(address: Omit<Address, "id" | "isDefault">): Address 
   });
   return record;
 }
+
+type AddressInput = Omit<Address, "id" | "userId" | "isDefault">;
+
+/** Adresin basligini ve alanlarini gunceller. Yalnizca adresin sahibi degistirebilir. */
+export function updateAddress(userId: string, id: string, fields: AddressInput): void {
+  mutate((db) => {
+    const address = db.addresses.find((a) => a.id === id && a.userId === userId);
+    if (address) Object.assign(address, fields);
+  });
+}
+
+/** Adresi siler; varsayilan adres silinirse kalan ilk adres varsayilan olur. */
+export function deleteAddress(userId: string, id: string): void {
+  mutate((db) => {
+    const target = db.addresses.find((a) => a.id === id && a.userId === userId);
+    if (!target) return;
+    db.addresses = db.addresses.filter((a) => a !== target);
+    if (target.isDefault) {
+      const next = db.addresses.find((a) => a.userId === userId);
+      if (next) next.isDefault = true;
+    }
+  });
+}
+
+/** Kullanicinin varsayilan adresini degistirir (odeme sayfasinda ilk secili gelen). */
+export function setDefaultAddress(userId: string, id: string): void {
+  mutate((db) => {
+    if (!db.addresses.some((a) => a.id === id && a.userId === userId)) return;
+    db.addresses.forEach((a) => {
+      if (a.userId === userId) a.isDefault = a.id === id;
+    });
+  });
+}
