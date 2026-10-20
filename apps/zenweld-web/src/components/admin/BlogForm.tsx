@@ -15,7 +15,7 @@ import {
   resolveSlug,
   useContentForm,
 } from "./content-form";
-import { SeoPanel } from "./SeoPanel";
+import { SeoPanel, storedLinks } from "./SeoPanel";
 import { blogPostSeo } from "@/lib/seo";
 
 const EMPTY: BlogPost = {
@@ -155,7 +155,7 @@ export function BlogForm({ item }: { item?: BlogPost }) {
           path="/blog"
           slug={draft.slug}
           onSlugChange={(v) => set("slug", v)}
-          stored={item && db.blogPosts.find((p) => p.id === item.id)}
+          {...storedLinks("/blog", item && db.blogPosts.find((x) => x.id === item.id))}
           value={draft.seo}
           onChange={(seo) => set("seo", seo)}
           compute={(seo) => blogPostSeo({ ...draft, seo })}

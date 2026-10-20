@@ -5,6 +5,7 @@ import {
   salePriceExVat,
   type BlogPost,
   type Category,
+  type CategoryGroup,
   type NewsItem,
   type Product,
   type SeoFields,
@@ -150,6 +151,11 @@ export const blogPostSeo = (post: BlogPost) => pageSeo(post.seo, post.title, pos
 export const newsSeo = (item: NewsItem) => pageSeo(item.seo, item.title, item.summary);
 
 export const eventSeo = (event: ZenweldEvent) => pageSeo(event.seo, event.title, event.summary);
+
+export const categorySeo = (category: Category) => pageSeo(category.seo, category.name, category.description);
+
+/** `description`: grup sayfasindaki aciklama (lib/catalog.ts groupDescription). */
+export const groupSeo = (group: CategoryGroup, description: string) => pageSeo(group.seo, group.name, description);
 
 export function breadcrumbJsonLd(
   items: { name: string; path: string }[],

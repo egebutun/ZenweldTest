@@ -12,7 +12,7 @@ Veriler iki yerden yönetilebilir:
 | Dosya | İçerik |
 |---|---|
 | `packages/data/src/seed/products.seed.ts` | Ürünler |
-| `packages/data/src/seed/categories.seed.ts` | Bölüm / grup / kategori ağacı |
+| `packages/data/src/seed/categories.seed.ts` | Bölüm / grup / kategori ağacı (başlangıç; sonrası panelde Ürünler → Kategoriler) |
 | `packages/data/src/seed/dealers.seed.ts` | Fiziksel bayiler |
 | `packages/data/src/seed/retailers.seed.ts` | Online satıcılar |
 | `packages/data/src/seed/stock.seed.ts` | Bayi ve satıcıların örnek stok listeleri |

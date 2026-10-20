@@ -1,6 +1,8 @@
 import {
   categories as seedCategories,
   categoryGroups as seedGroups,
+  categoryHref,
+  groupHref,
   type Category,
   type CategoryGroup,
   type TopLevelSection,
@@ -17,7 +19,7 @@ import { tr } from "@zenweld/i18n";
  *
  * Katalog adresi menudeki yolu izler; adresin her basamagi kendi sayfasidir.
  * Urun adresi kisa ve kalicidir: urun baska kategoriye tasinsa da degismez.
- * Adresler yalnizca groupHref / categoryHref ile uretilir.
+ * Adresler yalnizca groupHref / categoryHref ile uretilir (@zenweld/data).
  */
 
 export const SECTION_TITLES: Record<TopLevelSection, string> = {
@@ -34,15 +36,8 @@ export const SECTION_DESCRIPTIONS: Record<TopLevelSection, string> = {
   "dolgu-metalleri": "Zenweld MIG ve TIG kaynak tellerini inceleyin, size en yakın yetkili bayiden satın alın.",
 };
 
-/** Grup sayfasinin adresi: /ekipmanlar/kaynak-makineleri */
-export function groupHref(group: Pick<CategoryGroup, "section" | "slug">): string {
-  return `/${group.section}/${group.slug}`;
-}
-
-/** Kategori sayfasinin adresi: /ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri */
-export function categoryHref(category: Pick<Category, "section" | "group" | "slug">): string {
-  return `/${category.section}/${category.group}/${category.slug}`;
-}
+// Adres fonksiyonlari veri paketinde (panel ve depo da kullanir).
+export { categoryHref, groupHref };
 
 export interface Crumb {
   label: string;
@@ -75,8 +70,9 @@ export function findGroup(
   return groups.find((g) => g.section === section && g.slug === slug);
 }
 
-/** Grup sayfasinin aciklamasi; ayri bir metin girilmedigi icin kategorilerden uretilir. */
+/** Grup sayfasinin aciklamasi: panelde girilen metin, bossa kategori adlarindan uretilir. */
 export function groupDescription(group: CategoryGroup, categories: Category[] = seedCategories): string {
+  if (group.description?.trim()) return group.description.trim();
   const names = groupCategories(group, categories).map((c) => c.name);
   return `Zenweld ${group.name.toLocaleLowerCase("tr")}: ${names.join(", ")}. Size en yakın yetkili bayiden satın alın.`;
 }

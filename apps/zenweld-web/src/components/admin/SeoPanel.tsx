@@ -31,25 +31,31 @@ export function SeoPanel({
   path,
   slug,
   onSlugChange,
-  stored,
+  storedLink,
+  previousLinks,
   value,
   onChange,
   compute,
   descriptionFallback,
+  linkNote,
 }: {
   /** Etiketlerde: "Ürün" -> "Ürün Linki", "Ürün Sayfa Başlığı" */
   noun: string;
-  /** Adres oneki: "/urun" */
+  /** Adres oneki: "/urun", "/ekipmanlar/kaynak-makineleri" */
   path: string;
   slug: string;
   onSlugChange: (slug: string) => void;
-  /** Kayitli hali (yeni kayitta yok) */
-  stored?: { slug: string; previousSlugs?: string[] };
+  /** Kayitli adres (yeni kayitta yok): "/urun/arc-200" */
+  storedLink?: string;
+  /** Yeni adrese yonlenen eski adresler (tam yol) */
+  previousLinks?: string[];
   value?: SeoFields;
   onChange: (seo: SeoFields | undefined) => void;
   compute: (seo: SeoFields | undefined) => PageSeo;
   /** "ürünün kısa açıklaması" */
   descriptionFallback: string;
+  /** Link degisince uyarinin altina eklenen not (orn. grubun kategorileri) */
+  linkNote?: string;
 }) {
   const seo = compute(value);
   const auto = compute(undefined);
@@ -62,7 +68,8 @@ export function SeoPanel({
     onChange(empty ? undefined : next);
   };
 
-  const slugChanged = stored && slug && slug !== stored.slug;
+  const link = `${path}/${slug}`;
+  const linkChanged = storedLink && slug && link !== storedLink;
   const titleLength = (value?.title ?? "").length;
   const descriptionLength = (value?.description ?? "").length;
 
@@ -85,23 +92,24 @@ export function SeoPanel({
           </div>
         </FormRow>
 
-        {slugChanged && (
+        {linkChanged && (
           <p className="rounded-[4px] bg-amber-50 px-3 py-2 text-sm text-amber-800">
-            Kaydedince eski link <strong>{path}/{stored.slug}</strong> yeni linke yönlendirilir;
+            Kaydedince eski link <strong>{storedLink}</strong> yeni linke yönlendirilir;
             paylaşılmış bağlantılar ve Google'daki eski sonuç çalışmaya devam eder.
+            {linkNote && <> {linkNote}</>}
           </p>
         )}
 
-        {stored?.previousSlugs && stored.previousSlugs.length > 0 && (
+        {previousLinks && previousLinks.length > 0 && (
           <div>
             <div className="text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
               Yeni linke yönlenen eski linkler
             </div>
             <ul className="mt-1.5 space-y-1 text-sm text-zw-grey-600">
-              {stored.previousSlugs.map((s) => (
-                <li key={s} className="flex items-center gap-1.5">
+              {previousLinks.map((l) => (
+                <li key={l} className="flex items-center gap-1.5">
                   <CornerDownRight size={14} className="shrink-0 text-zw-grey-400" />
-                  {path}/{s}
+                  {l}
                 </li>
               ))}
             </ul>
@@ -161,6 +169,13 @@ export function SeoPanel({
       </FormPanel>
     </div>
   );
+}
+
+/** Urun, blog, haber ve etkinlik: kayitli adres ve eski adresleri (slug'dan). */
+export function storedLinks(base: string, stored?: { slug: string; previousSlugs?: string[] }) {
+  return stored
+    ? { storedLink: `${base}/${stored.slug}`, previousLinks: stored.previousSlugs?.map((s) => `${base}/${s}`) }
+    : {};
 }
 
 /** Arama sonucundaki gorunum; gercek alan adiyla (lib/seo.ts INDEXABLE_HOSTS). */

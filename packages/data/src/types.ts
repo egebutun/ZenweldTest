@@ -26,6 +26,11 @@ export interface Category {
   /** Grup sayfasindaki kart gorseli; yoksa kategorinin ilk urununun fotografi */
   image?: string;
   order: number;
+  /** Sayfanin altindaki tanitim metni ("... Hakkinda"); bossa gosterilmez */
+  aboutText?: string;
+  seo?: SeoFields;
+  /** Eski adresleri (tam yol): link, grup veya grubun linki degisince yeni adrese yonlenir */
+  previousPaths?: string[];
 }
 
 /** Mega menude sol kolonda duran gruplar */
@@ -39,6 +44,13 @@ export interface CategoryGroup {
   /** Bolum sayfasindaki kart gorseli; yoksa gruptaki ilk urunun fotografi */
   image?: string;
   order: number;
+  /** Grup sayfasindaki kisa aciklama; bossa kategori adlarindan uretilir */
+  description?: string;
+  /** Sayfanin altindaki tanitim metni ("... Hakkinda"); bossa gosterilmez */
+  aboutText?: string;
+  seo?: SeoFields;
+  /** Eski adresleri (tam yol): link degisince yeni adrese yonlenir */
+  previousPaths?: string[];
 }
 
 /* ------------------------------------------------------------------ */

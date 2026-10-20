@@ -16,7 +16,7 @@ import {
   resolveSlug,
   useContentForm,
 } from "./content-form";
-import { SeoPanel } from "./SeoPanel";
+import { SeoPanel, storedLinks } from "./SeoPanel";
 import { newsSeo } from "@/lib/seo";
 
 const EMPTY: NewsItem = {
@@ -143,7 +143,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
           path="/haberler"
           slug={draft.slug}
           onSlugChange={(v) => set("slug", v)}
-          stored={item && db.news.find((n) => n.id === item.id)}
+          {...storedLinks("/haberler", item && db.news.find((x) => x.id === item.id))}
           value={draft.seo}
           onChange={(seo) => set("seo", seo)}
           compute={(seo) => newsSeo({ ...draft, seo })}

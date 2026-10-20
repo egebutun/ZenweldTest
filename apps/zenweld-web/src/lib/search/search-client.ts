@@ -94,7 +94,7 @@ export function buildDocuments(db: ZenweldDatabase): SearchDoc[] {
       type: "category",
       title: c.name,
       subtitle: c.description,
-      body: `${c.name} ${c.description} ${c.group}`,
+      body: `${c.name} ${c.description} ${c.group} ${c.seo?.keywords?.join(" ") ?? ""}`,
       sku: "",
       href: categoryHref(c),
     });

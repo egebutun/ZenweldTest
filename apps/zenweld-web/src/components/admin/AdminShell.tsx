@@ -11,6 +11,7 @@ import {
   ExternalLink,
   FileText,
   FolderOpen,
+  FolderTree,
   HelpCircle,
   Info,
   LayoutDashboard,
@@ -72,6 +73,7 @@ const NAV_GROUPS: NavGroup[] = [
     Icon: Package,
     items: [
       { href: "/yonetim/urunler", label: "Ürünler", Icon: Package },
+      { href: "/yonetim/kategoriler", label: "Kategoriler", Icon: FolderTree },
       { href: "/yonetim/stok", label: "Stok Matrisi", Icon: Boxes },
       { href: "/yonetim/yorumlar", label: "Yorumlar", Icon: Star },
     ],

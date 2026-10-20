@@ -15,6 +15,7 @@ import {
 import { useT } from "@/lib/i18n-client";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { catalogTrail } from "@/lib/catalog";
+import { CatalogAbout } from "./CatalogAbout";
 
 interface ListingProps {
   section: TopLevelSection;
@@ -99,6 +100,8 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
           </div>
         </div>
       </div>
+
+      <CatalogAbout name={title} text={category?.aboutText} />
 
       {mobileFiltersOpen && (
         <div className="fixed inset-0 z-[200] lg:hidden">

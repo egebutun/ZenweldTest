@@ -20,6 +20,7 @@ import {
   sectionGroups,
   type Crumb,
 } from "@/lib/catalog";
+import { CatalogAbout } from "./CatalogAbout";
 
 /**
  * KATALOG KARTLARI
@@ -50,11 +51,14 @@ function HubPage({
   description,
   trail,
   cards,
+  aboutText,
 }: {
   title: string;
   description: string;
   trail: Crumb[];
   cards: HubCard[];
+  /** Kartlarin altindaki tanitim metni (yalnizca grup sayfasi) */
+  aboutText?: string;
 }) {
   const t = useT();
   return (
@@ -110,6 +114,8 @@ function HubPage({
           ))}
         </div>
       </div>
+
+      <CatalogAbout name={title} text={aboutText} />
     </>
   );
 }
@@ -176,6 +182,7 @@ export function GroupHub({ section, groupSlug }: { section: TopLevelSection; gro
       description={groupDescription(group, db.categories)}
       trail={catalogTrail(section, { groupSlug }, { categories: db.categories, groups: db.categoryGroups }).slice(0, -1)}
       cards={cards}
+      aboutText={group.aboutText}
     />
   );
 }

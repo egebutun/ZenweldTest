@@ -6,15 +6,16 @@ import { getPageSeo, useDatabase } from "@zenweld/store";
 import { isIndexablePage } from "./page-meta";
 
 /**
- * Linki panelden degismis kayit (urun, blog, haber, etkinlik): eski adresle
- * gelen ziyaretci yeni adrese yonlenir. Demoda tarayicida yapiliyor; canlida
- * sunucu 301 ile yonlendirecek (docs/YAPILACAKLAR.md).
+ * Linki panelden degismis kayit (urun, blog, haber, etkinlik, kategori):
+ * eski adresle gelen ziyaretci yeni adrese (`href`) yonlenir. Demoda
+ * tarayicida yapiliyor; canlida sunucu 301 ile yonlendirecek
+ * (docs/YAPILACAKLAR.md).
  */
-export function useMovedRedirect(moved: { slug: string } | undefined, path: string) {
+export function useMovedRedirect(href: string | undefined) {
   const router = useRouter();
   useEffect(() => {
-    if (moved) router.replace(`${path}/${moved.slug}`);
-  }, [moved, path, router]);
+    if (href) router.replace(href);
+  }, [href, router]);
 }
 
 /**

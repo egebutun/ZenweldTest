@@ -4,6 +4,7 @@ export * from "./discount";
 export * from "./checkout";
 export * from "./legal";
 export * from "./stock";
+export * from "./catalog";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";

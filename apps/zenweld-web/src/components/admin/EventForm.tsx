@@ -13,7 +13,7 @@ import {
   SingleImageField,
   useContentForm,
 } from "./content-form";
-import { SeoPanel } from "./SeoPanel";
+import { SeoPanel, storedLinks } from "./SeoPanel";
 import { eventSeo } from "@/lib/seo";
 
 const COUNTRIES = [
@@ -240,7 +240,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
           path="/etkinlikler"
           slug={draft.slug}
           onSlugChange={(v) => set("slug", v)}
-          stored={event && db.events.find((e) => e.id === event.id)}
+          {...storedLinks("/etkinlikler", event && db.events.find((x) => x.id === event.id))}
           value={draft.seo}
           onChange={(seo) => set("seo", seo)}
           compute={(seo) => eventSeo({ ...draft, seo })}

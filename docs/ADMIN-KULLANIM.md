@@ -9,7 +9,7 @@ olan sayfanın grubu kendiliğinden açık gelir:
 |---|---|
 | Panel | Özet |
 | Satış | Siparişler · Teklifler · Mağaza Ayarları |
-| Ürünler | Ürünler · Stok Matrisi · Yorumlar |
+| Ürünler | Ürünler · Kategoriler · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler |
 | İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
@@ -114,6 +114,38 @@ yazının/haberin özeti ve etkinliğin kısa açıklaması kullanılır.
 online satıcılarda ve bayi haritasında çıkması için **Stok Matrisi**'nden
 işaretlemelisiniz. Sitede satın alınabilmesi için ayrıca bir şey gerekmez: her
 yayındaki ürün sepete eklenebilir.
+
+---
+
+## 2b. Kategoriler
+
+Dört ürün bölümünün (Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri)
+**grupları** (mega menüde sol kolon, örn. Kaynak Makineleri) ve **kategorileri**
+(örn. MMA Örtülü Elektrod Kaynak Makineleri) menüdeki sırayla listelenir.
+
+- **Grup Ekle** (bölümün sağ üstü) ve **Kategori Ekle** (grubun altında) yeni kayıt
+  açar. Yeni grup ve kategori menüde, bölüm/grup sayfasındaki kartlarda ve ürün
+  formunun kategori listesinde hemen görünür.
+- ↑ ↓ okları menüdeki ve kartlardaki sırayı değiştirir.
+- 🗑 **Ürünü olan kategori** ve **kategorisi olan grup silinemez**; önce
+  içindekiler başka yere taşınır (ürünün kategorisi ürün formundan değişir).
+
+Düzenleme ekranında üç sekme vardır:
+
+| Sekme | İçerik |
+|---|---|
+| **Temel Bilgiler** | Ad, grup (kategoride) / bölüm (grupta, yalnızca yeni grupta seçilir), kısa açıklama, kart görseli |
+| **Tanıtım Metni** | Sayfanın altında, ürünlerin (grup sayfasında kategori kartlarının) altında "… Hakkında" başlığıyla görünen uzun metin. Boşsa görünmez. Biçimlendirme haberlerle aynı |
+| **SEO** | Link, sayfa başlığı, açıklama, anahtar kelimeler, Google önizlemesi (ürünlerdeki gibi) |
+
+- Kategorinin **kısa açıklaması** sayfa başlığının altında ve grup sayfasındaki
+  kartta görünür. Grubun kısa açıklaması boşsa kategori adlarından oluşturulur.
+- Kategori adresi grubun altındadır: `/ekipmanlar/kaynak-makineleri/<kategori>`.
+  Kategorinin linki değişirse ya da başka bir gruba taşınırsa eski adres yeni
+  adrese yönlenir. **Grubun linki** değişirse gruptaki bütün kategorilerin eski
+  adresleri de yeni adreslere yönlenir.
+- Kategorinin linki değişince içindeki ürünler kategoriye bağlı kalır; ürün
+  adresleri (`/urun/…`) değişmez.
 
 ---
 

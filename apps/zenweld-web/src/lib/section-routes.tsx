@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { categories, categoryGroups, type TopLevelSection } from "@zenweld/data";
-import { CategoryListing } from "@/components/product/CategoryListing";
-import { GroupHub, SectionHub } from "@/components/product/CatalogHub";
+import { SectionHub } from "@/components/product/CatalogHub";
+import { CategoryPage, GroupPage } from "@/components/product/CatalogPage";
 import { JsonLd } from "@/components/common/JsonLd";
 import {
   catalogTrail,
@@ -12,7 +11,16 @@ import {
   groupHref,
   type Crumb,
 } from "@/lib/catalog";
-import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical } from "@/lib/seo";
+import {
+  SITE_NAME,
+  absoluteUrl,
+  breadcrumbJsonLd,
+  canonical,
+  categorySeo,
+  groupSeo,
+  seoMetadata,
+  type PageSeo,
+} from "@/lib/seo";
 import { pageMetadataFor } from "@/lib/page-meta";
 
 /**
@@ -29,11 +37,11 @@ import { pageMetadataFor } from "@/lib/page-meta";
 type GroupParams = { params: Promise<{ grup: string }> };
 type CategoryParams = { params: Promise<{ grup: string; kategori: string }> };
 
-const metadata = (path: string, title: string, description: string): Metadata => ({
-  title,
-  description,
+/** Grup ve kategori: panelin SEO sekmesi, bos alanlarda ad ve aciklama. */
+const metadata = (path: string, seo: PageSeo): Metadata => ({
+  ...seoMetadata(seo),
   alternates: canonical(path),
-  openGraph: { title, description, url: absoluteUrl(path) },
+  openGraph: { title: seo.title, description: seo.description, url: absoluteUrl(path) },
 });
 
 /** Konum satirinin arama motoru icin yapisal hali. */
@@ -70,18 +78,18 @@ export function groupRoute(section: TopLevelSection) {
     async generateMetadata({ params }: GroupParams): Promise<Metadata> {
       const group = findGroup(section, (await params).grup);
       if (!group) return { title: "Kategori" };
-      return metadata(groupHref(group), group.name, groupDescription(group));
+      return metadata(groupHref(group), groupSeo(group, groupDescription(group)));
     },
 
     async Page({ params }: GroupParams) {
-      const group = findGroup(section, (await params).grup);
-      // Bilinmeyen veya kaldirilmis adres 404 doner (eski /<bolum>/<kategori> dahil).
-      if (!group) notFound();
-
+      const slug = (await params).grup;
+      // Sunucu koddaki veriyi bilir; panelde eklenen/degisen gruplari ve
+      // eski adres yonlendirmesini tarayicidaki sayfa cozer (GroupPage).
+      const group = findGroup(section, slug);
       return (
         <>
-          <JsonLd data={trailJsonLd(catalogTrail(section, { groupSlug: group.slug }))} />
-          <GroupHub section={section} groupSlug={group.slug} />
+          {group && <JsonLd data={trailJsonLd(catalogTrail(section, { groupSlug: group.slug }))} />}
+          <GroupPage section={section} groupSlug={slug} />
         </>
       );
     },
@@ -106,18 +114,16 @@ export function categoryRoute(section: TopLevelSection) {
       const { grup, kategori } = await params;
       const category = findCategory(grup, kategori);
       if (!category) return { title: "Kategori" };
-      return metadata(categoryHref(category), category.name, category.description);
+      return metadata(categoryHref(category), categorySeo(category));
     },
 
     async Page({ params }: CategoryParams) {
       const { grup, kategori } = await params;
       const category = findCategory(grup, kategori);
-      if (!category) notFound();
-
       return (
         <>
-          <JsonLd data={trailJsonLd(catalogTrail(section, { categorySlug: category.slug }))} />
-          <CategoryListing section={section} categorySlug={category.slug} />
+          {category && <JsonLd data={trailJsonLd(catalogTrail(section, { categorySlug: category.slug }))} />}
+          <CategoryPage section={section} groupSlug={grup} categorySlug={kategori} />
         </>
       );
     },

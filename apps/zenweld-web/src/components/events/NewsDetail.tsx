@@ -21,7 +21,7 @@ export function NewsDetail({ slug }: { slug: string }) {
     [db, item],
   );
   const moved = useMemo(() => (item ? undefined : findMovedNews(slug, db)), [item, slug, db]);
-  useMovedRedirect(moved, "/haberler");
+  useMovedRedirect(moved && `/haberler/${moved.slug}`);
   useSeoTitle(item && newsSeo(item).title);
 
   if (!item) {

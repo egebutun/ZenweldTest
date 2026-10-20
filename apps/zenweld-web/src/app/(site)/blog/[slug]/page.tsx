@@ -23,7 +23,7 @@ export default function BlogPostPage({
   // Yayindan kaldirilan yazi sitede gorunmez.
   const post = findBlogPostBySlug(slug, db);
   const moved = post ? undefined : findMovedBlogPost(slug, db);
-  useMovedRedirect(moved, "/blog");
+  useMovedRedirect(moved && `/blog/${moved.slug}`);
   useSeoTitle(post && blogPostSeo(post).title);
 
   if (!post) {

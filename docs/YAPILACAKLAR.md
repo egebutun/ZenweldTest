@@ -109,17 +109,21 @@ ayrıntılar: [STOK.md](STOK.md) › "Backend'e geçiş".
 
 ## SEO alanları (ürün, blog, haber, etkinlik, sabit sayfalar) ve link yönlendirme — backend
 
-Panelde SEO sekmesi (ürün, blog yazısı, haber, etkinlik) ve Sayfa SEO ekranı hazır; veri şimdilik
+Panelde SEO sekmesi (ürün, blog yazısı, haber, etkinlik, grup, kategori) ve Sayfa SEO ekranı hazır; veri şimdilik
 tarayıcıda. Sunucu bugün bu sayfaların başlığını, açıklamasını ve `keywords`
 etiketini koddaki örnek veriden üretiyor (`generateMetadata`), paneldeki
 değişikliği göremiyor. Eski linkten yeni linke yönlendirme de demoda tarayıcıda
 yapılıyor (`lib/page-seo-client.ts`).
 
-1. `products`, `blog_posts`, `news`, `events` tablolarına `seo_title`,
-   `seo_description`, `seo_keywords` alanları; eski linkler için tek bir
-   `previous_slugs` (tür, kayıt, eski link) tablosu.
+1. `products`, `blog_posts`, `news`, `events`, `categories`, `category_groups`
+   tablolarına `seo_title`, `seo_description`, `seo_keywords` alanları
+   (kategori ve gruplarda ayrıca `about_text`, gruplarda `description`); eski
+   linkler için tek bir `previous_paths` (tür, kayıt, eski adres) tablosu.
+   Kategori adresi grubun linkine bağlı olduğu için eski adres tam yol olarak
+   tutulur (`/ekipmanlar/kaynak-makineleri/mma-…`).
 2. Sayfaların başlığı, açıklaması ve `keywords` etiketi veritabanından
-   okunmalı (`lib/seo.ts` → `productSeo`, `blogPostSeo`, `newsSeo`, `eventSeo`).
+   okunmalı (`lib/seo.ts` → `productSeo`, `blogPostSeo`, `newsSeo`, `eventSeo`,
+   `categorySeo`, `groupSeo`).
    Sabit sayfalar (Sayfa SEO ekranı) için `page_seo` (sayfa adresi, başlık,
    açıklama) tablosu; `lib/page-meta.ts` → `pageMetadataFor` panelde girilen
    metni bu tablodan okumalı. Ana sayfanın başlığı site düzeninde
@@ -211,14 +215,11 @@ kullanılamayacağı değerlendirilsin.
 ## Ürün grupları (Kaynak Makineleri, Lazer Makineleri …)
 
 1. Grup ve kategori kartlarındaki görseller şimdilik çizim (illüstrasyon);
-   gerçek ürün/uygulama fotoğrafları gelince `apps/zenweld-web/public/images/categories/`
-   içindeki aynı adlı dosyalarla değiştirilmeli (ör. `mig-torclari.svg` yerine
-   `mig-torclari.webp` konup `categories.seed.ts`'teki yol güncellenir).
-   Kaynak Makineleri kartı ilk ürünün fotoğrafını kullanıyor.
-2. Grup sayfasının açıklaması kategorilerin adlarından otomatik üretiliyor;
-   arama motoru için gruba özel bir tanıtım metni yazılabilsin.
-3. Grup ve kategoriler panelden yönetilemiyor (ekleme, ad, sıra); şu an
-   `packages/data/src/seed/categories.seed.ts` dosyasında.
+   gerçek ürün/uygulama fotoğrafları gelince panelden (Ürünler → Kategoriler →
+   Kart Görseli) değiştirilmeli. Kaynak Makineleri kartı ilk ürünün fotoğrafını
+   kullanıyor.
+2. Grup ve kategorilerin tanıtım metinleri (sayfanın altındaki "… Hakkında")
+   ve SEO alanları panelden yazılmalı; şu an hepsi boş.
 
 ## Ürün önerileri — ürün sayfasındaki "İlgili Ürünler" yeniden kurgulanacak
 

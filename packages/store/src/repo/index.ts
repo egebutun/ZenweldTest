@@ -21,3 +21,4 @@ export * from "./legal";
 export * from "./service";
 export * from "./faqs";
 export * from "./documents";
+export * from "./categories";

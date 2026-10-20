@@ -18,7 +18,7 @@ export function EventDetail({ slug }: { slug: string }) {
 
   const event = useMemo(() => findEventBySlug(slug, db), [db, slug]);
   const moved = useMemo(() => (event ? undefined : findMovedEvent(slug, db)), [event, slug, db]);
-  useMovedRedirect(moved, "/etkinlikler");
+  useMovedRedirect(moved && `/etkinlikler/${moved.slug}`);
   useSeoTitle(event && eventSeo(event).title);
 
   if (!event) {

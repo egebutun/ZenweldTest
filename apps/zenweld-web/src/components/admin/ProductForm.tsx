@@ -9,7 +9,7 @@ import { BasicsTab } from "./product/BasicsTab";
 import { DescriptionTab } from "./product/DescriptionTab";
 import { ImagesTab } from "./product/ImagesTab";
 import { InTheBoxTab, SpecsTab } from "./product/ListTabs";
-import { SeoPanel } from "./SeoPanel";
+import { SeoPanel, storedLinks } from "./SeoPanel";
 import { productSeo } from "@/lib/seo";
 
 /**
@@ -99,7 +99,7 @@ export function ProductForm({ product }: { product?: Product }) {
           path="/urun"
           slug={draft.slug}
           onSlugChange={(v) => form.set("slug", v)}
-          stored={product && db.products.find((p) => p.id === product.id)}
+          {...storedLinks("/urun", product && db.products.find((x) => x.id === product.id))}
           value={draft.seo}
           onChange={(seo) => form.set("seo", seo)}
           compute={(seo) => productSeo({ ...draft, seo }, db.categories.find((c) => c.slug === draft.categorySlug))}

@@ -335,7 +335,9 @@ Sitede aşağıdakiler hazırdır:
   kısa ve kalıcıdır, ürün başka kategoriye taşınsa da değişmez. Her seviyede
   görünür konum satırı ve `BreadcrumbList` yapısal verisi var. Kart görselleri
   `public/images/categories/` klasöründedir (kategori/grup kaydındaki `image`);
-  görseli olmayan kartta ilk ürünün fotoğrafı gösterilir.
+  görseli olmayan kartta ilk ürünün fotoğrafı gösterilir. Gruplar ve
+  kategoriler panelden yönetilir (Ürünler → Kategoriler): ad, sıra, kart görseli,
+  sayfanın altındaki tanıtım metni ve SEO alanları.
 - **`/sitemap.xml`** — aramada görünmesi istenen bütün sayfalar: ürün, grup,
   kategori, blog, haber, etkinlik, kurumsal ve destek sayfaları. `packages/data`
   içindeki veriden otomatik üretilir. Son değişiklik tarihi yalnızca gerçek tarihi
