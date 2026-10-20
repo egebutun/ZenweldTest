@@ -64,6 +64,30 @@ export const MAX_LINE_QUANTITY = 99;
 const lineKey = (productId: string, selection: VariantSelection) =>
   [productId, ...Object.keys(selection).sort().map((g) => `${g}=${selection[g]}`)].join("|");
 
+/** Adet her zaman 1-99 arasinda tam sayi; 0, eksi veya kesirli adet sepete girmez. */
+const clampQuantity = (quantity: number) =>
+  Math.max(1, Math.min(MAX_LINE_QUANTITY, Math.floor(Number(quantity)) || 1));
+
+/** Depodaki sepet: bicimi bozuk satirlar atilir, adetler duzeltilir. */
+function parseStored(raw: string | null): StoredLine[] {
+  if (!raw) return [];
+  try {
+    const value: unknown = JSON.parse(raw);
+    if (!Array.isArray(value)) return [];
+    return value.flatMap((l) =>
+      l && typeof l.productId === "string"
+        ? [{
+            productId: l.productId,
+            selection: l.selection && typeof l.selection === "object" ? l.selection : {},
+            quantity: clampQuantity(l.quantity),
+          }]
+        : [],
+    );
+  } catch {
+    return [];
+  }
+}
+
 const CartContext = createContext<CartValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -74,12 +98,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) setStored(JSON.parse(raw) as StoredLine[]);
+      setStored(parseStored(window.localStorage.getItem(STORAGE_KEY)));
     } catch {
       /* yok say */
     }
     setReady(true);
+    // Baska sekmede degisen sepet buraya da alinir; yoksa bu sekmenin bir
+    // sonraki degisikligi oradaki eklemeyi silerdi.
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEY || event.key === null) setStored(parseStored(event.newValue));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const update = useCallback((next: (prev: StoredLine[]) => StoredLine[]) => {
@@ -130,10 +160,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         prev.some((l) => lineKey(l.productId, l.selection) === key)
           ? prev.map((l) =>
               lineKey(l.productId, l.selection) === key
-                ? { ...l, quantity: Math.min(MAX_LINE_QUANTITY, l.quantity + quantity) }
+                ? { ...l, quantity: clampQuantity(l.quantity + quantity) }
                 : l,
             )
-          : [...prev, { productId, selection: full, quantity }],
+          : [...prev, { productId, selection: full, quantity: clampQuantity(quantity) }],
       );
     },
     [db, update],
@@ -144,7 +174,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       update((prev) =>
         prev.map((l) =>
           lineKey(l.productId, l.selection) === key
-            ? { ...l, quantity: Math.max(1, Math.min(MAX_LINE_QUANTITY, quantity)) }
+            ? { ...l, quantity: clampQuantity(quantity) }
             : l,
         ),
       ),

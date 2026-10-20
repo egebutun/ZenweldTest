@@ -1,10 +1,11 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, PackageCheck, Truck, XCircle } from "lucide-react";
 import type { Order, OrderAddress } from "@zenweld/data";
 import {
+  cancelExpiredTransfers,
   cancelOrder,
   findOrder,
   getShopSettings,
@@ -33,6 +34,8 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
   const { id } = use(params);
   const db = useDatabase();
   const order = findOrder(id, db);
+  // Odeme suresi dolan havale siparisi musteri sayfalarindaki gibi iptal edilir.
+  useEffect(() => cancelExpiredTransfers(), []);
 
   if (!order) return <Alert tone="danger">Sipariş bulunamadı.</Alert>;
 
@@ -170,7 +173,11 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
 function Actions({ order }: { order: Order }) {
   const db = useDatabase();
   const carriers = getShopSettings(db).carriers;
-  const [carrier, setCarrier] = useState(order.shipment?.carrier ?? carriers[0] ?? "");
+  // Magaza ayarlarindan cikarilmis firma da listede gorunur; yoksa ekranda
+  // baska firma gorunurken kayitli firma kaydedilirdi.
+  const storedCarrier = order.shipment?.carrier;
+  const removed = storedCarrier && !carriers.includes(storedCarrier) ? storedCarrier : undefined;
+  const [carrier, setCarrier] = useState(storedCarrier ?? carriers[0] ?? "");
   const [tracking, setTracking] = useState(order.shipment?.trackingNumber ?? "");
   const [cancelling, setCancelling] = useState(false);
   const [reason, setReason] = useState("");
@@ -211,6 +218,7 @@ function Actions({ order }: { order: Order }) {
           <div className="grid gap-3 sm:grid-cols-[200px_1fr_auto] sm:items-end">
             <FormRow label="Kargo firması">
               <Select value={carrier} onChange={(e) => setCarrier(e.target.value)}>
+                {removed && <option value={removed}>{removed} (listede yok)</option>}
                 {carriers.map((c) => (
                   <option key={c}>{c}</option>
                 ))}

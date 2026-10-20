@@ -1,7 +1,7 @@
 "use client";
 
 import { CreditCard, Lock } from "lucide-react";
-import { cardInstallments, installmentQuote, type ShopSettings } from "@zenweld/data";
+import { installmentQuote, type InstallmentOption, type PaymentPos } from "@zenweld/data";
 import { FormRow, Input } from "@zenweld/ui";
 import { formatPrice } from "@zenweld/utils";
 import { useT } from "@/lib/i18n-client";
@@ -27,20 +27,31 @@ export function CardPayment({
   card,
   onChange,
   total,
-  shop,
+  pos,
+  options,
+  selected,
+  minInstallmentAmount,
 }: {
   card: CardDraft;
   onChange: (card: CardDraft) => void;
   /** Vade farki haric odenecek tutar */
   total: number;
-  shop: ShopSettings;
+  /**
+   * Kartin bankasi (POS), sunulan taksitler ve tutarda kullanilan secenek:
+   * odeme sayfasi bir kez hesaplar (cardInstallments); isaretli secenek ile
+   * cekilen tutar boylece hep ayni olur.
+   */
+  pos: PaymentPos | undefined;
+  options: InstallmentOption[];
+  selected: number;
+  /** Taksit secenekleri bu tutarin uzerinde sunulur (Magaza Ayarlari) */
+  minInstallmentAmount: number;
 }) {
   const t = useT();
   const set = <K extends keyof CardDraft>(k: K, v: CardDraft[K]) => onChange({ ...card, [k]: v });
 
   const brand = cardBrand(card.number);
   const program = cardProgram(card.number);
-  const { pos, options } = cardInstallments(total, program, shop);
   const matched = Boolean(program && pos?.program === program);
 
   return (
@@ -112,18 +123,18 @@ export function CardPayment({
           <div className="overflow-hidden rounded-[4px] border border-zw-grey-200">
             {options.map((option) => {
               const quote = installmentQuote(total, option);
-              const selected = card.installments === option.count;
+              const isSelected = selected === option.count;
               return (
                 <label
                   key={option.count}
                   className={`flex cursor-pointer items-center gap-3 border-b border-zw-grey-100 px-4 py-3 text-sm last:border-0 ${
-                    selected ? "bg-zw-red-50" : "bg-white hover:bg-zw-grey-50"
+                    isSelected ? "bg-zw-red-50" : "bg-white hover:bg-zw-grey-50"
                   }`}
                 >
                   <input
                     type="radio"
                     name="installments"
-                    checked={selected}
+                    checked={isSelected}
                     onChange={() => set("installments", option.count)}
                     className="accent-zw-red-600"
                   />
@@ -150,11 +161,11 @@ export function CardPayment({
           </div>
         )}
         {program && pos && !matched && <p className="mt-2 text-xs text-zw-grey-500">{t.checkout.singleOnly}</p>}
-        {matched && total < shop.minInstallmentAmount && (
+        {matched && total < minInstallmentAmount && (
           <p className="mt-2 text-xs text-zw-grey-500">
             {t.checkout.installmentMin.replace(
               "{amount}",
-              formatPrice(shop.minInstallmentAmount),
+              formatPrice(minInstallmentAmount),
             )}
           </p>
         )}

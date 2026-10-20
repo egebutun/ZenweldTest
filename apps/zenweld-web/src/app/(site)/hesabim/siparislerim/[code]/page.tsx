@@ -13,7 +13,8 @@ import { BankAccounts, CopyButton } from "@/components/shop/BankAccounts";
 import {
   useDocumentTitle,
   LegalDocument,
-  type LegalContext,
+  orderLegalContext,
+  paymentSummary,
   type LegalDocumentKind,
 } from "@/components/shop/LegalDocument";
 import { OrderStatusBadge, OrderTimeline } from "@/components/shop/OrderParts";
@@ -40,7 +41,7 @@ function OrderDetail() {
   }
 
   const shop = getShopSettings(db);
-  const paymentText = paymentSummary(order, t);
+  const paymentText = paymentSummary(order.payment, t);
 
   return (
     <div className="space-y-6">
@@ -164,7 +165,7 @@ function OrderDetail() {
       </Box>
 
       <Modal open={doc !== null} onClose={() => setDoc(null)} title={doc ? docTitle(doc) : ""}>
-        {doc && <LegalDocument kind={doc} context={orderLegalContext(order, paymentText)} />}
+        {doc && <LegalDocument kind={doc} context={orderLegalContext(order, order.createdAt, t)} />}
       </Modal>
     </div>
   );
@@ -178,22 +179,6 @@ export default function OrderDetailPage() {
   );
 }
 
-type T = ReturnType<typeof useT>;
-
-function paymentSummary(order: Order, t: T): string {
-  const p = order.payment;
-  if (p.method === "transfer") return t.orders.transfer;
-  const card = t.orders.cardPayment
-    .replace("{brand}", p.cardBrand ?? "")
-    .replace("{last4}", p.cardLast4 ?? "")
-    .trim();
-  const plan =
-    (p.installments ?? 1) > 1
-      ? t.orders.installments.replace("{count}", String(p.installments))
-      : t.orders.singlePayment;
-  return `${card} · ${plan}`;
-}
-
 function invoiceLines(order: Order): string[] {
   const i = order.invoice;
   const who =
@@ -201,27 +186,6 @@ function invoiceLines(order: Order): string[] {
       ? [i.companyName ?? "", `${i.taxOffice ?? ""} / ${i.taxNumber ?? ""}`]
       : [i.fullName ?? ""];
   return [...who, i.address.line, `${i.address.district} / ${i.address.city}`];
-}
-
-function orderLegalContext(order: Order, payment: string): LegalContext {
-  const a = order.shippingAddress;
-  return {
-    buyer: { name: order.customerName, email: order.email, phone: order.phone },
-    deliveryAddress: `${a.fullName}, ${a.line}, ${a.district} / ${a.city}`,
-    invoice: invoiceLines(order).slice(0, -2).join(" — "),
-    items: order.items.map((i) => ({
-      name: i.productName,
-      variant: i.variantLabel,
-      quantity: i.quantity,
-      unitPrice: i.unitPrice,
-    })),
-    subtotal: order.subtotal,
-    shipping: order.shipping,
-    installmentFee: order.installmentFee,
-    total: order.total,
-    payment,
-    date: order.createdAt,
-  };
 }
 
 function Box({ title, children }: { title: string; children: React.ReactNode }) {

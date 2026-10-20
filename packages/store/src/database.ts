@@ -76,6 +76,19 @@ export function getServerSnapshot(): ZenweldDatabase {
   return serverSnapshot;
 }
 
+/**
+ * Baska sekmede yapilan degisiklik (ornegin panelde "Odeme Alindi") bu
+ * sekmenin bellekteki kopyasina alinir; yoksa bu sekmenin bir sonraki kaydi
+ * butun veritabanini kendi eski kopyasiyla yazip o degisikligi silerdi.
+ */
+if (isBrowser()) {
+  window.addEventListener("storage", (event) => {
+    if (event.key !== STORAGE_KEY && event.key !== null) return;
+    memoryDb = null; // bir sonraki okuma depodan yapilir
+    emit();
+  });
+}
+
 export function subscribe(listener: () => void): () => void {
   listeners.add(listener);
   return () => listeners.delete(listener);

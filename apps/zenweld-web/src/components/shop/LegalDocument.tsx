@@ -1,11 +1,13 @@
 "use client";
 
 import type { ReactNode } from "react";
-import type { LegalPageId } from "@zenweld/data";
+import type { LegalPageId, Order, OrderPayment } from "@zenweld/data";
+import type { Dictionary } from "@zenweld/i18n";
 import { findLegalPage, useDatabase } from "@zenweld/store";
 import { RichText } from "@zenweld/ui";
 import { formatDate, formatPrice } from "@zenweld/utils";
 import { CONTACT, OFFICES } from "@/lib/contact";
+import { addressComplete } from "./AddressFields";
 
 /**
  * ON BILGILENDIRME FORMU ve MESAFELI SATIS SOZLESMESI
@@ -38,6 +40,65 @@ export interface LegalContext {
   total: number;
   payment: string;
   date: string;
+}
+
+/**
+ * Odeme satiri ("Visa •••• 1111 · 3 taksit"). Odeme sayfasinda onaylanan
+ * sozlesme ile siparisten acilan kopya ayni metni gostersin diye tek yerde.
+ */
+export function paymentSummary(payment: OrderPayment, t: Dictionary): string {
+  if (payment.method === "transfer") return t.orders.transfer;
+  const card = payment.cardLast4
+    ? t.orders.cardPayment
+        .replace("{brand}", payment.cardBrand ?? "")
+        .replace("{last4}", payment.cardLast4)
+        .trim()
+    : t.checkout.card;
+  const plan =
+    (payment.installments ?? 1) > 1
+      ? t.orders.installments.replace("{count}", String(payment.installments))
+      : t.orders.singlePayment;
+  return `${card} · ${plan}`;
+}
+
+/** Sozlesmeye giren siparis bilgileri (odeme sayfasindaki taslak ya da kayitli siparis). */
+export type LegalOrder = Pick<
+  Order,
+  "customerName" | "email" | "phone" | "shippingAddress" | "invoice" | "items" | "subtotal" | "shipping" | "installmentFee" | "total" | "payment"
+>;
+
+/**
+ * On bilgilendirme formu ve sozlesmenin siparis bilgileri. Odeme sayfasi ve
+ * siparis sayfasi bu tek fonksiyonu kullanir; musterinin onayladigi metin
+ * ile sonradan actigi kopya ayni kalir.
+ */
+export function orderLegalContext(order: LegalOrder, date: string, t: Dictionary): LegalContext {
+  const a = order.shippingAddress;
+  const i = order.invoice;
+  return {
+    buyer: {
+      name: (i.type === "corporate" ? i.companyName : i.fullName) || order.customerName,
+      email: order.email,
+      phone: order.phone,
+    },
+    deliveryAddress: addressComplete(a) ? `${a.fullName}, ${a.line}, ${a.district} / ${a.city}` : "—",
+    invoice:
+      i.type === "corporate"
+        ? `${i.companyName ?? ""} — ${i.taxOffice ?? ""} / ${i.taxNumber ?? ""}`
+        : i.fullName ?? "",
+    items: order.items.map((item) => ({
+      name: item.productName,
+      variant: item.variantLabel,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+    })),
+    subtotal: order.subtotal,
+    shipping: order.shipping,
+    installmentFee: order.installmentFee,
+    total: order.total,
+    payment: paymentSummary(order.payment, t),
+    date,
+  };
 }
 
 const SELLER = OFFICES[0];

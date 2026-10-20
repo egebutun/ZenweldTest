@@ -71,6 +71,6 @@ Siparişi tamamlamak için fatura bilgisi de geçerli olmalı:
 ### Havale / EFT
 
 Kart yerine **Havale / EFT** seçilirse kart bilgisi istenmez. Sipariş "Ödeme
-Bekleniyor" durumunda oluşur; ödeme süresi 3 gündür (Mağaza Ayarları'ndan
-değiştirilir). Ödeme, panelde **Siparişler → sipariş → Ödeme Alındı** ile onaylanır;
-sipariş "Hazırlanıyor" durumuna geçer.
+Bekleniyor" durumunda oluşur; ödeme süresi 3 gündür ve son günün sonunda (23:59)
+dolar (Mağaza Ayarları'ndan değiştirilir). Ödeme, panelde **Siparişler → sipariş →
+Ödeme Alındı** ile onaylanır; sipariş "Hazırlanıyor" durumuna geçer.

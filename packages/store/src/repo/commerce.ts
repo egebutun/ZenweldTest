@@ -19,18 +19,21 @@ export function quotesForUser(
   return listQuotes(db).filter((q) => q.userId === userId);
 }
 
+/** Yilin en buyuk numarasinin bir fazlasi: "TKL-2026-" + 0004 (silinen kayit numarayi tekrar ettirmez). */
+function nextCode(codes: string[], prefix: string, digits: number): string {
+  const last = codes
+    .filter((c) => c.startsWith(prefix))
+    .reduce((max, c) => Math.max(max, Number(c.slice(prefix.length)) || 0), 0);
+  return `${prefix}${String(last + 1).padStart(digits, "0")}`;
+}
+
 export function createQuote(quote: Omit<Quote, "id" | "code" | "createdAt" | "updatedAt">): Quote {
-  const db = getSnapshot();
-  const seq = String(db.quotes.length + 1).padStart(4, "0");
-  const record: Quote = {
-    ...quote,
-    id: uid("q"),
-    code: `TKL-${new Date().getFullYear()}-${seq}`,
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-  };
+  const at = nowIso();
+  const record: Quote = { ...quote, id: uid("q"), code: "", createdAt: at, updatedAt: at };
   mutate((draft) => {
-    draft.quotes.unshift(record);
+    // Numara kayit aninda en guncel listeden verilir.
+    record.code = nextCode(draft.quotes.map((q) => q.code), `TKL-${new Date().getFullYear()}-`, 4);
+    draft.quotes.unshift({ ...record });
   });
   return record;
 }
@@ -74,25 +77,21 @@ export type NewOrder = Omit<
  * havale/EFT siparisi "Odeme Bekleniyor"a duser.
  */
 export function placeOrder(order: NewOrder): Order {
-  const db = getSnapshot();
-  const year = new Date().getFullYear();
-  const prefix = `SIP-${year}-`;
-  const last = db.orders
-    .filter((o) => o.code.startsWith(prefix))
-    .reduce((max, o) => Math.max(max, Number(o.code.slice(prefix.length)) || 0), 0);
   const at = nowIso();
   const status: OrderStatus = order.payment.method === "card" ? "preparing" : "awaiting_payment";
   const record: Order = {
     ...order,
     id: uid("o"),
-    code: `${prefix}${String(last + 1).padStart(5, "0")}`,
+    code: "",
     status,
     history: [{ status, at }],
     createdAt: at,
     updatedAt: at,
   };
   mutate((draft) => {
-    draft.orders.unshift(record);
+    // Numara kayit aninda en guncel listeden verilir.
+    record.code = nextCode(draft.orders.map((o) => o.code), `SIP-${new Date().getFullYear()}-`, 5);
+    draft.orders.unshift({ ...record });
   });
   return record;
 }
@@ -112,13 +111,23 @@ function pushStatus(order: Order, status: OrderStatus, at: string, note?: string
   order.history.push({ status, at, ...(note ? { note } : {}) });
 }
 
-/** Havale/EFT odemesi hesaba gecti: siparis hazirlanmaya baslar. */
-export function markOrderPaid(id: string): void {
+/**
+ * Havale/EFT odemesi hesaba gecti: siparis hazirlanmaya baslar. Odeme suresi
+ * dolmus siparis onaylanmaz, iptal edilir (false doner).
+ */
+export function markOrderPaid(id: string): boolean {
+  let paid = false;
   updateOrder(id, (o, at) => {
     if (o.status !== "awaiting_payment") return;
+    if (isTransferExpired(o)) {
+      pushStatus(o, "cancelled", at, PAYMENT_EXPIRED_NOTE);
+      return;
+    }
     o.payment = { ...o.payment, paidAt: at };
     pushStatus(o, "preparing", at);
+    paid = true;
   });
+  return paid;
 }
 
 /** Kargoya verildi: firma ve takip numarasi musteriye gosterilir. */
@@ -154,19 +163,26 @@ export function saveOrderAdminNote(id: string, adminNote: string): void {
 export const PAYMENT_EXPIRED_NOTE = "Ödeme süresi doldu";
 
 /**
+ * Havale/EFT odeme suresi doldu mu? Musteriye son odeme GUNU gosterildigi
+ * icin sure o gunun sonunda (23:59) dolar, siparis saatinde degil.
+ */
+export function isTransferExpired(order: Order, now: Date = new Date()): boolean {
+  if (order.status !== "awaiting_payment" || !order.payment.dueAt) return false;
+  const end = new Date(order.payment.dueAt);
+  end.setHours(23, 59, 59, 999);
+  return now.getTime() > end.getTime();
+}
+
+/**
  * Odeme suresi dolan havale/EFT siparislerini iptal eder.
  *
- * Sunucu olmadigi icin bu kontrol siparis sayfalari acildiginda yapilir;
- * gercek sistemde gunluk zamanlanmis bir is olacak.
+ * Sunucu olmadigi icin bu kontrol siparis sayfalari (musteri ve panel)
+ * acildiginda yapilir; markOrderPaid de suresi dolmus siparisi onaylamaz.
+ * Gercek sistemde gunluk zamanlanmis bir is olacak.
  */
 export function cancelExpiredTransfers(now: Date = new Date()): void {
   const db = getSnapshot();
-  const expired = db.orders.filter(
-    (o) =>
-      o.status === "awaiting_payment" &&
-      o.payment.dueAt &&
-      new Date(o.payment.dueAt).getTime() < now.getTime(),
-  );
+  const expired = db.orders.filter((o) => isTransferExpired(o, now));
   if (expired.length === 0) return;
   const ids = new Set(expired.map((o) => o.id));
   mutate((draft) => {

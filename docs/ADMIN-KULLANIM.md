@@ -196,7 +196,7 @@ açılır:
 
 | Durum | Ne yapılır |
 |---|---|
-| **Ödeme Bekleniyor** (havale/EFT) | Açıklamasında sipariş no yazan ödeme hesaba geçince **Ödeme Alındı**. Son ödeme tarihi geçerse sipariş kendiliğinden iptal olur. |
+| **Ödeme Bekleniyor** (havale/EFT) | Açıklamasında sipariş no yazan ödeme hesaba geçince **Ödeme Alındı**. Süre, son ödeme **gününün sonunda** (23:59) dolar; sonra sipariş kendiliğinden iptal olur ve artık onaylanamaz. |
 | **Hazırlanıyor** | Kargoya verince kargo firmasını seçip takip numarasını girin → **Kargoya Ver** |
 | **Kargoda** | Takip numarası düzeltilebilir; teslim edilince **Teslim Edildi** |
 | Teslim edilmemiş her sipariş | **Siparişi İptal Et** (neden yazılırsa müşteri görür). Ödemesi alınmış siparişin iadesi banka / ödeme kuruluşu üzerinden ayrıca yapılır. |

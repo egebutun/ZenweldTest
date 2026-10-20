@@ -12,7 +12,14 @@ import {
   type OrderInvoice,
   type PaymentMethod,
 } from "@zenweld/data";
-import { addAddress, addressesForUser, getShopSettings, placeOrder, useDatabase } from "@zenweld/store";
+import {
+  addAddress,
+  addressesForUser,
+  getShopSettings,
+  placeOrder,
+  useDatabase,
+  type NewOrder,
+} from "@zenweld/store";
 import { Alert, Button, EmptyState, FormRow, Input, Modal, Textarea } from "@zenweld/ui";
 import { formatPrice } from "@zenweld/utils";
 import Link from "next/link";
@@ -23,7 +30,7 @@ import { CardPayment, EMPTY_CARD, type CardDraft } from "@/components/shop/CardP
 import {
   useDocumentTitle,
   LegalDocument,
-  type LegalContext,
+  orderLegalContext,
   type LegalDocumentKind,
 } from "@/components/shop/LegalDocument";
 import { OrderSummary } from "@/components/shop/OrderSummary";
@@ -39,7 +46,7 @@ import {
   isValidTcKimlikNo,
 } from "@/lib/payment";
 
-const addressText = (a: OrderAddress) => `${a.line}, ${a.district} / ${a.city}`;
+type InvoiceField = "fullName" | "tcKimlikNo" | "companyName" | "taxOffice" | "taxNumber";
 
 /** 3D Secure onayini taklit eden bekleme (demo). */
 const DEMO_3DS_MS = 1500;
@@ -69,7 +76,15 @@ export default function CheckoutPage() {
   const [saveNew, setSaveNew] = useState(true);
 
   const [invoiceType, setInvoiceType] = useState<OrderInvoice["type"] | null>(null);
-  const [invoice, setInvoice] = useState({ fullName: "", tcKimlikNo: "", companyName: "", taxOffice: "", taxNumber: "" });
+  // null: alan henuz degistirilmedi, uyenin profilindeki deger kullanilir.
+  // Kullanicinin bosalttigi alan bos kalir (profil degeri geri gelmez).
+  const [invoice, setInvoice] = useState<Record<InvoiceField, string | null>>({
+    fullName: null,
+    tcKimlikNo: null,
+    companyName: null,
+    taxOffice: null,
+    taxNumber: null,
+  });
   const [sameAddress, setSameAddress] = useState(true);
   const [invoiceAddress, setInvoiceAddress] = useState<OrderAddress>(EMPTY_ADDRESS);
 
@@ -140,11 +155,11 @@ export default function CheckoutPage() {
     : newAddress;
   const type = invoiceType ?? (user.role === "business" ? "corporate" : "individual");
   const inv = {
-    fullName: invoice.fullName || `${user.firstName} ${user.lastName}`,
-    tcKimlikNo: invoice.tcKimlikNo,
-    companyName: invoice.companyName || user.companyName || "",
-    taxOffice: invoice.taxOffice || user.taxOffice || "",
-    taxNumber: invoice.taxNumber || user.taxNumber || "",
+    fullName: invoice.fullName ?? `${user.firstName} ${user.lastName}`,
+    tcKimlikNo: invoice.tcKimlikNo ?? "",
+    companyName: invoice.companyName ?? user.companyName ?? "",
+    taxOffice: invoice.taxOffice ?? user.taxOffice ?? "",
+    taxNumber: invoice.taxNumber ?? user.taxNumber ?? "",
   };
   const billingAddress = sameAddress ? shipping : invoiceAddress;
 
@@ -154,40 +169,56 @@ export default function CheckoutPage() {
   const option = options.find((o) => o.count === card.installments) ?? options[0] ?? { count: 1, ratePercent: 0, enabled: true };
   const quote = method === "card" ? installmentQuote(totals.total, option) : { fee: 0, grandTotal: totals.total };
 
-  const paymentLabel =
-    method === "transfer"
-      ? t.orders.transfer
-      : [
-          t.checkout.card,
-          option.count > 1
-            ? t.orders.installments.replace("{count}", String(option.count))
-            : t.orders.singlePayment,
-        ].join(" — ");
-
-  const legalContext: LegalContext = {
-    buyer: {
-      name: type === "corporate" ? inv.companyName || inv.fullName : inv.fullName,
-      email: user.email,
-      phone: shipping.phone || user.phone,
-    },
-    deliveryAddress: addressComplete(shipping) ? `${shipping.fullName}, ${addressText(shipping)}` : "—",
+  // Siparisin taslagi: sozlesme onizlemesi ve kayit ayni nesneden uretilir.
+  const draft: NewOrder = {
+    userId: user.id,
+    customerName: `${user.firstName} ${user.lastName}`,
+    email: user.email,
+    phone: shipping.phone || user.phone,
+    shippingAddress: shipping,
     invoice:
       type === "corporate"
-        ? `${inv.companyName} — ${inv.taxOffice} / ${inv.taxNumber}`
-        : inv.fullName,
+        ? {
+            type,
+            companyName: inv.companyName,
+            taxOffice: inv.taxOffice,
+            taxNumber: inv.taxNumber,
+            address: billingAddress,
+          }
+        : { type, fullName: inv.fullName, tcKimlikNo: inv.tcKimlikNo, address: billingAddress },
     items: cart.lines.map((l) => ({
-      name: l.product.name,
-      variant: l.variantLabel ? l.variantLabel : undefined,
+      productId: l.product.id,
+      productName: l.product.name,
+      sku: l.sku,
+      variantLabel: l.variantLabel,
       quantity: l.quantity,
+      unitPriceExVat: l.unitExVat,
+      vatRate: l.product.vatRate,
       unitPrice: l.unitIncVat,
     })),
     subtotal: totals.subtotal,
+    vat: totals.vat,
     shipping: totals.shipping,
     installmentFee: quote.fee,
     total: quote.grandTotal,
-    payment: paymentLabel,
-    date: new Date().toISOString(),
+    payment:
+      method === "card"
+        ? {
+            method,
+            installments: option.count,
+            cardBrand: cardBrand(card.number),
+            cardProgram: cardProgram(card.number),
+            cardLast4: digitsOnly(card.number).slice(-4),
+            posId: pos?.id,
+            posName: pos?.name,
+            commissionPercent: pos ? posCommission(pos, option.count) : undefined,
+          }
+        : { method },
+    customerNote: note.trim() || undefined,
+    termsAcceptedAt: "",
   };
+
+  const legalContext = orderLegalContext(draft, new Date().toISOString(), t);
 
   const validate = (): string | null => {
     if (!addressComplete(shipping)) return t.checkout.required;
@@ -218,54 +249,11 @@ export default function CheckoutPage() {
     const now = new Date();
     const order = () =>
       placeOrder({
-        userId: user.id,
-        customerName: `${user.firstName} ${user.lastName}`,
-        email: user.email,
-        phone: shipping.phone,
-        shippingAddress: shipping,
-        invoice:
-          type === "corporate"
-            ? {
-                type,
-                companyName: inv.companyName,
-                taxOffice: inv.taxOffice,
-                taxNumber: inv.taxNumber,
-                address: billingAddress,
-              }
-            : { type, fullName: inv.fullName, tcKimlikNo: inv.tcKimlikNo, address: billingAddress },
-        items: cart.lines.map((l) => ({
-          productId: l.product.id,
-          productName: l.product.name,
-          sku: l.sku,
-          variantLabel: l.variantLabel,
-          quantity: l.quantity,
-          unitPriceExVat: l.unitExVat,
-          vatRate: l.product.vatRate,
-          unitPrice: l.unitIncVat,
-        })),
-        subtotal: totals.subtotal,
-        vat: totals.vat,
-        shipping: totals.shipping,
-        installmentFee: quote.fee,
-        total: quote.grandTotal,
+        ...draft,
         payment:
           method === "card"
-            ? {
-                method,
-                installments: option.count,
-                cardBrand: cardBrand(card.number),
-                cardProgram: cardProgram(card.number),
-                cardLast4: digitsOnly(card.number).slice(-4),
-                posId: pos?.id,
-                posName: pos?.name,
-                commissionPercent: pos ? posCommission(pos, option.count) : undefined,
-                paidAt: new Date().toISOString(),
-              }
-            : {
-                method,
-                dueAt: new Date(now.getTime() + shop.transferDueDays * 86_400_000).toISOString(),
-              },
-        customerNote: note.trim() || undefined,
+            ? { ...draft.payment, paidAt: new Date().toISOString() }
+            : { ...draft.payment, dueAt: new Date(now.getTime() + shop.transferDueDays * 86_400_000).toISOString() },
         termsAcceptedAt: now.toISOString(),
       });
 
@@ -420,7 +408,15 @@ export default function CheckoutPage() {
             </div>
 
             {method === "card" ? (
-              <CardPayment card={card} onChange={setCard} total={totals.total} shop={shop} />
+              <CardPayment
+                card={card}
+                onChange={setCard}
+                total={totals.total}
+                pos={pos}
+                options={options}
+                selected={option.count}
+                minInstallmentAmount={shop.minInstallmentAmount}
+              />
             ) : (
               <div className="space-y-3">
                 <p className="text-sm text-zw-grey-700">
