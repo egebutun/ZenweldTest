@@ -134,7 +134,6 @@ export const tr = {
   news: {
     title: "Haberler",
     subtitle: "Zenweld'den son gelişmeler, duyurular ve basın açıklamaları.",
-    readMore: "Devamını oku",
     backToList: "Tüm haberler",
     empty: "Henüz haber yok.",
     related: "Diğer haberler",
