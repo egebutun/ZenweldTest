@@ -27,7 +27,6 @@ const EMPTY: NewsItem = {
   coverUrl: "",
   images: [],
   publishedAt: "",
-  featured: false,
   active: true,
 };
 
@@ -90,18 +89,11 @@ export function NewsForm({ item }: { item?: NewsItem }) {
             <PublishedAtField value={draft.publishedAt} onChange={(v) => set("publishedAt", v)} />
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Checkbox
-              label="Yayında (aktif)"
-              checked={draft.active}
-              onChange={(e) => set("active", e.target.checked)}
-            />
-            <Checkbox
-              label="Öne çıkan (haberler sayfasında manşet)"
-              checked={draft.featured}
-              onChange={(e) => set("featured", e.target.checked)}
-            />
-          </div>
+          <Checkbox
+            label="Yayında (aktif)"
+            checked={draft.active}
+            onChange={(e) => set("active", e.target.checked)}
+          />
         </FormPanel>
       )}
 

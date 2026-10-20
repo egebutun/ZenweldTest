@@ -578,7 +578,6 @@ export interface NewsItem {
   /** Haber sayfasindaki fotograf galerisi (etkinliklerdeki gibi) */
   images: string[];
   publishedAt: string;
-  featured: boolean;
   active: boolean;
 }
 

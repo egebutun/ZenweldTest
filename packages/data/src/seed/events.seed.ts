@@ -297,7 +297,6 @@ Kaynak ve kesme teknolojilerindeki en yeni çözümleri keşfetmek, üretim sür
     coverUrl: "/images/news/kaynak-kesme-tanitim-gunu-van-2026.webp",
     images: [],
     publishedAt: "2026-07-27T09:00:00+03:00",
-    featured: true,
     active: true,
   },
   {
@@ -313,7 +312,6 @@ Akademiyle, öğrencilerin sektördeki çalışma olanaklarını okullarında g�
     coverUrl: "/images/news/zenweld-kaynak-akademi-2023.webp",
     images: [],
     publishedAt: "2023-09-12T09:00:00+03:00",
-    featured: false,
     active: true,
   },
 ];

@@ -55,7 +55,6 @@ export function createNews(partial: Partial<NewsItem>): NewsItem {
     coverUrl: partial.coverUrl ?? "",
     images: partial.images ?? [],
     publishedAt: partial.publishedAt ?? nowIso(),
-    featured: partial.featured ?? false,
     active: partial.active ?? true,
   };
   mutate((db) => {

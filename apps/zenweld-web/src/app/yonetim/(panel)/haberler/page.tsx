@@ -78,9 +78,8 @@ export default function AdminNewsPage() {
                 </td>
                 <td className="px-4 py-2.5">
                   <div className="flex flex-wrap gap-1">
-                    {n.featured && <Badge tone="red">Manşet</Badge>}
                     {!n.active && <Badge tone="grey">Yayında değil</Badge>}
-                    {n.active && !n.featured && <Badge tone="green">Yayında</Badge>}
+                    {n.active && <Badge tone="green">Yayında</Badge>}
                   </div>
                 </td>
                 <td className="px-4 py-2.5">
