@@ -157,12 +157,22 @@ zamanı ve yalnızca panelde görünen **İç Not** alanı bulunur.
 
 - **Kargo** — ücretsiz kargo sınırı (varsayılan 5.000 ₺), altındaki siparişlerde
   kargo ücreti, kargo firmaları listesi
-- **Kartla Taksit** — sunulacak taksit sayıları ve her biri için vade farkı (%0 =
-  peşin fiyatına taksit), taksit için en düşük sipariş tutarı
+- **Kartla Taksit** — taksit için en düşük sipariş tutarı ve banka POS'ları tablosu.
+  Her POS'ta: aktif/pasif, banka etiketi ve adı, kart programı (Bonus, World …),
+  mağaza no, POS adı.
+  - **Taksit Oranları (Göster):** müşteriye sunulan taksit sayıları ve her biri için
+    vade farkı (%0 = peşin fiyatına taksit).
+  - **Firma Taksit Oranları:** bankanın Zenweld'den kestiği komisyon (tek çekim dahil).
+    Müşteri görmez; kartlı siparişin detayında tahmini banka komisyonu ve net tahsilat
+    olarak görünür (sipariş anındaki oranla).
+  - Ödeme sayfasında kart, programı eşleşen ilk aktif POS'un taksitleriyle çekilir.
+    Eşleşmeyen kartlar "Diğer kartlar için varsayılan" işaretli POS'tan (örnekte
+    iyzico) tek çekim ödenir.
+  - Pencerelerde "Uygula" taslağa yazar; saklamak için sayfanın üstündeki **Kaydet**.
 - **Havale / EFT** — IBAN'lar ve ödeme süresi (gün)
 
-> Varsayılan kargo ücreti, vade farkı oranları ve IBAN'lar **örnektir**; gerçek
-> değerler girilmelidir.
+> Varsayılan kargo ücreti, banka POS'ları (mağaza no, oranlar) ve IBAN'lar
+> **örnektir**; gerçek değerler girilmelidir.
 
 ---
 

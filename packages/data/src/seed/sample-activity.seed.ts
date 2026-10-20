@@ -14,7 +14,7 @@ import type {
   WarrantyRecord,
 } from "../types";
 import { salePriceExVat } from "../discount";
-import { installmentQuote } from "../checkout";
+import { CARD_PROGRAMS, cardInstallments, installmentQuote, posCommission } from "../checkout";
 import { products } from "./products.seed";
 import { categories } from "./categories.seed";
 import { defaultSettings } from "./settings.seed";
@@ -70,7 +70,6 @@ const CITIES: [string, string, number][] = [
 ];
 
 const CARRIERS = ["Yurtiçi Kargo", "Aras Kargo", "MNG Kargo", "Sürat Kargo"];
-const CARD_PROGRAMS = ["Bonus", "World", "Maximum", "Axess", "CardFinans"];
 
 const COMPLAINTS: Record<ServiceReason, string> = {
   kurulum: "Yeni aldığımız makinenin kurulumu ve ilk ayarları için destek istiyoruz.",
@@ -189,10 +188,12 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
     const shipping = subtotal >= shop.freeShippingThreshold ? 0 : shop.shippingFee;
 
     const byCard = r() < 0.58;
-    const installments = byCard && subtotal + shipping >= shop.minInstallmentAmount
-      ? weighted<number>([[1, 45], [3, 20], [6, 18], [9, 9], [12, 8]])
-      : 1;
-    const option = shop.installments.find((o) => o.count === installments);
+    // Kartin programi bankayi (POS) ve sunulabilecek taksitleri belirler.
+    const cardProgram = pick([...CARD_PROGRAMS]);
+    const { pos, options } = cardInstallments(subtotal + shipping, cardProgram, shop);
+    const wanted = byCard ? weighted<number>([[1, 45], [3, 20], [6, 18], [9, 9], [12, 8]]) : 1;
+    const option = options.find((o) => o.count === wanted) ?? options[0];
+    const installments = option?.count ?? 1;
     const fee = byCard && option ? installmentQuote(subtotal + shipping, option).fee : 0;
 
     // Duruma siparisin yasina gore karar verilir
@@ -263,8 +264,11 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
             method: "card",
             installments,
             cardBrand: pick(["Visa", "Mastercard", "Troy"]),
-            cardProgram: pick(CARD_PROGRAMS),
+            cardProgram,
             cardLast4: String(between(1000, 9999)),
+            posId: pos?.id,
+            posName: pos?.name,
+            commissionPercent: pos ? posCommission(pos, installments) : undefined,
             paidAt: isoTR(createdMs),
           }
         : {

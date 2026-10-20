@@ -1,7 +1,7 @@
 "use client";
 
 import { CreditCard, Lock } from "lucide-react";
-import { availableInstallments, installmentQuote, type ShopSettings } from "@zenweld/data";
+import { cardInstallments, installmentQuote, type ShopSettings } from "@zenweld/data";
 import { FormRow, Input } from "@zenweld/ui";
 import { formatPrice } from "@zenweld/utils";
 import { useT } from "@/lib/i18n-client";
@@ -19,8 +19,9 @@ export const EMPTY_CARD: CardDraft = { holder: "", number: "", expiry: "", cvc: 
 
 /**
  * Kart formu ve taksit tablosu. Kart numarasinin ilk 6 hanesi girilince
- * kart programi ve taksit secenekleri gosterilir (gercek sistemde odeme
- * kurulusunun BIN sorgusu).
+ * kart programi bulunur (gercek sistemde odeme kurulusunun BIN sorgusu) ve
+ * o programin bankasinin (POS) taksitleri gosterilir. Programi eslesen
+ * banka yoksa varsayilan POS'tan tek cekim.
  */
 export function CardPayment({
   card,
@@ -39,7 +40,8 @@ export function CardPayment({
 
   const brand = cardBrand(card.number);
   const program = cardProgram(card.number);
-  const options = availableInstallments(total, shop);
+  const { pos, options } = cardInstallments(total, program, shop);
+  const matched = Boolean(program && pos?.program === program);
 
   return (
     <div className="space-y-4">
@@ -95,7 +97,7 @@ export function CardPayment({
           <h3 className="text-sm font-semibold text-zw-ink">{t.checkout.installments}</h3>
           {program && (
             <span className="text-xs text-zw-grey-500">
-              {t.checkout.cardProgram.replace("{program}", program)}
+              {t.checkout.cardProgram.replace("{program}", matched ? `${program} · ${pos!.name}` : program)}
             </span>
           )}
         </div>
@@ -104,6 +106,8 @@ export function CardPayment({
           <p className="rounded-[4px] bg-zw-grey-50 px-3 py-2.5 text-xs text-zw-grey-600">
             {t.checkout.installmentHint}
           </p>
+        ) : !pos ? (
+          <p className="rounded-[4px] bg-amber-50 px-3 py-2.5 text-xs font-semibold text-amber-800">{t.checkout.noPos}</p>
         ) : (
           <div className="overflow-hidden rounded-[4px] border border-zw-grey-200">
             {options.map((option) => {
@@ -145,7 +149,8 @@ export function CardPayment({
             })}
           </div>
         )}
-        {program && options.length === 1 && (
+        {program && pos && !matched && <p className="mt-2 text-xs text-zw-grey-500">{t.checkout.singleOnly}</p>}
+        {matched && total < shop.minInstallmentAmount && (
           <p className="mt-2 text-xs text-zw-grey-500">
             {t.checkout.installmentMin.replace(
               "{amount}",

@@ -1,5 +1,6 @@
 import type { Order, OrderAddress, OrderItem, PaymentMethod } from "../types";
 import { salePriceExVat } from "../discount";
+import { posCommission, posForCard } from "../checkout";
 import { products } from "./products.seed";
 import { defaultSettings } from "./settings.seed";
 
@@ -52,14 +53,20 @@ const elif: OrderAddress = {
   line: "Lorem OSB 3. Cadde No:17",
 };
 
-const card = (installments: number, last4: string, paidAt: string) => ({
-  method: "card" as PaymentMethod,
-  installments,
-  cardBrand: "Mastercard",
-  cardProgram: "World",
-  cardLast4: last4,
-  paidAt,
-});
+const card = (installments: number, last4: string, paidAt: string) => {
+  const pos = posForCard("World", defaultSettings.shop).pos!;
+  return {
+    method: "card" as PaymentMethod,
+    installments,
+    cardBrand: "Mastercard",
+    cardProgram: "World",
+    cardLast4: last4,
+    posId: pos.id,
+    posName: pos.name,
+    commissionPercent: posCommission(pos, installments),
+    paidAt,
+  };
+};
 
 const delivered = [item("zenmask-auto-9000", 1), item("gazalti-teli-sg2-08", 1)];
 const shipped = [item("evomig-205-p", 1), item("gazalti-teli-sg2-08", 4)];

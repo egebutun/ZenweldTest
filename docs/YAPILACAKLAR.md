@@ -63,6 +63,9 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
 1. **Ödeme kuruluşu** (iyzico, PayTR veya bankanın sanal POS'u): 3D Secure,
    kartın BIN'ine göre gerçek taksit oranları, iade/iptal. Kart bilgisi hiçbir
    zaman bizim sunucumuza gelmemeli (kuruluşun ödeme formu kullanılmalı).
+   Mağaza Ayarları → Kartla Taksit'teki banka POS'ları gerçek sanal POS'larla
+   eşleştirilmeli; POS'ların API anahtarları ve şifreleri yalnızca sunucuda
+   saklanmalı, panelde/tarayıcıda tutulmamalı.
 2. **Fiyat ve tutarlar sunucuda yeniden hesaplanmalı**; tarayıcıdan gelen
    tutara güvenilmez. Sipariş numarası sunucuda üretilmeli.
 3. **Hukuk metinleri**: Ön Bilgilendirme Formu, Mesafeli Satış Sözleşmesi,

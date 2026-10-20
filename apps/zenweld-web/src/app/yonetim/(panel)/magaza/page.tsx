@@ -4,15 +4,16 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { BankAccount, ShopSettings } from "@zenweld/data";
 import { getShopSettings, saveShopSettings, uid, useDatabase } from "@zenweld/store";
-import { Alert, Button, Checkbox, FormRow, Input, Textarea } from "@zenweld/ui";
+import { Alert, Button, FormRow, Input, Textarea } from "@zenweld/ui";
 import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
+import { PaymentPosSettings } from "@/components/admin/PaymentPosSettings";
 
 /**
  * MAGAZA AYARLARI — kargo, taksit ve havale/EFT.
  *
- * Taksit oranlari sitede musteriye gosterilen vade farkidir. Gercek
- * odeme kurulusu baglaninca bankalarin oranlari buradaki degerlerin
- * yerini alabilir (bkz. lib/payment.ts).
+ * Kartla taksit banka POS'u bazindadir: her POS'un musteriye sunulan
+ * taksitleri (vade farki) ve firma taksit oranlari (banka komisyonu)
+ * ayridir (bkz. components/admin/PaymentPosSettings.tsx).
  */
 export default function AdminShopSettingsPage() {
   const db = useDatabase();
@@ -34,6 +35,9 @@ export default function AdminShopSettingsPage() {
 
   const setBank = (id: string, patch: Partial<BankAccount>) =>
     set("bankAccounts", draft.bankAccounts.map((b) => (b.id === id ? { ...b, ...patch } : b)));
+
+  const unsaved = JSON.stringify({ ...draft, carriers: carriers.split("\n").map((c) => c.trim()).filter(Boolean) }) !==
+    JSON.stringify(getShopSettings(db));
 
   const save = () => {
     const carrierList = carriers.split("\n").map((c) => c.trim()).filter(Boolean);
@@ -58,6 +62,11 @@ export default function AdminShopSettingsPage() {
       {saved && (
         <div className="mb-4">
           <Alert tone="success">Mağaza ayarları kaydedildi.</Alert>
+        </div>
+      )}
+      {!saved && unsaved && (
+        <div className="mb-4">
+          <Alert tone="warning">Kaydedilmemiş değişiklikler var. Saklamak için Kaydet'e basın.</Alert>
         </div>
       )}
       {error && (
@@ -94,10 +103,11 @@ export default function AdminShopSettingsPage() {
           </div>
         </AdminCard>
 
-        <AdminCard>
+        <AdminCard className="lg:col-span-2">
           <h2 className="mb-1 font-display text-xl font-bold uppercase">Kartla Taksit</h2>
           <p className="mb-4 text-sm text-zw-grey-600">
-            Vade farkı %0 ise müşteri peşin fiyatına taksit yapar, banka komisyonunu Zenweld öder.
+            Her bankanın kendi taksit seçenekleri ve komisyonu vardır. Ödeme sayfasında kart, programı eşleşen
+            bankanın taksitleriyle çekilir; eşleşmeyen kartlar varsayılan POS'tan tek çekim ödenir.
           </p>
           <FormRow label="Taksit için en düşük sipariş tutarı (₺)">
             <Input
@@ -108,52 +118,9 @@ export default function AdminShopSettingsPage() {
               className="sm:w-48"
             />
           </FormRow>
-          <table className="mt-4 w-full text-sm">
-            <thead className="text-left text-xs uppercase text-zw-grey-500">
-              <tr>
-                <th className="py-2">Taksit</th>
-                <th className="py-2">Sunulsun</th>
-                <th className="py-2">Vade farkı (%)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zw-grey-100">
-              {draft.installments.map((o, idx) => (
-                <tr key={o.count}>
-                  <td className="py-2 font-semibold">{o.count} taksit</td>
-                  <td className="py-2">
-                    <Checkbox
-                      label=""
-                      checked={o.enabled}
-                      onChange={(e) =>
-                        set(
-                          "installments",
-                          draft.installments.map((x, i) => (i === idx ? { ...x, enabled: e.target.checked } : x)),
-                        )
-                      }
-                    />
-                  </td>
-                  <td className="py-2">
-                    <Input
-                      type="number"
-                      min={0}
-                      step={0.1}
-                      value={o.ratePercent}
-                      disabled={!o.enabled}
-                      onChange={(e) =>
-                        set(
-                          "installments",
-                          draft.installments.map((x, i) =>
-                            i === idx ? { ...x, ratePercent: num(e.target.value) } : x,
-                          ),
-                        )
-                      }
-                      className="w-28 py-1.5"
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="mt-4">
+            <PaymentPosSettings pos={draft.pos} onChange={(pos) => set("pos", pos)} />
+          </div>
         </AdminCard>
 
         <AdminCard className="lg:col-span-2">

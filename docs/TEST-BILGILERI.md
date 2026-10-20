@@ -39,19 +39,23 @@ görünür; site güncellendiğinde demo verisi baştan kurulabilir.
 Ad soyad herhangi bir isim olabilir. **Son kullanma tarihi** gelecekte bir ay olmalı
 (örnek `12/30`), **CVC** 3 hane (American Express'te 4 hane, örnek `1234`).
 
-| Kart | Numara | Ekranda görünen program |
-|---|---|---|
-| Visa | `4111 1111 1111 1111` | World |
-| Visa | `4400 0000 0000 0008` | Bonus |
-| Mastercard | `5555 5555 5555 4444` | Advantage |
-| Troy | `9792 0300 0000 0000` | Advantage |
-| American Express | `3782 822463 10005` | Advantage |
+| Kart | Numara | Program | Taksitler hangi bankadan (POS) |
+|---|---|---|---|
+| Visa | `4111 1111 1111 1111` | World | Yapı Kredi World |
+| Visa | `4400 0000 0000 0008` | Bonus | Garanti Bonus |
+| Mastercard | `5555 5555 5555 4444` | Advantage | HSBC Advantage (örnekte en fazla 6 taksit) |
+| Troy | `9792 0300 0000 0000` | Advantage | HSBC Advantage |
+| American Express | `3782 822463 10005` | Advantage | HSBC Advantage |
 
 - Hata mesajını denemek için **geçersiz** kart: `4111 1111 1111 1112`
 - "Program" (Bonus, World …) demoda kart numarasının ilk 6 hanesinden üretilir;
   gerçekte ödeme kuruluşunun sorgusundan gelir.
-- Taksit seçenekleri 1.000 ₺ ve üzeri siparişlerde çıkar (Mağaza Ayarları'ndan
-  değiştirilir).
+- Taksitler kartın programına bağlı bankanın (POS) taksitleridir; Mağaza Ayarları →
+  Kartla Taksit'ten banka bazında değiştirilir. Taksit seçenekleri 1.000 ₺ ve üzeri
+  siparişlerde çıkar.
+- **Varsayılan POS'u (tek çekim) denemek için:** Mağaza Ayarları'nda HSBC Advantage'ı
+  pasif yapıp kaydedin, sonra `5555 5555 5555 4444` ile ödeyin: kart iyzico'dan
+  yalnızca tek çekim olarak alınır.
 - "Öde" denince 3D Secure doğrulaması taklit edilir (yaklaşık 1,5 saniye), sipariş
   oluşur ve sipariş sayfası açılır.
 

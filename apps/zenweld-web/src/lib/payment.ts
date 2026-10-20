@@ -10,6 +10,8 @@
  * program eslemesi yalnizca sunum icindir.
  */
 
+import { CARD_PROGRAMS, type CardProgram } from "@zenweld/data";
+
 export const digitsOnly = (value: string) => value.replace(/\D/g, "");
 
 /** Kart numarasinin Luhn kontrolu. */
@@ -37,15 +39,12 @@ export function cardBrand(value: string): string | undefined {
   return undefined;
 }
 
-/** Turkiye'deki taksitli kart programlari. */
-const PROGRAMS = ["Bonus", "World", "Maximum", "Axess", "CardFinans", "Paraf", "Advantage", "BankkartCombo"];
-
 /** DEMO: kartin ilk 6 hanesinden sabit bir program secer. */
-export function cardProgram(value: string): string | undefined {
+export function cardProgram(value: string): CardProgram | undefined {
   const bin = digitsOnly(value).slice(0, 6);
   if (bin.length < 6) return undefined;
   const sum = [...bin].reduce((s, c) => s + Number(c), 0);
-  return PROGRAMS[sum % PROGRAMS.length];
+  return CARD_PROGRAMS[sum % CARD_PROGRAMS.length];
 }
 
 /** "4111111111111111" -> "4111 1111 1111 1111" */

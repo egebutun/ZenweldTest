@@ -279,13 +279,30 @@ function PaymentInfo({ order }: { order: Order }) {
         <>
           <Row label="Kart" value={`${p.cardBrand ?? ""} •••• ${p.cardLast4 ?? ""}`} />
           {p.cardProgram && <Row label="Program" value={p.cardProgram} />}
+          {p.posName && <Row label="POS" value={p.posName} />}
           <Row label="Taksit" value={(p.installments ?? 1) > 1 ? `${p.installments} taksit` : "Tek çekim"} />
+          {p.commissionPercent !== undefined && <Commission order={order} percent={p.commissionPercent} />}
         </>
       )}
       {p.dueAt && <Row label="Son ödeme" value={formatDate(p.dueAt)} />}
       <Row label="Ödendi" value={p.paidAt ? formatDateTime(p.paidAt) : "—"} />
       <Row label="Sözleşme onayı" value={formatDateTime(order.termsAcceptedAt)} />
     </dl>
+  );
+}
+
+/**
+ * Bankanin kestigi komisyon: siparis anindaki firma taksit orani x
+ * musteriden cekilen tutar (vade farki dahil). Tahminidir; kesin tutar
+ * banka ekstresindedir.
+ */
+function Commission({ order, percent }: { order: Order; percent: number }) {
+  const fee = Math.round((order.total * percent) / 100);
+  return (
+    <>
+      <Row label="Banka komisyonu (tahmini)" value={`%${percent.toLocaleString("tr-TR")} · ${formatPrice(fee)}`} />
+      <Row label="Net tahsilat (tahmini)" value={formatPrice(order.total - fee)} />
+    </>
   );
 }
 

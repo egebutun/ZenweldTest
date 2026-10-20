@@ -1,5 +1,7 @@
 /** Zenweld — paylasilan veri tipleri */
 
+import type { CardProgram } from "./checkout";
+
 /* ------------------------------------------------------------------ */
 /* Kategori                                                            */
 /* ------------------------------------------------------------------ */
@@ -422,6 +424,11 @@ export interface OrderPayment {
   /** Kart: banka kart programi (Bonus, World ...) */
   cardProgram?: string;
   cardLast4?: string;
+  /** Kart: cekimin yapildigi POS (siparis anindaki adi ve komisyon orani saklanir) */
+  posId?: string;
+  posName?: string;
+  /** Bankanin bu cekimden kestigi komisyon (%), siparis anindaki firma taksit orani */
+  commissionPercent?: number;
   /** Odeme alindigi an. Havalede yonetici "Odeme alindi" deyince dolar. */
   paidAt?: string;
   /** Havale: bu tarihe kadar odenmezse siparis iptal edilir. */
@@ -774,6 +781,31 @@ export interface InstallmentOption {
   enabled: boolean;
 }
 
+/**
+ * Banka sanal POS'u (Magaza Ayarlari > Kartla Taksit). Kart, programi
+ * eslesen POS'tan o bankanin taksitleriyle cekilir; eslesmeyen kartlar
+ * varsayilan POS'tan tek cekim (bkz. posForCard).
+ */
+export interface PaymentPos {
+  id: string;
+  /** Logo yerine etikette gorunen kisa banka adi: "Garanti" */
+  bankShortName: string;
+  /** "Garanti Bonus" */
+  name: string;
+  /** Taksit yapilan kart programi; bos ise program yok (orn. odeme kurulusu) */
+  program?: CardProgram;
+  /** Bankanin verdigi uye isyeri (magaza) numarasi */
+  merchantNo: string;
+  posName: string;
+  active: boolean;
+  /** Programi eslesmeyen kartlar bu POS'tan tek cekim odenir (tek POS isaretlenir) */
+  isDefault: boolean;
+  /** Musteriye sunulan taksitler ve vade farki */
+  installments: InstallmentOption[];
+  /** Firma taksit oranlari: bankanin Zenweld'den kestigi komisyon (count 1 = tek cekim) */
+  commissions: { count: number; ratePercent: number }[];
+}
+
 export interface BankAccount {
   id: string;
   bankName: string;
@@ -786,7 +818,8 @@ export interface ShopSettings {
   freeShippingThreshold: number;
   /** Esigin altindaki siparislerde kargo ucreti (KDV dahil) */
   shippingFee: number;
-  installments: InstallmentOption[];
+  /** Kartla odeme alinan banka POS'lari; ayni programda listede ustteki gecerli */
+  pos: PaymentPos[];
   /** Taksit secenekleri bu tutarin altindaki siparislerde gosterilmez */
   minInstallmentAmount: number;
   bankAccounts: BankAccount[];

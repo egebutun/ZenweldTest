@@ -527,6 +527,8 @@ export const tr = {
     cardProgram: "Kart programı: {program}",
     installmentHint: "Taksit seçeneklerini görmek için kart numaranızı girin.",
     installmentMin: "Taksit seçenekleri {amount} ve üzeri siparişlerde geçerlidir.",
+    singleOnly: "Bu kartla yalnızca tek çekim yapılabilir.",
+    noPos: "Bu kartla şu an ödeme alınamıyor. Havale / EFT ile ödeyebilirsiniz.",
     transferInfo:
       "Siparişiniz oluşturulduktan sonra aşağıdaki hesaplardan birine ödeme yapın ve açıklamaya sipariş numaranızı yazın. Ödeme {days} gün içinde hesabımıza geçmezse sipariş iptal edilir.",
     bankName: "Banka",

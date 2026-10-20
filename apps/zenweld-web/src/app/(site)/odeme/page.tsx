@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { Building2, CreditCard, Landmark, User as UserIcon } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import {
-  availableInstallments,
+  cardInstallments,
+  posCommission,
   installmentQuote,
   type OrderAddress,
   type OrderInvoice,
@@ -148,8 +149,9 @@ export default function CheckoutPage() {
   const billingAddress = sameAddress ? shipping : invoiceAddress;
 
   const { totals } = cart;
-  const options = availableInstallments(totals.total, shop);
-  const option = options.find((o) => o.count === card.installments) ?? options[0];
+  // Kartin bankasi (POS) ve sunulan taksitler; POS yoksa kartla odeme alinamaz.
+  const { pos, options } = cardInstallments(totals.total, cardProgram(card.number), shop);
+  const option = options.find((o) => o.count === card.installments) ?? options[0] ?? { count: 1, ratePercent: 0, enabled: true };
   const quote = method === "card" ? installmentQuote(totals.total, option) : { fee: 0, grandTotal: totals.total };
 
   const paymentLabel =
@@ -202,6 +204,7 @@ export default function CheckoutPage() {
       if (!isValidCardNumber(card.number)) return t.checkout.invalidCard;
       if (!isValidExpiry(card.expiry)) return t.checkout.invalidExpiry;
       if (!/^\d{3,4}$/.test(card.cvc)) return t.checkout.invalidCvc;
+      if (!pos) return t.checkout.noPos;
     }
     if (!consent) return t.checkout.consentRequired;
     return null;
@@ -253,6 +256,9 @@ export default function CheckoutPage() {
                 cardBrand: cardBrand(card.number),
                 cardProgram: cardProgram(card.number),
                 cardLast4: digitsOnly(card.number).slice(-4),
+                posId: pos?.id,
+                posName: pos?.name,
+                commissionPercent: pos ? posCommission(pos, option.count) : undefined,
                 paidAt: new Date().toISOString(),
               }
             : {
