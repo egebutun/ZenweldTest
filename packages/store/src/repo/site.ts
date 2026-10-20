@@ -2,6 +2,7 @@
 
 import type {
   AboutContent,
+  PageSeoFields,
   RichTextStyle,
   SalesRep,
   ShopSettings,
@@ -26,6 +27,27 @@ export function getRichTextStyle(db: ZenweldDatabase = getSnapshot()): RichTextS
 export function saveRichTextStyle(style: RichTextStyle): void {
   mutate((db) => {
     db.settings = { ...db.settings, richText: style };
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Sayfa SEO (sabit sayfalar)                                          */
+/* ------------------------------------------------------------------ */
+
+/** Sabit sayfanin panelde degistirilen basligi ve aciklamasi (yoksa varsayilan kullanilir). */
+export function getPageSeo(path: string, db: ZenweldDatabase = getSnapshot()): PageSeoFields | undefined {
+  return db.pageSeo?.[path];
+}
+
+/** Bos alanlar kaydedilmez; iki alan da bossa sayfa varsayilan metne doner. */
+export function savePageSeo(path: string, fields: PageSeoFields): void {
+  const title = fields.title?.trim();
+  const description = fields.description?.trim();
+  mutate((db) => {
+    const next = { ...db.pageSeo };
+    if (title || description) next[path] = { ...(title && { title }), ...(description && { description }) };
+    else delete next[path];
+    db.pageSeo = next;
   });
 }
 

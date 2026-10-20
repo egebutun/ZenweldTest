@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { blogPosts, categories, categoryGroups, events, news, products } from "@zenweld/data";
 import { categoryHref, groupHref } from "@/lib/catalog";
+import { INDEXABLE_PAGES } from "@/lib/page-meta";
 import { getSiteUrl } from "@/lib/seo";
 
 /**
@@ -21,33 +22,6 @@ import { getSiteUrl } from "@/lib/seo";
  * kurulunca veritabanindan okunacak (bkz. docs/YAPILACAKLAR.md).
  */
 
-const STATIC_PATHS = [
-  "",
-  "/ekipmanlar",
-  "/guvenlik",
-  "/aksesuarlar",
-  "/dolgu-metalleri",
-  "/yetkili-bayi-ve-servis-agi",
-  "/teklif-al",
-  "/hakkimizda",
-  "/satis-temsilcilerimiz",
-  "/welders-club",
-  "/bayilik-basvurusu",
-  "/iletisim",
-  "/garanti",
-  "/garanti/kayit",
-  "/garanti/sorgulama",
-  "/servis-talebi",
-  "/sss",
-  "/blog",
-  "/haberler",
-  "/etkinlikler",
-  "/urun-secici",
-  "/kaynak-rehberi",
-  "/msds",
-  "/parti-sertifikalari",
-];
-
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteUrl();
   const entry = (path: string, lastModified?: string): MetadataRoute.Sitemap[number] => ({
@@ -56,7 +30,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   });
 
   return [
-    ...STATIC_PATHS.map((path) => entry(path)),
+    // Sabit sayfalar: lib/page-meta.ts (Sayfa SEO ekranindaki liste)
+    ...INDEXABLE_PAGES.map((page) => entry(page.path)),
     ...categoryGroups.map((group) => entry(groupHref(group))),
     ...categories.map((category) => entry(categoryHref(category))),
     ...products.filter((p) => p.active).map((p) => entry(`/urun/${p.slug}`, p.updatedAt)),

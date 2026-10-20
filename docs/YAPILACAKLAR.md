@@ -107,9 +107,9 @@ ayrıntılar: [STOK.md](STOK.md) › "Backend'e geçiş".
 3. Ürün sayfaları önbellekte tutulmalı; yükleme uygulanınca yalnızca etkilenen
    ürünlerin sayfaları yenilenmeli, ayrıca günde en az bir kez.
 
-## Ürün, blog, haber ve etkinlik SEO'su ve link yönlendirme — backend
+## SEO alanları (ürün, blog, haber, etkinlik, sabit sayfalar) ve link yönlendirme — backend
 
-Panelde SEO sekmesi hazır (ürün, blog yazısı, haber, etkinlik); veri şimdilik
+Panelde SEO sekmesi (ürün, blog yazısı, haber, etkinlik) ve Sayfa SEO ekranı hazır; veri şimdilik
 tarayıcıda. Sunucu bugün bu sayfaların başlığını, açıklamasını ve `keywords`
 etiketini koddaki örnek veriden üretiyor (`generateMetadata`), paneldeki
 değişikliği göremiyor. Eski linkten yeni linke yönlendirme de demoda tarayıcıda
@@ -120,6 +120,10 @@ yapılıyor (`lib/page-seo-client.ts`).
    `previous_slugs` (tür, kayıt, eski link) tablosu.
 2. Sayfaların başlığı, açıklaması ve `keywords` etiketi veritabanından
    okunmalı (`lib/seo.ts` → `productSeo`, `blogPostSeo`, `newsSeo`, `eventSeo`).
+   Sabit sayfalar (Sayfa SEO ekranı) için `page_seo` (sayfa adresi, başlık,
+   açıklama) tablosu; `lib/page-meta.ts` → `pageMetadataFor` panelde girilen
+   metni bu tablodan okumalı. Ana sayfanın başlığı site düzeninde
+   (`app/(site)/layout.tsx`).
 3. Eski link sunucuda **301 (kalıcı)** ile yeni linke yönlendirilmeli; Google eski
    sonucu yeni linkle değiştirir. Panelde değiştirilen yeni link sunucuda da
    bulunmalı (bugün yalnızca tarayıcı biliyor; sunucu 404 kodu döndürüyor, sayfa
@@ -160,11 +164,10 @@ kararlaştırılacak. Başlıklar:
 8. Her değişiklikte tüm veritabanı (≈545 KB) yeniden yazılıyor
 9. Yorumlara yüklenen foto/videoda boyut sınırı ve sıkıştırma yok
 10. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
-11. `/yetkili-bayi-ve-servis-agi` sayfa başlığı eski adı taşıyor
-12. 17 dosyada hâlâ Lorem ipsum var
-13. ESLint kurulu değil, test ve CI yok
-14. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
-15. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
+11. 17 dosyada hâlâ Lorem ipsum var
+12. ESLint kurulu değil, test ve CI yok
+13. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
+14. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
 
 ## Çerezler ve yasal metinler
 

@@ -6,6 +6,8 @@ import "@fontsource/barlow-condensed/700.css";
 import "../globals.css";
 
 import { SITE_DESCRIPTION, SITE_NAME, absoluteUrl, canonical, getSiteUrl, isNoIndex } from "@/lib/seo";
+import { HOME_TITLE } from "@/lib/page-meta";
+import { StaticPageSeoTitle } from "@/lib/page-seo-client";
 import { Providers } from "./providers";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -19,12 +21,10 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-const TITLE = "ZENWELD — Kaynak Makineleri ve Plazma Kesme Sistemleri";
-
 export function generateMetadata(): Metadata {
   return {
     metadataBase: new URL(getSiteUrl()),
-    title: { default: TITLE, template: `%s | ${SITE_NAME}` },
+    title: { default: HOME_TITLE, template: `%s | ${SITE_NAME}` },
     description: SITE_DESCRIPTION,
     applicationName: SITE_NAME,
     alternates: canonical("/"),
@@ -35,7 +35,7 @@ export function generateMetadata(): Metadata {
       type: "website",
       siteName: SITE_NAME,
       locale: "tr_TR",
-      title: TITLE,
+      title: HOME_TITLE,
       description: SITE_DESCRIPTION,
       url: absoluteUrl("/"),
       // Paylasim karti: 1200x630 markali gorsel. Onceden dikey bir urun
@@ -52,7 +52,7 @@ export function generateMetadata(): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: TITLE,
+      title: HOME_TITLE,
       description: SITE_DESCRIPTION,
       images: ["/images/brand/og-cover.png"],
     },
@@ -65,6 +65,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-white antialiased">
         <Providers>
           <WelcomeGate />
+          <StaticPageSeoTitle />
           <Header />
           {/* Indirimli kartlarin alev susu bilerek kart disina tasar; ekranin
               kenarindaki kartta sayfayi yana kaydirmasin diye yatayda kirpilir.

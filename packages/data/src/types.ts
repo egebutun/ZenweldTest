@@ -155,6 +155,9 @@ export interface Product {
   previousSlugs?: string[];
 }
 
+/** Sabit sayfalarin (Hakkimizda, SSS ...) panelden degistirilen alanlari. */
+export type PageSeoFields = Pick<SeoFields, "title" | "description">;
+
 /** Panelin SEO sekmesi: urun, blog yazisi, haber ve etkinlik. */
 export interface SeoFields {
   /** Sayfa basligi (tam haliyle; bossa otomatik, orn. "Urun adi — Kategori | ZENWELD") */
@@ -891,5 +894,10 @@ export interface ZenweldDatabase {
   salesReps: SalesRep[];
   legalPages: LegalPage[];
   serviceRequests: ServiceRequest[];
+  /**
+   * Sabit sayfalarin panelden degistirilen arama basligi ve aciklamasi
+   * (sayfa adresi -> alanlar; Icerik > Sayfa SEO). Eski kayitlarda yok.
+   */
+  pageSeo?: Record<string, PageSeoFields>;
   settings: SiteSettings;
 }

@@ -21,6 +21,7 @@ import {
   Palette,
   PenLine,
   Scale,
+  Search,
   Settings,
   ShieldCheck,
   ShoppingCart,
@@ -107,6 +108,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/yonetim/sss", label: "Sık Sorulan Sorular", Icon: HelpCircle },
       { href: "/yonetim/belgeler", label: "Belgeler", Icon: FolderOpen },
       { href: "/yonetim/yasal-metinler", label: "Yasal Metinler", Icon: Scale },
+      { href: "/yonetim/sayfa-seo", label: "Sayfa SEO", Icon: Search },
     ],
   },
   {

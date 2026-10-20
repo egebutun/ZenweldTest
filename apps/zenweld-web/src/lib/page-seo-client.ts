@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { getPageSeo, useDatabase } from "@zenweld/store";
+import { isIndexablePage } from "./page-meta";
 
 /**
  * Linki panelden degismis kayit (urun, blog, haber, etkinlik): eski adresle
@@ -34,4 +36,15 @@ export function useSeoTitle(title: string | undefined) {
     observer.observe(document.head, { childList: true, subtree: true, characterData: true });
     return () => observer.disconnect();
   }, [title]);
+}
+
+/**
+ * Sabit sayfalar (Hakkimizda, SSS ...): Sayfa SEO ekraninda girilen baslik
+ * demoda sekmede gorunur. Site duzeninde bir kez yer alir.
+ */
+export function StaticPageSeoTitle() {
+  const pathname = usePathname();
+  const db = useDatabase();
+  useSeoTitle(isIndexablePage(pathname) ? getPageSeo(pathname, db)?.title : undefined);
+  return null;
 }

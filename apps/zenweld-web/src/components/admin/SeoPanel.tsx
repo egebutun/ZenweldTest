@@ -9,8 +9,8 @@ import type { PageSeo } from "@/lib/seo";
 import { FormPanel } from "./content-form";
 
 /** Google'in arama sonucunda kesmeden gosterdigi yaklasik uzunluklar */
-const TITLE_MAX = 60;
-const DESCRIPTION_MAX = 160;
+export const TITLE_MAX = 60;
+export const DESCRIPTION_MAX = 160;
 
 /** "tig, kaynak makinesi, , tig" -> ["tig", "kaynak makinesi"] */
 const parseKeywords = (text: string) => [
@@ -157,26 +157,32 @@ export function SeoPanel({
       </FormPanel>
 
       <FormPanel>
-        <div className="text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-          Google Önizlemesi
-        </div>
-        {/* Gercek alan adiyla (lib/seo.ts INDEXABLE_HOSTS) gosterilir. */}
-        <div className="max-w-[600px] font-sans">
-          <div className="truncate text-sm text-zw-grey-700">
-            zenweld.com › {path.slice(1)} › {slug || "…"}
-          </div>
-          <div className="mt-1 truncate text-xl leading-snug text-[#1a0dab]">{seo.title}</div>
-          <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-zw-grey-600">
-            {seo.description || "Açıklama girilmedi."}
-          </p>
-        </div>
+        <GooglePreview path={`${path}/${slug || "…"}`} title={seo.title} description={seo.description} />
       </FormPanel>
     </div>
   );
 }
 
+/** Arama sonucundaki gorunum; gercek alan adiyla (lib/seo.ts INDEXABLE_HOSTS). */
+export function GooglePreview({ path, title, description }: { path: string; title: string; description: string }) {
+  return (
+    <>
+      <div className="text-xs font-semibold uppercase tracking-wide text-zw-grey-600">Google Önizlemesi</div>
+      <div className="max-w-[600px] font-sans">
+        <div className="truncate text-sm text-zw-grey-700">
+          {["zenweld.com", ...path.split("/").filter(Boolean)].join(" › ")}
+        </div>
+        <div className="mt-1 truncate text-xl leading-snug text-[#1a0dab]">{title}</div>
+        <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-zw-grey-600">
+          {description || "Açıklama girilmedi."}
+        </p>
+      </div>
+    </>
+  );
+}
+
 /** Karakter sayaci: sinir asilinca kirmizi uyari verir. */
-function Counter({ length, max, children }: { length: number; max: number; children: ReactNode }) {
+export function Counter({ length, max, children }: { length: number; max: number; children: ReactNode }) {
   return (
     <span className="flex flex-wrap justify-between gap-x-3">
       <span className="min-w-0">{children}</span>

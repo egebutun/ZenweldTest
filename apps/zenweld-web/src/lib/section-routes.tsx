@@ -5,8 +5,6 @@ import { CategoryListing } from "@/components/product/CategoryListing";
 import { GroupHub, SectionHub } from "@/components/product/CatalogHub";
 import { JsonLd } from "@/components/common/JsonLd";
 import {
-  SECTION_DESCRIPTIONS,
-  SECTION_TITLES,
   catalogTrail,
   categoryHref,
   findGroup,
@@ -15,6 +13,7 @@ import {
   type Crumb,
 } from "@/lib/catalog";
 import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical } from "@/lib/seo";
+import { pageMetadataFor } from "@/lib/page-meta";
 
 /**
  * URUN BOLUMU, GRUP VE KATEGORI SAYFALARI — ORTAK KOD
@@ -48,7 +47,7 @@ const trailJsonLd = (trail: Crumb[]) =>
 export function sectionRoute(section: TopLevelSection) {
   return {
     generateMetadata(): Metadata {
-      return metadata(`/${section}`, SECTION_TITLES[section], SECTION_DESCRIPTIONS[section]);
+      return pageMetadataFor(`/${section}`)();
     },
     Page() {
       return (

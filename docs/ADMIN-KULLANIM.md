@@ -12,7 +12,7 @@ olan sayfanın grubu kendiliğinden açık gelir:
 | Ürünler | Ürünler · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler |
-| İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler |
+| İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
 | Ayarlar | Görünüm |
 
 Panel adresi: `http://localhost:3000/yonetim` (canlıda `zenweld.com/yonetim`)
@@ -240,6 +240,23 @@ haberlerle aynıdır (`## ara başlık`, `- madde`, `**kalın**`).
 tabloları siparişten otomatik doldurulur; düzenlenen metin tabloların altında görünür.
 
 > Metinlerin tamamı **taslaktır**; hukuk danışmanının metinleriyle değiştirilmelidir.
+
+## 4f. Sayfa SEO
+
+Sabit sayfaların (ana sayfa, ürün bölümleri, Keşfet menüsündeki sayfalar, destek ve
+garanti sayfaları) Google'da ve tarayıcı sekmesinde görünen **başlığı** ve
+**açıklaması** buradan değiştirilir. Liste menüdeki gibi üç bölümdedir; her satırda
+başlık, karakter sayısı, açıklama ve durum (**Varsayılan** / **Değiştirildi**)
+görünür.
+
+- ✏️ simgesi düzenleme penceresini açar: başlık (60 karakter önerilir), açıklama
+  (160 karakter önerilir) ve Google önizlemesi.
+- Boş bırakılan alanda varsayılan metin kullanılır (kutuda gri yazıyla görünür).
+  **Varsayılana dön** iki alanı da boşaltır; **Kaydet** ile uygulanır.
+- Bu sayfaların linkleri menüye bağlı olduğu için değiştirilemez.
+
+Ürün, blog, haber ve etkinliklerin SEO alanları kendi düzenleme ekranlarındaki
+**SEO** sekmesindedir.
 
 ---
 
