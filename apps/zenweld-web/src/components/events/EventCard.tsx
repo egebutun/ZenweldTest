@@ -48,7 +48,7 @@ export function EventCard({ event }: { event: ZenweldEvent }) {
       {/* Üst şerit: tarih bloğu + etkinlik logosu */}
       <div className="flex items-start justify-between gap-4">
         <DateBlock event={event} />
-        <div className="flex h-[92px] flex-1 items-center justify-end">
+        <div className="flex h-[92px] min-w-0 flex-1 items-center justify-end">
           {/* Sabit kutu + esit alan: her etkinligin logosu ayni gorsel
               agirlikta gorunur, hicbiri kirpilmaz. */}
           <EventLogo

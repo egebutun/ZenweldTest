@@ -66,7 +66,10 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <WelcomeGate />
           <Header />
-          <main className="min-h-[60vh]">{children}</main>
+          {/* Indirimli kartlarin alev susu bilerek kart disina tasar; ekranin
+              kenarindaki kartta sayfayi yana kaydirmasin diye yatayda kirpilir.
+              (clip, hidden'dan farkli olarak yapiskan basligi bozmaz.) */}
+          <main className="min-h-[60vh] overflow-x-clip">{children}</main>
           <Footer />
           <CookieBanner />
         </Providers>

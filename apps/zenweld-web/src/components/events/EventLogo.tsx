@@ -78,18 +78,19 @@ export function EventLogo({
   })();
 
   // "hug": kutu logonun tam olcusu olur; dort kenarinda da bos beyaz kalmaz.
-  // box-content sayesinde cerceve olcunun disina cizilir, logoyu kirpmaz.
+  // Her iki turde de dar ekranda (telefon) kutu ekran genisligini asmaz;
+  // logo oranini koruyarak kuculur, kirpilmaz.
   const box =
     fit === "hug"
       ? scaled
-        ? { width: scaled.width, height: scaled.height }
-        : { height: maxHeight }
-      : { width: maxWidth, height: maxHeight };
+        ? { width: scaled.width, height: scaled.height, maxWidth: "100%" }
+        : { height: maxHeight, maxWidth: "100%" }
+      : { width: "100%", maxWidth, height: maxHeight };
 
   return (
     <div
-      className={`flex shrink-0 items-center justify-center ${
-        fit === "hug" ? "box-content" : "overflow-hidden"
+      className={`flex items-center justify-center ${
+        fit === "hug" ? "shrink-0" : "min-w-0 overflow-hidden"
       } ${className}`}
       style={box}
     >
@@ -101,7 +102,7 @@ export function EventLogo({
         className="shrink-0 object-contain"
         style={
           scaled
-            ? { width: scaled.width, height: scaled.height }
+            ? { width: scaled.width, height: scaled.height, maxWidth: "100%", maxHeight: "100%" }
             : { maxWidth: "100%", maxHeight: "100%" }
         }
         onReady={setSize}

@@ -41,7 +41,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-14 grid gap-8 border-t border-zw-grey-200 pt-10 lg:grid-cols-2">
+        <div className="mt-14 grid grid-cols-1 gap-8 border-t border-zw-grey-200 pt-10 lg:grid-cols-2">
           <div>
             <ZenweldLogo className="h-8 w-auto" />
             <p className="mt-4 max-w-sm text-sm text-zw-grey-500">{CONTACT.address}</p>
@@ -90,7 +90,7 @@ export function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.footer.newsletterPlaceholder}
-                  className="h-12 flex-1 rounded-[4px] border border-zw-grey-300 px-4 text-sm outline-none focus:border-zw-ink"
+                  className="h-12 min-w-0 flex-1 rounded-[4px] border border-zw-grey-300 px-4 text-sm outline-none focus:border-zw-ink"
                 />
                 <button
                   type="submit"

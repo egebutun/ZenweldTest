@@ -63,7 +63,8 @@ export function Header() {
         className="sticky top-0 z-[100] border-b border-zw-grey-200 bg-white"
         onMouseLeave={() => setOpenMenu(null)}
       >
-        <div className="zw-container flex h-[72px] items-center gap-4">
+        {/* Dar telefonda (≤ 375px) tek satira sigsin diye bosluklar daralir. */}
+        <div className="zw-container flex h-[72px] items-center gap-2 sm:gap-4">
           <button
             className="-ml-1 rounded-[3px] p-2 text-zw-ink lg:hidden zw-focus"
             onClick={() => setDrawerOpen(true)}
@@ -131,11 +132,12 @@ export function Header() {
               </kbd>
             </button>
 
-            {/* 1024-1279px arasinda sepet simgesine yer acmak icin gizlenir;
-                bayi bulma Destek menusunde de var. */}
+            {/* 1024-1279px arasinda sepet simgesine, 360px'ten dar telefonda
+                diger simgelere yer acmak icin gizlenir; bayi bulma Destek
+                menusunde de var. */}
             <Link
               href="/yetkili-bayi-ve-servis-agi"
-              className="rounded-[4px] p-2 text-zw-ink transition-colors hover:bg-zw-grey-100 lg:hidden xl:block"
+              className="rounded-[4px] p-2 text-zw-ink transition-colors hover:bg-zw-grey-100 max-[359px]:hidden lg:hidden xl:block"
               aria-label={t.nav.findDealer}
               title={t.nav.findDealer}
             >

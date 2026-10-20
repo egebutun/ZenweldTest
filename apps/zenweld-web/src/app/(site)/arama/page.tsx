@@ -110,7 +110,7 @@ function SearchPageInner() {
       {otherHits.length > 0 && (
         <div className="mt-12">
           <h2 className="mb-4 font-display text-2xl font-bold uppercase">{t.search.pages}</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {otherHits.map((hit) => (
               <Link
                 key={hit.id}
