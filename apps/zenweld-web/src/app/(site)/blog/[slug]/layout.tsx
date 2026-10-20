@@ -30,10 +30,9 @@ export async function generateMetadata({
       images: [{ url: post.coverUrl, alt: title }],
     },
     twitter: { card: "summary_large_image", title, description, images: [post.coverUrl] },
-    // Blog govdeleri hala yer tutucu (Lorem ipsum). Gercek yazilar
-    // yazilana kadar aramaya kapali; aksi halde Google bu metinleri
-    // Zenweld'in gercek icerigi sanip indeksler.
-    robots: { index: false, follow: true },
+    // Blog yazilari aramaya acik ve site haritasinda. Ornek yazilarin
+    // govdesi hala yer tutucu (Lorem ipsum): site zenweld.com'da yayina
+    // girmeden once gercek metinler yazilmali (docs/YAPILACAKLAR.md).
   };
 }
 

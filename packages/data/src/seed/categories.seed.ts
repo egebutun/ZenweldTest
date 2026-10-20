@@ -6,8 +6,8 @@ import type { Category, CategoryGroup } from "../types";
  * Zenweld'in onayli kategori agaci (Ekim 2026). Uc seviye:
  *   1      ust bolum   (ekipmanlar, guvenlik ...) -> ana menu, /ekipmanlar (grup kartlari)
  *   1.1    grup        -> mega menude sol kolon, /ekipmanlar/<slug> (kategori kartlari)
- *   1.1.1  kategori    -> /ekipmanlar/<slug>; urunler buraya baglanir
- * Grup ve kategori adresleri ayni seviyede oldugu icin slug'lari farkli olmali.
+ *   1.1.1  kategori    -> /ekipmanlar/<grup>/<slug>; urunler buraya baglanir
+ * Urunler kategoriye yalnizca slug ile baglandigi icin kategori slug'lari tekil olmali.
  *
  * "code" alani kategori tablosundaki numaradir (siralama da buna gore).
  * Bir kategoride urun olmak zorunda degil; urunler belli oldukca eklenir.

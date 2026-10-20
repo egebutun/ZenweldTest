@@ -1,88 +1,67 @@
 import type { MetadataRoute } from "next";
-import { categories, categoryGroups, products, events, news } from "@zenweld/data";
+import { blogPosts, categories, categoryGroups, events, news, products } from "@zenweld/data";
+import { categoryHref, groupHref } from "@/lib/catalog";
 import { getSiteUrl } from "@/lib/seo";
 
 /**
  * /sitemap.xml
  *
- * Urun, grup, kategori ve blog sayfalari packages/data icindeki veriden otomatik
- * uretilir; yeni urun eklendiginde site haritasi kendiliginden guncellenir.
+ * Yalnizca Google'da gorunmesini istedigimiz sayfalar: urunler, katalog,
+ * blog, haberler, etkinlikler, kurumsal ve destek sayfalari. Giris, sepet,
+ * odeme, arama, hesabim, yonetim paneli ve yer tutucu metinli yasal sayfalar
+ * girmez (bu sayfalar noindex etiketi tasir).
+ *
+ * "Son degisiklik" (lastmod) yalnizca gercek tarihi bilinen sayfalarda
+ * yazilir: urunun guncellenme, blog yazisinin ve haberin yayin tarihi.
+ * Diger sayfalara her derlemede "bugun" yazilirsa Google bu tarihe
+ * guvenmemeyi ogrenir. Oncelik (priority) ve siklik (changefreq) alanlarini
+ * Google kullanmadigi icin yazilmaz.
+ *
+ * Liste koddaki veriden uretilir; panelde eklenen urun ve yazilar backend
+ * kurulunca veritabanindan okunacak (bkz. docs/YAPILACAKLAR.md).
  */
+
+const STATIC_PATHS = [
+  "",
+  "/ekipmanlar",
+  "/guvenlik",
+  "/aksesuarlar",
+  "/dolgu-metalleri",
+  "/yetkili-bayi-ve-servis-agi",
+  "/teklif-al",
+  "/hakkimizda",
+  "/satis-temsilcilerimiz",
+  "/welders-club",
+  "/bayilik-basvurusu",
+  "/iletisim",
+  "/garanti",
+  "/garanti/kayit",
+  "/garanti/sorgulama",
+  "/servis-talebi",
+  "/sss",
+  "/blog",
+  "/haberler",
+  "/etkinlikler",
+  "/urun-secici",
+  "/kaynak-rehberi",
+  "/msds",
+  "/parti-sertifikalari",
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteUrl();
-  const now = new Date();
+  const entry = (path: string, lastModified?: string): MetadataRoute.Sitemap[number] => ({
+    url: `${base}${path}`,
+    ...(lastModified ? { lastModified: new Date(lastModified) } : {}),
+  });
 
-  const staticPaths: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
-    { path: "", priority: 1, freq: "weekly" },
-    { path: "/ekipmanlar", priority: 0.9, freq: "weekly" },
-    { path: "/guvenlik", priority: 0.7, freq: "monthly" },
-    { path: "/aksesuarlar", priority: 0.7, freq: "monthly" },
-    { path: "/dolgu-metalleri", priority: 0.7, freq: "monthly" },
-    { path: "/yetkili-bayi-ve-servis-agi", priority: 0.9, freq: "monthly" },
-    { path: "/teklif-al", priority: 0.9, freq: "monthly" },
-    { path: "/hakkimizda", priority: 0.6, freq: "yearly" },
-    { path: "/satis-temsilcilerimiz", priority: 0.6, freq: "monthly" },
-    { path: "/welders-club", priority: 0.6, freq: "monthly" },
-    { path: "/bayilik-basvurusu", priority: 0.7, freq: "yearly" },
-    { path: "/garanti", priority: 0.6, freq: "yearly" },
-    { path: "/garanti/kayit", priority: 0.6, freq: "yearly" },
-    { path: "/garanti/sorgulama", priority: 0.5, freq: "yearly" },
-    { path: "/blog", priority: 0.6, freq: "weekly" },
-    { path: "/etkinlikler", priority: 0.7, freq: "weekly" },
-    { path: "/haberler", priority: 0.7, freq: "weekly" },
-    { path: "/urun-secici", priority: 0.6, freq: "monthly" },
-    { path: "/kaynak-rehberi", priority: 0.6, freq: "yearly" },
-    { path: "/msds", priority: 0.4, freq: "yearly" },
-    { path: "/parti-sertifikalari", priority: 0.4, freq: "yearly" },
-    { path: "/sss", priority: 0.5, freq: "monthly" },
-    { path: "/iletisim", priority: 0.5, freq: "yearly" },
+  return [
+    ...STATIC_PATHS.map((path) => entry(path)),
+    ...categoryGroups.map((group) => entry(groupHref(group))),
+    ...categories.map((category) => entry(categoryHref(category))),
+    ...products.filter((p) => p.active).map((p) => entry(`/urun/${p.slug}`, p.updatedAt)),
+    ...blogPosts.filter((p) => p.active !== false).map((p) => entry(`/blog/${p.slug}`, p.publishedAt)),
+    ...news.filter((n) => n.active).map((n) => entry(`/haberler/${n.slug}`, n.publishedAt)),
+    ...events.filter((e) => e.active).map((e) => entry(`/etkinlikler/${e.slug}`)),
   ];
-
-  const entries: MetadataRoute.Sitemap = [];
-
-  const push = (
-    path: string,
-    priority: number,
-    freq: MetadataRoute.Sitemap[number]["changeFrequency"],
-    lastModified: Date = now,
-  ) => {
-    entries.push({ url: `${base}${path}`, lastModified, changeFrequency: freq, priority });
-  };
-
-  staticPaths.forEach((p) => push(p.path, p.priority, p.freq));
-
-  categoryGroups.forEach((group) => {
-    push(`/${group.section}/${group.slug}`, 0.8, "weekly");
-  });
-
-  categories.forEach((category) => {
-    push(`/${category.section}/${category.slug}`, 0.8, "weekly");
-  });
-
-  products
-    .filter((product) => product.active)
-    .forEach((product) => {
-      push(`/urun/${product.slug}`, 0.9, "weekly", new Date(product.updatedAt));
-    });
-
-  // Blog yazilarinin govdesi hala yer tutucu metin. Gercek yazilar
-  // yazildiginda asagidaki blogun yorumu kaldirilir ve
-  // blog/[slug]/layout.tsx icindeki noindex silinir.
-  // blogPosts.forEach((post) => {
-  //   push(`/blog/${post.slug}`, 0.5, "monthly", new Date(post.publishedAt));
-  // });
-
-  events
-    .filter((event) => event.active)
-    .forEach((event) => {
-      push(`/etkinlikler/${event.slug}`, 0.6, "monthly", new Date(event.startDate));
-    });
-
-  news
-    .filter((item) => item.active)
-    .forEach((item) => {
-      push(`/haberler/${item.slug}`, 0.5, "monthly", new Date(item.publishedAt));
-    });
-
-  return entries;
 }

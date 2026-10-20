@@ -12,9 +12,11 @@ import {
   SECTION_DESCRIPTIONS,
   SECTION_TITLES,
   catalogTrail,
+  categoryHref,
   findGroup,
   groupCategories,
   groupDescription,
+  groupHref,
   sectionGroups,
   type Crumb,
 } from "@/lib/catalog";
@@ -24,7 +26,7 @@ import {
  *
  *   /ekipmanlar                    -> grup kartlari (SectionHub)
  *   /ekipmanlar/kaynak-makineleri  -> kategori kartlari (GroupHub)
- *   /ekipmanlar/mig-gazalti-...    -> urunler (CategoryListing)
+ *   /ekipmanlar/kaynak-makineleri/mig-gazalti-...  -> urunler (CategoryListing)
  *
  * Kart gorseli grubun/kategorinin kendi gorselidir (image); yoksa
  * icindeki ilk urunun fotografi kullanilir.
@@ -124,7 +126,7 @@ export function SectionHub({ section }: { section: TopLevelSection }) {
       const inGroup = cats.flatMap((c) => products.filter((p) => p.categorySlug === c.slug));
       return {
         key: group.id,
-        href: `/${section}/${group.slug}`,
+        href: groupHref(group),
         name: group.name,
         imageUrl: group.image ?? inGroup[0]?.images[0]?.url,
         productCount: inGroup.length,
@@ -157,7 +159,7 @@ export function GroupHub({ section, groupSlug }: { section: TopLevelSection; gro
       const inCategory = products.filter((p) => p.categorySlug === c.slug);
       return {
         key: c.id,
-        href: `/${section}/${c.slug}`,
+        href: categoryHref(c),
         name: c.name,
         imageUrl: c.image ?? inCategory[0]?.images[0]?.url,
         productCount: inCategory.length,

@@ -10,13 +10,14 @@ import { tr } from "@zenweld/i18n";
 /**
  * URUN KATALOGU — DORT SEVIYE
  *
- *   Bolum     /ekipmanlar                         grup kartlari
- *   Grup      /ekipmanlar/kaynak-makineleri       gruptaki tum urunler
- *   Kategori  /ekipmanlar/mig-gazalti-...         kategorinin urunleri
+ *   Bolum     /ekipmanlar                                          grup kartlari
+ *   Grup      /ekipmanlar/kaynak-makineleri                        kategori kartlari
+ *   Kategori  /ekipmanlar/kaynak-makineleri/mig-gazalti-...        kategorinin urunleri
  *   Urun      /urun/ultimate-250-mtc
  *
- * Grup ve kategori adresleri ayni seviyededir (/<bolum>/<slug>); grup ve
- * kategori slug'lari bu yuzden birbirinden farkli olmalidir.
+ * Katalog adresi menudeki yolu izler; adresin her basamagi kendi sayfasidir.
+ * Urun adresi kisa ve kalicidir: urun baska kategoriye tasinsa da degismez.
+ * Adresler yalnizca groupHref / categoryHref ile uretilir.
  */
 
 export const SECTION_TITLES: Record<TopLevelSection, string> = {
@@ -32,6 +33,16 @@ export const SECTION_DESCRIPTIONS: Record<TopLevelSection, string> = {
   aksesuarlar: "Zenweld MIG, TIG, MMA ve plazma kesme aksesuarlarını inceleyin, size en yakın yetkili bayiden satın alın.",
   "dolgu-metalleri": "Zenweld MIG ve TIG kaynak tellerini inceleyin, size en yakın yetkili bayiden satın alın.",
 };
+
+/** Grup sayfasinin adresi: /ekipmanlar/kaynak-makineleri */
+export function groupHref(group: Pick<CategoryGroup, "section" | "slug">): string {
+  return `/${group.section}/${group.slug}`;
+}
+
+/** Kategori sayfasinin adresi: /ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri */
+export function categoryHref(category: Pick<Category, "section" | "group" | "slug">): string {
+  return `/${category.section}/${category.group}/${category.slug}`;
+}
 
 export interface Crumb {
   label: string;
@@ -87,7 +98,7 @@ export function catalogTrail(
   const group = findGroup(section, category?.group ?? groupSlug ?? "", groups);
 
   const trail: Crumb[] = [{ label: SECTION_TITLES[section], href: `/${section}` }];
-  if (group) trail.push({ label: group.name, href: `/${section}/${group.slug}` });
-  if (category) trail.push({ label: category.name, href: `/${section}/${category.slug}` });
+  if (group) trail.push({ label: group.name, href: groupHref(group) });
+  if (category) trail.push({ label: category.name, href: categoryHref(category) });
   return trail;
 }

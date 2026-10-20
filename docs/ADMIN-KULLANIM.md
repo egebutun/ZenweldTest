@@ -84,6 +84,9 @@ Altı sekme vardır:
 | **Kutu İçeriği** | Madde listesi |
 | **SEO** | Ürün linki, sayfa başlığı, açıklama, anahtar kelimeler, Google önizlemesi |
 
+**Ürün adı:** Ürün adına marka ("Zenweld") yazılmaz; sayfa başlığına
+"| ZENWELD" otomatik eklenir.
+
 **SEO sekmesi:**
 - **Ürün Linki:** Ürün sayfasının adresi (`/urun/…`). Yeni üründe addan otomatik
   oluşur. Kayıtlı bir ürünün linki değiştirilirse eski link yeni linke

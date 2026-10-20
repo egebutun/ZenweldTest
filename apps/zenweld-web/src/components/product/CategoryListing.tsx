@@ -22,7 +22,7 @@ interface ListingProps {
 }
 
 /**
- * Kategori sayfasi (/ekipmanlar/mma-...): kategorinin urunleri. Ayni
+ * Kategori sayfasi (/ekipmanlar/kaynak-makineleri/mma-...): kategorinin urunleri. Ayni
  * gruptaki diger kategoriler gosterilmez; her kategorinin ileride kendi
  * filtreleri olacak.
  */

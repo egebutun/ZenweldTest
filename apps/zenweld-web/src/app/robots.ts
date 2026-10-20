@@ -12,6 +12,7 @@ import { getSiteUrl, isNoIndex } from "@/lib/seo";
  * robots.txt herkese acik oldugu icin panel adresini ilan etmemis oluruz.
  *
  * Site aramaya kapaliyken (isNoIndex) site haritasi da bildirilmez.
+ * "Host:" satiri standart degil (Google okumaz); yazilmiyor.
  */
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
@@ -26,6 +27,5 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     ...(isNoIndex() ? {} : { sitemap: `${siteUrl}/sitemap.xml` }),
-    host: siteUrl,
   };
 }

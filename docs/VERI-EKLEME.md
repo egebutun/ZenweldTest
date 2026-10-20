@@ -35,7 +35,7 @@ kullanılmaya devam eder.
   id: "p-yeni-model",              // benzersiz
   slug: "yeni-model",              // /urun/yeni-model
   sku: "ZW-YENI",
-  name: "Zenweld Yeni Model 300",
+  name: "Yeni Model 300",         // marka yazılmaz: sayfa başlığına "| ZENWELD" eklenir
   modelCode: "Z05.03.00",
   section: "ekipmanlar",           // ekipmanlar | guvenlik | aksesuarlar | dolgu-metalleri
   categorySlug: "mig-gazalti-kaynak-makineleri", // categories.seed.ts içindeki bir slug

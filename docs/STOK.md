@@ -81,9 +81,9 @@ sırasıyla okunur: A = kod, B = adet, C = fiyat, D = link.
 
 ```csv
 SKU;Ürün Adı;Adet;Fiyat
-ZW-U250MTC;Zenweld Ultimate 250 MTC;4;53.900,00
-ZW-TRC-MB25-3;Zenweld MB-25 MIG Torcu (3 m);12;1.980,00
-ZW-ARC200;Zenweld ARC 200;0;
+ZW-U250MTC;Ultimate 250 MTC;4;53.900,00
+ZW-TRC-MB25-3;MB-25 MIG Torcu (3 m);12;1.980,00
+ZW-ARC200;ARC 200;0;
 ```
 
 Örnek (online satıcı ya da online mağazası olan bayi):

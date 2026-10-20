@@ -54,7 +54,7 @@ export function useAdminName(): string | undefined {
   return user ? `${user.firstName} ${user.lastName}`.trim() : undefined;
 }
 
-/** "Zenweld MB-25 MIG Torcu (Torç Uzunluğu: 5 m)" */
+/** "MB-25 MIG Torcu (Torç Uzunluğu: 5 m)" */
 export function productLabel(db: ZenweldDatabase, productId: string, variantId?: string): string {
   const p = db.products.find((x) => x.id === productId);
   if (!p) return "Silinmiş ürün";

@@ -5,6 +5,7 @@ import { salePriceExVat, type ZenweldDatabase } from "@zenweld/data";
 import { listBlogPosts, listEvents, listNews, listProducts } from "@zenweld/store";
 import { trNormalize, trTokenize } from "./tr-normalize";
 import { expandQuery } from "./synonyms";
+import { categoryHref } from "@/lib/catalog";
 
 /**
  * ARAMA MOTORU
@@ -95,7 +96,7 @@ export function buildDocuments(db: ZenweldDatabase): SearchDoc[] {
       subtitle: c.description,
       body: `${c.name} ${c.description} ${c.group}`,
       sku: "",
-      href: `/${c.section}/${c.slug}`,
+      href: categoryHref(c),
     });
   });
 

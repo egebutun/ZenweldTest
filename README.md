@@ -330,12 +330,16 @@ Sitede aşağıdakiler hazırdır:
   her biri kendi başlığını ve açıklamasını üretir
 - **Dört seviyeli katalog** — Bölüm (`/ekipmanlar`, grup kartları) › Grup
   (`/ekipmanlar/kaynak-makineleri`, kategori kartları) › Kategori
-  (`/ekipmanlar/mig-gazalti-...`, ürünler) › Ürün. Her seviyede görünür konum
-  satırı ve `BreadcrumbList` yapısal verisi var. Kart görselleri
+  (`/ekipmanlar/kaynak-makineleri/mig-gazalti-...`, ürünler) › Ürün
+  (`/urun/ultimate-250-mtc`). Katalog adresi menüdeki yolu izler; ürün adresi
+  kısa ve kalıcıdır, ürün başka kategoriye taşınsa da değişmez. Her seviyede
+  görünür konum satırı ve `BreadcrumbList` yapısal verisi var. Kart görselleri
   `public/images/categories/` klasöründedir (kategori/grup kaydındaki `image`);
   görseli olmayan kartta ilk ürünün fotoğrafı gösterilir.
-- **`/sitemap.xml`** — ürün, grup, kategori ve blog sayfaları `packages/data` içindeki
-  veriden otomatik üretilir; yeni ürün eklendiğinde kendiliğinden güncellenir
+- **`/sitemap.xml`** — aramada görünmesi istenen bütün sayfalar: ürün, grup,
+  kategori, blog, haber, etkinlik, kurumsal ve destek sayfaları. `packages/data`
+  içindeki veriden otomatik üretilir. Son değişiklik tarihi yalnızca gerçek tarihi
+  bilinen sayfalarda yazılır (ürün, blog, haber)
 - **`/robots.txt`** — site haritasını bildirir (site aramaya açıkken); bkz. aşağıdaki *Arama motorlarına açık / kapalı*
 - **`canonical`** — her sayfa kendi adresini asıl adres olarak bildirir
 - **Open Graph / Twitter Card** — WhatsApp, LinkedIn ve X'te paylaşınca başlık,
@@ -368,7 +372,8 @@ indeksleyebilir. Bu yüzden yalnızca `/api/` kapalıdır.
 
 Site açıkken de her zaman `noindex` olan sayfalar: yönetim paneli (etiket +
 `X-Robots-Tag` başlığı), giriş, kayıt, şifremi unuttum, hesabım, arama, çıkış,
-henüz yer tutucu metinli sayfalar (yasal metinler vb.) ve blog yazıları.
+henüz yer tutucu metinli sayfalar (yasal metinler vb.). Bu sayfalar site
+haritasına da girmez.
 
 ---
 

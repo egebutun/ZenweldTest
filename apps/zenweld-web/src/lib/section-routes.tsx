@@ -8,8 +8,10 @@ import {
   SECTION_DESCRIPTIONS,
   SECTION_TITLES,
   catalogTrail,
+  categoryHref,
   findGroup,
   groupDescription,
+  groupHref,
   type Crumb,
 } from "@/lib/catalog";
 import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical } from "@/lib/seo";
@@ -21,10 +23,12 @@ import { SITE_NAME, absoluteUrl, breadcrumbJsonLd, canonical } from "@/lib/seo";
  * dosyalari yalnizca bu fonksiyonlari cagirir:
  *
  *   const route = sectionRoute("ekipmanlar");    // /ekipmanlar (grup kartlari)
- *   const route = categoryRoute("ekipmanlar");   // /ekipmanlar/[kategori]: grup (kategori kartlari) veya kategori (urunler)
+ *   const route = groupRoute("ekipmanlar");      // /ekipmanlar/[grup] (kategori kartlari)
+ *   const route = categoryRoute("ekipmanlar");   // /ekipmanlar/[grup]/[kategori] (urunler)
  */
 
-type CategoryParams = { params: Promise<{ kategori: string }> };
+type GroupParams = { params: Promise<{ grup: string }> };
+type CategoryParams = { params: Promise<{ grup: string; kategori: string }> };
 
 const metadata = (path: string, title: string, description: string): Metadata => ({
   title,
@@ -57,48 +61,64 @@ export function sectionRoute(section: TopLevelSection) {
   };
 }
 
-/** /<bolum>/[kategori] sayfasi: adres bir grubu ya da bir kategoriyi gosterir. */
+/** /<bolum>/[grup] sayfasi: grubun kategorileri resimli kartlar halinde. */
+export function groupRoute(section: TopLevelSection) {
+  return {
+    generateStaticParams() {
+      return categoryGroups.filter((g) => g.section === section).map((g) => ({ grup: g.slug }));
+    },
+
+    async generateMetadata({ params }: GroupParams): Promise<Metadata> {
+      const group = findGroup(section, (await params).grup);
+      if (!group) return { title: "Kategori" };
+      return metadata(groupHref(group), group.name, groupDescription(group));
+    },
+
+    async Page({ params }: GroupParams) {
+      const group = findGroup(section, (await params).grup);
+      // Bilinmeyen veya kaldirilmis adres 404 doner (eski /<bolum>/<kategori> dahil).
+      if (!group) notFound();
+
+      return (
+        <>
+          <JsonLd data={trailJsonLd(catalogTrail(section, { groupSlug: group.slug }))} />
+          <GroupHub section={section} groupSlug={group.slug} />
+        </>
+      );
+    },
+  };
+}
+
+/** /<bolum>/[grup]/[kategori] sayfasi: kategorinin urunleri. */
 export function categoryRoute(section: TopLevelSection) {
-  const findCategory = (slug: string) =>
-    categories.find((c) => c.section === section && c.slug === slug);
+  // Kategori yalnizca kendi grubunun adresinde acilir; baska grubun
+  // altindan yazilan adres 404 doner (ayni sayfanin tek adresi olur).
+  const findCategory = (groupSlug: string, slug: string) =>
+    categories.find((c) => c.section === section && c.group === groupSlug && c.slug === slug);
 
   return {
     generateStaticParams() {
-      return [
-        ...categoryGroups.filter((g) => g.section === section),
-        ...categories.filter((c) => c.section === section),
-      ].map((x) => ({ kategori: x.slug }));
+      return categories
+        .filter((c) => c.section === section)
+        .map((c) => ({ grup: c.group, kategori: c.slug }));
     },
 
     async generateMetadata({ params }: CategoryParams): Promise<Metadata> {
-      const slug = (await params).kategori;
-      const group = findGroup(section, slug);
-      if (group) return metadata(`/${section}/${slug}`, group.name, groupDescription(group));
-      const category = findCategory(slug);
-      if (category) return metadata(`/${section}/${slug}`, category.name, category.description);
-      return { title: "Kategori" };
+      const { grup, kategori } = await params;
+      const category = findCategory(grup, kategori);
+      if (!category) return { title: "Kategori" };
+      return metadata(categoryHref(category), category.name, category.description);
     },
 
     async Page({ params }: CategoryParams) {
-      const slug = (await params).kategori;
-      const group = findGroup(section, slug);
-      const category = group ? undefined : findCategory(slug);
+      const { grup, kategori } = await params;
+      const category = findCategory(grup, kategori);
+      if (!category) notFound();
 
-      // Bilinmeyen veya kaldirilmis adres 404 doner.
-      if (!group && !category) notFound();
-
-      const trail = catalogTrail(
-        section,
-        group ? { groupSlug: group.slug } : { categorySlug: category!.slug },
-      );
       return (
         <>
-          <JsonLd data={trailJsonLd(trail)} />
-          {group ? (
-            <GroupHub section={section} groupSlug={group.slug} />
-          ) : (
-            <CategoryListing section={section} categorySlug={category!.slug} />
-          )}
+          <JsonLd data={trailJsonLd(catalogTrail(section, { categorySlug: category.slug }))} />
+          <CategoryListing section={section} categorySlug={category.slug} />
         </>
       );
     },

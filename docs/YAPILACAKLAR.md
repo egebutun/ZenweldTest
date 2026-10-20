@@ -56,6 +56,14 @@ alması) ana siteden çıkarıldı. Bunlar için ayrı bir B2B uygulaması
 geliştirilecek. Bayi hesaplarını kimin açıp yöneteceği de bu uygulamayla
 birlikte netleşecek.
 
+## Blog yazıları — yayına girmeden önce
+
+Blog yazıları arama motorlarına açık ve site haritasında. Örnek yazıların
+gövdesi ve özeti hâlâ yer tutucu metin (Lorem ipsum,
+`packages/data/src/seed/content.seed.ts`). Site zenweld.com'da yayına girmeden
+önce bu yazılar gerçek metinlerle değiştirilmeli ya da panelden yayından
+kaldırılmalı; yoksa Google bu metni Zenweld'in içeriği olarak listeler.
+
 ## Online satış — canlıya çıkmadan önce
 
 Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı için:
@@ -114,7 +122,9 @@ göremiyor. Eski linkten yeni linke yönlendirme de demoda tarayıcıda yapılı
    sonucu yeni linkle değiştirir. Panelde değiştirilen yeni link sunucuda da
    bulunmalı (bugün yalnızca tarayıcı biliyor; sunucu 404 kodu döndürüyor, sayfa
    tarayıcıda açılıyor).
-4. Ürün kaydedilince o ürünün sayfası ve site haritası yenilenmeli.
+4. Ürün kaydedilince o ürünün sayfası ve site haritası yenilenmeli. Site
+   haritası veritabanından üretilmeli: panelde eklenen ürünler ve blog yazıları
+   girmeli, linki değişen üründe yalnızca yeni link yer almalı.
 
 ## Belgeler (MSDS, Kaynak Rehberi, Parti Sertifikaları) — backend
 

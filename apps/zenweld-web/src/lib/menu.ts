@@ -5,6 +5,7 @@ import { listLegalPages, listProducts, useDatabase } from "@zenweld/store";
 import { legalPath, productHighlights, type LegalPageId, type TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
 import { useT } from "./i18n-client";
+import { categoryHref, groupHref } from "./catalog";
 
 // Geriye donuk uyumluluk: iletisim verisi artik contact.ts icinde.
 export { CONTACT, OFFICES, officeQuery, mapEmbedUrl, mapDirectionsUrl, type Office } from "./contact";
@@ -72,7 +73,7 @@ export function useMainMenu(): TopMenu[] {
         href: `/${id}`,
         columns: groups.map((group) => ({
           label: group.name,
-          href: `/${id}/${group.slug}`,
+          href: groupHref(group),
           links: db.categories
             .filter((c) => c.section === id && c.group === group.slug)
             .sort((a, b) => a.order - b.order)
@@ -81,7 +82,7 @@ export function useMainMenu(): TopMenu[] {
               return {
                 label: c.name,
                 description: c.description,
-                href: `/${id}/${c.slug}`,
+                href: categoryHref(c),
                 productCount: inCategory.length,
                 products: inCategory.slice(0, MENU_PRODUCT_LIMIT).map((p) => ({
                   id: p.id,
