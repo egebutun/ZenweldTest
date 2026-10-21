@@ -64,8 +64,6 @@ Giriş sayfasındaki kartlara tıklayarak formu otomatik doldurabilirsiniz.
 | **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: online alışveriş, sipariş takibi, teklif talepleri, favoriler, garanti kayıtları |
 | **Kurumsal** | `kurumsal@demo.com` | `demo123` | Ana site: online alışveriş (kurumsal fatura), teklif talepleri, vadeli/çek ödeme |
 
-Ödeme ekranı için test kartları ve diğer test bilgileri: [docs/TEST-BILGILERI.md](docs/TEST-BILGILERI.md).
-
 Ana site yalnızca bireysel ve kurumsal üyeleri kabul eder. Bayiler ana sitenin
 müşterisi değildir; bayi olmak isteyenler **Bayilik Başvurusu** formunu doldurur.
 
