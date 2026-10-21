@@ -218,15 +218,37 @@ kararlaştırılacak. Başlıklar:
 ## Teklif Al metinleri — herkese hitap edecek şekilde güncellenecek
 
 Teklif Al artık bireysel üyelere de açık, ama bazı metinler hâlâ yalnızca
-kurumsal müşterilere hitap ediyor. Şimdilik bırakıldı; güncellenecek yerler:
+kurumsal müşterilere hitap ediyor. **Karar bekliyor (müdüre danışılacak).**
+Güncellenecek yerler ve önerilen metinler:
 
-1. Teklif Al sayfasının açıklaması: "Kurumsal müşterilerimize vadeli ödeme ve
-   çek ile ödeme seçenekleri sunuyoruz…" (`quote.subtitle`)
-2. Aynı cümlenin arama motoru açıklaması (`lib/page-meta.ts` → `/teklif-al`)
-3. Ana sayfadaki kutu: "Kurumsal alım mı yapacaksınız?" ve altındaki metin
-   (`home.quoteBannerTitle`, `home.quoteBannerText`)
-4. Site aramasındaki Teklif Al anahtar kelimeleri: "kurumsal vadeli çek"
-   (`lib/search/search-client.ts`)
+1. **Teklif Al sayfasının açıklaması** (`packages/i18n/src/tr.ts` → `quote.subtitle`)
+   - Şimdi: "Kurumsal müşterilerimize vadeli ödeme ve çek ile ödeme seçenekleri
+     sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin."
+   - Öneri: "İhtiyacınız olan ürünler için size özel fiyat teklifi hazırlayalım.
+     Formu doldurun, satış ekibimiz sizinle iletişime geçsin. Firmalara vadeli
+     ödeme ve çek ile ödeme seçenekleri de sunuyoruz."
+2. **Google'da görünen açıklama** (`lib/page-meta.ts` → `/teklif-al`; panelde
+   Sayfa SEO'dan da değiştirilebilir)
+   - Şimdi: 1. maddedeki cümlenin aynısı
+   - Öneri: "Bireysel ve kurumsal alımlarınız için Zenweld'den fiyat teklifi alın.
+     Firmalara vadeli ödeme ve çek seçenekleri." (160 karakterin altında)
+3. **Ana sayfadaki kırmızı kutu** (`home.quoteBannerTitle`, `home.quoteBannerText`)
+   - Şimdi: "Kurumsal alım mı yapacaksınız?" / "Vadeli ödeme ve çek ile ödeme
+     seçenekleri için satış ekibimizden teklif alın."
+   - Öneri: "Size özel fiyat teklifi alın" / "Tekli ya da toplu alımlarınız için
+     satış ekibimizden teklif isteyin. Firmalara vadeli ödeme ve çek ile ödeme
+     seçenekleri de sunuyoruz."
+4. **Site aramasındaki gizli kelimeler** (`lib/search/search-client.ts`)
+   - Şimdi: "kurumsal vadeli çek ödeme"
+   - Öneri: "fiyat teklifi toplu alım bireysel kurumsal vadeli çek ödeme"
+5. **İsteğe bağlı: formun 1. adım başlığı** (`quote.step1`)
+   - Şimdi: "Firma Bilgileri" — Öneri: "İletişim Bilgileri" (bireysel üyede firma
+     adı zaten isteğe bağlı)
+
+Açık soru: vadeli ödeme ve çek bireysel müşterilere de açık mı? Formda bu iki
+seçenek bugün herkese görünüyor. Yalnızca firmalar içinse formda yalnızca
+kurumsal üyelere gösterilmeli; herkese açıksa metinlerdeki "Firmalara"
+ifadesi çıkarılmalı.
 
 ## Ürün Seçici ve arama — yeniden tasarlanacak
 
