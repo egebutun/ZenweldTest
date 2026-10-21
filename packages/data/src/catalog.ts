@@ -1,4 +1,4 @@
-import type { Category, CategoryGroup } from "./types";
+import type { Category, CategoryGroup, Product } from "./types";
 
 /**
  * KATALOG ADRESLERI
@@ -15,4 +15,9 @@ export function groupHref(group: Pick<CategoryGroup, "section" | "slug">): strin
 
 export function categoryHref(category: Pick<Category, "section" | "group" | "slug">): string {
   return `/${category.section}/${category.group}/${category.slug}`;
+}
+
+/** Kategori icindeki "Önerilen" sira: Sıra numarasi kucuk olan once, esitse ada gore. */
+export function byProductOrder(a: Pick<Product, "order" | "name">, b: Pick<Product, "order" | "name">): number {
+  return (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name, "tr");
 }

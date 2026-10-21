@@ -2,10 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { Eye, EyeOff, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { isDiscountActive, salePriceExVat } from "@zenweld/data";
+import { byProductOrder, isDiscountActive, salePriceExVat, type TopLevelSection } from "@zenweld/data";
 import { deleteProduct, saveProduct, useDatabase, useNow } from "@zenweld/store";
 import { Badge, Button, CampaignBadge, Input, ProductImage, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { SECTION_TITLES, groupCategories, sectionGroups } from "@/lib/catalog";
 import Link from "next/link";
 import { formatPrice, priceWithVat } from "@zenweld/utils";
 
@@ -15,15 +16,24 @@ export default function AdminProductsPage() {
   const [query, setQuery] = useState("");
   const [section, setSection] = useState("");
 
+  // Liste sitedeki gibi dizilir: menudeki kategori sirasi, kategori icinde Sıra.
   const products = useMemo(() => {
     const q = query.trim().toLocaleLowerCase("tr");
-    return db.products.filter(
-      (p) =>
-        (!section || p.section === section) &&
-        (!q ||
-          p.name.toLocaleLowerCase("tr").includes(q) ||
-          p.sku.toLocaleLowerCase("tr").includes(q)),
+    const categoryRank = new Map(
+      (Object.keys(SECTION_TITLES) as TopLevelSection[])
+        .flatMap((s) => sectionGroups(s, db.categoryGroups).flatMap((g) => groupCategories(g, db.categories)))
+        .map((c, i) => [c.slug, i]),
     );
+    const rank = (slug: string) => categoryRank.get(slug) ?? Infinity;
+    return db.products
+      .filter(
+        (p) =>
+          (!section || p.section === section) &&
+          (!q ||
+            p.name.toLocaleLowerCase("tr").includes(q) ||
+            p.sku.toLocaleLowerCase("tr").includes(q)),
+      )
+      .sort((a, b) => rank(a.categorySlug) - rank(b.categorySlug) || byProductOrder(a, b));
   }, [db, query, section]);
 
   return (
@@ -67,6 +77,7 @@ export default function AdminProductsPage() {
             <tr>
               <th className="px-4 py-3">Ürün</th>
               <th className="px-4 py-3">Kategori</th>
+              <th className="px-4 py-3">Sıra</th>
               <th className="px-4 py-3">Fiyat</th>
               <th className="px-4 py-3">Durum</th>
               <th className="px-4 py-3 text-right">İşlem</th>
@@ -92,6 +103,7 @@ export default function AdminProductsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-2.5 text-zw-grey-600">{category?.name ?? "—"}</td>
+                  <td className="px-4 py-2.5 text-zw-grey-600">{p.order ?? "—"}</td>
                   <td className="px-4 py-2.5">
                     {/* Kampanya gecerliyse musterinin gordugu fiyat kirmizi,
                         normal fiyat ustu cizili; her durumda KDV haric normal

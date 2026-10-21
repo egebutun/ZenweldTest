@@ -73,6 +73,7 @@ doğrudan stok matrisine gidebilirsiniz.
 ## 2. Ürünler
 
 ### Ürün listesi
+- Liste sitedeki gibi dizilir: menüdeki kategori sırası, kategori içinde **Sıra**
 - Ad veya SKU ile arama, bölüme göre filtreleme
 - 👁 simgesi: ürünü yayından kaldırır / yayına alır
 - ✏️ simgesi: düzenleme ekranı
@@ -83,12 +84,17 @@ Altı sekme vardır:
 
 | Sekme | İçerik |
 |---|---|
-| **Temel Bilgiler** | Ad, SKU, model kodu, bölüm, kategori, fiyat (KDV hariç → dahil otomatik hesaplanır), durum işaretleri, kılavuz PDF bağlantısı |
+| **Temel Bilgiler** | Ad, SKU, model kodu, bölüm, kategori, **Sıra**, fiyat (KDV hariç → dahil otomatik hesaplanır), durum işaretleri, kılavuz PDF bağlantısı |
 | **Açıklamalar** | Kısa/detaylı açıklama, öne çıkan özellikler |
 | **Görseller** | URL ile ekleme veya dosya yükleme, sıralama, kapak seçimi |
 | **Teknik Özellikler** | Satır satır özellik–değer tablosu |
 | **Kutu İçeriği** | Madde listesi |
 | **SEO** | Ürün linki, sayfa başlığı, açıklama, anahtar kelimeler, Google önizlemesi |
+
+**Sıra:** Ürünün kendi kategorisinde kaçıncı göründüğü. Kategori sayfasındaki
+"Önerilen" sıralama ve kategori kartında görsel yoksa kullanılan ürün buna
+göre belirlenir. Küçük numara önce gelir; aynı numaralı ürünler ada göre dizilir.
+Yeni ürünün Sırası boş bırakılırsa kategorinin sonuna eklenir.
 
 **Ürün adı:** Ürün adına marka ("Zenweld") yazılmaz; sayfa başlığına
 "| ZENWELD" otomatik eklenir.

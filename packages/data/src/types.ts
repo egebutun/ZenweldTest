@@ -156,6 +156,12 @@ export interface Product {
   quotable: boolean;
   featured: boolean;
   isNew: boolean;
+  /**
+   * Kategori icindeki sira (panelde "Sıra"): kategori sayfasindaki "Önerilen"
+   * siralama ve kategori kartindaki gorsel buna gore. Kucuk numara once;
+   * bos olan sona, esitler ada gore.
+   */
+  order?: number;
   manualUrl?: string;
   warrantyMonths: number;
   createdAt: string;

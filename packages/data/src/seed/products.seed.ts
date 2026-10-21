@@ -933,3 +933,10 @@ products.forEach((p) => {
   const groups = VARIANT_GROUPS[p.slug];
   if (groups) p.variantGroups = groups;
 });
+
+// Kategori icindeki sira: bu dosyadaki siraya gore 1, 2, 3 ... (panelden degisir).
+const lastOrder = new Map<string, number>();
+products.forEach((p) => {
+  p.order = (lastOrder.get(p.categorySlug) ?? 0) + 1;
+  lastOrder.set(p.categorySlug, p.order);
+});

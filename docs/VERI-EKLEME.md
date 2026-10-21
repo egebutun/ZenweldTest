@@ -54,6 +54,7 @@ kullanılmaya devam eder.
   quotable: true,      // Teklif Al akışında seçilebilsin mi
   featured: false,     // Anasayfada öne çıksın mı
   isNew: true,
+  order: 3,            // Kategori içindeki sıra ("Önerilen"); boşsa en sona
   warrantyMonths: 24,
   createdAt: now,
   updatedAt: now,

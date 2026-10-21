@@ -57,17 +57,23 @@ export function saveProduct(product: Product): void {
   });
 }
 
+/** Kategorideki en buyuk Sıra numarasinin bir fazlasi. */
+function nextProductOrder(categorySlug: string, db: ZenweldDatabase = getSnapshot()): number {
+  return Math.max(0, ...db.products.filter((p) => p.categorySlug === categorySlug).map((p) => p.order ?? 0)) + 1;
+}
+
 export function createProduct(partial: Partial<Product>): Product {
   // Panel formlari yeni kayitta id: "" gonderir; bos metin de "id yok"
   // sayilir (?? kullanilsaydi kayit bos id ile yazilirdi).
   const id = partial.id || uid("p");
+  const categorySlug = partial.categorySlug ?? "cok-fonksiyonlu-kaynak-makineleri";
   const product: Product = {
     id,
     slug: partial.slug ?? id,
     sku: partial.sku ?? "ZW-YENI",
     name: partial.name ?? "Yeni Ürün",
     section: partial.section ?? "ekipmanlar",
-    categorySlug: partial.categorySlug ?? "cok-fonksiyonlu-kaynak-makineleri",
+    categorySlug,
     processes: partial.processes ?? [],
     shortDescription: partial.shortDescription ?? "",
     description: partial.description ?? "",
@@ -83,6 +89,8 @@ export function createProduct(partial: Partial<Product>): Product {
     quotable: partial.quotable ?? true,
     featured: partial.featured ?? false,
     isNew: partial.isNew ?? true,
+    // Sira verilmediyse kategorisinin sonuna eklenir.
+    order: partial.order ?? nextProductOrder(categorySlug),
     warrantyMonths: partial.warrantyMonths ?? 24,
     createdAt: nowIso(),
     updatedAt: nowIso(),

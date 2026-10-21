@@ -1,6 +1,6 @@
 "use client";
 
-import { salePriceExVat, type Product } from "@zenweld/data";
+import { byProductOrder, salePriceExVat, type Product } from "@zenweld/data";
 import { useT } from "@/lib/i18n-client";
 import { Select } from "@zenweld/ui";
 
@@ -89,7 +89,8 @@ export function applyFilters(items: Product[], filters: FilterState, now?: Date)
       sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       break;
     default:
-      // "Önerilen": katalogdaki sira korunur.
+      // "Önerilen": panelde verilen Sıra numarasi.
+      sorted.sort(byProductOrder);
       break;
   }
   return sorted;

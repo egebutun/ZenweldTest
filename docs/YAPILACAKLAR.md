@@ -3,16 +3,6 @@
 Kararlaştırılıp ileri bir tarihe bırakılan işler. Bir iş yapıldığında
 buradan silinir.
 
-## Ürün sıralaması — "Sıra" numarası
-
-Kategori sayfalarında varsayılan sıralama ("Önerilen") şu an ürünlerin
-veri dosyasındaki kayıt sırasını kullanıyor. Panelden yeni eklenen ürün
-listenin en başına geçiyor ve sıra panelden değiştirilemiyor.
-
-Yapılacak: ürünlere bir "Sıra" numarası alanı eklenip yönetim panelinden
-düzenlenebilir hale getirilmesi; "Önerilen" sıralamanın bu numarayı
-kullanması.
-
 ## Ürün seçenekleri (3 m / 5 m gibi) yönetimi
 
 Şu an yalnızca örnek olarak MB-25 MIG Torcu'nda var ve koddan geliyor.

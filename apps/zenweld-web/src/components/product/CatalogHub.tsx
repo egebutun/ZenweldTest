@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import type { TopLevelSection } from "@zenweld/data";
+import { byProductOrder, type TopLevelSection } from "@zenweld/data";
 import { listProducts, useDatabase } from "@zenweld/store";
 import { ProductImage } from "@zenweld/ui";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
@@ -129,7 +129,8 @@ export function SectionHub({ section }: { section: TopLevelSection }) {
     const products = listProducts(db);
     return sectionGroups(section, db.categoryGroups).map((group): HubCard => {
       const cats = groupCategories(group, db.categories);
-      const inGroup = cats.flatMap((c) => products.filter((p) => p.categorySlug === c.slug));
+      // Gorselsiz kartta ilk kategorinin "Önerilen" siradaki ilk urunu.
+      const inGroup = cats.flatMap((c) => products.filter((p) => p.categorySlug === c.slug).sort(byProductOrder));
       return {
         key: group.id,
         href: groupHref(group),
@@ -162,7 +163,7 @@ export function GroupHub({ section, groupSlug }: { section: TopLevelSection; gro
     if (!group) return [];
     const products = listProducts(db);
     return groupCategories(group, db.categories).map((c): HubCard => {
-      const inCategory = products.filter((p) => p.categorySlug === c.slug);
+      const inCategory = products.filter((p) => p.categorySlug === c.slug).sort(byProductOrder);
       return {
         key: c.id,
         href: categoryHref(c),

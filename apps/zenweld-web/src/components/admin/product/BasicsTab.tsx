@@ -54,7 +54,7 @@ export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolea
         </FormRow>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <FormRow label="Bölüm">
           <Select
             value={draft.section}
@@ -86,6 +86,19 @@ export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolea
               </option>
             ))}
           </Select>
+        </FormRow>
+        <FormRow
+          label="Sıra"
+          hint="Kategori sayfasında kaçıncı görünür (1 en başta). Boşsa kategorinin sonuna eklenir."
+        >
+          <Input
+            type="number"
+            min={1}
+            value={draft.order ?? ""}
+            onChange={(e) =>
+              set("order", e.target.value === "" ? undefined : Math.max(1, Math.floor(Number(e.target.value)) || 1))
+            }
+          />
         </FormRow>
       </div>
 
