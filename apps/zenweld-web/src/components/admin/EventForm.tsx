@@ -11,6 +11,8 @@ import {
   GalleryField,
   ContentTextFields,
   SingleImageField,
+  findSlugClash,
+  resolveSlug,
   useContentForm,
 } from "./content-form";
 import { SeoPanel, storedLinks } from "./SeoPanel";
@@ -68,8 +70,8 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
       return form.fail("Bitiş tarihi başlangıç tarihinden önce olamaz.");
     }
 
-    const slug = slugify(draft.slug) || slugify(draft.title);
-    if (db.events.some((x) => x.slug === slug && x.id !== draft.id)) {
+    const slug = resolveSlug(draft.slug, draft.title);
+    if (findSlugClash(db.events, draft.id, slug)) {
       return form.fail(`"${slug}" adresi başka bir etkinlikte kullanılıyor.`);
     }
 

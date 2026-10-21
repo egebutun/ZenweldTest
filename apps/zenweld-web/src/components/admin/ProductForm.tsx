@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import { validateDiscount, type Product } from "@zenweld/data";
 import { createProduct, saveProduct, useDatabase } from "@zenweld/store";
-import { slugify } from "@zenweld/utils";
-import { ContentFormShell, useContentForm } from "./content-form";
+import { ContentFormShell, findSlugClash, resolveSlug, useContentForm } from "./content-form";
 import { BasicsTab } from "./product/BasicsTab";
 import { DescriptionTab } from "./product/DescriptionTab";
 import { ImagesTab } from "./product/ImagesTab";
@@ -57,8 +56,8 @@ export function ProductForm({ product }: { product?: Product }) {
     form.setError(null);
     if (!draft.name.trim()) return form.fail("Ürün adı zorunludur.");
 
-    const slug = slugify(draft.slug) || slugify(draft.name);
-    if (db.products.some((p) => p.slug === slug && p.id !== draft.id)) {
+    const slug = resolveSlug(draft.slug, draft.name);
+    if (findSlugClash(db.products, draft.id, slug)) {
       return form.fail(`"${slug}" adresi başka bir üründe kullanılıyor.`);
     }
 
