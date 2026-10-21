@@ -9,7 +9,7 @@ olan sayfanın grubu kendiliğinden açık gelir:
 |---|---|
 | Panel | Özet |
 | Satış | Siparişler · Teklifler · Mağaza Ayarları |
-| Ürünler | Ürünler · Kategoriler · Stok Matrisi · Yorumlar |
+| Ürünler | Ürünler · Kategoriler · Seçenek Tanımları · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler |
 | İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
@@ -148,7 +148,7 @@ Düzenleme ekranında dört sekme vardır (Seçenekler yalnızca kategoride):
 |---|---|
 | **Temel Bilgiler** | Ad, grup (kategoride) / bölüm (grupta, yalnızca yeni grupta seçilir), kısa açıklama, kart görseli |
 | **Tanıtım Metni** | Sayfanın altında, ürünlerin (grup sayfasında kategori kartlarının) altında "… Hakkında" başlığıyla görünen uzun metin. Boşsa görünmez. Biçimlendirme haberlerle aynı |
-| **Seçenekler** | Kategorinin seçenek havuzu: seçenek adı (ör. Hortum Uzunluğu, Paket) ve sıralı değerleri (3 m, 4 m … / 10'lu, 20'li). Bu kategorideki ürünlere seçenek eklenirken değerler buradan seçilir |
+| **Seçenekler** | Bu kategorideki ürünlere seçenek eklenirken listelenecek seçenek tanımları işaretlenir (ör. MIG Torçları → Hortum Uzunluğu). **Yeni Seçenek Tanımı** ile buradan da tanım açılır |
 | **SEO** | Link, sayfa başlığı, açıklama, anahtar kelimeler, Google önizlemesi (ürünlerdeki gibi) |
 
 - Kategorinin **kısa açıklaması** sayfa başlığının altında ve grup sayfasındaki
@@ -159,10 +159,27 @@ Düzenleme ekranında dört sekme vardır (Seçenekler yalnızca kategoride):
   adresleri de yeni adreslere yönlenir.
 - Kategorinin linki değişince içindeki ürünler kategoriye bağlı kalır; ürün
   adresleri (`/urun/…`) değişmez.
-- **Seçenek havuzu** her kategoride ayrıdır; hangi kategoride seçenek olacağı
-  buradan belirlenir. Değer **Ekle** (ya da Enter) ile eklenir, ↑ ↓ ile sıralanır,
-  adı sonradan düzeltilebilir (ürünlere bağlantısı bozulmaz). Aynı değer iki kez
-  yazılamaz; değeri olmayan seçenek kaydedilmez.
+- Seçenek tanımları ortaktır (bkz. **2c. Seçenek Tanımları**); kategori yalnızca
+  hangilerinin listeleneceğini tutar. Kategori silinse ya da ürün başka kategoriye
+  taşınsa da tanımlar ve ürünlerin seçenekleri bozulmaz.
+
+---
+
+## 2c. Seçenek Tanımları
+
+Ürün seçeneklerinin (3 m / 5 m torç, 10'lu / 20'li paket gibi) ortak tanımları:
+seçenek adı ve sıralı değerleri. Tablo her tanımın değerlerini ve hangi
+kategorilerde listelendiğini gösterir.
+
+- **Yeni Seçenek** ve ✏️ aynı pencereyi açar: ad, değerler. Değer **Ekle** (ya da
+  Enter) ile eklenir, ↑ ↓ ile sıralanır, × ile silinir.
+- Bir değerin adı düzeltilince her yerde değişir; ürünler değere adıyla değil
+  değişmeyen kimliğiyle bağlıdır.
+- Aynı adla iki tanım, bir tanımda aynı değer iki kez olamaz; değeri olmayan
+  tanım kaydedilmez.
+- 🗑 tanımı siler ve listelendiği kategorilerden de kaldırır.
+- Tanımın hangi kategoride listeleneceği kategorinin **Seçenekler** sekmesinden
+  seçilir (bkz. 2b).
 
 ---
 

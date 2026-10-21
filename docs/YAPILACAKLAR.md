@@ -5,6 +5,17 @@ buradan silinir.
 
 ## Ürün seçenekleri (3 m / 5 m gibi) yönetimi
 
+**Yapılıyor (adım adım):** 1) Seçenek Tanımları ve kategori seçimi ✔ 2) ürün
+formunda Seçenekler sekmesi 3) ürün sayfası, sepet, Teklif Al 4) örnek veriler.
+
+Backend tabloları (demoda aynı yapı tarayıcıda):
+`option_definitions` (ad), `option_values` (tanım, ad, sıra; tanım içinde ad
+benzersiz), `category_options` (kategori ↔ tanım; yalnızca bağlantı),
+`product_variants` (ürün, değer, benzersiz ürün kodu, fiyat farkı, yalnızca farklı
+olan teknik özellik / kutu içeriği / fotoğraf). Kullanılan değer silinemez
+(yabancı anahtar RESTRICT); sipariş ve teklif satırları o anki seçenek adı ve
+kodunun kopyasını saklar.
+
 Şu an yalnızca örnek olarak MB-25 MIG Torcu'nda var ve koddan geliyor.
 Gerçek ürünler (SKU, teknik özellikler, açıklama) ve hangi ürünlerin
 seçenekli olduğu belirlendikten sonra panele seçenek yönetimi eklenecek.

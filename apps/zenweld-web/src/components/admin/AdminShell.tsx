@@ -15,6 +15,7 @@ import {
   HelpCircle,
   Info,
   LayoutDashboard,
+  ListChecks,
   LogOut,
   MapPin,
   Newspaper,
@@ -75,6 +76,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/yonetim/urunler", label: "Ürünler", Icon: Package },
       { href: "/yonetim/kategoriler", label: "Kategoriler", Icon: FolderTree },
+      { href: "/yonetim/secenekler", label: "Seçenek Tanımları", Icon: ListChecks },
       { href: "/yonetim/stok", label: "Stok Matrisi", Icon: Boxes },
       { href: "/yonetim/yorumlar", label: "Yorumlar", Icon: Star },
     ],

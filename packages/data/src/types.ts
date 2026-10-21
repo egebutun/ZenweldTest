@@ -13,9 +13,11 @@ export type TopLevelSection =
   | "dolgu-metalleri";
 
 /**
- * Kategorinin secenek havuzundaki bir secenek (panelde Kategoriler ›
- * Seçenekler): adi ve sirali degerleri. Bu kategorideki urunlere secenek
- * eklenirken degerler buradan secilir; ayni deger her urunde ayni yazilir.
+ * Secenek tanimi (panelde Ürünler › Seçenek Tanımları): adi ve sirali
+ * degerleri. Tanimlar tek yerde durur; kategoriler hangi tanimlarin
+ * listelenecegini secer (Category.optionIds), urun secenekleri tanima ve
+ * degere kimlikle baglanir. Kategori silinse ya da urun baska kategoriye
+ * tasinsa da tanimlar ve bagli urunler bozulmaz.
  */
 export interface OptionDefinition {
   id: string;
@@ -47,8 +49,11 @@ export interface Category {
   order: number;
   /** Sayfanin altindaki tanitim metni ("... Hakkinda"); bossa gosterilmez */
   aboutText?: string;
-  /** Secenek havuzu: bu kategorideki urunlerin secenekleri buradan secilir */
-  options?: OptionDefinition[];
+  /**
+   * Bu kategorideki urune secenek eklenirken listelenen tanimlar
+   * (OptionDefinition kimlikleri). Yalnizca baglanti; tanimlar ortaktir.
+   */
+  optionIds?: string[];
   seo?: SeoFields;
   /** Eski adresleri (tam yol): link, grup veya grubun linki degisince yeni adrese yonlenir */
   previousPaths?: string[];
@@ -910,6 +915,8 @@ export interface ZenweldDatabase {
   products: Product[];
   categories: Category[];
   categoryGroups: CategoryGroup[];
+  /** Ortak secenek tanimlari (Hortum Uzunluğu, Paket ...) */
+  optionDefinitions: OptionDefinition[];
   dealers: Dealer[];
   retailers: Retailer[];
   dealerStock: DealerStock[];

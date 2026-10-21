@@ -22,7 +22,7 @@ import {
   useContentForm,
 } from "./content-form";
 import { SeoPanel } from "./SeoPanel";
-import { CategoryOptionsPanel, cleanOptions, optionsError } from "./CategoryOptions";
+import { CategoryOptionsPanel } from "./CategoryOptions";
 import { siteUrl } from "@/lib/admin-links";
 
 /**
@@ -30,7 +30,7 @@ import { siteUrl } from "@/lib/admin-links";
  *
  * Sekmeler: Temel Bilgiler (ad, grup/bolum, kisa aciklama, kart gorseli),
  * Tanitim Metni (sayfanin altindaki "... Hakkinda" yazisi), Seçenekler
- * (yalnizca kategoride: urun seceneklerinin havuzu) ve SEO.
+ * (yalnizca kategoride: urune secenek eklerken listelenen ortak tanimlar) ve SEO.
  */
 
 const SECTIONS = Object.keys(SECTION_TITLES) as TopLevelSection[];
@@ -72,16 +72,15 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
     form.setError(null);
     if (!draft.name.trim()) return form.fail("Kategori adı zorunludur.");
     if (!currentGroup) return form.fail("Bir grup seçin.");
-    const optionsProblem = optionsError(draft.options ?? []);
-    if (optionsProblem) return form.fail(optionsProblem, "secenekler");
 
     const slug = resolveSlug(draft.slug, draft.name);
     // Urunler kategoriye yalnizca link (slug) ile baglidir; link tekil olmali.
     const clash = db.categories.find((c) => c.slug === slug && c.id !== draft.id);
     if (clash) return form.fail(`"${slug}" linki "${clash.name}" kategorisinde kullanılıyor.`, "seo");
 
-    const options = cleanOptions(draft.options ?? []);
-    const next: Category = { ...draft, slug, name: draft.name.trim(), options: options.length ? options : undefined };
+    // Form acikken silinmis tanim kayda geri yazilmasin.
+    const optionIds = (draft.optionIds ?? []).filter((id) => db.optionDefinitions.some((o) => o.id === id));
+    const next: Category = { ...draft, slug, name: draft.name.trim(), optionIds: optionIds.length ? optionIds : undefined };
     if (isNew) {
       router.push(`/yonetim/kategoriler/${createCategory(next).id}`);
     } else {
@@ -96,7 +95,7 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
       onSubmit={submit}
       savedText="Kategori kaydedildi."
       submitLabel={isNew ? "Kategoriyi Oluştur" : "Değişiklikleri Kaydet"}
-      tabs={[...TABS.slice(0, 2), { id: "secenekler", label: "Seçenekler", badge: draft.options?.length || undefined }, TABS[2]]}
+      tabs={[...TABS.slice(0, 2), { id: "secenekler", label: "Seçenekler", badge: draft.optionIds?.length || undefined }, TABS[2]]}
     >
       {form.tab === "temel" && (
         <FormPanel>
@@ -164,7 +163,7 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
       )}
 
       {form.tab === "secenekler" && (
-        <CategoryOptionsPanel value={draft.options ?? []} onChange={(options) => set("options", options)} />
+        <CategoryOptionsPanel selected={draft.optionIds ?? []} onChange={(ids) => set("optionIds", ids)} />
       )}
 
       {form.tab === "seo" && (

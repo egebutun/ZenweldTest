@@ -22,6 +22,7 @@ export { DOCUMENT_SECTIONS, documentPages } from "./seed/documents.seed";
 
 import type { ZenweldDatabase } from "./types";
 import { categories, categoryGroups } from "./seed/categories.seed";
+import { optionDefinitions } from "./seed/options.seed";
 import { products } from "./seed/products.seed";
 import { dealers } from "./seed/dealers.seed";
 import { retailers } from "./seed/retailers.seed";
@@ -38,7 +39,7 @@ import { documentPages } from "./seed/documents.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 52;
+export const DB_VERSION = 53;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida
@@ -54,6 +55,7 @@ export function createSeedDatabase(now: number = Date.now()): ZenweldDatabase {
       products,
       categories,
       categoryGroups,
+      optionDefinitions,
       dealers,
       retailers,
       dealerStock: stock.dealerStock,
