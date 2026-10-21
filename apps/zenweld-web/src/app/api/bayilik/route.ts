@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readFields, readJsonObject, sendMail } from "@/lib/server/mail";
+import { botResult, isBot, readFields, readJsonObject, sendMail } from "@/lib/server/mail";
 
 /**
  * BAYILIK BASVURUSU — E-POSTA GONDERIMI
@@ -27,6 +27,7 @@ const FIELDS: [string, string][] = [
 
 export async function POST(request: Request) {
   const body = await readJsonObject(request);
+  if (body && isBot(body)) return NextResponse.json(botResult());
   const values = body && readFields(body, FIELDS.map(([key]) => key));
   if (!values) return NextResponse.json({ ok: false, error: "gecersiz-istek" }, { status: 400 });
   if (!values.company || !values.email) {

@@ -8,6 +8,7 @@ import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenw
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { KvkkNotice } from "@/components/legal/LegalLink";
+import { useBotTrap } from "@/components/common/BotTrap";
 import { notifyZenweld } from "@/lib/notify";
 import { useMemberPrefill } from "@/lib/member-prefill";
 
@@ -42,6 +43,7 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
     setForm,
   );
   const [error, setError] = useState<string | null>(null);
+  const bot = useBotTrap();
 
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -98,7 +100,7 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
       address: saved.address,
       sellerTaxNumber: saved.sellerTaxNumber,
       extended: saved.extended ? "Evet" : "Hayır",
-    });
+    }, bot.website);
     setDone(true);
   };
 
@@ -196,6 +198,7 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
         onChange={(e) => set("extended", e.target.checked)}
       />
 
+      {bot.field}
       <KvkkNotice />
 
       {error && <Alert tone="danger">{error}</Alert>}

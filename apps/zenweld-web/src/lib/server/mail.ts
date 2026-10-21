@@ -1,3 +1,4 @@
+import { escapeHtml } from "@zenweld/utils";
 import { isNoIndex } from "@/lib/seo";
 
 /**
@@ -65,16 +66,17 @@ export function readFields(body: Record<string, unknown>, keys: string[]): Recor
   return out;
 }
 
-export const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+/**
+ * Bot tuzagi: formlardaki gorunmez "website" alani (components/common/BotTrap)
+ * ziyaretciye gorunmez; doluysa gonderen formu otomatik dolduran bir bottur.
+ * Bota basarili gibi yanit verilir (botResult), e-posta gonderilmez.
+ */
+export const isBot = (body: Record<string, unknown>) =>
+  typeof body.website === "string" && body.website.trim() !== "";
 
-/** HTML'e gomulecek kullanici metnini zararsiz hale getirir. */
-export function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
+export const botResult = (): MailResult => ({ ok: true, delivered: true, demo: isNoIndex() });
+
+export const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 /** Zenweld'e e-posta: baslik, alan tablosu ve istege bagli uzun metin. */
 export async function sendMail({

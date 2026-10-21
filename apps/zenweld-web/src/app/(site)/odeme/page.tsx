@@ -24,6 +24,7 @@ import { Alert, Button, EmptyState, FormRow, Input, Modal, Textarea } from "@zen
 import { formatPrice } from "@zenweld/utils";
 import Link from "next/link";
 import { KvkkNotice } from "@/components/legal/LegalLink";
+import { useBotTrap } from "@/components/common/BotTrap";
 import { AddressFields, EMPTY_ADDRESS, addressComplete } from "@/components/shop/AddressFields";
 import { BankAccounts } from "@/components/shop/BankAccounts";
 import { CardPayment, EMPTY_CARD, type CardDraft } from "@/components/shop/CardPayment";
@@ -98,6 +99,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [placed, setPlaced] = useState(false);
+  const bot = useBotTrap();
 
   if (!ready || !cart.ready || placed) {
     return <div className="zw-container py-20 text-center text-zw-grey-500">{t.common.loading}</div>;
@@ -278,7 +280,7 @@ export default function CheckoutPage() {
         shipping: `${a.fullName}, ${a.line}, ${a.district} / ${a.city}`,
         invoice: inv.type === "corporate" ? `${inv.companyName} — ${inv.taxOffice} / ${inv.taxNumber}` : `Bireysel: ${inv.fullName}`,
         note: record.customerNote,
-      });
+      }, bot.website);
       if (!selectedSaved && saveNew) {
         const { title, ...address } = newAddress;
         addAddress({ ...address, userId: user.id, title: title.trim() || t.checkout.shippingAddress });
@@ -487,6 +489,7 @@ export default function CheckoutPage() {
               </span>
             </label>
             <KvkkNotice className="mt-2" />
+            {bot.field}
 
             {error && (
               <div className="mt-4">

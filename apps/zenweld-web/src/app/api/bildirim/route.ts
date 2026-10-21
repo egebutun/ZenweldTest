@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readFields, readJsonObject, sendMail } from "@/lib/server/mail";
+import { botResult, isBot, readFields, readJsonObject, sendMail } from "@/lib/server/mail";
 
 /**
  * FORM BILDIRIMLERI — info@zenweld.com
@@ -133,6 +133,7 @@ const TEMPLATES: Record<string, Template> = {
 
 export async function POST(request: Request) {
   const body = await readJsonObject(request);
+  if (body && isBot(body)) return NextResponse.json(botResult());
   const template = body && typeof body.type === "string" ? TEMPLATES[body.type] : undefined;
   const data = body?.data;
   if (!template || !data || typeof data !== "object" || Array.isArray(data)) {

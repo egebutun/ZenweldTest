@@ -8,6 +8,7 @@ import { Button, Input, Textarea } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { onOpenSupportChat } from "@/lib/support-chat";
 import { KvkkNotice } from "@/components/legal/LegalLink";
+import { useBotTrap } from "@/components/common/BotTrap";
 
 /**
  * URUN DESTEK SOHBETI
@@ -49,6 +50,7 @@ export function ProductSupportChat({ product }: { product: Product }) {
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [delivered, setDelivered] = useState<boolean | null>(null);
+  const bot = useBotTrap();
 
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -105,6 +107,7 @@ export function ProductSupportChat({ product }: { product: Product }) {
           email,
           phone,
           isMember: Boolean(user),
+          website: bot.website,
         }),
       });
       const data = (await res.json()) as { ok?: boolean; delivered?: boolean };
@@ -214,6 +217,7 @@ export function ProductSupportChat({ product }: { product: Product }) {
                 </div>
               )}
 
+              {bot.field}
               <KvkkNotice className="text-[11px]" />
 
               <Button type="submit" fullWidth disabled={sending} leftIcon={<Send size={16} />}>

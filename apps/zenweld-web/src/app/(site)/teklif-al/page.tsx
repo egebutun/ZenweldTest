@@ -12,6 +12,7 @@ import { notifyZenweld } from "@/lib/notify";
 import { useMemberPrefill } from "@/lib/member-prefill";
 import { useQuoteList } from "@/lib/quote-list";
 import { KvkkNotice } from "@/components/legal/LegalLink";
+import { useBotTrap } from "@/components/common/BotTrap";
 
 const STEPS = 4;
 
@@ -34,6 +35,7 @@ export default function QuotePage() {
   const [code, setCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [addProductId, setAddProductId] = useState("");
+  const bot = useBotTrap();
 
   const [form, setForm] = useState({
     companyName: "",
@@ -152,7 +154,7 @@ export default function QuotePage() {
           ? `${t.quote.vadeli} (${quote.termDays} gün)`
           : t.quote[quote.paymentPreference],
       message: quote.message,
-    });
+    }, bot.website);
 
     quoteList.clear();
     setCode(quote.code);
@@ -424,6 +426,7 @@ export default function QuotePage() {
           )}
         </div>
 
+        {bot.field}
         <div className="mt-8 flex justify-between gap-3">
           <Button
             variant="outline"

@@ -84,7 +84,7 @@ export function ProductReviews({
     add: (m: ReviewMediaInput) => void,
     fail: (message: string) => void,
   ) => void;
-  /** Gonder dugmesinin ustundeki bilgilendirme (KVKK notu gibi). */
+  /** Gonder dugmesinin ustunde, formun icinde (KVKK notu, bot tuzagi). */
   notice?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);

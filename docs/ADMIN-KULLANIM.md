@@ -423,5 +423,7 @@ dendiğinde e-posta doğrudan formu dolduran kişiye gider.
   gösterilir ve tekrar deneyebilir; panele kaydı olan formlar kaydı yine alır.
 - E-posta için sunucuda `RESEND_API_KEY` tanımlı olmalı (bkz. README). Tanımlı
   değilse demo adresinde formlar başarılı görünür ama e-posta gitmez.
+- Her formda botlar için görünmez bir tuzak alanı var; formu otomatik dolduran
+  botların gönderimi e-posta olarak gelmez.
 - Şifremi unuttum ve bülten aboneliği henüz bir yere gitmiyor (backend ile).
 

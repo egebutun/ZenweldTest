@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search, X, Package, FolderOpen, FileText, File } from "lucide-react";
 import { useSearch } from "@/lib/search/use-search";
 import { useT } from "@/lib/i18n-client";
-import { formatPrice, priceWithVat } from "@zenweld/utils";
+import { formatPrice } from "@zenweld/utils";
 import { ProductImage } from "@zenweld/ui";
 import type { SearchDocType } from "@/lib/search/search-client";
 
@@ -189,7 +189,7 @@ export function SearchOverlay({ onClose }: { onClose: () => void }) {
                       </span>
                       {hit.type === "product" && hit.price != null && (
                         <span className="shrink-0 text-sm font-semibold text-zw-ink">
-                          {formatPrice(priceWithVat(hit.price, 20))}
+                          {formatPrice(hit.price)}
                         </span>
                       )}
                     </button>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Award, Check, GraduationCap, Ticket, Zap } from "lucide-react";
 import { stockPhotos } from "@zenweld/data";
 import { Alert, Button, FormRow, Input } from "@zenweld/ui";
+import { useBotTrap } from "@/components/common/BotTrap";
 import { PageHero } from "@/components/common/PageShell";
 import { useT } from "@/lib/i18n-client";
 import { notifyZenweld, reached } from "@/lib/notify";
@@ -15,13 +16,14 @@ export default function WeldersClubPage() {
   const [error, setError] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", city: "" });
   const set = (key: keyof typeof form, value: string) => setForm((f) => ({ ...f, [key]: value }));
+  const bot = useBotTrap();
 
   // Katilim info@zenweld.com'a e-postayla gider; gitmezse ziyaretciye soylenir.
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
     setError(false);
-    const result = await notifyZenweld("welders-club", form);
+    const result = await notifyZenweld("welders-club", form, bot.website);
     setSending(false);
     if (reached(result)) setJoined(true);
     else setError(true);
@@ -75,6 +77,7 @@ export default function WeldersClubPage() {
                 <FormRow label={t.auth.city}>
                   <Input value={form.city} onChange={(e) => set("city", e.target.value)} />
                 </FormRow>
+                {bot.field}
                 <Button type="submit" size="lg" fullWidth disabled={sending}>
                   {sending ? t.support.sending : t.club.join}
                 </Button>

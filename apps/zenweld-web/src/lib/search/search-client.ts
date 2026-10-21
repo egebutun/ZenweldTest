@@ -3,6 +3,7 @@
 import MiniSearch, { type SearchResult as MiniSearchResult } from "minisearch";
 import { salePriceExVat, type ZenweldDatabase } from "@zenweld/data";
 import { listBlogPosts, listEvents, listNews, listProducts } from "@zenweld/store";
+import { priceWithVat } from "@zenweld/utils";
 import { trNormalize, trTokenize } from "./tr-normalize";
 import { expandQuery } from "./synonyms";
 import { categoryHref } from "@/lib/catalog";
@@ -35,6 +36,7 @@ export interface SearchDoc {
   sku: string;
   href: string;
   image?: string;
+  /** Urunlerde KDV dahil satis fiyati (urunun kendi KDV orani ile) */
   price?: number;
 }
 
@@ -82,9 +84,9 @@ export function buildDocuments(db: ZenweldDatabase): SearchDoc[] {
       sku: p.sku,
       href: `/urun/${p.slug}`,
       image: p.images[0]?.url,
-      // Sonuclarda musterinin odeyecegi (kampanyali) fiyat gorunur.
+      // Sonuclarda musterinin odeyecegi (kampanyali, KDV dahil) fiyat gorunur.
       // Arama yalnizca kullanici acinca cizildigi icin anlik saat kullanilir.
-      price: salePriceExVat(p),
+      price: priceWithVat(salePriceExVat(p), p.vatRate),
     });
   });
 

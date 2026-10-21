@@ -49,3 +49,13 @@ export function fromDateTimeLocal(value: string): string | undefined {
 export function priceWithVat(exVat: number, vatRate: number): number {
   return Math.round(exVat * (1 + vatRate / 100));
 }
+
+/** HTML'e gomulecek kullanici metnini zararsiz hale getirir (e-posta, harita baloncugu). */
+export function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}

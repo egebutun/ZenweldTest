@@ -9,6 +9,7 @@ import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenw
 import Link from "next/link";
 import { PageHero } from "@/components/common/PageShell";
 import { KvkkNotice } from "@/components/legal/LegalLink";
+import { useBotTrap } from "@/components/common/BotTrap";
 import { useT } from "@/lib/i18n-client";
 import { notifyZenweld } from "@/lib/notify";
 import { useMemberPrefill } from "@/lib/member-prefill";
@@ -58,6 +59,7 @@ export default function ServiceRequestPage() {
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [code, setCode] = useState<string | null>(null);
+  const bot = useBotTrap();
 
   const set = (key: keyof typeof EMPTY, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -111,7 +113,7 @@ export default function ServiceRequestPage() {
       district: record.district,
       city: record.city,
       complaint: record.complaint,
-    });
+    }, bot.website);
     setCode(record.code);
     window.scrollTo({ top: 0 });
   };
@@ -289,6 +291,7 @@ export default function ServiceRequestPage() {
           </label>
           <KvkkNotice className="-mt-5 ml-6" />
 
+          {bot.field}
           {error && <Alert tone="danger">{error}</Alert>}
 
           <Button type="submit" size="lg">

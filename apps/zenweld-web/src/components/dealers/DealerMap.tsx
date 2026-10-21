@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { Dealer } from "@zenweld/data";
+import { escapeHtml } from "@zenweld/utils";
 import "leaflet/dist/leaflet.css";
 import { TURKEY_CENTER } from "@/lib/geo";
 
@@ -98,7 +99,8 @@ export function DealerMap({
         icon: pin(active ? "#141619" : "#b82429", active),
         zIndexOffset: active ? 1000 : 0,
       });
-      marker.bindTooltip(`<strong>${d.name}</strong><br/>${d.district} / ${d.city}`, {
+      // Panelde girilen metin HTML olarak yorumlanmasin (kod calistirma).
+      marker.bindTooltip(`<strong>${escapeHtml(d.name)}</strong><br/>${escapeHtml(`${d.district} / ${d.city}`)}`, {
         direction: "top",
         offset: [0, -34],
       });

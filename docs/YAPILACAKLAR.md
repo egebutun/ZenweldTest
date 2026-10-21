@@ -140,6 +140,12 @@ yapılıyor (`lib/page-seo-client.ts`).
 4. Kayıt kaydedilince o sayfa ve site haritası yenilenmeli. Site
    haritası veritabanından üretilmeli: panelde eklenen ürünler ve blog yazıları
    girmeli, linki değişen üründe yalnızca yeni link yer almalı.
+5. **Kampanya başlangıç ve bitişinde ürün sayfası yenilenmeli.** Google'a
+   giden fiyat (yapısal veri) sayfa üretilirken yazılır. Kampanya belirlenen
+   saatte kendiliğinden başlayıp bittiği için o anda kimse kayıt yapmaz;
+   sayfa ya kampanyanın başlangıç/bitiş saatinde zamanlanmış bir işle ya da
+   saatte bir yenilenmeli. Yoksa Google bir sonraki yenilemeye kadar eski
+   fiyatı görür.
 
 ## Belgeler (MSDS, Kaynak Rehberi, Parti Sertifikaları) — backend
 
@@ -154,6 +160,27 @@ Panel ve site sayfaları hazır; dosyalar şimdilik yükleyen tarayıcıda
    (`apps/zenweld-web/src/lib/page-meta.ts`); panelde değiştirilen başlık
    sunucu tarafında okunabilir hale gelince oraya bağlanmalı.
 
+## Formlar — güvenlik (backend)
+
+Formlar info@zenweld.com'a e-posta gönderir (`app/api/bildirim`,
+`/api/bayilik`, `/api/destek`; liste: ADMIN-KULLANIM.md › "Form e-postaları").
+Bugün gelen veri sunucuda kontrol ediliyor (alan türü, uzunluk) ve her
+formda botlar için görünmez bir tuzak alanı var
+(`components/common/BotTrap.tsx`). Canlıdan önce:
+
+1. **İstek sınırı:** aynı IP adresinden dakikada birkaç form gönderilebilmeli;
+   aşınca "çok fazla deneme" yanıtı. Vercel'de her istek ayrı bir sunucuda
+   çalıştığı için sayaç bellekte tutulamaz: Upstash Redis / Vercel KV gibi
+   bir depo ya da Vercel Firewall kuralı kullanılmalı.
+2. **Bot koruması:** Cloudflare Turnstile veya görünmez reCAPTCHA; doğrulama
+   sunucuda yapılmalı. Tuzak alanı yalnızca formu dolduran basit botları
+   durdurur, uca doğrudan istek atan betikleri durdurmaz.
+3. **Kayıt tutan formlar** (teklif, servis talebi, garanti, yorum, üyelik,
+   sipariş) önce sunucuda veritabanına yazılmalı, e-posta bu kayıttan
+   gönderilmeli. Bugün tarayıcı kaydı kendisi oluşturup e-posta ucuna haber
+   veriyor; bu uca sahte bir bildirim (ör. "yeni sipariş") de gönderilebilir.
+   Sipariş e-postası ödeme kuruluşunun onayından sonra gönderilmeli.
+
 ## Kod incelemesi bulguları
 
 Ayrıntılı inceleme sohbette yapıldı; düzeltme zamanı ayrıca
@@ -161,8 +188,8 @@ kararlaştırılacak. Başlıklar:
 
 1. Giriş/yetki yalnızca tarayıcıda (demo) — canlıdan önce sunucu tarafı
    kimlik doğrulama şart
-2. `/api/destek`, `/api/bayilik` ve `/api/bildirim` (form e-postaları) için
-   istek sınırı ve bot koruması yok (alan türü ve uzunluk kontrolü var)
+2. Form uçlarında istek sınırı ve bot koruması yok → "Formlar — güvenlik
+   (backend)"
 3. KVKK onay kutusu üyelik (`/kayit`) formunda yok
 4. Yayından kaldırılan ürün, haber ve etkinliğin sayfası doğrudan
    adresle hâlâ açılıyor

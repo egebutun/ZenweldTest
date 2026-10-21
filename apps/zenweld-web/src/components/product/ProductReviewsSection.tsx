@@ -8,6 +8,7 @@ import { ProductReviews } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { optimizeImageFile } from "@zenweld/utils";
 import { KvkkNotice } from "@/components/legal/LegalLink";
+import { useBotTrap } from "@/components/common/BotTrap";
 import { notifyZenweld } from "@/lib/notify";
 
 /** Yorum videosu en fazla 2 MB (tarayici deposunun siniri ~5 MB). */
@@ -24,6 +25,7 @@ export function ProductReviewsSection({ product }: { product: Product }) {
   const t = useT();
   const db = useDatabase();
   const { user } = useAuth();
+  const bot = useBotTrap();
 
   const items = useMemo(() => listProductReviews(product.id, db), [product.id, db]);
   const summary = useMemo(() => reviewSummary(product.id, db), [product.id, db]);
@@ -34,7 +36,12 @@ export function ProductReviewsSection({ product }: { product: Product }) {
       average={summary.average}
       defaultName={user ? `${user.firstName} ${user.lastName}`.trim() : ""}
       texts={t.reviews}
-      notice={<KvkkNotice />}
+      notice={
+        <>
+          {bot.field}
+          <KvkkNotice />
+        </>
+      }
       onSubmit={(input) => {
         const review = createReview({
           productId: product.id,
@@ -57,7 +64,7 @@ export function ProductReviewsSection({ product }: { product: Product }) {
           title: review.title,
           body: review.body,
           media: review.media.length ? `${review.media.length} dosya (panelde görülebilir)` : "Yok",
-        });
+        }, bot.website);
         return true;
       }}
       onPickMedia={(files, add, fail) => {

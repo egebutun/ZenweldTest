@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readFields, readJsonObject, sendMail } from "@/lib/server/mail";
+import { botResult, isBot, readFields, readJsonObject, sendMail } from "@/lib/server/mail";
 
 /**
  * URUN DESTEK TALEBI — E-POSTA GONDERIMI
@@ -15,6 +15,7 @@ const KEYS = ["productName", "productSku", "productUrl", "message", "name", "ema
 
 export async function POST(request: Request) {
   const body = await readJsonObject(request);
+  if (body && isBot(body)) return NextResponse.json(botResult());
   const values = body && readFields(body, KEYS);
   if (!values) return NextResponse.json({ ok: false, error: "gecersiz-istek" }, { status: 400 });
 

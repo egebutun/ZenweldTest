@@ -71,10 +71,16 @@ export function DocumentLibrary({ section }: { section: DocumentSection }) {
                     <div className="min-w-0">
                       <div className="font-semibold text-zw-ink">{doc.title}</div>
                       <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-zw-grey-500">
-                        {product && (
+                        {/* Yayindan kaldirilan urunun sayfasi yok; adi baglantisiz kalir. */}
+                        {product?.active && (
                           <Link href={`/urun/${product.slug}`} className="hover:text-zw-red-600">
                             {product.name} · {product.sku}
                           </Link>
+                        )}
+                        {product && !product.active && (
+                          <span>
+                            {product.name} · {product.sku}
+                          </span>
                         )}
                         {doc.lotNumber && <span>Parti No: {doc.lotNumber}</span>}
                         <span>{formatBytes(doc.size)}</span>

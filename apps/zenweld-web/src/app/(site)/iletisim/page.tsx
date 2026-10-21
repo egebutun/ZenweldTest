@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ExternalLink, Navigation } from "lucide-react";
 import { Alert, Button, FormRow, Input, Textarea } from "@zenweld/ui";
+import { useBotTrap } from "@/components/common/BotTrap";
 import { PageHero } from "@/components/common/PageShell";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useT } from "@/lib/i18n-client";
@@ -16,13 +17,14 @@ export default function ContactPage() {
   const [error, setError] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const set = (key: keyof typeof form, value: string) => setForm((f) => ({ ...f, [key]: value }));
+  const bot = useBotTrap();
 
   // Mesaj info@zenweld.com'a e-postayla gider; gitmezse ziyaretciye soylenir.
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
     setError(false);
-    const result = await notifyZenweld("iletisim", form);
+    const result = await notifyZenweld("iletisim", form, bot.website);
     setSending(false);
     if (reached(result)) setSent(true);
     else setError(true);
@@ -53,6 +55,7 @@ export default function ContactPage() {
                 <FormRow label={t.support.message} required>
                   <Textarea required value={form.message} onChange={(e) => set("message", e.target.value)} />
                 </FormRow>
+                {bot.field}
                 <KvkkNotice />
                 <Button type="submit" size="lg" disabled={sending}>
                   {sending ? t.support.sending : t.support.send}

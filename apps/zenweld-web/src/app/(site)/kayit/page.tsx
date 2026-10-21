@@ -7,6 +7,7 @@ import { useAuth, type RegisterInput } from "@zenweld/auth";
 import { Alert, Button, Checkbox, FormRow, Input } from "@zenweld/ui";
 import Link from "next/link";
 import { KvkkNotice, LegalLink } from "@/components/legal/LegalLink";
+import { useBotTrap } from "@/components/common/BotTrap";
 import { useT } from "@/lib/i18n-client";
 import { notifyZenweld } from "@/lib/notify";
 
@@ -37,6 +38,7 @@ export default function RegisterPage() {
 
   const set = (key: keyof typeof form, value: string | boolean) =>
     setForm((f) => ({ ...f, [key]: value }));
+  const bot = useBotTrap();
 
   const types: { id: AccountType; label: string; Icon: typeof UserIcon }[] = [
     {
@@ -97,7 +99,7 @@ export default function RegisterPage() {
       type: type === "business" ? "Kurumsal" : "Bireysel",
       companyName: input.companyName,
       newsletter: input.newsletter ? "Evet" : "Hayır",
-    });
+    }, bot.website);
 
     router.push("/hesabim");
   };
@@ -253,6 +255,7 @@ export default function RegisterPage() {
             <KvkkNotice />
           </div>
 
+          {bot.field}
           <Button type="submit" size="lg" fullWidth>
             {t.auth.submitRegister}
           </Button>

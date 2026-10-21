@@ -41,11 +41,13 @@ export async function postForm(url: string, body: unknown): Promise<SendResult> 
   }
 }
 
+/** website: formun bot tuzagi alani (components/common/BotTrap) */
 export function notifyZenweld(
   type: NotifyType,
   data: Record<string, string | number | boolean | string[] | undefined>,
+  website: string,
 ): Promise<SendResult> {
-  return postForm("/api/bildirim", { type, data });
+  return postForm("/api/bildirim", { type, data, website });
 }
 
 /**

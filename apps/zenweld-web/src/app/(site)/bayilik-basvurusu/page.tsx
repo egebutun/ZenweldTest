@@ -6,6 +6,7 @@ import { useAuth } from "@zenweld/auth";
 import { Alert, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { PageHero } from "@/components/common/PageShell";
+import { useBotTrap } from "@/components/common/BotTrap";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { postForm, reached } from "@/lib/notify";
@@ -51,6 +52,7 @@ export default function DealerApplicationPage() {
 
   const set = (key: keyof typeof form, value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
+  const bot = useBotTrap();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +61,7 @@ export default function DealerApplicationPage() {
     setSending(true);
     // Basvurunun kaydi yok, yalnizca e-postayla gider: gitmezse ziyaretci
     // bilgilendirilir ve tekrar deneyebilir (lib/notify.ts).
-    const result = await postForm("/api/bayilik", form);
+    const result = await postForm("/api/bayilik", { ...form, website: bot.website });
     setSending(false);
     if (reached(result)) setSent(true);
     else setError(t.dealerApply.sendError);
@@ -157,6 +159,7 @@ export default function DealerApplicationPage() {
               </div>
             </div>
 
+            {bot.field}
             <KvkkNotice />
 
             <Button type="submit" size="lg" disabled={sending} leftIcon={<Handshake size={18} />}>
