@@ -8,12 +8,17 @@ import type { User } from "@zenweld/data";
  * Servis Talebi, Garanti Kaydi). Sayfa yenilenince giris bilgisi ilk
  * cizimden sonra hazir olur; bu yuzden uye gelince yalnizca hala bos olan
  * alanlar doldurulur, ziyaretcinin yazdiklarina dokunulmaz.
+ *
+ * Yalnizca giris yapan kisi degisince calisir: veritabanina her yazista uye
+ * nesnesi yenilenir; ona baglansaydi ziyaretcinin bilerek sildigi alan geri
+ * dolardi.
  */
 export function useMemberPrefill<F>(
   user: User | null,
   values: (user: User) => Partial<F>,
   setForm: Dispatch<SetStateAction<F>>,
 ): void {
+  const userId = user?.id;
   useEffect(() => {
     if (!user) return;
     const fill = values(user) as Record<string, unknown>;
@@ -24,6 +29,6 @@ export function useMemberPrefill<F>(
       }
       return next as F;
     });
-    // values her cizimde yeni bir fonksiyon; uye degisince calismasi yeterli.
-  }, [user, setForm]);
+    // user ve values her cizimde yeni; giris yapan kisi degisince calismasi yeterli.
+  }, [userId, setForm]);
 }

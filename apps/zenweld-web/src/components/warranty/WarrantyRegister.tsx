@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
+import type { User } from "@zenweld/data";
 import { listProducts, registerWarranty, useDatabase } from "@zenweld/store";
 import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
@@ -11,6 +12,14 @@ import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";
 import { notifyZenweld } from "@/lib/notify";
 import { useMemberPrefill } from "@/lib/member-prefill";
+
+/** Uye girisliyse forma gelen bilgiler (ilk cizimde ve uye sonradan gelince). */
+const memberValues = (u: User) => ({
+  ownerName: `${u.firstName} ${u.lastName}`.trim(),
+  email: u.email,
+  phone: u.phone ?? "",
+  city: u.city ?? "",
+});
 
 /**
  * GARANTI KAYDI
@@ -25,10 +34,11 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
   const [done, setDone] = useState(false);
 
   const [form, setForm] = useState({
-    ownerName: user ? `${user.firstName} ${user.lastName}` : "",
-    email: user?.email ?? "",
-    phone: user?.phone ?? "",
-    city: user?.city ?? "",
+    ownerName: "",
+    email: "",
+    phone: "",
+    city: "",
+    ...(user ? memberValues(user) : {}),
     postalCode: "",
     address: "",
     categorySlug: "",
@@ -37,11 +47,7 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
     sellerTaxNumber: "",
     extended: false,
   });
-  useMemberPrefill(
-    user,
-    (u) => ({ ownerName: `${u.firstName} ${u.lastName}`.trim(), email: u.email, phone: u.phone ?? "", city: u.city ?? "" }),
-    setForm,
-  );
+  useMemberPrefill(user, memberValues, setForm);
   const [error, setError] = useState<string | null>(null);
   const bot = useBotTrap();
 

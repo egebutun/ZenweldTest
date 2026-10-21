@@ -90,7 +90,7 @@ export function StockUpload({
         </p>
 
         <div className="rounded-[4px] bg-zw-grey-50 px-3 py-2 text-xs text-zw-grey-600">
-          {columns.headerRow >= 0 ? (
+          {columns ? (
             <>
               Başlık satırı {columns.headerRow + 1}. Okunan sütunlar: Kod = {colLetter(columns.code)}, Adet ={" "}
               {colLetter(columns.quantity)}
@@ -100,7 +100,7 @@ export function StockUpload({
               {withUrl && columns.url === undefined && <> · link sütunu bulunamadı</>}
             </>
           ) : (
-            <>Başlık satırı bulunamadı; sütunlar şablon sırasıyla okundu (A = kod, B = adet, C = fiyat{withUrl ? ", D = link" : ""}).</>
+            <>Başlık satırı bulunamadı.</>
           )}
         </div>
 
@@ -120,7 +120,13 @@ export function StockUpload({
         {failed && (
           <Alert tone="danger">Stok güncellenemedi: tarayıcı deposu dolu. Değişiklik uygulanmadı.</Alert>
         )}
-        {file.incoming.length === 0 && (
+        {!columns && (
+          <Alert tone="danger">
+            Dosyada başlık satırı bulunamadı; uygulanamaz. İlk satırlardan birinde &quot;Kod&quot; (veya SKU) ve
+            &quot;Adet&quot; başlıkları olmalı. Şablon İndir ile alınan dosyadaki başlık satırını silmeyin.
+          </Alert>
+        )}
+        {columns && file.incoming.length === 0 && (
           <Alert tone="danger">Dosyada eşleşen ürün yok; uygulanamaz. Sütun başlıklarını ve kodları kontrol edin.</Alert>
         )}
         {truncated && (

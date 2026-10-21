@@ -96,7 +96,12 @@ export function ProductReviews({
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
-  const fmt = useMemo(() => new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium" }), []);
+  // Turkiye saatiyle: sunucu (UTC) ve tarayici ayni gunu yazar. Bozuk tarih sayfayi dusurmez.
+  const fmt = useMemo(() => new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium", timeZone: "Europe/Istanbul" }), []);
+  const reviewDate = (iso: string) => {
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? "" : fmt.format(d);
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -274,7 +279,7 @@ export function ProductReviews({
                     {texts.verified}
                   </span>
                 )}
-                <span className="text-xs text-zw-grey-500">{fmt.format(new Date(r.createdAt))}</span>
+                <span className="text-xs text-zw-grey-500">{reviewDate(r.createdAt)}</span>
               </div>
               {r.title && <h3 className="mt-2 font-semibold text-zw-ink">{r.title}</h3>}
               <p className="mt-1.5 whitespace-pre-line text-sm leading-relaxed text-zw-grey-700">

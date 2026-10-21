@@ -213,7 +213,8 @@ export function QuantityStepper({
   // sayi yazilinca adet hemen guncellenir, kutudan cikinca bos kalmaz.
   const [draft, setDraft] = useState<string | null>(null);
   const height = size === "lg" ? "h-14" : "h-10";
-  const set = (n: number) => onChange(Math.max(1, Math.min(MAX_LINE_QUANTITY, Math.floor(n) || 1)));
+  const clamp = (n: number) => Math.max(1, Math.min(MAX_LINE_QUANTITY, Math.floor(n) || 1));
+  const set = (n: number) => onChange(clamp(n));
   const step = (n: number) => {
     setDraft(null);
     set(n);
@@ -232,8 +233,12 @@ export function QuantityStepper({
         aria-label={t.cart.quantity}
         value={draft ?? value}
         onChange={(e) => {
-          setDraft(e.target.value);
-          if (Number(e.target.value) >= 1) set(Number(e.target.value));
+          const n = Number(e.target.value);
+          if (n >= 1) {
+            // Sinirin ustu (500 -> 99) ya da kesirli yazilirsa kutu gecerli adedi gosterir.
+            set(n);
+            setDraft(String(clamp(n)));
+          } else setDraft(e.target.value);
         }}
         onBlur={() => setDraft(null)}
         className="w-12 border-x border-zw-grey-200 text-center text-sm font-semibold [appearance:textfield] focus:outline-none [&::-webkit-inner-spin-button]:appearance-none"

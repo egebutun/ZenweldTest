@@ -2,6 +2,8 @@ export function formatPrice(amount: number): string {
   return new Intl.NumberFormat("tr-TR", {
     style: "currency",
     currency: "TRY",
+    // En az basamak da 0: eski tarayicilar (yalniz en cok 0 verilince) hata verir.
+    minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
 }

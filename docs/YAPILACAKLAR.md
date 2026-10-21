@@ -24,6 +24,12 @@ Bu iş yapılırken: `packages/store/src/repo/products.ts` içindeki
 `stockQuantity` alanlarını kopyalamıyor. Panele bu alanlar eklendiğinde
 bu fonksiyon da güncellenmeli; yoksa yeni ürünlerde sessizce kaybolurlar.
 
+Her seçeneğin kendi stok kodu (SKU) olmalı ve panelde zorunlu tutulmalı.
+Kodu olmayan seçenekler stok şablonunda ürünün koduyla yazılıyor; bayi
+dosyayı geri yüklediğinde bu satırlar tek satıra iner, seçeneklerin adetleri
+birbirinin üstüne yazılır (`packages/data/src/stock.ts` → `stockTemplateRows`,
+`buildCodeIndex`).
+
 ## Canlı sunucu (hosting) kararı ve Vercel temizliği
 
 Demo şu an Vercel'de yayında; derleme sunucusu ABD'de (Washington, D.C.).

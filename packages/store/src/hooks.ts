@@ -28,6 +28,8 @@ let clockTimer: ReturnType<typeof setInterval> | null = null;
 function subscribeClock(listener: () => void): () => void {
   clockListeners.add(listener);
   if (!clockTimer) {
+    // Saat bir sure durmus olabilir (dinleyen kalmamisti); hemen guncellenir.
+    clientNow = new Date();
     clockTimer = setInterval(() => {
       clientNow = new Date();
       clockListeners.forEach((l) => l());

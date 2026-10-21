@@ -7,6 +7,21 @@ import { Alert, Button, FormRow, Input } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 
+/**
+ * Giristen sonra gidilecek adres yalnizca site iciyse kullanilir:
+ * "/giris?next=https://sahte-site" ile gelen ziyaretci baska siteye gitmesin.
+ * Adres tarayicinin kendi kuraliyla cozulur; "/\t/sahte-site" gibi gorunmez
+ * karakterli hileler de yakalanir.
+ */
+function siteInternal(next: string | null): string | null {
+  if (!next) return null;
+  try {
+    const url = new URL(next, window.location.origin);
+    return url.origin === window.location.origin ? url.pathname + url.search + url.hash : null;
+  } catch {
+    return null;
+  }
+}
 
 function LoginInner() {
   const t = useT();
@@ -28,11 +43,7 @@ function LoginInner() {
       setError(result.error ?? "Giriş yapılamadı.");
       return;
     }
-    // Yalnizca site ici adreslere yonlendir: "/giris?next=https://sahte-site"
-    // ile gelen ziyaretci giristen sonra baska siteye gitmesin.
-    const next = params.get("next");
-    const safe = next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\");
-    router.push(safe ? next : "/hesabim");
+    router.push(siteInternal(params.get("next")) ?? "/hesabim");
   };
 
   return (

@@ -2,7 +2,7 @@
 
 import { FileText, Heart, Package, ShieldCheck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { ordersForUser, quotesForUser, useDatabase } from "@zenweld/store";
+import { ordersForUser, quotesForUser, useDatabase, warrantiesForEmail } from "@zenweld/store";
 import Link from "next/link";
 import { useFavourites } from "@/lib/favourites";
 import { useT } from "@/lib/i18n-client";
@@ -17,7 +17,7 @@ export default function AccountHome() {
 
   const quotes = quotesForUser(user.id, db);
   const orders = ordersForUser(user.id, db);
-  const warranties = db.warranties.filter((w) => w.email === user.email);
+  const warranties = warrantiesForEmail(user.email, db);
 
   const cards = [
     { href: "/hesabim/tekliflerim", label: t.account.myQuotes, value: quotes.length, Icon: FileText, show: user.role !== "admin" },

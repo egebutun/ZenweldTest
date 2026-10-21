@@ -211,18 +211,25 @@ export function readImageFiles(
 ): void {
   if (!files) return;
 
-  Array.from(files).forEach(async (file) => {
-    try {
-      const dataUrl = await optimizeImageFile(file, options);
-      if (dataUrlBytes(dataUrl) > MAX_UPLOAD_BYTES) {
-        onError(
-          `${file.name} küçültüldükten sonra bile çok büyük. Lütfen daha düşük çözünürlüklü bir görsel seçin veya URL girin.`,
-        );
-        return;
+  // Dosyalar sirayla islenir: galeriye secildikleri sirayla eklenir (kucuk
+  // dosya once biter diye one gecmez; ilk secilen kapak olur).
+  // Liste hemen alinir: cagiran taraf ayni dosyayi yeniden secebilmek icin
+  // kutuyu (input.value) hemen bosaltir.
+  const list = Array.from(files);
+  void (async () => {
+    for (const file of list) {
+      try {
+        const dataUrl = await optimizeImageFile(file, options);
+        if (dataUrlBytes(dataUrl) > MAX_UPLOAD_BYTES) {
+          onError(
+            `${file.name} küçültüldükten sonra bile çok büyük. Lütfen daha düşük çözünürlüklü bir görsel seçin veya URL girin.`,
+          );
+          continue;
+        }
+        onImage(dataUrl);
+      } catch {
+        onError(`${file.name} okunamadı. Farklı bir dosya deneyin.`);
       }
-      onImage(dataUrl);
-    } catch {
-      onError(`${file.name} okunamadı. Farklı bir dosya deneyin.`);
     }
-  });
+  })();
 }

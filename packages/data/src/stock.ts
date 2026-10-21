@@ -89,7 +89,7 @@ const HEADERS = {
 };
 
 export interface StockColumns {
-  /** Basligin bulundugu satir (0'dan); baslik yoksa -1 */
+  /** Basligin bulundugu satir (0'dan) */
   headerRow: number;
   code: number;
   quantity: number;
@@ -97,8 +97,11 @@ export interface StockColumns {
   url?: number;
 }
 
-/** Ilk 10 satirda basligi arar; bulunamazsa sablon sirasi varsayilir (kod, adet, fiyat, link). */
-export function detectStockColumns(rows: unknown[][]): StockColumns {
+/**
+ * Ilk 10 satirda basligi arar. Bulunamazsa null: sutun sirasi tahmin
+ * edilmez (sablonda 2. sutun urun adi; tahmin adet yerine adi okurdu).
+ */
+export function detectStockColumns(rows: unknown[][]): StockColumns | null {
   for (let r = 0; r < Math.min(rows.length, 10); r++) {
     const cells = rows[r].map((c) => simplify(asText(c)));
     const find = (names: string[]) => cells.findIndex((c) => names.includes(c));
@@ -110,7 +113,7 @@ export function detectStockColumns(rows: unknown[][]): StockColumns {
       return { headerRow: r, code, quantity, price: price >= 0 ? price : undefined, url: url >= 0 ? url : undefined };
     }
   }
-  return { headerRow: -1, code: 0, quantity: 1, price: 2, url: 3 };
+  return null;
 }
 
 export interface StockFileRow {
@@ -127,7 +130,8 @@ export interface StockFileRow {
 }
 
 export interface StockSheet {
-  columns: StockColumns;
+  /** Baslik satiri bulunamadiysa null; satir okunmaz, dosya uygulanamaz. */
+  columns: StockColumns | null;
   rows: StockFileRow[];
 }
 
@@ -138,6 +142,7 @@ export interface StockSheet {
 export function readStockSheet(table: unknown[][], options: { withUrl: boolean }): StockSheet {
   const columns = detectStockColumns(table);
   const rows: StockFileRow[] = [];
+  if (!columns) return { columns, rows };
   table.forEach((cells, index) => {
     if (index <= columns.headerRow) return;
     if (cells.every((c) => asText(c) === "")) return;

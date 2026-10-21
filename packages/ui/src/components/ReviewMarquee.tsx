@@ -95,7 +95,13 @@ export function ReviewMarquee({
 
     place();
     frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(frame);
+      // Serit duz siraya donerse kartlarda kaydirma kalmasin (ust uste binerdi).
+      cardsRef.current.forEach((el) => {
+        if (el) el.style.transform = "";
+      });
+    };
   }, [items.length, ring]);
 
   if (items.length === 0) return null;

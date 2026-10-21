@@ -54,7 +54,9 @@ export function warrantyExpiry(
   const months = db.products.find((p) => p.id === productId)?.warrantyMonths ?? 24;
   const expires = new Date(startDate);
   expires.setMonth(expires.getMonth() + months + (extended ? 12 : 0));
-  return expires.toISOString().slice(0, 10);
+  // Yerel tarih: toISOString() UTC verir, gece 00:00–03:00 kaydinda bir gun erken olurdu.
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${expires.getFullYear()}-${pad(expires.getMonth() + 1)}-${pad(expires.getDate())}`;
 }
 
 /** Yonetim panelinden garanti kaydini gunceller (musterinin Garantilerim sayfasina yansir). */

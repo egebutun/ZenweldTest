@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckCircle2, Handshake } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
+import type { User } from "@zenweld/data";
 import { Alert, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { PageHero } from "@/components/common/PageShell";
@@ -11,6 +12,13 @@ import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { postForm, reached } from "@/lib/notify";
 import { useMemberPrefill } from "@/lib/member-prefill";
+
+/** Uye girisliyse forma gelen bilgiler (ilk cizimde ve uye sonradan gelince). */
+const memberValues = (u: User) => ({
+  contactName: `${u.firstName} ${u.lastName}`.trim(),
+  email: u.email,
+  phone: u.phone ?? "",
+});
 
 /**
  * BAYILIK BASVURUSU
@@ -33,9 +41,10 @@ export default function DealerApplicationPage() {
   const [form, setForm] = useState({
     company: "",
     taxOffice: "",
-    contactName: user ? `${user.firstName} ${user.lastName}`.trim() : "",
-    email: user?.email ?? "",
-    phone: user?.phone ?? "",
+    contactName: "",
+    email: "",
+    phone: "",
+    ...(user ? memberValues(user) : {}),
     city: "",
     sector: "",
     years: "",
@@ -44,11 +53,7 @@ export default function DealerApplicationPage() {
     brands: "",
     message: "",
   });
-  useMemberPrefill(
-    user,
-    (u) => ({ contactName: `${u.firstName} ${u.lastName}`.trim(), email: u.email, phone: u.phone ?? "" }),
-    setForm,
-  );
+  useMemberPrefill(user, memberValues, setForm);
 
   const set = (key: keyof typeof form, value: string) =>
     setForm((f) => ({ ...f, [key]: value }));

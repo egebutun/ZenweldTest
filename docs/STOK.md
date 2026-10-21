@@ -63,8 +63,9 @@ Türkçe karakter farkı önemsizdir):
 | Fiyat | Fiyat, Satış Fiyatı, KDV Dahil Fiyat | Hayır |
 | Link | Link, URL, Ürün Linki, Ürün Adresi (yalnızca online satıcılar ve online mağazası olan bayiler; diğer bayilerde okunmaz) | Hayır; ama yoksa online kartta görünmez |
 
-Diğer sütunlar (ürün adı vb.) yok sayılır. Başlık bulunamazsa sütunlar şablon
-sırasıyla okunur: A = kod, B = adet, C = fiyat, D = link.
+Diğer sütunlar (ürün adı vb.) yok sayılır. Başlık bulunamazsa dosya uygulanmaz;
+sütun sırası tahmin edilmez (şablonda 2. sütun ürün adıdır, tahmin adet yerine adı
+okurdu).
 
 - **Sayılar:** `12`, `1.234`, `1.234,50`, `12,5`, `₺ 2.450` okunur.
 - **CSV:** `;`, `,` ya da sekme ayırıcı otomatik bulunur. UTF-8 değilse Türkçe Windows
