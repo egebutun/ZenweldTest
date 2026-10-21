@@ -192,7 +192,7 @@ Düzenleme ekranında dört sekme vardır (Seçenekler yalnızca kategoride):
 |---|---|
 | **Temel Bilgiler** | Ad, grup (kategoride) / bölüm (grupta, yalnızca yeni grupta seçilir), kısa açıklama, kart görseli |
 | **Tanıtım Metni** | Sayfanın altında, ürünlerin (grup sayfasında kategori kartlarının) altında "… Hakkında" başlığıyla görünen uzun metin. Boşsa görünmez. Biçimlendirme haberlerle aynı |
-| **Seçenekler** | Bu kategorideki ürünlere seçenek eklenirken listelenecek seçenek tanımları işaretlenir (ör. MIG Torçları → Hortum Uzunluğu). **Yeni Seçenek Tanımı** ile buradan da tanım açılır |
+| **Seçenekler** | Bu kategorideki ürünlere seçenek eklenirken listelenecek seçenek tanımları işaretlenir (ör. MIG Torçları → Hortum Uzunluğu). **Yeni Seçenek Tanımı** ile buradan da tanım açılır. Bu kategoride kullanılan tanımın altında ürün sayısı yazar |
 | **SEO** | Link, sayfa başlığı, açıklama, anahtar kelimeler, Google önizlemesi (ürünlerdeki gibi) |
 
 - Kategorinin **kısa açıklaması** sayfa başlığının altında ve grup sayfasındaki
@@ -206,6 +206,10 @@ Düzenleme ekranında dört sekme vardır (Seçenekler yalnızca kategoride):
 - Seçenek tanımları ortaktır (bkz. **2c. Seçenek Tanımları**); kategori yalnızca
   hangilerinin listeleneceğini tutar. Kategori silinse ya da ürün başka kategoriye
   taşınsa da tanımlar ve ürünlerin seçenekleri bozulmaz.
+- Kategoride kullanılan bir tanımın işareti kaldırılabilir; bu, o ürünlerin
+  seçeneklerini değiştirmez. Tanım yalnızca bu kategoride yeni bir ürüne seçenek
+  eklerken listelenmez. İşaret kaldırılırken kaç ürünün kullandığı söylenip onay
+  istenir. (Tanımı tamamen silmek ise ürünlerde kullanılıyorsa engellenir; bkz. 2c.)
 
 ---
 

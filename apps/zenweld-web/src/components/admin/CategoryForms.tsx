@@ -163,7 +163,11 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
       )}
 
       {form.tab === "secenekler" && (
-        <CategoryOptionsPanel selected={draft.optionIds ?? []} onChange={(ids) => set("optionIds", ids)} />
+        <CategoryOptionsPanel
+          selected={draft.optionIds ?? []}
+          onChange={(ids) => set("optionIds", ids)}
+          categorySlug={stored?.slug}
+        />
       )}
 
       {form.tab === "seo" && (
