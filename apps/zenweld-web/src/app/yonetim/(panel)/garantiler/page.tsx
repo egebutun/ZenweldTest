@@ -9,10 +9,9 @@ import {
   listUsers,
   saveWarranty,
   useDatabase,
-  warrantyExpiry,
 } from "@zenweld/store";
 import { Badge, Button, Input, Select } from "@zenweld/ui";
-import { formatDate } from "@zenweld/utils";
+import { addMonthsToDate, formatDate, localDateKey } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 
 /**
@@ -26,7 +25,7 @@ export default function AdminWarrantiesPage() {
   const db = useDatabase();
   const [query, setQuery] = useState("");
   const [state, setState] = useState("");
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
 
   const memberEmails = useMemo(
     () => new Set(listUsers(db).map((u) => u.email.toLowerCase())),
@@ -53,14 +52,10 @@ export default function AdminWarrantiesPage() {
 
   const productName = (id: string) => db.products.find((p) => p.id === id)?.name ?? id;
 
-  /** Uzatilmis garanti acilip kapaninca bitis tarihi yeniden hesaplanir (+/- 12 ay). */
+  /** Uzatilmis garanti acilip kapaninca bitis tarihine 12 ay eklenir/cikarilir; elle girilen tarih korunur. */
   const toggleExtended = (w: WarrantyRecord) => {
     const extended = !w.extended;
-    saveWarranty({
-      ...w,
-      extended,
-      expiresAt: warrantyExpiry(w.registeredAt, w.productId, extended, db),
-    });
+    saveWarranty({ ...w, extended, expiresAt: addMonthsToDate(w.expiresAt, extended ? 12 : -12) });
   };
 
   return (

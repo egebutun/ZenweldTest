@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { BankAccount, ShopSettings } from "@zenweld/data";
 import { getShopSettings, saveShopSettings, uid, useDatabase } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, Textarea } from "@zenweld/ui";
 import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
 import { PaymentPosSettings } from "@/components/admin/PaymentPosSettings";
+
+/** Kargo firmalari alani: satir basina bir firma. */
+const parseCarriers = (text: string) => text.split("\n").map((c) => c.trim()).filter(Boolean);
 
 /**
  * MAGAZA AYARLARI — kargo, taksit ve havale/EFT.
@@ -17,17 +20,25 @@ import { PaymentPosSettings } from "@/components/admin/PaymentPosSettings";
  */
 export default function AdminShopSettingsPage() {
   const db = useDatabase();
-  const [draft, setDraft] = useState<ShopSettings>(() => getShopSettings(db));
-  const [carriers, setCarriers] = useState(() => draft.carriers.join("\n"));
+  const stored = getShopSettings(db);
+  const [draft, setDraft] = useState<ShopSettings>(stored);
+  const [carriers, setCarriers] = useState(() => stored.carriers.join("\n"));
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Veri yeniden yuklendiginde (ice aktarma, sifirlama) formu senkronla.
-  useEffect(() => {
-    const shop = getShopSettings(db);
-    setDraft(shop);
-    setCarriers(shop.carriers.join("\n"));
-  }, [db]);
+  const formKey = JSON.stringify({ ...draft, carriers: parseCarriers(carriers) });
+  const storedKey = JSON.stringify(stored);
+
+  // Ayarlar baska yerde (baska sekmede) kaydedilirse form yenilenir;
+  // kaydedilmemis degisiklik varsa korunur. Baska verinin degismesi formu etkilemez.
+  const [syncedKey, setSyncedKey] = useState(storedKey);
+  if (syncedKey !== storedKey) {
+    setSyncedKey(storedKey);
+    if (formKey === syncedKey) {
+      setDraft(stored);
+      setCarriers(stored.carriers.join("\n"));
+    }
+  }
 
   const set = <K extends keyof ShopSettings>(key: K, value: ShopSettings[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
@@ -36,17 +47,16 @@ export default function AdminShopSettingsPage() {
   const setBank = (id: string, patch: Partial<BankAccount>) =>
     set("bankAccounts", draft.bankAccounts.map((b) => (b.id === id ? { ...b, ...patch } : b)));
 
-  const unsaved = JSON.stringify({ ...draft, carriers: carriers.split("\n").map((c) => c.trim()).filter(Boolean) }) !==
-    JSON.stringify(getShopSettings(db));
+  const unsaved = formKey !== storedKey;
 
   const save = () => {
-    const carrierList = carriers.split("\n").map((c) => c.trim()).filter(Boolean);
+    const carrierList = parseCarriers(carriers);
     if (carrierList.length === 0) return setError("En az bir kargo firması girin.");
     if (draft.bankAccounts.some((b) => !b.bankName.trim() || !b.iban.trim())) {
       return setError("Her banka hesabında banka adı ve IBAN zorunludur.");
     }
     setError(null);
-    saveShopSettings({ ...draft, carriers: carrierList });
+    if (!saveShopSettings({ ...draft, carriers: carrierList })) return;
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };

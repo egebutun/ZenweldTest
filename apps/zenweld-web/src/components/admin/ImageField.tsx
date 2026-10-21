@@ -20,6 +20,7 @@ export function ImageField({
   /** Yuvarlak onizleme (vesikalik fotograf icin) */
   rounded?: boolean;
 }) {
+  const uploaded = value?.startsWith("data:");
   return (
     <div className="flex items-start gap-3">
       <div
@@ -34,12 +35,14 @@ export function ImageField({
         )}
       </div>
       <div className="min-w-0 flex-1 space-y-2">
+        {/* Yuklenen dosyanin adresi yazilarak degistirilemez: Kaldir ya da yeni dosya. */}
         <input
           type="text"
-          value={value?.startsWith("data:") ? "(yüklenen dosya)" : (value ?? "")}
+          readOnly={uploaded}
+          value={uploaded ? "(yüklenen dosya)" : (value ?? "")}
           onChange={(e) => onChange(e.target.value.trim() || undefined)}
           placeholder="Görsel adresi (https://…) veya dosya yükleyin"
-          className="w-full rounded-[4px] border border-zw-grey-300 px-3 py-2 text-sm"
+          className={`w-full rounded-[4px] border border-zw-grey-300 px-3 py-2 text-sm ${uploaded ? "bg-zw-grey-50 text-zw-grey-500" : ""}`}
         />
         <div className="flex gap-2">
           <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-[4px] border border-zw-grey-300 px-3 py-1.5 text-xs font-semibold hover:border-zw-ink">

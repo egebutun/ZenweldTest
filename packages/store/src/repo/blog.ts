@@ -72,7 +72,8 @@ export function createBlogPost(partial: Partial<BlogPost>): BlogPost {
     seo: partial.seo,
   };
   mutate((db) => {
-    db.blogPosts.unshift(item);
+    // Yeni link baska bir kaydin eski linkiyse o yonlendirme kalkar.
+    db.blogPosts.unshift(withPreviousSlugs(db.blogPosts, item));
     sortBlogPosts(db.blogPosts);
   });
   return item;

@@ -2,11 +2,16 @@
 
 import { useSyncExternalStore } from "react";
 import type { ZenweldDatabase } from "@zenweld/data";
-import { BUILD_TIME, getServerSnapshot, getSnapshot, subscribe } from "./database";
+import { BUILD_TIME, getServerSnapshot, getSnapshot, getWriteFailed, subscribe, subscribeWriteFailed } from "./database";
 
 /** Canli veritabani. Admin panelde yapilan degisiklikler aninda yansir. */
 export function useDatabase(): ZenweldDatabase {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
+
+/** Son kayit tarayici deposuna yazilamadiysa true (yonetim paneli uyarisi). */
+export function useWriteFailed(): boolean {
+  return useSyncExternalStore(subscribeWriteFailed, getWriteFailed, () => false);
 }
 
 /* ------------------------------------------------------------------ */

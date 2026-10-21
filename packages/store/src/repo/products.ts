@@ -92,7 +92,8 @@ export function createProduct(partial: Partial<Product>): Product {
     seo: partial.seo,
   };
   mutate((db) => {
-    db.products.unshift(product);
+    // Yeni link baska bir kaydin eski linkiyse o yonlendirme kalkar.
+    db.products.unshift(withPreviousSlugs(db.products, product));
   });
   return product;
 }

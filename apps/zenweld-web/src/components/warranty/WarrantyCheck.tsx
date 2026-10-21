@@ -6,7 +6,7 @@ import { findProductById, findWarranty, useDatabase } from "@zenweld/store";
 import type { WarrantyRecord } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
-import { formatDate } from "@zenweld/utils";
+import { formatDate, localDateKey } from "@zenweld/utils";
 
 /**
  * GARANTI SORGULAMA
@@ -22,7 +22,8 @@ export function WarrantyCheck({ onRegister }: { onRegister: () => void }) {
   const [result, setResult] = useState<WarrantyRecord | null | undefined>(undefined);
 
   const product = result ? findProductById(result.productId, db) : undefined;
-  const expired = result ? new Date(result.expiresAt) < new Date() : false;
+  // Bitis gunu dahil gecerli (panelle ayni kural).
+  const expired = result ? result.expiresAt < localDateKey() : false;
 
   return (
     <div className="max-w-xl">

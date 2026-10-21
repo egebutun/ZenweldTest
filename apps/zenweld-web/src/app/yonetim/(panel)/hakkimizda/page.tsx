@@ -66,8 +66,12 @@ export default function AdminAboutPage() {
     setDirty(true);
     setSaved(false);
   };
-  const updateSection = (id: string, patch: Partial<AboutSection>) =>
-    update({ sections: draft.sections.map((s) => (s.id === id ? { ...s, ...patch } : s)) });
+  // Guncel taslak uzerinden: gorsel kucultulurken yapilan baska bir degisiklik ezilmez.
+  const updateSection = (id: string, patch: Partial<AboutSection>) => {
+    setDraft((d) => ({ ...d, sections: d.sections.map((s) => (s.id === id ? { ...s, ...patch } : s)) }));
+    setDirty(true);
+    setSaved(false);
+  };
   const moveSection = (index: number, dir: -1 | 1) => {
     const next = [...draft.sections];
     const [item] = next.splice(index, 1);
@@ -81,7 +85,7 @@ export default function AdminAboutPage() {
       setError("Sayfa başlığı zorunludur.");
       return;
     }
-    saveAbout({ ...draft, stats: draft.stats.filter((s) => s.value.trim()) });
+    if (!saveAbout({ ...draft, stats: draft.stats.filter((s) => s.value.trim()) })) return;
     setDirty(false);
     setSaved(true);
   };

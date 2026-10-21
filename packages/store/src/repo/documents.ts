@@ -34,8 +34,8 @@ export function documentPage(section: DocumentSection, db: ZenweldDatabase = get
   return db.documentPages.find((p) => p.section === section) ?? { section, title: "", subtitle: "" };
 }
 
-export function saveDocumentPage(page: DocumentPage): void {
-  mutate((db) => {
+export function saveDocumentPage(page: DocumentPage): boolean {
+  return mutate((db) => {
     db.documentPages = [...db.documentPages.filter((p) => p.section !== page.section), page];
   });
 }
@@ -79,15 +79,22 @@ const cleanInput = (section: DocumentSection, input: DocumentInput) => ({
   active: input.active,
 });
 
+/** Kayit yazilamadi (tarayici deposu dolu): yeni yuklenen dosya geri silinir. */
+async function recordFailed(fileKey?: string): Promise<never> {
+  if (fileKey) await deleteFile(fileKey).catch(() => undefined);
+  throw new DocumentError("Belge kaydedilemedi: tarayıcı deposu dolu. Değişiklik uygulanmadı.");
+}
+
 /** Yeni belge: once dosya depoya yazilir, sonra kayit listenin sonuna eklenir. */
 export async function addDocument(section: DocumentSection, input: DocumentInput, file: File): Promise<DocumentFile> {
   const id = uid("doc");
   const stored = await storeFile(id, file);
   const at = nowIso();
   const record: DocumentFile = { id, section, ...cleanInput(section, input), ...stored, createdAt: at, updatedAt: at };
-  mutate((db) => {
+  const saved = mutate((db) => {
     db.documents.push(record);
   });
+  if (!saved) await recordFailed(stored.fileKey);
   return record;
 }
 
@@ -96,10 +103,12 @@ export async function updateDocument(id: string, input: DocumentInput, file?: Fi
   const current = getSnapshot().documents.find((d) => d.id === id);
   if (!current) return;
   const stored = file ? await storeFile(id, file) : undefined;
-  mutate((db) => {
+  const saved = mutate((db) => {
     const doc = db.documents.find((d) => d.id === id);
     if (doc) Object.assign(doc, cleanInput(doc.section, input), stored, { updatedAt: nowIso() });
   });
+  // Eski dosya yalnizca kayit yeni dosyayi gosterdikten sonra silinir.
+  if (!saved) await recordFailed(stored?.fileKey);
   if (stored) await deleteFile(current.fileKey).catch(() => undefined);
 }
 
@@ -110,13 +119,15 @@ export function setDocumentActive(id: string, active: boolean): void {
   });
 }
 
-export async function deleteDocument(id: string): Promise<void> {
+/** Kayit silinemezse (depo dolu) dosya da silinmez; false doner. */
+export async function deleteDocument(id: string): Promise<boolean> {
   const doc = getSnapshot().documents.find((d) => d.id === id);
-  if (!doc) return;
-  mutate((db) => {
+  if (!doc) return false;
+  const removed = mutate((db) => {
     db.documents = db.documents.filter((d) => d.id !== id);
   });
-  await deleteFile(doc.fileKey).catch(() => undefined);
+  if (removed) await deleteFile(doc.fileKey).catch(() => undefined);
+  return removed;
 }
 
 /** Belgeyi kendi bolumu icinde bir yukari (-1) veya asagi (+1) tasir. */

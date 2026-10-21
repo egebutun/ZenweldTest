@@ -32,8 +32,13 @@ export interface DateRange {
   key: RangeKey;
   start: number;
   end: number;
-  /** Bir onceki esit uzunluktaki donem (karsilastirma icin) */
+  /**
+   * Karsilastirilan onceki donem: ayni uzunlukta ve ayni ana kadar. Bugun
+   * 09:00'da, dunun 00:00–09:00 arasi; son 7 gunde, onceki 7 gunun ayni
+   * saate kadarki kismi. Boylece suren gun tam bir gunle karsilastirilmaz.
+   */
   prevStart: number;
+  prevEnd: number;
   bins: Bin[];
   /** "Saatlik" | "Günlük" | "Haftalık" */
   binName: string;
@@ -51,6 +56,7 @@ export function makeRange(key: RangeKey, now: Date): DateRange {
   const start = today.getTime() - (days - 1) * DAY;
   const end = today.getTime() + DAY;
   const prevStart = start - days * DAY;
+  const prevEnd = prevStart + (Math.min(now.getTime(), end) - start);
 
   const bins: Bin[] = [];
   if (key === "today") {
@@ -79,6 +85,7 @@ export function makeRange(key: RangeKey, now: Date): DateRange {
     start,
     end,
     prevStart,
+    prevEnd,
     bins,
     binName: key === "today" ? "Saatlik" : key === "90" ? "Haftalık" : "Günlük",
   };
@@ -103,11 +110,11 @@ const top = <T>(entries: [string, T][], by: (v: T) => number, n: number) =>
   entries.sort((a, b) => by(b[1]) - by(a[1])).slice(0, n);
 
 export function dashboardStats(db: ZenweldDatabase, range: DateRange) {
-  const { start, end, prevStart, bins } = range;
+  const { start, end, prevStart, prevEnd, bins } = range;
   const sold = (o: Order) => o.status !== "cancelled";
 
   const ordersIn = db.orders.filter((o) => within(o.createdAt, start, end));
-  const ordersPrev = db.orders.filter((o) => within(o.createdAt, prevStart, start));
+  const ordersPrev = db.orders.filter((o) => within(o.createdAt, prevStart, prevEnd));
   const soldIn = ordersIn.filter(sold);
   const soldPrev = ordersPrev.filter(sold);
   const revenue = sum(soldIn.map((o) => o.total));
@@ -115,7 +122,7 @@ export function dashboardStats(db: ZenweldDatabase, range: DateRange) {
 
   const members = db.users.filter((u) => u.role !== "admin");
   const membersIn = members.filter((u) => within(u.createdAt, start, end));
-  const membersPrev = members.filter((u) => within(u.createdAt, prevStart, start));
+  const membersPrev = members.filter((u) => within(u.createdAt, prevStart, prevEnd));
 
   /* 1. Ozet kutulari */
   const kpis = {

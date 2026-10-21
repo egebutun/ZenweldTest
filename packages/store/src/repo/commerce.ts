@@ -96,8 +96,8 @@ export function placeOrder(order: NewOrder): Order {
   return record;
 }
 
-function updateOrder(id: string, update: (order: Order, at: string) => void): void {
-  mutate((db) => {
+function updateOrder(id: string, update: (order: Order, at: string) => void): boolean {
+  return mutate((db) => {
     const order = db.orders.find((o) => o.id === id);
     if (!order) return;
     const at = nowIso();
@@ -153,8 +153,8 @@ export function cancelOrder(id: string, note?: string): void {
   });
 }
 
-export function saveOrderAdminNote(id: string, adminNote: string): void {
-  updateOrder(id, (o) => {
+export function saveOrderAdminNote(id: string, adminNote: string): boolean {
+  return updateOrder(id, (o) => {
     o.adminNote = adminNote || undefined;
   });
 }

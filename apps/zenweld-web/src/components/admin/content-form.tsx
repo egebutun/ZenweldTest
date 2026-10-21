@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ImagePlus, Trash2, Upload } from "lucide-react";
+import { useWriteFailed } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, ProductImage, Tabs, Textarea } from "@zenweld/ui";
 import { readImageFiles, slugify } from "@zenweld/utils";
 import { siteUrl } from "@/lib/admin-links";
@@ -30,6 +31,8 @@ export function useContentForm<T extends object>(initial: T, firstTab = "temel")
   const [tab, setTab] = useState(firstTab);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  // Kayit tarayici deposuna yazilamadiysa "kaydedildi" gosterilmez (panel uyarisi: AdminShell).
+  const writeFailed = useWriteFailed();
 
   return {
     draft,
@@ -38,7 +41,7 @@ export function useContentForm<T extends object>(initial: T, firstTab = "temel")
     setTab,
     error,
     setError,
-    saved,
+    saved: saved && !writeFailed,
     set: <K extends keyof T>(key: K, value: T[K]) => setDraft((d) => ({ ...d, [key]: value })),
     /** Hatayi gosterir ve ilgili sekmeye gecer. */
     fail: (message: string, onTab = firstTab) => {
@@ -57,8 +60,8 @@ export function useContentForm<T extends object>(initial: T, firstTab = "temel")
 /* Kayit oncesi yardimcilar                                            */
 /* ------------------------------------------------------------------ */
 
-/** Adres bos birakildiysa basliktan uretilir. */
-export const resolveSlug = (slug: string, title: string) => slug.trim() || slugify(title);
+/** Adres bos birakildiysa basliktan uretilir; yazarken kalan sondaki tire temizlenir. */
+export const resolveSlug = (slug: string, title: string) => slugify(slug) || slugify(title);
 
 /** Ayni adresi kullanan baska kayit varsa onu dondurur. */
 export function findSlugClash<R extends { id: string; slug: string }>(

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Download, Search, Trash2 } from "lucide-react";
 import { deleteUser, downloadCsv, listUsers, saveUser, useDatabase } from "@zenweld/store";
 import type { UserRole, UserStatus } from "@zenweld/data";
-import { ROLE_LABELS } from "@zenweld/auth";
+import { ROLE_LABELS, useAuth } from "@zenweld/auth";
 import { Badge, Button, Input, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { formatDate } from "@zenweld/utils";
@@ -17,6 +17,9 @@ const STATUS_LABEL: Record<UserStatus, string> = {
 
 export default function AdminUsersPage() {
   const db = useDatabase();
+  // Yonetici kendi rolunu degistiremez ve kendini askiya alamaz (panelden
+  // atilir). Son yoneticiyi veri katmani da korur (saveUser).
+  const { user: me } = useAuth();
   const [query, setQuery] = useState("");
   const [role, setRole] = useState("");
   const [status, setStatus] = useState("");
@@ -125,6 +128,8 @@ export default function AdminUsersPage() {
                 <td className="px-4 py-2.5">
                   <Select
                     value={u.role}
+                    disabled={u.id === me?.id}
+                    title={u.id === me?.id ? "Kendi rolünüzü değiştiremezsiniz." : undefined}
                     onChange={(e) => saveUser({ ...u, role: e.target.value as UserRole })}
                     className="w-32 py-1.5 text-xs"
                   >
@@ -155,7 +160,7 @@ export default function AdminUsersPage() {
                           Onayla
                         </button>
                       )}
-                      {u.status !== "suspended" && (
+                      {u.status !== "suspended" && u.id !== me?.id && (
                         <button
                           onClick={() => saveUser({ ...u, status: "suspended" })}
                           className="rounded-[3px] border border-zw-grey-300 px-2 py-0.5 text-[11px] font-semibold hover:border-amber-500 hover:text-amber-700"

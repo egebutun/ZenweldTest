@@ -334,8 +334,7 @@ function AdminNote({ order }: { order: Order }) {
           size="sm"
           variant="outline"
           onClick={() => {
-            saveOrderAdminNote(order.id, note.trim());
-            setSaved(true);
+            if (saveOrderAdminNote(order.id, note.trim())) setSaved(true);
           }}
         >
           Notu Kaydet

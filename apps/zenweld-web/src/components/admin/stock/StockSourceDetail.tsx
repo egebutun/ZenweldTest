@@ -177,8 +177,7 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
               </thead>
               <tbody className="divide-y divide-zw-grey-100">
                 {rows.map(({ level, label }) => (
-                  // Anahtarda guncelleme zamani var: yukleme/geri almadan sonra satir yeni degerle kurulur.
-                  <StockRow key={`${level.productId}|${level.variantId ?? ""}|${level.updatedAt}`} level={level} label={label} source={source} by={by} now={now} />
+                  <StockRow key={`${level.productId}|${level.variantId ?? ""}`} level={level} label={label} source={source} by={by} now={now} />
                 ))}
                 {rows.length === 0 && (
                   <tr>
@@ -218,8 +217,9 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
                     type="button"
                     onClick={() => {
                       if (window.confirm(`"${h.fileName}" yüklemesi geri alınsın mı? Stok bu yüklemeden önceki haline döner.`)) {
-                        revertStockImport(h.id, by);
-                        setMessage({ tone: "success", text: "Yükleme geri alındı; stok önceki haline döndü." });
+                        if (revertStockImport(h.id, by)) {
+                          setMessage({ tone: "success", text: "Yükleme geri alındı; stok önceki haline döndü." });
+                        }
                       }
                     }}
                     className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-zw-red-600 hover:underline"
@@ -258,11 +258,21 @@ function StockRow({
   const [qty, setQty] = useState(String(level.quantity));
   const [price, setPrice] = useState(level.price != null ? String(level.price) : "");
   const [url, setUrl] = useState(level.url ?? "");
+  // Kayit degisince (dosya yukleme, geri alma, baska sekme) alanlar yeni
+  // degeri alir. Satir yeniden kurulmaz; Tab ile sonraki alana gecilebilir.
+  const [syncedAt, setSyncedAt] = useState(level.updatedAt);
+  if (syncedAt !== level.updatedAt) {
+    setSyncedAt(level.updatedAt);
+    setQty(String(level.quantity));
+    setPrice(level.price != null ? String(level.price) : "");
+    setUrl(level.url ?? "");
+  }
   const key = { sourceType: source.type, sourceId: source.id, productId: level.productId, variantId: level.variantId, by, label };
 
   const commitQty = () => {
     const n = Number(qty);
-    if (!Number.isInteger(n) || n < 0) return setQty(String(level.quantity));
+    // Bos birakilan kutu 0 sayilmaz; onceki deger geri gelir.
+    if (qty.trim() === "" || !Number.isInteger(n) || n < 0) return setQty(String(level.quantity));
     if (n !== level.quantity) setStockLevel({ ...key, patch: { quantity: n } });
   };
   const commitPrice = () => {
@@ -358,7 +368,7 @@ function AddRow({ source, by }: { source: StockSource; by?: string }) {
       <Button
         size="sm"
         leftIcon={<Plus size={15} />}
-        disabled={!choice || !Number.isInteger(n) || n < 0}
+        disabled={!choice || qty.trim() === "" || !Number.isInteger(n) || n < 0}
         onClick={() => {
           const { productId, variantId } = splitChoice(choice);
           setStockLevel({ sourceType: source.type, sourceId: source.id, productId, variantId, patch: { quantity: n }, by, label: productLabel(db, productId, variantId) });

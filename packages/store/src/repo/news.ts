@@ -65,7 +65,8 @@ export function createNews(partial: Partial<NewsItem>): NewsItem {
     seo: partial.seo,
   };
   mutate((db) => {
-    db.news.unshift(item);
+    // Yeni link baska bir kaydin eski linkiyse o yonlendirme kalkar.
+    db.news.unshift(withPreviousSlugs(db.news, item));
     sortNews(db.news);
   });
   return item;

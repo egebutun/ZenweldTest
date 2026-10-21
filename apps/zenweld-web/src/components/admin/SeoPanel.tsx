@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { CornerDownRight } from "lucide-react";
 import type { SeoFields } from "@zenweld/data";
 import { FormRow, Input, Textarea } from "@zenweld/ui";
-import { slugify } from "@zenweld/utils";
+import { slugify, slugifyDraft } from "@zenweld/utils";
 import type { PageSeo } from "@/lib/seo";
 import { FormPanel } from "./content-form";
 
@@ -87,7 +87,8 @@ export function SeoPanel({
             <Input
               className="rounded-l-none"
               value={slug}
-              onChange={(e) => onSlugChange(slugify(e.target.value))}
+              onChange={(e) => onSlugChange(slugifyDraft(e.target.value))}
+              onBlur={() => onSlugChange(slugify(slug))}
             />
           </div>
         </FormRow>

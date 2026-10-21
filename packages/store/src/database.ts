@@ -98,6 +98,30 @@ function emit(): void {
   listeners.forEach((l) => l());
 }
 
+/*
+ * Son kayit yazilamadi mi (tarayici deposu dolu)? Yonetim paneli bunu tek
+ * yerden kirmizi uyariyla gosterir ve "kaydedildi" mesajini gizler. Sonraki
+ * basarili kayitta kendiliginden kalkar.
+ */
+let writeFailed = false;
+const writeListeners = new Set<() => void>();
+
+function setWriteFailed(value: boolean): void {
+  if (writeFailed === value) return;
+  writeFailed = value;
+  writeListeners.forEach((l) => l());
+}
+
+export const getWriteFailed = () => writeFailed;
+
+export function subscribeWriteFailed(listener: () => void): () => void {
+  writeListeners.add(listener);
+  return () => writeListeners.delete(listener);
+}
+
+/** Uyari kapatilinca (yeni bir deneme oncesi). */
+export const dismissWriteFailed = () => setWriteFailed(false);
+
 /**
  * Veritabanini degistirir, kaydeder ve abonelere haber verir. Tarayici
  * deposuna yazilamazsa (kota dolu) degisiklik uygulanmaz ve false doner;
@@ -112,10 +136,12 @@ export function mutate(updater: (db: ZenweldDatabase) => ZenweldDatabase | void)
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
     } catch (err) {
       console.warn("[zenweld] localStorage yazilamadi (kota dolmus olabilir)", err);
+      setWriteFailed(true);
       return false;
     }
   }
   memoryDb = result;
+  setWriteFailed(false);
   emit();
   return true;
 }

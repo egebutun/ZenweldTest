@@ -5,6 +5,7 @@ import { Check, Search, Star, Trash2, X } from "lucide-react";
 import {
   FEATURED_REVIEW_LIMIT,
   deleteReview,
+  featuredReviewCount,
   listAllReviews,
   saveReview,
   toggleFeaturedReview,
@@ -39,7 +40,7 @@ export default function AdminReviewsPage() {
     });
   }, [db, query, onlyPending]);
 
-  const featuredCount = db.reviews.filter((r) => r.featured).length;
+  const featuredCount = featuredReviewCount(db);
   const pendingCount = db.reviews.filter((r) => !r.approved).length;
   const productName = (id: string) => db.products.find((p) => p.id === id)?.name ?? id;
 

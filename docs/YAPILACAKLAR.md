@@ -194,8 +194,8 @@ kararlaştırılacak. Başlıklar:
 4. Yayından kaldırılan ürün, haber ve etkinliğin sayfası doğrudan
    adresle hâlâ açılıyor
 5. `createProduct` bazı alanları kopyalamıyor (yukarıdaki not)
-6. Tarayıcı deposu dolunca değişiklik uygulanmıyor; yorum formu kullanıcıyı
-   uyarıyor, diğer formlar uyarmıyor
+6. Tarayıcı deposu dolunca değişiklik uygulanmıyor; yönetim paneli ve yorum
+   formu uyarıyor, sitedeki diğer formlar (teklif, servis, garanti, üyelik) uyarmıyor
 7. Arama dizini her sayfa açılışında kuruluyor
 8. Her değişiklikte tüm veritabanı (≈545 KB) yeniden yazılıyor
 9. Görsellerde `width`/`height` yok (sayfa kayması — CLS)

@@ -319,7 +319,8 @@ function prune(db: ZenweldDatabase, type: StockSourceType, id: string) {
 
 /**
  * Dosyayi uygular: kaynagin stogu dosyadaki listeyle DEGISTIRILIR (tam
- * liste). Onceki hal geri alma icin kayda yazilir.
+ * liste). Onceki hal geri alma icin kayda yazilir. Kaydedilemezse (tarayici
+ * deposu dolu) null doner.
  */
 export function applyStockImport(args: {
   sourceType: StockSourceType;
@@ -327,7 +328,7 @@ export function applyStockImport(args: {
   fileName: string;
   file: MatchedStockFile;
   by?: string;
-}): StockImport {
+}): StockImport | null {
   const at = nowIso();
   const record: StockImport = {
     id: uid("si"),
@@ -339,7 +340,7 @@ export function applyStockImport(args: {
     createdBy: args.by,
     summary: { rows: 0, matched: 0, unmatched: 0, invalid: 0, added: 0, changed: 0, zeroed: 0 },
   };
-  mutate((db) => {
+  const saved = mutate((db) => {
     const current = stockOfSource(args.sourceType, args.sourceId, db).map(plain);
     const incoming = args.file.incoming.map((l) => ({ ...l, updatedAt: at }));
     record.summary = summarizeImport(args.file, diffStock(current, incoming));
@@ -348,14 +349,14 @@ export function applyStockImport(args: {
     db.stockImports.push(record);
     prune(db, args.sourceType, args.sourceId);
   });
-  return record;
+  return saved ? record : null;
 }
 
 /** Son dosya yuklemesini geri alir: kaynagin stogu yuklemeden onceki hale doner. */
 export function revertStockImport(importId: string, by?: string): boolean {
   const target = getSnapshot().stockImports.find((i) => i.id === importId);
   if (!target || revertableImport(target.sourceType, target.sourceId)?.id !== importId) return false;
-  mutate((db) => {
+  return mutate((db) => {
     const at = nowIso();
     const rec = db.stockImports.find((i) => i.id === importId)!;
     const current = stockOfSource(rec.sourceType, rec.sourceId, db);
@@ -375,7 +376,6 @@ export function revertStockImport(importId: string, by?: string): boolean {
     });
     prune(db, rec.sourceType, rec.sourceId);
   });
-  return true;
 }
 
 const emptySummary = (): StockImportSummary => ({ rows: 1, matched: 1, unmatched: 0, invalid: 0, added: 0, changed: 0, zeroed: 0 });

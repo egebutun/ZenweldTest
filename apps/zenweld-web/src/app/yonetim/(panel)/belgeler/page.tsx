@@ -206,8 +206,7 @@ function PageTextForm({ section, href }: { section: DocumentSection; href: strin
           size="sm"
           disabled={!title.trim() || !changed}
           onClick={() => {
-            saveDocumentPage({ section, title: title.trim(), subtitle: subtitle.trim() });
-            setSaved(true);
+            if (saveDocumentPage({ section, title: title.trim(), subtitle: subtitle.trim() })) setSaved(true);
           }}
         >
           Kaydet

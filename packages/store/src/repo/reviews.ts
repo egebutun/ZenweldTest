@@ -33,14 +33,21 @@ export function reviewSummary(
 }
 
 /** Anasayfada gosterilecek, isaretlenmis yorumlar. */
-export function featuredReviews(db: ZenweldDatabase = getSnapshot()): ProductReview[] {
+/** One cikarilmis ve anasayfada gorunebilen yorumlar (onayli, urunu yayinda). */
+function visibleFeatured(db: ZenweldDatabase): ProductReview[] {
   const visible = new Set(db.products.filter((p) => p.active).map((p) => p.id));
-  return db.reviews
-    // Yayindan kaldirilan urunun yorumu anasayfada da gorunmez.
-    .filter((r) => r.approved && r.featured && visible.has(r.productId))
+  // Yayindan kaldirilan urunun yorumu anasayfada da gorunmez.
+  return db.reviews.filter((r) => r.approved && r.featured && visible.has(r.productId));
+}
+
+export function featuredReviews(db: ZenweldDatabase = getSnapshot()): ProductReview[] {
+  return visibleFeatured(db)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, FEATURED_REVIEW_LIMIT);
 }
+
+/** Paneldeki "anasayfada x/10" sayisi: sinira yalnizca gorunenler sayilir. */
+export const featuredReviewCount = (db: ZenweldDatabase = getSnapshot()) => visibleFeatured(db).length;
 
 /** Yonetim panelindeki tam liste (onay bekleyenler dahil). */
 export function listAllReviews(db: ZenweldDatabase = getSnapshot()): ProductReview[] {
@@ -95,8 +102,7 @@ export function toggleFeaturedReview(id: string): boolean {
     const review = db.reviews.find((r) => r.id === id);
     if (!review) return;
     if (!review.featured) {
-      const count = db.reviews.filter((r) => r.featured).length;
-      if (count >= FEATURED_REVIEW_LIMIT) {
+      if (visibleFeatured(db).length >= FEATURED_REVIEW_LIMIT) {
         ok = false;
         return;
       }

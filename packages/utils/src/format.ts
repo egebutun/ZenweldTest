@@ -59,3 +59,19 @@ export function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
+
+/**
+ * Yerel saatle bugunun tarihi: "YYYY-AA-GG". toISOString() UTC verdigi icin
+ * Turkiye'de gece 00:00–03:00 arasi bir gun geride kalir; tarih karsilastirmada
+ * bu kullanilir.
+ */
+export function localDateKey(date: Date = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+/** "YYYY-AA-GG" tarihine ay ekler (eksi deger cikarir). */
+export function addMonthsToDate(date: string, months: number): string {
+  const [y, m, d] = date.split("-").map(Number);
+  return localDateKey(new Date(y, m - 1 + months, d));
+}

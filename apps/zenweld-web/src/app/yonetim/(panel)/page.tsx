@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   AlertTriangle,
   CalendarDays,
@@ -12,21 +12,23 @@ import {
   Store,
   Users,
 } from "lucide-react";
-import { listOrders, listQuotes, listUsers, productsWithoutOnlineStock, useDatabase } from "@zenweld/store";
+import { cancelExpiredTransfers, listOrders, listQuotes, listUsers, productsWithoutOnlineStock, useDatabase } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
 import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
 import { DashboardCharts } from "@/components/admin/DashboardCharts";
 import Link from "next/link";
-import { formatDate, formatPrice } from "@zenweld/utils";
+import { formatDate, formatPrice, localDateKey } from "@zenweld/utils";
 
 export default function AdminDashboard() {
   const db = useDatabase();
+  // Odeme suresi dolan havale siparisi ciroda ve "islem bekliyor"da sayilmasin.
+  useEffect(() => cancelExpiredTransfers(), []);
 
   const stats = useMemo(() => {
     const activeProducts = db.products.filter((p) => p.active);
     const noOnlineStock = productsWithoutOnlineStock(db);
-    // Uye, teklif ve siparisler yalnizca ana sitenin kayitlari (bayi kayitlari haric).
-    const members = listUsers(db);
+    // Uyeler: yonetici hesaplari haric (uye grafigiyle ayni).
+    const members = listUsers(db).filter((u) => u.role !== "admin");
     const quotes = listQuotes(db);
     return {
       products: activeProducts.length,
@@ -42,7 +44,7 @@ export default function AdminDashboard() {
       ).length,
       events: db.events.filter((e) => e.active).length,
       upcomingEvents: db.events.filter(
-        (e) => e.active && e.endDate >= new Date().toISOString().slice(0, 10),
+        (e) => e.active && e.endDate >= localDateKey(),
       ).length,
       news: db.news.filter((n) => n.active).length,
       noOnlineStock,

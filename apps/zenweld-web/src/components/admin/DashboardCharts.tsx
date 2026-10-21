@@ -74,7 +74,7 @@ export function DashboardCharts() {
           ))}
         </div>
         <span className="text-xs text-zw-grey-500">
-          Değişimler, bir önceki eşit uzunluktaki dönemle karşılaştırılır.
+          Değişimler, bir önceki eşit uzunluktaki dönemin aynı saatine kadarki kısmıyla karşılaştırılır.
         </span>
       </div>
 

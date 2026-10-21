@@ -57,7 +57,7 @@ export function ProductForm({ product }: { product?: Product }) {
     form.setError(null);
     if (!draft.name.trim()) return form.fail("Ürün adı zorunludur.");
 
-    const slug = draft.slug.trim() || slugify(draft.name);
+    const slug = slugify(draft.slug) || slugify(draft.name);
     if (db.products.some((p) => p.slug === slug && p.id !== draft.id)) {
       return form.fail(`"${slug}" adresi başka bir üründe kullanılıyor.`);
     }

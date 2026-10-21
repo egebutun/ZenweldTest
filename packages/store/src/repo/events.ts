@@ -70,7 +70,8 @@ export function createEvent(partial: Partial<ZenweldEvent>): ZenweldEvent {
     seo: partial.seo,
   };
   mutate((db) => {
-    db.events.unshift(event);
+    // Yeni link baska bir kaydin eski linkiyse o yonlendirme kalkar.
+    db.events.unshift(withPreviousSlugs(db.events, event));
     sortEvents(db.events);
   });
   return event;

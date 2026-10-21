@@ -1,14 +1,24 @@
+const slugChars = (value: string) =>
+  value
+    .toLocaleLowerCase("tr")
+    .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
+    .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c")
+    .replace(/[^a-z0-9]+/g, "-");
+
 /**
  * Turkce karakterleri sadelestirerek URL'ye uygun bir slug uretir.
  * "İmatech 2026 Fuarı" -> "imatech-2026-fuari"
  */
 export function slugify(value: string): string {
-  return value
-    .toLocaleLowerCase("tr")
-    .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
-    .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+  return slugChars(value).replace(/^-|-$/g, "");
+}
+
+/**
+ * Link alanina yazilirken: sondaki tire silinmez, yoksa "arc-200" yazilirken
+ * "arc-" asamasinda tire kaybolur. Alandan cikinca ve kayitta slugify tamamlar.
+ */
+export function slugifyDraft(value: string): string {
+  return slugChars(value).replace(/^-/, "");
 }
 
 /** Tarayici deposuna yazilabilecek en buyuk gorsel boyutu. */

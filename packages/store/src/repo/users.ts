@@ -24,16 +24,30 @@ export function addUser(user: User): void {
   });
 }
 
-export function saveUser(user: User): void {
-  mutate((db) => {
+const isActiveAdmin = (u: User) => u.role === "admin" && u.status === "active";
+
+/**
+ * Bu kayit son aktif yonetici mi? Son yoneticinin rolu dusurulur, askiya
+ * alinir ya da silinirse panele kimse giremez.
+ */
+function isLastAdmin(id: string, db: ZenweldDatabase): boolean {
+  const stored = db.users.find((u) => u.id === id);
+  return Boolean(stored && isActiveAdmin(stored) && !db.users.some((u) => u.id !== id && isActiveAdmin(u)));
+}
+
+/** Son aktif yoneticiyi yoneticilikten cikaracaksa kaydedilmez (false). */
+export function saveUser(user: User): boolean {
+  if (!isActiveAdmin(user) && isLastAdmin(user.id, getSnapshot())) return false;
+  return mutate((db) => {
     const idx = db.users.findIndex((u) => u.id === user.id);
     if (idx >= 0) db.users[idx] = user;
     else db.users.unshift(user);
   });
 }
 
-export function deleteUser(id: string): void {
-  mutate((db) => {
+export function deleteUser(id: string): boolean {
+  if (isLastAdmin(id, getSnapshot())) return false;
+  return mutate((db) => {
     db.users = db.users.filter((u) => u.id !== id);
   });
 }

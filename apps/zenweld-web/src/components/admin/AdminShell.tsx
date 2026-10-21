@@ -34,7 +34,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { ZenweldLogo } from "@zenweld/ui";
+import { dismissWriteFailed, useWriteFailed } from "@zenweld/store";
+import { Alert, ZenweldLogo } from "@zenweld/ui";
 import { siteUrl } from "@/lib/admin-links";
 
 /**
@@ -208,6 +209,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   // Bilerek cikis yapildiysa "geri donulecek sayfa" eklenmez.
   const leaving = useRef(false);
+  const writeFailed = useWriteFailed();
 
   // Giris yoksa panelin kendi giris ekranina; donuste ayni sayfaya gelinir.
   useEffect(() => {
@@ -266,7 +268,25 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <AdminNav />
           </aside>
 
-          <div className="min-w-0">{children}</div>
+          <div className="min-w-0">
+            {/* Tum panel icin tek uyari: kayit tarayici deposuna yazilamadi. */}
+            {writeFailed && (
+              <div role="alert" className="sticky top-0 z-30 mb-4">
+                <Alert tone="danger">
+                  <span className="flex items-start justify-between gap-3">
+                    <span>
+                      <strong>Kaydedilemedi:</strong> tarayıcı deposu dolu, son değişiklik uygulanmadı.
+                      Büyük görselleri ya da kullanılmayan kayıtları silip tekrar deneyin.
+                    </span>
+                    <button type="button" onClick={dismissWriteFailed} className="shrink-0 font-semibold hover:underline">
+                      Kapat
+                    </button>
+                  </span>
+                </Alert>
+              </div>
+            )}
+            {children}
+          </div>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import type { ZenweldEvent } from "@zenweld/data";
 import { createEvent, saveEvent, useDatabase } from "@zenweld/store";
 import { Alert, Checkbox, FormRow, Input } from "@zenweld/ui";
-import { logoAlternates, slugify } from "@zenweld/utils";
+import { localDateKey, logoAlternates, slugify } from "@zenweld/utils";
 import {
   ContentFormShell,
   FormPanel,
@@ -55,7 +55,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
   const db = useDatabase();
   const router = useRouter();
   const isNew = !event;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
   const form = useContentForm<ZenweldEvent>(
     event ?? { ...EMPTY, startDate: today, endDate: today },
   );
@@ -68,7 +68,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
       return form.fail("Bitiş tarihi başlangıç tarihinden önce olamaz.");
     }
 
-    const slug = draft.slug.trim() || slugify(draft.title);
+    const slug = slugify(draft.slug) || slugify(draft.title);
     if (db.events.some((x) => x.slug === slug && x.id !== draft.id)) {
       return form.fail(`"${slug}" adresi başka bir etkinlikte kullanılıyor.`);
     }

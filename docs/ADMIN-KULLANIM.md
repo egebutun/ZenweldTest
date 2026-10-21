@@ -24,6 +24,9 @@ Demo giriş: `admin@zenweld.com` / `admin123`
 
 > Panel yalnızca Türkçedir. Backend gelene kadar değişiklikler tarayıcının yerel
 > deposunda saklanır; başlangıç verisi `packages/data` içindeki örnek verilerdir.
+> Depo dolarsa sayfanın üstünde kırmızı **"Kaydedilemedi"** uyarısı çıkar ve
+> "kaydedildi" mesajı görünmez; büyük görseller veya kullanılmayan kayıtlar
+> silinip tekrar denenir.
 
 ---
 
@@ -31,7 +34,10 @@ Demo giriş: `admin@zenweld.com` / `admin123`
 
 En üstteki **Bugün / Son 7 gün / Son 30 gün / Son 90 gün** seçimi altındaki
 tüm grafikleri aynı döneme göre gösterir (seçim tarayıcıda hatırlanır).
-Değişim yüzdeleri bir önceki eşit uzunluktaki dönemle karşılaştırılır.
+Değişim yüzdeleri bir önceki eşit uzunluktaki dönemin **aynı saatine kadarki**
+kısmıyla karşılaştırılır: bugün 09:00'da, dünün 00:00–09:00 arası. Böylece
+süren gün tam bir günle karşılaştırılmaz. "Üye" kartı ve grafiği yönetici
+hesaplarını saymaz.
 
 | Grafik | Ne gösterir |
 |---|---|
@@ -169,7 +175,8 @@ yoktur; sitede her ürün her zaman satıştadır. Ayrıntılar ve dosya biçimi
     Dosya öncekinden çok kısaysa onay istenir.
   - **Tanınmayan kodlar** (bayinin kendi kodu) önizlemede bir ürüne eşleştirilir;
     sonraki dosyalarda kendiliğinden tanınır.
-  - Tablodan adet, fiyat ve link elle düzeltilir, satır eklenir/silinir. Link sütunu
+  - Tablodan adet, fiyat ve link elle düzeltilir (alandan çıkınca kaydedilir; boş
+    bırakılan adet eski değerine döner), satır eklenir/silinir. Link sütunu
     yalnızca online satıcılarda ve online mağazası olan bayilerde vardır.
   - **Geçmiş:** yüklemeler ve elle düzeltmeler, yapanın adıyla. Son yükleme
     **Bu yüklemeyi geri al** ile geri alınır.
@@ -298,7 +305,8 @@ Teklif kartına tıklayınca detay açılır:
 
 - Sol: firma bilgileri, istenen ürünler, müşteri notu
 - Sağ: durum (Yeni → İnceleniyor → Teklif Gönderildi → Kazanıldı/Kapandı),
-  atanan satış temsilcisi, iç not, **E-posta Gönder** butonu
+  atanan satış temsilcisi, iç not, **E-posta Gönder** butonu. Temsilci ve iç not
+  alandan çıkınca kaydedilir.
 
 Durum değişiklikleri müşterinin `Hesabım → Tekliflerim` sayfasına anında yansır.
 
@@ -364,7 +372,9 @@ listelenir. Bayiler ana sitenin üyesi değildir.
 - **Askıya al** → hesabın girişini engeller
 - **CSV İndir** → filtrelenmiş üye listesini dışa aktarır
 
-Yönetici hesapları silinemez.
+Yönetici hesapları silinemez. Yönetici kendi rolünü değiştiremez ve kendini
+askıya alamaz. Son aktif yöneticinin rolü düşürülemez; böylece panele girecek
+kimsenin kalmaması önlenir.
 
 ---
 
@@ -380,8 +390,9 @@ kayıtları kullanır; burada yapılan değişiklik oralara anında yansır.
 - Seri no, isim veya e-posta ile arama; "garantisi devam eden / süresi dolan /
   uzatılmış" filtresi
 - **Garanti bitişi** tarih kutusundan elle değiştirilebilir
-- **+12 ay** (uzatılmış garanti) işaretlenince / kaldırılınca bitiş tarihi ürünün
-  garanti süresine göre yeniden hesaplanır
+- **+12 ay** (uzatılmış garanti) işaretlenince bitiş tarihine 12 ay eklenir,
+  kaldırılınca 12 ay çıkarılır; elle girilen tarih korunur
+- Bitiş günü dahil garanti geçerlidir (site sorgulamasıyla aynı)
 - Kaydı yapan kişi ana sitenin üyesiyse "Üye" etiketi görünür
 - Silme ve **CSV indir**
 

@@ -181,9 +181,10 @@ export default function AdminQuotesPage() {
                         <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
                           Atanan Satış Temsilcisi
                         </label>
+                        {/* Her harfte tum veriyi yazmamak icin alandan cikinca kaydedilir. */}
                         <Input
-                          value={q.assignedTo ?? ""}
-                          onChange={(e) => update(q, { assignedTo: e.target.value })}
+                          defaultValue={q.assignedTo ?? ""}
+                          onBlur={(e) => e.target.value !== (q.assignedTo ?? "") && update(q, { assignedTo: e.target.value })}
                           placeholder="Örn. Satış – Mehmet B."
                         />
                       </div>
@@ -192,8 +193,8 @@ export default function AdminQuotesPage() {
                           İç Not
                         </label>
                         <Textarea
-                          value={q.adminNote ?? ""}
-                          onChange={(e) => update(q, { adminNote: e.target.value })}
+                          defaultValue={q.adminNote ?? ""}
+                          onBlur={(e) => e.target.value !== (q.adminNote ?? "") && update(q, { adminNote: e.target.value })}
                         />
                       </div>
                       <div className="flex gap-2">

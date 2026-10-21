@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { defaultSettings, type RichTextStyle } from "@zenweld/data";
 import { getRichTextStyle, saveRichTextStyle, useDatabase } from "@zenweld/store";
@@ -21,19 +21,24 @@ Bu bir gövde paragrafıdır. Punto ve renk ayarlarını soldaki alanlardan değ
 
 export default function AdminAppearancePage() {
   const db = useDatabase();
-  const [draft, setDraft] = useState<RichTextStyle>(() => getRichTextStyle(db));
+  const stored = getRichTextStyle(db);
+  const [draft, setDraft] = useState<RichTextStyle>(stored);
   const [saved, setSaved] = useState(false);
 
-  // Veri yeniden yüklendiğinde (içe aktarma, sıfırlama) formu senkronla.
-  useEffect(() => {
-    setDraft(getRichTextStyle(db));
-  }, [db]);
+  // Ayar baska yerde (baska sekmede) kaydedilirse form yenilenir; kaydedilmemis
+  // degisiklik varsa korunur. Baska verinin degismesi formu etkilemez.
+  const storedKey = JSON.stringify(stored);
+  const [syncedKey, setSyncedKey] = useState(storedKey);
+  if (syncedKey !== storedKey) {
+    setSyncedKey(storedKey);
+    if (JSON.stringify(draft) === syncedKey) setDraft(stored);
+  }
 
   const set = <K extends keyof RichTextStyle>(key: K, value: RichTextStyle[K]) =>
     setDraft((d) => ({ ...d, [key]: value }));
 
   const save = () => {
-    saveRichTextStyle(draft);
+    if (!saveRichTextStyle(draft)) return;
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };

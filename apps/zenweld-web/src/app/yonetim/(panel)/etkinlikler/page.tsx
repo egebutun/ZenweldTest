@@ -6,14 +6,14 @@ import { deleteEvent, saveEvent, useDatabase } from "@zenweld/store";
 import { Badge, Button, Input, ProductImage, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import Link from "next/link";
-import { formatDate, logoAlternates } from "@zenweld/utils";
+import { formatDate, localDateKey, logoAlternates } from "@zenweld/utils";
 
 export default function AdminEventsPage() {
   const db = useDatabase();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
 
   const events = useMemo(() => {
     const q = query.trim().toLocaleLowerCase("tr");

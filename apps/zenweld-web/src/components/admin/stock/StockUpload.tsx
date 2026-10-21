@@ -45,6 +45,7 @@ export function StockUpload({
   const [view, setView] = useState<View>("changes");
   const [confirmTruncated, setConfirmTruncated] = useState(false);
   const [mapping, setMapping] = useState<Record<string, string>>({});
+  const [failed, setFailed] = useState(false);
 
   const { withUrl } = source;
   const sheet = useMemo(() => readStockSheet(table, { withUrl }), [table, withUrl]);
@@ -76,7 +77,8 @@ export function StockUpload({
 
   const apply = () => {
     const record = applyStockImport({ sourceType: source.type, sourceId: source.id, fileName, file, by });
-    onApplied(record);
+    if (record) onApplied(record);
+    else setFailed(true);
   };
 
   return (
@@ -115,6 +117,9 @@ export function StockUpload({
           <Stat label="Değişmeyen" value={diff.unchanged} />
         </div>
 
+        {failed && (
+          <Alert tone="danger">Stok güncellenemedi: tarayıcı deposu dolu. Değişiklik uygulanmadı.</Alert>
+        )}
         {file.incoming.length === 0 && (
           <Alert tone="danger">Dosyada eşleşen ürün yok; uygulanamaz. Sütun başlıklarını ve kodları kontrol edin.</Alert>
         )}

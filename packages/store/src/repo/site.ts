@@ -24,8 +24,8 @@ export function getRichTextStyle(db: ZenweldDatabase = getSnapshot()): RichTextS
   return { ...defaultSettings.richText, ...(db.settings?.richText ?? {}) };
 }
 
-export function saveRichTextStyle(style: RichTextStyle): void {
-  mutate((db) => {
+export function saveRichTextStyle(style: RichTextStyle): boolean {
+  return mutate((db) => {
     db.settings = { ...db.settings, richText: style };
   });
 }
@@ -59,8 +59,8 @@ export function getShopSettings(db: ZenweldDatabase = getSnapshot()): ShopSettin
   return { ...defaultSettings.shop, ...(db.settings?.shop ?? {}) };
 }
 
-export function saveShopSettings(shop: ShopSettings): void {
-  mutate((db) => {
+export function saveShopSettings(shop: ShopSettings): boolean {
+  return mutate((db) => {
     db.settings = { ...db.settings, shop };
   });
 }
@@ -70,8 +70,8 @@ export function saveShopSettings(shop: ShopSettings): void {
 /* ------------------------------------------------------------------ */
 
 /** Hakkimizda sayfasinin tum icerigini kaydeder. */
-export function saveAbout(about: AboutContent): void {
-  mutate((db) => {
+export function saveAbout(about: AboutContent): boolean {
+  return mutate((db) => {
     db.about = { ...about, updatedAt: nowIso() };
   });
 }
