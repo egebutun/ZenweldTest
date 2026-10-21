@@ -97,7 +97,7 @@ export function DiscountFields({ draft, set }: ProductTabProps) {
             </span>
             <CampaignBadge discount={draft.discount} now={now} />
           </div>
-          {(draft.variantGroups?.length ?? 0) > 0 && (
+          {(draft.options?.variants.length ?? 0) > 0 && (
             <p className="text-xs text-zw-grey-500">
               Seçenekli ürün: aynı indirim oranı tüm seçeneklere (ör. 3 m / 5 m) uygulanır.
             </p>

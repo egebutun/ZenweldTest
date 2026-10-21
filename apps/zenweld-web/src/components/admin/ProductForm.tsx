@@ -8,6 +8,7 @@ import { BasicsTab } from "./product/BasicsTab";
 import { DescriptionTab } from "./product/DescriptionTab";
 import { ImagesTab } from "./product/ImagesTab";
 import { InTheBoxTab, SpecsTab } from "./product/ListTabs";
+import { OptionsTab, optionsError, tidyOptions } from "./product/OptionsTab";
 import { SeoPanel, storedLinks } from "./SeoPanel";
 import { productSeo } from "@/lib/seo";
 
@@ -64,10 +65,14 @@ export function ProductForm({ product }: { product?: Product }) {
     const discountError = draft.discount ? validateDiscount(draft.discount) : null;
     if (discountError) return form.fail(discountError);
 
+    const optionsProblem = optionsError(draft, db.optionDefinitions, db.products);
+    if (optionsProblem) return form.fail(optionsProblem, "secenekler");
+
+    const record = { ...draft, slug, options: tidyOptions(draft) };
     if (isNew) {
-      router.push(`/yonetim/urunler/${createProduct({ ...draft, slug }).id}`);
+      router.push(`/yonetim/urunler/${createProduct(record).id}`);
     } else {
-      saveProduct({ ...draft, slug });
+      saveProduct(record);
       form.flashSaved();
     }
   };
@@ -84,6 +89,7 @@ export function ProductForm({ product }: { product?: Product }) {
         { id: "gorseller", label: "Görseller", badge: draft.images.length },
         { id: "teknik", label: "Teknik Özellikler", badge: draft.specs.length },
         { id: "kutu", label: "Kutu İçeriği", badge: draft.inTheBox.length },
+        { id: "secenekler", label: "Seçenekler", badge: draft.options?.variants.length ?? 0 },
         { id: "seo", label: "SEO" },
       ]}
     >
@@ -92,6 +98,7 @@ export function ProductForm({ product }: { product?: Product }) {
       {form.tab === "gorseller" && <ImagesTab {...tabProps} onError={form.setError} />}
       {form.tab === "teknik" && <SpecsTab {...tabProps} />}
       {form.tab === "kutu" && <InTheBoxTab {...tabProps} />}
+      {form.tab === "secenekler" && <OptionsTab {...tabProps} />}
       {form.tab === "seo" && (
         <SeoPanel
           noun="Ürün"

@@ -1,7 +1,7 @@
 "use client";
 
-import type { Product } from "@zenweld/data";
-import { activeOptionId, type VariantSelection } from "@/lib/variants";
+import type { VariantGroupView } from "@zenweld/data";
+import { activeOption, type VariantSelection } from "@/lib/variants";
 
 /**
  * URUN SECENEKLERI
@@ -11,48 +11,40 @@ import { activeOptionId, type VariantSelection } from "@/lib/variants";
  * hesaplanir.
  */
 export function VariantPicker({
-  product,
+  group,
   selection,
   onChange,
 }: {
-  product: Product;
+  group: VariantGroupView | undefined;
   selection: VariantSelection;
   onChange: (groupId: string, optionId: string) => void;
 }) {
-  if (!product.variantGroups?.length) return null;
+  if (!group) return null;
+  const active = activeOption(group, selection)?.id;
 
   return (
-    <div className="mt-6 space-y-4">
-      {product.variantGroups.map((group) => {
-        const active = activeOptionId(group.id, product, selection);
-        return (
-          <div key={group.id}>
-            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-              {group.label}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {group.options.map((option) => {
-                const selected = option.id === active;
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    aria-pressed={selected}
-                    onClick={() => onChange(group.id, option.id)}
-                    className={`rounded-[4px] border-2 px-4 py-2 text-sm font-semibold transition-colors ${
-                      selected
-                        ? "border-zw-red-600 bg-zw-red-50 text-zw-ink"
-                        : "border-zw-grey-200 text-zw-grey-700 hover:border-zw-grey-500"
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
+    <div className="mt-6">
+      <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">{group.label}</div>
+      <div className="flex flex-wrap gap-2">
+        {group.options.map((option) => {
+          const selected = option.id === active;
+          return (
+            <button
+              key={option.id}
+              type="button"
+              aria-pressed={selected}
+              onClick={() => onChange(group.id, option.id)}
+              className={`rounded-[4px] border-2 px-4 py-2 text-sm font-semibold transition-colors ${
+                selected
+                  ? "border-zw-red-600 bg-zw-red-50 text-zw-ink"
+                  : "border-zw-grey-200 text-zw-grey-700 hover:border-zw-grey-500"
+              }`}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

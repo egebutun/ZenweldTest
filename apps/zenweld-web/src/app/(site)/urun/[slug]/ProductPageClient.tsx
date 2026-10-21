@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { notFound } from "next/navigation";
 import { FileText } from "lucide-react";
+import { productVariantGroup } from "@zenweld/data";
 import { findMovedProduct, findProductBySlug, listProducts, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
 import Link from "next/link";
@@ -43,6 +44,11 @@ export function ProductPageClient({ slug }: { slug: string }) {
     product && productSeo(product, db.categories.find((c) => c.slug === product.categorySlug)).title,
   );
 
+  const group = useMemo(
+    () => (product ? productVariantGroup(product, db.optionDefinitions) : undefined),
+    [product, db],
+  );
+
   const related = useMemo(() => {
     if (!product) return [];
     return listProducts(db)
@@ -59,7 +65,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
   // degistirir. Alt bilesenlerin imzasini degistirmemek icin
   // secimi uygulanmis bir urun nesnesi turetiyoruz. priceExVat secenegin
   // NORMAL fiyatidir; kampanya indirimi gosterimde uygulanir.
-  const variant = resolveVariant(product, selection);
+  const variant = resolveVariant(product, group, selection);
   const shown: typeof product = {
     ...product,
     priceExVat: variant.priceExVat,
@@ -114,7 +120,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
             </div>
 
             <VariantPicker
-              product={product}
+              group={group}
               selection={selection}
               onChange={(groupId, optionId) =>
                 setSelection((sel) => ({ ...sel, [groupId]: optionId }))

@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { cartTotals, salePriceExVat, type CartTotals, type Product } from "@zenweld/data";
+import { cartTotals, productVariantGroup, salePriceExVat, type CartTotals, type Product } from "@zenweld/data";
 import { getShopSettings, useDatabase, useNow } from "@zenweld/store";
 import { priceWithVat } from "@zenweld/utils";
 import { completeSelection, resolveVariant, variantLabel, type VariantSelection } from "./variants";
@@ -129,7 +129,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       stored.flatMap((s) => {
         const product = db.products.find((p) => p.id === s.productId && p.active);
         if (!product) return [];
-        const variant = resolveVariant(product, s.selection);
+        const group = productVariantGroup(product, db.optionDefinitions);
+        const variant = resolveVariant(product, group, s.selection);
         const unitExVat = salePriceExVat({ ...product, priceExVat: variant.priceExVat }, now);
         const unitIncVat = priceWithVat(unitExVat, product.vatRate);
         return [
@@ -137,7 +138,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             key: lineKey(s.productId, s.selection),
             product,
             selection: s.selection,
-            variantLabel: variantLabel(product, s.selection),
+            variantLabel: variantLabel(group, s.selection),
             sku: variant.sku,
             quantity: s.quantity,
             unitExVat,
@@ -154,7 +155,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (productId, selection, quantity = 1) => {
       const product = db.products.find((p) => p.id === productId);
       if (!product) return;
-      const full = completeSelection(product, selection);
+      const full = completeSelection(productVariantGroup(product, db.optionDefinitions), selection);
       const key = lineKey(productId, full);
       update((prev) =>
         prev.some((l) => lineKey(l.productId, l.selection) === key)

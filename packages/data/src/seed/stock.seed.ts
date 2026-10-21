@@ -102,16 +102,16 @@ export function createSampleStock(nowMs: number = Date.now()): {
     const store = retailers.find((r) => r.id === dealer.retailerId);
     const rows: DealerStock[] = [];
     products.forEach((product) => {
-      const options = product.variantGroups?.[0]?.options ?? [undefined];
+      const options = product.options?.variants ?? [undefined];
       options.forEach((option, index) => {
-        const h = hash(dealer.id, `${product.id}${option ? `-${option.id}` : ""}`);
+        const h = hash(dealer.id, `${product.id}${option ? `-${option.valueId}` : ""}`);
         if (h % 100 >= 85) return; // bayi bu urunu hic tutmuyor
         // Uzun secenekler daha az bayide bulunur.
         const inStock = h % 100 < 62 - index * 14;
         rows.push({
           dealerId: dealer.id,
           productId: product.id,
-          variantId: option?.id,
+          variantId: option?.valueId,
           sku: option?.sku ?? product.sku,
           quantity: inStock ? (h % 9) + 1 : 0,
           price: samplePrice(product, h),

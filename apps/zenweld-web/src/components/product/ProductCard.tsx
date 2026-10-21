@@ -156,7 +156,7 @@ function CardCartButton({ product }: { product: Product }) {
   const className =
     "mt-3 flex w-full items-center justify-center gap-2 rounded-[4px] py-2.5 text-center text-xs font-bold uppercase tracking-wide text-white transition-colors";
 
-  if (product.variantGroups?.length) {
+  if (product.options?.variants.length) {
     return (
       <Link href={`/urun/${product.slug}`} className={`${className} bg-zw-ink hover:bg-zw-red-600`}>
         {t.cart.chooseOptions}

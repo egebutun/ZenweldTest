@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
 import type { OptionDefinition, OptionValue } from "@zenweld/data";
-import { listOptionDefinitions, saveOptionDefinition, useDatabase } from "@zenweld/store";
+import { listOptionDefinitions, productsUsingOption, saveOptionDefinition, useDatabase } from "@zenweld/store";
 import { Button, FormRow, Input, Modal } from "@zenweld/ui";
 import { slugify } from "@zenweld/utils";
 
@@ -12,7 +12,8 @@ import { slugify } from "@zenweld/utils";
  *
  * Ad (orn. "Hortum Uzunluğu") ve sirali degerler (3 m, 4 m ...). Seçenek
  * Tanımları ekraninda ve kategorinin Seçenekler sekmesinde (yeni tanim)
- * kullanilir. Kaydedince tanim hemen yazilir; onSaved kaydi alir.
+ * kullanilir. Kaydedince tanim hemen yazilir; onSaved kaydi alir. Urunde
+ * kullanilan deger silinemez.
  */
 export function OptionDefinitionModal({
   initial,
@@ -51,7 +52,11 @@ export function OptionDefinitionModal({
             onChange={(e) => setDraft({ ...draft, name: e.target.value })}
           />
         </FormRow>
-        <OptionValues values={draft.values} onChange={(values) => setDraft({ ...draft, values })} />
+        <OptionValues
+          values={draft.values}
+          onChange={(values) => setDraft({ ...draft, values })}
+          usedBy={(valueId) => (draft.id ? productsUsingOption(draft.id, valueId, db).length : 0)}
+        />
         {error && <p className="text-sm font-semibold text-zw-red-600">{error}</p>}
         <div className="flex gap-3 pt-2">
           <Button onClick={save}>Kaydet</Button>
@@ -65,7 +70,16 @@ export function OptionDefinitionModal({
 }
 
 /** Degerler: sirayla; yenisi kutuya yazilip Ekle (veya Enter) ile eklenir. */
-function OptionValues({ values, onChange }: { values: OptionValue[]; onChange: (values: OptionValue[]) => void }) {
+function OptionValues({
+  values,
+  onChange,
+  usedBy,
+}: {
+  values: OptionValue[];
+  onChange: (values: OptionValue[]) => void;
+  /** Degeri kullanan urun sayisi */
+  usedBy: (valueId: string) => number;
+}) {
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -124,7 +138,11 @@ function OptionValues({ values, onChange }: { values: OptionValue[]; onChange: (
               <button
                 type="button"
                 aria-label={`${v.label} değerini sil`}
-                onClick={() => onChange(values.filter((x) => x.id !== v.id))}
+                onClick={() => {
+                  const count = usedBy(v.id);
+                  if (count) return setError(`"${v.label}" ${count} üründe kullanılıyor; önce ürünün Seçenekler sekmesinden kaldırın.`);
+                  onChange(values.filter((x) => x.id !== v.id));
+                }}
                 className="rounded-[3px] p-1.5 text-zw-grey-400 hover:bg-zw-grey-100 hover:text-zw-red-600"
               >
                 <X size={15} />

@@ -1,4 +1,5 @@
-import type { Product, SkuAlias, StockImportSummary, StockRow } from "./types";
+import type { OptionDefinition, Product, SkuAlias, StockImportSummary, StockRow } from "./types";
+import { productVariantGroup } from "./variants";
 
 /**
  * STOK DOSYASI — OKUMA, ESLESTIRME, FARK
@@ -191,8 +192,8 @@ export function buildCodeIndex(products: Product[], aliases: SkuAlias[], sourceI
   const index = new Map<string, StockMatch>();
   products.forEach((p) => {
     index.set(normalizeCode(p.sku), { productId: p.id });
-    p.variantGroups?.[0]?.options.forEach((o) => {
-      if (o.sku) index.set(normalizeCode(o.sku), { productId: p.id, variantId: o.id });
+    p.options?.variants.forEach((v) => {
+      if (v.sku) index.set(normalizeCode(v.sku), { productId: p.id, variantId: v.valueId });
     });
   });
   aliases
@@ -340,15 +341,15 @@ export function looksTruncated(current: StockRow[], incoming: StockRow[]): boole
 export function stockTemplateRows(
   products: Product[],
   current: StockRow[],
-  options: { withUrl: boolean },
+  options: { withUrl: boolean; definitions: OptionDefinition[] },
 ): string[][] {
   const byKey = new Map(current.map((l) => [stockKey(l), l]));
   const header = ["SKU", "Ürün Adı", "Adet", "Fiyat", ...(options.withUrl ? ["Link"] : [])];
   const rows: string[][] = [header];
   products.forEach((p) => {
-    const variants = p.variantGroups?.[0]?.options;
+    const variants = productVariantGroup(p, options.definitions)?.options;
     const lines = variants?.length
-      ? variants.map((o) => ({ sku: o.sku ?? p.sku, name: `${p.name} (${o.label})`, variantId: o.id }))
+      ? variants.map((o) => ({ sku: o.sku, name: `${p.name} (${o.label})`, variantId: o.id }))
       : [{ sku: p.sku, name: p.name, variantId: undefined }];
     lines.forEach((l) => {
       const level = byKey.get(stockKey({ productId: p.id, variantId: l.variantId })) ?? byKey.get(stockKey({ productId: p.id }));

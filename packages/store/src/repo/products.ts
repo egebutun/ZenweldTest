@@ -54,6 +54,13 @@ export function saveProduct(product: Product): void {
     const next = { ...withPreviousSlugs(db.products, product), updatedAt: nowIso() };
     if (idx >= 0) db.products[idx] = next;
     else db.products.unshift({ ...next, createdAt: nowIso() });
+    // Urunden kaldirilan seceneklerin stok satirlari ve kod eslestirmeleri de silinir.
+    const kept = new Set(product.options?.variants.map((v) => v.valueId));
+    const live = (r: { productId: string; variantId?: string }) =>
+      r.productId !== product.id || !r.variantId || kept.has(r.variantId);
+    db.dealerStock = db.dealerStock.filter(live);
+    db.retailerStock = db.retailerStock.filter(live);
+    db.skuAliases = db.skuAliases.filter(live);
   });
 }
 
@@ -95,6 +102,7 @@ export function createProduct(partial: Partial<Product>): Product {
     createdAt: nowIso(),
     updatedAt: nowIso(),
     active: partial.active ?? true,
+    options: partial.options,
     modelCode: partial.modelCode,
     manualUrl: partial.manualUrl,
     seo: partial.seo,

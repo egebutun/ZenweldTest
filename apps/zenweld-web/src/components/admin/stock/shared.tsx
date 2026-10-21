@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
-import type { StockSourceType, ZenweldDatabase } from "@zenweld/data";
+import { productVariantGroup, type StockSourceType, type ZenweldDatabase } from "@zenweld/data";
 import { useAuth } from "@zenweld/auth";
 import type { SourceStatus } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
@@ -58,7 +58,7 @@ export function useAdminName(): string | undefined {
 export function productLabel(db: ZenweldDatabase, productId: string, variantId?: string): string {
   const p = db.products.find((x) => x.id === productId);
   if (!p) return "Silinmiş ürün";
-  const group = p.variantGroups?.[0];
+  const group = productVariantGroup(p, db.optionDefinitions);
   const option = group?.options.find((o) => o.id === variantId);
   return option ? `${p.name} (${group!.label}: ${option.label})` : p.name;
 }
@@ -69,10 +69,10 @@ export function productChoices(db: ZenweldDatabase) {
     .filter((p) => p.active)
     .sort((a, b) => a.name.localeCompare(b.name, "tr"))
     .flatMap((p) => {
-      const group = p.variantGroups?.[0];
+      const group = productVariantGroup(p, db.optionDefinitions);
       const base = [{ value: `${p.id}|`, label: `${p.sku} — ${p.name}${group ? " (tüm seçenekler)" : ""}` }];
       return group
-        ? [...base, ...group.options.map((o) => ({ value: `${p.id}|${o.id}`, label: `${o.sku ?? p.sku} — ${p.name} (${o.label})` }))]
+        ? [...base, ...group.options.map((o) => ({ value: `${p.id}|${o.id}`, label: `${o.sku} — ${p.name} (${o.label})` }))]
         : base;
     });
 }

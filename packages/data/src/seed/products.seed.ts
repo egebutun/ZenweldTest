@@ -1,4 +1,4 @@
-import type { Product, ProductVariantGroup } from "../types";
+import type { Product, ProductOptions } from "../types";
 import { stockPhotos } from "./images";
 
 /**
@@ -881,57 +881,25 @@ products.forEach((p) => {
 /* ------------------------------------------------------------------ */
 /* Secenekli urunler (varyantlar)                                      */
 /*                                                                     */
-/* Ornek: MB-25 MIG torcu 3 / 4 / 5 metre secenekleriyle satiliyor.    */
-/* Secenek degisince fiyat, urun kodu ve "Hortum Uzunlugu" teknik      */
-/* satiri degisiyor; bayi bulunurlugu da varyant bazli tutuluyor       */
-/* (bkz. stock.seed.ts).                                               */
-/*                                                                     */
-/* Yeni bir secenekli urun icin buraya bir kayit eklemek yeterli.      */
+/* Ornek: MB-25 MIG torcu 3 / 4 / 5 m secenekleriyle satiliyor. Secenek */
+/* adi ve degerleri ortak tanimdan gelir (options.seed.ts: Hortum       */
+/* Uzunluğu); "Hortum Uzunluğu" teknik satiri secimden kendiliginden     */
+/* olusur. Bayi bulunurlugu secenek bazli tutulur (bkz. stock.seed.ts). */
 /* ------------------------------------------------------------------ */
-const VARIANT_GROUPS: Record<string, ProductVariantGroup[]> = {
-  "mig-torcu-mb25": [
-    {
-      id: "hortum-uzunlugu",
-      label: "Hortum Uzunluğu",
-      options: [
-        {
-          id: "3m",
-          label: "3 metre",
-          priceDeltaExVat: 0,
-          sku: "ZW-TRC-MB25-3",
-          specOverrides: [
-            { label: "Hortum Uzunluğu", value: "3 m" },
-            { label: "Ağırlık", value: "1,9 kg" },
-          ],
-        },
-        {
-          id: "4m",
-          label: "4 metre",
-          priceDeltaExVat: 240,
-          sku: "ZW-TRC-MB25-4",
-          specOverrides: [
-            { label: "Hortum Uzunluğu", value: "4 m" },
-            { label: "Ağırlık", value: "2,3 kg" },
-          ],
-        },
-        {
-          id: "5m",
-          label: "5 metre",
-          priceDeltaExVat: 460,
-          sku: "ZW-TRC-MB25-5",
-          specOverrides: [
-            { label: "Hortum Uzunluğu", value: "5 m" },
-            { label: "Ağırlık", value: "2,7 kg" },
-          ],
-        },
-      ],
-    },
-  ],
+const PRODUCT_OPTIONS: Record<string, ProductOptions> = {
+  "mig-torcu-mb25": {
+    optionId: "hortum-uzunlugu",
+    variants: [
+      { valueId: "3-m", sku: "ZW-TRC-MB25-3", priceDeltaExVat: 0, specOverrides: [{ label: "Ağırlık", value: "1,9 kg" }] },
+      { valueId: "4-m", sku: "ZW-TRC-MB25-4", priceDeltaExVat: 240, specOverrides: [{ label: "Ağırlık", value: "2,3 kg" }] },
+      { valueId: "5-m", sku: "ZW-TRC-MB25-5", priceDeltaExVat: 460, specOverrides: [{ label: "Ağırlık", value: "2,7 kg" }] },
+    ],
+  },
 };
 
 products.forEach((p) => {
-  const groups = VARIANT_GROUPS[p.slug];
-  if (groups) p.variantGroups = groups;
+  const options = PRODUCT_OPTIONS[p.slug];
+  if (options) p.options = options;
 });
 
 // Kategori icindeki sira: bu dosyadaki siraya gore 1, 2, 3 ... (panelden degisir).

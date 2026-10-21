@@ -403,7 +403,7 @@ export function setStockLevel(args: {
     if (row) Object.assign(row, args.patch, { updatedAt: at });
     else {
       const product = db.products.find((p) => p.id === args.productId);
-      const option = product?.variantGroups?.[0]?.options.find((o) => o.id === args.variantId);
+      const option = product?.options?.variants.find((v) => v.valueId === args.variantId);
       const added: StockRow = {
         productId: args.productId,
         variantId: args.variantId,

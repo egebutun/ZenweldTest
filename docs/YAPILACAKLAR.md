@@ -6,7 +6,7 @@ buradan silinir.
 ## Ürün seçenekleri (3 m / 5 m gibi) yönetimi
 
 **Yapılıyor (adım adım):** 1) Seçenek Tanımları ve kategori seçimi ✔ 2) ürün
-formunda Seçenekler sekmesi 3) ürün sayfası, sepet, Teklif Al 4) örnek veriler.
+formunda Seçenekler sekmesi ✔ 3) ürün sayfası, sepet, Teklif Al 4) örnek veriler.
 
 Backend tabloları (demoda aynı yapı tarayıcıda):
 `option_definitions` (ad), `option_values` (tanım, ad, sıra; tanım içinde ad
@@ -16,20 +16,18 @@ olan teknik özellik / kutu içeriği / fotoğraf). Kullanılan değer silinemez
 (yabancı anahtar RESTRICT); sipariş ve teklif satırları o anki seçenek adı ve
 kodunun kopyasını saklar.
 
-Şu an yalnızca örnek olarak MB-25 MIG Torcu'nda var ve koddan geliyor.
-Gerçek ürünler (SKU, teknik özellikler, açıklama) ve hangi ürünlerin
-seçenekli olduğu belirlendikten sonra panele seçenek yönetimi eklenecek.
+Şu an örnek olarak MB-25 MIG Torcu'nda var. Gerçek ürünler (SKU, teknik
+özellikler, açıklama) ve hangi ürünlerin seçenekli olduğu belirlendikten sonra
+panelden girilecek.
 
-Bu iş yapılırken: `packages/store/src/repo/products.ts` içindeki
-`createProduct` fonksiyonu yeni ürün oluştururken `variantGroups` ve
-`stockQuantity` alanlarını kopyalamıyor. Panele bu alanlar eklendiğinde
-bu fonksiyon da güncellenmeli; yoksa yeni ürünlerde sessizce kaybolurlar.
+`packages/store/src/repo/products.ts` içindeki `createProduct` yeni ürün
+oluştururken `stockQuantity` alanını kopyalamıyor. Panele bu alan eklendiğinde
+bu fonksiyon da güncellenmeli; yoksa yeni ürünlerde sessizce kaybolur.
 
-Her seçeneğin kendi stok kodu (SKU) olmalı ve panelde zorunlu tutulmalı.
-Kodu olmayan seçenekler stok şablonunda ürünün koduyla yazılıyor; bayi
-dosyayı geri yüklediğinde bu satırlar tek satıra iner, seçeneklerin adetleri
-birbirinin üstüne yazılır (`packages/data/src/stock.ts` → `stockTemplateRows`,
-`buildCodeIndex`).
+Seçeneğin ürün kodu panelde zorunlu ve benzersiz (ürün formu kayıt öncesi
+kontrol ediyor). Backend'de `product_variants.sku` ve ürün kodları için aynı
+benzersizlik veritabanında da sağlanmalı; stok dosyaları bu kodla eşleşir
+(`packages/data/src/stock.ts` → `buildCodeIndex`).
 
 ## Canlı sunucu (hosting) kararı ve Vercel temizliği
 

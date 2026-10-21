@@ -5,6 +5,7 @@ export * from "./checkout";
 export * from "./legal";
 export * from "./stock";
 export * from "./catalog";
+export * from "./variants";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";
@@ -39,7 +40,7 @@ import { documentPages } from "./seed/documents.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 53;
+export const DB_VERSION = 54;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida

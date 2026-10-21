@@ -1,6 +1,6 @@
 "use client";
 
-import type { Category, OptionDefinition, ZenweldDatabase } from "@zenweld/data";
+import type { Category, OptionDefinition, Product, ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 
 /* ------------------------------------------------------------------ */
@@ -18,6 +18,13 @@ export function categoriesUsingOption(id: string, db: ZenweldDatabase = getSnaps
   return db.categories.filter((c) => c.optionIds?.includes(id));
 }
 
+/** Tanimi (valueId verilirse o degeri) kullanan urunler; kullanilan tanim ve deger silinemez. */
+export function productsUsingOption(id: string, valueId?: string, db: ZenweldDatabase = getSnapshot()): Product[] {
+  return db.products.filter(
+    (p) => p.options?.optionId === id && (!valueId || p.options.variants.some((v) => v.valueId === valueId)),
+  );
+}
+
 /** Ekler (id bos ise) veya gunceller. Kaydedilen tanim; yazilamazsa null. */
 export function saveOptionDefinition(definition: OptionDefinition): OptionDefinition | null {
   const record = { ...definition, id: definition.id || uid("opt") };
@@ -29,8 +36,9 @@ export function saveOptionDefinition(definition: OptionDefinition): OptionDefini
   return saved ? record : null;
 }
 
-/** Tanimi siler; kategorilerdeki baglantisi da kalkar. */
+/** Tanimi siler; kategorilerdeki baglantisi da kalkar. Urunde kullaniliyorsa silinmez (false). */
 export function deleteOptionDefinition(id: string): boolean {
+  if (productsUsingOption(id).length) return false;
   return mutate((db) => {
     db.optionDefinitions = db.optionDefinitions.filter((o) => o.id !== id);
     db.categories.forEach((c) => {

@@ -4,7 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import type { OptionDefinition } from "@zenweld/data";
-import { categoriesUsingOption, deleteOptionDefinition, listOptionDefinitions, useDatabase } from "@zenweld/store";
+import {
+  categoriesUsingOption,
+  deleteOptionDefinition,
+  listOptionDefinitions,
+  productsUsingOption,
+  useDatabase,
+} from "@zenweld/store";
 import { Button } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { OptionDefinitionModal } from "@/components/admin/OptionEditor";
@@ -15,7 +21,8 @@ import { OptionDefinitionModal } from "@/components/admin/OptionEditor";
  * Urun seceneklerinin ortak tanimlari: ad ve sirali degerler (Hortum
  * Uzunluğu: 3 m, 4 m ...). Kategoriler hangi tanimlarin listelenecegini
  * kendi Seçenekler sekmesinden secer; ayni tanim birden cok kategoride
- * kullanilabilir. Bir degerin adi duzeltilince her yerde degisir.
+ * kullanilabilir. Bir degerin adi duzeltilince her yerde degisir. Urunde
+ * kullanilan tanim (ve deger) silinemez; once urunden kaldirilir.
  */
 export default function AdminOptionsPage() {
   const db = useDatabase();
@@ -42,12 +49,14 @@ export default function AdminOptionsPage() {
               <th className="px-4 py-3">Seçenek</th>
               <th className="px-4 py-3">Değerler</th>
               <th className="px-4 py-3">Kategoriler</th>
+              <th className="px-4 py-3">Ürün</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-zw-grey-100">
             {definitions.map((o) => {
               const categories = categoriesUsingOption(o.id, db);
+              const products = productsUsingOption(o.id, undefined, db);
               return (
                 <tr key={o.id}>
                   <td className="px-4 py-2.5 font-semibold">{o.name}</td>
@@ -63,6 +72,7 @@ export default function AdminOptionsPage() {
                       </span>
                     ))}
                   </td>
+                  <td className="px-4 py-2.5 text-zw-grey-600">{products.length || "—"}</td>
                   <td className="px-4 py-2.5 text-right">
                     <div className="flex justify-end gap-1">
                       <button
@@ -77,6 +87,11 @@ export default function AdminOptionsPage() {
                         type="button"
                         aria-label={`${o.name} sil`}
                         onClick={() => {
+                          if (products.length) {
+                            return window.alert(
+                              `"${o.name}" ${products.length} üründe kullanılıyor; önce ürünlerin Seçenekler sekmesinden kaldırın.`,
+                            );
+                          }
                           const where = categories.length ? ` ${categories.length} kategoriden de kaldırılır.` : "";
                           if (window.confirm(`"${o.name}" silinsin mi?${where}`)) deleteOptionDefinition(o.id);
                         }}
@@ -91,7 +106,7 @@ export default function AdminOptionsPage() {
             })}
             {definitions.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-10 text-center text-zw-grey-500">
+                <td colSpan={5} className="px-4 py-10 text-center text-zw-grey-500">
                   Henüz seçenek tanımı yok.
                 </td>
               </tr>

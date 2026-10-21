@@ -74,7 +74,7 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
 
   const downloadTemplate = () => {
     const products = db.products.filter((p) => p.active).sort((a, b) => a.name.localeCompare(b.name, "tr"));
-    downloadCsvRows(stockTemplateRows(products, stockOfSource(source.type, source.id, db), { withUrl }), `${slugify(source.name)}-stok-sablonu.csv`);
+    downloadCsvRows(stockTemplateRows(products, stockOfSource(source.type, source.id, db), { withUrl, definitions: db.optionDefinitions }), `${slugify(source.name)}-stok-sablonu.csv`);
   };
 
   return (

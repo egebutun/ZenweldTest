@@ -80,7 +80,7 @@ doğrudan stok matrisine gidebilirsiniz.
 - 🗑 simgesi: ürünü ve tüm stok kayıtlarını siler
 
 ### Ürün düzenleme / yeni ürün
-Altı sekme vardır:
+Yedi sekme vardır:
 
 | Sekme | İçerik |
 |---|---|
@@ -89,12 +89,36 @@ Altı sekme vardır:
 | **Görseller** | URL ile ekleme veya dosya yükleme, sıralama, kapak seçimi |
 | **Teknik Özellikler** | Satır satır özellik–değer tablosu |
 | **Kutu İçeriği** | Madde listesi |
+| **Seçenekler** | Ürünün tek sayfada satılan seçenekleri (ör. Hortum Uzunluğu: 3 m / 5 m); her değerin ürün kodu ve fiyat farkı. Ayrıntı aşağıda |
 | **SEO** | Ürün linki, sayfa başlığı, açıklama, anahtar kelimeler, Google önizlemesi |
 
 **Sıra:** Ürünün kendi kategorisinde kaçıncı göründüğü. Kategori sayfasındaki
 "Önerilen" sıralama ve kategori kartında görsel yoksa kullanılan ürün buna
 göre belirlenir. Küçük numara önce gelir; aynı numaralı ürünler ada göre dizilir.
 Yeni ürünün Sırası boş bırakılırsa kategorinin sonuna eklenir.
+
+**Seçenekler sekmesi:**
+- **Seçenek Ekle:** Ürünün kategorisinde işaretli seçenek tanımlarından biri
+  seçilir (Kategoriler › Seçenekler). Kategoride işaretli tanım yoksa sekme bunu
+  söyler ve kategoriye bağlantı verir. Bir üründe tek seçenek olur.
+- **Değer ekle:** Tanımın bu üründe satılan değerleri tek tek eklenir (ör. 3 m,
+  5 m, 10 m). Sırası tanımdaki sıradır. Listede olmayan değer **Seçenek
+  Tanımları** ekranında tanıma eklenir.
+- Her değerde:
+  - **Ürün kodu (SKU):** zorunlu. Ürünün kendi koduyla, aynı ürünün başka
+    değeriyle ya da başka bir ürünün (veya seçeneğinin) koduyla aynı olamaz.
+    Bayi stok dosyaları bu kodla eşleşir.
+  - **Fiyat farkı (KDV hariç):** ana fiyata eklenir, eksi olabilir. Yanında
+    sonuç fiyat (KDV hariç ve dahil) görünür. Kampanya varsa aynı indirim oranı
+    tüm değerlere uygulanır.
+  - **Bu değerde farklı olanlar (isteğe bağlı):** fotoğraf (ürünün
+    görsellerinden biri), teknik özellik farkları (ör. Ağırlık; aynı adlı satırın
+    yerine geçer) ve ayrı kutu içeriği. Boş bırakılan alanda ürünün kendisi
+    geçerlidir. "Hortum Uzunluğu: 5 m" gibi seçenek satırı teknik özelliklere
+    kendiliğinden eklenir.
+- 🗑 değeri üründen kaldırır; kaydedince o değerin bayi ve satıcı stok kayıtları
+  da silinir. **Seçeneği Kaldır** seçeneği tüm değerleriyle kaldırır (onay
+  sorulur). Hiç değer eklenmemiş seçenek kaydedilmez.
 
 **Ürün adı:** Ürün adına marka ("Zenweld") yazılmaz; sayfa başlığına
 "| ZENWELD" otomatik eklenir.
@@ -168,8 +192,8 @@ Düzenleme ekranında dört sekme vardır (Seçenekler yalnızca kategoride):
 ## 2c. Seçenek Tanımları
 
 Ürün seçeneklerinin (3 m / 5 m torç, 10'lu / 20'li paket gibi) ortak tanımları:
-seçenek adı ve sıralı değerleri. Tablo her tanımın değerlerini ve hangi
-kategorilerde listelendiğini gösterir.
+seçenek adı ve sıralı değerleri. Tablo her tanımın değerlerini, hangi
+kategorilerde listelendiğini ve kaç üründe kullanıldığını gösterir.
 
 - **Yeni Seçenek** ve ✏️ aynı pencereyi açar: ad, değerler. Değer **Ekle** (ya da
   Enter) ile eklenir, ↑ ↓ ile sıralanır, × ile silinir.
@@ -178,6 +202,8 @@ kategorilerde listelendiğini gösterir.
 - Aynı adla iki tanım, bir tanımda aynı değer iki kez olamaz; değeri olmayan
   tanım kaydedilmez.
 - 🗑 tanımı siler ve listelendiği kategorilerden de kaldırır.
+- Bir üründe kullanılan tanım ve değer silinemez; önce ürünün **Seçenekler**
+  sekmesinden kaldırılır. Silinmek istenirse kaç üründe kullanıldığı yazılır.
 - Tanımın hangi kategoride listeleneceği kategorinin **Seçenekler** sekmesinden
   seçilir (bkz. 2b).
 

@@ -91,27 +91,31 @@ export interface SpecRow {
 /* ------------------------------------------------------------------ */
 /* Urun secenekleri (varyantlar)                                       */
 /*                                                                     */
-/* Ornek: bir MIG torcunun 3 m ve 5 m secenekleri. Secenek degisince   */
-/* fiyat, urun kodu, teknik ozellikler ve hangi bayide bulundugu       */
-/* degisebilir.                                                        */
+/* Ornek: bir MIG torcunun 3 m ve 5 m secenekleri. Urun tek bir secenek */
+/* tanimini kullanir (OptionDefinition) ve kullandigi degerler icin     */
+/* birer satir tutar. Ad ve sira tanimdan okunur; satir yalnizca bu     */
+/* urune ozel olanlari (kod, fiyat farki, farkli olan bilgiler) tutar.  */
 /* ------------------------------------------------------------------ */
 
-export interface ProductVariantOption {
-  id: string;
-  label: string;
-  /** Taban fiyata eklenecek fark (KDV haric, TRY). Eksi de olabilir. */
+export interface ProductVariant {
+  /** Tanimdaki degerin kimligi; secenegin urundeki kimligi de budur (stok, sepet) */
+  valueId: string;
+  /** Secenegin kendi urun kodu (zorunlu, benzersiz) */
+  sku: string;
+  /** Ana fiyata eklenecek fark (KDV haric, TRY). Eksi de olabilir. */
   priceDeltaExVat: number;
-  /** Varyanta ozel urun kodu; yoksa urunun kendi SKU'su kullanilir. */
-  sku?: string;
-  /** Ayni etiketli satir varsa uzerine yazar, yoksa listeye eklenir. */
+  /** Yalnizca farkli olan teknik ozellikler: ayni etiketli satirin yerine gecer, yoksa eklenir */
   specOverrides?: SpecRow[];
+  /** Bossa urunun kutu icerigi */
+  inTheBox?: string[];
+  /** Bossa urunun fotograflari */
+  image?: string;
 }
 
-export interface ProductVariantGroup {
-  id: string;
-  /** Orn. "Torç Uzunluğu" */
-  label: string;
-  options: ProductVariantOption[];
+export interface ProductOptions {
+  /** OptionDefinition kimligi (orn. "hortum-uzunlugu") */
+  optionId: string;
+  variants: ProductVariant[];
 }
 
 export interface ProductImage {
@@ -177,7 +181,7 @@ export interface Product {
    * Secenekli urunler (orn. 3 m / 5 m torc). Secim fiyati, urun kodunu,
    * teknik ozellikleri ve bayi bulunurlugunu degistirebilir.
    */
-  variantGroups?: ProductVariantGroup[];
+  options?: ProductOptions;
   /** Teklif Al akisina acik mi */
   quotable: boolean;
   featured: boolean;
