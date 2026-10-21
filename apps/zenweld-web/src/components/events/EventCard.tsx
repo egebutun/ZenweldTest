@@ -5,12 +5,13 @@ import type { ZenweldEvent } from "@zenweld/data";
 import { Badge } from "@zenweld/ui";
 import Link from "next/link";
 import { EventLogo } from "./EventLogo";
+import { useNow } from "@zenweld/store";
 import { useT } from "@/lib/i18n-client";
+import { eventWindow } from "./event-dates";
 
 /** Tarih bloğu: gün aralığı üstte, ay ortada, yıl altta. */
 function DateBlock({ event }: { event: ZenweldEvent }) {
-  const start = new Date(event.startDate);
-  const end = new Date(event.endDate);
+  const { start, end } = eventWindow(event);
 
   const month = new Intl.DateTimeFormat("tr-TR", {
     month: "long",
@@ -37,9 +38,10 @@ function DateBlock({ event }: { event: ZenweldEvent }) {
 export function EventCard({ event }: { event: ZenweldEvent }) {
   const t = useT();
 
-  const now = new Date();
-  const start = new Date(event.startDate);
-  const end = new Date(event.endDate);
+  // useNow: sunucu ciktisi ile tarayicinin ilk cizimi ayni an (derleme ani)
+  // ile hesaplanir, sonra gercek saate gecer.
+  const now = useNow();
+  const { start, end } = eventWindow(event);
   const isNow = now >= start && now <= end;
   const daysLeft = Math.ceil((start.getTime() - now.getTime()) / 86_400_000);
 

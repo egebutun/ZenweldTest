@@ -98,20 +98,26 @@ function emit(): void {
   listeners.forEach((l) => l());
 }
 
-/** Veritabanini degistirir, kaydeder ve abonelere haber verir. */
-export function mutate(updater: (db: ZenweldDatabase) => ZenweldDatabase | void): void {
+/**
+ * Veritabanini degistirir, kaydeder ve abonelere haber verir. Tarayici
+ * deposuna yazilamazsa (kota dolu) degisiklik uygulanmaz ve false doner;
+ * boylece sayfa yenilenince kaybolacak bir kayit ekranda gorunmez.
+ */
+export function mutate(updater: (db: ZenweldDatabase) => ZenweldDatabase | void): boolean {
   const current = getSnapshot();
   const draft = structuredClone(current);
   const result = updater(draft) ?? draft;
-  memoryDb = result;
   if (isBrowser()) {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
     } catch (err) {
       console.warn("[zenweld] localStorage yazilamadi (kota dolmus olabilir)", err);
+      return false;
     }
   }
+  memoryDb = result;
   emit();
+  return true;
 }
 
 export { STORAGE_KEY };

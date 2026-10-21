@@ -28,9 +28,11 @@ function LoginInner() {
       setError(result.error ?? "Giriş yapılamadı.");
       return;
     }
+    // Yalnizca site ici adreslere yonlendir: "/giris?next=https://sahte-site"
+    // ile gelen ziyaretci giristen sonra baska siteye gitmesin.
     const next = params.get("next");
-    if (next) router.push(next);
-    else router.push("/hesabim");
+    const safe = next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\");
+    router.push(safe ? next : "/hesabim");
   };
 
   return (

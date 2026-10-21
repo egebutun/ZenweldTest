@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { PageSeoFields, TopLevelSection } from "@zenweld/data";
 import { SECTION_DESCRIPTIONS, SECTION_TITLES } from "@/lib/catalog";
-import { SITE_DESCRIPTION, SITE_NAME, absoluteUrl, canonical } from "@/lib/seo";
+import { SITE_DESCRIPTION, SITE_NAME, canonical, socialMetadata } from "@/lib/seo";
 
 /**
  * SABIT SAYFALARIN ARAMA BASLIKLARI VE ACIKLAMALARI
@@ -122,7 +122,7 @@ export function pageMetadataFor(path: StaticPagePath) {
       title: { absolute: title },
       description,
       alternates: canonical(path),
-      openGraph: { title, description, url: absoluteUrl(path) },
+      ...socialMetadata({ title, description, path }),
     };
   };
 }

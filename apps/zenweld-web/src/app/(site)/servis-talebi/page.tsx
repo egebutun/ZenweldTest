@@ -3,13 +3,15 @@
 import { useMemo, useState } from "react";
 import { Check, Wrench } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import type { ServiceReason } from "@zenweld/data";
+import type { ServiceReason, User } from "@zenweld/data";
 import { createServiceRequest, listProducts, useDatabase } from "@zenweld/store";
 import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
 import { PageHero } from "@/components/common/PageShell";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useT } from "@/lib/i18n-client";
+import { notifyZenweld } from "@/lib/notify";
+import { useMemberPrefill } from "@/lib/member-prefill";
 
 /** Makine turu bu gruplardaki kategorilerden secilir (Kaynak, Lazer). */
 const MACHINE_GROUPS = ["kaynak-makineleri", "lazer-makineleri"];
@@ -37,19 +39,21 @@ const EMPTY = {
  * baglantilar (garanti kosullari, gizlilik sozlesmesi) yeni sekmede acilir;
  * boylece doldurulan form kaybolmaz.
  */
+const memberValues = (user: User) => ({
+  companyName: user.companyName || `${user.firstName} ${user.lastName}`.trim(),
+  email: user.email,
+  phone: user.phone ?? "",
+  city: user.city ?? "",
+  contactName: `${user.firstName} ${user.lastName}`.trim(),
+});
+
 export default function ServiceRequestPage() {
   const t = useT();
   const db = useDatabase();
   const { user } = useAuth();
 
-  const [form, setForm] = useState(() => ({
-    ...EMPTY,
-    companyName: user ? user.companyName || `${user.firstName} ${user.lastName}` : "",
-    email: user?.email ?? "",
-    phone: user?.phone ?? "",
-    city: user?.city ?? "",
-    contactName: user ? `${user.firstName} ${user.lastName}` : "",
-  }));
+  const [form, setForm] = useState(() => ({ ...EMPTY, ...(user ? memberValues(user) : {}) }));
+  useMemberPrefill(user, memberValues, setForm);
   const [reasons, setReasons] = useState<ServiceReason[]>([]);
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -92,6 +96,21 @@ export default function ServiceRequestPage() {
       productName: product?.name ?? "",
       reasons,
       userId: user?.id,
+    });
+    // Talep panelde Servis Talepleri'ne duser; info@zenweld.com'a da haber verilir.
+    void notifyZenweld("servis", {
+      code: record.code,
+      productName: record.productName,
+      reasons: record.reasons.map((r) => t.service.reasons[r]),
+      companyName: record.companyName,
+      contactName: record.contactName,
+      email: record.email,
+      phone: record.phone,
+      contactGsm: record.contactGsm,
+      address: record.address,
+      district: record.district,
+      city: record.city,
+      complaint: record.complaint,
     });
     setCode(record.code);
     window.scrollTo({ top: 0 });

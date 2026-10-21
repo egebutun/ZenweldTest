@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { CalendarDays } from "lucide-react";
-import { listEvents, useDatabase } from "@zenweld/store";
+import { listEvents, useDatabase, useNow } from "@zenweld/store";
 import { Button, EmptyState, Select } from "@zenweld/ui";
 import { EventCard } from "./EventCard";
+import { eventWindow } from "./event-dates";
 import { useT } from "@/lib/i18n-client";
 
 type StatusFilter = "" | "upcoming" | "past";
@@ -34,15 +35,14 @@ export function EventList() {
     [all],
   );
 
+  const now = useNow();
   const events = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
+    // Son gunu bitene kadar (23:59) etkinlik yaklasan/devam eden sayilir.
     return all
       .filter((e) => {
         if (country && e.country !== country) return false;
-        if (status === "upcoming") return new Date(e.endDate) >= today;
-        if (status === "past") return new Date(e.endDate) < today;
+        if (status === "upcoming") return eventWindow(e).end >= now;
+        if (status === "past") return eventWindow(e).end < now;
         return true;
       })
       .sort((a, b) =>
@@ -50,7 +50,7 @@ export function EventList() {
           ? b.startDate.localeCompare(a.startDate)
           : a.startDate.localeCompare(b.startDate),
       );
-  }, [all, country, status, sort]);
+  }, [all, country, status, sort, now]);
 
   const hasFilter = Boolean(status || country);
   const clearFilters = () => {

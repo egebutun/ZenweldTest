@@ -8,18 +8,36 @@ import { nowIso } from "./shared";
 /* Garanti kayitlari                                                   */
 /* ------------------------------------------------------------------ */
 
+/** Seri numarasi bosluksuz ve buyuk harfle saklanir; karsilastirma da boyle yapilir. */
+const normalizeSerial = (serial: string) => serial.trim().toUpperCase();
+
+/**
+ * Garanti kaydi. E-posta kucuk harfe cevrilir (Garantilerim uyenin e-postasiyla
+ * eslesir). Ayni seri numarasi ikinci kez kaydedilemez: false doner.
+ */
 export function registerWarranty(
   record: Omit<WarrantyRecord, "id" | "registeredAt" | "expiresAt">,
-): void {
+): WarrantyRecord | false {
+  if (findWarranty(record.serialNumber)) return false;
   const registeredAt = nowIso();
+  const saved: WarrantyRecord = {
+    ...record,
+    serialNumber: normalizeSerial(record.serialNumber),
+    email: record.email.trim().toLowerCase(),
+    id: uid("w"),
+    registeredAt,
+    expiresAt: warrantyExpiry(registeredAt, record.productId, record.extended),
+  };
   mutate((db) => {
-    db.warranties.unshift({
-      ...record,
-      id: uid("w"),
-      registeredAt,
-      expiresAt: warrantyExpiry(registeredAt, record.productId, record.extended, db),
-    });
+    db.warranties.unshift(saved);
   });
+  return saved;
+}
+
+/** Uyenin garantileri: kayittaki e-posta buyuk/kucuk harf farki gozetmeden eslesir. */
+export function warrantiesForEmail(email: string, db: ZenweldDatabase = getSnapshot()): WarrantyRecord[] {
+  const target = email.trim().toLowerCase();
+  return db.warranties.filter((w) => w.email.trim().toLowerCase() === target);
 }
 
 /**
@@ -54,7 +72,6 @@ export function deleteWarranty(id: string): void {
 }
 
 export function findWarranty(serialNumber: string, db: ZenweldDatabase = getSnapshot()) {
-  return db.warranties.find(
-    (w) => w.serialNumber.toLowerCase() === serialNumber.toLowerCase().trim(),
-  );
+  const target = normalizeSerial(serialNumber);
+  return db.warranties.find((w) => normalizeSerial(w.serialNumber) === target);
 }

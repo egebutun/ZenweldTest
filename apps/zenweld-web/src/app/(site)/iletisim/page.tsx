@@ -7,10 +7,26 @@ import { PageHero } from "@/components/common/PageShell";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useT } from "@/lib/i18n-client";
 import { CONTACT, mapDirectionsUrl, mapEmbedUrl, type Office } from "@/lib/menu";
+import { notifyZenweld, reached } from "@/lib/notify";
 
 export default function ContactPage() {
   const t = useT();
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const set = (key: keyof typeof form, value: string) => setForm((f) => ({ ...f, [key]: value }));
+
+  // Mesaj info@zenweld.com'a e-postayla gider; gitmezse ziyaretciye soylenir.
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setError(false);
+    const result = await notifyZenweld("iletisim", form);
+    setSending(false);
+    if (reached(result)) setSent(true);
+    else setError(true);
+  };
 
   return (
     <>
@@ -23,28 +39,23 @@ export default function ContactPage() {
             {sent ? (
               <Alert tone="success">{t.support.sent}</Alert>
             ) : (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSent(true);
-                }}
-                className="space-y-4"
-              >
+              <form onSubmit={submit} className="space-y-4">
+                {error && <Alert tone="danger">{t.support.sendError}</Alert>}
                 <FormRow label={t.support.name} required>
-                  <Input required />
+                  <Input required value={form.name} onChange={(e) => set("name", e.target.value)} />
                 </FormRow>
                 <FormRow label={t.support.email} required>
-                  <Input type="email" required />
+                  <Input type="email" required value={form.email} onChange={(e) => set("email", e.target.value)} />
                 </FormRow>
                 <FormRow label={t.support.subject} required>
-                  <Input required />
+                  <Input required value={form.subject} onChange={(e) => set("subject", e.target.value)} />
                 </FormRow>
                 <FormRow label={t.support.message} required>
-                  <Textarea required />
+                  <Textarea required value={form.message} onChange={(e) => set("message", e.target.value)} />
                 </FormRow>
                 <KvkkNotice />
-                <Button type="submit" size="lg">
-                  {t.support.send}
+                <Button type="submit" size="lg" disabled={sending}>
+                  {sending ? t.support.sending : t.support.send}
                 </Button>
               </form>
             )}

@@ -4,14 +4,25 @@ import { useMemo, useState } from "react";
 import { Check, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { createQuote, listProducts, useDatabase } from "@zenweld/store";
-import type { PaymentPreference } from "@zenweld/data";
+import type { PaymentPreference, User } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
+import { notifyZenweld } from "@/lib/notify";
+import { useMemberPrefill } from "@/lib/member-prefill";
 import { useQuoteList } from "@/lib/quote-list";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 
 const STEPS = 4;
+
+const memberValues = (user: User) => ({
+  companyName: user.companyName ?? "",
+  contactName: `${user.firstName} ${user.lastName}`.trim(),
+  email: user.email,
+  phone: user.phone ?? "",
+  taxNumber: user.taxNumber ?? "",
+  city: user.city ?? "",
+});
 
 export default function QuotePage() {
   const t = useT();
@@ -25,16 +36,18 @@ export default function QuotePage() {
   const [addProductId, setAddProductId] = useState("");
 
   const [form, setForm] = useState({
-    companyName: user?.companyName ?? "",
-    contactName: user ? `${user.firstName} ${user.lastName}` : "",
-    email: user?.email ?? "",
-    phone: user?.phone ?? "",
-    taxNumber: user?.taxNumber ?? "",
-    city: user?.city ?? "",
+    companyName: "",
+    contactName: "",
+    email: "",
+    phone: "",
+    taxNumber: "",
+    city: "",
+    ...(user ? memberValues(user) : {}),
     paymentPreference: "vadeli" as PaymentPreference,
     termDays: 60,
     message: "",
   });
+  useMemberPrefill(user, memberValues, setForm);
 
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
@@ -74,8 +87,31 @@ export default function QuotePage() {
     );
   }
 
+  // 1. adim (firma ve iletisim) eksikse sonraki adimlara gecilmez ve teklif
+  // gonderilmez; satis ekibinin talep sahibine ulasabilmesi gerekir.
+  const contactError = (): string | null => {
+    const companyRequired = user?.role !== "individual";
+    if ((companyRequired && !form.companyName.trim()) || !form.contactName.trim() || !form.phone.trim()) {
+      return t.quote.required;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return t.quote.invalidEmail;
+    return null;
+  };
+
+  const goTo = (target: number) => {
+    const problem = target > 1 ? contactError() : null;
+    setError(problem);
+    setStep(problem ? 1 : target);
+  };
+
   const submit = () => {
     setError(null);
+    const problem = contactError();
+    if (problem) {
+      setError(problem);
+      setStep(1);
+      return;
+    }
     if (quoteList.items.length === 0) {
       setError(t.quote.emptyList);
       setStep(2);
@@ -101,6 +137,23 @@ export default function QuotePage() {
       message: form.message,
     });
 
+    // Teklif panelde Teklifler'e duser; info@zenweld.com'a da haber verilir.
+    void notifyZenweld("teklif", {
+      code: quote.code,
+      companyName: quote.companyName,
+      contactName: quote.contactName,
+      email: quote.email,
+      phone: quote.phone,
+      taxNumber: quote.taxNumber,
+      city: quote.city,
+      items: quote.items.map((i) => `${i.quantity} × ${i.productName}`),
+      payment:
+        quote.paymentPreference === "vadeli"
+          ? `${t.quote.vadeli} (${quote.termDays} gün)`
+          : t.quote[quote.paymentPreference],
+      message: quote.message,
+    });
+
     quoteList.clear();
     setCode(quote.code);
   };
@@ -116,7 +169,7 @@ export default function QuotePage() {
           {stepTitles.map((title, i) => (
             <li key={title} className="flex-1">
               <button
-                onClick={() => setStep(i + 1)}
+                onClick={() => goTo(i + 1)}
                 className={`w-full border-t-4 pt-2 text-left text-xs font-semibold uppercase tracking-wide transition-colors ${
                   step === i + 1
                     ? "border-zw-red-600 text-zw-ink"
@@ -381,7 +434,7 @@ export default function QuotePage() {
           </Button>
 
           {step < STEPS ? (
-            <Button onClick={() => setStep((s) => Math.min(STEPS, s + 1))}>{t.common.next}</Button>
+            <Button onClick={() => goTo(Math.min(STEPS, step + 1))}>{t.common.next}</Button>
           ) : (
             <Button size="lg" onClick={submit}>
               {t.quote.submit}

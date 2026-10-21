@@ -47,7 +47,8 @@ export function listAllReviews(db: ZenweldDatabase = getSnapshot()): ProductRevi
   return [...db.reviews].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
-export function createReview(partial: Partial<ProductReview>): ProductReview {
+/** Yeni yorum; tarayici deposuna sigmazsa (buyuk video) null. */
+export function createReview(partial: Partial<ProductReview>): ProductReview | null {
   const item: ProductReview = {
     id: partial.id || uid("rv"),
     productId: partial.productId ?? "",
@@ -63,10 +64,10 @@ export function createReview(partial: Partial<ProductReview>): ProductReview {
     featured: false,
     createdAt: partial.createdAt ?? nowIso(),
   };
-  mutate((db) => {
+  const saved = mutate((db) => {
     db.reviews.unshift(item);
   });
-  return item;
+  return saved ? item : null;
 }
 
 export function saveReview(review: ProductReview): void {

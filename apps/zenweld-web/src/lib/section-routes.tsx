@@ -13,12 +13,12 @@ import {
 } from "@/lib/catalog";
 import {
   SITE_NAME,
-  absoluteUrl,
   breadcrumbJsonLd,
   canonical,
   categorySeo,
   groupSeo,
   seoMetadata,
+  socialMetadata,
   type PageSeo,
 } from "@/lib/seo";
 import { pageMetadataFor } from "@/lib/page-meta";
@@ -41,7 +41,7 @@ type CategoryParams = { params: Promise<{ grup: string; kategori: string }> };
 const metadata = (path: string, seo: PageSeo): Metadata => ({
   ...seoMetadata(seo),
   alternates: canonical(path),
-  openGraph: { title: seo.title, description: seo.description, url: absoluteUrl(path) },
+  ...socialMetadata({ title: seo.title, description: seo.description, path }),
 });
 
 /** Konum satirinin arama motoru icin yapisal hali. */

@@ -6,10 +6,26 @@ import { stockPhotos } from "@zenweld/data";
 import { Alert, Button, FormRow, Input } from "@zenweld/ui";
 import { PageHero } from "@/components/common/PageShell";
 import { useT } from "@/lib/i18n-client";
+import { notifyZenweld, reached } from "@/lib/notify";
 
 export default function WeldersClubPage() {
   const t = useT();
   const [joined, setJoined] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", city: "" });
+  const set = (key: keyof typeof form, value: string) => setForm((f) => ({ ...f, [key]: value }));
+
+  // Katilim info@zenweld.com'a e-postayla gider; gitmezse ziyaretciye soylenir.
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setError(false);
+    const result = await notifyZenweld("welders-club", form);
+    setSending(false);
+    if (reached(result)) setJoined(true);
+    else setError(true);
+  };
 
   const benefits = [
     { Icon: Award, label: t.club.benefit1 },
@@ -47,25 +63,20 @@ export default function WeldersClubPage() {
                 </span>
               </Alert>
             ) : (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setJoined(true);
-                }}
-                className="space-y-4"
-              >
+              <form onSubmit={submit} className="space-y-4">
                 <h2 className="font-display text-2xl font-bold uppercase">{t.club.join}</h2>
+                {error && <Alert tone="danger">{t.club.sendError}</Alert>}
                 <FormRow label={t.auth.firstName} required>
-                  <Input required />
+                  <Input required value={form.name} onChange={(e) => set("name", e.target.value)} />
                 </FormRow>
                 <FormRow label={t.auth.email} required>
-                  <Input type="email" required />
+                  <Input type="email" required value={form.email} onChange={(e) => set("email", e.target.value)} />
                 </FormRow>
                 <FormRow label={t.auth.city}>
-                  <Input />
+                  <Input value={form.city} onChange={(e) => set("city", e.target.value)} />
                 </FormRow>
-                <Button type="submit" size="lg" fullWidth>
-                  {t.club.join}
+                <Button type="submit" size="lg" fullWidth disabled={sending}>
+                  {sending ? t.support.sending : t.club.join}
                 </Button>
               </form>
             )}

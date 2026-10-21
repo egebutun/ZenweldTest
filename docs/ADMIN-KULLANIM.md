@@ -398,3 +398,30 @@ Sitedeki **Hakkımızda** sayfasının tamamı buradan yönetilir:
   kullanılabilir. Görseli olan bölümler metin ve görsel yan yana gösterilir.
 - Değişiklikler **Kaydet** ile sayfaya yansır; kaydedilmemiş değişiklik varsa
   uyarı çıkar.
+
+---
+
+## 12. Form e-postaları (info@zenweld.com)
+
+Sitedeki formlar gönderilince **info@zenweld.com**'a e-posta gider. Yanıtla
+dendiğinde e-posta doğrudan formu dolduran kişiye gider.
+
+| Form | Kaydı ayrıca panelde |
+|---|---|
+| İletişim formu | — (yalnızca e-posta) |
+| Bayilik başvurusu | — (yalnızca e-posta) |
+| Welders Club katılım | — (yalnızca e-posta) |
+| Ürün sayfası destek sorusu | — (yalnızca e-posta) |
+| Teklif Al | Teklifler |
+| Servis Talebi | Servis Talepleri |
+| Garanti Kaydı | Garantiler |
+| Ürün yorumu | Yorumlar (onay bekler) |
+| Üye ol | Üyeler |
+| Sipariş | Siparişler (T.C. kimlik no ve kart bilgisi e-postaya yazılmaz) |
+
+- Yalnızca e-postayla giden formlarda e-posta gönderilemezse ziyaretçiye hata
+  gösterilir ve tekrar deneyebilir; panele kaydı olan formlar kaydı yine alır.
+- E-posta için sunucuda `RESEND_API_KEY` tanımlı olmalı (bkz. README). Tanımlı
+  değilse demo adresinde formlar başarılı görünür ama e-posta gitmez.
+- Şifremi unuttum ve bülten aboneliği henüz bir yere gitmiyor (backend ile).
+

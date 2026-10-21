@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const item = news.find((n) => n.slug === slug);
+  const item = news.find((n) => n.active && n.slug === slug);
 
   if (!item) return { title: "Haber" };
 
@@ -35,6 +35,8 @@ export async function generateMetadata({
       publishedTime: item.publishedAt,
       images: [{ url: item.coverUrl, alt: item.title }],
     },
+    // Verilmezse X'te ana sayfanin basligi gorunur (ust duzeyden kalir).
+    twitter: { card: "summary_large_image", title, description, images: [item.coverUrl] },
   };
 }
 
@@ -46,7 +48,7 @@ export default async function NewsDetailPage({
   // Tohum verisinde olmayan slug'lar yonetim panelinden eklenmis olabilir;
   // bu kayitlar yalnizca tarayici deposunda tutulur, bulmayi istemciye birakiyoruz.
   const { slug } = await params;
-  const item = news.find((n) => n.slug === slug);
+  const item = news.find((n) => n.active && n.slug === slug);
 
   if (!item) return <NewsDetail slug={slug} />;
 

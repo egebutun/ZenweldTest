@@ -31,11 +31,13 @@ import {
   useDocumentTitle,
   LegalDocument,
   orderLegalContext,
+  paymentSummary,
   type LegalDocumentKind,
 } from "@/components/shop/LegalDocument";
 import { OrderSummary } from "@/components/shop/OrderSummary";
 import { useCart } from "@/lib/cart";
 import { useT } from "@/lib/i18n-client";
+import { notifyZenweld } from "@/lib/notify";
 import {
   cardBrand,
   cardProgram,
@@ -259,6 +261,24 @@ export default function CheckoutPage() {
 
     const finish = () => {
       const record = order();
+      // Siparis panelde Siparisler'de; info@zenweld.com'a da haber verilir.
+      // T.C. kimlik no ve kart bilgisi e-postaya yazilmaz.
+      const a = record.shippingAddress;
+      const inv = record.invoice;
+      void notifyZenweld("siparis", {
+        code: record.code,
+        customer: record.customerName,
+        email: record.email,
+        phone: record.phone,
+        items: record.items.map(
+          (i) => `${i.quantity} × ${i.productName}${i.variantLabel ? ` (${i.variantLabel})` : ""} — ${formatPrice(i.unitPrice * i.quantity)}`,
+        ),
+        total: formatPrice(record.total),
+        payment: paymentSummary(record.payment, t),
+        shipping: `${a.fullName}, ${a.line}, ${a.district} / ${a.city}`,
+        invoice: inv.type === "corporate" ? `${inv.companyName} — ${inv.taxOffice} / ${inv.taxNumber}` : `Bireysel: ${inv.fullName}`,
+        note: record.customerNote,
+      });
       if (!selectedSaved && saveNew) {
         const { title, ...address } = newAddress;
         addAddress({ ...address, userId: user.id, title: title.trim() || t.checkout.shippingAddress });

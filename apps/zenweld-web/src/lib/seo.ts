@@ -132,6 +132,42 @@ export function pageSeo(seo: SeoFields | undefined, autoTitle: string, autoDescr
 
 export type PageSeo = ReturnType<typeof pageSeo>;
 
+/** Paylasim karti: 1200x630 markali gorsel (scripts/make-brand-images.mjs). */
+export const OG_COVER = { url: "/images/brand/og-cover.png", width: 1200, height: 630, alt: SITE_NAME };
+
+/**
+ * WhatsApp, LinkedIn (Open Graph) ve X (Twitter) onizlemesi. Next ust
+ * duzeyin openGraph/twitter nesnesini birlestirmez, degistirir; bu yuzden
+ * her sayfa gorseli ve site adini kendisi vermeli, yoksa onizlemede gorsel
+ * cikmaz ve X'te ana sayfanin basligi gorunur.
+ */
+export function socialMetadata({
+  title,
+  description,
+  path,
+  image,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  /** Yoksa markali kart */
+  image?: { url: string; alt?: string };
+}): Pick<Metadata, "openGraph" | "twitter"> {
+  const picture = image ?? OG_COVER;
+  return {
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      locale: "tr_TR",
+      title,
+      description,
+      url: absoluteUrl(path),
+      images: [picture],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [picture.url] },
+  };
+}
+
 /** generateMetadata icin baslik, aciklama ve keywords etiketi. */
 export function seoMetadata(seo: PageSeo): Pick<Metadata, "title" | "description" | "keywords"> {
   return {

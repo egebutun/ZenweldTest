@@ -8,7 +8,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = blogPosts.find((p) => p.active !== false && p.slug === slug);
 
   if (!post) return { title: "Yazı" };
 

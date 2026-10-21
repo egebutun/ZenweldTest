@@ -32,6 +32,8 @@ export function DealerMap({
   const layerRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const LRef = useRef<any>(null);
+  /** Haritanin en son cercevelendigi bayi listesi ve konum */
+  const fittedRef = useRef("");
 
   useEffect(() => {
     let cancelled = false;
@@ -118,6 +120,12 @@ export function DealerMap({
       bounds.push([userPosition.lat, userPosition.lng]);
     }
 
+    // Harita yalnizca gosterilen bayiler ya da konum degisince yeniden
+    // cercevelenir. Secim degisince ya da ayni liste yeniden cizilince
+    // ziyaretcinin yakinlastirdigi gorunum korunur.
+    const key = `${dealers.map((d) => d.id).join(",")}|${userPosition ? `${userPosition.lat},${userPosition.lng}` : ""}`;
+    if (key === fittedRef.current) return;
+    fittedRef.current = key;
     if (bounds.length > 1) {
       map.fitBounds(bounds, { padding: [40, 40], maxZoom: 11 });
     } else if (bounds.length === 1) {

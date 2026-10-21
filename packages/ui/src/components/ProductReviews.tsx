@@ -51,6 +51,8 @@ export interface ReviewsTexts {
   errorRating: string;
   errorBody: string;
   errorName: string;
+  /** Kayit basarisiz (orn. dosyalar cok buyuk) */
+  errorSave: string;
 }
 
 export function ProductReviews({
@@ -72,9 +74,16 @@ export function ProductReviews({
     title: string;
     body: string;
     media: ReviewMediaInput[];
-  }) => void;
-  /** Dosya secildiginde cagrilir; kucultme/donusturme cagiranda yapilir. */
-  onPickMedia?: (files: FileList | null, add: (m: ReviewMediaInput) => void) => void;
+  }) => boolean;
+  /**
+   * Dosya secildiginde cagrilir; kucultme/donusturme cagiranda yapilir.
+   * Kabul edilmeyen dosya icin fail(mesaj) formda hata gosterir.
+   */
+  onPickMedia?: (
+    files: FileList | null,
+    add: (m: ReviewMediaInput) => void,
+    fail: (message: string) => void,
+  ) => void;
   /** Gonder dugmesinin ustundeki bilgilendirme (KVKK notu gibi). */
   notice?: ReactNode;
 }) {
@@ -96,7 +105,10 @@ export function ProductReviews({
     if (!name.trim()) return setError(texts.errorName);
     if (!body.trim()) return setError(texts.errorBody);
 
-    onSubmit({ authorName: name.trim(), rating, title: title.trim(), body: body.trim(), media });
+    // Kaydedilemezse form acik kalir; ziyaretci daha kucuk dosyayla deneyebilir.
+    if (!onSubmit({ authorName: name.trim(), rating, title: title.trim(), body: body.trim(), media })) {
+      return setError(texts.errorSave);
+    }
     setSent(true);
     setOpen(false);
     setRating(0);
@@ -195,7 +207,12 @@ export function ProductReviews({
                   multiple
                   className="hidden"
                   onChange={(e) => {
-                    onPickMedia(e.target.files, (m) => setMedia((list) => [...list, m]));
+                    setError(null);
+                    onPickMedia(
+                      e.target.files,
+                      (m) => setMedia((list) => [...list, m]),
+                      (message) => setError(message),
+                    );
                     e.target.value = "";
                   }}
                 />

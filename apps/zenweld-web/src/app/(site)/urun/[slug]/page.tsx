@@ -32,7 +32,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = products.find((p) => p.slug === slug);
+  const product = products.find((p) => p.active && p.slug === slug);
 
   if (!product) {
     return { title: "Ürün bulunamadı" };
@@ -79,7 +79,7 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = products.find((p) => p.slug === slug);
+  const product = products.find((p) => p.active && p.slug === slug);
 
   // Yonetim panelinden eklenen urunler yalnizca tarayicida bulunur; onlar icin
   // yapisal veri uretmeden istemci bilesenini calistiriyoruz.

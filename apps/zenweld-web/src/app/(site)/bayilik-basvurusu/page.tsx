@@ -8,6 +8,8 @@ import { KvkkNotice } from "@/components/legal/LegalLink";
 import { PageHero } from "@/components/common/PageShell";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
+import { postForm, reached } from "@/lib/notify";
+import { useMemberPrefill } from "@/lib/member-prefill";
 
 /**
  * BAYILIK BASVURUSU
@@ -41,6 +43,11 @@ export default function DealerApplicationPage() {
     brands: "",
     message: "",
   });
+  useMemberPrefill(
+    user,
+    (u) => ({ contactName: `${u.firstName} ${u.lastName}`.trim(), email: u.email, phone: u.phone ?? "" }),
+    setForm,
+  );
 
   const set = (key: keyof typeof form, value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -50,18 +57,12 @@ export default function DealerApplicationPage() {
     setError(null);
 
     setSending(true);
-    try {
-      await fetch("/api/bayilik", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-    } catch {
-      /* Aglaa ilgili bir sorun olsa da basvuru sahibini bekletmiyoruz;
-         ucun kendisi hata durumunu zaten raporluyor. */
-    }
+    // Basvurunun kaydi yok, yalnizca e-postayla gider: gitmezse ziyaretci
+    // bilgilendirilir ve tekrar deneyebilir (lib/notify.ts).
+    const result = await postForm("/api/bayilik", form);
     setSending(false);
-    setSent(true);
+    if (reached(result)) setSent(true);
+    else setError(t.dealerApply.sendError);
   };
 
   return (

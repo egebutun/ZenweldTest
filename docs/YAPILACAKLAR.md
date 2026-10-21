@@ -82,18 +82,23 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
 4. **ETBİS kaydı** (Ticaret Bakanlığı e-ticaret bilgi sistemi) ve satıcının
    MERSİS numarası sözleşmelere eklenmeli.
 5. **e-Arşiv / e-Fatura** entegrasyonu (muhasebe yazılımı veya entegratör).
-6. **E-posta bildirimleri**: sipariş onayı + sözleşme kopyası (zorunlu), havale
-   hatırlatması, kargoya verildi, teslim edildi.
-7. **Zamanlanmış iş**: süresi dolan havale siparişlerini iptal eden günlük iş
+6. **Müşteriye e-posta bildirimleri**: sipariş onayı + sözleşme kopyası
+   (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi. (Zenweld'e
+   "yeni sipariş" e-postası bugün de gidiyor.)
+7. **Form e-postaları için Resend kurulumu**: Vercel'de `RESEND_API_KEY` ve
+   doğrulanmış gönderici adresi `SUPPORT_FROM` tanımlanmalı. Tanımlı değilse
+   canlıda yalnızca e-postayla giden formlar (iletişim, bayilik, Welders Club)
+   ziyaretçiye hata gösterir.
+8. **Zamanlanmış iş**: süresi dolan havale siparişlerini iptal eden günlük iş
    (demoda sipariş sayfaları açılınca yapılıyor).
-8. **Kargo entegrasyonu** (isteğe bağlı): takip numarasından takip bağlantısı,
+9. **Kargo entegrasyonu** (isteğe bağlı): takip numarasından takip bağlantısı,
    kargo etiketinin panelden oluşturulması.
-9. **Gerçek kargo ücreti, vade farkı oranları ve IBAN'lar** Mağaza Ayarları'na
+10. **Gerçek kargo ücreti, vade farkı oranları ve IBAN'lar** Mağaza Ayarları'na
    girilmeli (şu an örnek değerler).
-10. **Örnek satış hareketleri silinmeli**: panel grafikleri için üretilen örnek
+11. **Örnek satış hareketleri silinmeli**: panel grafikleri için üretilen örnek
     üye, sipariş, teklif, servis talebi ve garanti kayıtları
     (`packages/data/src/seed/sample-activity.seed.ts` ve `index.ts`'teki çağrısı).
-11. **Ziyaretçi verileri** (ziyaret sayısı, ziyaretten siparişe dönüşüm, sepette
+12. **Ziyaretçi verileri** (ziyaret sayısı, ziyaretten siparişe dönüşüm, sepette
     bırakılan ürünler) için Google Analytics vb. kurulmalı; çerez onayına bağlı yüklenmeli.
 
 ## Bayi ve satıcı stokları — backend
@@ -156,22 +161,21 @@ kararlaştırılacak. Başlıklar:
 
 1. Giriş/yetki yalnızca tarayıcıda (demo) — canlıdan önce sunucu tarafı
    kimlik doğrulama şart
-2. `/api/destek` ve `/api/bayilik` için istek sınırı, uzunluk sınırı ve
-   e-posta doğrulaması yok
+2. `/api/destek`, `/api/bayilik` ve `/api/bildirim` (form e-postaları) için
+   istek sınırı ve bot koruması yok (alan türü ve uzunluk kontrolü var)
 3. KVKK onay kutusu üyelik (`/kayit`) formunda yok
 4. Yayından kaldırılan ürün, haber ve etkinliğin sayfası doğrudan
    adresle hâlâ açılıyor
 5. `createProduct` bazı alanları kopyalamıyor (yukarıdaki not)
-6. Tarayıcı deposu dolunca kayıt başarısız oluyor ama kullanıcıya
-   uyarı gösterilmiyor
+6. Tarayıcı deposu dolunca değişiklik uygulanmıyor; yorum formu kullanıcıyı
+   uyarıyor, diğer formlar uyarmıyor
 7. Arama dizini her sayfa açılışında kuruluyor
 8. Her değişiklikte tüm veritabanı (≈545 KB) yeniden yazılıyor
-9. Yorumlara yüklenen foto/videoda boyut sınırı ve sıkıştırma yok
-10. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
-11. 17 dosyada hâlâ Lorem ipsum var
-12. ESLint kurulu değil, test ve CI yok
-13. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
-14. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
+9. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
+10. 17 dosyada hâlâ Lorem ipsum var
+11. ESLint kurulu değil, test ve CI yok
+12. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
+13. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
 
 ## Çerezler ve yasal metinler
 
@@ -185,7 +189,8 @@ kararlaştırılacak. Başlıklar:
    böyle bir paylaşım henüz yok).
 4. 11 yasal metnin tamamı taslak; hukuk danışmanının metinleri panelden
    (İçerik › Yasal Metinler) girilmeli.
-5. Servis talebi gelince servis ekibine e-posta bildirimi (backend ile).
+5. Servis talepleri info@zenweld.com'a gidiyor; servis ekibinin ayrı bir
+   adresi olacaksa form türüne göre alıcı eklenmeli (`app/api/bildirim`).
 
 ## Teklif Al metinleri — herkese hitap edecek şekilde güncellenecek
 

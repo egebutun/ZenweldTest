@@ -218,7 +218,8 @@ export const tr = {
     reviewTitle: "Başlık",
     reviewBody: "Yorumunuz",
     addMedia: "Fotoğraf / Video Ekle",
-    mediaHint: "Görseller otomatik küçültülür. Video eklerken kısa klipler tercih edin.",
+    mediaHint: "Görseller otomatik küçültülür. Video en fazla 2 MB olabilir; kısa klipler tercih edin.",
+    mediaTooLarge: "\"{name}\" çok büyük. Video en fazla 2 MB olabilir.",
     submit: "Gönder",
     sending: "Gönderiliyor…",
     pending: "Değerlendirmeniz alındı. Yayınlanmadan önce ekibimiz tarafından kontrol edilecek.",
@@ -227,6 +228,7 @@ export const tr = {
     errorRating: "Lütfen puan verin.",
     errorBody: "Lütfen yorumunuzu yazın.",
     errorName: "Lütfen adınızı girin.",
+    errorSave: "Değerlendirmeniz kaydedilemedi; dosyalar çok büyük olabilir. Daha küçük görsel ya da video ile tekrar deneyin.",
     homeTitle: "Müşterilerimiz Ne Diyor?",
     homeSubtitle: "Zenweld kullanan ustaların değerlendirmeleri.",
   },
@@ -252,6 +254,7 @@ export const tr = {
     message: "Eklemek İstedikleriniz",
     sending: "Gönderiliyor…",
     send: "Gönder",
+    sendError: "Başvurunuz şu an iletilemedi. Lütfen tekrar deneyin ya da info@zenweld.com adresine e-posta gönderin.",
     backHome: "Anasayfaya Dön",
     thanksTitle: "Başvurunuz Alındı",
     thanks:
@@ -310,6 +313,8 @@ export const tr = {
     successText:
       "Teklif numaranız {code}. Satış ekibimiz en geç 1 iş günü içinde sizinle iletişime geçecek.",
     emptyList: "Teklif listeniz boş. Ürün sayfalarından ürün ekleyebilirsiniz.",
+    required: "Lütfen firma ve iletişim bilgilerindeki zorunlu alanları doldurun.",
+    invalidEmail: "Lütfen geçerli bir e-posta adresi girin.",
     yourList: "Teklif Listeniz",
     remove: "Çıkar",
   },
@@ -391,6 +396,7 @@ export const tr = {
     registeredAt: "Kayıt Tarihi",
     invalidPostalCode: "Posta kodu 5 haneli olmalıdır.",
     invalidSellerTaxNumber: "Satıcı VKN 10 haneli (şahıs firmalarında 11 haneli) olmalıdır.",
+    duplicateSerial: "Bu seri numarası daha önce kaydedilmiş.",
   },
   club: {
     title: "Welders Club",
@@ -402,6 +408,7 @@ export const tr = {
     benefit4: "Yeni ürünlere erken erişim",
     join: "Kulübe Katıl",
     joined: "Kulüp üyeliğiniz oluşturuldu!",
+    sendError: "Kaydınız şu an alınamadı. Lütfen tekrar deneyin ya da info@zenweld.com adresine e-posta gönderin.",
   },
   footer: {
     legal: "Politikalar & Yasal",
@@ -440,7 +447,9 @@ export const tr = {
     subject: "Konu",
     message: "Mesajınız",
     send: "Gönder",
+    sending: "Gönderiliyor…",
     sent: "Mesajınız alındı. En kısa sürede dönüş yapacağız.",
+    sendError: "Mesajınız şu an gönderilemedi. Lütfen tekrar deneyin ya da info@zenweld.com adresine e-posta gönderin.",
     emailNote: "E-posta adresimiz iki ofis için ortaktır.",
     officesTitle: "Ofislerimiz",
     officesSubtitle:

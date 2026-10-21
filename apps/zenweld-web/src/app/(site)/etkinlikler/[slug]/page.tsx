@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const event = events.find((e) => e.slug === slug);
+  const event = events.find((e) => e.active && e.slug === slug);
 
   if (!event) return { title: "Etkinlik" };
 
@@ -34,6 +34,8 @@ export async function generateMetadata({
       url: absoluteUrl(`/etkinlikler/${event.slug}`),
       images: [{ url: event.images[0] ?? event.logoUrl, alt: event.title }],
     },
+    // Verilmezse X'te ana sayfanin basligi gorunur (ust duzeyden kalir).
+    twitter: { card: "summary_large_image", title, description, images: [event.images[0] ?? event.logoUrl] },
   };
 }
 
@@ -43,7 +45,7 @@ export default async function EventDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const event = events.find((e) => e.slug === slug);
+  const event = events.find((e) => e.active && e.slug === slug);
 
   // Tohum verisinde olmayan slug'lar yonetim panelinden eklenmis olabilir;
   // bu kayitlar yalnizca tarayici deposunda oldugu icin sunucuda bulunamaz.

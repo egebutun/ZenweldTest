@@ -93,10 +93,14 @@ export function DealerFinder({
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const now = useNow();
-  const stockedDealerIds = useMemo(
-    () => (productId ? dealersWithProduct(productId, db, variantId, now.getTime()) : new Set<string>()),
+  // Stok tazeligi saate bagli (useNow dakikada bir ilerler). Liste ancak
+  // icerigi degisince yeni sayilir; yoksa harita her dakika yeniden
+  // cizilip ziyaretcinin yakinlastirdigi gorunum sifirlanirdi.
+  const stockedKey = useMemo(
+    () => (productId ? [...dealersWithProduct(productId, db, variantId, now.getTime())].sort().join(",") : ""),
     [productId, db, variantId, now],
   );
+  const stockedDealerIds = useMemo(() => new Set(stockedKey ? stockedKey.split(",") : []), [stockedKey]);
 
   const cities = useMemo(
     () => Array.from(new Set(listDealers(db).map((d) => d.city))).sort((a, b) => a.localeCompare(b, "tr")),

@@ -8,6 +8,8 @@ import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenw
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { KvkkNotice } from "@/components/legal/LegalLink";
+import { notifyZenweld } from "@/lib/notify";
+import { useMemberPrefill } from "@/lib/member-prefill";
 
 /**
  * GARANTI KAYDI
@@ -34,6 +36,11 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
     sellerTaxNumber: "",
     extended: false,
   });
+  useMemberPrefill(
+    user,
+    (u) => ({ ownerName: `${u.firstName} ${u.lastName}`.trim(), email: u.email, phone: u.phone ?? "", city: u.city ?? "" }),
+    setForm,
+  );
   const [error, setError] = useState<string | null>(null);
 
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
@@ -77,7 +84,21 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
     if (!/^\d{5}$/.test(form.postalCode)) return setError(t.warranty.invalidPostalCode);
     if (!/^\d{10,11}$/.test(form.sellerTaxNumber)) return setError(t.warranty.invalidSellerTaxNumber);
     setError(null);
-    registerWarranty(form);
+    const saved = registerWarranty(form);
+    if (!saved) return setError(t.warranty.duplicateSerial);
+    // Kayit panelde Garantiler'e duser; info@zenweld.com'a da haber verilir.
+    void notifyZenweld("garanti", {
+      productName: models.find((p) => p.id === saved.productId)?.name ?? "",
+      serialNumber: saved.serialNumber,
+      ownerName: saved.ownerName,
+      email: saved.email,
+      phone: saved.phone,
+      city: saved.city,
+      postalCode: saved.postalCode,
+      address: saved.address,
+      sellerTaxNumber: saved.sellerTaxNumber,
+      extended: saved.extended ? "Evet" : "Hayır",
+    });
     setDone(true);
   };
 

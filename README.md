@@ -356,6 +356,22 @@ Adres sırasıyla `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik değişkeni →
 başka bir sunucuda `NEXT_PUBLIC_SITE_URL` tanımlanır. Bu adres aynı zamanda
 sitenin aramaya açılıp açılmayacağını belirler (aşağıya bakın).
 
+### Form e-postaları
+
+Sitedeki formlar (iletişim, bayilik, teklif, servis, garanti, yorum, üyelik,
+sipariş, Welders Club, ürün destek sorusu) **info@zenweld.com**'a Resend
+üzerinden e-posta gönderir (`apps/zenweld-web/src/lib/server/mail.ts`,
+`app/api/bildirim`). Vercel'de tanımlanacak değişkenler:
+
+| Değişken | Açıklama |
+|---|---|
+| `RESEND_API_KEY` | resend.com anahtarı; yoksa e-posta gönderilmez |
+| `SUPPORT_EMAIL` | (isteğe bağlı) alıcı, varsayılan info@zenweld.com |
+| `SUPPORT_FROM` | (isteğe bağlı) doğrulanmış gönderici adresi |
+
+Anahtar yoksa demo adresinde formlar başarılı görünür; canlıda yalnızca
+e-postayla giden formlar ziyaretçiye hata gösterir.
+
 ### Arama motorlarına açık / kapalı
 
 Site **varsayılan olarak arama motorlarına kapalıdır.** Yalnızca gerçek alan

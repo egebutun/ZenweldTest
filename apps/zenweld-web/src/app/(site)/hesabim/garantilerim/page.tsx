@@ -2,7 +2,7 @@
 
 import { Plus, ShieldCheck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { findProductById, useDatabase } from "@zenweld/store";
+import { findProductById, useDatabase, warrantiesForEmail } from "@zenweld/store";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
@@ -14,7 +14,7 @@ export default function MyWarrantiesPage() {
   const db = useDatabase();
 
   if (!user) return null;
-  const records = db.warranties.filter((w) => w.email === user.email);
+  const records = warrantiesForEmail(user.email, db);
 
   if (records.length === 0) {
     return (

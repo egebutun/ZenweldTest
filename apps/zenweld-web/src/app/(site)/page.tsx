@@ -1,5 +1,6 @@
 import { JsonLd } from "@/components/common/JsonLd";
-import { faqJsonLd, organizationJsonLd } from "@/lib/seo";
+import type { Metadata } from "next";
+import { canonical, faqJsonLd, organizationJsonLd } from "@/lib/seo";
 import { ReviewMarquee } from "@/components/home/ReviewMarquee";
 import {
   BlogTeaser,
@@ -13,6 +14,9 @@ import {
   QuoteBanner,
   WhyZenweld,
 } from "@/components/home/HomeSections";
+
+/** Ana sayfanin asil adresi; baslik ve onizleme site duzeninden gelir. */
+export const metadata: Metadata = { alternates: canonical("/") };
 
 export default async function HomePage() {
 

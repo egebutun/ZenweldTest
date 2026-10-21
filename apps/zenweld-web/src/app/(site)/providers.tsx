@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import type { UserRole } from "@zenweld/data";
 import { AuthProvider } from "@zenweld/auth";
 import { CartProvider } from "@/lib/cart";
+import { FavouritesProvider } from "@/lib/favourites";
 import { QuoteListProvider } from "@/lib/quote-list";
 
 /**
@@ -16,7 +17,9 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <AuthProvider roles={SITE_ROLES}>
       <CartProvider>
-        <QuoteListProvider>{children}</QuoteListProvider>
+        <FavouritesProvider>
+          <QuoteListProvider>{children}</QuoteListProvider>
+        </FavouritesProvider>
       </CartProvider>
     </AuthProvider>
   );

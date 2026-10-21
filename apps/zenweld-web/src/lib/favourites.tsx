@@ -1,37 +1,68 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 const STORAGE_KEY = "zenweld.favourites.v1";
 
-/** Favori urunler — kullaniciya ozel degil, tarayiciya ozel (demo). */
-export function useFavourites() {
+interface FavouritesValue {
+  ids: string[];
+  toggle: (id: string) => void;
+  has: (id: string) => boolean;
+}
+
+const FavouritesContext = createContext<FavouritesValue | null>(null);
+
+const parse = (raw: string | null): string[] => {
+  try {
+    const value: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(value) ? value.filter((x): x is string => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Favori urunler — kullaniciya ozel degil, tarayiciya ozel (demo).
+ *
+ * Liste tek yerde tutulur: her kart kendi kopyasini tutsaydi, bir kartta
+ * eklenen favori digerinin kaydiyla silinirdi. Baska sekmedeki degisiklik
+ * de buraya alinir.
+ */
+export function FavouritesProvider({ children }: { children: ReactNode }) {
   const [ids, setIds] = useState<string[]>([]);
 
   useEffect(() => {
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) setIds(JSON.parse(raw) as string[]);
+      setIds(parse(window.localStorage.getItem(STORAGE_KEY)));
     } catch {
       /* yok say */
     }
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEY || event.key === null) setIds(parse(event.newValue));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  const persist = useCallback((next: string[]) => {
-    setIds(next);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    } catch {
-      /* yok say */
-    }
+  const toggle = useCallback((id: string) => {
+    setIds((prev) => {
+      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        /* yok say */
+      }
+      return next;
+    });
   }, []);
 
-  const toggle = useCallback(
-    (id: string) => {
-      persist(ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]);
-    },
-    [ids, persist],
-  );
+  const value = useMemo<FavouritesValue>(() => ({ ids, toggle, has: (id) => ids.includes(id) }), [ids, toggle]);
 
-  return { ids, toggle, has: (id: string) => ids.includes(id) };
+  return <FavouritesContext.Provider value={value}>{children}</FavouritesContext.Provider>;
+}
+
+export function useFavourites(): FavouritesValue {
+  const ctx = useContext(FavouritesContext);
+  if (!ctx) throw new Error("useFavourites, FavouritesProvider içinde kullanılmalıdır.");
+  return ctx;
 }

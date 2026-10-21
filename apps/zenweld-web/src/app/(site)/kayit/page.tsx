@@ -8,6 +8,7 @@ import { Alert, Button, Checkbox, FormRow, Input } from "@zenweld/ui";
 import Link from "next/link";
 import { KvkkNotice, LegalLink } from "@/components/legal/LegalLink";
 import { useT } from "@/lib/i18n-client";
+import { notifyZenweld } from "@/lib/notify";
 
 type AccountType = "individual" | "business";
 
@@ -87,6 +88,16 @@ export default function RegisterPage() {
       setError(result.error ?? "Kayıt oluşturulamadı.");
       return;
     }
+    // Uye panelde Uyeler'de; info@zenweld.com'a da haber verilir.
+    void notifyZenweld("uye", {
+      name: `${input.firstName} ${input.lastName}`.trim(),
+      email: input.email,
+      phone: input.phone,
+      city: input.city,
+      type: type === "business" ? "Kurumsal" : "Bireysel",
+      companyName: input.companyName,
+      newsletter: input.newsletter ? "Evet" : "Hayır",
+    });
 
     router.push("/hesabim");
   };
