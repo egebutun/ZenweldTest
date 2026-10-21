@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Check, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { createQuote, listProducts, useDatabase } from "@zenweld/store";
-import type { PaymentPreference, User } from "@zenweld/data";
+import { productVariantGroup, type PaymentPreference, type Product, type User } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
@@ -34,7 +34,8 @@ export default function QuotePage() {
   const [step, setStep] = useState(1);
   const [code, setCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [addProductId, setAddProductId] = useState("");
+  // "urunId|secenekId" (seceneksiz urunde "urunId|")
+  const [addChoice, setAddChoice] = useState("");
   const bot = useBotTrap();
 
   const [form, setForm] = useState({
@@ -54,8 +55,18 @@ export default function QuotePage() {
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  const quotableProducts = useMemo(
-    () => listProducts(db).filter((p) => p.quotable),
+  // Secenekli urun her secenegiyle ayri satir olarak listelenir; teklif
+  // secenegin kodu ve adiyla gider.
+  const quotableChoices = useMemo(
+    () =>
+      listProducts(db)
+        .filter((p) => p.quotable)
+        .flatMap((p): { value: string; label: string; product: Product; variantId?: string }[] => {
+          const group = productVariantGroup(p, db.optionDefinitions);
+          return group
+            ? group.options.map((o) => ({ value: `${p.id}|${o.id}`, label: `${p.name} — ${o.label} (${o.sku})`, product: p, variantId: o.id }))
+            : [{ value: `${p.id}|`, label: `${p.name} (${p.sku})`, product: p, variantId: undefined }];
+        }),
     [db],
   );
 
@@ -134,6 +145,8 @@ export default function QuotePage() {
       items: quoteList.items.map((i) => ({
         productId: i.productId,
         productName: i.productName,
+        sku: i.sku,
+        variantLabel: i.variantLabel,
         quantity: i.quantity,
       })),
       message: form.message,
@@ -148,7 +161,9 @@ export default function QuotePage() {
       phone: quote.phone,
       taxNumber: quote.taxNumber,
       city: quote.city,
-      items: quote.items.map((i) => `${i.quantity} × ${i.productName}`),
+      items: quote.items.map(
+        (i) => `${i.quantity} × ${i.productName}${i.variantLabel ? ` (${i.variantLabel})` : ""} · ${i.sku}`,
+      ),
       payment:
         quote.paymentPreference === "vadeli"
           ? `${t.quote.vadeli} (${quote.termDays} gün)`
@@ -248,22 +263,28 @@ export default function QuotePage() {
                   <table className="w-full text-sm">
                     <tbody className="divide-y divide-zw-grey-100">
                       {quoteList.items.map((item) => (
-                        <tr key={item.productId}>
-                          <td className="px-4 py-3 font-semibold">{item.productName}</td>
+                        <tr key={item.key}>
+                          <td className="px-4 py-3">
+                            <div className="font-semibold">{item.productName}</div>
+                            <div className="text-xs text-zw-grey-500">
+                              {item.variantLabel && `${item.variantLabel} · `}
+                              {item.sku}
+                            </div>
+                          </td>
                           <td className="w-28 px-4 py-3">
                             <input
                               type="number"
                               min={1}
                               value={item.quantity}
                               onChange={(e) =>
-                                quoteList.setQuantity(item.productId, Number(e.target.value))
+                                quoteList.setQuantity(item.key, Number(e.target.value))
                               }
                               className="w-20 rounded-[3px] border border-zw-grey-300 px-2 py-1"
                             />
                           </td>
                           <td className="w-12 px-4 py-3">
                             <button
-                              onClick={() => quoteList.remove(item.productId)}
+                              onClick={() => quoteList.remove(item.key)}
                               aria-label={t.quote.remove}
                               className="text-zw-grey-400 hover:text-zw-red-600"
                             >
@@ -279,14 +300,14 @@ export default function QuotePage() {
 
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Select
-                  value={addProductId}
-                  onChange={(e) => setAddProductId(e.target.value)}
+                  value={addChoice}
+                  onChange={(e) => setAddChoice(e.target.value)}
                   className="flex-1"
                 >
                   <option value="">{t.quote.addProduct}…</option>
-                  {quotableProducts.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ({p.sku})
+                  {quotableChoices.map((c) => (
+                    <option key={c.value} value={c.value}>
+                      {c.label}
                     </option>
                   ))}
                 </Select>
@@ -294,10 +315,10 @@ export default function QuotePage() {
                   variant="outline"
                   leftIcon={<Plus size={16} />}
                   onClick={() => {
-                    const product = quotableProducts.find((p) => p.id === addProductId);
-                    if (product) {
-                      quoteList.add({ productId: product.id, productName: product.name });
-                      setAddProductId("");
+                    const choice = quotableChoices.find((c) => c.value === addChoice);
+                    if (choice) {
+                      quoteList.add({ productId: choice.product.id, variantId: choice.variantId, productName: choice.product.name });
+                      setAddChoice("");
                     }
                   }}
                 >

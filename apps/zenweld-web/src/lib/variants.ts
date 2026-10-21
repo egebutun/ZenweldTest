@@ -25,7 +25,7 @@ export function activeOption(
   return group && (group.options.find((o) => o.id === selection[group.id]) ?? group.options[0]);
 }
 
-/** Secimin urune uyguladigi sonuc: fiyat, kod, ozellikler. */
+/** Secimin urune uyguladigi sonuc: fiyat, kod, ozellikler, kutu icerigi, fotograf. */
 export function resolveVariant(
   product: Product,
   group: VariantGroupView | undefined,
@@ -38,9 +38,12 @@ export function resolveVariant(
   // indirim yuzdesi ayni kalir.
   const priceExVat = product.priceExVat + (option?.priceDeltaExVat ?? 0);
 
-  // Secenegin kendi satiri ("Hortum Uzunluğu: 4 m") ve farkli degerleri;
-  // ayni etiketli satir varsa degistirilir, yoksa sona eklenir.
-  const specs: SpecRow[] = product.specs.map((row) => ({ ...row }));
+  const sku = option?.sku || product.sku;
+
+  // Urunun koduyla yazilmis satir ("Ürün Kodu") secenegin koduna doner.
+  // Sonra secenegin kendi satiri ("Hortum Uzunluğu: 4 m") ve farkli
+  // degerleri: ayni etiketli satir varsa degistirilir, yoksa sona eklenir.
+  const specs: SpecRow[] = product.specs.map((row) => (row.value.trim() === product.sku ? { ...row, value: sku } : { ...row }));
   if (group && option) {
     for (const override of [{ label: group.label, value: option.label }, ...(option.specOverrides ?? [])]) {
       const i = specs.findIndex((row) => row.label === override.label);
@@ -49,7 +52,16 @@ export function resolveVariant(
     }
   }
 
-  return { priceExVat, specs, sku: option?.sku || product.sku, variantId: option?.id, option };
+  return {
+    priceExVat,
+    specs,
+    sku,
+    inTheBox: option?.inTheBox ?? product.inTheBox,
+    /** Secenegin fotografi; yoksa urunun ilk fotografi */
+    image: option?.image,
+    variantId: option?.id,
+    option,
+  };
 }
 
 /** Secili secenegin okunur hali: "Hortum Uzunluğu: 5 m". Seceneksiz urunde bos. */

@@ -50,7 +50,7 @@ export default function CartPage() {
                 className="h-24 w-24 shrink-0 overflow-hidden rounded-[4px] bg-zw-grey-50"
               >
                 <ProductImage
-                  src={line.product.images[0]?.url}
+                  src={line.image}
                   alt={line.product.name}
                   label={line.product.name}
                   className="h-full w-full object-contain p-2"

@@ -68,8 +68,29 @@ kullanılmaya devam eder.
 }
 ```
 
+**Seçenekli ürün** (ör. 3 m / 5 m torç): seçenek adı ve değerleri
+`options.seed.ts` içindeki ortak tanımdan gelir; kategorinin listeleyeceği
+tanımlar `categories.seed.ts` içinde `optionIds` ile seçilir. Ürünün
+seçenekleri `products.seed.ts` › `PRODUCT_OPTIONS` içine ürün linkiyle yazılır:
+
+```ts
+"mig-torcu-mb36": {
+  optionId: "hortum-uzunlugu",           // options.seed.ts içindeki tanım
+  variants: [
+    { valueId: "3-m", sku: "ZW-TRC-MB36-3", priceDeltaExVat: 0 },
+    // Fiyat farkı KDV hariç; isteğe bağlı: specOverrides, inTheBox, image,
+    // previousSlugs (seçenek önceden ayrı ürünse eski linki)
+    { valueId: "4-m", sku: "ZW-TRC-MB36-4", priceDeltaExVat: 300 },
+  ],
+},
+```
+
+Seçeneğin kodu zorunludur ve başka hiçbir ürün ya da seçenek koduyla aynı
+olmamalıdır.
+
 `stock.seed.ts` her bayi ve satıcı için ürün listesinden **örnek stok üretir**
-(`dealerStock`, `retailerStock`; online mağazası olan bayilerde ürün linkleriyle);
+(`dealerStock`, `retailerStock`; online mağazası olan bayilerde ürün linkleriyle;
+seçenekli üründe seçenek başına);
 tarihler, veritabanının tarayıcıda oluşturulduğu ana göre ayarlanır. Ayrıca bir
 şey yapmanız gerekmez. Gerçek stok koda yazılmaz; bayi ve satıcıların gönderdiği
 dosyalar panelden yüklenir ([STOK.md](STOK.md)).

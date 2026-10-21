@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { productVariantGroup } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 
 /**
@@ -18,20 +19,33 @@ import { useDatabase } from "@zenweld/store";
  * sayfasinda bu listeye ekler; satis ekibi teklifi ayrica hazirlar.
  *
  * Liste tarayicida saklanir. Icindeki bir urun sonradan yayindan
- * kaldirilirsa listede gorunmez ve teklife eklenmez.
+ * kaldirilirsa listede gorunmez ve teklife eklenmez. Secenekli urunde
+ * secenek de saklanir; ayni urunun farkli secenekleri ayri satirdir.
  */
 
 export interface QuoteLineItem {
   productId: string;
+  /** Secenekli urunde secilen secenek (deger kimligi) */
+  variantId?: string;
   productName: string;
   quantity: number;
 }
 
+/** Listedeki satir: kayitli bilgiler ve urunden okunan kod ve secenek adi. */
+export interface QuoteListLine extends QuoteLineItem {
+  key: string;
+  sku: string;
+  /** "Hortum Uzunluğu: 5 m" */
+  variantLabel?: string;
+}
+
+const lineKey = (i: { productId: string; variantId?: string }) => `${i.productId}|${i.variantId ?? ""}`;
+
 interface QuoteListValue {
-  items: QuoteLineItem[];
+  items: QuoteListLine[];
   add: (item: Omit<QuoteLineItem, "quantity">, quantity?: number) => void;
-  remove: (productId: string) => void;
-  setQuantity: (productId: string, quantity: number) => void;
+  remove: (key: string) => void;
+  setQuantity: (key: string, quantity: number) => void;
   clear: () => void;
   count: number;
   has: (productId: string) => boolean;
@@ -44,7 +58,21 @@ export function QuoteListProvider({ children }: { children: ReactNode }) {
   const db = useDatabase();
   const [stored, setItems] = useState<QuoteLineItem[]>([]);
   const items = useMemo(
-    () => stored.filter((i) => db.products.some((p) => p.id === i.productId && p.active)),
+    () =>
+      stored.flatMap((i): QuoteListLine[] => {
+        const product = db.products.find((p) => p.id === i.productId && p.active);
+        if (!product) return [];
+        const group = productVariantGroup(product, db.optionDefinitions);
+        const option = group?.options.find((o) => o.id === i.variantId);
+        return [
+          {
+            ...i,
+            key: lineKey(i),
+            sku: option?.sku ?? product.sku,
+            variantLabel: group && option ? `${group.label}: ${option.label}` : undefined,
+          },
+        ];
+      }),
     [stored, db],
   );
 
@@ -69,10 +97,11 @@ export function QuoteListProvider({ children }: { children: ReactNode }) {
   const add = useCallback<QuoteListValue["add"]>(
     (item, quantity = 1) => {
       setItems((prev) => {
-        const existing = prev.find((i) => i.productId === item.productId);
+        const key = lineKey(item);
+        const existing = prev.find((i) => lineKey(i) === key);
         const next = existing
           ? prev.map((i) =>
-              i.productId === item.productId
+              lineKey(i) === key
                 ? { ...i, quantity: i.quantity + quantity }
                 : i,
             )
@@ -89,21 +118,21 @@ export function QuoteListProvider({ children }: { children: ReactNode }) {
   );
 
   const remove = useCallback(
-    (productId: string) => {
-      persist(items.filter((i) => i.productId !== productId));
+    (key: string) => {
+      persist(stored.filter((i) => lineKey(i) !== key));
     },
-    [items, persist],
+    [stored, persist],
   );
 
   const setQuantity = useCallback(
-    (productId: string, quantity: number) => {
+    (key: string, quantity: number) => {
       persist(
-        items.map((i) =>
-          i.productId === productId ? { ...i, quantity: Math.max(1, quantity) } : i,
+        stored.map((i) =>
+          lineKey(i) === key ? { ...i, quantity: Math.max(1, quantity) } : i,
         ),
       );
     },
-    [items, persist],
+    [stored, persist],
   );
 
   const clear = useCallback(() => persist([]), [persist]);

@@ -228,6 +228,12 @@ function VariantCard({
           </FormRow>
         </div>
 
+        {variant.previousSlugs?.map((slug) => (
+          <p key={slug} className="text-xs text-zw-grey-500">
+            Eski ürün linki <span className="font-mono">/urun/{slug}</span> bu seçenekle açılır.
+          </p>
+        ))}
+
         <details open={extras} className="rounded-[4px] border border-zw-grey-100">
           <summary className="cursor-pointer px-3 py-2 text-sm font-semibold text-zw-grey-700">
             Bu değerde farklı olanlar (isteğe bağlı)
@@ -423,7 +429,8 @@ export function optionsError(draft: Product, definitions: OptionDefinition[], pr
 
 /**
  * Kayit icin toparlar: degersiz secenek kaldirilir, bos satir ve maddeler
- * atilir, urunden silinmis fotograf secimi temizlenir.
+ * atilir, urunden silinmis fotograf secimi temizlenir. Eski ayri urunun
+ * linki (previousSlugs) korunur.
  */
 export function tidyOptions(draft: Product): ProductOptions | undefined {
   const own = draft.options;
@@ -431,7 +438,7 @@ export function tidyOptions(draft: Product): ProductOptions | undefined {
   const images = new Set(draft.images.map((i) => i.url));
   return {
     optionId: own.optionId,
-    variants: own.variants.map(({ valueId, sku, priceDeltaExVat, specOverrides, inTheBox, image }) => {
+    variants: own.variants.map(({ valueId, sku, priceDeltaExVat, specOverrides, inTheBox, image, previousSlugs }) => {
       const specs = (specOverrides ?? [])
         .map((r) => ({ label: r.label.trim(), value: r.value.trim() }))
         .filter((r) => r.label && r.value);
@@ -443,6 +450,7 @@ export function tidyOptions(draft: Product): ProductOptions | undefined {
         ...(specs.length ? { specOverrides: specs } : {}),
         ...(box.length ? { inTheBox: box } : {}),
         ...(image && images.has(image) ? { image } : {}),
+        ...(previousSlugs?.length ? { previousSlugs } : {}),
       };
     }),
   };

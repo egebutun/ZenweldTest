@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { notFound } from "next/navigation";
 import { FileText } from "lucide-react";
 import { productVariantGroup } from "@zenweld/data";
-import { findMovedProduct, findProductBySlug, listProducts, useDatabase } from "@zenweld/store";
+import { findProductBySlug, listProducts, movedProductPath, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
 import Link from "next/link";
 import { OnlineRetailers } from "@/components/product/OnlineRetailers";
@@ -38,8 +38,8 @@ export function ProductPageClient({ slug }: { slug: string }) {
   const [selection, setSelection] = useState<VariantSelection>({});
 
   const product = useMemo(() => findProductBySlug(slug, db), [slug, db]);
-  const moved = useMemo(() => (product ? undefined : findMovedProduct(slug, db)), [product, slug, db]);
-  useMovedRedirect(moved && `/urun/${moved.slug}`);
+  const moved = useMemo(() => (product ? undefined : movedProductPath(slug, db)), [product, slug, db]);
+  useMovedRedirect(moved);
   useSeoTitle(
     product && productSeo(product, db.categories.find((c) => c.slug === product.categorySlug)).title,
   );
@@ -48,6 +48,24 @@ export function ProductPageClient({ slug }: { slug: string }) {
     () => (product ? productVariantGroup(product, db.optionDefinitions) : undefined),
     [product, db],
   );
+
+  // ?secenek=5-m ile gelen link o secenekle acilir (ilk yuklemede bir kez
+  // okunur). Google'a sayfa tek adresle gider (canonical: /urun/...).
+  const linkApplied = useRef(false);
+  useEffect(() => {
+    if (linkApplied.current || !group) return;
+    linkApplied.current = true;
+    const wanted = new URLSearchParams(window.location.search).get("secenek");
+    if (wanted && group.options.some((o) => o.id === wanted)) setSelection({ [group.id]: wanted });
+  }, [group]);
+
+  // Secim adrese de yazilir; kopyalanan link bu secenekle acilir.
+  const choose = (groupId: string, optionId: string) => {
+    setSelection((sel) => ({ ...sel, [groupId]: optionId }));
+    const url = new URL(window.location.href);
+    url.searchParams.set("secenek", optionId);
+    window.history.replaceState(null, "", url);
+  };
 
   const related = useMemo(() => {
     if (!product) return [];
@@ -61,22 +79,24 @@ export function ProductPageClient({ slug }: { slug: string }) {
     notFound();
   }
 
-  // Secilen secenek fiyati, urun kodunu ve teknik ozellikleri
-  // degistirir. Alt bilesenlerin imzasini degistirmemek icin
-  // secimi uygulanmis bir urun nesnesi turetiyoruz. priceExVat secenegin
-  // NORMAL fiyatidir; kampanya indirimi gosterimde uygulanir.
+  // Secilen secenek fiyati, urun kodunu, teknik ozellikleri, kutu
+  // icerigini ve fotografi degistirir. Alt bilesenlerin imzasini
+  // degistirmemek icin secimi uygulanmis bir urun nesnesi turetiyoruz.
+  // priceExVat secenegin NORMAL fiyatidir; kampanya indirimi gosterimde
+  // uygulanir. Yorumlar urunun tumu icindir; secimle degismez.
   const variant = resolveVariant(product, group, selection);
   const shown: typeof product = {
     ...product,
     priceExVat: variant.priceExVat,
     specs: variant.specs,
     sku: variant.sku,
+    inTheBox: variant.inTheBox,
   };
 
   const tabs = [
     { id: "specs", label: t.product.specs },
     { id: "description", label: t.product.description },
-    ...(product.inTheBox.length > 0 ? [{ id: "box", label: t.product.inTheBox }] : []),
+    ...(shown.inTheBox.length > 0 ? [{ id: "box", label: t.product.inTheBox }] : []),
     { id: "warranty", label: t.product.warranty },
     { id: "faq", label: t.product.faqShort },
   ];
@@ -103,7 +123,8 @@ export function ProductPageClient({ slug }: { slug: string }) {
             sag kolon uzun oldugunda fotografin altinda bosluk kalmasini onler. */}
         <div className="grid gap-8 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-8">
           <div className="lg:col-start-1 lg:row-start-1">
-            <ProductGallery product={product} />
+            {/* Secenegin fotografi degisince galeri o fotografla yeniden acilir */}
+            <ProductGallery key={variant.image ?? ""} product={product} initialImage={variant.image} />
           </div>
 
           <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
@@ -122,9 +143,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
             <VariantPicker
               group={group}
               selection={selection}
-              onChange={(groupId, optionId) =>
-                setSelection((sel) => ({ ...sel, [groupId]: optionId }))
-              }
+              onChange={choose}
             />
 
             <PriceBlock product={shown} />
@@ -132,10 +151,10 @@ export function ProductPageClient({ slug }: { slug: string }) {
 
             <div className="mt-6 space-y-3">
               <AddToCart product={product} selection={selection} />
-              <WhereToBuyButton product={shown} variantId={variant.variantId} />
+              <WhereToBuyButton product={shown} variantId={variant.variantId} variantLabel={variant.option?.label} />
             </div>
 
-            <OnlineRetailers product={shown} />
+            <OnlineRetailers product={shown} variantId={variant.variantId} />
             <TrustBadges />
             <SupportCta />
           </div>
@@ -146,7 +165,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
           <div className="py-6">
             {tab === "specs" && <SpecTable product={shown} />}
 
-            {tab === "box" && <InTheBoxList product={product} />}
+            {tab === "box" && <InTheBoxList product={shown} />}
 
             {tab === "description" && (
               <div className="space-y-4 text-sm leading-relaxed text-zw-grey-700">

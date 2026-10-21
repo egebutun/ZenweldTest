@@ -3,31 +3,55 @@
 Kararlaştırılıp ileri bir tarihe bırakılan işler. Bir iş yapıldığında
 buradan silinir.
 
-## Ürün seçenekleri (3 m / 5 m gibi) yönetimi
+## Ürün seçenekleri (3 m / 5 m gibi) — backend
 
-**Yapılıyor (adım adım):** 1) Seçenek Tanımları ve kategori seçimi ✔ 2) ürün
-formunda Seçenekler sekmesi ✔ 3) ürün sayfası, sepet, Teklif Al 4) örnek veriler.
+Panel ve site hazır: Seçenek Tanımları, kategorinin Seçenekler sekmesi, ürünün
+Seçenekler sekmesi, ürün sayfası, sepet, sipariş ve Teklif Al. Veri şimdilik
+tarayıcıda. Örnek olarak MB-25 ve MB-36 MIG torçlarında (Hortum Uzunluğu) ve
+Gaz Nozulu Seti'nde (Paket) var. Gerçek ürünler ve hangilerinin seçenekli
+olduğu belirlenince panelden girilecek.
 
-Backend tabloları (demoda aynı yapı tarayıcıda):
-`option_definitions` (ad), `option_values` (tanım, ad, sıra; tanım içinde ad
-benzersiz), `category_options` (kategori ↔ tanım; yalnızca bağlantı),
-`product_variants` (ürün, değer, benzersiz ürün kodu, fiyat farkı, yalnızca farklı
-olan teknik özellik / kutu içeriği / fotoğraf). Kullanılan değer silinemez
-(yabancı anahtar RESTRICT); sipariş ve teklif satırları o anki seçenek adı ve
-kodunun kopyasını saklar.
-
-Şu an örnek olarak MB-25 MIG Torcu'nda var. Gerçek ürünler (SKU, teknik
-özellikler, açıklama) ve hangi ürünlerin seçenekli olduğu belirlendikten sonra
-panelden girilecek.
+1. **Tablolar:**
+   - `option_definitions`: seçenek adı ("Hortum Uzunluğu"); ad benzersiz.
+   - `option_values`: tanım, ad ("4 m"), sıra; tanım içinde ad benzersiz.
+   - `category_options`: kategori ↔ tanım; yalnızca bağlantı (bu kategorideki
+     ürüne seçenek eklenirken hangi tanımlar listelenir). Kategori ya da tanım
+     silinince bağlantı da silinir (CASCADE).
+   - `products.option_definition_id`: ürünün tek seçeneği; boşsa seçeneksiz.
+   - `product_variants`: ürün, değer, ürün kodu, fiyat farkı (KDV hariç) ve
+     yalnızca farklı olanlar: teknik özellik satırları, kutu içeriği, fotoğraf.
+     (ürün, değer) benzersiz; ürün silinince satırlar da silinir (CASCADE).
+2. **Kurallar (veritabanında da sağlanmalı; bugün panel kontrol ediyor):**
+   - Ürünün değerleri yalnızca kendi tanımından olur
+     (`product_variants` değerinin tanımı = `products.option_definition_id`).
+   - Üründe kullanılan değer ve tanım silinemez (RESTRICT); panel kaç üründe
+     kullanıldığını yazar.
+   - Ürün kodları tek havuzda benzersiz: ürün kodu ve seçenek kodu başka hiçbir
+     ürün ya da seçenek koduyla aynı olamaz. İki tabloya yayıldığı için ortak
+     bir kod tablosu (kod UNIQUE, ürün, seçenek) ya da tetikleyici gerekir.
+     Bayi ve satıcı stok dosyaları bu kodla eşleşir (`buildCodeIndex`).
+   - Değer üründen kaldırılınca o değerin stok satırları (`dealer_stock`,
+     `retailer_stock`) ve kod eşleştirmeleri (`sku_aliases`) aynı işlemde
+     (transaction) silinir (bugün: `saveProduct`). Stok tablolarında
+     `variant_id = ''` ürünün tüm seçenekleri demektir ([STOK.md](STOK.md)).
+3. **Eski linkler:** Ayrı bir ürün seçeneğe dönüştürülünce eski linki
+   `/urun/<ürün>?secenek=<değer>` adresine 301 ile yönlenmeli (örnek:
+   `/urun/mig-torcu-mb25-4m` → `/urun/mig-torcu-mb25?secenek=4-m`). Bunun için
+   SEO bölümündeki `previous_paths` tablosuna seçenek (değer) sütunu eklenir.
+   Demoda tarayıcı yönlendiriyor (`movedProductPath`). Panelde ayrı ürünü
+   seçeneğe dönüştürme ekranı yok; gerekirse eklenecek.
+4. **Sipariş ve teklif:** `order_items` ve `quote_items` o anki ürün adını,
+   seçenek adını ("Hortum Uzunluğu: 5 m") ve kodunu kopya olarak saklar;
+   sonradan ad değişse ya da seçenek silinse de geçmiş kayıt değişmez. Sepet ve
+   teklif listesi ürün ve değer kimliğini tutar.
+5. **Yorumlar** ürüne bağlıdır (`reviews.product_id`); tüm seçenekler aynı
+   yorumları gösterir.
+6. **Sayfa adresi:** `?secenek=` sayfayı yalnızca o seçenekle açar. Canonical
+   adres parametresizdir; site haritasında ürün tek satırdır.
 
 `packages/store/src/repo/products.ts` içindeki `createProduct` yeni ürün
 oluştururken `stockQuantity` alanını kopyalamıyor. Panele bu alan eklendiğinde
 bu fonksiyon da güncellenmeli; yoksa yeni ürünlerde sessizce kaybolur.
-
-Seçeneğin ürün kodu panelde zorunlu ve benzersiz (ürün formu kayıt öncesi
-kontrol ediyor). Backend'de `product_variants.sku` ve ürün kodları için aynı
-benzersizlik veritabanında da sağlanmalı; stok dosyaları bu kodla eşleşir
-(`packages/data/src/stock.ts` → `buildCodeIndex`).
 
 ## Canlı sunucu (hosting) kararı ve Vercel temizliği
 

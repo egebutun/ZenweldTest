@@ -57,7 +57,9 @@ export default function AdminQuotesPage() {
                   sehir: q.city,
                   odeme: PAYMENT_LABEL[q.paymentPreference],
                   vade: q.termDays ?? "",
-                  urunler: q.items.map((i) => `${i.quantity}x ${i.productName}`).join(" | "),
+                  urunler: q.items
+                    .map((i) => `${i.quantity}x ${i.productName}${i.variantLabel ? ` (${i.variantLabel})` : ""}`)
+                    .join(" | "),
                   durum: STATUS.find((s) => s.id === q.status)?.label ?? q.status,
                   tarih: q.createdAt,
                 })),
@@ -145,6 +147,8 @@ export default function AdminQuotesPage() {
                         {q.items.map((i, idx) => (
                           <li key={idx}>
                             {i.quantity} × {i.productName}
+                            {i.variantLabel && <span className="text-zw-grey-500"> — {i.variantLabel}</span>}
+                            {i.sku && <span className="text-xs text-zw-grey-400"> ({i.sku})</span>}
                           </li>
                         ))}
                       </ul>

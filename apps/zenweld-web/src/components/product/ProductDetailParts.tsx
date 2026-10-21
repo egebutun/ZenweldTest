@@ -34,9 +34,16 @@ import { formatDateTime, formatPrice, priceWithVat } from "@zenweld/utils";
 
 /* ---------------------------------------------------------------- */
 
-export function ProductGallery({ product }: { product: Product }) {
+export function ProductGallery({
+  product,
+  /** Secili secenegin fotografi; galeri bu fotografla acilir */
+  initialImage,
+}: {
+  product: Product;
+  initialImage?: string;
+}) {
   const images = product.images.length > 0 ? product.images : [{ url: "", alt: product.name }];
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => Math.max(0, images.findIndex((img) => img.url === initialImage)));
 
   return (
     <div className="grid gap-3">
@@ -256,9 +263,12 @@ export function WhereToBuyButton({
   product,
   /** Secili urun secenegi; bayi listesi buna gore filtrelenir. */
   variantId,
+  /** Secili secenegin adi (orn. "5 m"); listenin basliginda urun adinin yaninda */
+  variantLabel,
 }: {
   product: Product;
   variantId?: string;
+  variantLabel?: string;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -278,7 +288,7 @@ export function WhereToBuyButton({
       <Modal open={open} onClose={() => setOpen(false)} title={t.dealers.title} size="full">
         <DealerFinder
           productId={product.id}
-          productName={product.name}
+          productName={variantLabel ? `${product.name} (${variantLabel})` : product.name}
           variantId={variantId}
           compact
         />

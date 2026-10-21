@@ -110,6 +110,8 @@ export interface ProductVariant {
   inTheBox?: string[];
   /** Bossa urunun fotograflari */
   image?: string;
+  /** Secenek onceden ayri bir urunken kullanilan linkler; bu secenekle acilir */
+  previousSlugs?: string[];
 }
 
 export interface ProductOptions {
@@ -399,6 +401,10 @@ export type PaymentPreference = "vadeli" | "cek" | "havale" | "belirsiz";
 export interface QuoteItem {
   productId: string;
   productName: string;
+  /** Teklif anindaki urun kodu (secenekli urunde secenegin kodu) */
+  sku?: string;
+  /** Teklif anindaki secenek, orn. "Hortum Uzunluğu: 5 m" */
+  variantLabel?: string;
   quantity: number;
   note?: string;
 }
@@ -446,7 +452,7 @@ export interface OrderItem {
   productId: string;
   productName: string;
   sku: string;
-  /** Secili secenekler, orn. "Torç Uzunluğu: 5 m" */
+  /** Secili secenek, orn. "Hortum Uzunluğu: 5 m" */
   variantLabel?: string;
   quantity: number;
   /** Siparis anindaki birim fiyat (KDV haric, indirim uygulanmis) */

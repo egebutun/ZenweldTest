@@ -620,9 +620,9 @@ const accessorySeeds: AccessorySeed[] = [
   { slug: "kaynak-eldiveni-pro", sku: "ZW-GLV-PRO", name: "Pro Kaynak Eldiveni", section: "guvenlik", categorySlug: "kaynak-eldivenleri", price: 480, photo: stockPhotos.toolsFlatlay, short: "Sığır derisi, kevlar dikişli, ısıya dayanıklı kaynak eldiveni.", highlights: ["Sığır derisi, kevlar dikiş", "Isıya ve kıvılcıma dayanıklı", "Astarlı, uzun manşetli"] },
   { slug: "kaynak-onlugu-deri", sku: "ZW-APR-01", name: "Deri Kaynak Önlüğü", section: "guvenlik", categorySlug: "kaynak-onlukleri", price: 890, photo: stockPhotos.industrialShop, short: "Kıvılcıma ve ısıya dayanıklı tam boy deri kaynak önlüğü.", highlights: ["Tam boy deri koruma", "Ayarlanabilir omuz askısı", "Kıvılcım ve cüruf geçirmez"] },
   { slug: "mig-torcu-mb25", sku: "ZW-TRC-MB25", name: "MB-25 MIG Torcu", section: "aksesuarlar", categorySlug: "mig-torclari", price: 1650, photo: stockPhotos.toolsFlatlay, short: "250A kapasiteli, Euro bağlantılı MIG kaynak torcu. 3, 4 ve 5 metre seçenekleriyle.", highlights: ["250 A / %60 devrede kalma", "Euro bağlantılı hortum", "Yaygın sarf malzeme bulunabilirliği"] },
-  { slug: "mig-torcu-mb36", sku: "ZW-TRC-MB36", name: "MB-36 MIG Torcu 4m", section: "aksesuarlar", categorySlug: "mig-torclari", price: 2350, photo: stockPhotos.workshop, short: "350A kapasiteli, 4 metre ağır hizmet MIG kaynak torcu.", highlights: ["350 A ağır hizmet kapasitesi", "4 m uzun erişim", "Kalın kesitte sürekli kaynak"] },
+  { slug: "mig-torcu-mb36", sku: "ZW-TRC-MB36", name: "MB-36 MIG Torcu", section: "aksesuarlar", categorySlug: "mig-torclari", price: 2050, photo: stockPhotos.workshop, short: "350A kapasiteli, ağır hizmet MIG kaynak torcu. 3 ve 4 metre seçenekleriyle.", highlights: ["350 A ağır hizmet kapasitesi", "3 m ve 4 m hortum seçenekleri", "Kalın kesitte sürekli kaynak"] },
   { slug: "tig-torcu-wp26", sku: "ZW-TRC-WP26", name: "WP-26 TIG Torcu 4m", section: "aksesuarlar", categorySlug: "tig-torclari", price: 1980, photo: stockPhotos.metalWork, short: "Hava soğutmalı, 200A kapasiteli 4 metre TIG kaynak torcu.", highlights: ["200 A hava soğutmalı", "4 m esnek hortum paketi", "Standart WP-26 sarf uyumu"] },
-  { slug: "gaz-nozulu-seti", sku: "ZW-NZL-SET", name: "Gaz Nozulu Seti (10'lu)", section: "aksesuarlar", categorySlug: "mig-torc-sarf-malzemeleri", price: 420, photo: stockPhotos.toolsFlatlay, short: "MB-25 uyumlu 10 adetlik gaz nozulu seti.", highlights: ["MB-25 torçlarla uyumlu", "10 adetlik ekonomik paket", "Bakır gövde, uzun ömür"] },
+  { slug: "gaz-nozulu-seti", sku: "ZW-NZL-SET", name: "Gaz Nozulu Seti", section: "aksesuarlar", categorySlug: "mig-torc-sarf-malzemeleri", price: 420, photo: stockPhotos.toolsFlatlay, short: "MB-25 uyumlu gaz nozulu seti. 10'lu ve 20'li paket seçenekleriyle.", highlights: ["MB-25 torçlarla uyumlu", "10'lu ve 20'li paket seçenekleri", "Bakır gövde, uzun ömür"] },
   { slug: "kontak-meme-seti", sku: "ZW-TIP-SET", name: "Kontak Meme Seti M6 (20'li)", section: "aksesuarlar", categorySlug: "mig-torc-sarf-malzemeleri", price: 380, photo: stockPhotos.workshop, short: "0.8 / 1.0 / 1.2 mm ölçülerinde 20 adetlik kontak meme seti.", highlights: ["0.8 / 1.0 / 1.2 mm karışık", "M6 diş, MB-25 uyumlu", "20 adetlik paket"] },
   { slug: "gazalti-teli-sg2-08", sku: "ZW-WIRE-SG208", name: "SG2 Gazaltı Teli 0.8 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "karbonlu-celik-mig-telleri", price: 1450, photo: stockPhotos.metalWork, short: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", highlights: ["Bakır kaplı SG2 kalite", "0.8 mm, 15 kg makara", "Düşük sıçrantı, düzgün dikiş"] },
   { slug: "gazalti-teli-sg2-10", sku: "ZW-WIRE-SG210", name: "SG2 Gazaltı Teli 1.0 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "karbonlu-celik-mig-telleri", price: 1420, photo: stockPhotos.factoryLine, short: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", highlights: ["Bakır kaplı SG2 kalite", "1.0 mm, 15 kg makara", "Kalın kesitte yüksek verim"] },
@@ -639,8 +639,8 @@ const accessorySeeds: AccessorySeed[] = [
 /* listesiyle degistirilmeli veya silinmelidir.                        */
 /*                                                                     */
 /* Kategori dagilimi (menu testi icin):                                 */
-/*   MIG > MIG Torclari        12 urun  -> "Tumunu Gor (12)" cikar      */
-/*   MIG > Sarf Malzemeleri     9 urun  -> tam 3x3, sayi cikmaz         */
+/*   MIG > MIG Torclari        14 urun  -> "Tumunu Gor (14)" cikar      */
+/*   MIG > Sarf Malzemeleri    12 urun  -> "Tumunu Gor (12)" cikar      */
 /*   MIG > Yedek Parca          5 urun  -> ikinci satir yarim           */
 /* ------------------------------------------------------------------ */
 
@@ -655,12 +655,6 @@ const demoAccessories: Demo[] = [
   ["mig-torcu-mb24", "ZW-TRC-MB24", "MB-24 MIG Torcu 3m", "mig-torclari", 1320,
     "250A kapasiteli, Euro bağlantılı 3 metre MIG torcu.",
     "Euro bağlantı standardı", "250 A / %60 devrede kalma", "Yaygın sarf bulunabilirliği"],
-  ["mig-torcu-mb25-4m", "ZW-TRC-MB25-4", "MB-25 MIG Torcu 4m", "mig-torclari", 1890,
-    "250A kapasiteli, 4 metre uzun erişimli MIG torcu.",
-    "4 m ile geniş çalışma alanı", "MB-25 sarf uyumu", "Ergonomik kavrama kulpu"],
-  ["mig-torcu-mb36-3m", "ZW-TRC-MB36-3", "MB-36 MIG Torcu 3m", "mig-torclari", 2050,
-    "350A kapasiteli, ağır hizmet 3 metre MIG torcu.",
-    "Kalın kesitte sürekli kaynak", "350 A ağır hizmet", "Güçlendirilmiş hortum paketi"],
   ["mig-torcu-mb38", "ZW-TRC-MB38", "MB-38 MIG Torcu 4m", "mig-torclari", 2680,
     "400A kapasiteli, endüstriyel kullanım için 4 metre MIG torcu.",
     "400 A endüstriyel kapasite", "Güçlendirilmiş hortum paketi", "Uzun ömürlü kontak meme yuvası"],
@@ -881,18 +875,37 @@ products.forEach((p) => {
 /* ------------------------------------------------------------------ */
 /* Secenekli urunler (varyantlar)                                      */
 /*                                                                     */
-/* Ornek: MB-25 MIG torcu 3 / 4 / 5 m secenekleriyle satiliyor. Secenek */
-/* adi ve degerleri ortak tanimdan gelir (options.seed.ts: Hortum       */
-/* Uzunluğu); "Hortum Uzunluğu" teknik satiri secimden kendiliginden     */
-/* olusur. Bayi bulunurlugu secenek bazli tutulur (bkz. stock.seed.ts). */
+/* Ornek: MB-25 (3 / 4 / 5 m) ve MB-36 (3 / 4 m) MIG torclari, Gaz      */
+/* Nozulu Seti (10'lu / 20'li). Secenek adi ve degerleri ortak tanimdan */
+/* gelir (options.seed.ts); "Hortum Uzunluğu: 4 m" gibi teknik satir    */
+/* secimden kendiliginden olusur. Bayi ve satici stogu secenek bazli    */
+/* tutulur (bkz. stock.seed.ts).                                        */
+/*                                                                     */
+/* "MB-25 MIG Torcu 4m" ve "MB-36 MIG Torcu 3m" onceden ayri urundu;    */
+/* eski linkleri (previousSlugs) ilgili secenekle acilir.               */
 /* ------------------------------------------------------------------ */
 const PRODUCT_OPTIONS: Record<string, ProductOptions> = {
   "mig-torcu-mb25": {
     optionId: "hortum-uzunlugu",
     variants: [
       { valueId: "3-m", sku: "ZW-TRC-MB25-3", priceDeltaExVat: 0, specOverrides: [{ label: "Ağırlık", value: "1,9 kg" }] },
-      { valueId: "4-m", sku: "ZW-TRC-MB25-4", priceDeltaExVat: 240, specOverrides: [{ label: "Ağırlık", value: "2,3 kg" }] },
+      { valueId: "4-m", sku: "ZW-TRC-MB25-4", priceDeltaExVat: 240, specOverrides: [{ label: "Ağırlık", value: "2,3 kg" }], previousSlugs: ["mig-torcu-mb25-4m"] },
       { valueId: "5-m", sku: "ZW-TRC-MB25-5", priceDeltaExVat: 460, specOverrides: [{ label: "Ağırlık", value: "2,7 kg" }] },
+    ],
+  },
+  "mig-torcu-mb36": {
+    optionId: "hortum-uzunlugu",
+    variants: [
+      { valueId: "3-m", sku: "ZW-TRC-MB36-3", priceDeltaExVat: 0, specOverrides: [{ label: "Ağırlık", value: "2,4 kg" }], previousSlugs: ["mig-torcu-mb36-3m"] },
+      { valueId: "4-m", sku: "ZW-TRC-MB36-4", priceDeltaExVat: 300, specOverrides: [{ label: "Ağırlık", value: "2,9 kg" }] },
+    ],
+  },
+  // 20'li paketin fiyati ornektir; panelden degistirilir.
+  "gaz-nozulu-seti": {
+    optionId: "paket",
+    variants: [
+      { valueId: "10-lu", sku: "ZW-NZL-SET-10", priceDeltaExVat: 0, inTheBox: ["10 x Gaz nozulu"] },
+      { valueId: "20-li", sku: "ZW-NZL-SET-20", priceDeltaExVat: 380, inTheBox: ["20 x Gaz nozulu"] },
     ],
   },
 };

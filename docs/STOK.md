@@ -189,19 +189,23 @@ WHERE ds.product_id = $1 AND ds.quantity > 0
   AND ($3 = '' OR ds.variant_id IN ('', $3))
   AND ($2 = 0 OR ds.updated_at > now() - make_interval(days => $2));
 
--- Online satıcı kartları: online satıcılar + online mağazası olan bayiler
-SELECT rs.retailer_id, rs.url FROM retailer_stock rs
+-- Online satıcı kartları: online satıcılar + online mağazası olan bayiler;
+-- $3 = seçili seçenek ya da ''
+SELECT rs.retailer_id, rs.variant_id, rs.url FROM retailer_stock rs
 JOIN retailers r ON r.id = rs.retailer_id AND r.active
 WHERE rs.product_id = $1 AND rs.quantity > 0 AND rs.url IS NOT NULL
+  AND ($3 = '' OR rs.variant_id IN ('', $3))
   AND ($2 = 0 OR rs.updated_at > now() - make_interval(days => $2))
   AND NOT EXISTS (SELECT 1 FROM dealers d WHERE d.retailer_id = rs.retailer_id)
 UNION ALL
-SELECT d.retailer_id, ds.url FROM dealer_stock ds
+SELECT d.retailer_id, ds.variant_id, ds.url FROM dealer_stock ds
 JOIN dealers d ON d.id = ds.dealer_id AND d.active
 JOIN retailers r ON r.id = d.retailer_id AND r.active
 WHERE ds.product_id = $1 AND ds.quantity > 0 AND ds.url IS NOT NULL
+  AND ($3 = '' OR ds.variant_id IN ('', $3))
   AND ($2 = 0 OR ds.updated_at > now() - make_interval(days => $2));
--- Aynı mağaza birden fazla satırda gelebilir (seçenekler); mağaza başına bir kart.
+-- Aynı mağaza birden fazla satırda gelebilir (seçenekler); mağaza başına bir
+-- kart. Kart, seçili seçeneğin kendi satırının linkine gider ('' satırı yedek).
 ```
 
 ### API uçları

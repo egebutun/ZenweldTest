@@ -122,15 +122,28 @@ function onlineStock(
   return filter.retailerId ? result.filter((r) => r.retailer.id === filter.retailerId) : result;
 }
 
-/** Urunu stokta tutan (adet > 0, guncel, linkli) aktif online saticilar; kendi magazamiz basta. */
+/**
+ * Urunu stokta tutan (adet > 0, guncel, linkli) aktif online saticilar;
+ * kendi magazamiz basta. variantId verilirse yalnizca o secenegi
+ * bulunduranlar; secenek belirtilmemis kayitlar urunun tumu icin gecerlidir.
+ */
 export function retailersInStockFor(
   productId: string,
   db: ZenweldDatabase = getSnapshot(),
   now: number = Date.now(),
+  variantId?: string,
 ): RetailerInStock[] {
-  // Ayni magaza birden fazla satirda (secenekler) olabilir; bir kez gosterilir.
+  // Ayni magaza birden fazla satirda (secenekler) olabilir; bir kez
+  // gosterilir. Kart secenegin kendi satirinin linkine gider.
   const byRetailer = new Map<string, RetailerInStock>();
-  onlineStock(db, now, { productId }).forEach((r) => byRetailer.has(r.retailer.id) || byRetailer.set(r.retailer.id, r));
+  onlineStock(db, now, { productId })
+    .filter((r) => !variantId || !r.stock.variantId || r.stock.variantId === variantId)
+    .forEach((r) => {
+      const seen = byRetailer.get(r.retailer.id);
+      if (!seen || (variantId && r.stock.variantId === variantId && seen.stock.variantId !== variantId)) {
+        byRetailer.set(r.retailer.id, r);
+      }
+    });
   return [...byRetailer.values()]
     .sort((a, b) =>
       a.retailer.isOwnStore !== b.retailer.isOwnStore
@@ -178,8 +191,9 @@ export function lastStockUpdate(
   productId: string,
   db: ZenweldDatabase = getSnapshot(),
   now: number = Date.now(),
+  variantId?: string,
 ): string | undefined {
-  return retailersInStockFor(productId, db, now)
+  return retailersInStockFor(productId, db, now, variantId)
     .map((r) => r.stock.updatedAt)
     .sort()
     .pop();

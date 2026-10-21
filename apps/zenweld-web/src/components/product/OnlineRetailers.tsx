@@ -11,21 +11,35 @@ import { formatDate } from "@zenweld/utils";
 /**
  * "Ayrica online alisveris olarak surada da mevcuttur"
  *
- * ONEMLI: Bu liste urune ozeldir. Yalnizca o urunu STOKTA TUTAN saticilar
- * gosterilir (adet > 0, stok dosyasi panelde ayarlanan gunden eski degil ve
- * urun linki var). Online magazasi olan bayiler de burada; stoklari bayinin
+ * ONEMLI: Bu liste urune (secenekli urunde secili secenege) ozeldir.
+ * Yalnizca o urunu STOKTA TUTAN saticilar gosterilir (adet > 0, stok
+ * dosyasi panelde ayarlanan gunden eski degil ve urun linki var). Online
+ * magazasi olan bayiler de burada; stoklari bayinin
  * dosyasindan gelir. Kart, urunun saticinin sitesindeki sayfasina gider.
  * Stok yonetim panelinden (/yonetim/stok) guncellenir. Saticinin fiyati ve
  * adedi gosterilmez.
  */
-export function OnlineRetailers({ product }: { product: Product }) {
+export function OnlineRetailers({
+  product,
+  /** Secili urun secenegi; yalnizca o secenegi stokta tutan saticilar gosterilir. */
+  variantId,
+}: {
+  product: Product;
+  variantId?: string;
+}) {
   const t = useT();
   const db = useDatabase();
   const [expanded, setExpanded] = useState(false);
   const now = useNow();
 
-  const inStock = useMemo(() => retailersInStockFor(product.id, db, now.getTime()), [product.id, db, now]);
-  const updatedAt = useMemo(() => lastStockUpdate(product.id, db, now.getTime()), [product.id, db, now]);
+  const inStock = useMemo(
+    () => retailersInStockFor(product.id, db, now.getTime(), variantId),
+    [product.id, db, now, variantId],
+  );
+  const updatedAt = useMemo(
+    () => lastStockUpdate(product.id, db, now.getTime(), variantId),
+    [product.id, db, now, variantId],
+  );
 
   if (inStock.length === 0) {
     return (

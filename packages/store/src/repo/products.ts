@@ -35,9 +35,20 @@ export function visibleProducts(
     .filter((p): p is Product => Boolean(p?.active));
 }
 
-/** Adresi degismis urun: eski adresle gelen ziyaretci yeni adrese yonlendirilir. */
-export function findMovedProduct(slug: string, db: ZenweldDatabase = getSnapshot()): Product | undefined {
-  return findMoved(listProducts(db), slug);
+/**
+ * Eski urun linkinin yeni adresi: linki degisen urun ya da bir urunun
+ * secenegine donusen eski urun (orn. /urun/mig-torcu-mb25-4m ->
+ * /urun/mig-torcu-mb25?secenek=4-m). Eski link yoksa undefined.
+ */
+export function movedProductPath(slug: string, db: ZenweldDatabase = getSnapshot()): string | undefined {
+  const products = listProducts(db);
+  const moved = findMoved(products, slug);
+  if (moved) return `/urun/${moved.slug}`;
+  for (const p of products) {
+    const variant = p.options?.variants.find((v) => v.previousSlugs?.includes(slug));
+    if (variant) return `/urun/${p.slug}?secenek=${encodeURIComponent(variant.valueId)}`;
+  }
+  return undefined;
 }
 
 export function findProductById(

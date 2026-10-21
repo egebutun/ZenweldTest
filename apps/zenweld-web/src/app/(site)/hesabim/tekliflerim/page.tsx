@@ -50,6 +50,7 @@ export default function MyQuotesPage() {
             {q.items.map((item, i) => (
               <li key={i}>
                 {item.quantity} × {item.productName}
+                {item.variantLabel && <span className="text-zw-grey-500"> — {item.variantLabel}</span>}
               </li>
             ))}
           </ul>

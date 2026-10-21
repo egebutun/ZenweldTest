@@ -38,6 +38,8 @@ export interface CartLine {
   selection: VariantSelection;
   variantLabel?: string;
   sku: string;
+  /** Secenegin fotografi, yoksa urunun ilk fotografi */
+  image?: string;
   quantity: number;
   unitExVat: number;
   unitIncVat: number;
@@ -140,6 +142,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             selection: s.selection,
             variantLabel: variantLabel(group, s.selection),
             sku: variant.sku,
+            image: variant.image ?? product.images[0]?.url,
             quantity: s.quantity,
             unitExVat,
             unitIncVat,

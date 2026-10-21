@@ -119,6 +119,26 @@ Yeni ürünün Sırası boş bırakılırsa kategorinin sonuna eklenir.
 - 🗑 değeri üründen kaldırır; kaydedince o değerin bayi ve satıcı stok kayıtları
   da silinir. **Seçeneği Kaldır** seçeneği tüm değerleriyle kaldırır (onay
   sorulur). Hiç değer eklenmemiş seçenek kaydedilmez.
+- Değer kartında "Eski ürün linki … bu seçenekle açılır" yazıyorsa, bu seçenek
+  önceden ayrı bir üründü (ör. "MB-25 MIG Torcu 4m"); eski link bu seçenekle
+  açılır. Değer üründen kaldırılırsa bu yönlendirme de kalkar.
+- Ayrı bir ürünü seçeneğe dönüştürmek için önce ayrı ürün silinir (kodu boşa
+  çıksın), sonra ana ürüne değer eklenir. Silinen ürünün eski linkinin seçeneğe
+  yönlenmesi şimdilik panelden kurulamaz.
+
+**Sitede seçenekli ürün:**
+- Ürün sayfasında seçenek seçilince fiyat, ürün kodu (üstte ve Teknik
+  Özellikler tablosunda), teknik özellikler, kutu içeriği ve fotoğraf değişir.
+  Tablodaki kod satırı, ürünün koduyla yazılmış satırdır (ör. "Ürün Kodu").
+- **Stoktaki Bayileri Gör** ve online satıcı kartları seçilen seçeneğe göre
+  listelenir: yalnızca o seçeneği stokta tutanlar (ürünün tüm seçenekleri için
+  verilmiş stok kaydı da sayılır). Kart, satıcının o seçeneğe ait sayfasına gider.
+- Yorumlar ürünün tümü içindir; seçenek değişince değişmez.
+- Seçim adrese yazılır (`/urun/mig-torcu-mb25?secenek=5-m`); bu link o seçenekle
+  açılır. Google'a sayfa tek adresle gider.
+- Sepette, siparişte ve Teklif Al'da seçenek adı ve kodu görünür. Sipariş ve
+  teklif, o anki seçenek adını ve kodunu saklar; sonradan değişse de geçmiş
+  kayıt değişmez.
 
 **Ürün adı:** Ürün adına marka ("Zenweld") yazılmaz; sayfa başlığına
 "| ZENWELD" otomatik eklenir.
@@ -235,6 +255,9 @@ yoktur; sitede her ürün her zaman satıştadır. Ayrıntılar ve dosya biçimi
   - **Geçmiş:** yüklemeler ve elle düzeltmeler, yapanın adıyla. Son yükleme
     **Bu yüklemeyi geri al** ile geri alınır.
   - **Şablon İndir:** bizim SKU'larımızla dolu CSV; bayiye gönderilip doldurtulabilir.
+    Seçenekli ürünlerde her seçenek kendi koduyla ayrı satırdır (ör. MB-25 3 m /
+    4 m / 5 m); dosyadaki seçenek kodu stoğu o seçeneğe yazar, ürünün ana kodu
+    tüm seçenekler için geçerli sayılır.
 - **Ürün Bazında** sekmesi — bir ürünün hangi bayide/satıcıda kaç adet olduğu ve
   sitede görünüp görünmediği. Yalnızca görüntüleme; düzeltme kaynak sayfasından.
 
@@ -245,7 +268,8 @@ ayrıca o mağazanın online satıcı kartında görünür. Mağaza listede ayr�
 
 Sitede adet ve fiyat gösterilmez. Ürün sayfasında yalnızca stoğu olan bayiler ve
 online satıcılar listelenir; online satıcı kartı dosyadaki ürün linkine gider, linki
-olmayan ürün online kartta görünmez.
+olmayan ürün online kartta görünmez. Seçenekli üründe ikisi de seçilen seçeneğe göre
+listelenir.
 
 ---
 
@@ -357,7 +381,8 @@ görünür.
 
 Teklif kartına tıklayınca detay açılır:
 
-- Sol: firma bilgileri, istenen ürünler, müşteri notu
+- Sol: firma bilgileri, istenen ürünler (seçenekli üründe seçenek ve kodu,
+  ör. "MB-25 MIG Torcu — Hortum Uzunluğu: 5 m (ZW-TRC-MB25-5)"), müşteri notu
 - Sağ: durum (Yeni → İnceleniyor → Teklif Gönderildi → Kazanıldı/Kapandı),
   atanan satış temsilcisi, iç not, **E-posta Gönder** butonu. Temsilci ve iç not
   alandan çıkınca kaydedilir.
