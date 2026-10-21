@@ -12,6 +12,25 @@ export type TopLevelSection =
   | "aksesuarlar"
   | "dolgu-metalleri";
 
+/**
+ * Kategorinin secenek havuzundaki bir secenek (panelde Kategoriler ›
+ * Seçenekler): adi ve sirali degerleri. Bu kategorideki urunlere secenek
+ * eklenirken degerler buradan secilir; ayni deger her urunde ayni yazilir.
+ */
+export interface OptionDefinition {
+  id: string;
+  /** Orn. "Hortum Uzunluğu", "Paket" */
+  name: string;
+  values: OptionValue[];
+}
+
+export interface OptionValue {
+  /** Degerin ilk adindan uretilir ve degismez (urunler bu kimlige baglanir) */
+  id: string;
+  /** Orn. "4 m", "10'lu" */
+  label: string;
+}
+
 export interface Category {
   id: string;
   /** Kategori tablosundaki numara (or. "1.2.3"). */
@@ -28,6 +47,8 @@ export interface Category {
   order: number;
   /** Sayfanin altindaki tanitim metni ("... Hakkinda"); bossa gosterilmez */
   aboutText?: string;
+  /** Secenek havuzu: bu kategorideki urunlerin secenekleri buradan secilir */
+  options?: OptionDefinition[];
   seo?: SeoFields;
   /** Eski adresleri (tam yol): link, grup veya grubun linki degisince yeni adrese yonlenir */
   previousPaths?: string[];

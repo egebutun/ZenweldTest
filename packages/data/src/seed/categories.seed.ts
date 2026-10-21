@@ -119,6 +119,18 @@ export const categories: Category[] = [
     image: img("mig-torclari"),
     name: "MIG Torçları",
     description: "Euro bağlantılı MIG kaynak torçları ve torç setleri.",
+    options: [
+      {
+        id: "hortum-uzunlugu",
+        name: "Hortum Uzunluğu",
+        values: [
+          { id: "3-m", label: "3 m" },
+          { id: "4-m", label: "4 m" },
+          { id: "5-m", label: "5 m" },
+          { id: "10-m", label: "10 m" },
+        ],
+      },
+    ],
   },
   {
     id: "c3.1.2", code: "3.1.2", slug: "push-pull-torclar", section: "aksesuarlar", group: "mig-aksesuarlari", order: 2,
@@ -137,6 +149,16 @@ export const categories: Category[] = [
     image: img("mig-torc-sarf-malzemeleri"),
     name: "MIG Torç Sarf Malzemeleri",
     description: "Gaz nozulu, kontak meme ve diğer MIG sarf malzemeleri.",
+    options: [
+      {
+        id: "paket",
+        name: "Paket",
+        values: [
+          { id: "10-lu", label: "10'lu" },
+          { id: "20-li", label: "20'li" },
+        ],
+      },
+    ],
   },
   {
     id: "c3.1.5", code: "3.1.5", slug: "mig-torc-yedek-parcalari", section: "aksesuarlar", group: "mig-aksesuarlari", order: 5,

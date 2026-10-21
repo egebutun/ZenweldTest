@@ -142,12 +142,13 @@ Dört ürün bölümünün (Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri)
 - 🗑 **Ürünü olan kategori** ve **kategorisi olan grup silinemez**; önce
   içindekiler başka yere taşınır (ürünün kategorisi ürün formundan değişir).
 
-Düzenleme ekranında üç sekme vardır:
+Düzenleme ekranında dört sekme vardır (Seçenekler yalnızca kategoride):
 
 | Sekme | İçerik |
 |---|---|
 | **Temel Bilgiler** | Ad, grup (kategoride) / bölüm (grupta, yalnızca yeni grupta seçilir), kısa açıklama, kart görseli |
 | **Tanıtım Metni** | Sayfanın altında, ürünlerin (grup sayfasında kategori kartlarının) altında "… Hakkında" başlığıyla görünen uzun metin. Boşsa görünmez. Biçimlendirme haberlerle aynı |
+| **Seçenekler** | Kategorinin seçenek havuzu: seçenek adı (ör. Hortum Uzunluğu, Paket) ve sıralı değerleri (3 m, 4 m … / 10'lu, 20'li). Bu kategorideki ürünlere seçenek eklenirken değerler buradan seçilir |
 | **SEO** | Link, sayfa başlığı, açıklama, anahtar kelimeler, Google önizlemesi (ürünlerdeki gibi) |
 
 - Kategorinin **kısa açıklaması** sayfa başlığının altında ve grup sayfasındaki
@@ -158,6 +159,10 @@ Düzenleme ekranında üç sekme vardır:
   adresleri de yeni adreslere yönlenir.
 - Kategorinin linki değişince içindeki ürünler kategoriye bağlı kalır; ürün
   adresleri (`/urun/…`) değişmez.
+- **Seçenek havuzu** her kategoride ayrıdır; hangi kategoride seçenek olacağı
+  buradan belirlenir. Değer **Ekle** (ya da Enter) ile eklenir, ↑ ↓ ile sıralanır,
+  adı sonradan düzeltilebilir (ürünlere bağlantısı bozulmaz). Aynı değer iki kez
+  yazılamaz; değeri olmayan seçenek kaydedilmez.
 
 ---
 
