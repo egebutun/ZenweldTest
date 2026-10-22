@@ -12,3 +12,8 @@ npm-debug.log*
 .turbo/
 coverage/
 *.tsbuildinfo
+
+# Tarayici testleri
+tests/e2e/.oturum/
+test-results/
+playwright-report/

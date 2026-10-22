@@ -300,6 +300,7 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 | sharp | Derleme öncesi logo kırpma |
 | ESLint (eslint-config-next) | Kod denetimi; yalnızca geliştirirken ve derlemede çalışır, siteye girmez |
 | Vitest | İş kuralları testleri; yalnızca geliştirirken çalışır, siteye girmez |
+| Playwright | Tarayıcı testleri; yalnızca geliştirirken çalışır, siteye girmez |
 
 Sürümler: `apps/zenweld-web/package.json`, kök `package.json`.
 

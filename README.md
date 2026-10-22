@@ -66,6 +66,7 @@ npm run build       # ana sitenin üretim derlemesi (kod denetimini de çalışt
 npm run typecheck   # TypeScript kontrolü
 npm run lint        # kod denetimi (ESLint)
 npm test            # iş kuralları testleri (fiyat, kampanya, taksit, stok, garanti…)
+npm run test:e2e    # tarayıcı testleri (önce npm run build; sunucuyu kendisi açar)
 ```
 
 ---
@@ -77,6 +78,10 @@ npm test            # iş kuralları testleri (fiyat, kampanya, taksit, stok, ga
 | **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca Zenweld yönetim paneli (ana site `/yonetim`) |
 | **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: online alışveriş, sipariş takibi, teklif talepleri, favoriler, garanti kayıtları |
 | **Kurumsal** | `kurumsal@demo.com` | `demo123` | Bireysel ile aynı; ödemede kurumsal fatura önceden seçili gelir |
+
+Tarayıcı testleri (`npm run test:e2e`) giriş bilgilerini bu tablodan okur;
+bilgiler başka dosyada tutulmaz. Tablonun biçimi değişirse
+`tests/e2e/yardimci.ts` › `demoAccount` da güncellenmelidir.
 
 **Test kartı (ödeme ekranı):** `4111 1111 1111 1111`. Son kullanma tarihi
 gelecekte bir ay (örnek `12/30`), CVC herhangi 3 hane, kart üzerindeki isim
@@ -200,8 +205,11 @@ Site ve yönetim paneli yalnızca Türkçedir. Adreslerde dil ön eki yoktur
 ZenweldTest/
 ├── package.json                    npm workspaces kökü
 ├── eslint.config.mjs               Kod denetimi ayarları
-├── vitest.config.mts               Test ayarları
-├── tests/unit/                     İş kuralları testleri (npm test)
+├── vitest.config.mts               İş kuralları testlerinin ayarları
+├── playwright.config.ts            Tarayıcı testlerinin ayarları
+├── tests/
+│   ├── unit/                       İş kuralları testleri (npm test)
+│   └── e2e/                        Tarayıcı testleri (npm run test:e2e)
 │
 ├── packages/
 │   ├── data/                       Paylaşılan veri modeli ve başlangıç verisi
@@ -500,4 +508,4 @@ icon.png ve apple-icon.png yeniden oluşturulur.
 ## Teknoloji
 
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·
-MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · Vitest · npm workspaces
+MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · Vitest · Playwright · npm workspaces

@@ -59,11 +59,13 @@ ilgili belge **aynı commit'te** güncellenir:
   - `npm run lint`: kod denetimi (ESLint). `npm run build` de çalıştırır;
     hata varsa derleme durur.
   - `npm test`: iş kuralları testleri (`tests/unit`).
+  - `npm run test:e2e`: tarayıcı testleri (`tests/e2e`); önce `npm run build`.
 - **Testler:** `tests/unit`, `docs/IS-KURALLARI.md`'deki kuralları ve
-  örnekleri dener. Bir kural değişince ilgili test de aynı commit'te
-  güncellenir.
+  örnekleri dener; `tests/e2e` sitenin ve panelin tarayıcıda çalıştığını
+  dener (sayfa taraması, ödeme, teklif, belgeler, garanti). Bir kural ya da
+  ekran değişince ilgili test de aynı commit'te güncellenir.
 - **Doğrulama:** Her değişiklikten sonra typecheck, lint, test ve build
-  çalıştırılır.
+  çalıştırılır; davranış değiştiyse tarayıcı testleri de.
   Davranış değiştiyse kontrol listesindeki ilgili maddeler denenir.
 
 ## Güvenlik

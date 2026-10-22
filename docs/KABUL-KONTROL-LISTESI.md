@@ -53,6 +53,12 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       hatasız geçer.
 - [ ] Kod denetimi (`npm run lint`) hata ve uyarı vermez.
 - [ ] İş kuralları testleri (`npm test`) geçer.
+- [ ] Tarayıcı testleri (`npm run build` sonra `npm run test:e2e`) geçer.
+      Bunlar şu maddeleri kendiliğinden dener: bütün sayfaların açılması
+      (hata, 404, "demo" yazısı, İngilizce, güvenlik politikası), güvenlik
+      başlıkları, seçenekli ürünün kartla satın alınması, sepette adet
+      sınırı, teklif gönderme ve numarası, belge yükleme/açma/indirme,
+      garanti bitiş günü.
 
 ---
 
