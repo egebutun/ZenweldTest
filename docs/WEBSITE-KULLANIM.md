@@ -953,6 +953,11 @@ Adres: `/teklif-al`. Herkese açıktır; üyede bilgiler hesaptan gelir. Vadeli
 ödeme veya çekle almak isteyen kurumsal müşteriler içindir; satış ekibi
 teklifi ayrıca hazırlar.
 
+**Ürün sayfasında teklife ekleme düğmesi yoktur ve olmayacaktır** (karar,
+bkz. [KARARLAR.md](KARARLAR.md)). Ürünler yalnızca bu sayfadaki listeden
+seçilir. Siteden Teklif Al'a anasayfadaki tanıtım alanı ve teklif bandından
+gelinir.
+
 **Adımlar:**
 
 - Dört adımlıdır; üstteki adım çubuğuna tıklanarak da geçilir.
@@ -977,7 +982,8 @@ teklifi ayrıca hazırlar.
    - **Saklanma (Demo notu):** Liste tarayıcıda tutulur. Yayından kalkan ürün
      ya da seçeneği artık bulunmayan satır gösterilmez.
    - **Liste boşsa:** "Teklif listeniz boş. Ürün sayfalarından ürün
-     ekleyebilirsiniz." (bkz. [Bilinen durumlar](#25-bilinen-durumlar)).
+     ekleyebilirsiniz." Bu metin değişecek, çünkü ürün sayfasında teklif
+     düğmesi yok (bkz. [Bilinen durumlar](#25-bilinen-durumlar)).
 3. **Ödeme Tercihi** (zorunlu):
    - Seçenekler: **Vadeli Ödeme**, **Çek ile Ödeme**, **Havale / EFT**,
      **Görüşelim**.
@@ -1398,10 +1404,11 @@ birlikte "Aradığınız sayfa taşınmış veya kaldırılmış olabilir." yaza
 Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 
 - **Teklif Al metinleri:** Teklif listesi boşken "Ürün sayfalarından ürün
-  ekleyebilirsiniz." yazıyor, ama ürün sayfasında teklife ekleme düğmesi yok;
-  ürünler Teklif Al sayfasındaki listeden eklenir. Teklif Al metinlerinin
-  herkese hitap edecek şekilde yeniden yazılması karar beklemektedir
-  ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
+  ekleyebilirsiniz." yazıyor. Ürün sayfasında teklif düğmesi olmayacağına
+  karar verildiği için bu metin değişecek; ürünler Teklif Al sayfasındaki
+  listeden eklenir. Değişiklik, Teklif Al metinlerinin herkese hitap edecek
+  şekilde yeniden yazılmasıyla birlikte yapılacak; o iş müdür kararını
+  bekliyor ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
 - **Bülten kaydı:** Hiçbir yere gönderilmez; bülten servisi seçilince
   bağlanacak.
 - **Çerez ayarları penceresi:** Henüz boştur; analiz ve pazarlama
@@ -1411,5 +1418,10 @@ Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
   metinler ve örnek blog yazıları lorem ipsum'dur.
 - **Kategori filtreleri:** Kategori sayfasında bugün yalnızca sıralama var;
   her kategorinin kendi filtreleri ileride eklenecek.
+- **Ürün Seçici ve kaynak yöntemi:** Ürün Seçici ve aramadaki yöntem
+  eşleşmesi (MIG, TIG, MMA…) ürünlerdeki eski "kaynak yöntemi" bilgisine
+  bakar. Bu alan panelin ürün formunda yok, bu yüzden panelden eklenen yeni
+  ürünler Ürün Seçici sonuçlarında çıkmaz. Ürün Seçici yeniden tasarlanacak
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
 - **İlgili Ürünler:** Bugün aynı kategorideki ilk 4 ürün gösteriliyor; öneri
   mantığı yeniden kurgulanacak ([YAPILACAKLAR.md](YAPILACAKLAR.md)).

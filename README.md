@@ -64,6 +64,11 @@ Giriş sayfasındaki kartlara tıklayarak formu otomatik doldurabilirsiniz.
 | **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: online alışveriş, sipariş takibi, teklif talepleri, favoriler, garanti kayıtları |
 | **Kurumsal** | `kurumsal@demo.com` | `demo123` | Ana site: online alışveriş (kurumsal fatura), teklif talepleri, vadeli/çek ödeme |
 
+**Test kartı (ödeme ekranı):** `4111 1111 1111 1111`. Son kullanma tarihi
+gelecekte bir ay (örnek `12/30`), CVC herhangi 3 hane, kart üzerindeki isim
+herhangi bir ad olabilir. Ödeme demo modundadır, para çekilmez; gerçek kart
+bilgisi girmeyin.
+
 Ana site yalnızca bireysel ve kurumsal üyeleri kabul eder. Bayiler ana sitenin
 müşterisi değildir; bayi olmak isteyenler **Bayilik Başvurusu** formunu doldurur.
 
@@ -79,8 +84,9 @@ Marka sitesi ve **online mağazadır**. Ziyaretçi ürünü şu yollardan alır:
 2. **Stoktaki Bayileri Gör** → haritada o ürünü **stokta tutan** en yakın bayiyi bulur
 3. **Ayrıca online alışveriş olarak şurada da mevcuttur** → o üründe **stoğu olan**
    online satıcılara yönlendirilir
-4. **Teklif Al** → vadeli ödeme / çek isteyen kurumsal müşteriler için satış ekibi
-   iletişime geçer
+4. **Teklif Al** sayfası (`/teklif-al`) → vadeli ödeme / çek isteyen kurumsal
+   müşteriler için satış ekibi iletişime geçer. Ürün sayfasında teklif düğmesi
+   yoktur; ürünler Teklif Al sayfasındaki listeden seçilir.
 
 ### Online mağaza
 

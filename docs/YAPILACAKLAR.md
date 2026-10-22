@@ -277,6 +277,11 @@ Güncellenecek yerler ve önerilen metinler:
 5. **İsteğe bağlı: formun 1. adım başlığı** (`quote.step1`)
    - Şimdi: "Firma Bilgileri" — Öneri: "İletişim Bilgileri" (bireysel üyede firma
      adı zaten isteğe bağlı)
+6. **Boş teklif listesi mesajı** (`quote.emptyList`)
+   - Şimdi: "Teklif listeniz boş. Ürün sayfalarından ürün ekleyebilirsiniz."
+   - Ürün sayfasında teklif düğmesi olmayacak (karar verildi); ürünler yalnızca
+     Teklif Al sayfasındaki listeden eklenir. Bu yüzden metin değişmeli.
+   - Öneri: "Teklif listeniz boş. Aşağıdaki listeden ürün ekleyebilirsiniz."
 
 Açık soru: vadeli ödeme ve çek bireysel müşterilere de açık mı? Formda bu iki
 seçenek bugün herkese görünüyor. Yalnızca firmalar içinse formda yalnızca
