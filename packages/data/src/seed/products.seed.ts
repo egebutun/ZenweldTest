@@ -1,5 +1,4 @@
 import type { Product, ProductOptions } from "../types";
-import { stockPhotos } from "./images";
 
 /**
  * Gercek Zenweld modelleri (zenweld.com ve yetkili bayi siteleri kaynakli).
@@ -596,25 +595,24 @@ interface AccessorySeed {
   section: Product["section"];
   categorySlug: string;
   price: number;
-  photo: string;
   short: string;
   /** Menu kartinda gorunen 1-2 satislik ozellik */
   highlights?: string[];
 }
 
 const accessorySeeds: AccessorySeed[] = [
-  { slug: "zenmask-auto-9000", sku: "ZW-MASK9000", name: "ZenMask Auto 9000", section: "guvenlik", categorySlug: "otomatik-kararan-bas-maskeleri", price: 3450, photo: stockPhotos.welderAtWork, short: "Gerçek renk teknolojili otomatik kararan kaynak maskesi, 4 sensörlü.", highlights: ["Gerçek renk (True Color) görüş", "4 sensörlü, 1/25000 sn tepki", "DIN 5-13 kademesiz ayar"] },
-  { slug: "zenmask-basic-500", sku: "ZW-MASK500", name: "ZenMask Basic 500", section: "guvenlik", categorySlug: "otomatik-kararan-bas-maskeleri", price: 1290, photo: stockPhotos.workshop, short: "Giriş seviyesi otomatik kararan kaynak maskesi, 2 sensörlü.", highlights: ["Giriş seviyesi, hafif kask", "2 sensörlü otomatik kararma", "Değiştirilebilir ön cam"] },
-  { slug: "kaynak-eldiveni-pro", sku: "ZW-GLV-PRO", name: "Pro Kaynak Eldiveni", section: "guvenlik", categorySlug: "kaynak-eldivenleri", price: 480, photo: stockPhotos.toolsFlatlay, short: "Sığır derisi, kevlar dikişli, ısıya dayanıklı kaynak eldiveni.", highlights: ["Sığır derisi, kevlar dikiş", "Isıya ve kıvılcıma dayanıklı", "Astarlı, uzun manşetli"] },
-  { slug: "kaynak-onlugu-deri", sku: "ZW-APR-01", name: "Deri Kaynak Önlüğü", section: "guvenlik", categorySlug: "kaynak-onlukleri", price: 890, photo: stockPhotos.industrialShop, short: "Kıvılcıma ve ısıya dayanıklı tam boy deri kaynak önlüğü.", highlights: ["Tam boy deri koruma", "Ayarlanabilir omuz askısı", "Kıvılcım ve cüruf geçirmez"] },
-  { slug: "mig-torcu-mb25", sku: "ZW-TRC-MB25", name: "MB-25 MIG Torcu", section: "aksesuarlar", categorySlug: "mig-torclari", price: 1650, photo: stockPhotos.toolsFlatlay, short: "250A kapasiteli, Euro bağlantılı MIG kaynak torcu. 3, 4 ve 5 metre seçenekleriyle.", highlights: ["250 A / %60 devrede kalma", "Euro bağlantılı hortum", "Yaygın sarf malzeme bulunabilirliği"] },
-  { slug: "mig-torcu-mb36", sku: "ZW-TRC-MB36", name: "MB-36 MIG Torcu", section: "aksesuarlar", categorySlug: "mig-torclari", price: 2050, photo: stockPhotos.workshop, short: "350A kapasiteli, ağır hizmet MIG kaynak torcu. 3 ve 4 metre seçenekleriyle.", highlights: ["350 A ağır hizmet kapasitesi", "3 m ve 4 m hortum seçenekleri", "Kalın kesitte sürekli kaynak"] },
-  { slug: "tig-torcu-wp26", sku: "ZW-TRC-WP26", name: "WP-26 TIG Torcu 4m", section: "aksesuarlar", categorySlug: "tig-torclari", price: 1980, photo: stockPhotos.metalWork, short: "Hava soğutmalı, 200A kapasiteli 4 metre TIG kaynak torcu.", highlights: ["200 A hava soğutmalı", "4 m esnek hortum paketi", "Standart WP-26 sarf uyumu"] },
-  { slug: "gaz-nozulu-seti", sku: "ZW-NZL-SET", name: "Gaz Nozulu Seti", section: "aksesuarlar", categorySlug: "mig-torc-sarf-malzemeleri", price: 420, photo: stockPhotos.toolsFlatlay, short: "MB-25 uyumlu gaz nozulu seti. 10'lu ve 20'li paket seçenekleriyle.", highlights: ["MB-25 torçlarla uyumlu", "10'lu ve 20'li paket seçenekleri", "Bakır gövde, uzun ömür"] },
-  { slug: "kontak-meme-seti", sku: "ZW-TIP-SET", name: "Kontak Meme Seti M6 (20'li)", section: "aksesuarlar", categorySlug: "mig-torc-sarf-malzemeleri", price: 380, photo: stockPhotos.workshop, short: "0.8 / 1.0 / 1.2 mm ölçülerinde 20 adetlik kontak meme seti.", highlights: ["0.8 / 1.0 / 1.2 mm karışık", "M6 diş, MB-25 uyumlu", "20 adetlik paket"] },
-  { slug: "gazalti-teli-sg2-08", sku: "ZW-WIRE-SG208", name: "SG2 Gazaltı Teli 0.8 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "karbonlu-celik-mig-telleri", price: 1450, photo: stockPhotos.metalWork, short: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", highlights: ["Bakır kaplı SG2 kalite", "0.8 mm, 15 kg makara", "Düşük sıçrantı, düzgün dikiş"] },
-  { slug: "gazalti-teli-sg2-10", sku: "ZW-WIRE-SG210", name: "SG2 Gazaltı Teli 1.0 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "karbonlu-celik-mig-telleri", price: 1420, photo: stockPhotos.factoryLine, short: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", highlights: ["Bakır kaplı SG2 kalite", "1.0 mm, 15 kg makara", "Kalın kesitte yüksek verim"] },
-  { slug: "tig-cubugu-308l", sku: "ZW-ROD-308L", name: "308L Paslanmaz TIG Çubuğu 2.4 mm", section: "dolgu-metalleri", categorySlug: "paslanmaz-celik-tig-telleri", price: 2250, photo: stockPhotos.blueprint, short: "304/308 paslanmaz çelik kaynağı için 5 kg'lık TIG çubuğu paketi.", highlights: ["304 / 308 paslanmaz için", "2.4 mm, 5 kg paket", "Korozyona dayanıklı dikiş"] },
+  { slug: "zenmask-auto-9000", sku: "ZW-MASK9000", name: "ZenMask Auto 9000", section: "guvenlik", categorySlug: "otomatik-kararan-bas-maskeleri", price: 3450, short: "Gerçek renk teknolojili otomatik kararan kaynak maskesi, 4 sensörlü.", highlights: ["Gerçek renk (True Color) görüş", "4 sensörlü, 1/25000 sn tepki", "DIN 5-13 kademesiz ayar"] },
+  { slug: "zenmask-basic-500", sku: "ZW-MASK500", name: "ZenMask Basic 500", section: "guvenlik", categorySlug: "otomatik-kararan-bas-maskeleri", price: 1290, short: "Giriş seviyesi otomatik kararan kaynak maskesi, 2 sensörlü.", highlights: ["Giriş seviyesi, hafif kask", "2 sensörlü otomatik kararma", "Değiştirilebilir ön cam"] },
+  { slug: "kaynak-eldiveni-pro", sku: "ZW-GLV-PRO", name: "Pro Kaynak Eldiveni", section: "guvenlik", categorySlug: "kaynak-eldivenleri", price: 480, short: "Sığır derisi, kevlar dikişli, ısıya dayanıklı kaynak eldiveni.", highlights: ["Sığır derisi, kevlar dikiş", "Isıya ve kıvılcıma dayanıklı", "Astarlı, uzun manşetli"] },
+  { slug: "kaynak-onlugu-deri", sku: "ZW-APR-01", name: "Deri Kaynak Önlüğü", section: "guvenlik", categorySlug: "kaynak-onlukleri", price: 890, short: "Kıvılcıma ve ısıya dayanıklı tam boy deri kaynak önlüğü.", highlights: ["Tam boy deri koruma", "Ayarlanabilir omuz askısı", "Kıvılcım ve cüruf geçirmez"] },
+  { slug: "mig-torcu-mb25", sku: "ZW-TRC-MB25", name: "MB-25 MIG Torcu", section: "aksesuarlar", categorySlug: "mig-torclari", price: 1650, short: "250A kapasiteli, Euro bağlantılı MIG kaynak torcu. 3, 4 ve 5 metre seçenekleriyle.", highlights: ["250 A / %60 devrede kalma", "Euro bağlantılı hortum", "Yaygın sarf malzeme bulunabilirliği"] },
+  { slug: "mig-torcu-mb36", sku: "ZW-TRC-MB36", name: "MB-36 MIG Torcu", section: "aksesuarlar", categorySlug: "mig-torclari", price: 2050, short: "350A kapasiteli, ağır hizmet MIG kaynak torcu. 3 ve 4 metre seçenekleriyle.", highlights: ["350 A ağır hizmet kapasitesi", "3 m ve 4 m hortum seçenekleri", "Kalın kesitte sürekli kaynak"] },
+  { slug: "tig-torcu-wp26", sku: "ZW-TRC-WP26", name: "WP-26 TIG Torcu 4m", section: "aksesuarlar", categorySlug: "tig-torclari", price: 1980, short: "Hava soğutmalı, 200A kapasiteli 4 metre TIG kaynak torcu.", highlights: ["200 A hava soğutmalı", "4 m esnek hortum paketi", "Standart WP-26 sarf uyumu"] },
+  { slug: "gaz-nozulu-seti", sku: "ZW-NZL-SET", name: "Gaz Nozulu Seti", section: "aksesuarlar", categorySlug: "mig-torc-sarf-malzemeleri", price: 420, short: "MB-25 uyumlu gaz nozulu seti. 10'lu ve 20'li paket seçenekleriyle.", highlights: ["MB-25 torçlarla uyumlu", "10'lu ve 20'li paket seçenekleri", "Bakır gövde, uzun ömür"] },
+  { slug: "kontak-meme-seti", sku: "ZW-TIP-SET", name: "Kontak Meme Seti M6 (20'li)", section: "aksesuarlar", categorySlug: "mig-torc-sarf-malzemeleri", price: 380, short: "0.8 / 1.0 / 1.2 mm ölçülerinde 20 adetlik kontak meme seti.", highlights: ["0.8 / 1.0 / 1.2 mm karışık", "M6 diş, MB-25 uyumlu", "20 adetlik paket"] },
+  { slug: "gazalti-teli-sg2-08", sku: "ZW-WIRE-SG208", name: "SG2 Gazaltı Teli 0.8 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "karbonlu-celik-mig-telleri", price: 1450, short: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", highlights: ["Bakır kaplı SG2 kalite", "0.8 mm, 15 kg makara", "Düşük sıçrantı, düzgün dikiş"] },
+  { slug: "gazalti-teli-sg2-10", sku: "ZW-WIRE-SG210", name: "SG2 Gazaltı Teli 1.0 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "karbonlu-celik-mig-telleri", price: 1420, short: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", highlights: ["Bakır kaplı SG2 kalite", "1.0 mm, 15 kg makara", "Kalın kesitte yüksek verim"] },
+  { slug: "tig-cubugu-308l", sku: "ZW-ROD-308L", name: "308L Paslanmaz TIG Çubuğu 2.4 mm", section: "dolgu-metalleri", categorySlug: "paslanmaz-celik-tig-telleri", price: 2250, short: "304/308 paslanmaz çelik kaynağı için 5 kg'lık TIG çubuğu paketi.", highlights: ["304 / 308 paslanmaz için", "2.4 mm, 5 kg paket", "Korozyona dayanıklı dikiş"] },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -759,18 +757,12 @@ const demoAccessories: Demo[] = [
     "150 A hava soğutmalı", "Isıya dayanıklı kulp", "Kaymaz kulp"],
 ];
 
-const demoPhotos = [
-  stockPhotos.toolsFlatlay, stockPhotos.workshop, stockPhotos.metalWork,
-  stockPhotos.industrialShop, stockPhotos.factoryLine,
-];
-
-demoAccessories.forEach(([slug, sku, name, cat, price, short, a, b, c], i) => {
+demoAccessories.forEach(([slug, sku, name, cat, price, short, a, b, c]) => {
   accessorySeeds.push({
     slug, sku, name,
     section: "aksesuarlar",
     categorySlug: cat,
     price,
-    photo: demoPhotos[i % demoPhotos.length],
     short,
     highlights: [a, b, c],
   });

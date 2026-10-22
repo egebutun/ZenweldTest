@@ -232,9 +232,13 @@ yoksa önizleme boş çıkar.
 
 **Örnek ürün ve içerik fotoğrafları:**
 
-- Örnek veride fotoğraflar **Unsplash**'ten gelir
-  (`https://images.unsplash.com/…`). Gerçek ürün fotoğraflarıyla
-  değiştirilmeli.
+- **Ürünler:** Örnek verideki 60 ürünün hepsi depodaki tek bir Zenweld ürün
+  fotoğrafını kullanır
+  (`apps/zenweld-web/public/images/products/zenweld-urun.webp`). Her ürünün
+  kendi fotoğrafı panelden eklenmeli.
+- **Blog, haber, etkinlik, Hakkımızda ve Welders Club görselleri**
+  **Unsplash**'ten gelir (`https://images.unsplash.com/…`,
+  `packages/data/src/seed/images.ts`). Gerçek fotoğraflarla değiştirilmeli.
 - Sitenin görsel izni yalnızca `images.unsplash.com` adresine açıktır
   (`apps/zenweld-web/next.config.mjs`); yeni bir görsel sunucusu kullanılırsa
   buraya eklenmeli.

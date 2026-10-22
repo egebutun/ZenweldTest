@@ -1,7 +1,8 @@
 # ZENWELD — Kurumsal Site ve Online Mağaza
 
 Zenweld kaynak makineleri ve ekipmanları için hazırlanmış **frontend demo** projesi.
-Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur.
+Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur. Sunucuda yalnızca
+form e-postalarını gönderen üç küçük uç vardır (`app/api`).
 
 > ⚠️ **Bu bir demo/sunum çalışmasıdır.** Üyelik ve yönetim paneli özellikleri
 > gerçek bir sunucu tarafı kimlik doğrulaması olmadan çalışır. Canlıya çıkmadan
@@ -16,8 +17,18 @@ Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur.
 
 ---
 
+## Belgeler
+
+Sitenin ve panelin bütün özellikleri, kuralları ve kararları `docs/`
+klasöründedir. Başlangıç noktası:
+[docs/00-BASLA-BURADAN.md](docs/00-BASLA-BURADAN.md). Bu projede çalışan Claude
+oturumları için kurallar: [CLAUDE.md](CLAUDE.md).
+
+---
+
 ## İçindekiler
 
+- [Belgeler](#belgeler)
 - [Hızlı Başlangıç](#hızlı-başlangıç)
 - [Demo Hesaplar](#demo-hesaplar)
 - [Site](#site)
@@ -56,13 +67,11 @@ npm run typecheck   # TypeScript kontrolü
 
 ## Demo Hesaplar
 
-Giriş sayfasındaki kartlara tıklayarak formu otomatik doldurabilirsiniz.
-
 | Rol | E-posta | Şifre | Neler görebilir |
 |---|---|---|---|
 | **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca Zenweld yönetim paneli (ana site `/yonetim`) |
 | **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: online alışveriş, sipariş takibi, teklif talepleri, favoriler, garanti kayıtları |
-| **Kurumsal** | `kurumsal@demo.com` | `demo123` | Ana site: online alışveriş (kurumsal fatura), teklif talepleri, vadeli/çek ödeme |
+| **Kurumsal** | `kurumsal@demo.com` | `demo123` | Bireysel ile aynı; ödemede kurumsal fatura önceden seçili gelir |
 
 **Test kartı (ödeme ekranı):** `4111 1111 1111 1111`. Son kullanma tarihi
 gelecekte bir ay (örnek `12/30`), CVC herhangi 3 hane, kart üzerindeki isim
@@ -140,28 +149,38 @@ değiştirilebilir.
 ### Bayi bulucu
 
 Leaflet + OpenStreetMap (API anahtarı gerekmez). Tarayıcı konum izniyle
-Haversine mesafesine göre sıralama, şehir filtresi, "sadece bu ürünün stokta
-olduğu bayiler" filtresi, yol tarifi ve WhatsApp bağlantıları.
+Haversine mesafesine göre sıralama, şehir ve Yetkili Servis filtreleri, yol
+tarifi ve WhatsApp bağlantıları. Ürün sayfasındaki **Stoktaki Bayileri Gör**
+penceresinde yalnızca o ürünü stokta tutan bayiler listelenir.
 
 ### Üyelik ve roller
 
 | Rol | Yetkiler |
 |---|---|
-| Bireysel | Ana site: favoriler, garanti kaydı |
-| Kurumsal | Ana site: teklif talebi (vadeli / çek), teklif geçmişi |
-| Yönetici | Zenweld yönetim panelinin tamamı (ana site `/yonetim`) |
+| Bireysel ve Kurumsal | Ana site: online alışveriş, sipariş takibi, teklif talebi ve geçmişi, garanti kayıtları, adresler. İki tür aynı şeyleri yapar; kurumsal üyede kayıtta firma ünvanı zorunludur ve ödemede kurumsal fatura önceden seçili gelir. |
+| Yönetici | Zenweld yönetim panelinin tamamı (ana site `/yonetim`); sitede giriş yapamaz |
 
-Ana sitede bayi hesabı açılmaz; bayi olmak isteyenler **Bayilik Başvurusu**
-formunu doldurur.
+Favoriler, garanti kaydı ve Teklif Al üye olmadan da kullanılabilir. Ana sitede
+bayi hesabı açılmaz; bayi olmak isteyenler **Bayilik Başvurusu** formunu
+doldurur.
 
 ### Yönetim paneli (yalnızca Türkçe)
 
-`/yonetim` — ürün CRUD (görsel yükleme dahil), stok matrisi (bayi ve satıcıların
-CSV/XLSX stok dosyaları), belgeler (MSDS, kaynak rehberi, parti sertifikaları),
-online satıcı ve bayi yönetimi, üye yönetimi
-(rol değiştirme, askıya alma ve aktifleştirme, CSV dışa aktarma), sipariş yönetimi
-(havale onayı, kargo takip no, teslim, iptal), mağaza ayarları (kargo, taksit,
-IBAN), teklif takibi, sık sorulan sorular, yasal metinler.
+`/yonetim` — ana sayfada ciro, sipariş, teklif, üye, servis ve garanti
+grafikleri; menüde:
+
+- **Satış:** Siparişler (havale onayı, kargo takip no, teslim, iptal), Teklifler,
+  Mağaza Ayarları (kargo, POS ve taksitler, havale hesapları)
+- **Ürünler:** Ürünler (seçenekler ve SEO dahil), Kategoriler, Seçenek
+  Tanımları, Stok Matrisi (bayi ve satıcıların CSV/XLSX stok dosyaları), Yorumlar
+- **Bayi ve Satış Ağı:** Bayiler, Online Satıcılar, Satış Temsilcileri
+- **Müşteriler ve Servis:** Üyeler (rol değiştirme, askıya alma ve
+  aktifleştirme, CSV dışa aktarma), Servis Talepleri, Garantiler
+- **İçerik:** Haberler, Etkinlikler, Blog, Hakkımızda, Sık Sorulan Sorular,
+  Belgeler (MSDS, kaynak rehberi, parti sertifikaları), Yasal Metinler, Sayfa SEO
+- **Ayarlar:** Görünüm
+
+Ekran ekran anlatım: [docs/ADMIN-KULLANIM.md](docs/ADMIN-KULLANIM.md).
 
 ### Dil
 
@@ -179,28 +198,39 @@ ZenweldTest/
 ├── packages/
 │   ├── data/                       Paylaşılan veri modeli ve başlangıç verisi
 │   │   └── src/
+│   │       ├── index.ts            DB_VERSION (veri sürümü) ve dışa açılanlar
 │   │       ├── types.ts            Product, Dealer, Retailer, DealerStock, RetailerStock, User…
+│   │       ├── checkout.ts · discount.ts · variants.ts · stock.ts   Ortak hesaplar
+│   │       ├── catalog.ts · legal.ts · highlights.ts
 │   │       └── seed/
-│   │           ├── products.seed.ts    12 gerçek Zenweld modeli + 15 aksesuar
+│   │           ├── products.seed.ts    60 örnek ürün (3'ü seçenekli)
+│   │           ├── options.seed.ts     Seçenek tanımları (Hortum Uzunluğu, Paket)
 │   │           ├── categories.seed.ts  Bölüm / grup / kategori ağacı
 │   │           ├── dealers.seed.ts     29 bayi (TR koordinatlı)
 │   │           ├── retailers.seed.ts   Online satıcılar (Başak Hırdavat vb.)
 │   │           ├── stock.seed.ts       Bayi ve satıcıların örnek stok listeleri
 │   │           ├── users.seed.ts       Demo hesaplar
-│   │           ├── content.seed.ts     Blog, SSS, teklif, sipariş, garanti
-│   │           └── images.ts           Unsplash görsel havuzu
+│   │           ├── orders.seed.ts      Örnek siparişler
+│   │           ├── sample-activity.seed.ts  90 günlük örnek satış hareketi (canlıda kaldırılır)
+│   │           ├── content.seed.ts     Blog, SSS, teklif, garanti
+│   │           ├── events.seed.ts · company.seed.ts · reviews.seed.ts
+│   │           ├── documents.seed.ts · legal.seed.ts · settings.seed.ts
+│   │           └── images.ts           Unsplash görsel havuzu (blog, haber, etkinlik…)
 │   │
 │   ├── store/                      Backend yerine geçen veri katmanı
 │   │   └── src/
 │   │       ├── database.ts         localStorage motoru + abonelik
 │   │       ├── repo/               Veri işlemleri, konuya göre (ürün, stok, bayi, içerik…)
 │   │       ├── hooks.ts            useDatabase() — değişiklikler anında yansır
+│   │       ├── files.ts            Belge dosyaları (IndexedDB)
 │   │       └── export-import.ts    CSV indirme
 │   │
 │   ├── auth/                       Demo kimlik doğrulama
-│   │   └── src/ auth-context.tsx · guards.tsx · roles.ts · hash.ts
+│   │   └── src/ auth-context.tsx · roles.ts · hash.ts
 │   │
 │   ├── i18n/                       tr.ts — sitenin arayüz metinleri (düğme, başlık, uyarı…)
+│   │
+│   ├── utils/                      Biçimlendirme, link (slug) üretimi, görsel küçültme
 │   │
 │   └── ui/                         Ortak tasarım sistemi
 │       └── src/ theme.css · components/ (Button, Modal, Badge, Field…)
@@ -212,7 +242,8 @@ ZenweldTest/
             │   ├── page.tsx                    Anasayfa
             │   ├── ekipmanlar|guvenlik|aksesuarlar|dolgu-metalleri/
             │   │   ├── page.tsx                Bölüm: grupların resimli kartları
-            │   │   └── [kategori]/page.tsx     Grup: kategori kartları · Kategori: ürün listesi
+            │   │   ├── [grup]/page.tsx         Grup: kategori kartları
+            │   │   └── [grup]/[kategori]/      Kategori: ürün listesi
             │   ├── urun/[slug]/page.tsx        ÜRÜN DETAY
             │   ├── arama/page.tsx
             │   ├── yetkili-bayi-ve-servis-agi/ Bayi bulucu (harita)
@@ -233,10 +264,11 @@ ZenweldTest/
             │   │                               düzenlenir; adresler packages/data/src/legal.ts)
             │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
             ├── app/yonetim/                    ZENWELD YÖNETİM PANELİ
-            │   └── urunler · stok · siparisler · magaza · teklifler · bayiler · saticilar
-            │      · servis-talepleri · yasal-metinler · sss · hakkimizda · satis-temsilcileri
-            │      · uyeler · garantiler · etkinlikler · haberler · blog · yorumlar
-            │      · gorunum
+            │   └── siparisler · teklifler · magaza · urunler · kategoriler · secenekler
+            │      · stok · yorumlar · bayiler · saticilar · satis-temsilcileri · uyeler
+            │      · servis-talepleri · garantiler · haberler · etkinlikler · blog
+            │      · hakkimizda · sss · belgeler · yasal-metinler · sayfa-seo · gorunum
+            ├── app/api/                        bildirim · bayilik · destek (form e-postaları)
             ├── components/
             │   ├── layout/    Header · MegaMenu · MobileDrawer · Footer · CookieBanner
             │   ├── search/    SearchOverlay
@@ -253,7 +285,8 @@ ZenweldTest/
                 ├── section-routes.tsx Ürün bölümü/grup/kategori sayfalarının ortak kodu
                 ├── catalog.ts        Katalog seviyeleri (bölüm › grup › kategori) ve konum satırı
                 ├── i18n-client.tsx · seo.ts · geo.ts · menu.ts
-                └── quote-list.tsx · favourites.tsx
+                ├── quote-list.tsx · favourites.tsx · cart.tsx
+                └── server/mail.ts    Resend ile e-posta gönderimi (yalnızca sunucuda)
 ```
 
 ---
@@ -264,12 +297,22 @@ Backend olmadığı için:
 
 1. Uygulama açıldığında `packages/data` içindeki **başlangıç verisi** tarayıcının
    `localStorage`'ına yüklenir.
-2. Yönetim panelinde yapılan her değişiklik
-   `localStorage`'a yazılır ve sayfalar anında güncellenir.
+2. Yönetim panelinde yapılan her değişiklik ve sitede verilen sipariş, teklif,
+   yorum gibi kayıtlar `localStorage`'a yazılır; sayfalar anında güncellenir.
 3. Değişiklikler **yalnızca o tarayıcıda** görünür. Başka bilgisayarda görünmez.
+4. Panelden yüklenen belge dosyaları (MSDS, sertifikalar…) tarayıcının ayrı
+   dosya deposunda (IndexedDB) durur.
 
 Backend gelene kadar panelde yapılan değişiklikler yalnızca o tarayıcıda kalır;
 kalıcı veri için başlangıç (seed) dosyaları güncellenir.
+
+**Veri sürümü (`DB_VERSION`):** `packages/data/src/index.ts`'tedir. Başlangıç
+verisi ya da kayıtların yapısı değişince bir artırılır; artırılmazsa
+tarayıcılarda eski veri kalır. Artırılınca tarayıcılardaki veri silinir ve
+başlangıç verisiyle yeniden kurulur, yani panelde yapılmış değişiklikler de
+gider.
+
+Bütün kayıt türleri ve alanları: [docs/VERI-MODELI.md](docs/VERI-MODELI.md).
 
 ---
 
@@ -284,8 +327,8 @@ Her dosya kaynağın tam listesidir; hatalı yükleme geri alınabilir. Son 3 g�
 
 ```csv
 SKU;Ürün Adı;Adet;Fiyat;Link
-ZW-U250MTC;Zenweld Ultimate 250 MTC;4;53.900,00;https://www.satici.com/urun/ultimate-250-mtc
-ZW-ARC200;Zenweld ARC 200;12;12.450,00;https://www.satici.com/urun/arc-200
+ZW-U250MTC;Ultimate 250 MTC;4;53.900,00;https://www.satici.com/urun/ultimate-250-mtc
+ZW-ARC200;ARC 200;12;12.450,00;https://www.satici.com/urun/arc-200
 ```
 
 Link sütunu yalnızca online satıcılarda ve online mağazası olan bayilerde okunur.
@@ -296,16 +339,21 @@ Dosya biçimi, kurallar ve backend'e geçiş (tablolar, API): [docs/STOK.md](doc
 
 ## Görseller
 
-Projede Unsplash görsel bağlantıları kullanılmıştır
-(`packages/data/src/seed/images.ts`). Bunlar **gerçek Zenweld ürün fotoğrafları
-değildir**, genel kaynak/sanayi fotoğraflarıdır.
+- **Ürünler:** Örnek verideki 60 ürünün hepsi depodaki tek bir Zenweld ürün
+  fotoğrafını kullanır (`apps/zenweld-web/public/images/products/zenweld-urun.webp`).
+  Her ürünün kendi fotoğrafı panelden eklenmelidir.
+- **Blog, haber, etkinlik, Hakkımızda, Welders Club:** Unsplash bağlantıları
+  (`packages/data/src/seed/images.ts`). Bunlar **gerçek Zenweld fotoğrafları
+  değildir**, genel kaynak/sanayi fotoğraflarıdır.
+- **Kategori ve grup kartları:** `apps/zenweld-web/public/images/categories/`.
 
 `ProductImage` bileşeni, bir görsel yüklenemezse otomatik olarak **markalı SVG
 placeholder**'a düşer — sitede hiçbir zaman kırık görsel görünmez.
 
 Gerçek ürün fotoğraflarını eklemek için: `Yönetim Paneli → Ürünler → Düzenle →
-Görseller` sekmesinden URL girin veya dosya yükleyin (tarayıcı deposu sınırlı
-olduğu için 1.5 MB altında olmalıdır).
+Görseller` sekmesinden URL girin veya dosya yükleyin. Yüklenen görsel panelde
+otomatik olarak küçültülür (en fazla 1,5 MB, gerekirse WebP); boyutla uğraşmanız
+gerekmez.
 
 ---
 
@@ -322,7 +370,19 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
 3. **Ürün teknik verileri doğrulanmalı.** Amper, devrede kalma oranı ve ağırlık
    gibi değerler internet kaynaklarından derlendi; `products.seed.ts` içinde
    `DOĞRULANMALI` notu bulunur. Resmî katalogla karşılaştırılmalıdır.
-4. **Yasal metinler** (KVKK, gizlilik, iade, garanti koşulları) şu an lorem ipsum'dur.
+4. **Yasal metinler** (KVKK, gizlilik, iade, sözleşmeler…) şu an başlıkları
+   hazır **taslaklardır**; hukuk danışmanının metinleriyle değiştirilmelidir.
+5. **Örnek satış hareketleri silinmeli:** Panel grafikleri için üretilen örnek
+   üye, sipariş, teklif, servis ve garanti kayıtları
+   (`packages/data/src/seed/sample-activity.seed.ts`).
+6. **Gerçek değerler girilmeli:** Kargo ücreti, banka POS'ları ve vade farkı
+   oranları, IBAN'lar (Mağaza Ayarları'ndaki değerler örnektir).
+7. **Ödeme kuruluşu bağlanmalı** (iyzico, PayTR ya da bankanın sanal POS'u);
+   POS anahtarları yalnızca sunucuda tutulur.
+8. **E-posta servisi tanımlanmalı:** Vercel'de `RESEND_API_KEY` ve
+   `SUPPORT_FROM` (bkz. *Form e-postaları*).
+
+Tam liste ve backend notları: [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md).
 
 ---
 
@@ -342,8 +402,8 @@ Sitede aşağıdakiler hazırdır:
   görseli olmayan kartta ilk ürünün fotoğrafı gösterilir. Gruplar ve
   kategoriler panelden yönetilir (Ürünler → Kategoriler): ad, sıra, kart görseli,
   sayfanın altındaki tanıtım metni ve SEO alanları.
-- **`/sitemap.xml`** — aramada görünmesi istenen bütün sayfalar: ürün, grup,
-  kategori, blog, haber, etkinlik, kurumsal ve destek sayfaları. `packages/data`
+- **`/sitemap.xml`** — aramada görünmesi istenen bütün sayfalar: ürün, bölüm,
+  grup, kategori, blog, haber, etkinlik, kurumsal ve destek sayfaları. `packages/data`
   içindeki veriden otomatik üretilir. Son değişiklik tarihi yalnızca gerçek tarihi
   bilinen sayfalarda yazılır (ürün, blog, haber)
 - **`/robots.txt`** — site haritasını bildirir (site aramaya açıkken); bkz. aşağıdaki *Arama motorlarına açık / kapalı*
@@ -394,7 +454,7 @@ indeksleyebilir. Bu yüzden yalnızca `/api/` kapalıdır.
 
 Site açıkken de her zaman `noindex` olan sayfalar: yönetim paneli (etiket +
 `X-Robots-Tag` başlığı), giriş, kayıt, şifremi unuttum, hesabım, arama, çıkış,
-henüz yer tutucu metinli sayfalar (yasal metinler vb.). Bu sayfalar site
+sepet, ödeme ve yasal metinler (taslak oldukları için). Bu sayfalar site
 haritasına da girmez.
 
 ---
