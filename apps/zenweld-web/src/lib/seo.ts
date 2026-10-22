@@ -248,13 +248,13 @@ export function jsonLdScript(data: Record<string, unknown>): string {
 /* ------------------------------------------------------------------ */
 
 /**
- * Yer tutucu metin tasiyan sayfalar icin metadata.
+ * Taslak metin tasiyan sayfalar icin metadata.
  *
- * Bu sayfalarda (KVKK, gizlilik, iade, garanti sartlari...) su an Lorem
- * ipsum duruyor. Arama motorlarina acik birakilirsa Google bu metni
- * Zenweld'in GERCEK hukuki metni sanip indeksler; sonradan gercek metin
- * yazildiginda da eski hali bir sure aramada kalir. Bu yuzden gercek
- * icerik gelene kadar noindex isaretliyoruz.
+ * Bu sayfalarda (KVKK, gizlilik, iade, garanti sartlari...) su an hukuk
+ * danismaninin yazmadigi taslak metinler duruyor. Arama motorlarina acik
+ * birakilirsa Google bu metni Zenweld'in GERCEK hukuki metni sanip
+ * indeksler; sonradan gercek metin yazildiginda da eski hali bir sure
+ * aramada kalir. Bu yuzden gercek icerik gelene kadar noindex isaretliyoruz.
  *
  * Gercek metin eklendiginde: sayfayi lib/page-meta.ts tablosuna ekleyip
  * pageMetadataFor() kullanin, sayfa aramaya acilir.
