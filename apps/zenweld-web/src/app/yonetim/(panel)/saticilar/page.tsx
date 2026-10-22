@@ -22,16 +22,27 @@ export default function AdminRetailersPage() {
   const db = useDatabase();
   const now = useNow().getTime();
   const [editing, setEditing] = useState<Retailer | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const close = () => {
+    setEditing(null);
+    setError(null);
+  };
 
   const save = () => {
     if (!editing) return;
+    const name = editing.name.trim();
+    const websiteUrl = editing.websiteUrl.trim();
+    if (!name || !websiteUrl) return setError("Satıcı adı ve site adresi zorunludur.");
     const record: Retailer = {
       ...editing,
+      name,
+      websiteUrl,
       id: editing.id || `r-${Date.now().toString(36)}`,
-      logoText: editing.logoText || editing.name.toLocaleUpperCase("tr"),
+      logoText: editing.logoText || name.toLocaleUpperCase("tr"),
     };
     saveRetailer(record);
-    setEditing(null);
+    close();
   };
 
   return (
@@ -108,7 +119,7 @@ export default function AdminRetailersPage() {
 
       <Modal
         open={Boolean(editing)}
-        onClose={() => setEditing(null)}
+        onClose={close}
         title={editing?.id ? "Satıcıyı Düzenle" : "Yeni Satıcı"}
       >
         {editing && (
@@ -148,9 +159,10 @@ export default function AdminRetailersPage() {
               checked={editing.active}
               onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
             />
+            {error && <p className="text-sm font-semibold text-zw-red-600">{error}</p>}
             <div className="flex gap-3 pt-2">
               <Button onClick={save}>Kaydet</Button>
-              <Button variant="outline" onClick={() => setEditing(null)}>
+              <Button variant="outline" onClick={close}>
                 Vazgeç
               </Button>
             </div>

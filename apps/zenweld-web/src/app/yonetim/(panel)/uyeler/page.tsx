@@ -11,7 +11,6 @@ import { formatDate } from "@zenweld/utils";
 
 const STATUS_LABEL: Record<UserStatus, string> = {
   active: "Aktif",
-  pending: "Onay Bekliyor",
   suspended: "Askıda",
 };
 
@@ -88,7 +87,6 @@ export default function AdminUsersPage() {
         <Select value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">Tüm durumlar</option>
           <option value="active">Aktif</option>
-          <option value="pending">Onay Bekliyor</option>
           <option value="suspended">Askıda</option>
         </Select>
       </div>
@@ -140,27 +138,19 @@ export default function AdminUsersPage() {
                 </td>
                 <td className="px-4 py-2.5">
                   <div className="flex flex-col gap-1.5">
-                    <Badge
-                      tone={
-                        u.status === "active"
-                          ? "green"
-                          : u.status === "pending"
-                            ? "amber"
-                            : "outline"
-                      }
-                    >
+                    <Badge tone={u.status === "active" ? "green" : "outline"}>
                       {STATUS_LABEL[u.status]}
                     </Badge>
                     <div className="flex gap-1">
-                      {u.status !== "active" && (
+                      {u.status === "suspended" && (
                         <button
                           onClick={() => saveUser({ ...u, status: "active" })}
                           className="rounded-[3px] border border-zw-grey-300 px-2 py-0.5 text-[11px] font-semibold hover:border-emerald-500 hover:text-emerald-700"
                         >
-                          Onayla
+                          Aktifleştir
                         </button>
                       )}
-                      {u.status !== "suspended" && u.id !== me?.id && (
+                      {u.status === "active" && u.id !== me?.id && (
                         <button
                           onClick={() => saveUser({ ...u, status: "suspended" })}
                           className="rounded-[3px] border border-zw-grey-300 px-2 py-0.5 text-[11px] font-semibold hover:border-amber-500 hover:text-amber-700"

@@ -45,7 +45,6 @@ const EMPTY: ZenweldEvent = {
   country: "Türkiye",
   logoUrl: "",
   images: [],
-  featured: false,
   active: true,
 };
 
@@ -171,18 +170,11 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
             />
           </FormRow>
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Checkbox
-              label="Yayında (aktif)"
-              checked={draft.active}
-              onChange={(e) => set("active", e.target.checked)}
-            />
-            <Checkbox
-              label="Öne çıkan"
-              checked={draft.featured}
-              onChange={(e) => set("featured", e.target.checked)}
-            />
-          </div>
+          <Checkbox
+            label="Yayında (aktif)"
+            checked={draft.active}
+            onChange={(e) => set("active", e.target.checked)}
+          />
         </FormPanel>
       )}
 

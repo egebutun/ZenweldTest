@@ -140,7 +140,11 @@ export default function AdminReviewsPage() {
                 size="sm"
                 variant="outline"
                 leftIcon={<Trash2 size={14} />}
-                onClick={() => deleteReview(r.id)}
+                onClick={() => {
+                  if (window.confirm(`${r.authorName} adlı kişinin yorumu silinsin mi? Bu işlem geri alınamaz.`)) {
+                    deleteReview(r.id);
+                  }
+                }}
               >
                 Sil
               </Button>

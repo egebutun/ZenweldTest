@@ -63,7 +63,6 @@ Bizi standımızda ziyaret edin ve geleceğin kaynak teknolojilerini birlikte ke
     country: "Birleşik Arap Emirlikleri",
     logoUrl: logo("big-5-global-2025"),
     images: [stockPhotos.factoryLine, stockPhotos.industrialShop],
-    featured: true,
     active: true,
   },
   {
@@ -93,7 +92,6 @@ Daha fazla bilgi için bizimle iletişime geçin ve fuar boyunca bizi ziyaret et
     country: "Suudi Arabistan",
     logoUrl: logo("international-hardware-riyadh-2025"),
     images: [stockPhotos.industrialShop, stockPhotos.teamTalk],
-    featured: false,
     active: true,
   },
   {
@@ -122,7 +120,6 @@ Fuar boyunca, sektörel iş birlikleri, teknik danışmanlık ve ürün tanıtı
     country: "Türkiye",
     logoUrl: logo("win-eurasia-2025", "png"),
     images: [stockPhotos.factoryLine, stockPhotos.engineer, stockPhotos.teamTalk],
-    featured: false,
     active: true,
   },
   {
@@ -146,7 +143,6 @@ Detaylar ve fuar sonrası haberler için bizi takip edin!`,
     country: "Türkiye",
     logoUrl: logo("imatech-2025"),
     images: [stockPhotos.engineer, stockPhotos.metalWork],
-    featured: false,
     active: true,
   },
   {
@@ -166,7 +162,6 @@ Fuar süresince teknik ekibimiz, ürünlerimizin özelliklerini tanıtacak, uygu
     country: "Türkiye",
     logoUrl: logo("istanbul-hirdavat-fuari-2024"),
     images: [stockPhotos.toolsFlatlay, stockPhotos.workshop],
-    featured: false,
     active: true,
   },
   {
@@ -202,7 +197,6 @@ Win Eurasia 2024 Endüstri Fuarı'nı ziyaret etmeyi planlıyorsanız, Zenweld s
     country: "Türkiye",
     logoUrl: logo("win-eurasia-2024", "png"),
     images: [stockPhotos.factoryLine],
-    featured: false,
     active: true,
   },
   {
@@ -237,7 +231,6 @@ Zenweld, 2005 yılından beri kaynak ve kesme teknolojileri alanında faaliyet g
     country: "Türkiye",
     logoUrl: logo("konya-makine-teknolojileri-fuari-2024"),
     images: [stockPhotos.workshop],
-    featured: false,
     active: true,
   },
   {
@@ -274,7 +267,6 @@ Zenweld, 2005 yılından beri kaynak ve kesme teknolojileri alanında faaliyet g
     country: "Türkiye",
     logoUrl: logo("imatech-2024"),
     images: [stockPhotos.metalWork, stockPhotos.teamTalk],
-    featured: false,
     active: true,
   },
 ];

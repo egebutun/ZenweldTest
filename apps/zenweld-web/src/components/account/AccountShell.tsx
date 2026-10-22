@@ -58,7 +58,6 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
         <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-zw-grey-600">
           {t.account.welcome.replace("{name}", `${user.firstName} ${user.lastName}`)}
           <Badge tone="dark">{ROLE_LABELS[user.role]}</Badge>
-          {user.status === "pending" && <Badge tone="amber">Onay Bekliyor</Badge>}
         </p>
       </div>
 

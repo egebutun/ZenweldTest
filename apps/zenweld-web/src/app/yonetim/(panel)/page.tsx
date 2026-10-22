@@ -33,7 +33,6 @@ export default function AdminDashboard() {
     return {
       products: activeProducts.length,
       users: members.length,
-      pendingUsers: members.filter((u) => u.status === "pending").length,
       retailers: db.retailers.filter((r) => r.active).length,
       newQuotes: quotes.filter((q) => q.status === "new").length,
       quotes: quotes.length,
@@ -53,7 +52,7 @@ export default function AdminDashboard() {
 
   const cards = [
     { href: "/yonetim/urunler", label: "Aktif Ürün", value: stats.products, Icon: Package },
-    { href: "/yonetim/uyeler", label: "Üye", value: stats.users, Icon: Users, note: stats.pendingUsers ? `${stats.pendingUsers} onay bekliyor` : undefined },
+    { href: "/yonetim/uyeler", label: "Üye", value: stats.users, Icon: Users },
     { href: "/yonetim/saticilar", label: "Online Satıcı", value: stats.retailers, Icon: Store },
     { href: "/yonetim/teklifler", label: "Teklif", value: stats.quotes, Icon: FileText, note: stats.newQuotes ? `${stats.newQuotes} yeni` : undefined },
     { href: "/yonetim/siparisler", label: "Sipariş", value: stats.orders, Icon: ShoppingCart, note: stats.openOrders ? `${stats.openOrders} işlem bekliyor` : undefined },

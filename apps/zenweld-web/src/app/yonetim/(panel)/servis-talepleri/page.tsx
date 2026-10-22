@@ -26,6 +26,8 @@ export default function AdminServiceRequestsPage() {
   const db = useDatabase();
   const requests = listServiceRequests(db);
   const [open, setOpen] = useState<string | null>(null);
+  // Kayittan sonra detay yeniden kurulur (key: updatedAt); "Kaydedildi" bu yuzden burada tutulur.
+  const [savedId, setSavedId] = useState<string | null>(null);
   const category = (slug: string) => db.categories.find((c) => c.slug === slug)?.name ?? slug;
 
   return (
@@ -76,7 +78,13 @@ export default function AdminServiceRequestsPage() {
                 {open === r.id && (
                   <tr className="bg-zw-grey-50">
                     <td colSpan={6} className="px-4 py-4">
-                      <RequestDetail key={r.updatedAt} request={r} />
+                      <RequestDetail
+                        key={r.updatedAt}
+                        request={r}
+                        saved={savedId === r.id}
+                        onSaved={() => setSavedId(r.id)}
+                        onEdit={() => setSavedId(null)}
+                      />
                     </td>
                   </tr>
                 )}
@@ -96,7 +104,17 @@ export default function AdminServiceRequestsPage() {
   );
 }
 
-function RequestDetail({ request }: { request: ServiceRequest }) {
+function RequestDetail({
+  request,
+  saved,
+  onSaved,
+  onEdit,
+}: {
+  request: ServiceRequest;
+  saved: boolean;
+  onSaved: () => void;
+  onEdit: () => void;
+}) {
   const [status, setStatus] = useState(request.status);
   const [note, setNote] = useState(request.adminNote ?? "");
   const row = (label: string, value: string) => (
@@ -123,7 +141,13 @@ function RequestDetail({ request }: { request: ServiceRequest }) {
       </div>
       <div className="space-y-3">
         <div className="grid gap-3 sm:grid-cols-[180px_1fr]">
-          <Select value={status} onChange={(e) => setStatus(e.target.value as ServiceRequestStatus)}>
+          <Select
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value as ServiceRequestStatus);
+              onEdit();
+            }}
+          >
             {(Object.keys(STATUS) as ServiceRequestStatus[]).map((s) => (
               <option key={s} value={s}>
                 {STATUS[s].label}
@@ -133,13 +157,24 @@ function RequestDetail({ request }: { request: ServiceRequest }) {
         </div>
         <Textarea
           value={note}
-          onChange={(e) => setNote(e.target.value)}
+          onChange={(e) => {
+            setNote(e.target.value);
+            onEdit();
+          }}
           placeholder="İç not (yalnızca panelde görünür)"
           className="min-h-20 bg-white"
         />
-        <Button size="sm" onClick={() => saveServiceRequest({ ...request, status, adminNote: note.trim() || undefined })}>
-          Kaydet
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            size="sm"
+            onClick={() => {
+              if (saveServiceRequest({ ...request, status, adminNote: note.trim() || undefined })) onSaved();
+            }}
+          >
+            Kaydet
+          </Button>
+          {saved && <span className="text-xs text-emerald-700">Kaydedildi</span>}
+        </div>
       </div>
     </div>
   );

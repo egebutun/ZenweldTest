@@ -53,8 +53,11 @@ export default function AdminDealersPage() {
 
   const save = () => {
     if (!editing) return;
+    const name = editing.name.trim();
+    const city = editing.city.trim();
+    if (!name || !city) return setError("Bayi adı ve şehir zorunludur.");
     if (!dealerType(editing)) return setError("Bayi türünü seçin: Yetkili Bayi, Yetkili Servis ya da ikisi.");
-    if (!saveDealer({ ...editing, id: editing.id || `d-${Date.now().toString(36)}` })) {
+    if (!saveDealer({ ...editing, name, city, id: editing.id || `d-${Date.now().toString(36)}` })) {
       return setError("Bu online mağaza başka bir bayiye bağlı. Bir online mağaza yalnızca bir bayiye bağlanabilir.");
     }
     setError(null);

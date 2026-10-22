@@ -149,9 +149,8 @@ düğmesi.
 
 **Silme:**
 
-- Silmeden önce onay sorulur (istisnası için bkz.
-  [Yorumlar](#11-yorumlar)). Mesaj çoğunlukla ""<ad>" silinsin mi? Bu işlem
-  geri alınamaz." biçimindedir.
+- Her silmeden önce onay sorulur. Mesaj çoğunlukla ""<ad>" silinsin mi? Bu
+  işlem geri alınamaz." biçimindedir.
 
 **Yayında olmayan kayıt:**
 
@@ -237,7 +236,10 @@ Adres: `/yonetim`. Başlık: "Panel — Satış, teklif ve müşteri özetleri."
 - Seçenekler: Bugün / Son 7 gün / Son 30 gün (varsayılan) / Son 90 gün.
 - Seçim tarayıcıda hatırlanır ve bütün grafikleri sınırlar.
 - Kırılım: Bugün saatlik, 7 ve 30 gün günlük, 90 gün haftalık.
-- Özet kutularında bir önceki eşit dönemle karşılaştırma yapılır.
+- Değişim yüzdeleri bir önceki eşit dönemle karşılaştırılır; önceki dönemin
+  yalnızca **aynı saatine kadarki** kısmı sayılır. Örneğin bugün 09:00'da
+  "Bugün" seçiliyse dünün 00:00–09:00 arası alınır; süren gün tam bir günle
+  karşılaştırılmaz.
 
 **Özet kutuları** (önceki döneme göre değişimle):
 
@@ -255,7 +257,7 @@ Adres: `/yonetim`. Başlık: "Panel — Satış, teklif ve müşteri özetleri."
    şu an işlem bekleyenler (ödeme bekleyen + hazırlanan).
 3. **Ödeme yöntemi:** Kart–tek çekim / Kart–taksitli / Havale-EFT; adet ve
    ciro. Taksit sayılarının dağılımı.
-4. **En çok satan ürünler:** Ciroya göre ilk 5.
+4. **En çok satan ürünler:** Ciroya göre ilk 5 (üzerine gelince adet).
 5. **Ürün grubuna göre ciro:** İlk 12; grubu olmayan "Diğer".
 6. **Teklif hunisi:**
    - Gelen talep → İncelenen (Yeni olmayan) → Teklif verilen (Gönderildi,
@@ -266,10 +268,15 @@ Adres: `/yonetim`. Başlık: "Panel — Satış, teklif ve müşteri özetleri."
 9. **Servis ve garanti:** Servis talebi ve garanti kaydı sayıları; en çok
    servis istenen 5 model.
 
-**Genel durum** (sayı kartları, ilgili ekrana gider):
+- Grafiklerin üzerine gelince ayrıntı kutusu açılır.
+- Ciro, Yeni üyeler ve Servis ve garanti grafiklerinde **Tablo olarak
+  göster** ile bütün değerler tablo halinde görülür.
+
+**Genel durum** (sayı kartları, ilgili ekrana gider). Üye, teklif ve sipariş
+yalnızca ana sitenin kayıtlarıdır; bayi kayıtları sayılmaz.
 
 - Aktif Ürün.
-- Üye (altında "N onay bekliyor").
+- Üye.
 - Online Satıcı (aktif olanlar).
 - Teklif (altında "N yeni").
 - Sipariş (altında "N işlem bekliyor" = ödeme bekleyen + hazırlanan).
@@ -291,8 +298,14 @@ Adres: `/yonetim`. Başlık: "Panel — Satış, teklif ve müşteri özetleri."
 - Son 5 sipariş (kod, tutar) sipariş detayına gider.
 - Boşsa "Henüz teklif yok." / "Henüz sipariş yok."
 
-**Demo notu:** Panel açılınca ödeme süresi dolan havale siparişleri iptal
-edilir (gerçek sistemde zamanlanmış görev yapacak).
+**Demo notu:**
+
+- Panel açılınca ödeme süresi dolan havale siparişleri iptal edilir (gerçek
+  sistemde zamanlanmış görev yapacak).
+- Grafiklerdeki örnek hareketler (son 90 güne yayılmış örnek üye, sipariş,
+  teklif, servis talebi ve garanti kaydı)
+  `packages/data/src/seed/sample-activity.seed.ts` dosyasından gelir. Canlıya
+  çıkmadan önce silinmelidir.
 
 ---
 
@@ -331,8 +344,8 @@ bulunamadı."
 | Kargoda | "Takip numarasında hata varsa düzeltip kaydedebilirsiniz." Kargo firması + Takip numarası | **Kaydet** ve **Teslim Edildi** | Kaydet: bilgi düzelir; Teslim Edildi: Teslim Edildi |
 | Teslim Edildi / İptal | "Bu sipariş teslim edildi/iptal edildi; başka işlem yok." | — | — |
 
-- **Ödeme Alındı:** Ödeme süresi dolmuşsa sipariş onaylanmaz; "Ödeme süresi
-  doldu" notuyla iptal edilir.
+- **Ödeme Alındı:** Havale süresi son ödeme **gününün sonunda** (23:59) dolar.
+  Süre dolmuşsa sipariş onaylanmaz; "Ödeme süresi doldu" notuyla iptal edilir.
 - **Kargo firması** listesi [Mağaza Ayarları](#6-mağaza-ayarları)'ndan
   gelir. Sonradan listeden çıkarılmış ama siparişte kayıtlı firma "<firma>
   (listede yok)" diye görünür.
@@ -377,6 +390,9 @@ bulunamadı."
   - Ödendi (tarih-saat ya da —), Sözleşme onayı (tarih-saat).
 - **Müşteri Notu:** Müşteri ödeme sayfasında not yazdıysa.
 - **İç Not:** "Yalnızca panelde görünür"; **Notu Kaydet** → "Kaydedildi".
+
+**Demo notu:** Kartla ödeme gerçek değildir; sipariş kaydı ve akış gösterim
+içindir.
 
 ---
 
@@ -430,8 +446,9 @@ seçenekleri ve havale/EFT hesapları."
 **Kargo:**
 
 - **Ücretsiz kargo sınırı (₺, KDV dahil):** Sepet bu tutar ve üzerindeyse
-  kargo ücretsiz.
-- **Kargo ücreti (₺, KDV dahil):** Sınırın altındaki siparişlerde.
+  kargo ücretsiz. Örnek değer 5.000 ₺.
+- **Kargo ücreti (₺, KDV dahil):** Sınırın altındaki siparişlerde. Örnek değer
+  250 ₺.
 - **Kargo firmaları:** Her satıra bir firma; sipariş kargoya verilirken
   seçilir. En az bir firma zorunlu: "En az bir kargo firması girin."
 
@@ -440,7 +457,10 @@ seçenekleri ve havale/EFT hesapları."
 - Açıklama: "Her bankanın kendi taksit seçenekleri ve komisyonu vardır.
   Ödeme sayfasında kart, programı eşleşen bankanın taksitleriyle çekilir;
   eşleşmeyen kartlar varsayılan POS'tan tek çekim ödenir."
-- **Taksit için en düşük sipariş tutarı (₺).**
+- **Taksit için en düşük sipariş tutarı (₺).** Örnek değer 1.000 ₺.
+- Ödeme sayfasında kart, programı eşleşen **ilk aktif** POS'un taksitleriyle
+  çekilir. Eşleşmeyen kartlar varsayılan POS'tan (örnek veride iyzico) tek
+  çekim ödenir.
 - **POS tablosu:**
   - Sütunlar: Düzenle · Aktif (kutu) · Banka (kısa etiket) · Banka adı ·
     Mağaza no · POS adı · Firma taksit oranları (**Göster**) · Taksit
@@ -489,10 +509,14 @@ seçenekleri ve havale/EFT hesapları."
 **Havale / EFT:**
 
 - "Bu hesaplar ödeme sayfasında ve müşterinin sipariş detayında gösterilir."
-- **Ödeme süresi (gün):** En az 1. "Dolunca sipariş iptal edilir."
+- **Ödeme süresi (gün):** En az 1; örnek değer 3. "Dolunca sipariş iptal
+  edilir." Süre son günün 23:59'unda dolar.
 - **Hesaplar:** Banka, Alıcı, IBAN (büyük harfe çevrilir), sil.
 - **Hesap Ekle:** Alıcı adı ilk hesaptan kopyalanır.
 - Hata: "Her banka hesabında banka adı ve IBAN zorunludur."
+
+**Önemli:** Kargo ücreti, banka POS'ları (mağaza no, oranlar) ve IBAN'lar
+örnek veridir; canlıya çıkmadan gerçek değerler girilmelidir.
 
 ---
 
@@ -523,6 +547,7 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
   - "Kampanya bitti (%X)"
 - **Sil:** ""<ad>" silinsin mi? Bu işlem geri alınamaz."
   - Ürünün bayi ve satıcı stok satırları ile kod eşleştirmeleri de silinir.
+  - Ürünün linki boşa çıkar; başka bir ürün bu linki alabilir.
   - Belgelerdeki ürün bağlantısı kalkar; belge kalır.
   - Sipariş ve teklifler kendi kopyalarını korur.
 
@@ -539,11 +564,17 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
   kategorisi, KDV %20, garanti 24 ay; Yayında, Teklife açık ve Yeni ürün
   rozeti işaretli.
 - Kayıt: "Ürün kaydedildi."
+- **Yeni ürün ve stok:** Yeni ürün hiçbir bayide ve online satıcıda stokta
+  görünmez. Haritada ve online satıcılarda çıkması için bayi/satıcı stok
+  dosyalarında yer alması gerekir ([Stok Matrisi](#10-stok-matrisi)). Sitede
+  satın alınabilmesi için ayrıca bir şey gerekmez; yayındaki her ürün sepete
+  eklenebilir.
 
 #### Temel Bilgiler
 
 - **Ürün Adı** (zorunlu): "Ürün adı zorunludur." Yeni üründe link addan
-  oluşur.
+  oluşur. Ada marka ("Zenweld") yazılmaz; sayfa başlığına "| ZENWELD"
+  kendiliğinden eklenir.
 - **Ürün Kodu (SKU)** (zorunlu).
 - **Model Kodu.**
 - **Garanti (ay).**
@@ -551,6 +582,9 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
 - **Kategori:** Yalnızca seçili bölümün kategorileri.
 - **Sıra:** "Kategori sayfasında kaçıncı görünür (1 en başta). Boşsa
   kategorinin sonuna eklenir."
+  - Küçük numara önce gelir; aynı numaralı ürünler ada göre dizilir.
+  - Kategori sayfasındaki "Önerilen" sıralama, panel listesinin sırası ve
+    kategori kartında görsel yoksa kullanılan ürün buna göre belirlenir.
 - **Normal fiyat (KDV hariç, ₺)** (zorunlu): "İndirimsiz fiyat".
 - **KDV (%).**
 - **KDV dahil:** Hesaplanır, değiştirilemez.
@@ -641,7 +675,8 @@ Bir ürün tek sayfada seçenekleriyle satılabilir (ör. hortum uzunluğu 3 m /
 - **Fiyat farkı (KDV hariç, ₺):** "Ana fiyata eklenir; eksi olabilir".
 - **Normal fiyat:** Hesaplanır ("<KDV hariç> + KDV · <KDV dahil>").
 - Bir zamanlar ayrı ürün olup bu seçeneğe dönüştürülen değerde: "Eski ürün
-  linki /urun/<link> bu seçenekle açılır."
+  linki /urun/<link> bu seçenekle açılır." Değer üründen kaldırılırsa bu
+  yönlendirme de kalkar.
 - **"Bu değerde farklı olanlar (isteğe bağlı)"** (doluysa açık gelir):
   - **Fotoğraf:** "Ürünün fotoğrafı" ya da ürünün görsellerinden biri.
     Üründe görsel yoksa: "Önce Görseller sekmesinden ürüne fotoğraf
@@ -680,12 +715,28 @@ satıcı stok dosyaları bu kodlarla eşleşir):
 - Seçenek adı değiştirildiyse (başka tanım seçildiyse) ürünün bütün
   seçenekli stok satırları silinir.
 
+**Ayrı bir ürünü seçeneğe dönüştürmek** (ör. "MB-25 MIG Torcu 4m" ürününü
+"MB-25 MIG Torcu"nun 4 m seçeneği yapmak):
+
+1. Ayrı ürün silinir; kodu boşa çıkar.
+2. Ana ürüne değer eklenir ve o kod seçeneğe yazılır.
+3. Silinen ürünün eski linkinin seçeneğe yönlenmesi bugün panelden
+   kurulamaz (bkz. [Bilinen durumlar](#27-bilinen-durumlar)).
+
+Seçenekli ürünün sitede nasıl göründüğü (fiyat, kod ve fotoğrafın seçime göre
+değişmesi, `?secenek=` adresi, sepet ve teklif davranışı, seçime göre bayi ve
+online satıcılar, ortak yorumlar):
+[WEBSITE-KULLANIM.md › Ürün sayfası](WEBSITE-KULLANIM.md#6-ürün-sayfası).
+
 #### SEO
 
 - [Ortak SEO sekmesi](#2-ortak-davranışlar); link `/urun/<link>`.
 - Başka ürün aynı linki kullanıyorsa: ""<link>" adresi "<ad>" ürününde
   kullanılıyor."
+- Sayfa Başlığı boşsa "Ürün adı — Kategori | ZENWELD" kullanılır.
 - Açıklama boşsa ürünün kısa açıklaması kullanılır.
+- Anahtar kelimeler site içi aramada işe yarar; Google bu etiketi sıralamada
+  kullanmaz. Görünürlüğü asıl belirleyen başlık, açıklama ve sayfa içeriğidir.
 
 ---
 
@@ -718,6 +769,7 @@ değiştirir."
   - Kategorisi olan grup silinemez: "İçinde kategori olan grup silinemez;
     önce kategorileri taşıyın."
   - Onay: ""<ad>" silinsin mi? Bu işlem geri alınamaz."
+- Bir ürünün kategorisi ürün formunun Temel Bilgiler sekmesinden değişir.
 
 ### Kategori formu
 
@@ -770,7 +822,10 @@ görünür; boş bırakılırsa gösterilmez." Biçimli metindir.
 **Kaydedince:**
 
 - Link ya da grup değiştiyse eski adres yeni adrese yönlenir.
-- Kategorinin bütün ürünleri yeni kategori linkine ve bölümüne taşınır.
+- Kategorinin bütün ürünleri yeni kategori linkine ve bölümüne taşınır;
+  ürünler kategoriye bağlı kalır. Ürün adresleri (`/urun/…`) değişmez.
+- Kategori silinse ya da ürün başka kategoriye taşınsa da seçenek tanımları
+  ve ürünlerin seçenekleri bozulmaz.
 
 ### Grup formu
 
@@ -855,8 +910,9 @@ yükleyin."
 Bayiler ve online satıcılar ürün kodu + adet listesi gönderir; liste buradan
 yüklenir. Ürün sayfasındaki "Stoktaki bayiler" ve "online satıcılar" bu
 verilerden gelir. Zenweld'in kendi deposu burada yoktur (sitede her ürün her
-zaman satıştadır). Dosya biçimi ve backend için ayrıntı:
-[STOK.md](STOK.md).
+zaman satıştadır). Sitede adet ve fiyat gösterilmez; yalnızca stoğu olan
+bayiler ve online satıcılar listelenir. Seçenekli üründe seçilen seçeneğe göre
+listelenir. Dosya biçimi ve backend için ayrıntı: [STOK.md](STOK.md).
 
 **Kaynaklar:**
 
@@ -898,7 +954,12 @@ Kaynak yoksa "Bayi/satıcı bulunamadı."
 - **← Tüm bayi ve satıcılar.**
 - Başlık: kaynağın adı; altında "Bayi · <şehir> · Online mağaza: <ad>".
 - **Şablon İndir:** `<ad>-stok-sablonu.csv`. Yayındaki bütün ürünler ve
-  seçenekleri, bu kaynağın bugünkü adetleriyle.
+  seçenekleri, bu kaynağın bugünkü adetleriyle; bayiye gönderilip
+  doldurtulabilir.
+  - Seçenekli üründe her seçenek kendi koduyla ayrı satırdır (ör. MB-25 3 m /
+    4 m / 5 m).
+  - Dosyadaki seçenek kodu stoğu o seçeneğe yazar; ürünün ana kodu bütün
+    seçenekler için geçerli sayılır.
 - **Dosya Yükle (CSV / XLSX):** `.csv`, `.xlsx`, `.txt`. Dosya okunamazsa
   hata metni ya da "Dosya okunamadı." Okunursa önizleme penceresi açılır.
 - **Özet:** Stoktaki ürün (N / M satır), Son güncelleme, durum rozeti.
@@ -1030,7 +1091,8 @@ aynı yorumları paylaşır.
     çalışır. En fazla 10 yorum anasayfada olur; doluysa: "Anasayfada en
     fazla 10 yorum gösterilebilir. Önce birini çıkarın." Sınıra yalnızca
     onaylı ve ürünü yayında olan yorumlar sayılır.
-  - **Sil:** Onay sormadan siler.
+  - **Sil:** Onay sorar: "<yazar> adlı kişinin yorumu silinsin mi? Bu işlem
+    geri alınamaz."
 - Boşsa: "Yorum bulunamadı."
 - Panelde yorum yazılmaz ve metni düzenlenmez.
 
@@ -1056,10 +1118,12 @@ Bayiler sitenin müşterisi değildir; sitede bayi girişi yoktur (bkz.
 
 **Yeni Bayi / Bayiyi Düzenle penceresi:**
 
-- **Bayi Adı** (yıldızlı), **Şehir** (yıldızlı), **İlçe**, **Adres**.
+- **Bayi Adı** (zorunlu), **Şehir** (zorunlu), **İlçe**, **Adres**. Ad ve
+  şehrin başındaki/sonundaki boşluklar atılır.
 - **Telefon**, **WhatsApp.**
 - **Enlem (lat)** ("Google Maps'ten kopyalayabilirsiniz") ve **Boylam
-  (lng).** Yeni kayıtta 39.1 / 35.6 (Türkiye'nin ortası) gelir.
+  (lng).** Google Maps'te konuma sağ tıklayınca koordinat kopyalanır. Yeni
+  kayıtta 39.1 / 35.6 (Türkiye'nin ortası) gelir.
 - **Çalışma Saatleri:** Yeni kayıtta "Hafta içi 09:00 – 18:00".
 - **Bağlı olduğu online mağaza:**
   - "Yok" ya da online satıcılardan biri.
@@ -1067,10 +1131,14 @@ Bayiler sitenin müşterisi değildir; sitede bayi girişi yoktur (bkz.
   - "Seçilirse bayinin stok dosyasındaki ürün linkleri de okunur; ürünler
     haritada ve bu mağazanın online satıcı kartında görünür. Bir mağaza
     yalnızca bir bayiye bağlanabilir."
+  - Bayinin online mağazası varsa önce mağaza
+    [Online Satıcılar](#13-online-satıcılar)'a eklenir, sonra burada seçilir.
 - **Bayi Türü** (zorunlu): Yetkili Bayi / Yetkili Servis / Yetkili Bayi +
-  Yetkili Servis.
+  Yetkili Servis. Sitede haritada ve servis ağı sayfasında rozet olarak
+  görünür.
 - **Aktif.**
 - Hatalar:
+  - "Bayi adı ve şehir zorunludur."
   - "Bayi türünü seçin: Yetkili Bayi, Yetkili Servis ya da ikisi."
   - "Bu online mağaza başka bir bayiye bağlı. Bir online mağaza yalnızca bir
     bayiye bağlanabilir."
@@ -1097,14 +1165,17 @@ alışveriş olarak şurada da mevcuttur” bölümünde çıkacak siteler."
 
 **Yeni Satıcı / Satıcıyı Düzenle penceresi:**
 
-- **Satıcı Adı** (yıldızlı).
+- **Satıcı Adı** (zorunlu).
 - **Logo Metni:** "Ürün sayfasındaki kutuda görünecek kısa yazı". Boşsa
   adın büyük harfli hali kullanılır.
-- **Site Adresi** (yıldızlı): "https://…".
+- **Site Adresi** (zorunlu): "https://…". Satıcının ana sayfasıdır; ürün
+  sayfasındaki kart ise stok dosyasındaki ürün linkine gider.
 - **Şehir.**
 - **"Zenweld'in kendi online mağazası (ürün sayfasında kırmızı rozetle en
   başta)".**
-- **Aktif.**
+- **Aktif:** Kapatılırsa hiçbir ürün sayfasında görünmez.
+- Ad ve site adresi boşsa: "Satıcı adı ve site adresi zorunludur." Başındaki
+  ve sonundaki boşluklar atılır.
 
 ---
 
@@ -1113,7 +1184,8 @@ alışveriş olarak şurada da mevcuttur” bölümünde çıkacak siteler."
 Adres: `/yonetim/satis-temsilcileri`. Açıklama: "<N> temsilci · <N> sitede
 görünüyor".
 
-Sitedeki Keşfet › Satış Temsilcilerimiz sayfasının listesi.
+Sitedeki Keşfet › Satış Temsilcilerimiz sayfasının listesi. Sitedeki bölge
+düğmeleri listedeki "Bölge / Görev" değerlerinden kendiliğinden oluşur.
 
 - **Sayfayı gör** (yeni sekme), **Temsilci ekle.**
 - **Tablo:**
@@ -1129,7 +1201,7 @@ Sitedeki Keşfet › Satış Temsilcilerimiz sayfasının listesi.
 - **Ad Soyad** (zorunlu).
 - **Bölge / Görev** (zorunlu): "ör. Ege Bölgesi".
 - **Telefon** (zorunlu): "WhatsApp bu numaraya açılır"; örnek "+90 532 000
-  00 00".
+  00 00". Sitede hem **Ara** hem **WhatsApp** düğmesi bu numaraya bağlanır.
 - **E-posta** (zorunlu).
 - **Fotoğraf (isteğe bağlı):** "Yoksa ad soyadın baş harfleri gösterilir".
 - **Sitede göster.**
@@ -1146,18 +1218,21 @@ Sitedeki Keşfet › Satış Temsilcilerimiz sayfasının listesi.
 
 Adres: `/yonetim/uyeler`. Açıklama: "<N> üye listeleniyor".
 
+Yalnızca ana sitenin üyeleri (bireysel, kurumsal) ve yönetici hesapları
+listelenir. Bayiler ana sitenin üyesi değildir.
+
 - **CSV İndir** (`zenweld-uyeler.csv`): ad, soyad, e-posta, rol, durum,
   firma, vergi no, telefon, şehir, kayıt tarihi.
 - **Arama:** "İsim, e-posta veya firma ara…".
 - **Rol süzgeci:** Tüm roller / Bireysel / Kurumsal / Yönetici.
-- **Durum süzgeci:** Tüm durumlar / Aktif / Onay Bekliyor / Askıda.
+- **Durum süzgeci:** Tüm durumlar / Aktif / Askıda.
 - **Tablo:**
   - Üye: ad soyad, e-posta, telefon.
   - Firma / Vergi No (yoksa —).
   - **Rol:** Liste; seçilince hemen kaydedilir. Kendi satırında kilitlidir:
     "Kendi rolünüzü değiştiremezsiniz."
-  - **Durum:** Rozet; aktif değilse **Onayla**, askıda değilse **Askıya
-    al** (kendi satırında yok).
+  - **Durum:** Rozet (Aktif / Askıda). Aktif üyede **Askıya al** (kendi
+    satırında yok), askıdaki üyede **Aktifleştir**.
   - Kayıt tarihi.
   - Sil: Yönetici satırında pasiftir. Onay: "<e-posta> silinsin mi?"
 
@@ -1170,9 +1245,9 @@ Adres: `/yonetim/uyeler`. Açıklama: "<N> üye listeleniyor".
   Yöneticilikten çıkarılan hesap panele giremez, sitede giriş yapabilir.
 - Bireysel ve kurumsal üye sitede aynı işlemleri yapabilir; kurumsal üyede
   kayıtta firma bilgisi istenir.
-- Sitede kayıt olan üye **Aktif** başlar. "Onay Bekliyor" durumu bugün
-  yalnızca örnek veride vardır ve sitede hiçbir işlemi kısıtlamaz (bkz.
-  [Bilinen durumlar](#27-bilinen-durumlar)).
+- Sitede kayıt olan üye **Aktif** başlar ve siteyi hemen kullanabilir;
+  panelden onay gerekmez (karar, bkz. [KARARLAR.md](KARARLAR.md)). Üyelikte
+  "onay bekliyor" durumu yoktur.
 - Panelde üye eklenmez; ad, e-posta ve şifre değiştirilmez.
 
 ---
@@ -1195,8 +1270,8 @@ koduyla **Yeni** durumunda gelir. En yeni talep önce.
   - **Müşteri şikayeti.**
   - Adres, E-posta, Telefon, Yetkili kişi, Yetkili GSM.
   - **Durum** listesi ve **İç not** ("İç not (yalnızca panelde görünür)").
-    İkisi **Kaydet** ile birlikte kaydedilir; ekranda "kaydedildi" mesajı
-    çıkmaz.
+    İkisi **Kaydet** ile birlikte kaydedilir; düğmenin yanında "Kaydedildi"
+    yazar. Durum ya da not yeniden değiştirilince bu yazı kalkar.
 - Boşsa: "Henüz servis talebi yok."
 - Talep silinmez. Servis talebi müşterinin Hesabım sayfasında görünmez.
 
@@ -1206,9 +1281,14 @@ koduyla **Yeni** durumunda gelir. En yeni talep önce.
 
 Adres: `/yonetim/garantiler`. Açıklama: "<N> garanti kaydı · <N> geçerli".
 
-Sitedeki Garanti Kaydı formundan gelen kayıtlar. Buradaki değişiklik
-müşterinin Hesabım › Garantilerim sayfasına ve sitedeki garanti sorgulamaya
-anında yansır (aynı veri).
+Sitedeki Garanti Kaydı formundan gelen kayıtlar (ad soyad, e-posta, telefon,
+şehir, posta kodu, adres, ürün, seri numarası, satıcı VKN, 12 ay uzatma
+isteği). Buradaki değişiklik müşterinin Hesabım › Garantilerim sayfasına ve
+sitedeki garanti sorgulamaya anında yansır (aynı veri).
+
+- Satın alma tarihi sorulmadığı için garanti süresi **kayıt tarihinden**
+  başlar: kayıt tarihi + ürünün garanti süresi + (istendiyse) 12 ay.
+- Bitiş günü dahil garanti geçerlidir (site sorgulamasıyla aynı).
 
 - **CSV indir** (`garanti-kayitlari.csv`): seri no, ürün, sahibi, e-posta,
   telefon, şehir, posta kodu, adres, satıcı VKN, bitiş, uzatılmış
@@ -1256,10 +1336,14 @@ kullanır.
 | Sütunlar | Haber (kapak, başlık, /link), Yayın Tarihi, Durum | Etkinlik (logo, ad, /link), Tarih (başlangıç ve bitiş), Konum (şehir, ülke), Durum | Yazı (kapak, başlık, /link), Kategori, Yayın Tarihi, Durum |
 
 - **Durum rozetleri:** Yayında / Yayında değil. Etkinlikte ayrıca Yaklaşan
-  (bitişi bugün ya da sonra) / Geçmiş ve "Öne çıkan".
+  (bitişi bugün ya da sonra) / Geçmiş.
 - **İşlem:** göz (**Yayından kaldır** / **Yayına al**), **Düzenle**, **Sil**
   (""<başlık>" silinsin mi? Bu işlem geri alınamaz.").
 - Boşsa: "Kayıt bulunamadı."
+- **Yayına giriş:** "Yayında" işaretli kayıt kaydedildiği anda sitede
+  görünür. Yayın tarihi yalnızca sıralama ve gösterim içindir; ileri bir
+  tarih seçilse de kayıt beklemeden yayına girer. Zamanlanmış yayın yoktur
+  (karar, bkz. [KARARLAR.md](KARARLAR.md)).
 
 ### Haber formu
 
@@ -1299,7 +1383,7 @@ kullanır.
     Arabistan, Almanya, İtalya, Fransa, Rusya, Mısır, Irak, Azerbaycan;
     listede olmayan ülke de yazılabilir.
   - **Etkinlik Web Sitesi.**
-  - **Yayında (aktif)**, **Öne çıkan.**
+  - **Yayında (aktif).**
 - **Açıklamalar:** **Kısa Açıklama** (etkinlik kartında) ve **Detaylı
   Açıklama** (etkinlik sayfasında). Biçimli metindir.
 - **Logo & Fotoğraflar:**
@@ -1408,6 +1492,10 @@ sayfaları. Yüklenen belgeler sitede bu listedeki sırayla görünür."
   Ziyaretçi parti numarasıyla arayabilir."
 - **Yayında (sitede görünür).**
 - Kaydederken düğmede "Yükleniyor…" yazar.
+- Düzenlemede yeni dosya seçilirse eskisinin yerine geçer.
+- Sitede ziyaretçi belge adı, ürün adı, ürün kodu ve parti numarasıyla
+  arayabilir. PDF'ler **Görüntüle** ile yeni sekmede açılır, diğer dosyalar
+  **İndir** ile iner.
 - Kabul edilen uzantılar: pdf, doc, docx, xls, xlsx, jpg, jpeg, png, zip.
 - Hatalar:
   - "Başlık zorunludur." / "Dosya seçin."
@@ -1447,6 +1535,9 @@ bilgideki sıradır:
 | Mesafeli Satış Sözleşmesi | `/yasal/mesafeli-satis-sozlesmesi` |
 
 (Sayfa adları panelde değiştirilebilir; tablodakiler başlangıç adlarıdır.)
+
+**Önemli:** Metinlerin tamamı taslaktır; canlıya çıkmadan hukuk danışmanının
+metinleriyle değiştirilmelidir.
 
 - **Liste:** Başlık (düzenlemeye gider), Adres (sitede yeni sekmede açılır),
   Son güncelleme, Düzenle.
@@ -1504,16 +1595,17 @@ sayfalarla aynı listedir.
 
 ## 24. Görünüm
 
-Adres: `/yonetim/gorunum`. Açıklama: "Etkinlik ve haber sayfalarındaki
-metinlerin punto ve renklerini buradan ayarlayın."
+Adres: `/yonetim/gorunum`. Açıklama: "Haber, etkinlik ve blog yazılarındaki,
+Hakkımızda sayfasındaki, yasal metinlerdeki ve kategori tanıtım metinlerindeki
+yazıların punto ve renklerini buradan ayarlayın."
 
-- Bilgi: "Bu ayarlar etkinlik ve haber metinlerindeki ara başlık, madde ve
-  kalın vurguları etkiler. Sayfa başlıkları, menüler ve ürün sayfaları marka
-  tasarımına bağlı olduğu için buradan değişmez."
-- Ayarlar gerçekte bütün biçimli metinlere uygulanır: haber, etkinlik, blog
-  yazısı, Hakkımızda, yasal metinler, sipariş belgeleri (Ön Bilgilendirme,
-  Mesafeli Satış) ve kategori/grup tanıtım metinleri (bkz. [Bilinen
-  durumlar](#27-bilinen-durumlar)).
+- Bilgi: "Bu ayarlar haber, etkinlik ve blog yazılarındaki, Hakkımızda
+  sayfasındaki, yasal metinlerdeki (sipariş sözleşmeleri dahil) ve
+  kategori/grup tanıtım metinlerindeki ara başlık, madde ve kalın vurguları
+  etkiler. Sayfa başlıkları, menüler ve ürün sayfaları marka tasarımına bağlı
+  olduğu için buradan değişmez."
+- Yani ayarlar bütün biçimli metinlere uygulanır; sipariş sözleşmeleri Ön
+  Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi'dir.
 
 **Ayarlar:**
 
@@ -1556,7 +1648,18 @@ metinlerin punto ve renklerini buradan ayarlayın."
 | Şifremi Unuttum | — (hiçbir yere gitmez) | — |
 
 - Bu formların hepsi ayrıca `info@zenweld.com`'a e-posta gönderir (bülten ve
-  şifre hariç). E-posta kuralları: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md).
+  şifre hariç).
+  - E-postada **Yanıtla** denince yanıt doğrudan formu dolduran kişiye gider.
+  - Sipariş e-postasına T.C. kimlik no ve kart bilgisi yazılmaz.
+  - Yalnızca e-postayla giden formlarda e-posta gönderilemezse ziyaretçiye hata
+    gösterilir ve tekrar deneyebilir; panele kaydı olan formlar kaydı yine
+    alır.
+  - Her formda botlar için görünmez bir tuzak alanı vardır; onu dolduran
+    gönderim e-posta olarak gelmez.
+  - E-posta için sunucuda e-posta servisinin anahtarı tanımlı olmalıdır (bkz.
+    README). Demo adresinde anahtar yoksa formlar başarılı görünür ama
+    e-posta gitmez.
+  - Ayrıntı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md).
 - Panelden müşteriye e-posta gitmez.
 
 ---
@@ -1607,40 +1710,22 @@ metinlerin punto ve renklerini buradan ayarlayın."
 
 Bugünkü panelde bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 
-- **Zorunlu görünen ama kontrol edilmeyen alanlar:**
-  - Bayi penceresinde Bayi Adı ve Şehir yıldızlı ama boş bırakılarak
-    kaydedilebiliyor.
-  - Online Satıcı penceresinde Satıcı Adı ve Site Adresi yıldızlı ama boş
-    bırakılarak kaydedilebiliyor.
 - **Garantiler ekranındaki not:** "“+12 ay” işaretlenince bitiş tarihi
   ürünün garanti süresine göre yeniden hesaplanır." yazıyor. Gerçekte mevcut
   bitiş tarihine 12 ay eklenir ya da çıkarılır. 29 Şubat'a denk gelen
   tarihler bilinçli olarak olduğu gibi bırakıldı (bkz.
   [KARARLAR.md](KARARLAR.md)).
-- **Görünüm ekranının açıklaması:** Ayarların yalnızca etkinlik ve haberi
-  etkilediğini söylüyor; gerçekte bütün biçimli metinleri etkiliyor
-  ([24. bölüm](#24-görünüm)).
-- **Etkinlikteki "Öne çıkan":** Yalnızca panel listesinde rozet olarak
-  görünür; sitede bir etkisi yok.
-- **İleri tarihli yayın:** Haber ve blog yazısında yayın tarihi ileri bir
-  gün seçilse de kayıt hemen yayına girer. Tarih yalnızca sıralama ve
-  gösterim içindir; zamanlanmış yayın yok.
-- **Yorum silme:** Onay sorulmadan siliniyor.
-- **"Onay Bekliyor" üyelik durumu:** Sitede kayıt olan herkes Aktif başlar.
-  Bu durum yalnızca örnek veride var ve sitede hiçbir işlemi kısıtlamıyor;
-  Hesabım'da rozet olarak görünüyor.
 - **Ürün formunda olmayan alanlar:**
   - Kaynak yöntemi (MIG, TIG, MMA…): Ürün Seçici ve aramadaki yöntem
     eşleşmesi bu alana bakar; panelden eklenen ürün Ürün Seçici'de çıkmaz
     (bkz. [WEBSITE-KULLANIM.md › Bilinen durumlar](WEBSITE-KULLANIM.md#25-bilinen-durumlar)).
-  - Ürünlerdeki "öne çıkan" işareti.
+  - Ürün kaydındaki "öne çıkan" alanı: Panelde yok ve sitede hiçbir yerde
+    kullanılmıyor (örnek veride kalmış bir alan).
 - **Ayrı ürünü seçeneğe dönüştürme:** Eski ayrı ürünün linkini bir seçeneğe
   yönlendirme bugün yalnızca örnek veride var; panelde bunu yapan bir
   işlem yok ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
 - **Müşteriye bildirim:** Sipariş, teklif, servis ve garanti durumları
   değişince müşteriye e-posta gitmiyor.
-- **Servis talebi kaydı:** Kaydet'e basınca ekranda "kaydedildi" mesajı
-  çıkmıyor.
 - **Demo sınırları:**
   - Yetki kontrolü tarayıcıda yapılıyor.
   - Bütün veri tarayıcının yerel deposunda; başka tarayıcıda panel

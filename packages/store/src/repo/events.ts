@@ -65,7 +65,6 @@ export function createEvent(partial: Partial<ZenweldEvent>): ZenweldEvent {
     logoUrl: partial.logoUrl ?? "",
     images: partial.images ?? [],
     websiteUrl: partial.websiteUrl,
-    featured: partial.featured ?? false,
     active: partial.active ?? true,
     seo: partial.seo,
   };

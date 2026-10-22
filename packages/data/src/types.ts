@@ -356,7 +356,7 @@ export interface SkuAlias {
 /* ------------------------------------------------------------------ */
 
 export type UserRole = "individual" | "business" | "admin";
-export type UserStatus = "active" | "pending" | "suspended";
+export type UserStatus = "active" | "suspended";
 
 export interface User {
   id: string;
@@ -675,7 +675,6 @@ export interface ZenweldEvent {
   /** Detay sayfasindaki fotograf galerisi */
   images: string[];
   websiteUrl?: string;
-  featured: boolean;
   active: boolean;
   seo?: SeoFields;
   /** Eski adresler: link degisince eski adres yenisine yonlenir */
@@ -827,8 +826,9 @@ export interface ServiceRequest {
 /* ------------------------------------------------------------------ */
 
 /**
- * Etkinlik ve haber metinlerinin ("## baslik", "- madde", "**kalin**")
- * gorunumu. Yonetim panelindeki Gorunum sayfasindan degistirilir.
+ * Bicimli metinlerin ("## baslik", "- madde", "**kalin**") gorunumu: haber,
+ * etkinlik, blog, Hakkimizda, yasal metinler ve kategori/grup tanitimi.
+ * Yonetim panelindeki Gorunum sayfasindan degistirilir.
  */
 export interface RichTextStyle {
   /** Ara baslik punto (px) */

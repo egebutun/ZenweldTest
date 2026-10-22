@@ -72,7 +72,7 @@ export const users: User[] = [
   {
     id: "u-kurumsal-2",
     role: "business",
-    status: "pending",
+    status: "active",
     email: "satinalma@ornekfirma.com",
     passwordHash: demoHash("demo123"),
     firstName: "Burak",

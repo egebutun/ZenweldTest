@@ -829,7 +829,8 @@ ve Mesafeli Sözleşmeler Yönetmeliği gereği ödeme öncesi onaylanır).
   Koşulları'nı kabul etmelisiniz.", "Bu e-posta adresi zaten kayıtlı.", "Şifre
   en az 6 karakter olmalıdır."
 - **Kayıt sonrası:**
-  - Hesap hemen aktif olur ve oturum açılır; üye Hesabım'a gider.
+  - Hesap hemen aktif olur ve oturum açılır; üye Hesabım'a gider. Panelden
+    onay gerekmez; üye siteyi hemen kullanabilir.
   - `info@zenweld.com`'a "Yeni üye" e-postası gider: ad, e-posta, telefon,
     şehir, tür, firma ve bülten izni.
 
@@ -853,8 +854,8 @@ değildir. Gerçek sistemde kimlik doğrulama sunucuda yapılmalıdır.
 Adres: `/hesabim/...`.
 
 - **Girişsizse:** "Giriş Yap" kutusu çıkar.
-- **Üst kısım:** "Hoş geldiniz, <Ad Soyad>", hesap türü rozeti (Bireysel /
-  Kurumsal) ve hesap onay bekliyorsa "Onay Bekliyor" rozeti.
+- **Üst kısım:** "Hoş geldiniz, <Ad Soyad>" ve hesap türü rozeti (Bireysel /
+  Kurumsal).
 - **Menü:** Genel Bakış, Profil, Tekliflerim, Siparişlerim, Favorilerim,
   Garantilerim, Adreslerim. Alt sayfalarda da (ör. sipariş detayı) ilgili menü
   seçili kalır.

@@ -47,7 +47,7 @@ export default function AdminAppearancePage() {
     <>
       <AdminPageHeader
         title="Görünüm"
-        description="Etkinlik ve haber sayfalarındaki metinlerin punto ve renklerini buradan ayarlayın."
+        description="Haber, etkinlik ve blog yazılarındaki, Hakkımızda sayfasındaki, yasal metinlerdeki ve kategori tanıtım metinlerindeki yazıların punto ve renklerini buradan ayarlayın."
         action={
           <Button
             variant="outline"
@@ -67,9 +67,10 @@ export default function AdminAppearancePage() {
 
       <div className="mb-4">
         <Alert tone="info">
-          Bu ayarlar etkinlik ve haber metinlerindeki ara başlık, madde ve kalın vurguları
-          etkiler. Sayfa başlıkları, menüler ve ürün sayfaları marka tasarımına bağlı olduğu
-          için buradan değişmez.
+          Bu ayarlar haber, etkinlik ve blog yazılarındaki, Hakkımızda sayfasındaki, yasal
+          metinlerdeki (sipariş sözleşmeleri dahil) ve kategori/grup tanıtım metinlerindeki ara
+          başlık, madde ve kalın vurguları etkiler. Sayfa başlıkları, menüler ve ürün sayfaları
+          marka tasarımına bağlı olduğu için buradan değişmez.
         </Alert>
       </div>
 

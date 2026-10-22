@@ -104,7 +104,6 @@ export default function AdminEventsPage() {
                     <Badge tone={e.endDate >= today ? "green" : "outline"}>
                       {e.endDate >= today ? "Yaklaşan" : "Geçmiş"}
                     </Badge>
-                    {e.featured && <Badge tone="red">Öne çıkan</Badge>}
                     {!e.active && <Badge tone="grey">Yayında değil</Badge>}
                   </div>
                 </td>

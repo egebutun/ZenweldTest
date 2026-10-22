@@ -35,8 +35,9 @@ export function createServiceRequest(
   return record;
 }
 
-export function saveServiceRequest(request: ServiceRequest): void {
-  mutate((db) => {
+/** Tarayici deposuna yazilamazsa false. */
+export function saveServiceRequest(request: ServiceRequest): boolean {
+  return mutate((db) => {
     const idx = db.serviceRequests.findIndex((r) => r.id === request.id);
     if (idx >= 0) db.serviceRequests[idx] = { ...request, updatedAt: nowIso() };
   });
