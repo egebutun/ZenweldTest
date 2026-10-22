@@ -96,10 +96,6 @@ olduğu belirlenince panelden girilecek.
 6. **Sayfa adresi:** `?secenek=` sayfayı yalnızca o seçenekle açar. Canonical
    adres parametresizdir; site haritasında ürün tek satırdır.
 
-`packages/store/src/repo/products.ts` içindeki `createProduct` yeni ürün
-oluştururken `stockQuantity` alanını kopyalamıyor. Panele bu alan eklendiğinde
-bu fonksiyon da güncellenmeli; yoksa yeni ürünlerde sessizce kaybolur.
-
 ## Canlı sunucu (hosting) kararı ve Vercel temizliği
 
 Demo şu an Vercel'de yayında; derleme sunucusu ABD'de (Washington, D.C.).
@@ -350,15 +346,15 @@ kararlaştırılacak. Başlıklar:
    kimlik doğrulama şart
 2. Form uçlarında istek sınırı ve bot koruması yok → "Formlar — güvenlik
    (backend)"
-3. `createProduct` bazı alanları kopyalamıyor (yukarıdaki not)
-4. Tarayıcı deposu dolunca değişiklik uygulanmıyor; yönetim paneli ve yorum
+3. Tarayıcı deposu dolunca değişiklik uygulanmıyor; yönetim paneli ve yorum
    formu uyarıyor, sitedeki diğer formlar (teklif, servis, garanti, üyelik) uyarmıyor
-5. Arama dizini her sayfa açılışında kuruluyor
-6. Her değişiklikte tüm veritabanı (≈545 KB) yeniden yazılıyor
-7. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
-8. 17 dosyada hâlâ Lorem ipsum var
-9. ESLint kurulu değil, test ve CI yok
-10. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
+4. Arama dizini her sayfa açılışında kuruluyor
+5. Her değişiklikte tüm veritabanı (≈545 KB) yeniden yazılıyor
+6. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
+7. 8 dosyada hâlâ Lorem ipsum yer tutucu metin var: anasayfa, ürün sayfası,
+   Welders Club, Teklif Al formu, Adreslerim, `tr.ts` ve örnek veriler
+8. ESLint kurulu değil, test ve CI yok
+9. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
 
 ## Çerezler ve yasal metinler
 
