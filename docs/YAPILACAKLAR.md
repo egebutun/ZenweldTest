@@ -20,6 +20,8 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | Kargo takip bağlantısı | Kargo firması ve entegrasyon kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 9 |
 | Müşterinin siparişini sitede iptal etmesi | İleride düşünülecek | "Müşterinin siparişi iptal etmesi" bölümü |
 | Kurumsal üyelerde iade talebi | Kurumsal alıcılara cayma hakkının uygulanıp uygulanmayacağı sorulup öğrenilecek | "İade talebi" bölümü |
+| Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | "Erişilebilirlik" bölümü |
+| Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil | "Görseller ve uzun listeler" bölümü |
 
 ## Müşterinin siparişi iptal etmesi — ileride düşünülecek
 
@@ -32,6 +34,45 @@ karar verilecekler:
 - Kartla ödenmiş siparişte para iadesi K-27'ye göre banka ya da ödeme
   kuruluşu üzerinden ayrıca yapılır; müşteriye bunun söylenmesi.
 - Zenweld'e bildirim (e-posta) ve panelde iptal nedeninin görünmesi.
+
+## Erişilebilirlik (A4) — önerilen, zorunlu değil
+
+Türkiye'de özel e-ticaret siteleri için genel bir erişilebilirlik
+zorunluluğu bilinmiyor; AB'ye satış yapılırsa durum değişebilir (hukukçuyla
+teyit edilmeli). Yapılacaklar:
+
+1. **"İçeriğe atla" bağlantısı:** Sayfanın en başında, Tab'a basınca
+   görünen bir bağlantı; klavyeyle gezen ziyaretçi menüyü atlayıp doğrudan
+   sayfa içeriğine geçer. Bugün yok.
+2. **Klavye odağı her yerde görünsün:** Tab ile gezinirken seçili düğme ya
+   da bağlantı belirgin bir çerçeveyle görünmeli; bütün sayfalarda
+   denetlenmeli.
+3. **Dokunma alanları:** Telefonda düğme ve bağlantılar en az 44 × 44 piksel
+   olmalı; küçük simge düğmeler (sepetten çıkar, adet artır/azalt vb.)
+   denetlenmeli.
+4. **Form etiketleri alanlara bağlansın:** Birçok formda etiket alanla
+   bağlı değil (Üye Ol, Teklif Al, panelde ürün formu — "Kod incelemesi
+   bulguları" 9); ekran okuyucu alanın adını okuyamaz. Tarayıcı testleri
+   de bu yüzden bazı alanları sırasıyla seçiyor.
+5. Renk karşıtlığı tasarım aşamasında ele alınacak.
+
+## Görseller ve uzun listeler (A5) — önerilen, zorunlu değil
+
+1. **Görsel optimizasyonu (`next/image`):** Bugün görseller olduğu gibi
+   yükleniyor (`ProductImage`, `<img loading="lazy">`). Next.js'in görsel
+   bileşeni ekran boyuna uygun küçük sürüm ve WebP/AVIF üretir; sayfa daha
+   hızlı açılır, görselin ölçüsü önceden bilindiği için sayfa kayması olmaz
+   ("Kod incelemesi bulguları" 6).
+   - Panelden yüklenen görseller bugün tarayıcıda (`data:`) durduğu için bu
+     yoldan ancak dosya deposu gelince geçebilir ("Görseller ve yüklenen
+     dosyalar — backend").
+   - `next.config.mjs` içindeki `images.remotePatterns` ve güvenlik
+     politikasındaki görsel izni birlikte güncellenmeli.
+2. **Sayfalama:** Sitede ve panelde hiçbir liste sayfalanmıyor; kategori
+   ürün listesi, blog, haberler, etkinlikler ve panelde siparişler, üyeler,
+   teklifler, yorumlar tek sayfada. Kayıt sayısı artınca sayfa sayfa
+   gösterilmeli. Sitede sayfa adresi (ör. `?sayfa=2`) arama motorları için
+   canonical ve site haritasıyla birlikte düşünülmeli.
 
 ## Kategori filtreleri
 
@@ -303,10 +344,43 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
 4. **Şifre değiştirme ve hesap silme sunucuda yapılmalı:** Bugün tarayıcıda
    (`changePassword`, `deleteAccount`). Şifre değişince üyenin diğer
    cihazlardaki oturumları kapanmalı.
-5. **Hesap silinince kalan kayıtlardaki kişisel veriler:** Siparişler yasal
-   olarak saklanır; teklif, servis talebi, garanti ve yorumlardaki ad,
-   e-posta ve telefonun silinip silinmeyeceği ya da anonimleştirileceği
-   hukukçuyla netleşmeli (KVKK).
+5. **Hesap silinince kalan veriler:** "Hesap silme — açık konular" bölümü.
+
+## Hesap silme — açık konular (KVKK ve yasal saklama)
+
+Bugün üye Hesabım › Profil'den hesabını silebiliyor: hesap ve adresleri
+siliniyor, diğer kayıtları kalıyor (panelden silmeyle aynı). Bu kural
+demoda yeterli; canlıya çıkmadan şunlar hukukçu ve mali müşavirle
+netleşmeli:
+
+1. **Yasal saklama süresi:** Sipariş ve fatura kayıtları vergi ve ticaret
+   mevzuatı gereği yıllarca saklanmalı (süreler mali müşavirle
+   netleşmeli). KVKK'ya göre bu süre boyunca yalnızca gereken bilgi tutulur;
+   süre dolunca silinir ya da anonimleştirilir. Sitedeki "Kişisel Veri
+   Saklama ve İmha Politikası" metni buna göre yazılmalı.
+2. **Diğer kayıtlardaki kişisel veriler:** Teklif, servis talebi, iade
+   talebi, garanti kaydı ve yorumdaki ad, e-posta ve telefon silinsin mi,
+   anonimleştirilsin mi, kalsın mı?
+3. **Yorumlar:** Sitede yazarın adıyla görünüyor. Hesap silinince ad
+   gizlensin mi (ör. "Silinmiş üye")?
+4. **Garanti:** Kayıt e-postaya ve seri numarasına bağlı; hesap silinse de
+   ürünün garantisi sürer. Garanti verisi silinirse müşteri garanti hakkını
+   kanıtlamakta zorlanabilir.
+5. **Açık işler varken silme:** Hazırlanan ya da kargodaki sipariş, açık
+   iade talebi varken de hesap silinebiliyor; müşteri bunları artık
+   göremez. Silme engellensin mi, uyarı mı verilsin?
+6. **Aynı e-postayla yeniden üye olma:** Bugün mümkün. Eski siparişler,
+   teklifler ve iade talepleri yeni hesaba bağlanmıyor (üye kimliğine
+   bağlılar); garanti kayıtları ise e-postayla eşleştiği için yeniden
+   görünüyor. Hangisinin doğru olduğu kararlaştırılmalı.
+7. **Bülten izni ve İYS:** Hesapla birlikte bülten izni de siliniyor; İYS
+   bağlanınca ret kaydı gönderilmeli ("Bülten ve İYS").
+8. **Başka yerlerdeki kopyalar:** Sunucu yedekleri, info@zenweld.com'a gelen
+   form e-postaları, muhasebe ve e-arşiv yazılımı için de imha süreci
+   tanımlanmalı.
+9. **İz kaydı ve bildirim:** Silmenin kim tarafından ve ne zaman yapıldığı
+   bugün hiçbir yerde kalmıyor; Zenweld'e de bildirim gitmiyor. KVKK
+   başvurularına yanıt verebilmek için kayıt tutulmalı.
 
 ## Müşteriye e-posta bildirimleri (sipariş dışı) — backend
 

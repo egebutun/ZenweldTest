@@ -802,6 +802,8 @@ ve Mesafeli Sözleşmeler Yönetmeliği gereği ödeme öncesi onaylanır).
   - "Şifre hatalı."
   - "Hesabınız askıya alınmış. Lütfen bizimle iletişime geçin."
 - E-posta büyük/küçük harf duyarsızdır.
+- Hesabını silen üye buraya gelir (`/giris?hesap=silindi`); formun üstünde
+  "Hesabınız silindi." yazar.
 - **Girişten sonra nereye gider:**
   - Adreste `?next=` varsa ve site içi bir adresse oraya gider (ör. ödemeden
     gelindiyse ödemeye).

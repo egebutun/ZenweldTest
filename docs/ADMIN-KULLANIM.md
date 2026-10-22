@@ -1699,6 +1699,7 @@ yazıların punto ve renklerini buradan ayarlayın."
 | `/yonetim/siparisler` | Siparişler |
 | `/yonetim/siparisler/<id>` | Sipariş detayı |
 | `/yonetim/teklifler` | Teklifler |
+| `/yonetim/iade-talepleri` | İade Talepleri |
 | `/yonetim/magaza` | Mağaza Ayarları |
 | `/yonetim/urunler` | Ürünler |
 | `/yonetim/urunler/yeni` | Yeni ürün |
