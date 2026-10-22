@@ -126,12 +126,19 @@ Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
 22 Ekim 2026'da `npm audit fix` ile yama sürümlerine geçildi (next 15.5.28,
 sharp 0.35.5, source-map-js 1.2.2); kritik açık dahil 4 açıktan 2'si kapandı.
 
-- **Kalan:** `npm audit` 2 açık gösterir. İkisi de Next 15'in kendi içine
-  sabitlediği eski postcss (8.4.31) yüzündendir; yalnızca Next 16'ya geçince
-  kapanır.
-- **Risk düşük:** Bu açıklar saldırganın hazırladığı bir CSS dosyası
-  işlenince ortaya çıkar. postcss yalnızca derleme sırasında projenin kendi
-  CSS dosyalarını işler; ziyaretçiden CSS alınmaz.
+- **Kalan:** `npm audit` 7 açık gösterir:
+  - **2 tanesi** Next 15'in kendi içine sabitlediği eski postcss (8.4.31)
+    yüzündendir; yalnızca Next 16'ya geçince kapanır. Bu açıklar saldırganın
+    hazırladığı bir CSS dosyası işlenince ortaya çıkar. postcss yalnızca
+    derleme sırasında projenin kendi CSS dosyalarını işler; ziyaretçiden CSS
+    alınmaz.
+  - **5 tanesi** kod denetimi aracının (ESLint, `eslint-config-next`)
+    kullandığı `braces` paketinden gelir (çok iç içe dosya kalıbıyla
+    yavaşlatma). Araç yalnızca geliştirirken ve derlemede projenin kendi
+    dosyalarını denetler; siteye girmez, dışarıdan veri almaz. 22 Ekim 2026
+    itibarıyla düzeltilmiş sürümü yok; çıkınca `npm update` ile alınır.
+- **Risk düşük:** Yedi açığın hiçbiri ziyaretçinin gönderdiği veriyle
+  tetiklenemez.
 - **Karar:** Geçiş ertelendi; canlı sunucu kararıyla birlikte planlı yapılacak.
 - **Nasıl:** Next'in 16 sürüm geçiş kılavuzu adım adım uygulanır (ana sürüm
   değişikliği; bazı dosya ve ayar adları değişir). Sonra typecheck, build ve
@@ -395,7 +402,7 @@ kararlaştırılacak. Başlıklar:
 6. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
 7. 8 dosyada hâlâ Lorem ipsum yer tutucu metin var: anasayfa, ürün sayfası,
    Welders Club, Teklif Al formu, Adreslerim, `tr.ts` ve örnek veriler
-8. ESLint kurulu değil, test ve CI yok
+8. Test ve CI yok
 9. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
 
 ## Çerezler ve yasal metinler

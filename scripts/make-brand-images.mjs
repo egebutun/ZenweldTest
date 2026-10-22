@@ -26,7 +26,6 @@ const ROOT = new URL("..", import.meta.url).pathname;
 const APPS = ["zenweld-web"];
 
 const INK = "#141619";
-const RED = "#b82429";
 const W = 1200;
 const H = 630;
 

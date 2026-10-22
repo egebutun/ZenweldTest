@@ -174,7 +174,7 @@ export function GroupHub({ section, groupSlug }: { section: TopLevelSection; gro
         cta: t.common.viewProducts,
       };
     });
-  }, [db, section, group, t]);
+  }, [db, group, t]);
 
   if (!group) return null;
   return (

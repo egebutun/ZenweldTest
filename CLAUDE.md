@@ -56,8 +56,9 @@ ilgili belge **aynı commit'te** güncellenir:
   - `npm run dev:web`: geliştirme sunucusu, http://localhost:3000.
   - `npm run build`: üretim derlemesi.
   - `npm run typecheck`: TypeScript kontrolü.
-  - `npm run lint`: bugün çalışmaz, ESLint kurulu değil.
-- **Doğrulama:** Her değişiklikten sonra typecheck ve build çalıştırılır.
+  - `npm run lint`: kod denetimi (ESLint). `npm run build` de çalıştırır;
+    hata varsa derleme durur.
+- **Doğrulama:** Her değişiklikten sonra typecheck, lint ve build çalıştırılır.
   Davranış değiştiyse kontrol listesindeki ilgili maddeler denenir.
 
 ## Güvenlik

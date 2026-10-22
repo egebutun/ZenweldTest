@@ -11,13 +11,16 @@
     "dev:web": "npm run dev --workspace=@zenweld/web",
     "build": "npm run build --workspace=@zenweld/web",
     "build:web": "npm run build --workspace=@zenweld/web",
-    "lint": "npm run lint --workspaces --if-present",
+    "lint": "eslint .",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.28",
     "sharp": "^0.35.4"
   }
 }

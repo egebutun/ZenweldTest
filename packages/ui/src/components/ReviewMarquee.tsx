@@ -73,12 +73,14 @@ export function ReviewMarquee({
     let offset = 0;
     let last = performance.now();
     let frame = 0;
+    // Dizi hic yeniden atanmaz; kart ref'leri icini doldurur.
+    const cards = cardsRef.current;
 
     // Kart konumu [-STEP, total-STEP) araliginda tutulur: bir kart sol
     // kenardan tamamen kayip ciktiktan SONRA halkanin sonuna atlar.
     // Aksi halde x=0'da aniden kaybolur ve solda bosluk olusurdu.
     const place = () => {
-      cardsRef.current.forEach((el, i) => {
+      cards.forEach((el, i) => {
         if (!el) return;
         const x = ((((i * STEP - offset) % total) + total) % total) - STEP;
         el.style.transform = `translateX(${x}px)`;
@@ -98,7 +100,7 @@ export function ReviewMarquee({
     return () => {
       cancelAnimationFrame(frame);
       // Serit duz siraya donerse kartlarda kaydirma kalmasin (ust uste binerdi).
-      cardsRef.current.forEach((el) => {
+      cards.forEach((el) => {
         if (el) el.style.transform = "";
       });
     };

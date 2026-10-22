@@ -51,6 +51,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] `npm start` ile site açılır; anasayfa 200 döner.
 - [ ] Tip kontrolü (`npx tsc --noEmit -p apps/zenweld-web/tsconfig.json`)
       hatasız geçer.
+- [ ] Kod denetimi (`npm run lint`) hata ve uyarı vermez.
 
 ---
 

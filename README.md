@@ -62,8 +62,9 @@ oturumundan ayrı kendi oturumu vardır.
 Diğer komutlar:
 
 ```bash
-npm run build       # ana sitenin üretim derlemesi
+npm run build       # ana sitenin üretim derlemesi (kod denetimini de çalıştırır)
 npm run typecheck   # TypeScript kontrolü
+npm run lint        # kod denetimi (ESLint)
 ```
 
 ---
@@ -495,4 +496,4 @@ icon.png ve apple-icon.png yeniden oluşturulur.
 ## Teknoloji
 
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·
-MiniSearch · Leaflet + OpenStreetMap · lucide-react · npm workspaces
+MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · npm workspaces

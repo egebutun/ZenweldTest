@@ -298,6 +298,7 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 | read-excel-file | Stok dosyası (.xlsx) okuma; CSV kendi okuyucumuzla |
 | @fontsource (Inter, Barlow Condensed) | Yazı tipleri sitenin kendi sunucusundan gelir; Google Fonts'a istek gitmez |
 | sharp | Derleme öncesi logo kırpma |
+| ESLint (eslint-config-next) | Kod denetimi; yalnızca geliştirirken ve derlemede çalışır, siteye girmez |
 
 Sürümler: `apps/zenweld-web/package.json`, kök `package.json`.
 
