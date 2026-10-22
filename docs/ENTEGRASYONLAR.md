@@ -315,7 +315,9 @@ her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
 **Ortam değişkenleri:** Örnek dosya `apps/zenweld-web/.env.example`'dır.
 Bilgisayarda aynı klasöre `.env.local` adıyla kopyalanıp doldurulur
 (`.env.local` GitHub'a gönderilmez); Vercel'de Project Settings ›
-Environment Variables'a girilir.
+Environment Variables'a girilir. **Kural:** Koda yeni bir değişken
+eklendiğinde ya da biri kaldırıldığında bu tablo ve `.env.example` birlikte
+güncellenir (`.env.example`'a gerçek değer yazılmaz).
 
 | Değişken | Kim tanımlar | Açıklama |
 |---|---|---|
