@@ -1234,7 +1234,9 @@ listelenir. Bayiler ana sitenin üyesi değildir.
   - **Durum:** Rozet (Aktif / Askıda). Aktif üyede **Askıya al** (kendi
     satırında yok), askıdaki üyede **Aktifleştir**.
   - Kayıt tarihi.
-  - Sil: Yönetici satırında pasiftir. Onay: "<e-posta> silinsin mi?"
+  - Sil: Yönetici satırında pasiftir. Onay: "<e-posta> silinsin mi?" Üyenin
+    kayıtlı adresleri de silinir; siparişleri, teklifleri, servis talepleri ve
+    yorumları kalır.
 
 **Kurallar:**
 

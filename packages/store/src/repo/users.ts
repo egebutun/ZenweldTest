@@ -45,10 +45,12 @@ export function saveUser(user: User): boolean {
   });
 }
 
+/** Uyeyi kayitli adresleriyle birlikte siler; siparis ve teklifleri kalir. */
 export function deleteUser(id: string): boolean {
   if (isLastAdmin(id, getSnapshot())) return false;
   return mutate((db) => {
     db.users = db.users.filter((u) => u.id !== id);
+    db.addresses = db.addresses.filter((a) => a.userId !== id);
   });
 }
 

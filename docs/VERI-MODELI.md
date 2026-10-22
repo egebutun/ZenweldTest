@@ -134,8 +134,8 @@ bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmışt
 | Teklif satırı | Ürün | `productId` | Ad, kod ve seçenek kopya |
 | Sipariş | Üye (zorunlu) | `userId` | Sipariş yalnızca üyeden |
 | Sipariş satırı | Ürün | `productId` | Ad, kod, seçenek ve fiyat kopya |
-| Servis talebi | Kategori, ürün, üye (isteğe bağlı) | `categorySlug`, `productId`, `userId` | |
-| Garanti kaydı | Kategori, ürün | `categorySlug`, `productId` | Üyeye e-postayla eşleşir (kimlikle değil) |
+| Servis talebi | Kategori, ürün, üye (isteğe bağlı) | `categorySlug`, `productId`, `userId` | Kategori bugün linkle bağlı; backend'de kimlikle bağlanmalı |
+| Garanti kaydı | Kategori, ürün | `categorySlug`, `productId` | Kategori bugün linkle bağlı; backend'de kimlikle bağlanmalı. Üyeye e-postayla eşleşir (kimlikle değil) |
 | Yorum | Ürün, üye (isteğe bağlı) | `productId`, `userId` | Seçenekten bağımsız; bütün seçenekler aynı yorumları görür |
 | Belge | Ürün (isteğe bağlı) | `productId` | |
 
@@ -722,7 +722,7 @@ sağlanmalı.
 | Seçenek değeri | Bir üründe kullanılıyorsa silinmez | — |
 | Bayi | — | Stok satırları, stok işlemleri, kod eşleştirmeleri |
 | Online satıcı | — | Stok satırları, stok işlemleri, kod eşleştirmeleri; bağlı bayinin `retailerId`'si |
-| Üye | Son aktif yönetici silinemez; panelde yönetici satırı silinemez | Adresleri bugün silinmiyor (backend'de birlikte silinmeli); siparişleri ve teklifleri kalır |
+| Üye | Son aktif yönetici silinemez; panelde yönetici satırı silinemez | Kayıtlı adresleri. Siparişleri, teklifleri, servis talepleri ve yorumları kalır (geçmiş kayıt) |
 | Teklif | — | Numarası boşta kalır |
 | Garanti, yorum, SSS, temsilci, haber, blog, etkinlik | — | — |
 | Belge | — | Dosyası |
@@ -795,7 +795,10 @@ sunucuya taşınmalı (veritabanı, oturum).
 ## 16. Kullanılmayan alanlar
 
 Kayıtta bulunan ama bugün sitede de panelde de kullanılmayan alanlar.
-Backend'e geçerken taşınmayabilir ya da kullanılmaya başlanabilir:
+
+**Karar (2026-10-22):** Bu alanlar ileride kullanılmak üzere bırakıldı;
+silinmez. Backend'e geçerken tablolara taşınmalı (bkz.
+[KARARLAR.md](KARARLAR.md)).
 
 | Alan | Durum |
 |---|---|
