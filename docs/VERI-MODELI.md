@@ -679,8 +679,11 @@ başlangıç değeri.
 | Teklif | `TKL-<yıl>-<4 hane>` | TKL-2026-0004 |
 | Servis talebi | `SRV-<yıl>-<4 hane>` | SRV-2026-0034 |
 
-- Numara o yılın en büyük numarasının bir fazlasıdır; her yıl 1'den başlar.
-- Silinen kaydın numarası yeniden kullanılmaz.
+- Numara o yıl şimdiye kadar verilmiş en büyük numaranın bir fazlasıdır;
+  her yıl 1'den başlar.
+- Silinen kaydın numarası yeniden kullanılmaz; en son kayıt silinse de.
+  Bunun için son verilen numaralar veritabanında ayrıca tutulur:
+  `recordCounters` (ön ek → sayı, ör. `"TKL-2026-": 49`).
 - Numara kayıt anında verilir; backend'de aynı anda gelen iki kayıt aynı
   numarayı almamalı (veritabanı sırası ya da kilit).
 
@@ -759,7 +762,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 57).
+- `packages/data/src/index.ts`'tedir (bugün 58).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**

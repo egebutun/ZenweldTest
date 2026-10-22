@@ -254,6 +254,14 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   ödeme kuruluşu üzerinden ayrıca yapılır. Müşteri siparişini sitede iptal
   edemez.
 
+### K-64 · Kayıt numarası hiçbir zaman tekrar verilmez
+- **Tarih:** 2026-10-22
+- **Karar:** Sipariş, teklif ve servis talebi numaraları tekrar etmez; en
+  son kayıt silinse de numarası bir sonraki kayda verilmez.
+- **Neden:** Müşterinin elindeki e-postada yazan numara başka bir kayda
+  verilmesin. Testler, en son teklif silinince numarasının yeniden
+  verildiğini ortaya çıkardı; belgeyi değil kodu düzeltme kararı alındı.
+
 ---
 
 ## 5. Bayiler, online satıcılar ve stok

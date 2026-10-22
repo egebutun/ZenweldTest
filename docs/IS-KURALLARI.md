@@ -623,11 +623,13 @@ Kod: `packages/auth/src/auth-context.tsx`, `packages/store/src/repo/users.ts`.
 | Teklif | `TKL-<yıl>-<4 hane>` | TKL-2026-0004 |
 | Servis talebi | `SRV-<yıl>-<4 hane>` | SRV-2026-0034 |
 
-- Numara, o yılın en büyük numarasının bir fazlasıdır; her yıl 1'den başlar.
-- Silinen kaydın numarası yeniden verilmez.
+- Numara, o yıl şimdiye kadar verilmiş en büyük numaranın bir fazlasıdır;
+  her yıl 1'den başlar.
+- Silinen kaydın numarası yeniden verilmez; **en son kayıt silinse de**
+  numarası bir sonraki kayda verilmez ([KARARLAR.md](KARARLAR.md) K-64).
 
-Kod: `packages/store/src/repo/commerce.ts` › `nextCode`,
-`packages/store/src/repo/service.ts`.
+Kod: `packages/store/src/repo/shared.ts` › `nextCode` (sipariş, teklif ve
+servis talebi aynı yeri kullanır).
 
 ---
 

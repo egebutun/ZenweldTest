@@ -950,6 +950,11 @@ export interface ZenweldDatabase {
   legalPages: LegalPage[];
   serviceRequests: ServiceRequest[];
   /**
+   * Son verilen kayit numaralari (on ek -> sayi; "TKL-2026-" -> 49).
+   * Silinen kaydin numarasi, en sonuncusu dahil, yeniden verilmez.
+   */
+  recordCounters: Record<string, number>;
+  /**
    * Sabit sayfalarin panelden degistirilen arama basligi ve aciklamasi
    * (sayfa adresi -> alanlar; Icerik > Sayfa SEO). Eski kayitlarda yok.
    */

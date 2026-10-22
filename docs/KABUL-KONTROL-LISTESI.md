@@ -266,7 +266,8 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Vadeli ödemede vade 30/45/60/90/120 gün (varsayılan 60).
 - [ ] Gönderince teklif numarası `TKL-<yıl>-<4 hane>` görünür; liste boşalır;
       üyede teklif Tekliflerim'de durur.
-- [ ] Panelde silinen teklifin numarası yeni teklife verilmez.
+- [ ] Panelde silinen teklifin numarası yeni teklife verilmez; en son
+      teklif silinse de (örnek: TKL-…-0049 silinince yeni teklif 0050 olur).
 
 ---
 

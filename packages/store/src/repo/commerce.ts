@@ -2,7 +2,7 @@
 
 import type { Order, OrderStatus, Quote, ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
-import { nowIso } from "./shared";
+import { nextCode, nowIso } from "./shared";
 
 /* ------------------------------------------------------------------ */
 /* Teklifler                                                           */
@@ -19,20 +19,12 @@ export function quotesForUser(
   return listQuotes(db).filter((q) => q.userId === userId);
 }
 
-/** Yilin en buyuk numarasinin bir fazlasi: "TKL-2026-" + 0004 (silinen kayit numarayi tekrar ettirmez). */
-function nextCode(codes: string[], prefix: string, digits: number): string {
-  const last = codes
-    .filter((c) => c.startsWith(prefix))
-    .reduce((max, c) => Math.max(max, Number(c.slice(prefix.length)) || 0), 0);
-  return `${prefix}${String(last + 1).padStart(digits, "0")}`;
-}
-
 export function createQuote(quote: Omit<Quote, "id" | "code" | "createdAt" | "updatedAt">): Quote {
   const at = nowIso();
   const record: Quote = { ...quote, id: uid("q"), code: "", createdAt: at, updatedAt: at };
   mutate((draft) => {
     // Numara kayit aninda en guncel listeden verilir.
-    record.code = nextCode(draft.quotes.map((q) => q.code), `TKL-${new Date().getFullYear()}-`, 4);
+    record.code = nextCode(draft, draft.quotes.map((q) => q.code), `TKL-${new Date().getFullYear()}-`, 4);
     draft.quotes.unshift({ ...record });
   });
   return record;
@@ -90,7 +82,7 @@ export function placeOrder(order: NewOrder): Order {
   };
   mutate((draft) => {
     // Numara kayit aninda en guncel listeden verilir.
-    record.code = nextCode(draft.orders.map((o) => o.code), `SIP-${new Date().getFullYear()}-`, 5);
+    record.code = nextCode(draft, draft.orders.map((o) => o.code), `SIP-${new Date().getFullYear()}-`, 5);
     draft.orders.unshift({ ...record });
   });
   return record;

@@ -40,7 +40,7 @@ import { documentPages } from "./seed/documents.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 57;
+export const DB_VERSION = 58;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida
@@ -79,6 +79,8 @@ export function createSeedDatabase(now: number = Date.now()): ZenweldDatabase {
       salesReps,
       legalPages,
       serviceRequests: sample.serviceRequests,
+      // Ornek kayitlarin numaralari nextCode'da mevcut en buyuk numaradan okunur.
+      recordCounters: {},
       settings: defaultSettings,
     }),
   ) as ZenweldDatabase;
