@@ -256,8 +256,11 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 
 ### K-27 · Müşteriye otomatik iade yok
 - **Karar:** Sipariş iptalinde para iadesi panelden yapılmaz; banka ya da
-  ödeme kuruluşu üzerinden ayrıca yapılır. Müşteri siparişini sitede iptal
-  edemez.
+  ödeme kuruluşu üzerinden ayrıca yapılır.
+- **Not (2026-10-22):** "Müşteri siparişini sitede iptal edemez" bu karardan
+  çıkarıldı; müşterinin siparişi kendisinin iptal etmesi ileride
+  düşünülecek ([YAPILACAKLAR.md](YAPILACAKLAR.md)). Bugün sitede iptal
+  düğmesi yoktur.
 
 ### K-64 · Kayıt numarası hiçbir zaman tekrar verilmez
 - **Tarih:** 2026-10-22

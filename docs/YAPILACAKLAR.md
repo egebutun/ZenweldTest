@@ -18,6 +18,19 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | Ayrı ürünü seçeneğe dönüştürme ekranı | Gerçek ürünler girilmeye başlanınca karar | [Ürün seçenekleri](#ürün-seçenekleri-3-m--5-m-gibi--backend) 3 |
 | Satıcı bilgilerinin sitede gösterilmesi (ETBİS, unvan, MERSİS) | ETBİS kaydı ve şirket bilgileri | "Satıcı bilgileri sitede" bölümü |
 | Kargo takip bağlantısı | Kargo firması ve entegrasyon kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 9 |
+| Müşterinin siparişini sitede iptal etmesi | İleride düşünülecek | "Müşterinin siparişi iptal etmesi" bölümü |
+
+## Müşterinin siparişi iptal etmesi — ileride düşünülecek
+
+Bugün müşteri siparişini sitede iptal edemez; iptali yönetici panelden
+yapar (KARARLAR K-27'deki eski cümle 2026-10-22'de çıkarıldı). Yapılırsa
+karar verilecekler:
+
+- Hangi durumlarda iptal edilebilir (ör. yalnızca Ödeme Bekleniyor ve
+  Hazırlanıyor; kargoya verilen sipariş iptal edilemez).
+- Kartla ödenmiş siparişte para iadesi K-27'ye göre banka ya da ödeme
+  kuruluşu üzerinden ayrıca yapılır; müşteriye bunun söylenmesi.
+- Zenweld'e bildirim (e-posta) ve panelde iptal nedeninin görünmesi.
 
 ## Kategori filtreleri
 

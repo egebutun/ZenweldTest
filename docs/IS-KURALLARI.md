@@ -308,7 +308,8 @@ Siparişi yalnızca **üye** verir.
 - Teslim edilmiş ya da iptal edilmiş sipariş iptal edilemez.
 - İptal nedenini müşteri görür. Ödemesi alınmış siparişin iadesi banka ya da
   ödeme kuruluşu üzerinden **ayrıca** yapılır; sistem iade yapmaz.
-- Müşteri sitede siparişini iptal edemez.
+- Müşteri sitede siparişini iptal edemez (bugün düğme yok; ileride
+  düşünülecek, [YAPILACAKLAR.md](YAPILACAKLAR.md)).
 - Sipariş kaydı ürün adı, kodu, seçenek adı, birim fiyat ve KDV oranını
   sipariş anındaki haliyle saklar ([VERI-MODELI.md](VERI-MODELI.md)).
 - Durum değişince müşteriye e-posta **gitmez**.
