@@ -186,7 +186,6 @@ export interface Product {
   options?: ProductOptions;
   /** Teklif Al akisina acik mi */
   quotable: boolean;
-  featured: boolean;
   isNew: boolean;
   /**
    * Kategori icindeki sira (panelde "Sıra"): kategori sayfasindaki "Önerilen"

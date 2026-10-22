@@ -109,7 +109,6 @@ export function createProduct(partial: Partial<Product>): Product {
     inTheBox: partial.inTheBox ?? [],
     highlights: partial.highlights ?? [],
     quotable: partial.quotable ?? true,
-    featured: partial.featured ?? false,
     isNew: partial.isNew ?? true,
     // Sira verilmediyse kategorisinin sonuna eklenir.
     order: partial.order ?? nextProductOrder(categorySlug),

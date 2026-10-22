@@ -42,7 +42,6 @@ export function ProductForm({ product }: { product?: Product }) {
       inTheBox: [],
       highlights: [],
       quotable: true,
-      featured: false,
       isNew: true,
       warrantyMonths: 24,
       createdAt: new Date().toISOString(),

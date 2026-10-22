@@ -1312,9 +1312,10 @@ sitedeki garanti sorgulamaya anında yansır (aynı veri).
 - Boşsa: "Henüz garanti kaydı yok." / "Aramanıza uygun kayıt yok."
 - Ekranın altındaki not: "Bitiş tarihi ve uzatılmış garanti değişiklikleri
   müşterinin “Hesabım → Garantilerim” sayfasına ve sitedeki garanti
-  sorgulamaya anında yansır. “+12 ay” işaretlenince bitiş tarihi ürünün
-  garanti süresine göre yeniden hesaplanır." (Son cümle bugünkü davranışla
-  uyuşmuyor; bkz. [Bilinen durumlar](#27-bilinen-durumlar).)
+  sorgulamaya anında yansır. “+12 ay” işaretlenince bitiş tarihine 12 ay
+  eklenir, kaldırılınca 12 ay çıkarılır."
+- 29 Şubat'a denk gelen tarihler bilinçli olarak olduğu gibi bırakıldı (bkz.
+  [KARARLAR.md](KARARLAR.md)).
 
 ---
 
@@ -1710,17 +1711,10 @@ yazıların punto ve renklerini buradan ayarlayın."
 
 Bugünkü panelde bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 
-- **Garantiler ekranındaki not:** "“+12 ay” işaretlenince bitiş tarihi
-  ürünün garanti süresine göre yeniden hesaplanır." yazıyor. Gerçekte mevcut
-  bitiş tarihine 12 ay eklenir ya da çıkarılır. 29 Şubat'a denk gelen
-  tarihler bilinçli olarak olduğu gibi bırakıldı (bkz.
-  [KARARLAR.md](KARARLAR.md)).
-- **Ürün formunda olmayan alanlar:**
-  - Kaynak yöntemi (MIG, TIG, MMA…): Ürün Seçici ve aramadaki yöntem
-    eşleşmesi bu alana bakar; panelden eklenen ürün Ürün Seçici'de çıkmaz
-    (bkz. [WEBSITE-KULLANIM.md › Bilinen durumlar](WEBSITE-KULLANIM.md#25-bilinen-durumlar)).
-  - Ürün kaydındaki "öne çıkan" alanı: Panelde yok ve sitede hiçbir yerde
-    kullanılmıyor (örnek veride kalmış bir alan).
+- **Ürün formunda olmayan alan — kaynak yöntemi (MIG, TIG, MMA…):** Ürün
+  Seçici ve aramadaki yöntem eşleşmesi bu alana bakar; panelden eklenen ürün
+  Ürün Seçici'de çıkmaz (bkz.
+  [WEBSITE-KULLANIM.md › Bilinen durumlar](WEBSITE-KULLANIM.md#25-bilinen-durumlar)).
 - **Ayrı ürünü seçeneğe dönüştürme:** Eski ayrı ürünün linkini bir seçeneğe
   yönlendirme bugün yalnızca örnek veride var; panelde bunu yapan bir
   işlem yok ([YAPILACAKLAR.md](YAPILACAKLAR.md)).

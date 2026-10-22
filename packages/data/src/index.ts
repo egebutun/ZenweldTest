@@ -40,7 +40,7 @@ import { documentPages } from "./seed/documents.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 56;
+export const DB_VERSION = 57;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida

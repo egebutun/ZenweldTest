@@ -220,7 +220,7 @@ export default function AdminWarrantiesPage() {
       <p className="mt-3 text-xs text-zw-grey-500">
         Bitiş tarihi ve uzatılmış garanti değişiklikleri müşterinin “Hesabım → Garantilerim”
         sayfasına ve sitedeki garanti sorgulamaya anında yansır. “+12 ay” işaretlenince bitiş
-        tarihi ürünün garanti süresine göre yeniden hesaplanır.
+        tarihine 12 ay eklenir, kaldırılınca 12 ay çıkarılır.
       </p>
     </>
   );
