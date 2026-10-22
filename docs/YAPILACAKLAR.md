@@ -192,7 +192,7 @@ Panel ve site sayfaları hazır; dosyalar şimdilik yükleyen tarayıcıda
 ## Formlar — güvenlik (backend)
 
 Formlar info@zenweld.com'a e-posta gönderir (`app/api/bildirim`,
-`/api/bayilik`, `/api/destek`; liste: ADMIN-KULLANIM.md › "Form e-postaları").
+`/api/bayilik`, `/api/destek`; liste: ADMIN-KULLANIM.md › "Siteden panele gelenler").
 Bugün gelen veri sunucuda kontrol ediliyor (alan türü, uzunluk) ve her
 formda botlar için görünmez bir tuzak alanı var
 (`components/common/BotTrap.tsx`). Canlıdan önce:
