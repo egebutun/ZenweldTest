@@ -144,6 +144,9 @@ Başlıklar `apps/zenweld-web/next.config.mjs`'de; ne yaptıkları
 [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9. Barındırma ve ortam
 değişkenleri › Güvenlik başlıkları'nda.
 
+**Bilerek gevşek bırakılanlar** (bugünkü yapıda başka yolu yok; canlıya
+çıkarken sıkılaştırılmalı):
+
 1. **Alt alan adları (HSTS):** Bugün yalnızca sitenin kendi adresi her zaman
    https ile açılır. `zenweld.com`'un bütün alt alan adlarının (ör. posta,
    eski uygulamalar) https çalıştığı BT ile doğrulanırsa `includeSubDomains`
@@ -154,9 +157,26 @@ değişkenleri › Güvenlik başlıkları'nda.
    verisini satır içi yazıyor. Kaldırmak için her isteğe özel anahtar (nonce)
    gerekir; bu da sayfaların her istekte sunucuda üretilmesi demektir. Backend
    ve barındırma kararıyla birlikte değerlendirilmeli.
-3. **Yeni dış servisler:** Ödeme kuruluşu (3D Secure sayfası), analiz kodu,
+3. **Görsel adresleri:** Politika her `https` adresinden görsel yüklemeye
+   izin veriyor, çünkü panelde herhangi bir görsel adresi girilebiliyor.
+   Görseller kendi dosya deposuna taşınınca ("Görseller ve yüklenen
+   dosyalar — backend") izin yalnızca o depoya ve gerçekten kullanılan dış
+   adreslere (harita döşemeleri vb.) daraltılmalı; panelde dış görsel adresi
+   girme kaldırılmalı ya da yalnızca bu adreslere izin vermeli.
+
+**Dikkat edilecekler:**
+
+4. **Yeni dış servisler:** Ödeme kuruluşu (3D Secure sayfası), analiz kodu,
    canlı destek gibi her yeni servisin adresi politikaya eklenmeli; yoksa
    tarayıcı engeller.
+5. **Vercel araç çubuğu (yorumlar):** Vercel, önizleme adreslerinde Vercel
+   hesabıyla giriş yapmış ekip üyelerine sayfanın altında küçük bir araç
+   çubuğu gösterir. Bununla sayfanın bir noktasına iğne gibi yorum
+   bırakılabilir ve ekip yorumlara yanıt verebilir (tasarım ve metin geri
+   bildirimi için). Ziyaretçiler bu çubuğu görmez. Bugün kullanılmıyor.
+   Güvenlik politikası bu çubuğu engelleyebilir; site bundan etkilenmez.
+   Kullanılmak istenirse Vercel'in belgesindeki adresler (`vercel.live`
+   vb.) politikaya eklenir. Vercel'den ayrılınca konu kalkar.
 
 ## Zenweld – bayi B2B uygulaması
 
