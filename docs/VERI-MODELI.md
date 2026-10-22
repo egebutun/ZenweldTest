@@ -725,7 +725,7 @@ sağlanmalı.
 | Seçenek değeri | Bir üründe kullanılıyorsa silinmez | — |
 | Bayi | — | Stok satırları, stok işlemleri, kod eşleştirmeleri |
 | Online satıcı | — | Stok satırları, stok işlemleri, kod eşleştirmeleri; bağlı bayinin `retailerId`'si |
-| Üye | Son aktif yönetici silinemez; panelde yönetici satırı silinemez | Kayıtlı adresleri. Siparişleri, teklifleri, servis talepleri ve yorumları kalır (geçmiş kayıt) |
+| Üye (panelden ya da üyenin kendisi Hesabım'dan) | Son aktif yönetici silinemez; panelde yönetici satırı silinemez | Kayıtlı adresleri. Siparişleri, teklifleri, servis talepleri, garanti kayıtları ve yorumları kalır (geçmiş kayıt) |
 | Teklif | — | Numarası boşta kalır |
 | Garanti, yorum, SSS, temsilci, haber, blog, etkinlik | — | — |
 | Belge | — | Dosyası |

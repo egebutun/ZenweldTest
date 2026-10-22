@@ -603,8 +603,14 @@ Kod: `packages/store/src/repo/reviews.ts`.
   Lütfen bizimle iletişime geçin."); açık oturumu hemen kapanır.
 - **Son yönetici:** Son aktif yöneticinin rolü düşürülemez, askıya alınamaz
   ve silinemez. Yönetici kendi rolünü değiştiremez ve kendini askıya alamaz.
+- **Şifre değiştirme (Hesabım › Profil):** Mevcut şifre doğru olmalı; yeni
+  şifre en az 6 karakter ve tekrarıyla aynı olmalı. Oturum açık kalır.
 - **Üye silinince:** Kayıtlı adresleri de silinir; siparişleri, teklifleri,
-  servis talepleri ve yorumları kalır.
+  servis talepleri, garanti kayıtları ve yorumları kalır.
+  - Yönetici panelden siler ya da üye kendi hesabını Hesabım › Profil ›
+    **Hesabımı Sil**'den siler (şifresiyle onaylar); sonuç aynıdır.
+  - Kendi hesabını silen üyenin oturumu kapanır. Aynı e-postayla yeniden üye
+    olunabilir.
 - **Sipariş:** Yalnızca üye verebilir. Teklif, servis talebi, garanti kaydı
   ve yorum için üyelik gerekmez.
 - **Adres:** Üyenin ilk adresi varsayılandır; varsayılan silinince kalan ilk

@@ -283,6 +283,13 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
    gönderilmeli.
 3. **Favoriler üyeye bağlanmalı:** Bugün tarayıcıda (`zenweld.favourites.v1`);
    üye başka cihazda giriş yapınca favorilerini görmüyor.
+4. **Şifre değiştirme ve hesap silme sunucuda yapılmalı:** Bugün tarayıcıda
+   (`changePassword`, `deleteAccount`). Şifre değişince üyenin diğer
+   cihazlardaki oturumları kapanmalı.
+5. **Hesap silinince kalan kayıtlardaki kişisel veriler:** Siparişler yasal
+   olarak saklanır; teklif, servis talebi, garanti ve yorumlardaki ad,
+   e-posta ve telefonun silinip silinmeyeceği ya da anonimleştirileceği
+   hukukçuyla netleşmeli (KVKK).
 
 ## Müşteriye e-posta bildirimleri (sipariş dışı) — backend
 

@@ -10,11 +10,14 @@ import {
   type ReactNode,
 } from "react";
 import type { User, UserRole } from "@zenweld/data";
-import { addUser, findUserById, getSnapshot, saveUser, useDatabase } from "@zenweld/store";
+import { addUser, deleteUser, findUserById, getSnapshot, saveUser, useDatabase } from "@zenweld/store";
 import { demoHash, verifyPassword } from "./hash";
 
 /** Ana site (musteri) oturumu. */
 const SESSION_KEY = "zenweld.session.v1";
+
+/** Uye olurken ve sifre degistirirken en kisa sifre. */
+const MIN_PASSWORD_LENGTH = 6;
 
 export interface RegisterInput {
   role: Exclude<UserRole, "admin">;
@@ -45,6 +48,14 @@ interface AuthContextValue {
   logout: () => void;
   register: (input: RegisterInput) => AuthResult;
   updateProfile: (patch: Partial<User>) => void;
+  /** Giris yapmis kisinin sifresi: mevcut sifre dogru olmali. */
+  changePassword: (current: string, next: string) => AuthResult;
+  /**
+   * Giris yapmis kisi kendi hesabini siler (sifresiyle onaylar) ve oturum
+   * kapanir. Panelden silmeyle ayni: hesap ve adresler silinir; siparis,
+   * teklif, servis talebi, garanti ve yorumlar kalir.
+   */
+  deleteAccount: (password: string) => AuthResult;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -149,8 +160,8 @@ export function AuthProvider({
     if (taken) {
       return { ok: false, error: "Bu e-posta adresi zaten kayıtlı." };
     }
-    if (input.password.length < 6) {
-      return { ok: false, error: "Şifre en az 6 karakter olmalıdır." };
+    if (input.password.length < MIN_PASSWORD_LENGTH) {
+      return { ok: false, error: `Şifre en az ${MIN_PASSWORD_LENGTH} karakter olmalıdır.` };
     }
     const newUser: User = {
       id: `u-${Date.now().toString(36)}`,
@@ -187,9 +198,35 @@ export function AuthProvider({
     [user],
   );
 
+  const changePassword = useCallback<AuthContextValue["changePassword"]>(
+    (current, next) => {
+      if (!user) return { ok: false, error: "Oturumunuz kapanmış. Lütfen yeniden giriş yapın." };
+      if (!verifyPassword(current, user.passwordHash)) return { ok: false, error: "Mevcut şifre hatalı." };
+      if (next.length < MIN_PASSWORD_LENGTH) {
+        return { ok: false, error: `Şifre en az ${MIN_PASSWORD_LENGTH} karakter olmalıdır.` };
+      }
+      if (!saveUser({ ...user, passwordHash: demoHash(next) })) {
+        return { ok: false, error: "Şifre kaydedilemedi. Lütfen tekrar deneyin." };
+      }
+      return { ok: true, user };
+    },
+    [user],
+  );
+
+  const deleteAccount = useCallback<AuthContextValue["deleteAccount"]>(
+    (password) => {
+      if (!user) return { ok: false, error: "Oturumunuz kapanmış. Lütfen yeniden giriş yapın." };
+      if (!verifyPassword(password, user.passwordHash)) return { ok: false, error: "Şifre hatalı." };
+      if (!deleteUser(user.id)) return { ok: false, error: "Hesap silinemedi. Lütfen tekrar deneyin." };
+      logout();
+      return { ok: true };
+    },
+    [user, logout],
+  );
+
   const value = useMemo(
-    () => ({ user, ready, login, logout, register, updateProfile }),
-    [user, ready, login, logout, register, updateProfile],
+    () => ({ user, ready, login, logout, register, updateProfile, changePassword, deleteAccount }),
+    [user, ready, login, logout, register, updateProfile, changePassword, deleteAccount],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

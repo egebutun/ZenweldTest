@@ -1241,7 +1241,8 @@ listelenir. Bayiler ana sitenin üyesi değildir.
   - Kayıt tarihi.
   - Sil: Yönetici satırında pasiftir. Onay: "<e-posta> silinsin mi?" Üyenin
     kayıtlı adresleri de silinir; siparişleri, teklifleri, servis talepleri ve
-    yorumları kalır.
+    yorumları kalır. Üye kendi hesabını sitede Hesabım › Profil'den de
+    silebilir; sonuç aynıdır ve üye listeden kalkar.
 
 **Kurallar:**
 

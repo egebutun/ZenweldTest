@@ -54,6 +54,7 @@ function LoginInner() {
           <p className="mt-2 text-sm text-zw-grey-600">{t.auth.loginSubtitle}</p>
 
           <form onSubmit={submit} className="mt-8 space-y-4">
+            {params.get("hesap") === "silindi" && !error && <Alert tone="success">{t.account.accountDeleted}</Alert>}
             {error && <Alert tone="danger">{error}</Alert>}
 
             <FormRow label={t.auth.email} required htmlFor="email">

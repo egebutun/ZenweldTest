@@ -369,6 +369,17 @@ export const tr = {
     noFavourites: "Henüz favori ürününüz yok.",
     noWarranties: "Kayıtlı garanti bulunamadı.",
     total: "Tutar",
+    changePassword: "Şifre Değiştir",
+    currentPassword: "Mevcut Şifre",
+    newPassword: "Yeni Şifre",
+    newPasswordAgain: "Yeni Şifre (Tekrar)",
+    passwordChanged: "Şifreniz değiştirildi.",
+    deleteAccount: "Hesabımı Sil",
+    deleteAccountText:
+      "Hesabınız ve kayıtlı adresleriniz kalıcı olarak silinir; bu işlem geri alınamaz. Siparişleriniz, teklifleriniz, servis talepleriniz, garanti kayıtlarınız ve yorumlarınız silinmez.",
+    deleteAccountPassword: "Onay için şifreniz",
+    deleteAccountConfirm: "Hesabınız kalıcı olarak silinsin mi? Bu işlem geri alınamaz.",
+    accountDeleted: "Hesabınız silindi.",
   },
   warranty: {
     serialNumber: "Seri Numarası",

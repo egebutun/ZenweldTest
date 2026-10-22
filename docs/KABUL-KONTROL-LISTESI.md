@@ -58,7 +58,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       (hata, 404, "demo" yazısı, İngilizce, güvenlik politikası), güvenlik
       başlıkları, seçenekli ürünün kartla satın alınması, sepette adet
       sınırı, teklif gönderme ve numarası, belge yükleme/açma/indirme,
-      garanti bitiş günü.
+      garanti bitiş günü, şifre değiştirme ve hesap silme.
 
 ---
 
@@ -255,6 +255,13 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Garantilerim'de "Yeni Garanti Kaydı" garanti kayıt sayfasına gider;
       form üyenin adı ve e-postasıyla dolu gelir.
 - [ ] Adreslerim'de yeni adres eklenir; ilk adres varsayılan olur.
+- [ ] Profil › Şifre Değiştir: yanlış mevcut şifre "Mevcut şifre hatalı.",
+      tekrar farklıysa "Şifreler eşleşmiyor.", 6 karakterden kısa yeni şifre
+      reddedilir; başarılıysa "Şifreniz değiştirildi." Çıkış yapınca eski
+      şifreyle giriş "Şifre hatalı." der, yenisiyle girilir.
+- [ ] Profil › Hesabımı Sil: yanlış şifreyle silinmez; doğru şifre ve onayla
+      silinir, Giriş sayfasında "Hesabınız silindi." yazar; aynı e-postayla
+      giriş "hesap bulunamadı" der. Üyenin siparişleri panelde durur.
 - [ ] Site ve panel oturumu ayrıdır; birinden çıkış diğerini etkilemez.
 
 ---

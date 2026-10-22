@@ -873,6 +873,21 @@ kartlar ilgili sayfaya gider.
   - E-posta: Değiştirilemez.
   - Yalnızca kurumsalda: Firma Ünvanı, Vergi Dairesi, Vergi No.
 - **Kaydet:** "Profiliniz güncellendi." yazar.
+- **Şifre Değiştir:** Mevcut Şifre, Yeni Şifre (en az 6 karakter), Yeni Şifre
+  (Tekrar).
+  - Başarılıysa "Şifreniz değiştirildi." yazar ve alanlar boşalır; oturum
+    açık kalır.
+  - Hatalar: "Mevcut şifre hatalı.", "Şifreler eşleşmiyor.", "Şifre en az 6
+    karakter olmalıdır."
+- **Hesabımı Sil:** Açıklama: hesap ve kayıtlı adresler kalıcı olarak
+  silinir, işlem geri alınamaz; siparişler, teklifler, servis talepleri,
+  garanti kayıtları ve yorumlar silinmez.
+  - Onay için şifre istenir, ardından "Hesabınız kalıcı olarak silinsin mi?"
+    sorulur.
+  - Şifre yanlışsa "Şifre hatalı." yazar, hesap silinmez.
+  - Silinince oturum kapanır, Giriş sayfası açılır ve "Hesabınız silindi."
+    yazar. Aynı e-postayla giriş "hesap bulunamadı" der; aynı e-postayla
+    yeniden üye olunabilir.
 
 ### Tekliflerim
 
