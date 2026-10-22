@@ -299,6 +299,7 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 | @fontsource (Inter, Barlow Condensed) | Yazı tipleri sitenin kendi sunucusundan gelir; Google Fonts'a istek gitmez |
 | sharp | Derleme öncesi logo kırpma |
 | ESLint (eslint-config-next) | Kod denetimi; yalnızca geliştirirken ve derlemede çalışır, siteye girmez |
+| Vitest | İş kuralları testleri; yalnızca geliştirirken çalışır, siteye girmez |
 
 Sürümler: `apps/zenweld-web/package.json`, kök `package.json`.
 

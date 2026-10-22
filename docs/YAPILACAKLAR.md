@@ -402,7 +402,8 @@ kararlaştırılacak. Başlıklar:
 6. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
 7. 8 dosyada hâlâ Lorem ipsum yer tutucu metin var: anasayfa, ürün sayfası,
    Welders Club, Teklif Al formu, Adreslerim, `tr.ts` ve örnek veriler
-8. Test ve CI yok
+8. Tarayıcı testleri ve otomatik kontrol (CI) yok; iş kuralları testleri
+   var (`npm test`)
 9. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
 
 ## Çerezler ve yasal metinler

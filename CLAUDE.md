@@ -58,7 +58,12 @@ ilgili belge **aynı commit'te** güncellenir:
   - `npm run typecheck`: TypeScript kontrolü.
   - `npm run lint`: kod denetimi (ESLint). `npm run build` de çalıştırır;
     hata varsa derleme durur.
-- **Doğrulama:** Her değişiklikten sonra typecheck, lint ve build çalıştırılır.
+  - `npm test`: iş kuralları testleri (`tests/unit`).
+- **Testler:** `tests/unit`, `docs/IS-KURALLARI.md`'deki kuralları ve
+  örnekleri dener. Bir kural değişince ilgili test de aynı commit'te
+  güncellenir.
+- **Doğrulama:** Her değişiklikten sonra typecheck, lint, test ve build
+  çalıştırılır.
   Davranış değiştiyse kontrol listesindeki ilgili maddeler denenir.
 
 ## Güvenlik

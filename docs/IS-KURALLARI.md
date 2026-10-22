@@ -18,6 +18,10 @@ yoktur; yalnızca kurallar vardır.
 Kuralların koddaki yeri her bölümün sonunda yazar. Bir kural değişirse
 yalnızca o yer değişmeli; site, panel ve sipariş kaydı aynı yeri kullanır.
 
+Fiyat, kampanya, seçenek, sepet, kart ve taksit, havale süresi, garanti,
+stok ve ürün kodu kuralları ile bu dosyadaki örnekler `tests/unit`
+altında otomatik denenir (`npm test`). Kural değişince test de değişir.
+
 ---
 
 ## İçindekiler

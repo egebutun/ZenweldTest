@@ -65,6 +65,7 @@ Diğer komutlar:
 npm run build       # ana sitenin üretim derlemesi (kod denetimini de çalıştırır)
 npm run typecheck   # TypeScript kontrolü
 npm run lint        # kod denetimi (ESLint)
+npm test            # iş kuralları testleri (fiyat, kampanya, taksit, stok, garanti…)
 ```
 
 ---
@@ -198,6 +199,9 @@ Site ve yönetim paneli yalnızca Türkçedir. Adreslerde dil ön eki yoktur
 ```
 ZenweldTest/
 ├── package.json                    npm workspaces kökü
+├── eslint.config.mjs               Kod denetimi ayarları
+├── vitest.config.mts               Test ayarları
+├── tests/unit/                     İş kuralları testleri (npm test)
 │
 ├── packages/
 │   ├── data/                       Paylaşılan veri modeli ve başlangıç verisi
@@ -496,4 +500,4 @@ icon.png ve apple-icon.png yeniden oluşturulur.
 ## Teknoloji
 
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·
-MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · npm workspaces
+MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · Vitest · npm workspaces
