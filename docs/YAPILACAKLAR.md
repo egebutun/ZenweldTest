@@ -3,6 +3,48 @@
 Kararlaştırılıp ileri bir tarihe bırakılan işler. Bir iş yapıldığında
 buradan silinir.
 
+## Karar bekleyen frontend işleri (özet)
+
+Backend gerektirmeyen ama bir karara ya da bilgiye bağlı olduğu için
+bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
+
+| İş | Neyi bekliyor | Ayrıntı |
+|---|---|---|
+| Çerez ayarları penceresi (analiz ve pazarlama çerezlerini ayrı açıp kapama) ve analiz kodlarının kurulması | Hangi analiz aracının kullanılacağı | [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler) 1–3, [Online satış](#online-satış--canlıya-çıkmadan-önce) 12 |
+| Kategori filtreleri | Gerçek ürün listesi ve teknik özellikler | [Kategori filtreleri](#kategori-filtreleri) |
+| Ürün Seçici'nin yeniden kurulması | Soruların ve eşleştirme mantığının belirlenmesi | [Ürün Seçici ve arama](#ürün-seçici-ve-arama--yeniden-tasarlanacak) |
+| "İlgili Ürünler" öneri mantığı | Bölümdeki kararlar | "Ürün önerileri" bölümü |
+| Teklif Al metinleri | Müdür kararı | [Teklif Al metinleri](#teklif-al-metinleri--herkese-hitap-edecek-şekilde-güncellenecek) |
+| Ayrı ürünü seçeneğe dönüştürme ekranı | Gerçek ürünler girilmeye başlanınca karar | [Ürün seçenekleri](#ürün-seçenekleri-3-m--5-m-gibi--backend) 3 |
+| Satıcı bilgilerinin sitede gösterilmesi (ETBİS, unvan, MERSİS) | ETBİS kaydı ve şirket bilgileri | "Satıcı bilgileri sitede" bölümü |
+| Kargo takip bağlantısı | Kargo firması ve entegrasyon kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 9 |
+
+## Kategori filtreleri
+
+Kategori sayfasında bugün yalnızca sıralama var (Önerilen, fiyat, isim, en
+yeniler). Ürün listesi ve teknik özellikler kesinleşince her alt kategoriye
+kendi filtreleri eklenecek (ör. MIG makinesinde akım aralığı ve giriş
+gerilimi, maskede kararma sınıfı; MMA ile TIG makinesinin filtreleri farklı).
+
+- Filtre seçenekleri ürünlerin teknik özellik satırlarından üretilmeli; bu
+  yüzden aynı özelliğin her üründe aynı adla ve aynı birimle girilmesi gerekir.
+- Seçili filtreler sayfa adresine yazılmalı (paylaşılabilir, geri tuşuyla
+  korunur); filtreli adresler arama motorlarına kapalı olmalı.
+- Telefonda filtreler bugünkü "Filtreler" penceresinde açılır.
+
+## Satıcı bilgileri sitede (ETBİS, unvan, MERSİS)
+
+Alt bilgide bugün adres, telefon ve e-posta var; ticari unvan, MERSİS
+numarası ve ETBİS bilgisi yok. Sözleşmelerdeki MERSİS alanı da boş ("[—]").
+
+- ETBİS kaydından sonra Bakanlığın verdiği doğrulama kodu (QR/logo) sitede
+  gösterilmeli.
+- Satıcının ticari unvanı ve MERSİS numarası sitede kolayca bulunabilmeli
+  (alt bilgi ya da İletişim sayfası) ve Ön Bilgilendirme Formu ile Mesafeli
+  Satış Sözleşmesi'ne yazılmalı.
+- Hangi bilgilerin zorunlu olduğu hukuk danışmanıyla teyit edilmeli
+  (bkz. [Online satış](#online-satış--canlıya-çıkmadan-önce) 4).
+
 ## Ürün seçenekleri (3 m / 5 m gibi) — backend
 
 Panel ve site hazır: Seçenek Tanımları, kategorinin Seçenekler sekmesi, ürünün
@@ -151,6 +193,73 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
     (`packages/data/src/seed/sample-activity.seed.ts` ve `index.ts`'teki çağrısı).
 12. **Ziyaretçi verileri** (ziyaret sayısı, ziyaretten siparişe dönüşüm, sepette
     bırakılan ürünler) için Google Analytics vb. kurulmalı; çerez onayına bağlı yüklenmeli.
+
+## Veritabanı — bütün kayıtlar (backend)
+
+Bugün bütün kayıtlar (ürünler, siparişler, üyeler, teklifler, ayarlar…)
+ziyaretçinin tarayıcısında duruyor (`zenweld.db.v1`). Her tarayıcı kendi
+kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
+
+1. Bütün kayıt türleri sunucu veritabanına taşınmalı. Kayıt türleri, alanlar,
+   ilişkiler ve silme kuralları: [VERI-MODELI.md](VERI-MODELI.md).
+2. Okuma ve yazma tek yerde toplanmış (`packages/store/src/database.ts`); bu
+   katman ve `packages/store/src/repo/` fonksiyonları sunucu API'sine
+   bağlanmalı.
+3. `DB_VERSION` ile tarayıcı verisini sıfırlama yerine veritabanı geçişleri
+   (migration) kullanılmalı.
+4. Örnek veri (`packages/data/src/seed/`) yalnızca ilk kurulumda yüklenmeli;
+   örnek satış hareketleri hiç yüklenmemeli (bkz. "Online satış" 11).
+5. Tarayıcıda yalnızca ziyaretçiye ait küçük veriler kalır (sepet, teklif
+   listesi, çerez tercihi); hangisinin nereye taşınacağı:
+   [VERI-MODELI.md](VERI-MODELI.md) › Tarayıcıda tutulanlar.
+
+## Üyelik, oturum ve şifre — backend
+
+1. **Kimlik doğrulama ve yetki sunucuda yapılmalı.** Bugün şifre tarayıcıda
+   basit bir özetle karşılaştırılıyor (`packages/auth/src/hash.ts`) ve
+   oturum tarayıcıda tutuluyor. Şifreler güçlü bir özetle (bcrypt, argon2)
+   saklanmalı; oturum sunucuda tutulmalı (ör. httpOnly çerez); yönetim
+   paneli sayfaları ve panel işlemleri sunucuda yönetici rolüyle korunmalı.
+2. **Şifre sıfırlama:** "Şifremi unuttum" bugün yalnızca mesaj gösteriyor,
+   e-posta gitmiyor. Tek kullanımlık ve süreli bir bağlantı e-postayla
+   gönderilmeli.
+3. **Favoriler üyeye bağlanmalı:** Bugün tarayıcıda (`zenweld.favourites.v1`);
+   üye başka cihazda giriş yapınca favorilerini görmüyor.
+
+## Müşteriye e-posta bildirimleri (sipariş dışı) — backend
+
+Bugün müşteriye hiç e-posta gitmiyor; formlar yalnızca info@zenweld.com'a
+e-posta gönderiyor. Sipariş bildirimleri "Online satış" 6'da. Ayrıca:
+
+1. Teklif talebinin durumu panelde değişince (İnceleniyor, Teklif Gönderildi…).
+2. Servis talebinin durumu değişince.
+3. Garanti kaydı alındığında ve panelde bitiş tarihi değişince.
+
+Hangi bildirimlerin gönderileceği ve metinleri kararlaştırılmalı.
+
+## Görseller ve yüklenen dosyalar — backend
+
+Panelden yüklenen görseller (ürün, kategori ve grup kartı, haber, blog,
+etkinlik, Hakkımızda, satış temsilcisi) ve yorumlardaki fotoğraf ve videolar
+bugün veritabanının içine metin olarak (`data:` ile başlayan) yazılıyor.
+
+1. Dosyalar bir nesne deposuna (S3 uyumlu) yüklenmeli; kayıtta yalnızca
+   adres kalmalı.
+2. Yükleme sunucuda tür ve boyut kontrolünden geçmeli.
+3. Belgeler (MSDS, sertifikalar) için ayrı bölüm: "Belgeler — backend".
+
+## Bülten ve İYS
+
+Alt bilgideki bülten kaydı bugün hiçbir yere gönderilmiyor ve saklanmıyor.
+Üye olurken işaretlenen "haber ve kampanya e-postaları" izni yalnızca üye
+kaydında duruyor (`newsletter` alanı). Hangi bülten servisinin kullanılacağı
+karar bekliyor ([KARARLAR.md](KARARLAR.md) › Henüz karar verilmemiş konular).
+
+1. Servis seçilince bülten kayıtları ve üyelerin izinleri bu servise
+   gönderilmeli.
+2. Ticari ileti izinleri İYS'ye (İleti Yönetim Sistemi) bildirilmeli.
+3. Her e-postada abonelikten çıkma bağlantısı olmalı; çıkış İYS'ye de
+   yansımalı.
 
 ## Bayi ve satıcı stokları — backend
 
