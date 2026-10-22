@@ -39,7 +39,12 @@ olduğu belirlenince panelden girilecek.
    `/urun/mig-torcu-mb25-4m` → `/urun/mig-torcu-mb25?secenek=4-m`). Bunun için
    SEO bölümündeki `previous_paths` tablosuna seçenek (değer) sütunu eklenir.
    Demoda tarayıcı yönlendiriyor (`movedProductPath`). Panelde ayrı ürünü
-   seçeneğe dönüştürme ekranı yok; gerekirse eklenecek.
+   seçeneğe dönüştürme ekranı yok. Eklenip eklenmeyeceğine gerçek ürünler
+   girilmeye başlanınca karar verilecek. Ekran yapılırsa tek adımda:
+   seçeneği eski ürünün koduyla kurar, eski linki seçeneğe yönlendirir,
+   stok satırlarını, kod eşleştirmelerini ve yorumları taşır, ayrı ürünü
+   kaldırır. Bugün elle yapılırsa eski link 404 verir, yorumlar görünmez olur
+   ve stoklar bir sonraki stok dosyasına kadar boş kalır.
 4. **Sipariş ve teklif:** `order_items` ve `quote_items` o anki ürün adını,
    seçenek adını ("Hortum Uzunluğu: 5 m") ve kodunu kopya olarak saklar;
    sonradan ad değişse ya da seçenek silinse de geçmiş kayıt değişmez. Sepet ve
@@ -77,6 +82,23 @@ birlikte karar verilmeli.
 
 Proje standart bir Next.js projesidir; Vercel'e bağımlı değildir ve her
 Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
+
+## Next.js 16'ya geçiş (güvenlik)
+
+22 Ekim 2026'da `npm audit fix` ile yama sürümlerine geçildi (next 15.5.28,
+sharp 0.35.5, source-map-js 1.2.2); kritik açık dahil 4 açıktan 2'si kapandı.
+
+- **Kalan:** `npm audit` 2 açık gösterir. İkisi de Next 15'in kendi içine
+  sabitlediği eski postcss (8.4.31) yüzündendir; yalnızca Next 16'ya geçince
+  kapanır.
+- **Risk düşük:** Bu açıklar saldırganın hazırladığı bir CSS dosyası
+  işlenince ortaya çıkar. postcss yalnızca derleme sırasında projenin kendi
+  CSS dosyalarını işler; ziyaretçiden CSS alınmaz.
+- **Karar:** Geçiş ertelendi; canlı sunucu kararıyla birlikte planlı yapılacak.
+- **Nasıl:** Next'in 16 sürüm geçiş kılavuzu adım adım uygulanır (ana sürüm
+  değişikliği; bazı dosya ve ayar adları değişir). Sonra typecheck, build ve
+  [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) baştan uygulanır;
+  `npm audit` temiz çıkmalı.
 
 ## Zenweld – bayi B2B uygulaması
 

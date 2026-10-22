@@ -568,5 +568,6 @@ Konuşulmuş ama kararı bekleyen ya da sonraya bırakılmış işler. Ayrıntı
 | **Ödeme kuruluşu** | iyzico, PayTR ya da banka sanal POS'ları |
 | **Kurumsal alıcıda cayma hakkı** | Hukukçuyla netleşecek |
 | **Bülten servisi** | Seçilip bağlanacak (İYS kaydıyla) |
-| **Ayrı ürünü seçeneğe dönüştürme ekranı** | Gerekirse panele eklenecek |
+| **Ayrı ürünü seçeneğe dönüştürme ekranı** | Gerçek ürünler girilmeye başlanınca karar verilecek (2026-10-22) |
+| **Next.js 16'ya geçiş** | Ertelendi (2026-10-22); canlı sunucu kararıyla birlikte planlı yapılacak. Kalan 2 güvenlik bulgusunun riski düşük |
 | **Bayi B2B uygulaması** | Ayrı proje; bayi hesaplarını kimin yöneteceği o zaman netleşecek |
