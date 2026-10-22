@@ -74,7 +74,7 @@ Diğer temel bilgiler:
 | 3 | [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md) | Yönetim panelinin her ekranı |
 | 4 | [VERI-MODELI.md](VERI-MODELI.md) | Saklanan bütün kayıtlar, alanları, birbirleriyle bağlantıları ve silme kuralları |
 | 5 | [IS-KURALLARI.md](IS-KURALLARI.md) | Hesaplar ve kurallar: fiyat, KDV, kampanya, taksit, stok, ürün kodları, linkler, durum akışları, e-postalar |
-| 6 | [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) | Dış sistemler: ödeme, e-posta, harita, barındırma, çerez onayı; gerekli ayarların adları |
+| 6 | [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) | Dış sistemler: ödeme, e-posta, harita, barındırma, çerez onayı, güvenlik başlıkları; gerekli ayarların adları |
 | 7 | [STOK.md](STOK.md) | Bayi ve satıcı stok dosyalarının biçimi, eşleşme kuralları, backend'e geçiş |
 | 8 | [KARARLAR.md](KARARLAR.md) | Alınan kararlar ve nedenleri |
 | 9 | [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) | Bir özelliğin doğru çalıştığını doğrulamak için madde madde test listesi |

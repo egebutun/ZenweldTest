@@ -244,9 +244,13 @@ yoksa önizleme boş çıkar.
 - **Blog, haber, etkinlik, Hakkımızda ve Welders Club görselleri**
   **Unsplash**'ten gelir (`https://images.unsplash.com/…`,
   `packages/data/src/seed/images.ts`). Gerçek fotoğraflarla değiştirilmeli.
-- Sitenin görsel izni yalnızca `images.unsplash.com` adresine açıktır
-  (`apps/zenweld-web/next.config.mjs`); yeni bir görsel sunucusu kullanılırsa
-  buraya eklenmeli.
+- Tarayıcının hangi adreslerden görsel yükleyebileceğini güvenlik politikası
+  belirler; bugün her `https` adresine açıktır (bkz.
+  [9](#9-barındırma-ve-ortam-değişkenleri) › Güvenlik başlıkları).
+- `next.config.mjs` içindeki `images.remotePatterns` ayrıca yalnızca
+  `images.unsplash.com`'a açıktır. Bu ayar Next.js'in görsel küçültme
+  ucu (`/_next/image`) içindir; site bugün bu ucu kullanmıyor. Kullanılmaya
+  başlanırsa yeni görsel sunucuları buraya da eklenmeli.
 - Görsel yüklenemezse markalı Zenweld yer tutucusu gösterilir.
 
 **Kategori, grup ve etkinlik logoları:** Depoda durur
