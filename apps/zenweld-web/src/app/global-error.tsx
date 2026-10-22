@@ -29,7 +29,6 @@ export default function GlobalError({ reset }: { error: Error & { digest?: strin
               {t.retry}
             </button>
             {/* Bilerek duz baglanti: sayfa bastan yuklenir, bozuk durum temizlenir. */}
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
               href="/"
               className="rounded-[4px] border border-zw-ink px-6 py-3 text-sm font-semibold uppercase hover:border-zw-red-600 hover:text-zw-red-600"

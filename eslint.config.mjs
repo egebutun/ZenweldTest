@@ -22,6 +22,9 @@ const config = [
       // Turkce metinlerde kesme isareti cok sik gecer (Kaydet'e, POS'un);
       // metin icinde ' serbest, digerleri yasak kalir.
       "react/no-unescaped-entities": ["error", { forbid: [">", '"', "}"] }],
+      // Yalnizca eski pages/ klasoru icindir; bu projede pages/ yok (app/ kullanilir).
+      // Acik kalinca kokten calistirmada uyari verir, derlemede calismaz.
+      "@next/next/no-html-link-for-pages": "off",
     },
   },
 ];
