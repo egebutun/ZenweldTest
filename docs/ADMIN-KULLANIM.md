@@ -112,6 +112,11 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 **Bulunamayan panel sayfası:** "Sayfa bulunamadı" ve **Panele dön**
 düğmesi.
 
+**Hata veren panel ekranı:** Bir ekran açılırken beklenmeyen bir hata olursa
+boş ekran yerine "Bir sorun oluştu" yazar; sol menü yerinde kalır, başka
+ekrana geçilebilir. **Tekrar dene** ekranı yeniden açmayı dener, **Panele
+dön** panelin ana ekranına götürür.
+
 **Demo notu:**
 
 - Yetki kontrolü yalnızca tarayıcıda yapılır; canlıya çıkmadan önce sunucu

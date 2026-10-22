@@ -664,6 +664,12 @@ export const tr = {
     clear: "Filtreleri Temizle",
     productCount: "{count} ürün",
   },
+  errorPage: {
+    title: "Bir sorun oluştu",
+    text: "Sayfa açılırken beklenmeyen bir hata oluştu. Tekrar deneyin; sorun sürerse ana sayfaya dönün.",
+    retry: "Tekrar Dene",
+    home: "Ana sayfaya dön",
+  },
 };
 
 /** Arayuz metinlerinin yapisi. */

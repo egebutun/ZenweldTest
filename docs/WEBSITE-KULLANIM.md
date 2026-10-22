@@ -40,7 +40,7 @@ tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
 19. [Kurumsal sayfalar: Hakkımızda, Satış Temsilcilerimiz, SSS](#19-kurumsal-sayfalar)
 20. [Blog, Haberler, Etkinlikler](#20-blog-haberler-etkinlikler)
 21. [Yasal metinler](#21-yasal-metinler)
-22. [Bulunamayan sayfa (404)](#22-bulunamayan-sayfa-404)
+22. [Bulunamayan sayfa (404) ve hata sayfası](#22-bulunamayan-sayfa-404-ve-hata-sayfası)
 23. [Arama motorları (SEO)](#23-arama-motorları-seo)
 24. [Bütün sayfa adresleri](#24-bütün-sayfa-adresleri)
 25. [Bilinen durumlar](#25-bilinen-durumlar)
@@ -1321,11 +1321,18 @@ sıradadır:
 
 ---
 
-## 22. Bulunamayan sayfa (404)
+## 22. Bulunamayan sayfa (404) ve hata sayfası
 
 Eşleşmeyen her adreste ve yayında olmayan içerikte, üst menü ve alt bilgiyle
 birlikte "Aradığınız sayfa taşınmış veya kaldırılmış olabilir." yazar ve
 **Ana sayfaya dön** düğmesi çıkar.
+
+**Hata sayfası:** Bir sayfa açılırken beklenmeyen bir hata olursa boş ekran
+yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kalır.
+- **Tekrar Dene** sayfayı yeniden açmayı dener.
+- **Ana sayfaya dön** anasayfaya götürür.
+- Üst menü ya da alt bilginin kendisi hata verirse aynı yazı ve düğmeler
+  menüsüz, tek başına bir sayfada çıkar.
 
 ---
 

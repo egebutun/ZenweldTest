@@ -160,6 +160,11 @@ Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
    bağlanabilir.
 8. **Komisyon:** Paneldeki tahmini komisyon yerine istenirse kuruluşun
    bildirdiği gerçek kesinti yazılabilir.
+9. **Güvenlik politikası:** Kuruluşun ödeme ya da 3D Secure sayfasının adresi
+   sitenin güvenlik politikasına eklenmeli: sayfa çerçeve içinde açılıyorsa
+   `frame-src`'ye, siteden form ile gönderiliyorsa `form-action`'a. Eklenmezse
+   tarayıcı ödeme sayfasını engeller (bkz. [9](#9-barındırma-ve-ortam-değişkenleri)
+   › Güvenlik başlıkları).
 
 Kod: `apps/zenweld-web/src/app/(site)/odeme/page.tsx`,
 `apps/zenweld-web/src/components/shop/CardPayment.tsx`,
@@ -303,7 +308,10 @@ her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
 - Barındırma kararı (KVKK ve sunucu yeri) ve Vercel dışına geçişte
   kaldırılacak parçalar: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Canlı sunucu.
 
-**Ortam değişkenleri:**
+**Ortam değişkenleri:** Örnek dosya `apps/zenweld-web/.env.example`'dır.
+Bilgisayarda aynı klasöre `.env.local` adıyla kopyalanıp doldurulur
+(`.env.local` GitHub'a gönderilmez); Vercel'de Project Settings ›
+Environment Variables'a girilir.
 
 | Değişken | Kim tanımlar | Açıklama |
 |---|---|---|
@@ -327,6 +335,32 @@ değişkenleri → `http://localhost:3000`.
 alan adı yoktur. Arama motorlarına her zaman kapalıdır (sayfa etiketi ve
 `X-Robots-Tag` başlığı).
 
+**Güvenlik başlıkları:** Her yanıta eklenir (`apps/zenweld-web/next.config.mjs`).
+
+| Başlık | Ne yapar |
+|---|---|
+| `Content-Security-Policy` | Sayfanın hangi adreslerden kod, görsel, çerçeve yükleyebileceğini ve formun nereye gönderilebileceğini belirler |
+| `Strict-Transport-Security` | Tarayıcı siteye bir yıl boyunca yalnızca https ile bağlanır. Alt alan adlarını kapsamaz |
+| `X-Frame-Options: DENY` | Site başka bir sitenin içinde (çerçevede) açılamaz |
+| `X-Content-Type-Options: nosniff` | Tarayıcı dosya türünü tahmin etmez |
+| `Referrer-Policy` | Dış sitelere yalnızca alan adı gider, sayfa yolu gitmez |
+| `Permissions-Policy` | Kamera, mikrofon, ödeme ve USB kapalı; konum yalnızca sitenin kendisine açık (bayi ağı sayfasındaki **Konumumu Kullan**) |
+
+Güvenlik politikasının (CSP) bugün izin verdiği dış adresler:
+
+- **Görseller:** her `https` adresi (panelden herhangi bir görsel adresi
+  girilebildiği için; harita döşemeleri ve Unsplash dahil), ayrıca
+  tarayıcıda tutulan yüklenmiş görseller (`data:`, `blob:`).
+- **Çerçeve:** `maps.google.com` ve `www.google.com` (iletişim sayfasındaki
+  harita).
+- **Kod, bağlantı (istek), yazı tipi:** yalnızca sitenin kendisi. E-posta
+  servisine sunucu bağlandığı için tarayıcıya izin gerekmez.
+
+**Kural:** Siteye yeni bir dış servis eklendiğinde (analiz kodu, video, sohbet
+aracı, ödeme sayfası, başka bir harita) adresi `next.config.mjs` içindeki
+politikaya da yazılmalıdır; yazılmazsa tarayıcı servisi engeller ve konsolda
+"Content Security Policy" uyarısı çıkar.
+
 ---
 
 ## 10. Henüz bağlanmayanlar
@@ -342,7 +376,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | **Müşteriye e-posta** | Yok | Sipariş onayı ve sözleşme kopyası (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi |
 | **Şifremi Unuttum** | Ekran var, e-posta gitmez | Şifre sıfırlama bağlantısı e-postası |
 | **Bülten** | Kayıt kutusu var, hiçbir yere gitmez | Bülten servisi seçilip bağlanmalı |
-| **Analitik** (ziyaret, dönüşüm, sepette bırakılan) | Yok | Google Analytics vb.; çerez onayına bağlı yüklenmeli. Çerez ayarları penceresine analiz/pazarlama kategorileri eklenmeli |
+| **Analitik** (ziyaret, dönüşüm, sepette bırakılan) | Yok | Google Analytics vb.; çerez onayına bağlı yüklenmeli ve adresleri güvenlik politikasına (CSP) eklenmeli. Çerez ayarları penceresine analiz/pazarlama kategorileri eklenmeli |
 | **e-Arşiv / e-Fatura** | Yok | Muhasebe yazılımı ya da entegratör |
 | **Kargo** | Takip numarası elle girilir | İsteğe bağlı: takip bağlantısı, etiket oluşturma |
 | **ETBİS ve MERSİS** | Yok | Ticaret Bakanlığı kaydı; numaralar sözleşmelere |

@@ -138,6 +138,26 @@ sharp 0.35.5, source-map-js 1.2.2); kritik açık dahil 4 açıktan 2'si kapand�
   [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) baştan uygulanır;
   `npm audit` temiz çıkmalı.
 
+## Güvenlik başlıkları — canlıya çıkarken
+
+Başlıklar `apps/zenweld-web/next.config.mjs`'de; ne yaptıkları
+[ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9. Barındırma ve ortam
+değişkenleri › Güvenlik başlıkları'nda.
+
+1. **Alt alan adları (HSTS):** Bugün yalnızca sitenin kendi adresi her zaman
+   https ile açılır. `zenweld.com`'un bütün alt alan adlarının (ör. posta,
+   eski uygulamalar) https çalıştığı BT ile doğrulanırsa `includeSubDomains`
+   eklenir; tarayıcıların hazır listesine (`preload`) girmek ayrı bir karardır
+   ve geri alınması aylar sürer.
+2. **Satır içi kod izni:** Politika satır içi kodlara izin veriyor
+   (`'unsafe-inline'`), çünkü sayfalar önceden üretiliyor ve Next.js sayfa
+   verisini satır içi yazıyor. Kaldırmak için her isteğe özel anahtar (nonce)
+   gerekir; bu da sayfaların her istekte sunucuda üretilmesi demektir. Backend
+   ve barındırma kararıyla birlikte değerlendirilmeli.
+3. **Yeni dış servisler:** Ödeme kuruluşu (3D Secure sayfası), analiz kodu,
+   canlı destek gibi her yeni servisin adresi politikaya eklenmeli; yoksa
+   tarayıcı engeller.
+
 ## Zenweld – bayi B2B uygulaması
 
 Zenweld ile bayiler arasındaki teklif ve siparişler (bayinin Zenweld'den mal
@@ -162,7 +182,9 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
    zaman bizim sunucumuza gelmemeli (kuruluşun ödeme formu kullanılmalı).
    Mağaza Ayarları → Kartla Taksit'teki banka POS'ları gerçek sanal POS'larla
    eşleştirilmeli; POS'ların API anahtarları ve şifreleri yalnızca sunucuda
-   saklanmalı, panelde/tarayıcıda tutulmamalı.
+   saklanmalı, panelde/tarayıcıda tutulmamalı. Kuruluşun ödeme/3D Secure
+   sayfasının adresi sitenin güvenlik politikasına (CSP) eklenmeli
+   (`frame-src` ya da `form-action`).
 2. **Fiyat ve tutarlar sunucuda yeniden hesaplanmalı**; tarayıcıdan gelen
    tutara güvenilmez. Sipariş numarası sunucuda üretilmeli.
 3. **Hukuk metinleri**: Ön Bilgilendirme Formu, Mesafeli Satış Sözleşmesi,

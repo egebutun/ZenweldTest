@@ -62,6 +62,19 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Sitede ve panelde "demo" yazısı geçmez.
 - [ ] Var olmayan bir adres 404 sayfası gösterir; panelde "Sayfa bulunamadı"
       ve "Panele dön".
+- [ ] Bir sayfa hata verirse "Bir sorun oluştu", **Tekrar Dene** ve **Ana
+      sayfaya dön** çıkar; üst menü ve alt bilgi yerinde kalır. (Elle
+      denemek için geçici olarak hata veren bir sayfa gerekir; yazılımcı
+      dener.)
+- [ ] Her yanıtta güvenlik başlıkları vardır (tarayıcının geliştirici
+      araçları › Ağ ya da `curl -I`): `Content-Security-Policy`,
+      `Strict-Transport-Security`, `X-Frame-Options: DENY`,
+      `X-Content-Type-Options: nosniff`, `Referrer-Policy`,
+      `Permissions-Policy`.
+- [ ] Sitede ve panelde gezinirken tarayıcı konsolunda "Content Security
+      Policy" uyarısı çıkmaz; bayi haritası, iletişim sayfasındaki Google
+      Haritalar, blog/haber görselleri ve panelde açılan PDF belgeler
+      görünür.
 - [ ] Yayında olmayan ürün, blog yazısı, haber ve etkinliğin adresi 404
       verir; listelerde ve aramada görünmez.
 - [ ] Telefon genişliğinde menü, ürün sayfası, sepet, ödeme ve panel
@@ -337,6 +350,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       istenen sayfa açılır.
 - [ ] Site hesabıyla panele giriş yapılamaz.
 - [ ] Panel sayfalarında `X-Robots-Tag: noindex` başlığı vardır.
+- [ ] Bir panel ekranı hata verirse "Bir sorun oluştu", **Tekrar dene** ve
+      **Panele dön** çıkar; sol menü yerinde kalır. (Elle denemek için
+      geçici olarak hata veren bir ekran gerekir; yazılımcı dener.)
 - [ ] Sol menü grupları: Satış, Ürünler, Bayi ve Satış Ağı, Müşteriler ve
       Servis, İçerik, Ayarlar; açık sayfanın grubu açık gelir.
 - [ ] Panelde her silme onay ister (yorum silme dahil).

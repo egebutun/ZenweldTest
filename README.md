@@ -47,6 +47,9 @@ oturumları için kurallar: [CLAUDE.md](CLAUDE.md).
 # Gereksinim: Node.js 20+ (proje Node 22 ile geliştirildi)
 npm install
 
+# İsteğe bağlı: e-posta ve site adresi ayarları (boşken de çalışır)
+cp apps/zenweld-web/.env.example apps/zenweld-web/.env.local
+
 # Ana Zenweld sitesi → http://localhost:3000
 # Zenweld yönetim paneli de bu uygulamanın içinde → http://localhost:3000/yonetim
 npm run dev:web
@@ -237,6 +240,8 @@ ZenweldTest/
 │
 └── apps/
     └── zenweld-web/                ANA SİTE (port 3000)
+        ├── next.config.mjs             Güvenlik başlıkları (CSP …), görsel izinleri
+        ├── .env.example                Ortam değişkenleri örneği
         └── src/
             ├── app/(site)/                     Sitenin sayfaları (adreste görünmez)
             │   ├── page.tsx                    Anasayfa
