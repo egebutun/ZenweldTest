@@ -58,7 +58,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       (hata, 404, "demo" yazısı, İngilizce, güvenlik politikası), güvenlik
       başlıkları, seçenekli ürünün kartla satın alınması, sepette adet
       sınırı, teklif gönderme ve numarası, belge yükleme/açma/indirme,
-      garanti bitiş günü, şifre değiştirme ve hesap silme.
+      garanti bitiş günü, şifre değiştirme ve hesap silme, iade talebi.
 
 ---
 
@@ -262,6 +262,12 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Profil › Hesabımı Sil: yanlış şifreyle silinmez; doğru şifre ve onayla
       silinir, Giriş sayfasında "Hesabınız silindi." yazar; aynı e-postayla
       giriş "hesap bulunamadı" der. Üyenin siparişleri panelde durur.
+- [ ] Bireysel üyede teslim edilen siparişin detayında **İade Talebi
+      Oluştur** teslim gününden itibaren 14 gün görünür, sonra görünmez;
+      kurumsal üyede hiç görünmez.
+- [ ] Ürün seçmeden gönderilen talep: "İade edilecek en az bir ürün seçin."
+      Gönderilen talep `IAD-<yıl>-<4 hane>` numarası ve "Yeni" durumuyla
+      görünür; açık talep varken düğme görünmez.
 - [ ] Site ve panel oturumu ayrıdır; birinden çıkış diğerini etkilemez.
 
 ---
@@ -408,6 +414,13 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Durum değişikliği müşterinin Tekliflerim sayfasına yansır.
 - [ ] Temsilci ve iç not alandan çıkınca kaydedilir.
 - [ ] CSV indirilir; `=` ile başlayan hücre Excel'de formül olarak çalışmaz.
+
+**İade Talepleri:**
+
+- [ ] Sitede açılan talep listede görünür; satıra tıklayınca ürünler,
+      açıklama, iletişim bilgileri ve para iadesi uyarısı çıkar.
+- [ ] Durum Onaylandı yapılıp kaydedilince müşteri sipariş detayında
+      "Onaylandı" görür ve kalan ürünler için süre içinde yeni talep açabilir.
 
 **Mağaza Ayarları:**
 

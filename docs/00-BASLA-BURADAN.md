@@ -110,6 +110,7 @@ IS-KURALLARI'nda yazar.
 | **Teklif** | Kurumsal alım için gönderilen talep (vadeli, çek, havale ya da görüşelim). Satış ekibi panelden takip eder. |
 | **Garanti kaydı** | Müşterinin aldığı makineyi seri numarasıyla kaydetmesi. Garanti bitiş tarihi sorgulanabilir. |
 | **Servis talebi** | Arızalı ürün için gönderilen talep. Panelden takip edilir. |
+| **İade talebi** | Bireysel üyenin teslim edilen siparişindeki ürünleri geri göndermek için teslimden itibaren 14 gün içinde Hesabım'dan açtığı talep (cayma). Panelde İade Talepleri'nden takip edilir. |
 | **Bayilik başvurusu** | Bayi olmak isteyen firmanın formu. E-postayla Zenweld'e gider. |
 | **Welders Club** | Kaynakçılar için topluluk sayfası. Katılım formu e-postayla Zenweld'e gider. |
 | **Belgeler** | MSDS (güvenlik bilgi formları), Kaynak Rehberi ve Parti Sertifikaları sayfalarındaki indirilebilir dosyalar. Panelden yönetilir. |

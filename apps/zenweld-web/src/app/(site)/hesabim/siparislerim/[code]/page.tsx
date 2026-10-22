@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { CheckCircle2, Truck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import type { Order, OrderAddress } from "@zenweld/data";
-import { cancelExpiredTransfers, getShopSettings, ordersForUser, useDatabase } from "@zenweld/store";
+import { cancelExpiredTransfers, getShopSettings, ordersForUser, returnRequestsForOrder, useDatabase } from "@zenweld/store";
 import { Alert, EmptyState, Modal } from "@zenweld/ui";
 import { formatDate, formatDateTime, formatPrice } from "@zenweld/utils";
 import Link from "next/link";
@@ -18,6 +18,7 @@ import {
   type LegalDocumentKind,
 } from "@/components/shop/LegalDocument";
 import { OrderStatusBadge, OrderTimeline } from "@/components/shop/OrderParts";
+import { ReturnRequestBox } from "@/components/shop/ReturnRequestBox";
 import { useT } from "@/lib/i18n-client";
 
 const addressLines = (a: OrderAddress) => [a.fullName, a.phone, a.line, `${a.district} / ${a.city}`];
@@ -132,6 +133,8 @@ function OrderDetail() {
           <Row label={t.cart.total} value={<strong className="text-base">{formatPrice(order.total)}</strong>} />
         </dl>
       </Box>
+
+      <ReturnRequestBox order={order} user={user} requests={returnRequestsForOrder(order.id, db)} />
 
       <div className="grid gap-6 md:grid-cols-3">
         <Box title={t.orders.payment}>

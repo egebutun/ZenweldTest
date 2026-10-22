@@ -102,7 +102,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 
 | Grup | Sayfalar |
 |---|---|
-| Satış | Siparişler · Teklifler · Mağaza Ayarları |
+| Satış | Siparişler · Teklifler · İade Talepleri · Mağaza Ayarları |
 | Ürünler | Ürünler · Kategoriler · Seçenek Tanımları · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler |
@@ -398,6 +398,23 @@ bulunamadı."
 
 **Demo notu:** Kartla ödeme gerçek değildir; sipariş kaydı ve akış gösterim
 içindir.
+
+### İade Talepleri (`/yonetim/iade-talepleri`)
+
+Bireysel üyelerin Hesabım › Siparişlerim'den açtığı iade (cayma) talepleri
+(kurallar: [IS-KURALLARI.md](IS-KURALLARI.md#7-sipariş-durumları)).
+
+- **Başlık altı:** "<n> talep · <n> yeni".
+- **Tablo:** Talep (numara, tarih), Sipariş (numara; tıklayınca sipariş
+  detayı açılır), Müşteri (ad, e-posta), Ürünler (toplam adet), Neden,
+  Durum. En yeni talep üstte. Boşsa "Henüz iade talebi yok."
+- **Satıra tıklayınca:** İade edilecek ürünler (adet × ad — seçenek, kod),
+  müşterinin açıklaması, e-posta ve telefon.
+  - Uyarı: "Para iadesi panelden yapılmaz. Onaylanan talepte iadeyi banka ya
+    da ödeme kuruluşu üzerinden ayrıca yapın."
+  - Durum (Yeni, İnceleniyor, Onaylandı, Reddedildi) ve iç not; **Kaydet** →
+    "Kaydedildi". Müşteri durumu sipariş detayında görür.
+- Talep silinmez.
 
 ---
 
@@ -1240,8 +1257,8 @@ listelenir. Bayiler ana sitenin üyesi değildir.
     satırında yok), askıdaki üyede **Aktifleştir**.
   - Kayıt tarihi.
   - Sil: Yönetici satırında pasiftir. Onay: "<e-posta> silinsin mi?" Üyenin
-    kayıtlı adresleri de silinir; siparişleri, teklifleri, servis talepleri ve
-    yorumları kalır. Üye kendi hesabını sitede Hesabım › Profil'den de
+    kayıtlı adresleri de silinir; siparişleri, teklifleri, servis talepleri,
+    iade talepleri ve yorumları kalır. Üye kendi hesabını sitede Hesabım › Profil'den de
     silebilir; sonuç aynıdır ve üye listeden kalkar.
 
 **Kurallar:**

@@ -785,6 +785,45 @@ export interface LegalPage {
 }
 
 /* ------------------------------------------------------------------ */
+/* Iade (cayma) talepleri (Hesabim > Siparislerim)                     */
+/* ------------------------------------------------------------------ */
+
+export type ReturnRequestStatus = "new" | "reviewing" | "approved" | "rejected";
+export type ReturnReason = "changed_mind" | "defective" | "wrong_item" | "other";
+
+/** Iade edilen siparis satiri; siparis anindaki bilgilerin kopyasi. */
+export interface ReturnRequestItem {
+  /** Siparisin items dizisindeki sirasi (0'dan) */
+  line: number;
+  productId: string;
+  productName: string;
+  sku: string;
+  variantLabel?: string;
+  quantity: number;
+}
+
+/** Bireysel uyenin teslim edilen siparisi icin actigi iade talebi (DB: return_requests). */
+export interface ReturnRequest {
+  id: string;
+  /** IAD-<yil>-<4 hane> */
+  code: string;
+  orderId: string;
+  orderCode: string;
+  userId: string;
+  customerName: string;
+  email: string;
+  phone: string;
+  items: ReturnRequestItem[];
+  reason: ReturnReason;
+  note?: string;
+  status: ReturnRequestStatus;
+  /** Yalnizca yonetim panelinde gorunur */
+  adminNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/* ------------------------------------------------------------------ */
 /* Servis talepleri (Destek ve Garanti > Servis Talebi)                */
 /* ------------------------------------------------------------------ */
 
@@ -949,6 +988,7 @@ export interface ZenweldDatabase {
   salesReps: SalesRep[];
   legalPages: LegalPage[];
   serviceRequests: ServiceRequest[];
+  returnRequests: ReturnRequest[];
   /**
    * Son verilen kayit numaralari (on ek -> sayi; "TKL-2026-" -> 49).
    * Silinen kaydin numarasi, en sonuncusu dahil, yeniden verilmez.

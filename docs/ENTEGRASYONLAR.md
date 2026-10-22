@@ -61,7 +61,7 @@ veritabanında, tarayıcıda ya da depoda (GitHub) **asla** durmaz.
 - E-posta yalnızca **sunucudan** gönderilir; tarayıcı servise doğrudan
   bağlanmaz. Formlar sitenin kendi uçlarına gönderir:
   - `POST /api/bildirim` — iletişim, teklif, servis, garanti, yorum, üye,
-    sipariş, Welders Club (`type` alanıyla).
+    sipariş, iade talebi, Welders Club (`type` alanıyla).
   - `POST /api/bayilik` — bayilik başvurusu.
   - `POST /api/destek` — ürün sayfasındaki destek sorusu.
 - Sunucu e-postayı Resend'in API'sine (`https://api.resend.com/emails`)
@@ -89,7 +89,8 @@ veritabanında, tarayıcıda ya da depoda (GitHub) **asla** durmaz.
 **Ziyaretçi ne görür:**
 
 - **Kaydı panelde olan formlar** (sipariş, teklif, servis, garanti, yorum,
-  üyelik) e-postanın sonucunu beklemez; kayıt her durumda yapılır.
+  üyelik, iade talebi) e-postanın sonucunu beklemez; kayıt her durumda
+  yapılır.
 - **Yalnızca e-postayla giden formlar** (iletişim, bayilik, Welders Club,
   ürün destek sorusu):
   - E-posta gittiyse başarılı.

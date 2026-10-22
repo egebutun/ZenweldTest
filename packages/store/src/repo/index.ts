@@ -23,3 +23,4 @@ export * from "./faqs";
 export * from "./documents";
 export * from "./categories";
 export * from "./options";
+export * from "./returns";

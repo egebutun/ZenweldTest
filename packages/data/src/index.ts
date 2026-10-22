@@ -6,6 +6,7 @@ export * from "./legal";
 export * from "./stock";
 export * from "./catalog";
 export * from "./variants";
+export * from "./returns";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";
@@ -40,7 +41,7 @@ import { documentPages } from "./seed/documents.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 58;
+export const DB_VERSION = 59;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida
@@ -79,6 +80,7 @@ export function createSeedDatabase(now: number = Date.now()): ZenweldDatabase {
       salesReps,
       legalPages,
       serviceRequests: sample.serviceRequests,
+      returnRequests: [],
       // Ornek kayitlarin numaralari nextCode'da mevcut en buyuk numaradan okunur.
       recordCounters: {},
       settings: defaultSettings,

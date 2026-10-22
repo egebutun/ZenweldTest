@@ -19,6 +19,7 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | Satıcı bilgilerinin sitede gösterilmesi (ETBİS, unvan, MERSİS) | ETBİS kaydı ve şirket bilgileri | "Satıcı bilgileri sitede" bölümü |
 | Kargo takip bağlantısı | Kargo firması ve entegrasyon kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 9 |
 | Müşterinin siparişini sitede iptal etmesi | İleride düşünülecek | "Müşterinin siparişi iptal etmesi" bölümü |
+| Kurumsal üyelerde iade talebi | Kurumsal alıcılara cayma hakkının uygulanıp uygulanmayacağı sorulup öğrenilecek | "İade talebi" bölümü |
 
 ## Müşterinin siparişi iptal etmesi — ileride düşünülecek
 
@@ -252,6 +253,22 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
 12. **Ziyaretçi verileri** (ziyaret sayısı, ziyaretten siparişe dönüşüm, sepette
     bırakılan ürünler) için Google Analytics vb. kurulmalı; çerez onayına bağlı yüklenmeli.
 
+## İade talebi — kurumsal üyeler ve backend
+
+1. **Kurumsal üyeler için sor, öğren:** İade talebi düğmesi bugün yalnızca
+   bireysel üyede (KARARLAR K-65). Kurumsal (ticari) alıcılara cayma
+   hakkının uygulanıp uygulanmayacağı hukukçuya ve müdüre sorulup
+   öğrenilmeli ("Online satış" 3'teki açık soruyla aynı konu). Uygulanacaksa
+   `packages/data/src/returns.ts` › `canRequestReturn` içindeki rol kontrolü
+   kaldırılır.
+2. **Sunucu:** Talep sunucuda açılmalı; süre, adet ve siparişin sahibi
+   sunucuda denetlenmeli. Bugün tarayıcıda.
+3. **Ürünün geri gönderilmesi:** Müşteriye kargo kodu ya da gönderim adresi
+   verilmesi, ürün depoya ulaşınca kontrol edilmesi süreci tanımlanmalı.
+4. **Para iadesi:** Ödeme kuruluşunun iade işlemi bağlanırsa onaylanan
+   talepten iade başlatılabilir ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) ›
+   Kartla ödeme 7).
+
 ## Veritabanı — bütün kayıtlar (backend)
 
 Bugün bütün kayıtlar (ürünler, siparişler, üyeler, teklifler, ayarlar…)
@@ -299,6 +316,8 @@ e-posta gönderiyor. Sipariş bildirimleri "Online satış" 6'da. Ayrıca:
 1. Teklif talebinin durumu panelde değişince (İnceleniyor, Teklif Gönderildi…).
 2. Servis talebinin durumu değişince.
 3. Garanti kaydı alındığında ve panelde bitiş tarihi değişince.
+4. İade talebinin durumu panelde değişince (İnceleniyor, Onaylandı,
+   Reddedildi).
 
 Hangi bildirimlerin gönderileceği ve metinleri kararlaştırılmalı.
 

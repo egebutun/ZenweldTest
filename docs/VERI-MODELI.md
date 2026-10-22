@@ -133,6 +133,7 @@ bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmışt
 | Teklif | Üye (isteğe bağlı) | `userId` | Ziyaretçi de teklif ister |
 | Teklif satırı | Ürün | `productId` | Ad, kod ve seçenek kopya |
 | Sipariş | Üye (zorunlu) | `userId` | Sipariş yalnızca üyeden |
+| İade talebi | Sipariş, üye | `orderId`, `userId` | Satırları siparişin satırlarına sırayla (`line`) bağlı |
 | Sipariş satırı | Ürün | `productId` | Ad, kod, seçenek ve fiyat kopya |
 | Servis talebi | Kategori, ürün, üye (isteğe bağlı) | `categorySlug`, `productId`, `userId` | Kategori bugün linkle bağlı; backend'de kimlikle bağlanmalı |
 | Garanti kaydı | Kategori, ürün | `categorySlug`, `productId` | Kategori bugün linkle bağlı; backend'de kimlikle bağlanmalı. Üyeye e-postayla eşleşir (kimlikle değil) |
@@ -461,6 +462,25 @@ Siparişi yalnızca üye verir. Durum akışı ve tutar hesapları:
 `carrier` (firma), `trackingNumber`, `shippedAt` (ilk kargoya verilme;
 takip no düzeltilince değişmez), `deliveredAt?`.
 
+### İade talepleri (`return_requests`)
+
+Bireysel üyenin teslim edilen siparişi için açtığı iade (cayma) talebi
+(kurallar: [IS-KURALLARI.md](IS-KURALLARI.md#7-sipariş-durumları)).
+
+| Alan | Tür | Açıklama |
+|---|---|---|
+| `id` | metin | |
+| `code` | metin | `IAD-<yıl>-<4 hane>`; benzersiz |
+| `orderId`, `orderCode` | metin | Sipariş ve numarası |
+| `userId` | metin | Talebi açan üye |
+| `customerName`, `email`, `phone` | metin | Siparişteki müşteri bilgilerinin kopyası |
+| `items` | liste | `{ line, productId, productName, sku, variantLabel?, quantity }`. `line` siparişin satır sırası (0'dan); ad, kod ve seçenek sipariş anındaki kopyadır |
+| `reason` | durum | `changed_mind` (Vazgeçtim), `defective` (Kusurlu ürün), `wrong_item` (Yanlış ürün gönderildi), `other` (Diğer) |
+| `note` | metin? | Müşterinin açıklaması |
+| `status` | durum | `new` (Yeni), `reviewing` (İnceleniyor), `approved` (Onaylandı), `rejected` (Reddedildi) |
+| `adminNote` | metin? | Yalnızca panelde |
+| `createdAt`, `updatedAt` | tarih | |
+
 ---
 
 ## 8. Servis talepleri ve garantiler
@@ -678,6 +698,7 @@ başlangıç değeri.
 | Sipariş | `SIP-<yıl>-<5 hane>` | SIP-2026-00003 |
 | Teklif | `TKL-<yıl>-<4 hane>` | TKL-2026-0004 |
 | Servis talebi | `SRV-<yıl>-<4 hane>` | SRV-2026-0034 |
+| İade talebi | `IAD-<yıl>-<4 hane>` | IAD-2026-0001 |
 
 - Numara o yıl şimdiye kadar verilmiş en büyük numaranın bir fazlasıdır;
   her yıl 1'den başlar.
@@ -725,12 +746,12 @@ sağlanmalı.
 | Seçenek değeri | Bir üründe kullanılıyorsa silinmez | — |
 | Bayi | — | Stok satırları, stok işlemleri, kod eşleştirmeleri |
 | Online satıcı | — | Stok satırları, stok işlemleri, kod eşleştirmeleri; bağlı bayinin `retailerId`'si |
-| Üye (panelden ya da üyenin kendisi Hesabım'dan) | Son aktif yönetici silinemez; panelde yönetici satırı silinemez | Kayıtlı adresleri. Siparişleri, teklifleri, servis talepleri, garanti kayıtları ve yorumları kalır (geçmiş kayıt) |
+| Üye (panelden ya da üyenin kendisi Hesabım'dan) | Son aktif yönetici silinemez; panelde yönetici satırı silinemez | Kayıtlı adresleri. Siparişleri, teklifleri, servis talepleri, iade talepleri, garanti kayıtları ve yorumları kalır (geçmiş kayıt) |
 | Teklif | — | Numarası boşta kalır |
 | Garanti, yorum, SSS, temsilci, haber, blog, etkinlik | — | — |
 | Belge | — | Dosyası |
 | Yasal metin | Silinemez | — |
-| Sipariş, servis talebi | Panelde silinmez | — |
+| Sipariş, servis talebi, iade talebi | Panelde silinmez | — |
 
 ---
 
@@ -762,7 +783,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 58).
+- `packages/data/src/index.ts`'tedir (bugün 59).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -781,6 +802,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 | Üye | 69 | 1 yönetici, 46 bireysel, 22 kurumsal |
 | Sipariş / teklif | 133 / 48 | |
 | Servis talebi / garanti | 34 / 54 | |
+| İade talebi | 0 | Hesabım'dan açılır |
 | Yorum | 11 | |
 | Blog / haber / etkinlik | 6 / 2 / 8 | |
 | SSS / temsilci / yasal metin | 8 / 11 / 11 | |

@@ -2,7 +2,7 @@
 
 Bu dosya sitenin ve panelin hesaplarını ve kurallarını anlatır: fiyat ve
 KDV, kampanya, seçenekli ürün, sepet ve kargo, kartla ödeme ve taksit,
-havale süresi, sipariş ve teklif durumları, garanti, stok, ürün kodları,
+havale süresi, sipariş ve teklif durumları, iade talebi, garanti, stok, ürün kodları,
 linkler, yorumlar, üyelik ve form e-postaları. Ekranların tarifi bu dosyada
 yoktur; yalnızca kurallar vardır.
 
@@ -316,6 +316,32 @@ Siparişi yalnızca **üye** verir.
 
 Kod: `packages/store/src/repo/commerce.ts`.
 
+**İade (cayma) talebi:**
+
+- Yalnızca **bireysel üye**, yalnızca **Teslim Edildi** durumundaki siparişi
+  için açar; kurumsal üyede yoktur ([KARARLAR.md](KARARLAR.md) K-65).
+- **Süre:** Teslim gününden itibaren **14 gün**; son gün 23:59'a kadar.
+  Teslim anı kargo kaydındaki teslim tarihidir (yoksa durum geçmişindeki
+  Teslim Edildi anı).
+  - **Örnek:** 10 Mart 15:00'te teslim edilen siparişte son gün 24 Mart;
+    24 Mart 23:59'a kadar talep açılır, 25 Mart'ta açılmaz.
+- Müşteri ürünleri ve adetlerini seçer (en az bir ürün), nedeni seçer
+  (Vazgeçtim, Kusurlu ürün, Yanlış ürün gönderildi, Diğer) ve isterse
+  açıklama yazar.
+- **İade edilebilecek adet** = siparişteki adet − reddedilmemiş taleplerdeki
+  adet.
+- Açık talep (Yeni ya da İnceleniyor) varken aynı siparişe yeni talep
+  açılamaz. Talep onaylanır ya da reddedilirse, kalan ürünler için süre
+  içinde yeni talep açılabilir.
+- **Durumlar:** Yeni → İnceleniyor → Onaylandı ya da Reddedildi; panelde
+  istenen duruma geçilir. Müşteri durumu sipariş detayında görür; e-posta
+  gitmez.
+- Para iadesi panelden yapılmaz; banka ya da ödeme kuruluşu üzerinden
+  ayrıca yapılır (K-27).
+- Numara `IAD-<yıl>-<4 hane>` ([17](#17-kayıt-numaraları)).
+
+Kod: `packages/data/src/returns.ts`, `packages/store/src/repo/returns.ts`.
+
 ---
 
 ## 8. Teklif
@@ -606,7 +632,7 @@ Kod: `packages/store/src/repo/reviews.ts`.
 - **Şifre değiştirme (Hesabım › Profil):** Mevcut şifre doğru olmalı; yeni
   şifre en az 6 karakter ve tekrarıyla aynı olmalı. Oturum açık kalır.
 - **Üye silinince:** Kayıtlı adresleri de silinir; siparişleri, teklifleri,
-  servis talepleri, garanti kayıtları ve yorumları kalır.
+  servis talepleri, iade talepleri, garanti kayıtları ve yorumları kalır.
   - Yönetici panelden siler ya da üye kendi hesabını Hesabım › Profil ›
     **Hesabımı Sil**'den siler (şifresiyle onaylar); sonuç aynıdır.
   - Kendi hesabını silen üyenin oturumu kapanır. Aynı e-postayla yeniden üye
@@ -629,14 +655,15 @@ Kod: `packages/auth/src/auth-context.tsx`, `packages/store/src/repo/users.ts`.
 | Sipariş | `SIP-<yıl>-<5 hane>` | SIP-2026-00003 |
 | Teklif | `TKL-<yıl>-<4 hane>` | TKL-2026-0004 |
 | Servis talebi | `SRV-<yıl>-<4 hane>` | SRV-2026-0034 |
+| İade talebi | `IAD-<yıl>-<4 hane>` | IAD-2026-0001 |
 
 - Numara, o yıl şimdiye kadar verilmiş en büyük numaranın bir fazlasıdır;
   her yıl 1'den başlar.
 - Silinen kaydın numarası yeniden verilmez; **en son kayıt silinse de**
   numarası bir sonraki kayda verilmez ([KARARLAR.md](KARARLAR.md) K-64).
 
-Kod: `packages/store/src/repo/shared.ts` › `nextCode` (sipariş, teklif ve
-servis talebi aynı yeri kullanır).
+Kod: `packages/store/src/repo/shared.ts` › `nextCode` (sipariş, teklif,
+servis talebi ve iade talebi aynı yeri kullanır).
 
 ---
 
@@ -655,7 +682,8 @@ kurulumu ve demo davranışı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md).
 - Her formda botlar için görünmez bir tuzak alanı vardır; onu dolduran
   gönderim e-posta olarak gelmez ama bota başarılı gibi yanıt verilir.
 - **Kaydı panelde olan formlar** (sipariş, teklif, servis, garanti, yorum,
-  üyelik) e-postanın sonucunu beklemez; e-posta gitmese de kayıt yapılır.
+  üyelik, iade talebi) e-postanın sonucunu beklemez; e-posta gitmese de
+  kayıt yapılır.
 - **Yalnızca e-postayla giden formlar** (iletişim, bayilik başvurusu,
   Welders Club, ürün destek sorusu) e-posta gidemezse ziyaretçiye hata
   gösterir; ziyaretçi tekrar deneyebilir.
@@ -674,6 +702,7 @@ kurulumu ve demo davranışı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md).
 | Ürün yorumu | "Yeni ürün yorumu — <ürün>" | Ürün, Yazan, Puan, Başlık, Fotoğraf / video; Yorum | Yorumlar (onay bekler) |
 | Üye Ol | "Yeni üye — <ad> (<tür>)" | Ad Soyad, E-posta, Telefon, Şehir, Üyelik, Firma, Bülten izni | Üyeler |
 | Sipariş | "Yeni sipariş — <no> — <toplam>" | Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — tutar), Toplam, Ödeme, Teslimat adresi, Fatura (kurumsalda firma, vergi dairesi, VKN; bireyselde ad); Müşteri notu | Siparişler |
+| İade talebi | "Yeni iade talebi — <talep no> — <sipariş no>" | Talep no, Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — kod), Neden; Açıklama | İade Talepleri |
 | Welders Club | "Welders Club katılım — <ad>" | Ad, E-posta, Şehir | — |
 | Bayilik Başvurusu | "Bayilik başvurusu — <firma>" | Firma unvanı, Vergi dairesi / no, Şehir, Faaliyet alanı, Sektördeki yıl, Çalıştığı markalar, Showroom var mı, Servis kabiliyeti, Yetkili kişi, E-posta, Telefon, Not. Sunucu firma ve e-posta olmadan kabul etmez | — |
 | Ürün destek sorusu | "Ürün destek talebi — <ürün> (<kod>)" | Ürün, Ürün kodu, Ürün sayfası, Ad Soyad, E-posta, Telefon, Üye mi; Soru. Sunucu soru ve (e-posta ya da telefon) olmadan kabul etmez | — |

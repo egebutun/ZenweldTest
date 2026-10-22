@@ -262,6 +262,17 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   düşünülecek ([YAPILACAKLAR.md](YAPILACAKLAR.md)). Bugün sitede iptal
   düğmesi yoktur.
 
+### K-65 · İade talebi yalnızca bireysel üyede, teslimden itibaren 14 gün
+- **Tarih:** 2026-10-22
+- **Karar:**
+  - Bireysel üye, teslim edilen siparişi için Hesabım › Siparişlerim'den iade
+    (cayma) talebi açar; süre teslim gününden itibaren 14 gündür (son gün
+    23:59'a kadar).
+  - Kurumsal üyede bu düğme şimdilik yoktur; kurumsal alıcılara uygulanıp
+    uygulanmayacağı sorulup öğrenilecek ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
+  - Panelde Satış grubunda **İade Talepleri** ekranı vardır. Para iadesi
+    K-27'ye göre banka ya da ödeme kuruluşu üzerinden ayrıca yapılır.
+
 ### K-64 · Kayıt numarası hiçbir zaman tekrar verilmez
 - **Tarih:** 2026-10-22
 - **Karar:** Sipariş, teklif ve servis talebi numaraları tekrar etmez; en

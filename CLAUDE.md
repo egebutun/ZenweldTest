@@ -63,7 +63,7 @@ ilgili belge **aynı commit'te** güncellenir:
   - `npm run test:e2e`: tarayıcı testleri (`tests/e2e`); önce `npm run build`.
 - **Testler:** `tests/unit`, `docs/IS-KURALLARI.md`'deki kuralları ve
   örnekleri dener; `tests/e2e` sitenin ve panelin tarayıcıda çalıştığını
-  dener (sayfa taraması, ödeme, teklif, belgeler, garanti, hesap). Bir kural ya da
+  dener (sayfa taraması, ödeme, teklif, belgeler, garanti, hesap, iade). Bir kural ya da
   ekran değişince ilgili test de aynı commit'te güncellenir.
 - **Doğrulama:** Her değişiklikten sonra typecheck, lint, test ve build
   çalıştırılır; davranış değiştiyse tarayıcı testleri de.

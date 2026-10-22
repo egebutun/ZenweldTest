@@ -180,7 +180,7 @@ doldurur.
 grafikleri; menüde:
 
 - **Satış:** Siparişler (havale onayı, kargo takip no, teslim, iptal), Teklifler,
-  Mağaza Ayarları (kargo, POS ve taksitler, havale hesapları)
+  İade Talepleri, Mağaza Ayarları (kargo, POS ve taksitler, havale hesapları)
 - **Ürünler:** Ürünler (seçenekler ve SEO dahil), Kategoriler, Seçenek
   Tanımları, Stok Matrisi (bayi ve satıcıların CSV/XLSX stok dosyaları), Yorumlar
 - **Bayi ve Satış Ağı:** Bayiler, Online Satıcılar, Satış Temsilcileri
@@ -282,7 +282,7 @@ ZenweldTest/
             │   │                               düzenlenir; adresler packages/data/src/legal.ts)
             │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
             ├── app/yonetim/                    ZENWELD YÖNETİM PANELİ
-            │   └── siparisler · teklifler · magaza · urunler · kategoriler · secenekler
+            │   └── siparisler · teklifler · iade-talepleri · magaza · urunler · kategoriler · secenekler
             │      · stok · yorumlar · bayiler · saticilar · satis-temsilcileri · uyeler
             │      · servis-talepleri · garantiler · haberler · etkinlikler · blog
             │      · hakkimizda · sss · belgeler · yasal-metinler · sayfa-seo · gorunum
@@ -441,7 +441,7 @@ sitenin aramaya açılıp açılmayacağını belirler (aşağıya bakın).
 ### Form e-postaları
 
 Sitedeki formlar (iletişim, bayilik, teklif, servis, garanti, yorum, üyelik,
-sipariş, Welders Club, ürün destek sorusu) **info@zenweld.com**'a Resend
+sipariş, iade talebi, Welders Club, ürün destek sorusu) **info@zenweld.com**'a Resend
 üzerinden e-posta gönderir (`apps/zenweld-web/src/lib/server/mail.ts`,
 `app/api/bildirim`). Vercel'de tanımlanacak değişkenler:
 

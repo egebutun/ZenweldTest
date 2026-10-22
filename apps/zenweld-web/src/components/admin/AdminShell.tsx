@@ -22,6 +22,7 @@ import {
   Package,
   Palette,
   PenLine,
+  RotateCcw,
   Scale,
   Search,
   Settings,
@@ -66,6 +67,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/yonetim/siparisler", label: "Siparişler", Icon: ShoppingCart },
       { href: "/yonetim/teklifler", label: "Teklifler", Icon: FileText },
+      { href: "/yonetim/iade-talepleri", label: "İade Talepleri", Icon: RotateCcw },
       { href: "/yonetim/magaza", label: "Mağaza Ayarları", Icon: SlidersHorizontal },
     ],
   },

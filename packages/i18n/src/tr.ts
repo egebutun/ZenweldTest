@@ -376,7 +376,7 @@ export const tr = {
     passwordChanged: "Şifreniz değiştirildi.",
     deleteAccount: "Hesabımı Sil",
     deleteAccountText:
-      "Hesabınız ve kayıtlı adresleriniz kalıcı olarak silinir; bu işlem geri alınamaz. Siparişleriniz, teklifleriniz, servis talepleriniz, garanti kayıtlarınız ve yorumlarınız silinmez.",
+      "Hesabınız ve kayıtlı adresleriniz kalıcı olarak silinir; bu işlem geri alınamaz. Siparişleriniz, teklifleriniz, servis ve iade talepleriniz, garanti kayıtlarınız ve yorumlarınız silinmez.",
     deleteAccountPassword: "Onay için şifreniz",
     deleteAccountConfirm: "Hesabınız kalıcı olarak silinsin mi? Bu işlem geri alınamaz.",
     accountDeleted: "Hesabınız silindi.",
@@ -674,6 +674,33 @@ export const tr = {
     sortNewest: "En yeniler",
     clear: "Filtreleri Temizle",
     productCount: "{count} ürün",
+  },
+  returns: {
+    title: "İade Talebi",
+    create: "İade Talebi Oluştur",
+    info: "Teslim tarihinden itibaren 14 gün içinde iade talebi oluşturabilirsiniz. Son gün: {date}.",
+    selectItems: "İade edilecek ürünler ve adetleri",
+    quantity: "İade adedi",
+    reason: "İade nedeni",
+    reasons: {
+      changed_mind: "Vazgeçtim",
+      defective: "Kusurlu ürün",
+      wrong_item: "Yanlış ürün gönderildi",
+      other: "Diğer",
+    },
+    note: "Açıklama (isteğe bağlı)",
+    submit: "Talebi Gönder",
+    cancel: "Vazgeç",
+    noItems: "İade edilecek en az bir ürün seçin.",
+    failed: "Talep oluşturulamadı. Sayfayı yenileyip tekrar deneyin.",
+    success:
+      "İade talebiniz alındı. Talep numaranız {code}. Talebiniz incelendikten sonra sizinle iletişime geçilecek; onaylanırsa ödeme iadesi ayrıca yapılır.",
+    status: {
+      new: "Yeni",
+      reviewing: "İnceleniyor",
+      approved: "Onaylandı",
+      rejected: "Reddedildi",
+    },
   },
   errorPage: {
     title: "Bir sorun oluştu",

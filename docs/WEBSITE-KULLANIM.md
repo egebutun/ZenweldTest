@@ -880,8 +880,8 @@ kartlar ilgili sayfaya gider.
   - Hatalar: "Mevcut şifre hatalı.", "Şifreler eşleşmiyor.", "Şifre en az 6
     karakter olmalıdır."
 - **Hesabımı Sil:** Açıklama: hesap ve kayıtlı adresler kalıcı olarak
-  silinir, işlem geri alınamaz; siparişler, teklifler, servis talepleri,
-  garanti kayıtları ve yorumlar silinmez.
+  silinir, işlem geri alınamaz; siparişler, teklifler, servis ve iade
+  talepleri, garanti kayıtları ve yorumlar silinmez.
   - Onay için şifre istenir, ardından "Hesabınız kalıcı olarak silinsin mi?"
     sorulur.
   - Şifre yanlışsa "Şifre hatalı." yazar, hesap silinmez.
@@ -931,6 +931,20 @@ kartlar ilgili sayfaya gider.
   - Teslimat adresi ve fatura bilgileri.
   - Sözleşmeler: Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi, sipariş
     anının bilgileriyle.
+- **İade Talebi** (yalnızca bireysel üyede; kurallar
+  [IS-KURALLARI.md](IS-KURALLARI.md#7-sipariş-durumları)):
+  - Bölüm, siparişin iade talebi varsa ya da talep açılabiliyorsa görünür.
+  - Açılmış talepler: numara, durum (Yeni, İnceleniyor, Onaylandı,
+    Reddedildi), tarih-saat, ürünler ve neden.
+  - Talep açılabiliyorsa: "Teslim tarihinden itibaren 14 gün içinde iade
+    talebi oluşturabilirsiniz. Son gün: <tarih>." ve **İade Talebi Oluştur**.
+  - Form: iade edilecek her ürün için adet (0'dan iade edilebilecek adede
+    kadar), İade nedeni (Vazgeçtim, Kusurlu ürün, Yanlış ürün gönderildi,
+    Diğer), Açıklama (isteğe bağlı); **Talebi Gönder**, **Vazgeç**. Ürün
+    seçilmezse "İade edilecek en az bir ürün seçin."
+  - Gönderince: "İade talebiniz alındı. Talep numaranız <IAD-…>. Talebiniz
+    incelendikten sonra sizinle iletişime geçilecek; onaylanırsa ödeme iadesi
+    ayrıca yapılır." Talep info@zenweld.com'a e-postayla da gider.
 - **Demo notu:** Ödeme süresi dolan havale siparişleri, Siparişlerim ya da
   sipariş detayı açıldığında iptal edilir (sunucu olmadığı için). Gerçek
   sistemde bu iş sunucuda zamanlanmış olarak yapılmalıdır.

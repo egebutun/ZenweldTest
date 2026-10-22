@@ -6,7 +6,7 @@ import { botResult, isBot, readFields, readJsonObject, sendMail } from "@/lib/se
  *
  * Sitedeki formlar gonderilince Zenweld'e e-posta gider (bayilik basvurusu
  * ve urun destek sorusu kendi uclarindan: /api/bayilik, /api/destek).
- * Kayit tutan formlarin (teklif, servis, garanti, yorum, uyelik, siparis)
+ * Kayit tutan formlarin (teklif, servis, garanti, yorum, uyelik, siparis, iade)
  * kaydi ayrica yonetim panelindedir; e-posta haber vermek icindir.
  *
  * Yalnizca asagidaki form turleri ve alanlari kabul edilir; konu satiri ve
@@ -121,6 +121,21 @@ const TEMPLATES: Record<string, Template> = {
       ["invoice", "Fatura"],
     ],
     note: ["note", "Müşteri notu"],
+    replyTo: "email",
+  },
+  iade: {
+    title: "Yeni iade talebi",
+    subject: (d) => `Yeni iade talebi — ${d.code} — ${d.order}`,
+    fields: [
+      ["code", "Talep no"],
+      ["order", "Sipariş no"],
+      ["customer", "Müşteri"],
+      ["email", "E-posta"],
+      ["phone", "Telefon"],
+      ["items", "Ürünler"],
+      ["reason", "Neden"],
+    ],
+    note: ["note", "Açıklama"],
     replyTo: "email",
   },
   "welders-club": {

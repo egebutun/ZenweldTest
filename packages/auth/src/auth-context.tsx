@@ -53,7 +53,7 @@ interface AuthContextValue {
   /**
    * Giris yapmis kisi kendi hesabini siler (sifresiyle onaylar) ve oturum
    * kapanir. Panelden silmeyle ayni: hesap ve adresler silinir; siparis,
-   * teklif, servis talebi, garanti ve yorumlar kalir.
+   * teklif, servis ve iade talebi, garanti ve yorumlar kalir.
    */
   deleteAccount: (password: string) => AuthResult;
 }
