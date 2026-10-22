@@ -3,12 +3,12 @@
 import { useRouter } from "next/navigation";
 import { validateDiscount, type Product } from "@zenweld/data";
 import { createProduct, saveProduct, useDatabase } from "@zenweld/store";
-import { ContentFormShell, findSlugClash, resolveSlug, useContentForm } from "./content-form";
+import { ContentFormShell, EMPTY_SLUG_ERROR, findSlugClash, resolveSlug, useContentForm } from "./content-form";
 import { BasicsTab } from "./product/BasicsTab";
 import { DescriptionTab } from "./product/DescriptionTab";
 import { ImagesTab } from "./product/ImagesTab";
 import { InTheBoxTab, SpecsTab } from "./product/ListTabs";
-import { OptionsTab, optionsError, tidyOptions } from "./product/OptionsTab";
+import { OptionsTab, optionsError, productCodeError, tidyOptions } from "./product/OptionsTab";
 import { SeoPanel, storedLinks } from "./SeoPanel";
 import { productSeo } from "@/lib/seo";
 
@@ -57,10 +57,13 @@ export function ProductForm({ product }: { product?: Product }) {
     form.setError(null);
     if (!draft.name.trim()) return form.fail("Ürün adı zorunludur.");
 
+    const codeProblem = productCodeError(draft, db.products);
+    if (codeProblem) return form.fail(codeProblem);
+
     const slug = resolveSlug(draft.slug, draft.name);
-    if (findSlugClash(db.products, draft.id, slug)) {
-      return form.fail(`"${slug}" adresi başka bir üründe kullanılıyor.`);
-    }
+    if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
+    const clash = findSlugClash(db.products, draft.id, slug);
+    if (clash) return form.fail(`"${slug}" adresi "${clash.name}" ürününde kullanılıyor.`, "seo");
 
     const discountError = draft.discount ? validateDiscount(draft.discount) : null;
     if (discountError) return form.fail(discountError);

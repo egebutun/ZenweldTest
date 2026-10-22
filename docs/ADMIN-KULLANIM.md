@@ -84,7 +84,7 @@ Yedi sekme vardır:
 
 | Sekme | İçerik |
 |---|---|
-| **Temel Bilgiler** | Ad, SKU, model kodu, bölüm, kategori, **Sıra**, fiyat (KDV hariç → dahil otomatik hesaplanır), durum işaretleri, kılavuz PDF bağlantısı |
+| **Temel Bilgiler** | Ad, SKU (başka bir ürünün ya da seçeneğin koduyla aynı olamaz), model kodu, bölüm, kategori, **Sıra**, fiyat (KDV hariç → dahil otomatik hesaplanır), durum işaretleri, kılavuz PDF bağlantısı |
 | **Açıklamalar** | Kısa/detaylı açıklama, öne çıkan özellikler |
 | **Görseller** | URL ile ekleme veya dosya yükleme, sıralama, kapak seçimi |
 | **Teknik Özellikler** | Satır satır özellik–değer tablosu |
@@ -139,6 +139,9 @@ Yeni ürünün Sırası boş bırakılırsa kategorinin sonuna eklenir.
 - Sepette, siparişte ve Teklif Al'da seçenek adı ve kodu görünür. Sipariş ve
   teklif, o anki seçenek adını ve kodunu saklar; sonradan değişse de geçmiş
   kayıt değişmez.
+- Bir değer üründen kaldırılırsa, ziyaretçinin sepetinde ya da teklif
+  listesinde o değerle duran satır artık gösterilmez (başka bir seçenek yerine
+  sessizce satılmasın diye).
 
 **Ürün adı:** Ürün adına marka ("Zenweld") yazılmaz; sayfa başlığına
 "| ZENWELD" otomatik eklenir.
@@ -148,7 +151,9 @@ Yeni ürünün Sırası boş bırakılırsa kategorinin sonuna eklenir.
   oluşur. Kayıtlı bir ürünün linki değiştirilirse eski link yeni linke
   yönlendirilir; paylaşılmış bağlantılar ve Google'daki eski sonuç çalışmaya devam
   eder. Yönlenen eski linkler sekmede listelenir. Başka bir ürün bu eski linki
-  alırsa yönlendirme kalkar, link o ürünü açar.
+  alırsa yönlendirme kalkar, link o ürünü açar. Link başka bir kayıtta
+  kullanılıyorsa ya da adda Latin harf/rakam olmadığı için (ör. Rusça bir ad)
+  oluşturulamıyorsa kaydedilmez; form bu sekmeye gelip nedenini yazar.
 - **Ürün Sayfa Başlığı:** Tarayıcı sekmesinde ve Google sonucunda görünen başlık.
   Boş bırakılırsa "Ürün adı — Kategori | ZENWELD" kullanılır. 60 karakteri
   geçmemesi önerilir.

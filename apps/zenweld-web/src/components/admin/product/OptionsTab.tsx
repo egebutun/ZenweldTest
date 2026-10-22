@@ -396,7 +396,30 @@ function VariantBox({
 /* ------------------------------------------------------------------ */
 
 /**
- * Urun kodlari: her degerde zorunlu; urunun kendi koduyla, ayni urunun
+ * Baska urunlerin kodlari (urun ve secenek kodlari) -> nerede kullanildigi.
+ * Kodlar tek havuzda benzersizdir; bayi ve satici stok dosyalari bu kodla
+ * eslesir (buildCodeIndex).
+ */
+function codesInUse(products: Product[], selfId: string): Map<string, string> {
+  const taken = new Map<string, string>();
+  products
+    .filter((p) => p.id !== selfId)
+    .forEach((p) => {
+      taken.set(normalizeCode(p.sku), `"${p.name}" ürününde kullanılıyor`);
+      p.options?.variants.forEach((v) => taken.set(normalizeCode(v.sku), `"${p.name}" ürününün seçeneğinde kullanılıyor`));
+    });
+  return taken;
+}
+
+/** Urunun kendi kodu baska bir urunun ya da seceneginin koduyla ayni olamaz. */
+export function productCodeError(draft: Product, products: Product[]): string | null {
+  const code = normalizeCode(draft.sku);
+  const clash = code ? codesInUse(products, draft.id).get(code) : undefined;
+  return clash ? `Ürün kodu (${draft.sku.trim()}) ${clash}.` : null;
+}
+
+/**
+ * Secenek kodlari: her degerde zorunlu; urunun kendi koduyla, ayni urunun
  * baska degeriyle ya da baska bir urunun (veya seceneginin) koduyla ayni
  * olamaz. Fiyat eksiye dusemez.
  */
@@ -406,13 +429,7 @@ export function optionsError(draft: Product, definitions: OptionDefinition[], pr
   const definition = definitions.find((d) => d.id === own.optionId);
   const name = (valueId: string) => definition?.values.find((v) => v.id === valueId)?.label ?? valueId;
 
-  const taken = new Map<string, string>();
-  products
-    .filter((p) => p.id !== draft.id)
-    .forEach((p) => {
-      taken.set(normalizeCode(p.sku), `"${p.name}" ürününde kullanılıyor`);
-      p.options?.variants.forEach((v) => taken.set(normalizeCode(v.sku), `"${p.name}" ürününün seçeneğinde kullanılıyor`));
-    });
+  const taken = codesInUse(products, draft.id);
   if (draft.sku.trim()) taken.set(normalizeCode(draft.sku), "ürünün kendi koduyla aynı olamaz");
 
   for (const v of own.variants) {

@@ -49,18 +49,25 @@ export function ProductPageClient({ slug }: { slug: string }) {
     [product, db],
   );
 
-  // ?secenek=5-m ile gelen link o secenekle acilir (ilk yuklemede bir kez
-  // okunur). Google'a sayfa tek adresle gider (canonical: /urun/...).
-  const linkApplied = useRef(false);
+  // ?secenek=5-m ile gelen link o secenekle acilir. Google'a sayfa tek
+  // adresle gider (canonical: /urun/...). Ilk cizimde ornek veri kullanilir;
+  // panelde eklenen deger tarayicidaki veri yuklenince bulunur, bu yuzden
+  // link secenek bulunana ya da ziyaretci secim yapana kadar yeniden denenir.
+  const linkPending = useRef(true);
   useEffect(() => {
-    if (linkApplied.current || !group) return;
-    linkApplied.current = true;
+    if (!linkPending.current || !group) return;
     const wanted = new URLSearchParams(window.location.search).get("secenek");
-    if (wanted && group.options.some((o) => o.id === wanted)) setSelection({ [group.id]: wanted });
+    if (!wanted) {
+      linkPending.current = false;
+    } else if (group.options.some((o) => o.id === wanted)) {
+      linkPending.current = false;
+      setSelection({ [group.id]: wanted });
+    }
   }, [group]);
 
   // Secim adrese de yazilir; kopyalanan link bu secenekle acilir.
   const choose = (groupId: string, optionId: string) => {
+    linkPending.current = false;
     setSelection((sel) => ({ ...sel, [groupId]: optionId }));
     const url = new URL(window.location.href);
     url.searchParams.set("secenek", optionId);

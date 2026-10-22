@@ -63,6 +63,13 @@ export function useContentForm<T extends object>(initial: T, firstTab = "temel")
 /** Adres bos birakildiysa basliktan uretilir; yazarken kalan sondaki tire temizlenir. */
 export const resolveSlug = (slug: string, title: string) => slugify(slug) || slugify(title);
 
+/**
+ * resolveSlug bos dondururse (adda Latin harf ya da rakam yok, orn. Rusca
+ * bir etkinlik adi) kayit yapilmaz; bos linkli sayfa acilamazdi.
+ */
+export const EMPTY_SLUG_ERROR =
+  "Link oluşturulamadı: adda Latin harf ya da rakam yok. SEO sekmesinde Latin harf ve rakamlarla bir link yazın.";
+
 /** Ayni adresi kullanan baska kayit varsa onu dondurur. */
 export function findSlugClash<R extends { id: string; slug: string }>(
   rows: R[],

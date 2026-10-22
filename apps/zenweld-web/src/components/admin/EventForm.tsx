@@ -11,6 +11,7 @@ import {
   GalleryField,
   ContentTextFields,
   SingleImageField,
+  EMPTY_SLUG_ERROR,
   findSlugClash,
   resolveSlug,
   useContentForm,
@@ -71,9 +72,9 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
     }
 
     const slug = resolveSlug(draft.slug, draft.title);
-    if (findSlugClash(db.events, draft.id, slug)) {
-      return form.fail(`"${slug}" adresi başka bir etkinlikte kullanılıyor.`);
-    }
+    if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
+    const clash = findSlugClash(db.events, draft.id, slug);
+    if (clash) return form.fail(`"${slug}" adresi "${clash.title}" etkinliğinde kullanılıyor.`, "seo");
 
     const next: ZenweldEvent = { ...draft, slug };
 

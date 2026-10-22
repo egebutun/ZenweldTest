@@ -62,7 +62,9 @@ export function StockUpload({
   );
   const current = useMemo(() => stockOfSource(source.type, source.id, db), [source, db]);
   const diff = useMemo(() => diffStock(current, file.incoming), [current, file.incoming]);
-  const truncated = looksTruncated(current, file.incoming);
+  // Uygulanamayan dosyada (baslik yok ya da eslesen urun yok) "cok kisa"
+  // uyarisi ve onay kutusu gosterilmez; yalnizca neden uygulanamadigi yazar.
+  const truncated = file.incoming.length > 0 && looksTruncated(current, file.incoming);
   const warnings = file.rows.filter((r) => r.warning);
   const noLink = withUrl ? file.incoming.filter((r) => r.quantity > 0 && !r.url).length : 0;
   const choices = useMemo(() => productChoices(db), [db]);

@@ -11,6 +11,7 @@ import {
   ContentTextFields,
   PublishedAtField,
   SingleImageField,
+  EMPTY_SLUG_ERROR,
   findSlugClash,
   resolveSlug,
   useContentForm,
@@ -46,8 +47,9 @@ export function BlogForm({ item }: { item?: BlogPost }) {
     if (!draft.title.trim()) return form.fail("Yazı başlığı zorunludur.");
 
     const slug = resolveSlug(draft.slug, draft.title);
+    if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
     const clash = findSlugClash(db.blogPosts, draft.id, slug);
-    if (clash) return form.fail(`"${clash.slug}" adresi başka bir yazıda kullanılıyor.`);
+    if (clash) return form.fail(`"${slug}" adresi "${clash.title}" yazısında kullanılıyor.`, "seo");
 
     const next: BlogPost = {
       ...draft,

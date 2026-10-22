@@ -12,6 +12,7 @@ import {
   ContentTextFields,
   PublishedAtField,
   SingleImageField,
+  EMPTY_SLUG_ERROR,
   findSlugClash,
   resolveSlug,
   useContentForm,
@@ -45,8 +46,9 @@ export function NewsForm({ item }: { item?: NewsItem }) {
     if (!draft.title.trim()) return form.fail("Haber başlığı zorunludur.");
 
     const slug = resolveSlug(draft.slug, draft.title);
+    if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
     const clash = findSlugClash(db.news, draft.id, slug);
-    if (clash) return form.fail(`"${clash.slug}" adresi başka bir haberde kullanılıyor.`);
+    if (clash) return form.fail(`"${slug}" adresi "${clash.title}" haberinde kullanılıyor.`, "seo");
 
     const next: NewsItem = { ...draft, slug };
 

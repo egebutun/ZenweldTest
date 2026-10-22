@@ -62,11 +62,15 @@ export function findProductById(
 export function saveProduct(product: Product): void {
   mutate((db) => {
     const idx = db.products.findIndex((p) => p.id === product.id);
+    const before = idx >= 0 ? db.products[idx].options : undefined;
     const next = { ...withPreviousSlugs(db.products, product), updatedAt: nowIso() };
     if (idx >= 0) db.products[idx] = next;
     else db.products.unshift({ ...next, createdAt: nowIso() });
-    // Urunden kaldirilan seceneklerin stok satirlari ve kod eslestirmeleri de silinir.
-    const kept = new Set(product.options?.variants.map((v) => v.valueId));
+    // Urunden kaldirilan seceneklerin stok satirlari ve kod eslestirmeleri de
+    // silinir. Secenek tanimi degistiyse hepsi silinir: iki tanimda ayni
+    // kimlikli deger ("3-m") olabilir, eski stok yeni secenegin sanilmasin.
+    const sameOption = before?.optionId === product.options?.optionId;
+    const kept = new Set(sameOption ? product.options?.variants.map((v) => v.valueId) : []);
     const live = (r: { productId: string; variantId?: string }) =>
       r.productId !== product.id || !r.variantId || kept.has(r.variantId);
     db.dealerStock = db.dealerStock.filter(live);

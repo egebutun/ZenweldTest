@@ -11,6 +11,7 @@ import {
 } from "react";
 import { productVariantGroup } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
+import { resolveVariant, variantLabel } from "./variants";
 
 /**
  * "Teklif Listesi" — alisveris sepetinden (lib/cart.tsx) ayridir.
@@ -21,6 +22,7 @@ import { useDatabase } from "@zenweld/store";
  * Liste tarayicida saklanir. Icindeki bir urun sonradan yayindan
  * kaldirilirsa listede gorunmez ve teklife eklenmez. Secenekli urunde
  * secenek de saklanir; ayni urunun farkli secenekleri ayri satirdir.
+ * Secenegi artik bulunmayan satir da (sepetteki gibi) gorunmez.
  */
 
 export interface QuoteLineItem {
@@ -63,13 +65,14 @@ export function QuoteListProvider({ children }: { children: ReactNode }) {
         const product = db.products.find((p) => p.id === i.productId && p.active);
         if (!product) return [];
         const group = productVariantGroup(product, db.optionDefinitions);
-        const option = group?.options.find((o) => o.id === i.variantId);
+        if (group && !group.options.some((o) => o.id === i.variantId)) return [];
+        const selection = group && i.variantId ? { [group.id]: i.variantId } : {};
         return [
           {
             ...i,
             key: lineKey(i),
-            sku: option?.sku ?? product.sku,
-            variantLabel: group && option ? `${group.label}: ${option.label}` : undefined,
+            sku: resolveVariant(product, group, selection).sku,
+            variantLabel: variantLabel(group, selection),
           },
         ];
       }),

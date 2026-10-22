@@ -40,10 +40,14 @@ export function resolveVariant(
 
   const sku = option?.sku || product.sku;
 
-  // Urunun koduyla yazilmis satir ("Ürün Kodu") secenegin koduna doner.
-  // Sonra secenegin kendi satiri ("Hortum Uzunluğu: 4 m") ve farkli
-  // degerleri: ayni etiketli satir varsa degistirilir, yoksa sona eklenir.
-  const specs: SpecRow[] = product.specs.map((row) => (row.value.trim() === product.sku ? { ...row, value: sku } : { ...row }));
+  // Urunun koduyla yazilmis satir ("Ürün Kodu") secenegin koduna doner
+  // (urun kodu bossa hicbir satir). Sonra secenegin kendi satiri ("Hortum
+  // Uzunluğu: 4 m") ve farkli degerleri: ayni etiketli satir varsa
+  // degistirilir, yoksa sona eklenir.
+  const ownCode = product.sku.trim();
+  const specs: SpecRow[] = product.specs.map((row) =>
+    ownCode && row.value.trim() === ownCode ? { ...row, value: sku } : { ...row },
+  );
   if (group && option) {
     for (const override of [{ label: group.label, value: option.label }, ...(option.specOverrides ?? [])]) {
       const i = specs.findIndex((row) => row.label === override.label);

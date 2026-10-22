@@ -16,8 +16,10 @@ import { categorySeo, groupSeo } from "@/lib/seo";
 import {
   ContentFormShell,
   ContentTextFields,
+  EMPTY_SLUG_ERROR,
   FormPanel,
   SingleImageField,
+  findSlugClash,
   resolveSlug,
   useContentForm,
 } from "./content-form";
@@ -74,8 +76,9 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
     if (!currentGroup) return form.fail("Bir grup seçin.");
 
     const slug = resolveSlug(draft.slug, draft.name);
+    if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
     // Urunler kategoriye yalnizca link (slug) ile baglidir; link tekil olmali.
-    const clash = db.categories.find((c) => c.slug === slug && c.id !== draft.id);
+    const clash = findSlugClash(db.categories, draft.id, slug);
     if (clash) return form.fail(`"${slug}" linki "${clash.name}" kategorisinde kullanılıyor.`, "seo");
 
     // Form acikken silinmis tanim kayda geri yazilmasin.
@@ -209,7 +212,9 @@ export function GroupForm({ group, section }: { group?: CategoryGroup; section?:
     if (!draft.name.trim()) return form.fail("Grup adı zorunludur.");
 
     const slug = resolveSlug(draft.slug, draft.name);
-    const clash = db.categoryGroups.find((g) => g.section === draft.section && g.slug === slug && g.id !== draft.id);
+    if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
+    // Grup linki yalnizca kendi bolumunde tekil olmali.
+    const clash = findSlugClash(db.categoryGroups.filter((g) => g.section === draft.section), draft.id, slug);
     if (clash) return form.fail(`"${slug}" linki bu bölümde "${clash.name}" grubunda kullanılıyor.`, "seo");
 
     const next: CategoryGroup = {

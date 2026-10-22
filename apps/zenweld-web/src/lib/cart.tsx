@@ -20,7 +20,7 @@ import { completeSelection, resolveVariant, variantLabel, type VariantSelection 
  * Sepette yalnizca urun, secenek ve adet saklanir; fiyat her zaman o anki
  * urun kaydindan (kampanya dahil) hesaplanir. Boylece yonetim panelinde
  * fiyat degisirse sepet de guncel fiyati gosterir. Yayindan kaldirilan
- * urun sepette gorunmez.
+ * urun ve secilen secenegi artik bulunmayan satir sepette gorunmez.
  *
  * Sepet tarayicida saklanir; uye girisi yalnizca odeme adiminda istenir.
  */
@@ -132,6 +132,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const product = db.products.find((p) => p.id === s.productId && p.active);
         if (!product) return [];
         const group = productVariantGroup(product, db.optionDefinitions);
+        // Secilen secenek artik yoksa (urunden kaldirildi ya da kimligi
+        // degisti) satir gosterilmez; yoksa sessizce baska secenek satilirdi.
+        if (group && !group.options.some((o) => o.id === s.selection[group.id])) return [];
         const variant = resolveVariant(product, group, s.selection);
         const unitExVat = salePriceExVat({ ...product, priceExVat: variant.priceExVat }, now);
         const unitIncVat = priceWithVat(unitExVat, product.vatRate);
