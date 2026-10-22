@@ -409,8 +409,9 @@ export default function QuotePage() {
                 <h2 className="font-display text-xl font-bold uppercase">{t.quote.products}</h2>
                 <ul className="mt-3 space-y-1 text-sm">
                   {quoteList.items.map((i) => (
-                    <li key={i.productId}>
+                    <li key={i.key}>
                       {i.quantity} × {i.productName}
+                      {i.variantLabel && <span className="text-zw-grey-500"> — {i.variantLabel}</span>}
                     </li>
                   ))}
                   {quoteList.items.length === 0 && (
