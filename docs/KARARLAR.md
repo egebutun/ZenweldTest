@@ -53,6 +53,11 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   yoktur.
 - **Not:** Belgelerdeki "Demo notu" işaretleri yalnızca geliştiriciler
   içindir.
+- **Ürün tanıtımı anlamında "demo" kalır (2026-10-22):** Fuar
+  etkinliklerindeki "Uygulamalı Demo Gösterileri" ve "canlı demolar",
+  satış temsilcisi unvanı "Demo ve Satış Sonrası Hizmetler Uzmanı" bu
+  kararın kapsamında değildir. Tarayıcı testleri bu ifadelere izin verir
+  (`tests/e2e/tarama.spec.ts`).
 
 ### K-03 · Bayiler sitenin müşterisi değildir
 - **Tarih:** 2026-10-05 (bayi mağaza sitesinin kaldırılması 2026-10-09)

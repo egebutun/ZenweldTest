@@ -54,7 +54,7 @@ const PANEL = [
   "/gorunum",
 ].map((path) => `/yonetim${path}`);
 
-/** "demo" kelimesinin site demosu degil, urun tanitimi anlaminda gectigi icerik. */
+/** "demo" kelimesinin site demosu degil, urun tanitimi anlaminda gectigi icerik (KARARLAR K-02). */
 const ALLOWED_DEMO = /uygulamalı demo gösterileri|canlı demo\p{L}*|demo ve satış sonrası/gu;
 
 async function scan(page: Page, problems: string[], paths: string[]) {

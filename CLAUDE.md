@@ -51,7 +51,8 @@ ilgili belge **aynı commit'te** güncellenir:
   tarayıcılarındaki panel değişiklikleri silinir.
 - **Metinler:** Arayüz metinleri `packages/i18n/src/tr.ts`'tedir.
 - **Dil:** Site ve panel yalnızca Türkçedir (anasayfadaki "Hot Sale" hariç).
-- **"Demo" yazısı:** Sitede ve panelde "demo" ibaresi geçmez.
+- **"Demo" yazısı:** Sitede ve panelde sitenin demo olduğunu gösteren yazı
+  geçmez (ürün tanıtımı anlamındaki "demo" kalır; KARARLAR K-02).
 - **Komutlar:**
   - `npm run dev:web`: geliştirme sunucusu, http://localhost:3000.
   - `npm run build`: üretim derlemesi.

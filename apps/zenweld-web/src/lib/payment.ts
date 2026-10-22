@@ -47,7 +47,7 @@ export function cardProgram(value: string): CardProgram | undefined {
   return CARD_PROGRAMS[sum % CARD_PROGRAMS.length];
 }
 
-/** "4111111111111111" -> "4111 1111 1111 1111" */
+/** "1234567812345678" -> "1234 5678 1234 5678" */
 export function formatCardNumber(value: string): string {
   return digitsOnly(value).slice(0, 19).replace(/(\d{4})(?=\d)/g, "$1 ");
 }
