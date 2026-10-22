@@ -350,19 +350,15 @@ kararlaştırılacak. Başlıklar:
    kimlik doğrulama şart
 2. Form uçlarında istek sınırı ve bot koruması yok → "Formlar — güvenlik
    (backend)"
-3. KVKK onay kutusu üyelik (`/kayit`) formunda yok
-4. Yayından kaldırılan ürün, haber ve etkinliğin sayfası doğrudan
-   adresle hâlâ açılıyor
-5. `createProduct` bazı alanları kopyalamıyor (yukarıdaki not)
-6. Tarayıcı deposu dolunca değişiklik uygulanmıyor; yönetim paneli ve yorum
+3. `createProduct` bazı alanları kopyalamıyor (yukarıdaki not)
+4. Tarayıcı deposu dolunca değişiklik uygulanmıyor; yönetim paneli ve yorum
    formu uyarıyor, sitedeki diğer formlar (teklif, servis, garanti, üyelik) uyarmıyor
-7. Arama dizini her sayfa açılışında kuruluyor
-8. Her değişiklikte tüm veritabanı (≈545 KB) yeniden yazılıyor
-9. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
-10. 17 dosyada hâlâ Lorem ipsum var
-11. ESLint kurulu değil, test ve CI yok
-12. İki sitede aynı yardımcı dosyaların ayrı kopyaları var
-13. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
+5. Arama dizini her sayfa açılışında kuruluyor
+6. Her değişiklikte tüm veritabanı (≈545 KB) yeniden yazılıyor
+7. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
+8. 17 dosyada hâlâ Lorem ipsum var
+9. ESLint kurulu değil, test ve CI yok
+10. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
 
 ## Çerezler ve yasal metinler
 
