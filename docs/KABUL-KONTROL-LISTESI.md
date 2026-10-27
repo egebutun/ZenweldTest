@@ -129,7 +129,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       eşit numaralar ada göre.
 - [ ] `/ekipmanlar?grup=kaynak-makineleri` 404 verir.
 - [ ] Konum satırında (breadcrumb) her seviye tıklanabilir.
-- [ ] Kategori ve grup kartında görsel yoksa ilk ürünün fotoğrafı görünür.
+- [ ] Kategori ve grup kartında görsel yoksa ilk ürünün fotoğrafı görünür
+      (örnek veride her kartın çizimi var; panelden Kart Görseli kaldırılarak
+      denenir).
 - [ ] Tanıtım metni girilmiş grup ve kategoride sayfanın altında "<ad>
       Hakkında" bölümü çıkar; boşsa çıkmaz.
 

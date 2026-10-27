@@ -20,7 +20,7 @@ const img = (slug: string) => `/images/categories/${slug}.svg`;
 
 export const categoryGroups: CategoryGroup[] = [
   { id: "g1.1", code: "1.1", slug: "lazer-makineleri", section: "ekipmanlar", name: "Lazer Makineleri", image: img("lazer-makineleri"), order: 1 },
-  { id: "g1.2", code: "1.2", slug: "kaynak-makineleri", section: "ekipmanlar", name: "Kaynak Makineleri", order: 2 },
+  { id: "g1.2", code: "1.2", slug: "kaynak-makineleri", section: "ekipmanlar", name: "Kaynak Makineleri", image: img("kaynak-makineleri"), order: 2 },
 
   { id: "g2.1", code: "2.1", slug: "kaynak-maskeleri", section: "guvenlik", name: "Kaynak Maskeleri", image: img("kaynak-maskeleri"), order: 1 },
   { id: "g2.2", code: "2.2", slug: "koruyucu-giyim", section: "guvenlik", name: "Koruyucu Giyim", image: img("koruyucu-giyim"), order: 2 },

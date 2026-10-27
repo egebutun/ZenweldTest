@@ -635,8 +635,7 @@ kullanılamayacağı değerlendirilsin.
 
 1. Grup ve kategori kartlarındaki görseller şimdilik çizim (illüstrasyon);
    gerçek ürün/uygulama fotoğrafları gelince panelden (Ürünler → Kategoriler →
-   Kart Görseli) değiştirilmeli. Kaynak Makineleri kartı ilk ürünün fotoğrafını
-   kullanıyor.
+   Kart Görseli) değiştirilmeli.
 2. Grup ve kategorilerin tanıtım metinleri (sayfanın altındaki "… Hakkında")
    ve SEO alanları panelden yazılmalı; şu an hepsi boş.
 
