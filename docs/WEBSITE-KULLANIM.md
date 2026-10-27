@@ -578,6 +578,10 @@ listelenir.
 
 ## 9. Ürün Seçici
 
+> Sorular ve süzme mantığı geçicidir. Bütün ürünler kesinleşince en son
+> yeniden kurulacak; o zamana kadar sonuçların doğru olması beklenmez
+> ([KARARLAR.md](KARARLAR.md) K-69).
+
 Adres: `/urun-secici`. `?malzeme=celik` gibi bir ön seçimle açılırsa
 1. adımı atlar.
 
@@ -1463,7 +1467,8 @@ Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 - **Ürün Seçici ve kaynak yöntemi:** Ürün Seçici ve aramadaki yöntem
   eşleşmesi (MIG, TIG, MMA…) ürünlerdeki eski "kaynak yöntemi" bilgisine
   bakar. Bu alan panelin ürün formunda yok, bu yüzden panelden eklenen yeni
-  ürünler Ürün Seçici sonuçlarında çıkmaz. Ürün Seçici yeniden tasarlanacak
-  ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
+  ürünler Ürün Seçici sonuçlarında çıkmaz. Ürün Seçici bütün ürünler
+  kesinleşince en son yeniden tasarlanacak ([KARARLAR.md](KARARLAR.md) K-69,
+  [YAPILACAKLAR.md](YAPILACAKLAR.md)).
 - **İlgili Ürünler:** Bugün aynı kategorideki ilk 4 ürün gösteriliyor; öneri
   mantığı yeniden kurgulanacak ([YAPILACAKLAR.md](YAPILACAKLAR.md)).

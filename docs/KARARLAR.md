@@ -142,6 +142,16 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   - Kategori ve grubun uzun tanıtım metni sayfanın **altında** durur.
 - **Neden:** Ürünler kategorisiz kalmasın; ürünler üstte görünsün.
 
+### K-69 · Ürün Seçici en sona bırakıldı
+- **Tarih:** 2026-10-27
+- **Karar:** Ürün Seçici'nin soruları, seçenekleri ve süzme mantığı bütün
+  ürünler kesinleştikten sonra, en son düşünülecek. O zamana kadar Ürün
+  Seçici'nin verdiği sonuçların doğru olması beklenmez; ürün eklenirken ya
+  da test edilirken sonuçlarına göre ayar yapılmaz.
+- **Neden:** Ürünlerin tamamı henüz kesin değil; sorular ve eşleştirme ancak
+  bütün ürünler belli olunca doğru kurulabilir.
+- **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün Seçici ve arama.
+
 ---
 
 ## 3. Ürün seçenekleri
@@ -610,7 +620,7 @@ Konuşulmuş ama kararı bekleyen ya da sonraya bırakılmış işler. Ayrıntı
 | Konu | Durum |
 |---|---|
 | **Teklif Al metinleri** | Sayfadaki metinler kurumsal müşteriye hitap ediyor; herkese hitap edecek şekilde yeniden yazılacak. Müdür kararı bekleniyor |
-| **Ürün Seçici ve arama** | Yeniden tasarlanacak; eski yöntem verisi o zaman silinecek |
+| **Ürün Seçici ve arama** | Bütün ürünler kesinleşince, en son yeniden tasarlanacak (K-69); eski yöntem verisi o zaman silinecek |
 | **İlgili ürünler** | Öneri mantığı (sepet birlikteliği, aynı kategoride çok satanlar, makineye uygun aksesuarlar) sonra kurulacak |
 | **Kategori filtreleri** | Ürün listesi ve teknik özellikler kesinleşince her alt kategoriye kendi filtreleri |
 | **Çerez ayarları ve analitik** | Analiz aracı seçilince ayarlar penceresi doldurulacak |

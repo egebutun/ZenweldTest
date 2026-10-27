@@ -71,6 +71,9 @@ bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmışt
 - Gün hesapları (havalenin son ödeme günü, garantinin bitişi, etkinliğin
   "yaklaşan" sayılması) bugün tarayıcının yerel saatine göre yapılır.
   Backend'de Türkiye saati (Europe/Istanbul) esas alınmalı.
+- Ekranda tarih ve saat her zaman Türkiye saatiyle yazılır
+  (`packages/utils/src/format.ts`); sayfayı önceden hazırlayan sunucu ile
+  tarayıcı aynı günü gösterir.
 
 **Para:**
 

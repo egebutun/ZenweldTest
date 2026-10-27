@@ -192,8 +192,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Arama Türkçe karakter farkını gözetmez ("kaynak" / "KAYNAK").
 - [ ] Panelde ürüne yazılan anahtar kelimeyle ürün aramada bulunur.
 - [ ] Aramadaki fiyat ürünün kendi KDV oranıyla hesaplanır.
-- [ ] Ürün Seçici üç soru sorar ve sonuç gösterir (panelden eklenen ürünler
-      çıkmaz; bilinen durum, [KARARLAR.md](KARARLAR.md) K-09).
+- [ ] Ürün Seçici açılır, üç soruyu sorar ve sonuç ekranına gelir.
+      Sonuçların doğruluğu denenmez: sorular ve süzme mantığı bütün ürünler
+      kesinleşince en son kurulacak ([KARARLAR.md](KARARLAR.md) K-69).
 
 ---
 

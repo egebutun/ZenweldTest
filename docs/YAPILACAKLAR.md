@@ -12,7 +12,7 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 |---|---|---|
 | Çerez ayarları penceresi (analiz ve pazarlama çerezlerini ayrı açıp kapama) ve analiz kodlarının kurulması | Hangi analiz aracının kullanılacağı | [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler) 1–3, [Online satış](#online-satış--canlıya-çıkmadan-önce) 12 |
 | Kategori filtreleri | Gerçek ürün listesi ve teknik özellikler | [Kategori filtreleri](#kategori-filtreleri) |
-| Ürün Seçici'nin yeniden kurulması | Soruların ve eşleştirme mantığının belirlenmesi | [Ürün Seçici ve arama](#ürün-seçici-ve-arama--yeniden-tasarlanacak) |
+| Ürün Seçici'nin yeniden kurulması | Bütün ürünlerin kesinleşmesi; en son ele alınacak (KARARLAR K-69) | [Ürün Seçici ve arama](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) |
 | "İlgili Ürünler" öneri mantığı | Bölümdeki kararlar | "Ürün önerileri" bölümü |
 | Teklif Al metinleri | Müdür kararı | [Teklif Al metinleri](#teklif-al-metinleri--herkese-hitap-edecek-şekilde-güncellenecek) |
 | Ayrı ürünü seçeneğe dönüştürme ekranı | Gerçek ürünler girilmeye başlanınca karar | [Ürün seçenekleri](#ürün-seçenekleri-3-m--5-m-gibi--backend) 3 |
@@ -619,9 +619,21 @@ seçenek bugün herkese görünüyor. Yalnızca firmalar içinse formda yalnızc
 kurumsal üyelere gösterilmeli; herkese açıksa metinlerdeki "Firmalara"
 ifadesi çıkarılmalı.
 
-## Ürün Seçici ve arama — yeniden tasarlanacak
+## Ürün Seçici ve arama — en son yeniden tasarlanacak
 
-Kaynak yöntemi etiketleri (MIG, TIG, MMA…) ürün formundan, ürün kartından ve
+**Sahibin kararı (2026-10-27, KARARLAR K-69):** Ürün Seçici bütün ürünler
+kesinleşince, en son ele alınacak. Bugün ürünlerin tamamı kesin olmadığı için
+sağlıklı sonuç vermiyor; şu anki sonuçları önemli değil, ona göre ayar
+yapılmaz. O zaman karar verilecekler:
+
+1. Hangi soruların sorulacağı ve her sorunun seçenekleri.
+2. Süzme (eşleştirme) mantığı: hangi cevabın hangi ürünleri getireceği.
+3. Lazer makinelerinin (lazer kaynak, temizleme, markalama) Ürün Seçici'de
+   nasıl yer alacağı; bugünkü sorular (çelik, paslanmaz, alüminyum, kesim)
+   lazer makinelerine uymuyor.
+4. Bu bilgilerin ürünlere panelden mi girileceği.
+
+Bugünkü durum: Kaynak yöntemi etiketleri (MIG, TIG, MMA…) ürün formundan, ürün kartından ve
 kategori filtresinden kaldırıldı. Ürün Seçici soruları ve aramadaki yöntem
 eşleşmesi hâlâ ürünlerdeki eski `processes` verisine bakıyor; panelden eklenen
 yeni ürünlerde bu alan boş kalır. Ürün Seçici'nin soruları ve eşleştirme mantığı

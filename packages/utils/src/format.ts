@@ -8,6 +8,14 @@ export function formatPrice(amount: number): string {
   }).format(amount);
 }
 
+/**
+ * Tarih ve saat her zaman Turkiye saatiyle yazilir. Saat dilimi verilmezse
+ * sayfayi onceden ureten sunucu (UTC) ile tarayici farkli gun yazar:
+ * Turkiye saatiyle 00:00-03:00 arasindaki kayit sunucuda bir gun once
+ * gorunur ve React "hydration" hatasi verir.
+ */
+const TIME_ZONE = "Europe/Istanbul";
+
 export function formatDate(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
@@ -15,6 +23,7 @@ export function formatDate(iso: string): string {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+    timeZone: TIME_ZONE,
   }).format(d);
 }
 
@@ -27,6 +36,7 @@ export function formatDateTime(iso: string): string {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: TIME_ZONE,
   }).format(d);
 }
 
