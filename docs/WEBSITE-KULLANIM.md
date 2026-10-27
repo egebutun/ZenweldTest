@@ -890,6 +890,9 @@ kartlar ilgili sayfaya gider.
   - Silinince oturum kapanır, Giriş sayfası açılır ve "Hesabınız silindi."
     yazar. Aynı e-postayla giriş "hesap bulunamadı" der; aynı e-postayla
     yeniden üye olunabilir.
+  - Sitede KVKK başvurusu (verilerini öğrenme, düzeltme, itiraz) için ayrı bir
+    form yoktur; ileride düşünülecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›
+    Hesap silme — açık konular 10).
 
 ### Tekliflerim
 

@@ -364,12 +364,14 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     ödeme ekranında kayıtlı adres seçilir ya da yeni adres eklenir.
   - Ürün sayfasında favori kalbi **Sepete Ekle düğmesinin yanındadır.**
 
-### K-68 · Üye hesabını kendisi siler; KVKK başvuru formu yok
-- **Tarih:** 2026-10-22
-- **Karar:** Hesabım › Profil'de **Hesabımı Sil** vardır: üye şifresiyle
-  onaylayıp hesabını hemen siler (panelden silmeyle aynı kural). Önerilen
-  diğer yol, Hesabım'da "Verilerimle ilgili başvuru" formu (talep e-postayla
-  Zenweld'e gider, işlemi yönetici yapar), yapılmadı.
+### K-68 · Üye hesabını kendisi siler; KVKK başvuru formu ileride düşünülecek
+- **Tarih:** 2026-10-22 (2b için: 2026-10-27)
+- **Karar:** Hesabım › Profil'de **Hesabımı Sil** vardır (seçenek 2a): üye
+  şifresiyle onaylayıp hesabını hemen siler (panelden silmeyle aynı kural).
+  Önerilen diğer yol (seçenek 2b), Hesabım'da "Verilerimle ilgili başvuru"
+  formu (talep e-postayla Zenweld'e gider, işlemi yönetici yapar), bugün
+  yoktur; **ileride düşünülecek** ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›
+  Hesap silme — açık konular 10).
 - **Not:** Silinen hesabın diğer kayıtlarındaki kişisel verilerle ilgili açık
   konular [YAPILACAKLAR.md](YAPILACAKLAR.md) › Hesap silme — açık konular.
 

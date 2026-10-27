@@ -20,6 +20,7 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | Kargo takip bağlantısı | Kargo firması ve entegrasyon kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 9 |
 | Müşterinin siparişini sitede iptal etmesi | İleride düşünülecek | "Müşterinin siparişi iptal etmesi" bölümü |
 | Kurumsal üyelerde iade talebi | Kurumsal alıcılara cayma hakkının uygulanıp uygulanmayacağı sorulup öğrenilecek | "İade talebi" bölümü |
+| KVKK başvuru formu (2b) | İleride düşünülecek; hesap silme için 2a (Hesabımı Sil) seçildi | "Hesap silme — açık konular" 10 |
 | Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | "Erişilebilirlik" bölümü |
 | Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil | "Görseller ve uzun listeler" bölümü |
 
@@ -348,8 +349,9 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
 
 ## Hesap silme — açık konular (KVKK ve yasal saklama)
 
-Bugün üye Hesabım › Profil'den hesabını silebiliyor: hesap ve adresleri
-siliniyor, diğer kayıtları kalıyor (panelden silmeyle aynı). Bu kural
+Bugün üye Hesabım › Profil › **Hesabımı Sil**'den hesabını silebiliyor
+(seçenek 2a, KARARLAR K-68): hesap ve adresleri siliniyor, diğer kayıtları
+kalıyor (panelden silmeyle aynı). Önerilen diğer yol (2b) aşağıda 10'da. Bu kural
 demoda yeterli; canlıya çıkmadan şunlar hukukçu ve mali müşavirle
 netleşmeli:
 
@@ -381,6 +383,17 @@ netleşmeli:
 9. **İz kaydı ve bildirim:** Silmenin kim tarafından ve ne zaman yapıldığı
    bugün hiçbir yerde kalmıyor; Zenweld'e de bildirim gitmiyor. KVKK
    başvurularına yanıt verebilmek için kayıt tutulmalı.
+10. **KVKK başvuru formu (2b) — ileride düşünülecek:** 2a (Hesabımı Sil)
+    seçildi; 2b ileride düşünülecek (sahibin kararı, 2026-10-27).
+    - **Nedir:** Hesabım'da "Verilerimle ilgili başvuru" formu. Üye başvuru
+      gönderir, başvuru info@zenweld.com'a gider, gereğini yönetici yapar.
+    - **2a'dan farkı:** Silmenin yanında KVKK'daki diğer hakları da (verilerini
+      öğrenme, düzeltme, itiraz) kapsar; neyin silinip neyin saklanacağına
+      (1–8) bir insan başvuru başvuru karar verir. 2a ile birlikte
+      kullanılabilir; birbirinin yerine geçmez.
+    - **Dikkat:** Başvurulara en geç 30 gün içinde yanıt verilmeli. Form
+      yapılana kadar başvuru yolu (e-posta ya da yazılı) KVKK Aydınlatma
+      Metni'nde yazmalı.
 
 ## Müşteriye e-posta bildirimleri (sipariş dışı) — backend
 
