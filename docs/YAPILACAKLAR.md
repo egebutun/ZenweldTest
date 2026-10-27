@@ -23,6 +23,9 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | KVKK başvuru formu (2b) | İleride düşünülecek; hesap silme için 2a (Hesabımı Sil) seçildi | "Hesap silme — açık konular" 10 |
 | Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | "Erişilebilirlik" bölümü |
 | Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil | "Görseller ve uzun listeler" bölümü |
+| Ürünlerin gerçek fotoğrafları | Fotoğrafların hazırlanması | "Ürün içeriği" 1 |
+| Ürünlerin teknik değerlerinin doğrulanması | Resmî katalog | "Ürün içeriği" 2 |
+| Sitenin tasarımı | Sahibi yapacak | "Sitenin tasarımı" bölümü |
 
 ## Müşterinin siparişi iptal etmesi — ileride düşünülecek
 
@@ -255,6 +258,35 @@ gövdesi ve özeti hâlâ yer tutucu metin (Lorem ipsum,
 `packages/data/src/seed/content.seed.ts`). Site zenweld.com'da yayına girmeden
 önce bu yazılar gerçek metinlerle değiştirilmeli ya da panelden yayından
 kaldırılmalı; yoksa Google bu metni Zenweld'in içeriği olarak listeler.
+
+## Ürün içeriği — gerçek fotoğraflar ve teknik değerler
+
+1. **Fotoğraflar:** Örnek verideki 60 ürünün hepsi aynı Zenweld ürün
+   fotoğrafını kullanıyor
+   (`apps/zenweld-web/public/images/products/zenweld-urun.webp`). Her ürünün
+   kendi fotoğrafları panelden eklenmeli (Ürünler › ürün › Görseller);
+   seçenekli üründe seçeneğe özel fotoğraf da seçilebilir. Grup ve kategori
+   kart görselleri için: "Ürün grupları" 1.
+2. **Teknik değerler:** Amper, devrede kalma oranı, ağırlık gibi değerler
+   internetteki kaynaklardan derlendi ve yaklaşıktır
+   (`packages/data/src/seed/products.seed.ts`, `DOGRULANMALI` notları).
+   Resmî katalogla karşılaştırılıp panelden düzeltilmeli. Aynı dosyadaki
+   aksesuar kalemleri ve kampanyalar da örnek veridir.
+
+## Sitenin tasarımı — sahibi yapacak
+
+Tasarım (renk, yerleşim, yazı tipi, efektler) sahibi tarafından sonra
+yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
+
+1. Bütün özellikler, sayfa adresleri ve metinler korunmalı; yalnızca görünüm
+   değişmeli (davranış: WEBSITE-KULLANIM ve ADMIN-KULLANIM).
+2. Tasarımdan sonra tarayıcı testleri (`npm run test:e2e`) ve kabul kontrol
+   listesi çalıştırılmalı. Testler bazı form alanlarını ekrandaki sırasıyla
+   seçiyor (Üye Ol, Teklif Al); formların yapısı değişirse testler de
+   güncellenmeli.
+3. Renk karşıtlığı bu aşamada ele alınacak ("Erişilebilirlik (A4)" 5).
+4. Tasarım öncesi kodun yedeği GitHub'da `yedek/2026-10-22-tasarim-oncesi`
+   dalında.
 
 ## Online satış — canlıya çıkmadan önce
 

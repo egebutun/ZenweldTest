@@ -387,7 +387,7 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
    şekilde Supabase/Firebase/PostgreSQL'e bağlanabilir.
 3. **Ürün teknik verileri doğrulanmalı.** Amper, devrede kalma oranı ve ağırlık
    gibi değerler internet kaynaklarından derlendi; `products.seed.ts` içinde
-   `DOĞRULANMALI` notu bulunur. Resmî katalogla karşılaştırılmalıdır.
+   `DOGRULANMALI` notu bulunur. Resmî katalogla karşılaştırılmalıdır.
 4. **Yasal metinler** (KVKK, gizlilik, iade, sözleşmeler…) şu an başlıkları
    hazır **taslaklardır**; hukuk danışmanının metinleriyle değiştirilmelidir.
 5. **Örnek satış hareketleri silinmeli:** Panel grafikleri için üretilen örnek
