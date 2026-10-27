@@ -69,8 +69,8 @@ teyit edilmeli). Yapılacaklar:
    - `next.config.mjs` içindeki `images.remotePatterns` ve güvenlik
      politikasındaki görsel izni birlikte güncellenmeli.
 2. **Sayfalama:** Sitede ve panelde hiçbir liste sayfalanmıyor; kategori
-   ürün listesi, blog, haberler, etkinlikler ve panelde siparişler, üyeler,
-   teklifler, yorumlar tek sayfada. Kayıt sayısı artınca sayfa sayfa
+   ürün listesi, arama sonuçları, blog, haberler, etkinlikler ve panelde
+   siparişler, üyeler, teklifler, yorumlar tek sayfada. Kayıt sayısı artınca sayfa sayfa
    gösterilmeli. Sitede sayfa adresi (ör. `?sayfa=2`) arama motorları için
    canonical ve site haritasıyla birlikte düşünülmeli.
 

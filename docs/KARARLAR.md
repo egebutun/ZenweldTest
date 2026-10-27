@@ -364,6 +364,15 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     ödeme ekranında kayıtlı adres seçilir ya da yeni adres eklenir.
   - Ürün sayfasında favori kalbi **Sepete Ekle düğmesinin yanındadır.**
 
+### K-68 · Üye hesabını kendisi siler; KVKK başvuru formu yok
+- **Tarih:** 2026-10-22
+- **Karar:** Hesabım › Profil'de **Hesabımı Sil** vardır: üye şifresiyle
+  onaylayıp hesabını hemen siler (panelden silmeyle aynı kural). Önerilen
+  diğer yol, Hesabım'da "Verilerimle ilgili başvuru" formu (talep e-postayla
+  Zenweld'e gider, işlemi yönetici yapar), yapılmadı.
+- **Not:** Silinen hesabın diğer kayıtlarındaki kişisel verilerle ilgili açık
+  konular [YAPILACAKLAR.md](YAPILACAKLAR.md) › Hesap silme — açık konular.
+
 ---
 
 ## 7. Garanti ve servis
@@ -575,6 +584,19 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   değişiklikten önce açıklama yapılıp onay alınır; istenmeyen şey yapılmaz;
   silmeden önce söylenir; gereksiz kod bırakılmaz. Geliştirme tek dalda
   yürür (`claude/tender-knuth-9it4y3`).
+
+### K-66 · Otomatik kod biçimlendirici (Prettier) kullanılmaz
+- **Tarih:** 2026-10-22
+- **Karar:** Kod denetimi (ESLint) kuruludur; Prettier kurulmaz.
+- **Neden:** İlk kurulumda 189 dosyanın yalnızca yazım düzenini
+  değiştirecekti; kodun düzeni zaten tutarlı.
+
+### K-67 · GitHub'da otomatik kontrol (CI) şimdilik yok
+- **Tarih:** 2026-10-22
+- **Karar:** Tip kontrolü, kod denetimi, testler ve derleme her gönderimde
+  GitHub'da kendiliğinden çalıştırılmaz; geliştirici elle çalıştırır
+  (CLAUDE.md › Doğrulama). İleride kurulabilir
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Kod incelemesi bulguları 8).
 
 ---
 
