@@ -334,7 +334,8 @@ hiçbiri değilse 404 çıkar.
 - **Konum satırı:** Bölüm › Grup › Kategori › Ürün adı.
 - **Galeri:**
   - Büyük görsel ve küçük resimler; küçük resme tıklayınca büyür.
-  - Seçilen seçeneğin fotoğrafı varsa galeri o fotoğrafla açılır.
+  - Seçilen seçeneğin fotoğrafı varsa galeri o fotoğrafla açılır (ör.
+    soğutmalı makinede Hava ya da Su seçilince o halin fotoğrafı).
 - **Ürün adı ve kısa açıklama.**
 - **Bilgi satırı:**
   - "YENİ" rozeti (işaretliyse) ve "<N> ay garanti".
@@ -1491,6 +1492,11 @@ Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 - **Yer tutucu metinler:** Anasayfadaki "Neden Zenweld?", ürünlerin Garanti
   sekmesi, Welders Club avantaj açıklamaları, boş Adreslerim açıklaması, yasal
   metinler ve örnek blog yazıları lorem ipsum'dur.
+- **Ürün fotoğrafları:** Ekipmanlardan 20 ürünün fotoğrafı yok ve 5
+  soğutmalı üründe bir soğutma halinin fotoğrafı eksik; bunlarda alt
+  kategorinin kart çizimi görünür (KARARLAR K-77,
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları). Diğer bölümlerin
+  ürünleri genel bir Zenweld fotoğrafını kullanır.
 - **Kategori filtreleri:** Şebeke Voltajı, Amper ve Güç (W) filtrelerinin
   değerleri yok; Model Serisi dışındaki filtreler ürünlere eşlenmedi
   (eşlenmemiş filtre sonucu daraltmaz). Değerler ürünler kesinleşince

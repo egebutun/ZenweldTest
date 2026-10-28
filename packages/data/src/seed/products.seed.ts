@@ -1,12 +1,13 @@
-import type { Product, ProductOptions, ProductVariant } from "../types";
+import type { Product, ProductImage, ProductOptions, ProductVariant } from "../types";
+import { categories } from "./categories.seed";
 import { machineContent } from "./machine-content.seed";
 
 const now = "2026-09-16T08:00:00+03:00";
 
 /**
- * Tum urunlerde kullanilan Zenweld urun fotografi.
+ * Ekipmanlar disindaki urunlerde kullanilan Zenweld urun fotografi.
  *
- * Dosya her iki uygulamanin public/images/products/ klasorunde bulunur.
+ * Dosya public/images/products/ klasorunde bulunur.
  * Farkli urunlere farkli fotograf vermek icin: Yonetim Paneli > Urunler >
  * Duzenle > Gorseller sekmesinden URL girin veya dosya yukleyin.
  */
@@ -26,9 +27,10 @@ export const products: Product[] = [];
 /* ve secenekler. Ad ve link KARARLAR K-71'e gore yazildi.              */
 /*                                                                     */
 /* !! ORNEK — gercegiyle degistirilecek: kisa ve uzun aciklama, teknik  */
-/* ozellikler, kutu icerigi, one cikan ozellikler, kullanim kilavuzu    */
-/* linki ve fotograf. Force serisi 9 urunun icerigi sahibinin ikinci     */
-/* listesinden gelir (machine-content.seed.ts); 5'inin kodu GECICIDIR   */
+/* ozellikler, kutu icerigi, one cikan ozellikler ve kullanim kilavuzu  */
+/* linki. Fotograflar: MACHINE_PHOTOS. Force serisi 9 urunun icerigi    */
+/* sahibinin ikinci listesinden gelir (machine-content.seed.ts);        */
+/* 5'inin kodu GECICIDIR                                                */
 /* (KARARLAR K-75). Fiyatlar TEMSILIDIR (999.999 TL + KDV); secenekler   */
 /* arasinda fiyat farki yok. Ara paket uzunluklari (5 m, 10 m)          */
 /* temsilidir. Kaynak yontemi ve elektrik bilgisi bilerek girilmedi     */
@@ -65,15 +67,70 @@ interface MachineSeed {
   sap?: string;
   brand?: string;
   options?: MachineOptions;
-  /** Ortak urun fotografi yerine kullanilacak fotograf */
-  image?: string;
 }
 
 /** SAP kodu verilmemis urunun gecici kodu (KARARLAR K-75); SAP kodu gelince degistirilir. */
 const tempCode = (model: string) => `ZW-GECICI-${model}`;
 
-/** Sahibinin ikinci listesindeki yeni Force urunlerinin (gecici) fotografi. */
-const FORCE_PHOTO = "/images/products/jasic-tig200.webp";
+/**
+ * GERCEK URUN FOTOGRAFLARI (sahibinden, KARARLAR K-77)
+ *
+ * public/images/products/ altinda; dosya adi urunun linkidir: <link>.webp,
+ * soğutma secenekli urunde <link>-hava-sogutmali.webp ve
+ * <link>-su-sogutmali.webp (yaninda orijinal .jpg/.png). Burada fotografi
+ * gelmis olanlar yazilir. Fotografi olmayan urun ve soğutma hali, alt
+ * kategorinin kart cizimini gosterir. Eksikler: docs/YAPILACAKLAR.md ›
+ * Ürün fotoğrafları.
+ */
+const MACHINE_PHOTOS = new Set([
+  "ultimate-405-cel-mma",
+  "ultimate-251-thp",
+  "ultimate-405-thp-su-sogutmali",
+  "ultimate-300-thp-hava-sogutmali",
+  "ultimate-300-thp-su-sogutmali",
+  "ultimate-320-thp-ipanel-hava-sogutmali",
+  "ultimate-320-thp-ipanel-su-sogutmali",
+  "ultimate-205-ac-dc",
+  "ultimate-320-ac-dc-hava-sogutmali",
+  "ultimate-400-ac-dc-ipanel-hava-sogutmali",
+  "ultimate-400-ac-dc-ipanel-su-sogutmali",
+  "ultimate-405-mts-hava-sogutmali",
+  "ultimate-405-mts-su-sogutmali",
+  "ultimate-505-mts-su-sogutmali",
+  "ultimate-320-mtc-ipanel",
+  "ultimate-255-mtc",
+  "ultimate-355-mtc",
+  "evomig-405-p-su-sogutmali",
+  "evomig-555-p-su-sogutmali",
+  "ultimate-205-mte-pro",
+  "evomig-205-p",
+  "multicut-105-cnc",
+  "multicut-85-cnc",
+  "multicut-60-s",
+]);
+
+const COOLING_LABELS = { hava: "Hava Soğutmalı", su: "Su Soğutmalı" } as const;
+
+/**
+ * Urunun fotograflari. Soğutma secenekli urunde hava ve su hali ayri
+ * fotograftir; varyant kendi halinin fotografini gosterir (byCooling).
+ */
+function machinePhotos(seed: MachineSeed): { images: ProductImage[]; byCooling?: Record<"hava" | "su", string> } {
+  const drawing = categories.find((c) => c.slug === seed.categorySlug)?.image ?? PRODUCT_PHOTO;
+  const photo = (name: string) => (MACHINE_PHOTOS.has(name) ? `/images/products/${name}.webp` : undefined);
+  if (!seed.options || !("cooling" in seed.options)) {
+    return { images: [{ url: photo(seed.slug) ?? drawing, alt: seed.name }] };
+  }
+  const halves = (["hava", "su"] as const).map((c) => ({ c, url: photo(`${seed.slug}-${c}-sogutmali`) }));
+  if (halves.every((h) => !h.url)) return { images: [{ url: drawing, alt: seed.name }] };
+  const byCooling = { hava: halves[0].url ?? drawing, su: halves[1].url ?? drawing };
+  // Kart ilk fotografi gosterir; gercek fotograf cizimden once gelir.
+  const ordered = [...halves].sort((a, b) => Number(!a.url) - Number(!b.url));
+  return {
+    images: ordered.map((h) => ({ url: byCooling[h.c], alt: h.url ? `${seed.name} — ${COOLING_LABELS[h.c]}` : seed.name })),
+    byCooling,
+  };
+}
 
 const MMA = "mma-ortulu-elektrod-kaynak-makineleri";
 const TIG = "tig-argon-kaynak-makineleri";
@@ -104,8 +161,8 @@ const machineSeeds: MachineSeed[] = [
   { slug: "ultimate-255-mma", name: "Ultimate 255 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000001" },
   { slug: "ultimate-405-cel-mma", name: "Ultimate 405 CEL MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000002" },
   { slug: "forcearc-200-mma", name: "ForceArc 200 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000072" },
-  { slug: "forcearc-250-mma", name: "ForceArc 250 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC250"), image: FORCE_PHOTO },
-  { slug: "forcearc-280-mma", name: "ForceArc 280 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC280"), image: FORCE_PHOTO },
+  { slug: "forcearc-250-mma", name: "ForceArc 250 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC250") },
+  { slug: "forcearc-280-mma", name: "ForceArc 280 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC280") },
   { slug: "forcearc-400-cel-mma", name: "ForceArc 400 CEL MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000076" },
 
   { slug: "ultimate-251-thp", name: "Ultimate 251 THP TIG Argon Kaynak Makinesi", categorySlug: TIG, sap: "ZW30100000010", options: { torch: TIG_TORCH } },
@@ -130,10 +187,10 @@ const machineSeeds: MachineSeed[] = [
   { slug: "ultimate-205-mte-pro", name: "Ultimate 205 MTE Pro Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: "ZW30100000032" },
   { slug: "evomig-205-p", name: "Evomig 205 P Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: "ZW30100000037" },
   // ForceMIG serisi sahibinin ikinci listesiyle Çok Fonksiyonlu'ya alindi (ForceMIG 200 MIG'deydi).
-  { slug: "forcemig-125", name: "ForceMIG 125 Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG125"), image: FORCE_PHOTO },
-  { slug: "forcemig-185-mp", name: "ForceMIG 185 MP Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG185MP"), image: FORCE_PHOTO },
+  { slug: "forcemig-125", name: "ForceMIG 125 Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG125") },
+  { slug: "forcemig-185-mp", name: "ForceMIG 185 MP Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG185MP") },
   { slug: "forcemig-200", name: "ForceMIG 200 Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: "ZW30100000074" },
-  { slug: "forcemig-205-dp", name: "ForceMIG 205 DP Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG205DP"), image: FORCE_PHOTO },
+  { slug: "forcemig-205-dp", name: "ForceMIG 205 DP Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG205DP") },
 
   { slug: "multicut-105-cnc", name: "Multicut 105 CNC Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000042" },
   { slug: "multicut-85-cnc", name: "Multicut 85 CNC Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000043" },
@@ -215,7 +272,13 @@ function optionPhrases(o: MachineOptions | undefined): string[] {
 
 machineSeeds.forEach((seed) => {
   const brand = seed.brand ?? "Zenweld";
+  const photos = machinePhotos(seed);
   const options = machineOptions(seed);
+  // Soğutma secenekli urunde her varyant kendi halinin fotografini gosterir.
+  options?.variants.forEach((v) => {
+    const cooling = v.values.sogutma as "hava" | "su" | undefined;
+    if (photos.byCooling && cooling) v.image = photos.byCooling[cooling];
+  });
   // Birden cok SAP kalemli urunun sayfa kodu SAP'ta yoktur (KARARLAR K-72).
   const sku = seed.sap ?? `ZW-${seed.slug.toUpperCase()}`;
   const type = TYPE_BY_CATEGORY[seed.categorySlug];
@@ -238,7 +301,7 @@ machineSeeds.forEach((seed) => {
     priceExVat: REPRESENTATIVE_PRICE,
     vatRate: 20,
     currency: "TRY",
-    images: [{ url: seed.image ?? PRODUCT_PHOTO, alt: seed.name }],
+    images: photos.images,
     specs: [
       { label: "Marka", value: brand },
       { label: "Ürün Kodu", value: sku },

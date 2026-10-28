@@ -1,27 +1,44 @@
-# Ürün görseli buraya
+# Ürün fotoğrafları buraya
 
-Sitedeki ürünler bu klasördeki **`zenweld-urun.webp`** dosyasını kullanır.
-Sonradan eklenen 5 Force ürünü (ForceArc 250 / 280, ForceMIG 125 / 185 MP /
-205 DP) geçici olarak **`jasic-tig200.webp`** dosyasını kullanır (eski
-tarayıcılar için yanında `.jpg` hali var).
+## Ekipmanlar (sahibinin fotoğrafları)
 
-Dosya yoksa site kırılmaz — markalı Zenweld placeholder görseli gösterilir.
+Dosyanın adı ürünün linkidir (sitedeki `/urun/<link>` adresindeki kısım):
 
-## Yükleme
+- Tek fotoğraflı ürün: `<link>.jpg` (ör. `ultimate-251-thp.jpg`)
+- Hava ve su soğutma seçeneği olan ürün: `<link>-hava-sogutmali.jpg` ve
+  `<link>-su-sogutmali.jpg` (ör. `ultimate-405-mts-su-sogutmali.jpg`)
 
-GitHub üzerinden: bu klasörde **Add file → Upload files** → fotoğrafı sürükle.
+Eksik fotoğrafların listesi ve yüklenecek adları:
+`docs/YAPILACAKLAR.md` › Ürün fotoğrafları.
 
-Elinizdeki dosya `.png` veya `.jpg` ise ikisinden birini yapın:
+Yüklenen fotoğrafın sitede görünmesi için:
 
-- Dosyayı `zenweld-urun.png` adıyla yükleyin, sonra proje kökünde
-  `node scripts/optimize-images.mjs` çalıştırın — küçültülmüş `.webp`
-  sürümünü sizin için üretir.
-- Ya da dosyayı kendiniz WebP'ye çevirip `zenweld-urun.webp` adıyla yükleyin.
+1. Yanına küçültülmüş `.webp` hali üretilir (800 px; sitede bu kullanılır,
+   orijinal `.jpg` eski tarayıcılar için yedek kalır).
+2. Dosyanın adı (uzantısız) `packages/data/src/seed/products.seed.ts`
+   içindeki `MACHINE_PHOTOS` listesine eklenir ve veri sürümü artırılır.
 
-Neden WebP: aynı fotoğrafın PNG hali 519 KB, WebP hali 28 KB. Sayfada 40'tan
-fazla ürün kartı olduğu için bu fark açılış hızında doğrudan hissediliyor.
+Fotoğrafı olmayan ürün ve soğutma hali, alt kategorinin kart çizimini
+gösterir (`public/images/categories/`).
 
-## Ürüne özel görsel vermek
+## Diğer bölümler
 
-Yönetim Paneli → Ürünler → Düzenle → **Görseller** sekmesinden
-URL girebilir veya dosya yükleyebilirsiniz.
+Güvenlik, Aksesuarlar ve Dolgu Metalleri'ndeki ürünler bu klasördeki
+**`zenweld-urun.webp`** dosyasını kullanır (eski tarayıcılar için yanında
+`.png` hali var). Dosya yoksa site kırılmaz; markalı Zenweld yer tutucu
+görseli gösterilir.
+
+## WebP'ye çevirme
+
+Proje kökünde `node scripts/optimize-images.mjs` bu klasördeki büyük
+`.png` / `.jpg` dosyalarının yanına `.webp` hallerini üretir.
+
+Neden WebP: aynı fotoğrafın JPG hali 300–900 KB, WebP hali 20–40 KB.
+Sayfada 40'tan fazla ürün kartı olduğu için bu fark açılış hızında doğrudan
+hissediliyor.
+
+## Ürüne panelden fotoğraf vermek
+
+Yönetim Paneli → Ürünler → Düzenle → **Görseller** sekmesinden URL
+girilebilir veya dosya yüklenebilir. Seçenekli üründe her kombinasyonun
+fotoğrafı **Seçenekler** sekmesinden seçilir.

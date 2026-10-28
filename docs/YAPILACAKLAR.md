@@ -23,7 +23,7 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | KVKK başvuru formu (2b) | İleride düşünülecek; hesap silme için 2a (Hesabımı Sil) seçildi | "Hesap silme — açık konular" 10 |
 | Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | "Erişilebilirlik" bölümü |
 | Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil | "Görseller ve uzun listeler" bölümü |
-| Ürünlerin gerçek fotoğrafları | Fotoğrafların hazırlanması | "Ürün içeriği" 1 |
+| Ekipmanların eksik fotoğrafları (20 ürün ve 5 soğutma hali) ve diğer bölümlerin ürün fotoğrafları | Sahibinin göndermesi | [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) |
 | Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi (Force serisi 9 ürün geldi) | "Ürün içeriği" 2 |
 | Geçici ürün kodlarının (`ZW-GECICI-…`) SAP kodlarıyla değiştirilmesi | SAP kodlarının açılması | "Ürün içeriği" 6 |
 | Ekipmanların gerçek fiyatları ve seçenek fiyat farkları | Sahibinin göndermesi | "Ürün içeriği" 3 |
@@ -295,14 +295,7 @@ K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler �
 ürün; örnek veride `packages/data/src/seed/products.seed.ts` ("ORNEK" ve
 "TEMSILI" notları) (KARARLAR K-73).
 
-1. **Fotoğraflar:** Örnek verideki 88 ürünün 83'ü aynı Zenweld ürün
-   fotoğrafını kullanıyor
-   (`apps/zenweld-web/public/images/products/zenweld-urun.webp`); sonradan
-   eklenen 5 Force ürünü geçici olarak sahibinin verdiği Jasic TIG200
-   fotoğrafını (`jasic-tig200.webp`) kullanıyor. Her ürünün
-   kendi fotoğrafları panelden eklenmeli (Ürünler › ürün › Görseller);
-   seçenekli üründe kombinasyona özel fotoğraf da seçilebilir. Grup ve
-   kategori kart görselleri için: "Ürün grupları" 1.
+1. **Fotoğraflar:** Bkz. [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler).
 2. **Ekipmanların içeriği (örnek):** Force serisi 9 üründe (ForceArc 200 /
    250 / 280, ForceMIG 125 / 185 MP / 200 / 205 DP, ForceTIG 200, ForceCut 45)
    teknik özellikler, açıklama, kutu içeriği ve öne çıkan özellikler
@@ -332,6 +325,49 @@ K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler �
    ForceMIG 185 MP, ForceMIG 205 DP. SAP kodları açılınca panelden (Ürünler ›
    ürün › Ürün Kodu) değiştirilmeli; bayi ve satıcı stok dosyaları kodla
    eşleştiği için bundan önce stok dosyalarında bu ürünler eşleşmez.
+
+## Ürün fotoğrafları — eksikler
+
+Ekipmanların gerçek fotoğrafları sahibinden gelir (KARARLAR K-77). Fotoğraf
+`apps/zenweld-web/public/images/products/` klasörüne aşağıdaki adla yüklenir;
+sonra `.webp` hali üretilir ve ürün örnek veriye bağlanır
+(`packages/data/src/seed/products.seed.ts` › `MACHINE_PHOTOS`; bkz.
+klasördeki `BURAYA-GORSEL-YUKLEYIN.md`). Fotoğrafı olmayan ürün ve soğutma
+hali, alt kategorinin kart çizimini gösterir.
+
+**Çeşit:** 2 = hava ve su soğutmalı hali ayrı fotoğraf; 1 = tek fotoğraf.
+Ekipmanların 40 ürününden 20'sinin fotoğrafı tam; eksikler:
+
+| Kategori | Model | Çeşit | Eksik | Yüklenecek dosya adı |
+|---|---|:-:|---|---|
+| MMA | Ultimate 255 MMA | 1 | Fotoğraf | `ultimate-255-mma.jpg` |
+| MMA | ForceArc 200 MMA | 1 | Fotoğraf | `forcearc-200-mma.jpg` |
+| MMA | ForceArc 250 MMA | 1 | Fotoğraf | `forcearc-250-mma.jpg` |
+| MMA | ForceArc 280 MMA | 1 | Fotoğraf | `forcearc-280-mma.jpg` |
+| MMA | ForceArc 400 CEL MMA | 1 | Fotoğraf | `forcearc-400-cel-mma.jpg` |
+| TIG | Ultimate 405 THP | 2 | Hava | `ultimate-405-thp-hava-sogutmali.jpg` |
+| TIG | Ultimate 320 AC/DC | 2 | Su | `ultimate-320-ac-dc-su-sogutmali.jpg` |
+| TIG | ForceTIG 200 | 1 | Fotoğraf | `forcetig-200.jpg` |
+| MIG | Ultimate 250 MTC | 1 | Fotoğraf | `ultimate-250-mtc.jpg` |
+| MIG | Ultimate 505 MTS | 2 | Hava | `ultimate-505-mts-hava-sogutmali.jpg` |
+| MIG | Evomig 405 P | 2 | Hava | `evomig-405-p-hava-sogutmali.jpg` |
+| MIG | Evomig 555 P | 2 | Hava | `evomig-555-p-hava-sogutmali.jpg` |
+| MIG | Evomig 255 P | 1 | Fotoğraf | `evomig-255-p.jpg` |
+| Çok Fonksiyonlu | ForceMIG 125 | 1 | Fotoğraf | `forcemig-125.jpg` |
+| Çok Fonksiyonlu | ForceMIG 185 MP | 1 | Fotoğraf | `forcemig-185-mp.jpg` |
+| Çok Fonksiyonlu | ForceMIG 200 | 1 | Fotoğraf | `forcemig-200.jpg` |
+| Çok Fonksiyonlu | ForceMIG 205 DP | 1 | Fotoğraf | `forcemig-205-dp.jpg` |
+| Plazma | ForceCut 45 | 1 | Fotoğraf | `forcecut-45.jpg` |
+| Lazer Kaynak | Y300 QCW | 1 | Fotoğraf | `y300-qcw.jpg` |
+| Lazer Temizleme | Jasic LS-20000F | 1 | Fotoğraf | `jasic-ls-20000f-lazer-temizleme.jpg` |
+| Lazer Temizleme | Jasic LS-30000D | 1 | Fotoğraf | `jasic-ls-30000d-lazer-temizleme.jpg` |
+| Lazer Temizleme | Jasic 300 W Puls | 1 | Fotoğraf | `jasic-300-w-puls-lazer-temizleme.jpg` |
+| Lazer Markalama | FC-50 | 1 | Fotoğraf | `fc-50.jpg` |
+| Lazer Markalama | UV-5 | 1 | Fotoğraf | `uv-5.jpg` |
+| Lazer Markalama | Jasic 30 W Fiber | 1 | Fotoğraf | `jasic-30-w-fiber-lazer-markalama.jpg` |
+
+Diğer bölümlerdeki (Güvenlik, Aksesuarlar, Dolgu Metalleri) 48 ürün hâlâ aynı
+genel Zenweld fotoğrafını kullanıyor (`zenweld-urun.webp`).
 
 ## Jasic lazer kaynak ürünleri — sahibi ayrıntılı açıklayacak
 

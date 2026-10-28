@@ -357,11 +357,13 @@ Dosya biçimi, kurallar ve backend'e geçiş (tablolar, API): [docs/STOK.md](doc
 
 ## Görseller
 
-- **Ürünler:** Örnek verideki 88 ürünün 83'ü depodaki tek bir Zenweld ürün
-  fotoğrafını kullanır (`apps/zenweld-web/public/images/products/zenweld-urun.webp`);
-  sonradan eklenen 5 Force ürünü geçici olarak bir Jasic TIG200 fotoğrafını
-  (`jasic-tig200.webp`) kullanır. Her ürünün kendi fotoğrafı panelden
-  eklenmelidir.
+- **Ürünler:** Ekipmanların fotoğrafları sahibinden gelir
+  (`apps/zenweld-web/public/images/products/<ürün linki>.webp`; soğutmalı
+  üründe `-hava-sogutmali` / `-su-sogutmali` ekli). Fotoğrafı henüz olmayan
+  ekipman, alt kategorisinin kart çizimini gösterir; eksikler
+  [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Ürün fotoğrafları. Diğer
+  bölümlerdeki 48 ürün genel bir Zenweld fotoğrafını kullanır
+  (`zenweld-urun.webp`). Her ürünün fotoğrafı panelden de değiştirilebilir.
 - **Blog, haber, etkinlik, Hakkımızda, Welders Club:** Unsplash bağlantıları
   (`packages/data/src/seed/images.ts`). Bunlar **gerçek Zenweld fotoğrafları
   değildir**, genel kaynak/sanayi fotoğraflarıdır.

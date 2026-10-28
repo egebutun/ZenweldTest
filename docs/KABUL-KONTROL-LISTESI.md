@@ -134,6 +134,12 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       `ZW-GECICI-…`.
 - [ ] Ürün adı model ve türü içerir (ör. "Ultimate 405 THP TIG Argon Kaynak
       Makinesi"); Jasic ürünlerinin adında "Jasic" yazar.
+- [ ] Ultimate 405 MTS'de Hava Soğutmalı ve Su Soğutmalı seçilince fotoğraf
+      o halin fotoğrafına değişir; `?secenek=su_3-m_5-m` linki su
+      fotoğrafıyla açılır.
+- [ ] Fotoğrafı olmayan ürün (ör. ForceArc 200 MMA) ve soğutma hali (ör.
+      Ultimate 405 THP'de Hava) alt kategorinin kart çizimini gösterir;
+      Ultimate 505 MTS'nin kartında su soğutmalı fotoğrafı görünür.
 - [ ] Kategori sayfası ürünleri listeler; aynı gruptaki diğer kategorilerin
       şeridi yoktur.
 - [ ] Kategoride "Önerilen" sıralama paneldeki Sıra numarasına göredir;

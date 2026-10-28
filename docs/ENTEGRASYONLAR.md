@@ -238,12 +238,11 @@ yoksa önizleme boş çıkar.
 
 **Örnek ürün ve içerik fotoğrafları:**
 
-- **Ürünler:** Örnek verideki 88 ürünün 83'ü depodaki tek bir Zenweld ürün
-  fotoğrafını kullanır
-  (`apps/zenweld-web/public/images/products/zenweld-urun.webp`); sonradan
-  eklenen 5 Force ürünü geçici olarak bir Jasic TIG200 fotoğrafını
-  (`jasic-tig200.webp`) kullanır. Her ürünün kendi fotoğrafı panelden
-  eklenmeli.
+- **Ürünler:** Ekipmanların fotoğrafları sahibinden gelir ve depodadır
+  (`apps/zenweld-web/public/images/products/`); fotoğrafı henüz olmayan
+  ekipman alt kategorisinin kart çizimini gösterir (KARARLAR K-77). Diğer
+  bölümlerdeki ürünler tek bir genel Zenweld fotoğrafını kullanır
+  (`zenweld-urun.webp`); gerçekleri panelden eklenmeli.
 - **Blog, haber, etkinlik, Hakkımızda ve Welders Club görselleri**
   **Unsplash**'ten gelir (`https://images.unsplash.com/…`,
   `packages/data/src/seed/images.ts`). Gerçek fotoğraflarla değiştirilmeli.

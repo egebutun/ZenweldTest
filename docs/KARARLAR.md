@@ -201,7 +201,8 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     arasında fiyat farkı yoktur.
   - MIG makinelerinin ara paket uzunlukları (5 m, 10 m) temsilidir.
   - Açıklama, teknik özellikler, kutu içeriği, öne çıkan özellikler ve
-    kullanım kılavuzu bağlantısı örnektir; ürün fotoğrafı ortak fotoğraftır.
+    kullanım kılavuzu bağlantısı örnektir; ürün fotoğrafı ortak fotoğraftır
+    (**Değişti** 2026-10-28: fotoğraflar sahibinden gelir, bkz. K-77).
   - Kaynak yöntemi ve elektrik bilgisi girilmez (Ürün Seçici en son, K-69).
 - **Neden:** Sahibinin kararı; gerçek bilgiler sonra gönderilecek. Ayrıntı:
   [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün içeriği.
@@ -270,6 +271,24 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md) › Katalog,
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md) › Kategori formu ›
   Filtreler, [YAPILACAKLAR.md](YAPILACAKLAR.md) › Kategori filtreleri.
+
+
+### K-77 · Ekipman fotoğrafları sahibinden; soğutmaya göre değişir
+- **Tarih:** 2026-10-28
+- **Karar:**
+  - Ekipmanlardaki eski fotoğraflar yanlış sayılır; sahibinin gönderdiği
+    fotoğraflar kullanılır. Eksikler tamamlanana kadar fotoğrafı olmayan
+    ürün ve soğutma hali, ürünün bulunduğu alt kategorinin kart çizimini
+    gösterir.
+  - Hava ve su soğutma seçeneği olan üründe Hava ya da Su seçilince o halin
+    fotoğrafı görünür. Ürün kartında gerçek fotoğraf çizimden önce gelir.
+  - Fotoğrafın adı ürünün linkidir: `<link>.jpg`; soğutmalı üründe
+    `<link>-hava-sogutmali.jpg` ve `<link>-su-sogutmali.jpg`.
+  - Adında soğutma yazmayan fotoğrafların hangi hale ait olduğu fotoğrafa
+    bakılarak belirlendi ve sahibince doğrulandı; `ultimate-320-mtc`
+    fotoğrafı Ultimate 320 MTC iPanel'indir. Sitede karşılığı olmayan
+    `ultimate-400-cel` fotoğrafı sahibinin isteğiyle silindi.
+- **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları.
 
 ---
 
