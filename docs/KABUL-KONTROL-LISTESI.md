@@ -123,10 +123,15 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       Kaynak Makineleri).
 - [ ] `/ekipmanlar/kaynak-makineleri` kategorileri **kartlarla** gösterir,
       ürün listelemez.
-- [ ] Ekipmanlar'da sahibinin listesindeki 35 ürün vardır (MMA 4, TIG 8,
-      MIG 10, Çok Fonksiyonlu 2, Plazma 4, Lazer Kaynak 1, Lazer Temizleme 3,
+- [ ] Ekipmanlar'da sahibinin listelerindeki 40 ürün vardır (MMA 6, TIG 8,
+      MIG 9, Çok Fonksiyonlu 6, Plazma 4, Lazer Kaynak 1, Lazer Temizleme 3,
       Lazer Markalama 3). Lazer Kaynak'ta yalnızca Y300 QCW var (Jasic lazer
       kaynaklar sonra, KARARLAR K-74). Fiyatlar temsili: 999.999 ₺ + KDV.
+- [ ] ForceMIG serisi (125, 185 MP, 200, 205 DP) Çok Fonksiyonlu'dadır.
+      Force serisi ürünlerin sayfasında Teknik Özellikler, Ürün Açıklaması,
+      Kutu İçeriği ve Öne Çıkan Özellikler sahibinin listesindeki gibidir (ör.
+      ForceArc 200: "Ağırlık: 3,56 kg"); yeni 5 Force ürününün kodu
+      `ZW-GECICI-…`.
 - [ ] Ürün adı model ve türü içerir (ör. "Ultimate 405 THP TIG Argon Kaynak
       Makinesi"); Jasic ürünlerinin adında "Jasic" yazar.
 - [ ] Kategori sayfası ürünleri listeler; aynı gruptaki diğer kategorilerin

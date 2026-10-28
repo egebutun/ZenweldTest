@@ -24,7 +24,8 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | "Erişilebilirlik" bölümü |
 | Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil | "Görseller ve uzun listeler" bölümü |
 | Ürünlerin gerçek fotoğrafları | Fotoğrafların hazırlanması | "Ürün içeriği" 1 |
-| Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi | "Ürün içeriği" 2 |
+| Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi (Force serisi 9 ürün geldi) | "Ürün içeriği" 2 |
+| Geçici ürün kodlarının (`ZW-GECICI-…`) SAP kodlarıyla değiştirilmesi | SAP kodlarının açılması | "Ürün içeriği" 6 |
 | Ekipmanların gerçek fiyatları ve seçenek fiyat farkları | Sahibinin göndermesi | "Ürün içeriği" 3 |
 | Ara paket uzunluklarının gerçek değerleri | Sahibinin göndermesi | "Ürün içeriği" 4 |
 | Jasic lazer kaynak ürünleri (2026-10-27 listesindeki 6 model; belki çok sonra) | Sahibinin seçenekleri ayrıntılı açıklaması | "Jasic lazer kaynak ürünleri" bölümü |
@@ -288,13 +289,22 @@ K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler �
 ürün; örnek veride `packages/data/src/seed/products.seed.ts` ("ORNEK" ve
 "TEMSILI" notları) (KARARLAR K-73).
 
-1. **Fotoğraflar:** Örnek verideki 83 ürünün hepsi aynı Zenweld ürün
+1. **Fotoğraflar:** Örnek verideki 88 ürünün 83'ü aynı Zenweld ürün
    fotoğrafını kullanıyor
-   (`apps/zenweld-web/public/images/products/zenweld-urun.webp`). Her ürünün
+   (`apps/zenweld-web/public/images/products/zenweld-urun.webp`); sonradan
+   eklenen 5 Force ürünü geçici olarak sahibinin verdiği Jasic TIG200
+   fotoğrafını (`jasic-tig200.webp`) kullanıyor. Her ürünün
    kendi fotoğrafları panelden eklenmeli (Ürünler › ürün › Görseller);
    seçenekli üründe kombinasyona özel fotoğraf da seçilebilir. Grup ve
    kategori kart görselleri için: "Ürün grupları" 1.
-2. **Ekipmanların içeriği (örnek):** Kısa ve uzun açıklama (seçeneklerden
+2. **Ekipmanların içeriği (örnek):** Force serisi 9 üründe (ForceArc 200 /
+   250 / 280, ForceMIG 125 / 185 MP / 200 / 205 DP, ForceTIG 200, ForceCut 45)
+   teknik özellikler, açıklama, kutu içeriği ve öne çıkan özellikler
+   sahibinin ikinci listesinden gelir (`machine-content.seed.ts`); kısa
+   açıklama açıklamanın ilk cümlesidir. Bunlardan 4'ünün kısa açıklaması 160
+   karakteri aşıyor (ForceMIG 125, 185 MP, 200 ve ForceCut 45); Google'da
+   sonu kesilebilir, panelin SEO sekmesinden kısa bir açıklama yazılabilir
+   (öneri). Diğer ekipmanlarda kısa ve uzun açıklama (seçeneklerden
    üretilen bir cümle ve lorem ipsum), teknik özellikler (yalnızca Marka,
    Ürün Kodu, Ürün Türü), kutu içeriği (ana ünite, torç, kullanım kılavuzu),
    öne çıkan özellikler (seçenekler ve garanti) ve kullanım kılavuzu
@@ -311,6 +321,11 @@ K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler �
    kombinasyonları düzeltilmeli; kodların `-AP5M`, `-AP10M` kısmı da değişir.
 5. **Diğer bölümler:** Aksesuar, güvenlik ve dolgu metali ürünleri,
    kampanyalar ve örnek yorumlar hâlâ örnek veridir.
+6. **Geçici kodlar:** SAP kodu verilmeyen 5 ürünün kodu geçicidir (KARARLAR
+   K-75): ForceArc 250 (`ZW-GECICI-FORCEARC250`), ForceArc 280, ForceMIG 125,
+   ForceMIG 185 MP, ForceMIG 205 DP. SAP kodları açılınca panelden (Ürünler ›
+   ürün › Ürün Kodu) değiştirilmeli; bayi ve satıcı stok dosyaları kodla
+   eşleştiği için bundan önce stok dosyalarında bu ürünler eşleşmez.
 
 ## Jasic lazer kaynak ürünleri — sahibi ayrıntılı açıklayacak
 
@@ -696,7 +711,9 @@ yapılmaz. O zaman karar verilecekler:
 bakıyor (1. adım malzeme → ürünün kaynak yöntemleri, 3. adım elektrik →
 teknik özelliklerde "3 faz"). 2026-10-28'de girilen gerçek ekipmanlara bu
 bilgiler bilerek girilmedi (KARARLAR K-73); bu yüzden Ürün Seçici şu an
-sonuç vermiyor. Ürün Seçici kurulurken ürünlere eklenecek.
+sonuç vermiyor. Ürün Seçici kurulurken ürünlere eklenecek. Force serisi 9
+üründe bu bilgiler teknik özelliklerde yazılı ("Kaynak yöntemi", "Giriş
+gerilimi"); oradan alınabilir.
 
 Bugünkü durum: Kaynak yöntemi etiketleri (MIG, TIG, MMA…) ürün formundan, ürün kartından ve
 kategori filtresinden kaldırıldı. Ürün Seçici soruları ve aramadaki yöntem

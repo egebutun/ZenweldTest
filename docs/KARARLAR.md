@@ -215,6 +215,21 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Jasic lazer kaynak
   ürünleri.
 
+### K-75 · SAP kodu verilmemiş ürüne geçici kod; ForceMIG serisi Çok Fonksiyonlu'da
+- **Tarih:** 2026-10-28
+- **Karar:**
+  - Sahibinin SAP kodunu veremediği ürünler geçici kod alır:
+    `ZW-GECICI-<MODEL>` (ör. `ZW-GECICI-FORCEARC250`). SAP kodu gelince
+    panelden değiştirilir. Gerçek SAP kodlarıyla karışmasın diye rastgele
+    sayı yerine bu biçim seçildi.
+  - Sahibinin ikinci listesine göre ForceMIG serisi (125, 185 MP, 200,
+    205 DP) **Çok Fonksiyonlu Kaynak Makineleri**'ndedir; ForceMIG 200 ilk
+    listede MIG'deydi, taşındı. Adlar K-71'e göre "… Çok Fonksiyonlu Kaynak
+    Makinesi"dir.
+  - Ürünler model adıyla eşleştirildi; listedeki "JASIC alt model kodu"
+    sütunu kullanılmaz (sahibine göre yanlışlıkla kalmış).
+- **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün içeriği.
+
 ---
 
 ## 3. Ürün seçenekleri

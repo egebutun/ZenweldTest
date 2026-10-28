@@ -1,4 +1,5 @@
 import type { Product, ProductOptions, ProductVariant } from "../types";
+import { machineContent } from "./machine-content.seed";
 
 const now = "2026-09-16T08:00:00+03:00";
 
@@ -26,7 +27,9 @@ export const products: Product[] = [];
 /*                                                                     */
 /* !! ORNEK — gercegiyle degistirilecek: kisa ve uzun aciklama, teknik  */
 /* ozellikler, kutu icerigi, one cikan ozellikler, kullanim kilavuzu    */
-/* linki ve fotograf. Fiyatlar TEMSILIDIR (999.999 TL + KDV); secenekler */
+/* linki ve fotograf. Force serisi 9 urunun icerigi sahibinin ikinci     */
+/* listesinden gelir (machine-content.seed.ts); 5'inin kodu GECICIDIR   */
+/* (KARARLAR K-75). Fiyatlar TEMSILIDIR (999.999 TL + KDV); secenekler   */
 /* arasinda fiyat farki yok. Ara paket uzunluklari (5 m, 10 m)          */
 /* temsilidir. Kaynak yontemi ve elektrik bilgisi bilerek girilmedi     */
 /* (Ürün Seçici en son kurulacak, KARARLAR K-69).                       */
@@ -62,7 +65,15 @@ interface MachineSeed {
   sap?: string;
   brand?: string;
   options?: MachineOptions;
+  /** Ortak urun fotografi yerine kullanilacak fotograf */
+  image?: string;
 }
+
+/** SAP kodu verilmemis urunun gecici kodu (KARARLAR K-75); SAP kodu gelince degistirilir. */
+const tempCode = (model: string) => `ZW-GECICI-${model}`;
+
+/** Sahibinin ikinci listesindeki yeni Force urunlerinin (gecici) fotografi. */
+const FORCE_PHOTO = "/images/products/jasic-tig200.webp";
 
 const MMA = "mma-ortulu-elektrod-kaynak-makineleri";
 const TIG = "tig-argon-kaynak-makineleri";
@@ -77,6 +88,8 @@ const machineSeeds: MachineSeed[] = [
   { slug: "ultimate-255-mma", name: "Ultimate 255 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000001" },
   { slug: "ultimate-405-cel-mma", name: "Ultimate 405 CEL MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000002" },
   { slug: "forcearc-200-mma", name: "ForceArc 200 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000072" },
+  { slug: "forcearc-250-mma", name: "ForceArc 250 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC250"), image: FORCE_PHOTO },
+  { slug: "forcearc-280-mma", name: "ForceArc 280 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC280"), image: FORCE_PHOTO },
   { slug: "forcearc-400-cel-mma", name: "ForceArc 400 CEL MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000076" },
 
   { slug: "ultimate-251-thp", name: "Ultimate 251 THP TIG Argon Kaynak Makinesi", categorySlug: TIG, sap: "ZW30100000010", options: { torch: TIG_TORCH } },
@@ -97,10 +110,14 @@ const machineSeeds: MachineSeed[] = [
   { slug: "evomig-405-p", name: "Evomig 405 P MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, options: { cooling: { hava: "ZW30100000065", su: "ZW30100000035" }, torch: MIG_TORCH, interconnect: INTERCONNECT } },
   { slug: "evomig-555-p", name: "Evomig 555 P MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, options: { cooling: { hava: "ZW30100000062", su: "ZW30100000038" }, torch: MIG_TORCH, interconnect: INTERCONNECT } },
   { slug: "evomig-255-p", name: "Evomig 255 P MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, sap: "ZW30100000064", options: { torch: MIG_TORCH } },
-  { slug: "forcemig-200", name: "ForceMIG 200 MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, sap: "ZW30100000074" },
 
   { slug: "ultimate-205-mte-pro", name: "Ultimate 205 MTE Pro Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: "ZW30100000032" },
   { slug: "evomig-205-p", name: "Evomig 205 P Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: "ZW30100000037" },
+  // ForceMIG serisi sahibinin ikinci listesiyle Çok Fonksiyonlu'ya alindi (ForceMIG 200 MIG'deydi).
+  { slug: "forcemig-125", name: "ForceMIG 125 Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG125"), image: FORCE_PHOTO },
+  { slug: "forcemig-185-mp", name: "ForceMIG 185 MP Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG185MP"), image: FORCE_PHOTO },
+  { slug: "forcemig-200", name: "ForceMIG 200 Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: "ZW30100000074" },
+  { slug: "forcemig-205-dp", name: "ForceMIG 205 DP Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG205DP"), image: FORCE_PHOTO },
 
   { slug: "multicut-105-cnc", name: "Multicut 105 CNC Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000042" },
   { slug: "multicut-85-cnc", name: "Multicut 85 CNC Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000043" },
@@ -187,8 +204,9 @@ machineSeeds.forEach((seed) => {
   const sku = seed.sap ?? `ZW-${seed.slug.toUpperCase()}`;
   const type = TYPE_BY_CATEGORY[seed.categorySlug];
   const phrases = optionPhrases(seed.options);
-  // ORNEK icerik: gercek urun bilgileri gelince degistirilecek.
-  const short = `${brand} ${type}.${phrases.length ? ` ${phrases.join("; ")}.` : ""}`;
+  // Sahibinin gonderdigi icerik varsa o; yoksa ORNEK icerik (gercekleri gelince degistirilecek).
+  const content = machineContent[seed.slug];
+  const short = content?.short ?? `${brand} ${type}.${phrases.length ? ` ${phrases.join("; ")}.` : ""}`;
   products.push({
     id: `p-${seed.slug}`,
     slug: seed.slug,
@@ -199,22 +217,22 @@ machineSeeds.forEach((seed) => {
     categorySlug: seed.categorySlug,
     processes: [],
     shortDescription: short,
-    description: `${short} ${lorem}`,
+    description: content?.description ?? `${short} ${lorem}`,
     priceExVat: REPRESENTATIVE_PRICE,
     vatRate: 20,
     currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: seed.name }],
+    images: [{ url: seed.image ?? PRODUCT_PHOTO, alt: seed.name }],
     specs: [
       { label: "Marka", value: brand },
       { label: "Ürün Kodu", value: sku },
-      { label: "Ürün Türü", value: type.charAt(0).toLocaleUpperCase("tr") + type.slice(1) },
+      ...(content?.specs ?? [{ label: "Ürün Türü", value: type.charAt(0).toLocaleUpperCase("tr") + type.slice(1) }]),
     ],
-    inTheBox: [
+    inTheBox: content?.inTheBox ?? [
       "1 x Ana ünite",
       ...(seed.options && !("power" in seed.options) ? ["1 x Torç (seçilen uzunlukta)"] : []),
       "1 x Kullanım kılavuzu",
     ],
-    highlights: [...phrases, "12 ay garanti", "Yetkili bayi ve servis ağı"].slice(0, 3),
+    highlights: content?.highlights ?? [...phrases, "12 ay garanti", "Yetkili bayi ve servis ağı"].slice(0, 3),
     ...(options ? { options } : {}),
     quotable: true,
     isNew: false,

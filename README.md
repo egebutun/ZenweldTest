@@ -357,9 +357,11 @@ Dosya biçimi, kurallar ve backend'e geçiş (tablolar, API): [docs/STOK.md](doc
 
 ## Görseller
 
-- **Ürünler:** Örnek verideki 83 ürünün hepsi depodaki tek bir Zenweld ürün
-  fotoğrafını kullanır (`apps/zenweld-web/public/images/products/zenweld-urun.webp`).
-  Her ürünün kendi fotoğrafı panelden eklenmelidir.
+- **Ürünler:** Örnek verideki 88 ürünün 83'ü depodaki tek bir Zenweld ürün
+  fotoğrafını kullanır (`apps/zenweld-web/public/images/products/zenweld-urun.webp`);
+  sonradan eklenen 5 Force ürünü geçici olarak bir Jasic TIG200 fotoğrafını
+  (`jasic-tig200.webp`) kullanır. Her ürünün kendi fotoğrafı panelden
+  eklenmelidir.
 - **Blog, haber, etkinlik, Hakkımızda, Welders Club:** Unsplash bağlantıları
   (`packages/data/src/seed/images.ts`). Bunlar **gerçek Zenweld fotoğrafları
   değildir**, genel kaynak/sanayi fotoğraflarıdır.
@@ -386,8 +388,10 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
    içindeki okuma/yazma fonksiyonları değiştirilerek tüm uygulama aynı kalacak
    şekilde Supabase/Firebase/PostgreSQL'e bağlanabilir.
 3. **Ürün içeriği ve fiyatlar girilmeli.** Ekipmanlar'daki ürünlerin adı, kodu,
-   alt grubu, garantisi ve seçenekleri gerçektir; açıklama, teknik özellikler,
-   kutu içeriği ve fotoğraflar örnektir, fiyatlar temsilidir (999.999 ₺ + KDV).
+   alt grubu, garantisi ve seçenekleri gerçektir; Force serisi 9 ürün dışında
+   açıklama, teknik özellikler ve kutu içeriği örnektir; fotoğraflar örnektir,
+   fiyatlar temsilidir (999.999 ₺ + KDV), 5 ürünün kodu geçicidir
+   (`ZW-GECICI-…`).
    Aksesuar kalemleri de örnektir (`products.seed.ts` içinde `ORNEK`,
    `TEMSILI`, `DOGRULANMALI` notları). Ayrıntı:
    [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Ürün içeriği.

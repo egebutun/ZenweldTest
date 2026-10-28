@@ -1,6 +1,9 @@
 # Ürün görseli buraya
 
-Sitedeki tüm ürünler bu klasördeki **`zenweld-urun.webp`** dosyasını kullanır.
+Sitedeki ürünler bu klasördeki **`zenweld-urun.webp`** dosyasını kullanır.
+Sonradan eklenen 5 Force ürünü (ForceArc 250 / 280, ForceMIG 125 / 185 MP /
+205 DP) geçici olarak **`jasic-tig200.webp`** dosyasını kullanır (eski
+tarayıcılar için yanında `.jpg` hali var).
 
 Dosya yoksa site kırılmaz — markalı Zenweld placeholder görseli gösterilir.
 
