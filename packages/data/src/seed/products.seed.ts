@@ -84,6 +84,22 @@ const LASER_WELD = "lazer-kaynak-makineleri";
 const LASER_CLEAN = "lazer-temizleme";
 const LASER_MARK = "lazer-markalama";
 
+/**
+ * Model Serisi filtresi (KARARLAR K-76): urun adinin ilk kelimesinden.
+ * Lazer temizleme ve markalama kategorilerinde bu filtre yok. Diger
+ * filtrelerin degerleri sonra eslenecek.
+ */
+const SERIES_BY_PREFIX: Record<string, string> = {
+  ultimate: "ultimate",
+  evomig: "evomig",
+  forcearc: "force",
+  forcetig: "force",
+  forcemig: "force",
+  forcecut: "force",
+  multicut: "multicut",
+  y300: "y300",
+};
+
 const machineSeeds: MachineSeed[] = [
   { slug: "ultimate-255-mma", name: "Ultimate 255 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000001" },
   { slug: "ultimate-405-cel-mma", name: "Ultimate 405 CEL MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000002" },
@@ -206,6 +222,7 @@ machineSeeds.forEach((seed) => {
   const phrases = optionPhrases(seed.options);
   // Sahibinin gonderdigi icerik varsa o; yoksa ORNEK icerik (gercekleri gelince degistirilecek).
   const content = machineContent[seed.slug];
+  const series = SERIES_BY_PREFIX[seed.slug.split("-")[0]];
   const short = content?.short ?? `${brand} ${type}.${phrases.length ? ` ${phrases.join("; ")}.` : ""}`;
   products.push({
     id: `p-${seed.slug}`,
@@ -234,6 +251,7 @@ machineSeeds.forEach((seed) => {
     ],
     highlights: content?.highlights ?? [...phrases, "12 ay garanti", "Yetkili bayi ve servis ağı"].slice(0, 3),
     ...(options ? { options } : {}),
+    ...(series ? { filterValues: { "model-serisi": [series] } } : {}),
     quotable: true,
     isNew: false,
     manualUrl: "#",

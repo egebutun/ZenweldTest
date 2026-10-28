@@ -117,6 +117,7 @@ export function createProduct(partial: Partial<Product>): Product {
     updatedAt: nowIso(),
     active: partial.active ?? true,
     options: partial.options,
+    filterValues: partial.filterValues,
     modelCode: partial.modelCode,
     brand: partial.brand,
     manualUrl: partial.manualUrl,

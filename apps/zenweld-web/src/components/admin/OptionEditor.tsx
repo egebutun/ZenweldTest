@@ -52,10 +52,13 @@ export function OptionDefinitionModal({
             onChange={(e) => setDraft({ ...draft, name: e.target.value })}
           />
         </FormRow>
-        <OptionValues
+        <ValueListEditor
           values={draft.values}
           onChange={(values) => setDraft({ ...draft, values })}
-          usedBy={(valueId) => (draft.id ? productsUsingOption(draft.id, valueId, db).length : 0)}
+          canRemove={(value) => {
+            const count = draft.id ? productsUsingOption(draft.id, value.id, db).length : 0;
+            return count ? `"${value.label}" ${count} üründe kullanılıyor; önce ürünün Seçenekler sekmesinden kaldırın.` : true;
+          }}
         />
         {error && <p className="text-sm font-semibold text-zw-red-600">{error}</p>}
         <div className="flex gap-3 pt-2">
@@ -69,16 +72,21 @@ export function OptionDefinitionModal({
   );
 }
 
-/** Degerler: sirayla; yenisi kutuya yazilip Ekle (veya Enter) ile eklenir. */
-function OptionValues({
+/**
+ * Degerler: sirayla; yenisi kutuya yazilip Ekle (veya Enter) ile eklenir.
+ * Seçenek tanimlarinda ve kategori filtrelerinde kullanilir.
+ */
+export function ValueListEditor({
   values,
   onChange,
-  usedBy,
+  canRemove,
+  placeholder = "Yeni değer, ör. 10 m",
 }: {
   values: OptionValue[];
   onChange: (values: OptionValue[]) => void;
-  /** Degeri kullanan urun sayisi */
-  usedBy: (valueId: string) => number;
+  /** Silmeden once: true silinir; false vazgecilir; metin silinmez ve uyari olarak yazilir */
+  canRemove: (value: OptionValue) => boolean | string;
+  placeholder?: string;
 }) {
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -139,9 +147,9 @@ function OptionValues({
                 type="button"
                 aria-label={`${v.label} değerini sil`}
                 onClick={() => {
-                  const count = usedBy(v.id);
-                  if (count) return setError(`"${v.label}" ${count} üründe kullanılıyor; önce ürünün Seçenekler sekmesinden kaldırın.`);
-                  onChange(values.filter((x) => x.id !== v.id));
+                  const answer = canRemove(v);
+                  if (typeof answer === "string") return setError(answer);
+                  if (answer) onChange(values.filter((x) => x.id !== v.id));
                 }}
                 className="rounded-[3px] p-1.5 text-zw-grey-400 hover:bg-zw-grey-100 hover:text-zw-red-600"
               >
@@ -154,7 +162,7 @@ function OptionValues({
       <div className="flex gap-2">
         <Input
           value={text}
-          placeholder="Yeni değer, ör. 10 m"
+          placeholder={placeholder}
           onChange={(e) => {
             setText(e.target.value);
             setError(null);

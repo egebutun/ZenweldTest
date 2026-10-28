@@ -37,7 +37,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 14. [Arama motorları ve adresler](#14-arama-motorları-ve-adresler)
 15. [Panel: giriş ve çerçeve](#15-panel-giriş-ve-çerçeve)
 16. [Panel: satış](#16-panel-satış)
-17. [Panel: ürünler, kategoriler ve seçenekler](#17-panel-ürünler-kategoriler-ve-seçenekler)
+17. [Panel: ürünler, kategoriler, seçenekler ve filtreler](#17-panel-ürünler-kategoriler-seçenekler-ve-filtreler)
 18. [Panel: stok](#18-panel-stok)
 19. [Panel: bayi ağı, müşteriler ve servis](#19-panel-bayi-ağı-müşteriler-ve-servis)
 20. [Panel: içerik ve ayarlar](#20-panel-içerik-ve-ayarlar)
@@ -474,7 +474,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 
 ---
 
-## 17. Panel: ürünler, kategoriler ve seçenekler
+## 17. Panel: ürünler, kategoriler, seçenekler ve filtreler
 
 **Ürünler:**
 
@@ -510,6 +510,21 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       ürünleri kategoriyle gider.
 - [ ] Kategoride kullanılan bir seçenek tanımının işareti kaldırılırken "N
       üründe kullanılıyor…" onayı çıkar; ürünlerin seçenekleri bozulmaz.
+- [ ] Ekipmanların 8 alt kategorisinin Filtreler sekmesinde filtreler
+      KARARLAR K-76'daki gibidir (ör. MIG: Model Serisi, Şebeke Voltajı,
+      Amper, Çalışma Modu, Fiziki Yapı); Şebeke Voltajı, Amper ve Güç (W)
+      "Değer yok; sitede görünmez" yazar.
+- [ ] Ürünlerin Değerleri tablosunda Model Serisi her üründe işaretlidir
+      (MIG: Ultimate 6, Evomig 3); diğer sütunlar açık sarıdır.
+- [ ] Tabloda bir ürüne değer işaretlenip kaydedilince ürünün Filtreler
+      sekmesinde aynı değer işaretli görünür; tersi de geçerlidir.
+- [ ] Filtreye değer eklenince, adı düzeltilince ve sırası değişince
+      ürünün Filtreler sekmesinde de değişir; ürünlerde işaretli değer
+      silinirken "N üründe işaretli" onayı çıkar ve kaydedince ürünlerden
+      kalkar.
+- [ ] Aynı adla ikinci filtre ya da filtre içinde aynı değer kaydedilemez.
+- [ ] Ürünün kategorisi değiştirilip kaydedilince eski kategorinin filtre
+      değerleri silinir.
 
 **Seçenek Tanımları:**
 

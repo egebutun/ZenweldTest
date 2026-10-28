@@ -1,7 +1,8 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Category, CategoryGroup, TopLevelSection } from "@zenweld/data";
+import { byProductOrder, type Category, type CategoryGroup, type TopLevelSection } from "@zenweld/data";
 import {
   createCategory,
   createGroup,
@@ -25,14 +26,16 @@ import {
 } from "./content-form";
 import { SeoPanel } from "./SeoPanel";
 import { CategoryOptionsPanel } from "./CategoryOptions";
+import { CategoryFiltersPanel, filtersError, type FilterMapping } from "./CategoryFilters";
 import { siteUrl } from "@/lib/admin-links";
 
 /**
  * KATEGORI VE GRUP FORMLARI (Urunler > Kategoriler)
  *
  * Sekmeler: Temel Bilgiler (ad, grup/bolum, kisa aciklama, kart gorseli),
- * Tanitim Metni (sayfanin altindaki "... Hakkinda" yazisi), Seçenekler
- * (yalnizca kategoride: urune secenek eklerken listelenen ortak tanimlar) ve SEO.
+ * Tanitim Metni (sayfanin altindaki "... Hakkinda" yazisi), yalnizca
+ * kategoride Seçenekler (urune secenek eklerken listelenen ortak tanimlar) ve
+ * Filtreler (kategori sayfasindaki filtreler ve urunlerin degerleri), SEO.
  */
 
 const SECTIONS = Object.keys(SECTION_TITLES) as TopLevelSection[];
@@ -69,6 +72,12 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
   const { draft, set } = form;
   const stored = category && db.categories.find((c) => c.id === category.id);
   const currentGroup = db.categoryGroups.find((g) => g.section === draft.section && g.slug === draft.group);
+  // Filtreler sekmesindeki eslesme tablosunda degisen urunler; Kaydet ile yazilir.
+  const [mapping, setMapping] = useState<FilterMapping>({});
+  const products = useMemo(
+    () => (stored ? db.products.filter((p) => p.categorySlug === stored.slug).sort(byProductOrder) : []),
+    [db, stored],
+  );
 
   const submit = () => {
     form.setError(null);
@@ -83,11 +92,25 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
 
     // Form acikken silinmis tanim kayda geri yazilmasin.
     const optionIds = (draft.optionIds ?? []).filter((id) => db.optionDefinitions.some((o) => o.id === id));
-    const next: Category = { ...draft, slug, name: draft.name.trim(), optionIds: optionIds.length ? optionIds : undefined };
+    const filterProblem = filtersError(draft.filters ?? []);
+    if (filterProblem) return form.fail(filterProblem, "filtreler");
+    const filters = (draft.filters ?? []).map((f) => ({
+      ...f,
+      name: f.name.trim(),
+      values: f.values.map((v) => ({ ...v, label: v.label.trim() })),
+    }));
+    const next: Category = {
+      ...draft,
+      slug,
+      name: draft.name.trim(),
+      optionIds: optionIds.length ? optionIds : undefined,
+      filters: filters.length ? filters : undefined,
+    };
     if (isNew) {
       router.push(`/yonetim/kategoriler/${createCategory(next).id}`);
     } else {
-      saveCategory(next);
+      saveCategory(next, mapping);
+      setMapping({});
       form.flashSaved();
     }
   };
@@ -98,7 +121,12 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
       onSubmit={submit}
       savedText="Kategori kaydedildi."
       submitLabel={isNew ? "Kategoriyi Oluştur" : "Değişiklikleri Kaydet"}
-      tabs={[...TABS.slice(0, 2), { id: "secenekler", label: "Seçenekler", badge: draft.optionIds?.length || undefined }, TABS[2]]}
+      tabs={[
+        ...TABS.slice(0, 2),
+        { id: "secenekler", label: "Seçenekler", badge: draft.optionIds?.length || undefined },
+        { id: "filtreler", label: "Filtreler", badge: draft.filters?.length || undefined },
+        TABS[2],
+      ]}
     >
       {form.tab === "temel" && (
         <FormPanel>
@@ -170,6 +198,16 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
           selected={draft.optionIds ?? []}
           onChange={(ids) => set("optionIds", ids)}
           categorySlug={stored?.slug}
+        />
+      )}
+
+      {form.tab === "filtreler" && (
+        <CategoryFiltersPanel
+          filters={draft.filters ?? []}
+          onChange={(filters) => set("filters", filters)}
+          products={products}
+          mapping={mapping}
+          onMappingChange={setMapping}
         />
       )}
 

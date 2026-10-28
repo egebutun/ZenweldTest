@@ -1,13 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { validateDiscount, type Product } from "@zenweld/data";
+import { tidyFilterValues, validateDiscount, type Product } from "@zenweld/data";
 import { createProduct, saveProduct, useDatabase } from "@zenweld/store";
 import { ContentFormShell, EMPTY_SLUG_ERROR, findSlugClash, resolveSlug, useContentForm } from "./content-form";
 import { BasicsTab } from "./product/BasicsTab";
 import { DescriptionTab } from "./product/DescriptionTab";
 import { ImagesTab } from "./product/ImagesTab";
 import { InTheBoxTab, SpecsTab } from "./product/ListTabs";
+import { FiltersTab } from "./product/FiltersTab";
 import { OptionsTab, optionsError, productCodeError, tidyOptions } from "./product/OptionsTab";
 import { SeoPanel, storedLinks } from "./SeoPanel";
 import { productSeo } from "@/lib/seo";
@@ -70,7 +71,14 @@ export function ProductForm({ product }: { product?: Product }) {
     const optionsProblem = optionsError(draft, db.optionDefinitions, db.products);
     if (optionsProblem) return form.fail(optionsProblem, "secenekler");
 
-    const record = { ...draft, slug, options: tidyOptions(draft) };
+    // Yalnizca kategorinin bugunku filtrelerine ait degerler kaydedilir.
+    const category = db.categories.find((c) => c.slug === draft.categorySlug);
+    const record = {
+      ...draft,
+      slug,
+      options: tidyOptions(draft),
+      filterValues: tidyFilterValues(draft.filterValues, category?.filters),
+    };
     if (isNew) {
       router.push(`/yonetim/urunler/${createProduct(record).id}`);
     } else {
@@ -92,6 +100,7 @@ export function ProductForm({ product }: { product?: Product }) {
         { id: "teknik", label: "Teknik Özellikler", badge: draft.specs.length },
         { id: "kutu", label: "Kutu İçeriği", badge: draft.inTheBox.length },
         { id: "secenekler", label: "Seçenekler", badge: draft.options?.variants.length ?? 0 },
+        { id: "filtreler", label: "Filtreler", badge: Object.values(draft.filterValues ?? {}).filter((v) => v.length).length },
         { id: "seo", label: "SEO" },
       ]}
     >
@@ -101,6 +110,7 @@ export function ProductForm({ product }: { product?: Product }) {
       {form.tab === "teknik" && <SpecsTab {...tabProps} />}
       {form.tab === "kutu" && <InTheBoxTab {...tabProps} />}
       {form.tab === "secenekler" && <OptionsTab {...tabProps} />}
+      {form.tab === "filtreler" && <FiltersTab {...tabProps} />}
       {form.tab === "seo" && (
         <SeoPanel
           noun="Ürün"

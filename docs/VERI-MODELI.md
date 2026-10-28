@@ -124,9 +124,11 @@ bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmışt
 |---|---|---|---|
 | Kategori | Grup | `section` + `group` (grubun linki) | Bugün linkle bağlı; backend'de grup kimliğiyle bağlanmalı |
 | Kategori | Seçenek tanımları | `optionIds[]` | Çoka çok; yalnızca "listelensin" bağı |
+| Kategori | Filtreler | `filters[]` | Filtreler kategorinin içindedir (kategoriye özel, ortak değil) |
 | Ürün | Kategori | `categorySlug` (+ `section`) | Bugün linkle bağlı; backend'de kategori kimliğiyle bağlanmalı. `section` kategoriden türetilebilir |
 | Ürün | Seçenek tanımları | `options.optionIds[]` | Ürün başına en fazla 3 tanım, sayfadaki sırasıyla |
 | Varyant (kombinasyon) | Seçenek değerleri | `options.variants[].values` | Ürünün her seçeneğinden bir değer; değer o tanımdan olmalı |
+| Ürün | Kategorisinin filtre değerleri | `filterValues` | Filtre başına bir ya da birden çok değer; yalnızca kendi kategorisinin filtreleri |
 | Bayi | Online satıcı | `retailerId` | Bire bir: bir mağaza en fazla bir bayiye bağlı |
 | Bayi stok satırı | Bayi, ürün, varyant | `dealerId`, `productId`, `variantId` | Ayrıntı: [STOK.md](STOK.md) |
 | Satıcı stok satırı | Satıcı, ürün, varyant | `retailerId`, `productId`, `variantId` | |
@@ -179,6 +181,7 @@ Menüde bölümün altında sol kolondaki gruplar (ör. Kaynak Makineleri).
 | `aboutText` | metin? | Tanıtım metni (biçimli) |
 | `image` | metin? | Kart görseli; yoksa kategorinin ilk ürününün fotoğrafı |
 | `optionIds` | metin[]? | Bu kategoride ürüne seçenek eklenirken listelenen tanımlar |
+| `filters[]` | liste? | Kategori sayfasındaki filtreler, sırasıyla (bkz. aşağıda) |
 | `seo` | SEO? | |
 | `previousPaths` | metin[]? | Eski tam yollar |
 | `code`, `icon` | metin? | Kullanılmıyor (bkz. [16](#16-kullanılmayan-alanlar)) |
@@ -192,6 +195,20 @@ Menüde bölümün altında sol kolondaki gruplar (ör. Kaynak Makineleri).
 | `values[]` | liste | Sıralı değerler |
 | `values[].id` | metin | Değerin ilk adından üretilir (`4-m`) ve **hiç değişmez**; aynısı varsa sonuna `-2`, `-3` eklenir |
 | `values[].label` | metin | Ör. "4 m". Tanım içinde benzersiz; ad düzeltilebilir |
+
+**Filtreler (`filters` → `category_filters`, `category_filter_values`):**
+
+Filtreler kategoriye özeldir; aynı adlı filtrenin değerleri kategoriye göre
+değişebilir (TIG'de Çalışma Modu: DC, AC/DC; MIG'de Standart, Puls).
+KARARLAR K-76.
+
+| Alan | Tür | Açıklama |
+|---|---|---|
+| `id` | metin | Filtrenin ilk adından üretilir (`model-serisi`) ve **hiç değişmez**; sayfa adresinde kullanılır (`?model-serisi=force`). Kategori içinde benzersiz |
+| `name` | metin | Ör. "Model Serisi". Kategori içinde benzersiz (Türkçe büyük/küçük harf duyarsız) |
+| `values[]` | liste | Sıralı değerler; boş olabilir (değeri olmayan filtre sitede görünmez) |
+| `values[].id` | metin | Değerin ilk adından üretilir (`kompakt`) ve hiç değişmez; aynısı varsa sonuna `-2` eklenir |
+| `values[].label` | metin | Ör. "Kompakt". Filtre içinde benzersiz; ad düzeltilebilir |
 
 Kategori ↔ tanım bağı (`category_options`) kategorinin `optionIds` alanıdır.
 
@@ -219,6 +236,7 @@ Kategori ↔ tanım bağı (`category_options`) kategorinin `optionIds` alanıd�
 | `inTheBox[]` | metin[] | Kutu içeriği |
 | `highlights[]` | metin[] | Öne çıkan özellikler; ilk 3'ü menü kartında |
 | `options` | seçenekler? | Bkz. aşağıda |
+| `filterValues` | nesne? | Kategori filtrelerindeki değerleri: `{ <filtre kimliği>: [<değer kimliği>, …] }`. Bir filtrede birden çok değer olabilir; seçenekli üründe değer ürünün tamamı içindir. Kayıtta kategoride olmayan filtre ve değer silinir. Backend'de `product_filter_values` (`productId`, `filterId`, `valueId`) |
 | `quotable` | evet/hayır | Teklif Al listesinde çıkar mı |
 | `isNew` | evet/hayır | "Yeni" rozeti |
 | `order` | sayı? | Kategori içindeki sıra; boş olan sona, eşitler ada göre |
@@ -777,6 +795,7 @@ sağlanmalı.
 | Ürün | — | Bayi ve satıcı stok satırları, kod eşleştirmeleri. Belgelerdeki ürün bağı kalkar (belge kalır). Sipariş, teklif, garanti, servis ve yorum kayıtları kalır |
 | Ürünün bir varyantı (kombinasyonu) | — | O varyantın stok satırları ve kod eşleştirmeleri; eski ürün linki yönlendirmesi. Ürünün seçenek listesi (tanımları) değişirse bütün varyantlı stok satırları |
 | Kategori | İçinde ürün varsa silinmez | — |
+| Kategori filtresi ya da filtre değeri | — (kaç üründe işaretli olduğu söylenip onay istenir) | Kategorinin ürünlerindeki o filtre ya da değer |
 | Grup | İçinde kategori varsa silinmez | — |
 | Seçenek tanımı | Bir üründe kullanılıyorsa silinmez | Kategorilerdeki bağı |
 | Seçenek değeri | Bir üründe kullanılıyorsa silinmez | — |
@@ -819,7 +838,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 64).
+- `packages/data/src/index.ts`'tedir (bugün 65).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -831,7 +850,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 | Kayıt | Sayı | Not |
 |---|---|---|
 | Ürün | 88 | 40'ı Ekipmanlar (sahibinin listeleri; fiyat temsili, Force serisi dışında içerik örnek, KARARLAR K-73, K-75). 20'si seçenekli: 17 makine ve 3 aksesuar (MB-25 ve MB-36 MIG torçları, Gaz Nozulu Seti) |
-| Grup / kategori | 11 / 45 | |
+| Grup / kategori | 11 / 45 | Ekipmanların 8 alt kategorisinde filtre var (KARARLAR K-76); ürünlere yalnızca Model Serisi eşli |
 | Seçenek tanımı | 6 | Hortum Uzunluğu, Paket, Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu (temsili), Tepe Güç |
 | Bayi / online satıcı | 29 / 9 | |
 | Stok satırı (bayi / satıcı) | ~4.060 / ~610 | Veri ilk kurulduğunda o günün tarihiyle üretilir |

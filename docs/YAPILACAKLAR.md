@@ -11,7 +11,7 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | İş | Neyi bekliyor | Ayrıntı |
 |---|---|---|
 | Çerez ayarları penceresi (analiz ve pazarlama çerezlerini ayrı açıp kapama) ve analiz kodlarının kurulması | Hangi analiz aracının kullanılacağı | [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler) 1–3, [Online satış](#online-satış--canlıya-çıkmadan-önce) 12 |
-| Kategori filtreleri | Gerçek ürün listesi ve teknik özellikler | [Kategori filtreleri](#kategori-filtreleri) |
+| Kategori filtrelerinin değerleri ve ürünlere eşlenmesi | Ürünlerin kesinleşmesi; Şebeke Voltajı, Amper ve Güç değerleri | [Kategori filtreleri](#kategori-filtreleri) |
 | Ürün Seçici'nin yeniden kurulması | Bütün ürünlerin kesinleşmesi; en son ele alınacak (KARARLAR K-69) | [Ürün Seçici ve arama](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) |
 | "İlgili Ürünler" öneri mantığı | Bölümdeki kararlar | "Ürün önerileri" bölümü |
 | Teklif Al metinleri | Müdür kararı | [Teklif Al metinleri](#teklif-al-metinleri--herkese-hitap-edecek-şekilde-güncellenecek) |
@@ -84,16 +84,23 @@ teyit edilmeli). Yapılacaklar:
 
 ## Kategori filtreleri
 
-Kategori sayfasında bugün yalnızca sıralama var (Önerilen, fiyat, isim, en
-yeniler). Ürün listesi ve teknik özellikler kesinleşince her alt kategoriye
-kendi filtreleri eklenecek (ör. MIG makinesinde akım aralığı ve giriş
-gerilimi, maskede kararma sınıfı; MMA ile TIG makinesinin filtreleri farklı).
+Ekipmanların 8 alt kategorisinin filtreleri ve değerleri panelde tanımlı;
+ürünlerin değerleri panelde işaretlenir (KARARLAR K-76, ADMIN-KULLANIM ›
+Kategori formu › Filtreler). Kalanlar:
 
-- Filtre seçenekleri ürünlerin teknik özellik satırlarından üretilmeli; bu
-  yüzden aynı özelliğin her üründe aynı adla ve aynı birimle girilmesi gerekir.
-- Seçili filtreler sayfa adresine yazılmalı (paylaşılabilir, geri tuşuyla
-  korunur); filtreli adresler arama motorlarına kapalı olmalı.
-- Telefonda filtreler bugünkü "Filtreler" penceresinde açılır.
+1. **Sitede gösterim:** Filtrelerin alt kategori sayfasında gösterilmesi
+   (masaüstünde sol sütun, telefonda Filtreler penceresi; seçim adrese
+   yazılır). Kurallar: [IS-KURALLARI.md](IS-KURALLARI.md) › 19.
+2. **Değerlerin girilmesi:** Şebeke Voltajı, Amper ve Güç (W) filtrelerinin
+   değerleri yok; ürünler kesinleşince sahibinden gelecek. Değeri olmayan
+   filtre sitede görünmez.
+3. **Ürünlere eşleme:** Bugün yalnızca Model Serisi eşli. Çalışma Modu,
+   Fiziki Yapı, Lazer Tipi ve değeri girilecek filtreler ürünlere
+   işaretlenecek (kategorinin Filtreler sekmesindeki tabloda toplu
+   yapılabilir). Eşlenmemiş filtre sitede sonucu daraltmaz.
+4. Diğer bölümlerin (Güvenlik, Aksesuarlar, Dolgu Metalleri) alt
+   kategorilerine filtre isteniyorsa sahibinden değişkenler gelmeli; panelden
+   eklenebilir.
 
 ## Satıcı bilgileri sitede (ETBİS, unvan, MERSİS)
 

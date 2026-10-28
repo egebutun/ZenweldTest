@@ -581,7 +581,7 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
 - **Düzenleme:** `/yonetim/urunler/<id>`. Başlıkta ad, "SKU: <kod>" ve
   **Ürün sayfasını gör ↗**. Bulunamazsa "Ürün bulunamadı."
 - **Sekmeler** (sayı rozetli): Temel Bilgiler · Açıklamalar · Görseller ·
-  Teknik Özellikler · Kutu İçeriği · Seçenekler · SEO.
+  Teknik Özellikler · Kutu İçeriği · Seçenekler · Filtreler · SEO.
 - **Yeni ürünün başlangıç değerleri:** Bölüm Ekipmanlar, bölümün ilk
   kategorisi, KDV %20, garanti 24 ay; Yayında, Teklife açık ve Yeni ürün
   rozeti işaretli.
@@ -784,6 +784,27 @@ değişmesi, `?secenek=` adresi, sepet ve teklif davranışı, seçime göre bay
 online satıcılar, ortak yorumlar):
 [WEBSITE-KULLANIM.md › Ürün sayfası](WEBSITE-KULLANIM.md#6-ürün-sayfası).
 
+#### Filtreler
+
+Ürünün, kategorisinin filtrelerindeki değerleri (ör. Model Serisi: Evomig).
+Filtreler ve değerleri kategorinin Filtreler sekmesinde tanımlanır
+([Kategori formu](#kategori-formu)); kategorinin bütün ürünleri orada tek
+tabloda da işaretlenebilir.
+
+- Açıklama: "Kategori sayfasındaki filtrelerde bu ürünün değerleri; bir
+  filtrede birden çok değer işaretlenebilir. Seçenekli üründe değerler
+  ürünün tamamı içindir. Filtreler ve değerleri <kategori> kategorisinin
+  Filtreler sekmesinde düzenlenir." Kategori adı kategori formuna gider.
+- Her filtre bir başlık ve altında değer düğmeleridir; tıklanınca işaretlenir
+  ya da işaret kalkar. Bir filtrede birden çok değer işaretlenebilir.
+- Değeri olmayan filtrede: "Değer yok; kategorinin Filtreler sekmesinden
+  eklenir."
+- Kategoride filtre yoksa: "Bu ürünün kategorisinde filtre yok. Filtreler
+  kategorinin Filtreler sekmesinde tanımlanır (<kategori>)."
+- Sekme rozeti değeri işaretli filtre sayısıdır.
+- Temel Bilgiler'de kategori değiştirilirse sekme yeni kategorinin
+  filtrelerini gösterir; kaydedince eski kategorinin değerleri silinir.
+
 #### SEO
 
 - [Ortak SEO sekmesi](#2-ortak-davranışlar); link `/urun/<link>`.
@@ -834,7 +855,7 @@ değiştirir."
   sonuna eklenir.
 - **Düzenleme:** `/yonetim/kategoriler/<id>`. Başlıkta ad, link ve
   **Sayfayı gör ↗**. Bulunamazsa "Kategori bulunamadı."
-- **Sekmeler:** Temel Bilgiler · Tanıtım Metni · Seçenekler · SEO.
+- **Sekmeler:** Temel Bilgiler · Tanıtım Metni · Seçenekler · Filtreler · SEO.
 - Kayıt: "Kategori kaydedildi."
 
 **Temel Bilgiler:**
@@ -868,6 +889,50 @@ görünür; boş bırakılırsa gösterilmez." Biçimli metindir.
 - Tanım yoksa: "Henüz seçenek tanımı yok."
 - Form açıkken başka yerden silinen tanımlar kayda yazılmaz.
 
+**Filtreler:**
+
+Kategori sayfasındaki filtreler ve kategorinin ürünlerindeki değerleri
+(KARARLAR K-76). Filtreler kategoriye özeldir: aynı adlı filtrenin değerleri
+kategoriye göre değişebilir. Sekme rozeti filtre sayısıdır. Bütün
+değişiklikler formun **Değişiklikleri Kaydet** düğmesiyle yazılır.
+
+- Açıklama: "Kategori sayfasında soldaki filtreler (telefonda Filtreler
+  penceresi), bu sırayla. Değeri olmayan filtre sitede görünmez. Hiçbir
+  ürüne eşlenmemiş filtre sitede seçilebilir ama sonucu daraltmaz."
+- **Her filtre bir kutudur:**
+  - Sıra numarası, düzeltilebilen **filtre adı**; yanında "Değer yok; sitede
+    görünmez" ya da "N/M üründe işaretli".
+  - Yukarı / aşağı oklarıyla sıralanır; sitede bu sırayla görünür.
+  - Çöp kutusuyla silinir. Onay: ""<ad>" filtresi silinsin mi?" Ürünlerde
+    değeri işaretliyse: "N üründe değeri işaretli; kaydedince bu ürünlerden
+    de kalkar."
+  - **Değerler:** Seçenek tanımlarındaki gibi sıralı liste ("Yeni değer, ör.
+    380 V"; **Ekle** ya da Enter; oklarla sıralama; ad yerinde düzeltilir;
+    aynısı varsa ""<değer>" zaten var."). X ile silinir; ürünlerde
+    işaretliyse onay: ""<değer>" N üründe işaretli; kaydedince bu ürünlerden
+    de kalkar. Silinsin mi?"
+  - Filtrenin ve değerin değişmeyen bir kimliği vardır (ilk addan üretilir);
+    ad düzeltilince ürünlerdeki değerler ve sayfa adresleri kopmaz.
+- **Yeni filtre:** "Yeni filtre adı, ör. Amper" kutusu ve **Filtre Ekle**
+  (ya da Enter). Aynı ad varsa: ""<ad>" adında bir filtre zaten var."
+- Filtre yoksa: "Bu kategoride filtre yok; kategori sayfasında yalnızca
+  sıralama görünür."
+- **Ürünlerin Değerleri (N)** tablosu:
+  - "Her ürüne filtre değerlerini işaretleyin; bir filtrede birden çok değer
+    işaretlenebilir. Boş hücre: değer girilmemiş. Tek ürünün değerleri ürünün
+    Filtreler sekmesinden de değiştirilebilir."
+  - Satırlarda kategorinin bütün ürünleri (yayında olmayanlar dahil, Sıra
+    numarasına göre): ad (ürün formuna gider) ve ürün kodu. Sütunlarda
+    değeri olan filtreler; başlıkta "(işaretli ürün/toplam)". Hücrede
+    değerlerin işaret kutuları.
+  - Değeri girilmemiş hücre açık sarıdır.
+  - Ürün yoksa: "Bu kategoride henüz ürün yok." Değeri olan filtre yoksa:
+    "Değeri olan filtre yok."
+- Kayıt hataları (form Filtreler sekmesine geçer): "Adı boş bir filtre
+  var.", ""<ad>" filtresi iki kez yazılmış.", ""<ad>" filtresinde boş değer
+  var.", ""<ad>" filtresinde "<değer>" iki kez yazılmış."
+- Ad karşılaştırmaları Türkçe büyük/küçük harfe duyarsızdır.
+
 **SEO:**
 
 - [Ortak SEO sekmesi](#2-ortak-davranışlar); link `/bolum/grup/<link>`.
@@ -882,6 +947,8 @@ görünür; boş bırakılırsa gösterilmez." Biçimli metindir.
   ürünler kategoriye bağlı kalır. Ürün adresleri (`/urun/…`) değişmez.
 - Kategori silinse ya da ürün başka kategoriye taşınsa da seçenek tanımları
   ve ürünlerin seçenekleri bozulmaz.
+- Tablodaki işaretler ürünlere yazılır. Silinen filtre ve değer kategorinin
+  ürünlerinden de kalkar.
 
 ### Grup formu
 

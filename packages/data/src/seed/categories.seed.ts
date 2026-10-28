@@ -1,4 +1,4 @@
-import type { Category, CategoryGroup } from "../types";
+import type { Category, CategoryFilter, CategoryGroup } from "../types";
 
 /**
  * URUN KATEGORILERI
@@ -17,6 +17,36 @@ import type { Category, CategoryGroup } from "../types";
  */
 
 const img = (slug: string) => `/images/categories/${slug}.svg`;
+
+/*
+ * EKIPMANLAR ALT KATEGORI FILTRELERI (KARARLAR K-76)
+ *
+ * Degiskenler sahibinin listesinden. Şebeke Voltajı, Amper ve Güç (W)
+ * degerleri urunler kesinlesince girilecek; degeri olmayan filtre sitede
+ * gorunmez. Model Serisi her kategoride orada bulunan serilerdir.
+ */
+const SERIES = {
+  ultimate: { id: "ultimate", label: "Ultimate" },
+  evomig: { id: "evomig", label: "Evomig" },
+  force: { id: "force", label: "Force" },
+  multicut: { id: "multicut", label: "Multicut" },
+  y300: { id: "y300", label: "Y300" },
+};
+const filter = (id: string, name: string, values: [id: string, label: string][] = []): CategoryFilter => ({
+  id,
+  name,
+  values: values.map(([vid, label]) => ({ id: vid, label })),
+});
+const modelSeries = (...series: (keyof typeof SERIES)[]): CategoryFilter => ({
+  id: "model-serisi",
+  name: "Model Serisi",
+  values: series.map((s) => SERIES[s]),
+});
+const VOLTAGE = filter("sebeke-voltaji", "Şebeke Voltajı");
+const CURRENT = filter("amper", "Amper");
+const POWER = filter("guc", "Güç (W)");
+const PHYSICAL = filter("fiziki-yapi", "Fiziki Yapı", [["portatif", "Portatif"], ["kompakt", "Kompakt"], ["cantali", "Çantalı"]]);
+const MIG_MODE = filter("calisma-modu", "Çalışma Modu", [["standart", "Standart"], ["puls", "Puls"]]);
 
 export const categoryGroups: CategoryGroup[] = [
   { id: "g1.1", code: "1.1", slug: "lazer-makineleri", section: "ekipmanlar", name: "Lazer Makineleri", image: img("lazer-makineleri"), order: 1 },
@@ -42,24 +72,36 @@ export const categories: Category[] = [
     name: "Lazer Kaynak Makineleri",
     description: "Yüksek hızda, düşük ısı girdisiyle temiz ve ince dikişli kaynak.",
     optionIds: ["tepe-guc"],
+    filters: [modelSeries("y300"), VOLTAGE, PHYSICAL],
   },
   {
     id: "c1.1.2", code: "1.1.2", slug: "lazer-temizleme", section: "ekipmanlar", group: "lazer-makineleri", order: 2,
     image: img("lazer-temizleme"),
     name: "Lazer Temizleme",
     description: "Pas, boya ve oksiti yüzeye zarar vermeden kimyasalsız temizleyin.",
+    filters: [
+      filter("fiziki-yapi", "Fiziki Yapı", [["portatif", "Portatif"], ["kompakt", "Kompakt"]]),
+      filter("lazer-tipi", "Lazer Tipi", [["fiber", "Fiber"], ["puls", "Puls"]]),
+      POWER,
+    ],
   },
   {
     id: "c1.1.3", code: "1.1.3", slug: "lazer-markalama", section: "ekipmanlar", group: "lazer-makineleri", order: 3,
     image: img("lazer-markalama"),
     name: "Lazer Markalama",
     description: "Metal yüzeylere kalıcı, hassas yazı, logo ve kod işleme.",
+    filters: [
+      filter("fiziki-yapi", "Fiziki Yapı", [["masa-tipi", "Masa Tipi"], ["portatif", "Portatif"]]),
+      filter("lazer-tipi", "Lazer Tipi", [["uv", "UV"], ["fiber", "Fiber"]]),
+      POWER,
+    ],
   },
   {
     id: "c1.2.1", code: "1.2.1", slug: "mma-ortulu-elektrod-kaynak-makineleri", section: "ekipmanlar", group: "kaynak-makineleri", order: 1,
     image: img("mma-ortulu-elektrod-kaynak-makineleri"),
     name: "MMA (Stick) Örtülü Elektrod Kaynak Makineleri",
     description: "Gaz kullanmadan dış mekan kaynağı ve genel imalat için ideal.",
+    filters: [modelSeries("ultimate", "force"), VOLTAGE, CURRENT],
   },
   {
     id: "c1.2.2", code: "1.2.2", slug: "tig-argon-kaynak-makineleri", section: "ekipmanlar", group: "kaynak-makineleri", order: 2,
@@ -67,6 +109,7 @@ export const categories: Category[] = [
     name: "TIG (GTAW) Argon Kaynak Makineleri",
     description: "Alüminyum dahil metallerde hassas kaynak işleri için ideal.",
     optionIds: ["sogutma", "torc-uzunlugu"],
+    filters: [modelSeries("ultimate", "force"), VOLTAGE, CURRENT, filter("calisma-modu", "Çalışma Modu", [["dc", "DC"], ["ac-dc", "AC/DC"]])],
   },
   {
     id: "c1.2.3", code: "1.2.3", slug: "mig-gazalti-kaynak-makineleri", section: "ekipmanlar", group: "kaynak-makineleri", order: 3,
@@ -74,18 +117,22 @@ export const categories: Category[] = [
     name: "MIG (GMAW) Gazaltı Kaynak Makineleri",
     description: "Araç panelinden metal imalatına kadar hızlı ve istikrarlı kaynak.",
     optionIds: ["sogutma", "torc-uzunlugu", "ara-paket-uzunlugu"],
+    filters: [modelSeries("ultimate", "evomig"), VOLTAGE, CURRENT, MIG_MODE, PHYSICAL],
   },
   {
     id: "c1.2.4", code: "1.2.4", slug: "cok-fonksiyonlu-kaynak-makineleri", section: "ekipmanlar", group: "kaynak-makineleri", order: 4,
     image: img("cok-fonksiyonlu-kaynak-makineleri"),
     name: "Çok Fonksiyonlu Kaynak Makineleri",
     description: "Tek makinede birden fazla kaynak yönteminin esnekliği.",
+    // MIG ile ayni filtreler (K-76)
+    filters: [modelSeries("ultimate", "evomig", "force"), VOLTAGE, CURRENT, MIG_MODE, PHYSICAL],
   },
   {
     id: "c1.2.5", code: "1.2.5", slug: "plazma-kesim-makineleri", section: "ekipmanlar", group: "kaynak-makineleri", order: 5,
     image: img("plazma-kesim-makineleri"),
     name: "Plazma Kesim Makineleri",
     description: "Karbon çeliği, paslanmaz ve alüminyumda temiz kesim performansı.",
+    filters: [modelSeries("multicut", "force"), VOLTAGE, CURRENT],
   },
   {
     id: "c2.1.1", code: "2.1.1", slug: "otomatik-kararan-bas-maskeleri", section: "guvenlik", group: "kaynak-maskeleri", order: 1,

@@ -3,8 +3,10 @@
 import {
   categoryHref,
   groupHref,
+  tidyFilterValues,
   type Category,
   type CategoryGroup,
+  type ProductFilterValues,
   type ZenweldDatabase,
 } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
@@ -60,7 +62,13 @@ function releasePath(db: ZenweldDatabase, path: string): void {
 
 /* ------------------------------ Kategori ------------------------------ */
 
-export function saveCategory(category: Category): void {
+/**
+ * productFilters: kategori formundaki eslesme tablosu (urun kimligi ->
+ * filtre degerleri); verilen urunlerin degerleri bununla degisir. Her
+ * kayitta kategorinin urunlerindeki degerler kategorinin filtrelerine gore
+ * toparlanir: silinen filtre ve deger urunlerden de kalkar.
+ */
+export function saveCategory(category: Category, productFilters?: Record<string, ProductFilterValues | undefined>): void {
   mutate((db) => {
     const idx = db.categories.findIndex((c) => c.id === category.id);
     const stored = idx >= 0 ? db.categories[idx] : undefined;
@@ -78,6 +86,14 @@ export function saveCategory(category: Category): void {
         p.section = next.section;
       });
     }
+
+    db.products.forEach((p) => {
+      if (p.categorySlug !== next.slug) return;
+      const values = productFilters && p.id in productFilters ? productFilters[p.id] : p.filterValues;
+      const tidy = tidyFilterValues(values, next.filters);
+      if (tidy) p.filterValues = tidy;
+      else delete p.filterValues;
+    });
 
     releasePath(db, path);
     if (idx >= 0) db.categories[idx] = next;

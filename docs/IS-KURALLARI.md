@@ -3,7 +3,7 @@
 Bu dosya sitenin ve panelin hesaplarını ve kurallarını anlatır: fiyat ve
 KDV, kampanya, seçenekli ürün, sepet ve kargo, kartla ödeme ve taksit,
 havale süresi, sipariş ve teklif durumları, iade talebi, garanti, stok, ürün kodları,
-linkler, yorumlar, üyelik ve form e-postaları. Ekranların tarifi bu dosyada
+linkler, yorumlar, üyelik, form e-postaları ve kategori filtreleri. Ekranların tarifi bu dosyada
 yoktur; yalnızca kurallar vardır.
 
 İlgili dosyalar:
@@ -19,7 +19,7 @@ Kuralların koddaki yeri her bölümün sonunda yazar. Bir kural değişirse
 yalnızca o yer değişmeli; site, panel ve sipariş kaydı aynı yeri kullanır.
 
 Fiyat, kampanya, seçenek, sepet, kart ve taksit, havale süresi, garanti,
-stok ve ürün kodu kuralları ile bu dosyadaki örnekler `tests/unit`
+stok, ürün kodu ve kategori filtresi kuralları ile bu dosyadaki örnekler `tests/unit`
 altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 
 ---
@@ -44,6 +44,7 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 16. [Üyelik ve oturum](#16-üyelik-ve-oturum)
 17. [Kayıt numaraları](#17-kayıt-numaraları)
 18. [Form e-postaları](#18-form-e-postaları)
+19. [Kategori filtreleri](#19-kategori-filtreleri)
 
 ---
 
@@ -742,3 +743,51 @@ Kod: `apps/zenweld-web/src/app/api/bildirim/route.ts`,
 `apps/zenweld-web/src/app/api/bayilik/route.ts`,
 `apps/zenweld-web/src/app/api/destek/route.ts`,
 `apps/zenweld-web/src/lib/notify.ts`, `apps/zenweld-web/src/lib/server/mail.ts`.
+
+---
+
+## 19. Kategori filtreleri
+
+Alt kategori sayfasındaki filtreler (ör. MIG'de Model Serisi, Çalışma Modu,
+Fiziki Yapı). Filtreler ve değerleri kategoriye özeldir; ürünün değerleri
+üründe durur (KARARLAR K-76).
+
+**Kurallar:**
+
+- Aynı filtrede birden çok değer seçilirse **"ya o ya bu"**: ürün seçilen
+  değerlerden en az birini taşıyorsa listede kalır.
+- Farklı filtreler **birlikte** uygulanır: ürün her filtrenin seçimine
+  uymalıdır.
+- Bir ürün bir filtrede birden çok değer taşıyabilir; her değerin
+  seçiminde listede çıkar.
+- **Eşlenmemiş filtre:** Kategorinin ürünlerinden hiçbirinde değeri işaretli
+  olmayan filtre seçilebilir ama **sonucu daraltmaz**; değerlerinin yanında
+  sayı yazmaz. Bir ürüne değer işaretlenince filtre normal çalışır; o zaman
+  değeri girilmemiş ürün o filtrenin seçiminde elenir.
+- **Değeri olmayan filtre** (ör. bugün Şebeke Voltajı, Amper) sitede
+  gösterilmez.
+- **Sayı:** Bir değerin yanındaki sayı, o değer seçilirse listede kalacak
+  ürün sayısıdır; diğer filtrelerdeki seçim hesaba katılır, filtrenin kendi
+  seçimi katılmaz. Sayısı 0 olan seçili olmayan değer soluk görünür ve
+  seçilemez.
+- Sayılar ve sonuç yalnızca kategorinin yayındaki ürünleriyle hesaplanır.
+- Seçenekli üründe değer ürüne bağlıdır, seçeneğe değil.
+- **Kayıt:** Üründe yalnızca kendi kategorisinin filtrelerine ait değerler
+  tutulur. Ürün başka kategoriye taşınınca eski kategorinin değerleri, bir
+  filtre ya da değer kategoriden silinince ürünlerdeki karşılığı silinir.
+
+**Örnek:** MIG'de Ultimate 250 MTC (Standart), Ultimate 405 MTS (Standart ve
+Puls), Evomig 405 P (Puls). Model Serisi: Ultimate seçilince 2 ürün kalır; o
+sırada Çalışma Modu'nda Standart (2) ve Puls (1) yazar. Puls da seçilince
+yalnızca Ultimate 405 MTS kalır. Fiziki Yapı hiçbir ürüne eşlenmemişse
+Kompakt seçilse de liste değişmez.
+
+**Adres:**
+
+- Seçim adrese yazılır: `?<filtre>=<değer>,<değer>` (ör.
+  `?calisma-modu=puls&fiziki-yapi=kompakt,cantali`). Filtre ve değer
+  kimlikleri ilk addan üretilir ve değişmez; ad düzeltilince adres bozulmaz.
+- Adresteki bilinmeyen filtre ve değer yok sayılır.
+- Arama motoruna sayfa filtresiz adresle bildirilir (standart adres).
+
+Kod: `packages/data/src/filters.ts`.

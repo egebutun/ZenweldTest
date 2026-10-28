@@ -54,10 +54,30 @@ export interface Category {
    * (OptionDefinition kimlikleri). Yalnizca baglanti; tanimlar ortaktir.
    */
   optionIds?: string[];
+  /**
+   * Kategori sayfasindaki filtreler (Model Serisi, Çalışma Modu ...), sirayla.
+   * Kategoriye ozeldir: ayni adli filtrenin degerleri kategoriye gore
+   * degisir (TIG'de DC / AC/DC, MIG'de Standart / Puls). Urunun degerleri
+   * Product.filterValues'tadir.
+   */
+  filters?: CategoryFilter[];
   seo?: SeoFields;
   /** Eski adresleri (tam yol): link, grup veya grubun linki degisince yeni adrese yonlenir */
   previousPaths?: string[];
 }
+
+/** Kategori filtresi: ad ve sirali degerler. Degeri olmayan filtre sitede gorunmez. */
+export interface CategoryFilter {
+  /** Ilk addan uretilir ve degismez; sayfa adresinde kullanilir (?model-serisi=...) */
+  id: string;
+  /** Orn. "Model Serisi", "Fiziki Yapı" */
+  name: string;
+  /** Orn. "Portatif", "Kompakt"; kimlik ilk addan uretilir ve degismez */
+  values: OptionValue[];
+}
+
+/** Urunun filtre degerleri: filtre kimligi -> isaretli deger kimlikleri (birden cok olabilir). */
+export type ProductFilterValues = Record<string, string[]>;
 
 /** Mega menude sol kolonda duran gruplar */
 export interface CategoryGroup {
@@ -194,6 +214,12 @@ export interface Product {
    * teknik ozellikleri ve bayi bulunurlugunu degistirebilir.
    */
   options?: ProductOptions;
+  /**
+   * Kategori filtrelerindeki degerleri (Category.filters). Yalnizca kendi
+   * kategorisinin filtrelerine ait degerler tutulur; secenekli urunde deger
+   * urune baglidir, secenege degil.
+   */
+  filterValues?: ProductFilterValues;
   /** Teklif Al akisina acik mi */
   quotable: boolean;
   isNew: boolean;

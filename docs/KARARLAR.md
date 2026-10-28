@@ -230,6 +230,46 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     sütunu kullanılmaz (sahibine göre yanlışlıkla kalmış).
 - **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün içeriği.
 
+### K-76 · Ekipman alt kategorilerinde filtreler; filtreler kategoriye özel
+- **Tarih:** 2026-10-28
+- **Karar:**
+  - Ekipmanların alt kategori sayfalarında filtre vardır. Değişkenler
+    sahibinin listesinden (sıra sayfadaki sıradır):
+
+    | Alt kategori | Filtreler |
+    |---|---|
+    | MMA, Plazma | Model Serisi · Şebeke Voltajı · Amper |
+    | TIG | Model Serisi · Şebeke Voltajı · Amper · Çalışma Modu (DC, AC/DC) |
+    | MIG, Çok Fonksiyonlu | Model Serisi · Şebeke Voltajı · Amper · Çalışma Modu (Standart, Puls) · Fiziki Yapı (Portatif, Kompakt, Çantalı) |
+    | Lazer Kaynak | Model Serisi · Şebeke Voltajı · Fiziki Yapı (Portatif, Kompakt, Çantalı) |
+    | Lazer Temizleme | Fiziki Yapı (Portatif, Kompakt) · Lazer Tipi (Fiber, Puls) · Güç (W) |
+    | Lazer Markalama | Fiziki Yapı (Masa Tipi, Portatif) · Lazer Tipi (UV, Fiber) · Güç (W) |
+
+  - Model Serisi'nin değerleri her kategoride orada bulunan serilerdir
+    (Ultimate, Evomig, Force, Multicut, Y300). Şebeke Voltajı, Amper ve
+    Güç (W) değerleri ürünler kesinleşince girilecek.
+  - Çok Fonksiyonlu'nun filtreleri MIG'inkiyle aynıdır (sahibinin
+    listesinde bu ürünler MIG grubundaydı).
+  - Listedeki "Harici Çantalı" ile "Çantalı" aynıdır; "Çantalı" yazılır.
+    Yazım Türkçedir: Compact → Kompakt, Std → Standart.
+  - Y300'ün gücü (600 W / 1000 W) filtrede yoktur; ürünün seçeneği olarak
+    kalır.
+  - Filtreler kategoriye özeldir (Seçenek Tanımları gibi ortak değildir):
+    aynı adlı filtrenin değerleri kategoriye göre değişir (Çalışma Modu
+    TIG'de DC / AC/DC, MIG'de Standart / Puls). Filtreler ve ürünlerin
+    değerleri panelden yönetilir.
+  - Şimdilik yalnızca Model Serisi ürünlere eşlendi (ürün adının ilk
+    kelimesinden). Sahibinin listesinde olmayan beş Force ürünü (ForceArc
+    250, 280; ForceMIG 125, 185 MP, 205 DP) de Force sayıldı. Diğer
+    filtreler değerler kesinleşince eşlenecek.
+  - Hiçbir ürüne eşlenmemiş filtre sitede seçilebilir ama sonucu
+    daraltmaz (sahibinin isteği: "ne seçilirse seçilsin tam sonuç gelsin").
+- **Neden:** Sahibinin kararı; MMA, TIG ve lazer makinelerinde müşterinin
+  baktığı özellikler farklıdır (bkz. K-06).
+- **Ayrıntı:** [IS-KURALLARI.md](IS-KURALLARI.md) › 19,
+  [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md) › Kategori formu ›
+  Filtreler, [YAPILACAKLAR.md](YAPILACAKLAR.md) › Kategori filtreleri.
+
 ---
 
 ## 3. Ürün seçenekleri
@@ -720,7 +760,7 @@ Konuşulmuş ama kararı bekleyen ya da sonraya bırakılmış işler. Ayrıntı
 | **Teklif Al metinleri** | Sayfadaki metinler kurumsal müşteriye hitap ediyor; herkese hitap edecek şekilde yeniden yazılacak. Müdür kararı bekleniyor |
 | **Ürün Seçici ve arama** | Bütün ürünler kesinleşince, en son yeniden tasarlanacak (K-69); eski yöntem verisi o zaman silinecek |
 | **İlgili ürünler** | Öneri mantığı (sepet birlikteliği, aynı kategoride çok satanlar, makineye uygun aksesuarlar) sonra kurulacak |
-| **Kategori filtreleri** | Ürün listesi ve teknik özellikler kesinleşince her alt kategoriye kendi filtreleri |
+| **Kategori filtrelerinin değerleri** | Şebeke Voltajı, Amper ve Güç (W) değerleri ile Model Serisi dışındaki filtrelerin ürünlere eşlenmesi ürünler kesinleşince (K-76) |
 | **Çerez ayarları ve analitik** | Analiz aracı seçilince ayarlar penceresi doldurulacak |
 | **Barındırma yeri** | KVKK açısından sunucunun yeri BT ve hukukla birlikte seçilecek |
 | **Açık rıza ve yurt dışı aktarım** | Sunucu yeri belli olunca hukukçuyla netleşecek |
