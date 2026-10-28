@@ -790,4 +790,5 @@ Kompakt seçilse de liste değişmez.
 - Adresteki bilinmeyen filtre ve değer yok sayılır.
 - Arama motoruna sayfa filtresiz adresle bildirilir (standart adres).
 
-Kod: `packages/data/src/filters.ts`.
+Kod: `packages/data/src/filters.ts`; sayfada
+`apps/zenweld-web/src/components/product/CategoryListing.tsx`.

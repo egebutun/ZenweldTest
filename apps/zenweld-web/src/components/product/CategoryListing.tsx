@@ -1,8 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PackageOpen, SlidersHorizontal, X } from "lucide-react";
-import type { TopLevelSection } from "@zenweld/data";
+import {
+  applyFilterSelection,
+  filterFacets,
+  selectionFromQuery,
+  writeSelectionToQuery,
+  type FilterSelection,
+  type TopLevelSection,
+} from "@zenweld/data";
 import { listProducts, useDatabase, useNow } from "@zenweld/store";
 import { Button, EmptyState } from "@zenweld/ui";
 import { ProductGrid } from "./ProductGrid";
@@ -24,8 +31,9 @@ interface ListingProps {
 
 /**
  * Kategori sayfasi (/ekipmanlar/kaynak-makineleri/mma-...): kategorinin urunleri. Ayni
- * gruptaki diger kategoriler gosterilmez; her kategorinin ileride kendi
- * filtreleri olacak.
+ * gruptaki diger kategoriler gosterilmez; her kategorinin kendi filtreleri
+ * vardir (Category.filters). Filtre secimi adrese yazilir
+ * (?calisma-modu=puls); arama motoruna sayfa filtresiz adresle gider.
  */
 export function CategoryListing({ section, categorySlug }: ListingProps) {
   const t = useT();
@@ -33,6 +41,10 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
   const now = useNow();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  // Adresin sorgu kismi; secim bundan kategorinin filtrelerine gore okunur
+  // (panelde eklenen filtre tarayicidaki veri yuklenince taninir).
+  const [query, setQuery] = useState("");
+  useEffect(() => setQuery(window.location.search), []);
 
   const category = useMemo(
     () => db.categories.find((c) => c.slug === categorySlug),
@@ -44,8 +56,40 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
     [db, section, categorySlug],
   );
 
+  const categoryFilters = useMemo(() => category?.filters ?? [], [category]);
+  const selection = useMemo(
+    () => selectionFromQuery(new URLSearchParams(query), categoryFilters),
+    [query, categoryFilters],
+  );
+  const facets = useMemo(() => filterFacets(categoryFilters, scoped, selection), [categoryFilters, scoped, selection]);
+  const filtered = useMemo(
+    () => applyFilters(applyFilterSelection(scoped, categoryFilters, selection), filters, now),
+    [scoped, categoryFilters, selection, filters, now],
+  );
 
-  const filtered = useMemo(() => applyFilters(scoped, filters, now), [scoped, filters, now]);
+  // Secim adrese yazilir: link paylasilinca ve geri donulunce ayni secimle acilir.
+  const select = (next: FilterSelection) => {
+    const url = new URL(window.location.href);
+    url.search = writeSelectionToQuery(url.searchParams, next, categoryFilters).toString();
+    window.history.replaceState(null, "", url);
+    setQuery(url.search);
+  };
+  const toggleValue = (filterId: string, valueId: string) => {
+    const own = selection[filterId] ?? [];
+    select({ ...selection, [filterId]: own.includes(valueId) ? own.filter((v) => v !== valueId) : [...own, valueId] });
+  };
+  const clear = () => {
+    setFilters(DEFAULT_FILTERS);
+    select({});
+  };
+  const panelProps = {
+    value: filters,
+    onChange: setFilters,
+    resultCount: filtered.length,
+    facets,
+    onToggleValue: toggleValue,
+    onClear: clear,
+  };
 
   const title = category?.name ?? "";
   const description = category?.description ?? "";
@@ -81,11 +125,7 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
         <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
           <aside className="hidden lg:block">
             <div className="sticky top-24">
-              <ProductFilters
-                value={filters}
-                onChange={setFilters}
-                resultCount={filtered.length}
-              />
+              <ProductFilters {...panelProps} />
             </div>
           </aside>
 
@@ -94,6 +134,16 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
                 yerine durumu dogru anlatan mesaj. */}
             {scoped.length === 0 ? (
               <EmptyState icon={<PackageOpen size={40} />} title={t.nav.menuEmptyCategory} />
+            ) : filtered.length === 0 ? (
+              <EmptyState
+                icon={<SlidersHorizontal size={40} />}
+                title={t.filters.noMatch}
+                action={
+                  <Button variant="outline" onClick={clear}>
+                    {t.filters.clear}
+                  </Button>
+                }
+              />
             ) : (
               <ProductGrid products={filtered} />
             )}
@@ -116,11 +166,7 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
                 <X size={22} />
               </button>
             </div>
-            <ProductFilters
-              value={filters}
-              onChange={setFilters}
-              resultCount={filtered.length}
-            />
+            <ProductFilters {...panelProps} />
             <Button
               fullWidth
               className="mt-6"

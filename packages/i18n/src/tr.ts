@@ -674,6 +674,7 @@ export const tr = {
     sortNewest: "En yeniler",
     clear: "Filtreleri Temizle",
     productCount: "{count} ürün",
+    noMatch: "Seçtiğiniz filtrelere uyan ürün yok.",
   },
   returns: {
     title: "İade Talebi",

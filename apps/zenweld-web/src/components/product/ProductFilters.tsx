@@ -1,6 +1,6 @@
 "use client";
 
-import { byProductOrder, salePriceExVat, type Product } from "@zenweld/data";
+import { byProductOrder, salePriceExVat, type FilterFacet, type Product } from "@zenweld/data";
 import { useT } from "@/lib/i18n-client";
 import { Select } from "@zenweld/ui";
 
@@ -16,14 +16,26 @@ export const DEFAULT_FILTERS: FilterState = {
   maxPrice: null,
 };
 
+/**
+ * Kategori sayfasinin sol sutunu (telefonda Filtreler penceresi): siralama
+ * ve kategorinin filtreleri. Filtrelerin kurallari: packages/data/src/filters.ts.
+ */
 export function ProductFilters({
   value,
   onChange,
   resultCount,
+  facets,
+  onToggleValue,
+  onClear,
 }: {
   value: FilterState;
   onChange: (next: FilterState) => void;
   resultCount: number;
+  /** Kategorinin filtreleri (filterFacets); filtresiz kategoride bos */
+  facets: FilterFacet[];
+  onToggleValue: (filterId: string, valueId: string) => void;
+  /** Siralamayi ve filtre secimini sifirlar */
+  onClear: () => void;
 }) {
   const t = useT();
 
@@ -32,7 +44,7 @@ export function ProductFilters({
       <div className="flex items-center justify-between">
         <h3 className="font-display text-lg font-semibold uppercase">{t.filters.title}</h3>
         <button
-          onClick={() => onChange(DEFAULT_FILTERS)}
+          onClick={onClear}
           className="text-xs font-semibold uppercase text-zw-red-600 hover:underline"
         >
           {t.filters.clear}
@@ -54,6 +66,36 @@ export function ProductFilters({
           <option value="newest">{t.filters.sortNewest}</option>
         </Select>
       </div>
+
+      {facets.map((f) => (
+        <fieldset key={f.id}>
+          <legend className="mb-2 text-xs font-semibold uppercase tracking-wide text-zw-grey-600">{f.name}</legend>
+          <div className="space-y-1.5">
+            {f.values.map((v) => {
+              // Secilirse hic urun kalmayacak deger soluk; secili olan her zaman kaldirilabilir.
+              const disabled = v.count === 0 && !v.selected;
+              return (
+                <label
+                  key={v.id}
+                  className={`flex items-center gap-2 text-sm ${
+                    disabled ? "cursor-not-allowed text-zw-grey-400" : "cursor-pointer text-zw-ink"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 accent-zw-red-600"
+                    checked={v.selected}
+                    disabled={disabled}
+                    onChange={() => onToggleValue(f.id, v.id)}
+                  />
+                  <span>{v.label}</span>
+                  {v.count !== null && <span className="text-xs text-zw-grey-500">({v.count})</span>}
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+      ))}
 
 
       <div className="rounded-[4px] bg-zw-grey-50 px-3 py-2 text-sm text-zw-grey-600">

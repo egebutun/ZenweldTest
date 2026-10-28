@@ -84,21 +84,20 @@ teyit edilmeli). Yapılacaklar:
 
 ## Kategori filtreleri
 
-Ekipmanların 8 alt kategorisinin filtreleri ve değerleri panelde tanımlı;
-ürünlerin değerleri panelde işaretlenir (KARARLAR K-76, ADMIN-KULLANIM ›
-Kategori formu › Filtreler). Kalanlar:
+Ekipmanların 8 alt kategorisinin sayfasında filtreler var; filtreler ve
+ürünlerin değerleri panelden yönetilir (KARARLAR K-76, IS-KURALLARI › 19).
+Kalanlar:
 
-1. **Sitede gösterim:** Filtrelerin alt kategori sayfasında gösterilmesi
-   (masaüstünde sol sütun, telefonda Filtreler penceresi; seçim adrese
-   yazılır). Kurallar: [IS-KURALLARI.md](IS-KURALLARI.md) › 19.
-2. **Değerlerin girilmesi:** Şebeke Voltajı, Amper ve Güç (W) filtrelerinin
+1. **Değerlerin girilmesi:** Şebeke Voltajı, Amper ve Güç (W) filtrelerinin
    değerleri yok; ürünler kesinleşince sahibinden gelecek. Değeri olmayan
    filtre sitede görünmez.
-3. **Ürünlere eşleme:** Bugün yalnızca Model Serisi eşli. Çalışma Modu,
+2. **Ürünlere eşleme:** Bugün yalnızca Model Serisi eşli. Çalışma Modu,
    Fiziki Yapı, Lazer Tipi ve değeri girilecek filtreler ürünlere
    işaretlenecek (kategorinin Filtreler sekmesindeki tabloda toplu
-   yapılabilir). Eşlenmemiş filtre sitede sonucu daraltmaz.
-4. Diğer bölümlerin (Güvenlik, Aksesuarlar, Dolgu Metalleri) alt
+   yapılabilir). Eşlenmemiş filtre sitede sonucu daraltmaz; bir ürüne değer
+   işaretlenince o filtre değeri girilmemiş ürünleri eler, bu yüzden bir
+   filtrenin eşlemesi bütün ürünlerde birlikte tamamlanmalı.
+3. Diğer bölümlerin (Güvenlik, Aksesuarlar, Dolgu Metalleri) alt
    kategorilerine filtre isteniyorsa sahibinden değişkenler gelmeli; panelden
    eklenebilir.
 

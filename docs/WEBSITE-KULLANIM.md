@@ -220,7 +220,7 @@ Katalog dört seviyelidir: **bölüm › grup › kategori › ürün**.
 |---|---|---|
 | Bölüm | `/ekipmanlar`, `/guvenlik`, `/aksesuarlar`, `/dolgu-metalleri` | Bölümün grupları kart olarak |
 | Grup | `/ekipmanlar/kaynak-makineleri` | Grubun kategorileri kart olarak |
-| Kategori | `/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri` | Kategorinin ürünleri |
+| Kategori | `/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri` | Kategorinin ürünleri; varsa filtreleri |
 | Ürün | `/urun/<ürün-linki>` | Ürün sayfası (kısa ve kalıcı adres; ürün başka kategoriye taşınsa da değişmez) |
 
 Her seviyede üstte konum satırı (ör. Ekipmanlar › Kaynak Makineleri ›
@@ -258,11 +258,27 @@ Her seviyede üstte konum satırı (ör. Ekipmanlar › Kaynak Makineleri ›
     kampanya uygulanmış haliyle.
   - **İsme göre (A-Z):** Türkçe alfabe sırasıyla.
   - **En yeniler:** Ürünün eklenme tarihine göre.
+- **Filtreler** (filtresi olan kategoride; bugün ekipmanların 8 alt
+  kategorisi, KARARLAR K-76):
+  - Sıralamanın altında her filtre bir başlık (ör. "Model Serisi") ve
+    değerlerinin işaret kutularıdır, paneldeki sırayla.
+  - Değerin yanında, seçilirse kalacak ürün sayısı yazar ("Evomig (3)").
+    Sayısı 0 olan değer soluktur ve seçilemez; seçili değer her zaman
+    kaldırılabilir.
+  - Hiçbir ürüne eşlenmemiş filtrenin (bugün Çalışma Modu, Fiziki Yapı,
+    Lazer Tipi) değerleri sayısızdır; seçilebilir ama liste değişmez.
+  - Değeri olmayan filtre (bugün Şebeke Voltajı, Amper, Güç) görünmez.
+  - Seçim sayfa adresine yazılır (`?model-serisi=evomig&calisma-modu=puls`);
+    link paylaşılınca ya da ürün sayfasından geri dönülünce aynı seçimle
+    açılır. Kurallar: [IS-KURALLARI.md](IS-KURALLARI.md) › 19.
+  - Filtresi olmayan kategoride yalnızca sıralama vardır.
 - **Ürün sayısı ve sıfırlama:** "N ürün" yazar; **Filtreleri Temizle**
-  sıralamayı varsayılana döndürür.
-- **Telefonda:** Sıralama, "Filtreler (N)" düğmesiyle açılan bir pencerede
-  durur.
+  sıralamayı varsayılana döndürür ve filtre seçimini kaldırır.
+- **Telefonda:** Sıralama ve filtreler, "Filtreler (N)" düğmesiyle açılan
+  bir pencerede durur; penceredeki düğme "N ürün" yazar ve pencereyi kapatır.
 - **Boş kategori:** "Bu kategoriye henüz ürün eklenmedi." yazar.
+- **Filtreye uyan ürün yoksa:** "Seçtiğiniz filtrelere uyan ürün yok." ve
+  **Filtreleri Temizle** düğmesi.
 - **Tanıtım metni:** En altta "<Kategori> Hakkında", panelde yazıldıysa
   görünür.
 
@@ -1475,8 +1491,10 @@ Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 - **Yer tutucu metinler:** Anasayfadaki "Neden Zenweld?", ürünlerin Garanti
   sekmesi, Welders Club avantaj açıklamaları, boş Adreslerim açıklaması, yasal
   metinler ve örnek blog yazıları lorem ipsum'dur.
-- **Kategori filtreleri:** Kategori sayfasında bugün yalnızca sıralama var;
-  her kategorinin kendi filtreleri ileride eklenecek.
+- **Kategori filtreleri:** Şebeke Voltajı, Amper ve Güç (W) filtrelerinin
+  değerleri yok; Model Serisi dışındaki filtreler ürünlere eşlenmedi
+  (eşlenmemiş filtre sonucu daraltmaz). Değerler ürünler kesinleşince
+  girilecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Kategori filtreleri).
 - **Ürün Seçici ve kaynak yöntemi:** Ürün Seçici ve aramadaki yöntem
   eşleşmesi (MIG, TIG, MMA…) ürünlerdeki eski "kaynak yöntemi" bilgisine
   bakar. Bu alan panelin ürün formunda yok, bu yüzden panelden eklenen yeni

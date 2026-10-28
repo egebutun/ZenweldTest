@@ -138,6 +138,22 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       şeridi yoktur.
 - [ ] Kategoride "Önerilen" sıralama paneldeki Sıra numarasına göredir;
       eşit numaralar ada göre.
+- [ ] MIG kategorisinde solda Model Serisi (Ultimate (6), Evomig (3)),
+      Çalışma Modu ve Fiziki Yapı görünür; Şebeke Voltajı ve Amper görünmez.
+      Lazer Temizleme'de Fiziki Yapı ve Lazer Tipi görünür, Güç görünmez.
+- [ ] Evomig seçilince 3 ürün kalır ve adres `?model-serisi=evomig` olur;
+      Puls da seçilince liste değişmez (Çalışma Modu eşlenmemiş).
+- [ ] Panelde bir ürüne Fiziki Yapı: Kompakt işaretlenince sitede Kompakt
+      seçilince yalnızca o ürün kalır; diğer Fiziki Yapı değerleri (0) ve
+      soluk görünür.
+- [ ] Filtreli adres yeni sekmede aynı seçimle açılır; ürün sayfasından geri
+      dönülünce seçim korunur.
+- [ ] Uyan ürün yoksa "Seçtiğiniz filtrelere uyan ürün yok." ve **Filtreleri
+      Temizle** çıkar; Filtreleri Temizle seçimi ve sıralamayı sıfırlar,
+      adres filtresiz olur.
+- [ ] Telefonda filtreler "Filtreler (N)" penceresinde açılır.
+- [ ] Filtresi olmayan kategoride (ör. MIG Torçları) yalnızca sıralama
+      vardır.
 - [ ] `/ekipmanlar?grup=kaynak-makineleri` 404 verir.
 - [ ] Konum satırında (breadcrumb) her seviye tıklanabilir.
 - [ ] Kategori ve grup kartında görsel yoksa ilk ürünün fotoğrafı görünür
@@ -519,7 +535,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Tabloda bir ürüne değer işaretlenip kaydedilince ürünün Filtreler
       sekmesinde aynı değer işaretli görünür; tersi de geçerlidir.
 - [ ] Filtreye değer eklenince, adı düzeltilince ve sırası değişince
-      ürünün Filtreler sekmesinde de değişir; ürünlerde işaretli değer
+      sitede ve ürünün Filtreler sekmesinde de değişir; ürünlerde işaretli değer
       silinirken "N üründe işaretli" onayı çıkar ve kaydedince ürünlerden
       kalkar.
 - [ ] Aynı adla ikinci filtre ya da filtre içinde aynı değer kaydedilemez.

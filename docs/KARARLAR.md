@@ -267,6 +267,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Neden:** Sahibinin kararı; MMA, TIG ve lazer makinelerinde müşterinin
   baktığı özellikler farklıdır (bkz. K-06).
 - **Ayrıntı:** [IS-KURALLARI.md](IS-KURALLARI.md) › 19,
+  [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md) › Katalog,
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md) › Kategori formu ›
   Filtreler, [YAPILACAKLAR.md](YAPILACAKLAR.md) › Kategori filtreleri.
 
