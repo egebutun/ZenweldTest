@@ -123,6 +123,11 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       Kaynak Makineleri).
 - [ ] `/ekipmanlar/kaynak-makineleri` kategorileri **kartlarla** gösterir,
       ürün listelemez.
+- [ ] Aksesuarlar menüsünün ilk grubu **Lazer Aksesuarları**'dır; altında
+      Lazer Kaynak Kafaları, Lazer Temizleme Kafaları, Lazer Tel Sürme
+      Üniteleri, Lazer Sarf Malzemeleri ve Lazer Yedek Parçaları vardır.
+      Kartlarda sahibinin notlarından yazılan açıklama ve "0 ürün" görünür;
+      kategori sayfası "Bu kategoriye henüz ürün eklenmedi." yazar.
 - [ ] Ekipmanlar'da sahibinin listelerindeki 40 ürün vardır (MMA 6, TIG 8,
       MIG 9, Çok Fonksiyonlu 6, Plazma 4, Lazer Kaynak 1, Lazer Temizleme 3,
       Lazer Markalama 3). Lazer Kaynak'ta yalnızca Y300 QCW var (Jasic lazer

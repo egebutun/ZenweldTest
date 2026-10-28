@@ -55,11 +55,13 @@ export const categoryGroups: CategoryGroup[] = [
   { id: "g2.1", code: "2.1", slug: "kaynak-maskeleri", section: "guvenlik", name: "Kaynak Maskeleri", image: img("kaynak-maskeleri"), order: 1 },
   { id: "g2.2", code: "2.2", slug: "koruyucu-giyim", section: "guvenlik", name: "Koruyucu Giyim", image: img("koruyucu-giyim"), order: 2 },
 
-  { id: "g3.1", code: "3.1", slug: "mig-aksesuarlari", section: "aksesuarlar", name: "MIG Aksesuarları", image: img("mig-aksesuarlari"), order: 1 },
-  { id: "g3.2", code: "3.2", slug: "tig-aksesuarlari", section: "aksesuarlar", name: "TIG Aksesuarları", image: img("tig-aksesuarlari"), order: 2 },
-  { id: "g3.3", code: "3.3", slug: "mma-aksesuarlari", section: "aksesuarlar", name: "MMA Aksesuarları", image: img("mma-aksesuarlari"), order: 3 },
-  { id: "g3.4", code: "3.4", slug: "plazma-kesme-aksesuarlari", section: "aksesuarlar", name: "Plazma Kesme Aksesuarları", image: img("plazma-kesme-aksesuarlari"), order: 4 },
-  { id: "g3.5", code: "3.5", slug: "diger-aksesuarlar", section: "aksesuarlar", name: "Diğer Aksesuarlar", image: img("diger-aksesuarlar"), order: 5 },
+  // Sahibinin 2026-10-28 eki; kategori tablosunda numarasi yok (KARARLAR K-05 eki).
+  { id: "g3.0", slug: "lazer-aksesuarlari", section: "aksesuarlar", name: "Lazer Aksesuarları", order: 1 },
+  { id: "g3.1", code: "3.1", slug: "mig-aksesuarlari", section: "aksesuarlar", name: "MIG Aksesuarları", image: img("mig-aksesuarlari"), order: 2 },
+  { id: "g3.2", code: "3.2", slug: "tig-aksesuarlari", section: "aksesuarlar", name: "TIG Aksesuarları", image: img("tig-aksesuarlari"), order: 3 },
+  { id: "g3.3", code: "3.3", slug: "mma-aksesuarlari", section: "aksesuarlar", name: "MMA Aksesuarları", image: img("mma-aksesuarlari"), order: 4 },
+  { id: "g3.4", code: "3.4", slug: "plazma-kesme-aksesuarlari", section: "aksesuarlar", name: "Plazma Kesme Aksesuarları", image: img("plazma-kesme-aksesuarlari"), order: 5 },
+  { id: "g3.5", code: "3.5", slug: "diger-aksesuarlar", section: "aksesuarlar", name: "Diğer Aksesuarlar", image: img("diger-aksesuarlar"), order: 6 },
 
   { id: "g4.1", code: "4.1", slug: "mig-telleri", section: "dolgu-metalleri", name: "MIG Telleri", image: img("mig-telleri"), order: 1 },
   { id: "g4.2", code: "4.2", slug: "tig-telleri", section: "dolgu-metalleri", name: "TIG Telleri", image: img("tig-telleri"), order: 2 },
@@ -163,6 +165,34 @@ export const categories: Category[] = [
     image: img("kaynak-onlukleri"),
     name: "Kaynak Önlükleri",
     description: "Kıvılcım ve cürufa karşı vücudu koruyan deri önlükler.",
+  },
+  {
+    id: "c3.0.1", slug: "lazer-kaynak-kafalari", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 1,
+    name: "Lazer Kaynak Kafaları",
+    description:
+      "El tipi kaynak kafaları (27S gibi), otomasyon ve robot kafaları (25A gibi) ile kafa, kablo ve bağlantı elemanlarının birlikte satıldığı komple kafa setleri.",
+  },
+  {
+    id: "c3.0.2", slug: "lazer-temizleme-kafalari", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 2,
+    name: "Lazer Temizleme Kafaları",
+    description: "El tipi lazer temizleme kafaları ve setleri.",
+  },
+  {
+    id: "c3.0.3", slug: "lazer-tel-surme-uniteleri", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 3,
+    name: "Lazer Tel Sürme Üniteleri",
+    description: "Tek tel, çift tel ve üç tel sürme üniteleri ile tel sürme kabloları ve bağlantı parçaları.",
+  },
+  {
+    id: "c3.0.4", slug: "lazer-sarf-malzemeleri", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 4,
+    name: "Lazer Sarf Malzemeleri",
+    description:
+      "Sık değişen, stoktan satılan kalemler: koruyucu lensler (koruyucu camlar), kaynak nozulları, tel kılavuz uçları, conta ve O-ringler.",
+  },
+  {
+    id: "c3.0.5", slug: "lazer-yedek-parcalari", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 5,
+    name: "Lazer Yedek Parçaları",
+    description:
+      "Servis ve arıza nedeniyle değişen kalemler: odaklama ve kolimatör lensleri, lens tutucular ve kartuşlar, fiber kablolar, kafa içi kartlar, sensörler ve motorlar.",
   },
   {
     id: "c3.1.1", code: "3.1.1", slug: "mig-torclari", section: "aksesuarlar", group: "mig-aksesuarlari", order: 1,

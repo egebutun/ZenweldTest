@@ -84,10 +84,15 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 ## 2. Katalog ve ürün
 
 ### K-05 · Kategori ağacı
-- **Tarih:** 2026-10-02
+- **Tarih:** 2026-10-02 (ek: 2026-10-28)
 - **Karar:** Kategoriler Zenweld'in onaylı kategori ağacına göredir: 4 bölüm
   (Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri), 11 grup, 45
   kategori. Kategoride ürün olmak zorunda değildir.
+- **Ek (2026-10-28):** Aksesuarlar'ın ilk grubu olarak **Lazer
+  Aksesuarları** eklendi (12 grup, 50 kategori). Kategorileri: Lazer Kaynak
+  Kafaları, Lazer Temizleme Kafaları, Lazer Tel Sürme Üniteleri, Lazer Sarf
+  Malzemeleri, Lazer Yedek Parçaları. Açıklamaları sahibinin notlarından
+  yazıldı; henüz ürünleri yok. Kategori tablosunda numaraları yok.
 
 ### K-06 · Dört seviyeli katalog, kartlarla
 - **Tarih:** 2026-10-18
