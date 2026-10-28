@@ -24,7 +24,10 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | "Erişilebilirlik" bölümü |
 | Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil | "Görseller ve uzun listeler" bölümü |
 | Ürünlerin gerçek fotoğrafları | Fotoğrafların hazırlanması | "Ürün içeriği" 1 |
-| Ürünlerin teknik değerlerinin doğrulanması | Resmî katalog | "Ürün içeriği" 2 |
+| Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi | "Ürün içeriği" 2 |
+| Ekipmanların gerçek fiyatları ve seçenek fiyat farkları | Sahibinin göndermesi | "Ürün içeriği" 3 |
+| Ara paket uzunluklarının gerçek değerleri | Sahibinin göndermesi | "Ürün içeriği" 4 |
+| Jasic lazer kaynak ürünleri | Sahibinin seçenekleri ayrıntılı açıklaması | "Jasic lazer kaynak ürünleri" bölümü |
 | Sitenin tasarımı | Sahibi yapacak | "Sitenin tasarımı" bölümü |
 
 ## Müşterinin siparişi iptal etmesi — ileride düşünülecek
@@ -279,17 +282,54 @@ kaldırılmalı; yoksa Google bu metni Zenweld'in içeriği olarak listeler.
 
 ## Ürün içeriği — gerçek fotoğraflar ve teknik değerler
 
-1. **Fotoğraflar:** Örnek verideki 60 ürünün hepsi aynı Zenweld ürün
+Ekipmanlar'daki 35 ürün sahibinin listesinden (2026-10-27) girildi: ad, ürün
+kodu (SAP kodu), alt grup, garanti ve seçenekler gerçektir (KARARLAR K-71,
+K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler ›
+ürün; örnek veride `packages/data/src/seed/products.seed.ts` ("ORNEK" ve
+"TEMSILI" notları) (KARARLAR K-73).
+
+1. **Fotoğraflar:** Örnek verideki 83 ürünün hepsi aynı Zenweld ürün
    fotoğrafını kullanıyor
    (`apps/zenweld-web/public/images/products/zenweld-urun.webp`). Her ürünün
    kendi fotoğrafları panelden eklenmeli (Ürünler › ürün › Görseller);
-   seçenekli üründe seçeneğe özel fotoğraf da seçilebilir. Grup ve kategori
-   kart görselleri için: "Ürün grupları" 1.
-2. **Teknik değerler:** Amper, devrede kalma oranı, ağırlık gibi değerler
-   internetteki kaynaklardan derlendi ve yaklaşıktır
-   (`packages/data/src/seed/products.seed.ts`, `DOGRULANMALI` notları).
-   Resmî katalogla karşılaştırılıp panelden düzeltilmeli. Aynı dosyadaki
-   aksesuar kalemleri ve kampanyalar da örnek veridir.
+   seçenekli üründe kombinasyona özel fotoğraf da seçilebilir. Grup ve
+   kategori kart görselleri için: "Ürün grupları" 1.
+2. **Ekipmanların içeriği (örnek):** Kısa ve uzun açıklama (seçeneklerden
+   üretilen bir cümle ve lorem ipsum), teknik özellikler (yalnızca Marka,
+   Ürün Kodu, Ürün Türü), kutu içeriği (ana ünite, torç, kullanım kılavuzu),
+   öne çıkan özellikler (seçenekler ve garanti) ve kullanım kılavuzu
+   bağlantısı (`#`, hiçbir yere gitmiyor). Amper, devrede kalma, ağırlık gibi
+   teknik değerler bilerek uydurulmadı; gerçekleri girilmeli.
+3. **Fiyatlar (temsili):** Ekipmanların hepsi 999.999 ₺ + KDV (KDV dahil
+   1.199.998,80 ₺); seçenekler arasında fiyat farkı yok. Örnek siparişler,
+   panel grafikleri, kampanyalı ürünler ve bayi stok fiyatları da bu
+   fiyattan hesaplanıyor. Gerçek fiyatlar ve seçenek farkları (ör. su
+   soğutma, 8 m torç) gelince girilmeli.
+4. **Ara paket uzunlukları (temsili):** MIG makinelerinde 5 m ve 10 m.
+   Gerçek değerler gelince Seçenek Tanımları › Ara Paket Uzunluğu ve dört
+   makinenin (Ultimate 405 MTS, Ultimate 505 MTS, Evomig 405 P, Evomig 555 P)
+   kombinasyonları düzeltilmeli; kodların `-AP5M`, `-AP10M` kısmı da değişir.
+5. **Diğer bölümler:** Aksesuar, güvenlik ve dolgu metali ürünleri,
+   kampanyalar ve örnek yorumlar hâlâ örnek veridir.
+
+## Jasic lazer kaynak ürünleri — sahibi ayrıntılı açıklayacak
+
+Sahibinin 2026-10-27 listesinde Lazer Kaynak alt grubundaki 15 Jasic satırı
+(6 model) henüz girilmedi (KARARLAR K-74): LS-15000F (5 satır), LS-20000F
+(5), LS-30000D (2), ALS-40, LS-20000IV, LS-15000IV. Girerken netleşecekler:
+
+1. **Seçenekler:** Listede "Tel sürme ünitesi (tel sürmesiz / dahili / harici
+   tek tel / harici çift tel / harici üç tel / otomasyon)" ve "Torç tipi
+   (SUP23T / SUP27S / SUP32T / SUP26AS)" yazıyor; satırlar bunların karışımı
+   (ör. "tek tel sürmeli", "27S kafalı", "SUP26A otomasyon"). Hangi model
+   hangi kombinasyonlarla satılıyor ve kodları ne?
+2. "LS-20000F 25A Otomasyon Kafalı" satırındaki 25A, torç tipleri listesinde
+   yok.
+3. ALS-40, LS-20000IV ve LS-15000IV'ün tek satırı var ama seçenek yazısı da
+   var; seçenekleri var mı?
+4. Ad ve link: "Jasic LS-15000F Lazer Kaynak Makinesi" gibi (KARARLAR K-08
+   eki, K-71). Lazer Temizleme'deki Jasic LS-20000F / LS-30000D ile
+   karışmasın diye link `jasic-ls-20000f-lazer-kaynak` gibi olmalı.
 
 ## Sitenin tasarımı — sahibi yapacak
 
@@ -651,6 +691,12 @@ yapılmaz. O zaman karar verilecekler:
    lazer makinelerine uymuyor.
 4. Bu bilgilerin ürünlere panelden mi girileceği.
 
+**Kaynak yöntemi ve elektrik bilgisi:** Ürün Seçici bugün bu iki bilgiye
+bakıyor (1. adım malzeme → ürünün kaynak yöntemleri, 3. adım elektrik →
+teknik özelliklerde "3 faz"). 2026-10-28'de girilen gerçek ekipmanlara bu
+bilgiler bilerek girilmedi (KARARLAR K-73); bu yüzden Ürün Seçici şu an
+sonuç vermiyor. Ürün Seçici kurulurken ürünlere eklenecek.
+
 Bugünkü durum: Kaynak yöntemi etiketleri (MIG, TIG, MMA…) ürün formundan, ürün kartından ve
 kategori filtresinden kaldırıldı. Ürün Seçici soruları ve aramadaki yöntem
 eşleşmesi hâlâ ürünlerdeki eski `processes` verisine bakıyor; panelden eklenen
@@ -672,7 +718,8 @@ kullanılamayacağı değerlendirilsin.
 ## Ürün önerileri — ürün sayfasındaki "İlgili Ürünler" yeniden kurgulanacak
 
 Şu anki durum: aynı kategorideki ilk 4 ürün gösteriliyor, sıralama yok. Tek
-ürünlü kategoride bölüm hiç çıkmıyor (ör. Ultimate 250 MTC, Kaynak Eldiveni).
+ürünlü kategoride bölüm hiç çıkmıyor (ör. Y300 QCW Lazer Kaynak Makinesi, Pro
+Kaynak Eldiveni).
 Makine sayfasında aksesuar önerilmiyor
 (`apps/zenweld-web/src/app/(site)/urun/[slug]/ProductPageClient.tsx`).
 

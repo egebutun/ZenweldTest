@@ -174,6 +174,47 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   bütün ürünler belli olunca doğru kurulabilir.
 - **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün Seçici ve arama.
 
+### K-72 · Ürün kodu SAP kodudur; seçenek ve sayfa kodları
+- **Tarih:** 2026-10-28
+- **Karar:**
+  - Ürün kodu (SKU), şirketin SAP Business One sistemindeki kalem kodudur.
+    Ayrı bir model kodu kullanılmaz (panelde Model Kodu alanı boş kalır).
+  - Seçeneğin kodu SAP'ta yoksa SAP kodunun sonuna seçenek eklenerek
+    üretilir: torç uzunluğu `-4M`, ara paket uzunluğu `-AP10M` (ör.
+    `ZW30100000027-3M-AP5M`). Seçeneğin kendi SAP kodu varsa o kullanılır
+    (ör. Y300 QCW 600 W / 1000 W).
+  - Seçenekli ürünün sayfa kodu: ürün **tek** SAP kalemiyse (yalnızca torç
+    uzunluğu seçenekli) SAP kodu; **birden çok** SAP kalemiyse (soğutmaya ya
+    da güce göre) SAP'ta olmayan model kodu `ZW-<MODEL>` (ör.
+    `ZW-ULTIMATE-405-THP`).
+- **Neden:** Kodun SAP'takiyle aynı olması eşleştirmeyi kolaylaştırır;
+  e-ticarette yaygın yöntem budur. Birden çok SAP kalemini kapsayan sayfanın
+  kodu bir SAP kodu olsaydı, bayi dosyasında o kodla gelen stok ürünün bütün
+  seçeneklerinde (ör. su soğutmalılarda da) görünürdü.
+- **Açık konu:** Üretilen kodların SAP'ta açılıp açılmayacağı:
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün seçenekleri 7.
+
+### K-73 · Ekipmanlarda temsili fiyat ve örnek içerik
+- **Tarih:** 2026-10-28
+- **Karar:** Gerçek bilgiler gelene kadar:
+  - Ekipmanların fiyatı **999.999 ₺ + KDV**'dir (temsili); seçenekler
+    arasında fiyat farkı yoktur.
+  - MIG makinelerinin ara paket uzunlukları (5 m, 10 m) temsilidir.
+  - Açıklama, teknik özellikler, kutu içeriği, öne çıkan özellikler ve
+    kullanım kılavuzu bağlantısı örnektir; ürün fotoğrafı ortak fotoğraftır.
+  - Kaynak yöntemi ve elektrik bilgisi girilmez (Ürün Seçici en son, K-69).
+- **Neden:** Sahibinin kararı; gerçek bilgiler sonra gönderilecek. Ayrıntı:
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün içeriği.
+
+### K-74 · Jasic lazer kaynak ürünleri sonra eklenecek
+- **Tarih:** 2026-10-28
+- **Karar:** Lazer Kaynak'ta şimdilik yalnızca Y300 QCW vardır. Jasic lazer
+  kaynak makineleri, sahibi seçeneklerini ayrıntılı açıkladıktan sonra en
+  son eklenecek. Lazer Temizleme ve Lazer Markalama'daki Jasic ürünleri
+  girildi.
+- **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Jasic lazer kaynak
+  ürünleri.
+
 ---
 
 ## 3. Ürün seçenekleri

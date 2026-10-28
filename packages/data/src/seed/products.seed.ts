@@ -1,14 +1,5 @@
 import type { Product, ProductOptions, ProductVariant } from "../types";
 
-/**
- * Gercek Zenweld modelleri (zenweld.com ve yetkili bayi siteleri kaynakli).
- *
- * !! DOGRULANMALI !!
- * Teknik degerler arama sonuclarindan derlendi; resmi kataloga erisilemedigi
- * icin amper / devrede kalma / agirlik gibi degerler yaklasiktir.
- * Admin panel > Urunler > Duzenle ekranindan duzeltilebilir.
- */
-
 const now = "2026-09-16T08:00:00+03:00";
 
 /**
@@ -25,564 +16,215 @@ const PRODUCT_PHOTO = "/images/products/zenweld-urun.webp";
 
 const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
-export const products: Product[] = [
-  /* ------------------------------------------------------------ 1 */
-  {
-    id: "p-ultimate-250-mtc",
-    slug: "ultimate-250-mtc",
-    sku: "ZW-U250MTC",
-    name: "Ultimate 250 MTC",
-    modelCode: "Z05.02.25",
-    section: "ekipmanlar",
-    categorySlug: "cok-fonksiyonlu-kaynak-makineleri",
-    processes: ["MIG", "MAG", "TIG", "MMA", "MULTI"],
-    shortDescription: "D300 mm tel besleme ünitesi entegre, 250A gücünde monofaze multi-process inverter kaynak makinesi.",
-    description: "Ultimate 250 MTC, D300 mm tel besleme ünitesi entegre edilmiş, güvenilir monofaze inverter kaynak makinesidir. 250A gücü ile farklı malzeme ve uygulamalarda profesyonel kaynak imkânı sunar. Tek buton ile MIG, MMA veya TIG DC kaynak yöntemleri arasında geçiş yapılabilir. Karbon çelikleri, paslanmaz çelikler ve alüminyum alaşımları dâhil pek çok metalde kullanılabilir. Kutup değiştirme özelliği sayesinde özel alaşımlı tellerle (DCEN) çalışmaya olanak tanır. Hafif ve akıllı tasarımı, zorlu koşullarda dahi taşınabilir kullanım sağlar. Hafif sanayi, bakım-onarım hizmetleri, hobi kullanımı ve küçük atölye işletmeleri için uygundur.",
-    priceExVat: 41500,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "MIG / MAG / MMA / TIG DC" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kaynak Akım Aralığı", value: "30 – 250 A" },
-      { label: "Devrede Kalma (40°C)", value: "%60 @ 250 A" },
-      { label: "Tel Besleme", value: "Entegre, D300 mm makara" },
-      { label: "Tel Çapı", value: "0.8 – 1.2 mm" },
-      { label: "Kutup Değiştirme (DCEN)", value: "Var" },
-      { label: "Koruma Sınıfı", value: "IP21S" },
-      { label: "Ağırlık", value: "~ 24 kg" },
-    ],
-    inTheBox: [
-      "1 x Ultimate 250 MTC Ana Ünite",
-      "1 x 3 m MIG Torcu",
-      "1 x 3 m Şase Kablosu ve Pensesi",
-      "1 x 3 m Elektrot Pensesi",
-      "1 x Argon Regülatörü",
-      "1 x 1.8 m Gaz Hortumu",
-      "2 x 0.8-1.0 mm V Kanal Makara",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "Tek butonla MIG / MMA / TIG geçişi",
-      "Entegre D300 mm tel besleme ünitesi",
-      "DCEN kutup değiştirme özelliği",
-      "Monofaze şebekede 250 A performans",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+export const products: Product[] = [];
 
-  /* ------------------------------------------------------------ 2 */
-  {
-    id: "p-ultimate-255-mtc",
-    slug: "ultimate-255-mtc",
-    sku: "ZW-U255MTC",
-    name: "Ultimate 255 MTC",
-    modelCode: "Z05.02.55",
-    section: "ekipmanlar",
-    categorySlug: "mig-gazalti-kaynak-makineleri",
-    processes: ["MIG", "MAG", "MMA", "TIG"],
-    shortDescription: "Senkron kontrol panelli, 255A gücünde gazaltı kaynak makinesi. Ağır hizmet atölye kullanımı için.",
-    description: "Ultimate 255 MTC, senkron (synergic) kontrol paneli sayesinde tel çapı ve malzeme seçimine göre kaynak parametrelerini otomatik ayarlar. Yüksek devrede kalma oranıyla sürekli üretim yapan atölyeler için tasarlanmıştır. Karbon çeliği, paslanmaz ve alüminyum uygulamalarında istikrarlı ark sunar.",
-    priceExVat: 48900,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "MIG / MAG / MMA / TIG DC" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kaynak Akım Aralığı", value: "30 – 255 A" },
-      { label: "Devrede Kalma (40°C)", value: "%60 @ 255 A" },
-      { label: "Kontrol", value: "Senkron (Synergic)" },
-      { label: "Tel Çapı", value: "0.8 – 1.2 mm" },
-      { label: "Ağırlık", value: "~ 26 kg" },
-    ],
-    inTheBox: [
-      "1 x Ultimate 255 MTC Ana Ünite",
-      "1 x 3 m MIG Torcu",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Argon Regülatörü",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "Senkron kontrol paneli",
-      "Yüksek devrede kalma oranı",
-      "Alüminyum uyumlu tel besleme",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+/* ------------------------------------------------------------------ */
+/* EKIPMANLAR — GERCEK URUNLER (sahibinin listesi, 2026-10-27)          */
+/*                                                                     */
+/* Sahibinden gelen: ad, urun kodu (SAP kodu), alt grup, fiyat, garanti */
+/* ve secenekler. Ad ve link KARARLAR K-71'e gore yazildi.              */
+/*                                                                     */
+/* !! ORNEK — gercegiyle degistirilecek: kisa ve uzun aciklama, teknik  */
+/* ozellikler, kutu icerigi, one cikan ozellikler, kullanim kilavuzu    */
+/* linki ve fotograf. Fiyatlar TEMSILIDIR (999.999 TL + KDV); secenekler */
+/* arasinda fiyat farki yok. Ara paket uzunluklari (5 m, 10 m)          */
+/* temsilidir. Kaynak yontemi ve elektrik bilgisi bilerek girilmedi     */
+/* (Ürün Seçici en son kurulacak, KARARLAR K-69).                       */
+/* Ayrinti: docs/YAPILACAKLAR.md › Ürün içeriği; kodlar: KARARLAR K-72. */
+/*                                                                     */
+/* Lazer Kaynak'taki Jasic urunleri henuz eklenmedi (KARARLAR K-74).    */
+/* ------------------------------------------------------------------ */
 
-  /* ------------------------------------------------------------ 3 */
-  {
-    id: "p-ultimate-355-mtc",
-    slug: "ultimate-355-mtc",
-    sku: "ZW-U355MTC",
-    name: "Ultimate 355 MTC",
-    modelCode: "Z05.03.55",
-    section: "ekipmanlar",
-    categorySlug: "mig-gazalti-kaynak-makineleri",
-    processes: ["MIG", "MAG", "MMA"],
-    shortDescription: "Trifaze 355A gazaltı kaynak makinesi. Ağır sanayi ve sürekli üretim için endüstriyel çözüm.",
-    description: "Ultimate 355 MTC, trifaze şebekede 355A'e kadar kaynak akımı sunan endüstriyel sınıf bir gazaltı kaynak makinesidir. Ayrı tel besleme ünitesi ve uzatılabilir ara kablo seçeneğiyle büyük parçalarda çalışma kolaylığı sağlar. Ağır sanayi, çelik konstrüksiyon ve seri imalat uygulamaları için tasarlanmıştır.",
-    priceExVat: 96500,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "MIG / MAG / MMA" },
-      { label: "Şebeke Gerilimi", value: "380 V ± %15, 3 faz" },
-      { label: "Kaynak Akım Aralığı", value: "40 – 355 A" },
-      { label: "Devrede Kalma (40°C)", value: "%60 @ 355 A" },
-      { label: "Tel Besleme", value: "Ayrı ünite, 4 makaralı" },
-      { label: "Ağırlık", value: "~ 52 kg" },
-    ],
-    inTheBox: [
-      "1 x Ultimate 355 MTC Ana Ünite",
-      "1 x Tel Besleme Ünitesi",
-      "1 x 3 m MIG Torcu",
-      "1 x 5 m Ara Kablo Seti",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "Trifaze endüstriyel güç",
-      "Ayrı tel besleme ünitesi",
-      "Seri imalat için yüksek dayanım",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+/** Temsili fiyat (KDV haric); gercek fiyatlar gelince panelden degistirilir. */
+const REPRESENTATIVE_PRICE = 999_999;
 
-  /* ------------------------------------------------------------ 4 */
-  {
-    id: "p-ultimate-205-mte-pro",
-    slug: "ultimate-205-mte-pro",
-    sku: "ZW-U205MTE",
-    name: "Ultimate 205 MTE Pro",
-    modelCode: "Z05.02.05",
-    section: "ekipmanlar",
-    categorySlug: "mig-gazalti-kaynak-makineleri",
-    processes: ["MIG", "MAG", "MMA", "TIG"],
-    shortDescription: "Kompakt gövdeli, 200A sınıfı taşınabilir MIG kaynak makinesi. Servis ve saha işleri için ideal.",
-    description: "Ultimate 205 MTE Pro, kompakt gövdesi ve düşük ağırlığı ile saha ve servis işlerinde öne çıkan bir MIG kaynak makinesidir. Monofaze şebekede çalışır, D200 mm makara kullanır ve gazsız (özlü tel) kaynağa da uygundur. Bakım-onarım, oto sanayi ve hafif imalat uygulamaları için uygundur.",
-    priceExVat: 28900,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "MIG / MAG / MMA / TIG DC" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kaynak Akım Aralığı", value: "30 – 200 A" },
-      { label: "Makara Kapasitesi", value: "D200 mm" },
-      { label: "Gazsız Kaynak", value: "Destekler" },
-      { label: "Ağırlık", value: "~ 15 kg" },
-    ],
-    inTheBox: [
-      "1 x Ultimate 205 MTE Pro Ana Ünite",
-      "1 x 3 m MIG Torcu",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "15 kg kompakt gövde",
-      "Gazlı ve gazsız kaynak",
-      "Saha ve servis için taşınabilir",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+const TIG_TORCH = ["4-m", "8-m"];
+const MIG_TORCH = ["3-m", "4-m", "5-m"];
+/** TEMSILI: gercek ara paket uzunluklari gelince duzeltilecek. */
+const INTERCONNECT = ["5-m", "10-m"];
 
-  /* ------------------------------------------------------------ 5 */
-  {
-    id: "p-evomig-205-p",
-    slug: "evomig-205-p",
-    sku: "ZW-EVO205P",
-    name: "Evomig 205 P Pulse MIG",
-    modelCode: "Z06.02.05",
-    section: "ekipmanlar",
-    categorySlug: "mig-gazalti-kaynak-makineleri",
-    processes: ["PULSE", "MIG", "MAG", "TIG", "MMA", "MULTI"],
-    shortDescription: "Pulse ve Double Pulse destekli, renkli ekranlı sinerjik MIG kaynak makinesi. Alüminyumda üstün görünüm.",
-    description: "Evomig 205 P, pulse ve double pulse kaynak modları ile ince sacta çarpılmayı ve sıçrantıyı minimuma indirir. Renkli ekranlı sinerjik arayüzü sayesinde malzeme, tel çapı ve gaz seçimi yapıldığında tüm parametreler otomatik olarak ayarlanır. Özellikle alüminyum ve paslanmaz uygulamalarında dekoratif, pul pul kaynak dikişi elde edilir.",
-    priceExVat: 64900,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "Pulse MIG / Double Pulse / MIG / MAG / TIG / MMA" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kaynak Akım Aralığı", value: "30 – 200 A" },
-      { label: "Ekran", value: "Renkli TFT, sinerjik" },
-      { label: "Hafıza", value: "Kullanıcı program hafızası" },
-      { label: "Ağırlık", value: "~ 21 kg" },
-    ],
-    inTheBox: [
-      "1 x Evomig 205 P Ana Ünite",
-      "1 x 3 m MIG Torcu",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Argon Regülatörü",
-      "2 x U Kanal Alüminyum Makarası",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "Pulse ve Double Pulse modları",
-      "Renkli sinerjik ekran",
-      "Alüminyumda dekoratif dikiş",
-      "Minimum sıçrantı",
-    ],
-    quotable: true,
-    isNew: true,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+/** "4-m" -> "4M" (kodun sonuna eklenen kisim) */
+const codePart = (valueId: string) => valueId.replace(/-m$/, "M");
 
-  /* ------------------------------------------------------------ 6 */
-  {
-    id: "p-ultimate-205-acdc-tig",
-    slug: "ultimate-205-acdc-tig",
-    sku: "ZW-U205ACDC",
-    name: "Ultimate 205 AC/DC TIG",
-    modelCode: "Z04.02.05",
-    section: "ekipmanlar",
-    categorySlug: "tig-argon-kaynak-makineleri",
-    processes: ["TIG", "MMA"],
-    shortDescription: "AC/DC TIG kaynak makinesi. Alüminyum ve alaşımlarında hassas kaynak için pulse ve dalga formu kontrolü.",
-    description: "Ultimate 205 AC/DC TIG, alüminyum ve alaşımlarının kaynağı için AC modu, çelik ve paslanmaz için DC modu sunar. Ayarlanabilir AC frekansı, temizleme dengesi ve pulse fonksiyonu ile ince parçalarda dahi tam kontrol sağlar. HF ateşleme ve ayak pedalı desteği ile hassas işçilik gerektiren uygulamalar için tasarlanmıştır.",
-    priceExVat: 52900,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "AC/DC TIG / MMA" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kaynak Akım Aralığı", value: "10 – 200 A" },
-      { label: "AC Frekansı", value: "20 – 200 Hz" },
-      { label: "Temizleme Dengesi", value: "Ayarlanabilir" },
-      { label: "Ateşleme", value: "HF (Yüksek Frekans)" },
-      { label: "Pedal Desteği", value: "Var" },
-      { label: "Ağırlık", value: "~ 23 kg" },
-    ],
-    inTheBox: [
-      "1 x Ultimate 205 AC/DC Ana Ünite",
-      "1 x 4 m TIG Torcu (WP-26)",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Elektrot Pensesi",
-      "1 x Argon Regülatörü",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "AC modunda alüminyum kaynağı",
-      "Ayarlanabilir AC frekansı ve denge",
-      "Pulse TIG fonksiyonu",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+type MachineOptions =
+  /** Tek SAP kalemi; secenek yalnizca torc uzunlugu. Sayfa kodu = SAP kodu. */
+  | { torch: string[] }
+  /** Sogutmaya gore iki SAP kalemi; yaninda torc (ve ara paket) uzunlugu. */
+  | { cooling: { hava: string; su: string }; torch: string[]; interconnect?: string[] }
+  /** Her guc ayri SAP kalemi. */
+  | { power: Record<string, string> };
 
-  /* ------------------------------------------------------------ 7 */
-  {
-    id: "p-ultimate-th-200",
-    slug: "ultimate-th-200",
-    sku: "ZW-UTH200",
-    name: "Ultimate TH 200",
-    modelCode: "Z04.01.20",
-    section: "ekipmanlar",
-    categorySlug: "tig-argon-kaynak-makineleri",
-    processes: ["TIG", "MMA"],
-    shortDescription: "DC TIG / MMA inverter kaynak makinesi. HF ateşlemeli, hafif ve taşınabilir gövde.",
-    description: "Ultimate TH 200, çelik ve paslanmaz uygulamaları için DC TIG ve MMA kaynak yöntemlerini tek gövdede sunar. HF ateşleme sayesinde tungsten elektrot iş parçasına temas etmeden ark başlatılır; böylece kaynak bölgesinde kirlenme önlenir. Hafif yapısı ile saha ve bakım işlerinde rahat taşınır.",
-    priceExVat: 24500,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "DC TIG / MMA" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kaynak Akım Aralığı", value: "10 – 200 A" },
-      { label: "Ateşleme", value: "HF (Yüksek Frekans)" },
-      { label: "Devrede Kalma (40°C)", value: "%60 @ 200 A" },
-      { label: "Ağırlık", value: "~ 9 kg" },
-    ],
-    inTheBox: [
-      "1 x Ultimate TH 200 Ana Ünite",
-      "1 x 4 m TIG Torcu",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Elektrot Pensesi",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "9 kg ultra hafif gövde",
-      "HF ateşleme ile temiz ark başlangıcı",
-      "TIG ve MMA tek makinede",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+interface MachineSeed {
+  slug: string;
+  name: string;
+  categorySlug: string;
+  /** Seceneksiz ya da tek SAP kalemli urunde SAP kodu; birden cok SAP kalemlide bos (model kodu uretilir) */
+  sap?: string;
+  brand?: string;
+  options?: MachineOptions;
+}
 
-  /* ------------------------------------------------------------ 8 */
-  {
-    id: "p-arc-200",
-    slug: "arc-200",
-    sku: "ZW-ARC200",
-    name: "ARC 200",
-    modelCode: "Z03.01.15",
-    section: "ekipmanlar",
-    categorySlug: "mma-ortulu-elektrod-kaynak-makineleri",
-    processes: ["MMA"],
-    shortDescription: "200A örtülü elektrot (MMA) inverter kaynak makinesi. Dış mekan ve genel imalat için gaz gerektirmez.",
-    description: "Zenweld ARC 200, inverter teknolojisi sayesinde klasik trafolu makinelere göre çok daha hafif ve verimli çalışan bir örtülü elektrot kaynak makinesidir. Gaz kullanmadığı için açık havada ve rüzgârlı ortamlarda kaynak yapılabilir. Hot Start, Arc Force ve Anti-Stick fonksiyonları ile elektrot yapışmasını önler ve istikrarlı bir ark sağlar.",
-    priceExVat: 9900,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "MMA (Örtülü Elektrot)" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kaynak Akım Aralığı", value: "20 – 200 A" },
-      { label: "Elektrot Çapı", value: "2.0 – 4.0 mm" },
-      { label: "Fonksiyonlar", value: "Hot Start / Arc Force / Anti-Stick" },
-      { label: "Ağırlık", value: "~ 5 kg" },
-    ],
-    inTheBox: [
-      "1 x ARC 200 Ana Ünite",
-      "1 x Elektrot Pensesi ve Kablosu",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Taşıma Askısı",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "5 kg, tek elle taşınabilir",
-      "Gaz gerektirmez — dış mekan kaynağı",
-      "Hot Start / Arc Force / Anti-Stick",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+const MMA = "mma-ortulu-elektrod-kaynak-makineleri";
+const TIG = "tig-argon-kaynak-makineleri";
+const MIG = "mig-gazalti-kaynak-makineleri";
+const MULTI = "cok-fonksiyonlu-kaynak-makineleri";
+const PLASMA = "plazma-kesim-makineleri";
+const LASER_WELD = "lazer-kaynak-makineleri";
+const LASER_CLEAN = "lazer-temizleme";
+const LASER_MARK = "lazer-markalama";
 
-  /* ------------------------------------------------------------ 9 */
-  {
-    id: "p-arc-120",
-    slug: "arc-120",
-    sku: "ZW-ARC120",
-    name: "ARC 120",
-    modelCode: "Z03.01.12",
-    section: "ekipmanlar",
-    categorySlug: "mma-ortulu-elektrod-kaynak-makineleri",
-    processes: ["MMA"],
-    shortDescription: "Hobi ve bakım-onarım işleri için giriş seviyesi 120A örtülü elektrot inverter kaynak makinesi.",
-    description: "ARC 120, ev tipi şebekede rahatlıkla çalışan, hobi kullanıcıları ve küçük bakım-onarım işleri için tasarlanmış giriş seviyesi bir inverter kaynak makinesidir. Kompakt boyutu ve düşük ağırlığı ile alet çantasında taşınabilir.",
-    priceExVat: 5900,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "MMA (Örtülü Elektrot)" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kaynak Akım Aralığı", value: "20 – 120 A" },
-      { label: "Elektrot Çapı", value: "2.0 – 3.2 mm" },
-      { label: "Ağırlık", value: "~ 3.5 kg" },
-    ],
-    inTheBox: [
-      "1 x ARC 120 Ana Ünite",
-      "1 x Elektrot Pensesi ve Kablosu",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "Giriş seviyesi, ekonomik",
-      "3.5 kg kompakt gövde",
-      "Ev tipi şebekede çalışır",
-    ],
-    quotable: false,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+const machineSeeds: MachineSeed[] = [
+  { slug: "ultimate-255-mma", name: "Ultimate 255 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000001" },
+  { slug: "ultimate-405-cel-mma", name: "Ultimate 405 CEL MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000002" },
+  { slug: "forcearc-200-mma", name: "ForceArc 200 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000072" },
+  { slug: "forcearc-400-cel-mma", name: "ForceArc 400 CEL MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000076" },
 
-  /* ------------------------------------------------------------ 10 */
-  {
-    id: "p-ultimate-arc-200s",
-    slug: "ultimate-arc-200-s",
-    sku: "ZW-UARC200S",
-    name: "Ultimate ARC 200 S",
-    modelCode: "Z03.02.00",
-    section: "ekipmanlar",
-    categorySlug: "mma-ortulu-elektrod-kaynak-makineleri",
-    processes: ["MMA", "TIG"],
-    shortDescription: "Profesyonel kullanım için yüksek devrede kalma oranlı 200A MMA / Lift TIG kaynak makinesi.",
-    description: "Ultimate ARC 200 S, profesyonel kullanıcılar için yüksek devrede kalma oranı ve güçlendirilmiş soğutma sistemiyle geliştirilmiştir. Lift TIG özelliği sayesinde ek bir makineye ihtiyaç duymadan hassas TIG işleri de yapılabilir. Selülozik elektrotlarla boru kaynağına uygundur.",
-    priceExVat: 14900,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kaynak Yöntemi", value: "MMA / Lift TIG" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kaynak Akım Aralığı", value: "20 – 200 A" },
-      { label: "Devrede Kalma (40°C)", value: "%80 @ 200 A" },
-      { label: "Selülozik Elektrot", value: "Uygun" },
-      { label: "Ağırlık", value: "~ 7 kg" },
-    ],
-    inTheBox: [
-      "1 x Ultimate ARC 200 S Ana Ünite",
-      "1 x Elektrot Pensesi ve Kablosu",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Taşıma Askısı",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "%80 devrede kalma oranı",
-      "Lift TIG desteği",
-      "Selülozik elektrot uyumlu",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+  { slug: "ultimate-251-thp", name: "Ultimate 251 THP TIG Argon Kaynak Makinesi", categorySlug: TIG, sap: "ZW30100000010", options: { torch: TIG_TORCH } },
+  { slug: "ultimate-405-thp", name: "Ultimate 405 THP TIG Argon Kaynak Makinesi", categorySlug: TIG, options: { cooling: { hava: "ZW30100000011", su: "ZW30100000012" }, torch: TIG_TORCH } },
+  { slug: "ultimate-300-thp", name: "Ultimate 300 THP TIG Argon Kaynak Makinesi", categorySlug: TIG, options: { cooling: { hava: "ZW30100000013", su: "ZW30100000014" }, torch: TIG_TORCH } },
+  { slug: "ultimate-320-thp-ipanel", name: "Ultimate 320 THP iPanel TIG Argon Kaynak Makinesi", categorySlug: TIG, options: { cooling: { hava: "ZW30100000015", su: "ZW30100000016" }, torch: TIG_TORCH } },
+  { slug: "ultimate-205-ac-dc", name: "Ultimate 205 AC/DC TIG Argon Kaynak Makinesi", categorySlug: TIG, sap: "ZW30100000019", options: { torch: TIG_TORCH } },
+  { slug: "ultimate-320-ac-dc", name: "Ultimate 320 AC/DC TIG Argon Kaynak Makinesi", categorySlug: TIG, options: { cooling: { hava: "ZW30100000020", su: "ZW30100000021" }, torch: TIG_TORCH } },
+  { slug: "ultimate-400-ac-dc-ipanel", name: "Ultimate 400 AC/DC iPanel TIG Argon Kaynak Makinesi", categorySlug: TIG, options: { cooling: { hava: "ZW30100000022", su: "ZW30100000023" }, torch: TIG_TORCH } },
+  { slug: "forcetig-200", name: "ForceTIG 200 TIG Argon Kaynak Makinesi", categorySlug: TIG, sap: "ZW30100000073" },
 
-  /* ------------------------------------------------------------ 11 */
-  {
-    id: "p-multicut-40-cnc",
-    slug: "multicut-40-cnc",
-    sku: "ZW-MC40CNC",
-    name: "Multicut 40 CNC",
-    modelCode: "Z07.01.40",
-    section: "ekipmanlar",
-    categorySlug: "plazma-kesim-makineleri",
-    processes: ["PLAZMA"],
-    shortDescription: "Monofaze 40A plazma kesme makinesi. 14 mm temiz kesim, CNC bağlantı çıkışı ve PFC modülü.",
-    description: "Multicut 40 CNC, monofaze giriş gerilimi ile çalışan ve yüksek devrede kalma oranıyla maksimum 40 Amper'e kadar kesim yapabilen bir plazma kesme makinesidir. Otomasyon sistemlerine adapte edilebilen CNC bağlantı çıkışı bulunur. Yüksek frekanssız çalışma yöntemi ve koruma sistemi üst düzey güvenlik sağlar. IGBT teknolojisi üstün performanslı kesme arkı oluşturur; PFC modülü sayesinde düşük enerji tüketimi ve mükemmel kesme arkı kontrolü sunar. Karbon çeliği, galvanizli çelik, paslanmaz çelik, döküm malzemeler, alüminyum ve alaşımlarının kesiminde kullanılır. 14 mm temiz kesim ve 20 mm oluk açma performansına sahiptir.",
-    priceExVat: 32900,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kesme Yöntemi", value: "Plazma Kesme" },
-      { label: "Şebeke Gerilimi", value: "220 V ± %15, 1 faz" },
-      { label: "Kesme Akımı", value: "20 – 40 A" },
-      { label: "Temiz Kesim", value: "14 mm" },
-      { label: "Oluk Açma", value: "20 mm" },
-      { label: "CNC Çıkışı", value: "Var" },
-      { label: "Ateşleme", value: "Yüksek frekanssız (Blowback)" },
-      { label: "PFC Modülü", value: "Var" },
-      { label: "Ağırlık", value: "~ 12 kg" },
-    ],
-    inTheBox: [
-      "1 x Multicut 40 CNC Ana Ünite",
-      "1 x 6 m Plazma Torcu",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Hava Regülatörü ve Filtresi",
-      "5 x Yedek Elektrot ve Meme",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "14 mm temiz kesim performansı",
-      "Otomasyon için CNC bağlantı çıkışı",
-      "Yüksek frekanssız güvenli ateşleme",
-      "PFC ile düşük enerji tüketimi",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+  { slug: "ultimate-250-mtc", name: "Ultimate 250 MTC MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, sap: "ZW30100000024", options: { torch: MIG_TORCH } },
+  { slug: "ultimate-405-mts", name: "Ultimate 405 MTS MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, options: { cooling: { hava: "ZW30100000027", su: "ZW30100000028" }, torch: MIG_TORCH, interconnect: INTERCONNECT } },
+  { slug: "ultimate-505-mts", name: "Ultimate 505 MTS MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, options: { cooling: { hava: "ZW30100000030", su: "ZW30100000029" }, torch: MIG_TORCH, interconnect: INTERCONNECT } },
+  { slug: "ultimate-320-mtc-ipanel", name: "Ultimate 320 MTC iPanel MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, sap: "ZW30100000031", options: { torch: MIG_TORCH } },
+  { slug: "ultimate-255-mtc", name: "Ultimate 255 MTC MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, sap: "ZW30100000033", options: { torch: MIG_TORCH } },
+  { slug: "ultimate-355-mtc", name: "Ultimate 355 MTC MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, sap: "ZW30100000034", options: { torch: MIG_TORCH } },
+  { slug: "evomig-405-p", name: "Evomig 405 P MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, options: { cooling: { hava: "ZW30100000065", su: "ZW30100000035" }, torch: MIG_TORCH, interconnect: INTERCONNECT } },
+  { slug: "evomig-555-p", name: "Evomig 555 P MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, options: { cooling: { hava: "ZW30100000062", su: "ZW30100000038" }, torch: MIG_TORCH, interconnect: INTERCONNECT } },
+  { slug: "evomig-255-p", name: "Evomig 255 P MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, sap: "ZW30100000064", options: { torch: MIG_TORCH } },
+  { slug: "forcemig-200", name: "ForceMIG 200 MIG Gazaltı Kaynak Makinesi", categorySlug: MIG, sap: "ZW30100000074" },
 
-  /* ------------------------------------------------------------ 12 */
-  {
-    id: "p-multicut-60-s",
-    slug: "multicut-60-s",
-    sku: "ZW-MC60S",
-    name: "Multicut 60 S",
-    modelCode: "Z07.02.60",
-    section: "ekipmanlar",
-    categorySlug: "plazma-kesim-makineleri",
-    processes: ["PLAZMA"],
-    shortDescription: "Trifaze, kompakt ve taşınabilir 60A plazma kesme makinesi. 18 mm temiz kesim, 25 mm oluk açma.",
-    description: "Multicut 60 S, taşınabilir ve kompakt yapıda trifaze bir plazma kesme makinesidir. Merkezi bağlantı, yüksek frekanssız çalışma yöntemi ve koruma sistemi üst düzey güvenlik sağlar. 18 mm temiz kesim ve 25 mm oluk açma performansı sunar. Otomasyona uygun CNC bağlantı çıkışı bulunur.",
-    priceExVat: 58900,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: "Zenweld ürün görseli" }],
-    specs: [
-      { label: "Kesme Yöntemi", value: "Plazma Kesme" },
-      { label: "Şebeke Gerilimi", value: "380 V ± %15, 3 faz" },
-      { label: "Kesme Akımı", value: "20 – 60 A" },
-      { label: "Temiz Kesim", value: "18 mm" },
-      { label: "Oluk Açma", value: "25 mm" },
-      { label: "Torç Bağlantısı", value: "Merkezi bağlantı" },
-      { label: "CNC Çıkışı", value: "Var" },
-      { label: "Ağırlık", value: "~ 18 kg" },
-    ],
-    inTheBox: [
-      "1 x Multicut 60 S Ana Ünite",
-      "1 x 6 m Plazma Torcu (merkezi bağlantı)",
-      "1 x Şase Kablosu ve Pensesi",
-      "1 x Hava Regülatörü ve Filtresi",
-      "1 x Kullanım Kılavuzu",
-    ],
-    highlights: [
-      "18 mm temiz kesim / 25 mm oluk açma",
-      "Merkezi torç bağlantısı",
-      "Trifaze endüstriyel güç",
-    ],
-    quotable: true,
-    isNew: false,
-    manualUrl: "#",
-    warrantyMonths: 24,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  },
+  { slug: "ultimate-205-mte-pro", name: "Ultimate 205 MTE Pro Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: "ZW30100000032" },
+  { slug: "evomig-205-p", name: "Evomig 205 P Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: "ZW30100000037" },
+
+  { slug: "multicut-105-cnc", name: "Multicut 105 CNC Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000042" },
+  { slug: "multicut-85-cnc", name: "Multicut 85 CNC Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000043" },
+  { slug: "multicut-60-s", name: "Multicut 60 S Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000044" },
+  { slug: "forcecut-45", name: "ForceCut 45 Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000075" },
+
+  { slug: "y300-qcw", name: "Y300 QCW Lazer Kaynak Makinesi", categorySlug: LASER_WELD, options: { power: { "600-w": "ZW40100000113", "1000-w": "ZW40100000114" } } },
+
+  { slug: "jasic-ls-20000f-lazer-temizleme", name: "Jasic LS-20000F Lazer Temizleme Makinesi", categorySlug: LASER_CLEAN, sap: "ZW30100000059", brand: "Jasic" },
+  { slug: "jasic-ls-30000d-lazer-temizleme", name: "Jasic LS-30000D Lazer Temizleme Makinesi", categorySlug: LASER_CLEAN, sap: "ZW30100000071", brand: "Jasic" },
+  { slug: "jasic-300-w-puls-lazer-temizleme", name: "Jasic 300 W Portatif Puls Lazer Temizleme Makinesi", categorySlug: LASER_CLEAN, sap: "ZW40100000106", brand: "Jasic" },
+
+  { slug: "fc-50", name: "FC-50 Lazer Markalama Makinesi", categorySlug: LASER_MARK, sap: "ZW30100000056" },
+  { slug: "uv-5", name: "UV-5 Lazer Markalama Makinesi", categorySlug: LASER_MARK, sap: "ZW30100000057" },
+  { slug: "jasic-30-w-fiber-lazer-markalama", name: "Jasic 30 W Portatif Fiber Lazer Markalama Makinesi", categorySlug: LASER_MARK, sap: "ZW30100000066", brand: "Jasic" },
 ];
+
+/** Varyant: kimligi degerlerden (secenek sirasiyla), kodu SAP kodu + secenek. */
+function variant(optionIds: string[], valueIds: string[], sku: string): ProductVariant {
+  return {
+    id: valueIds.join("_"),
+    values: Object.fromEntries(optionIds.map((o, i) => [o, valueIds[i]])),
+    sku,
+    priceDeltaExVat: 0,
+  };
+}
+
+/**
+ * Seceneklerin kodlari (KARARLAR K-72): SAP kodunun sonuna torc uzunlugu
+ * ("-4M") ve ara paket uzunlugu ("-AP10M") eklenir. Tepe guc seceneklerinin
+ * kodlari SAP kodlaridir.
+ */
+function machineOptions(seed: MachineSeed): ProductOptions | undefined {
+  const o = seed.options;
+  if (!o) return undefined;
+  if ("power" in o) {
+    return { optionIds: ["tepe-guc"], variants: Object.entries(o.power).map(([w, sap]) => variant(["tepe-guc"], [w], sap)) };
+  }
+  if ("cooling" in o) {
+    const optionIds = ["sogutma", "torc-uzunlugu", ...(o.interconnect ? ["ara-paket-uzunlugu"] : [])];
+    const variants = (["hava", "su"] as const).flatMap((c) =>
+      o.torch.flatMap((t) =>
+        o.interconnect
+          ? o.interconnect.map((a) => variant(optionIds, [c, t, a], `${o.cooling[c]}-${codePart(t)}-AP${codePart(a)}`))
+          : [variant(optionIds, [c, t], `${o.cooling[c]}-${codePart(t)}`)],
+      ),
+    );
+    return { optionIds, variants };
+  }
+  return { optionIds: ["torc-uzunlugu"], variants: o.torch.map((t) => variant(["torc-uzunlugu"], [t], `${seed.sap}-${codePart(t)}`)) };
+}
+
+const TYPE_BY_CATEGORY: Record<string, string> = {
+  [MMA]: "MMA (örtülü elektrod) kaynak makinesi",
+  [TIG]: "TIG (argon) kaynak makinesi",
+  [MIG]: "MIG/MAG (gazaltı) kaynak makinesi",
+  [MULTI]: "çok fonksiyonlu kaynak makinesi",
+  [PLASMA]: "plazma kesme makinesi",
+  [LASER_WELD]: "lazer kaynak makinesi",
+  [LASER_CLEAN]: "lazer temizleme makinesi",
+  [LASER_MARK]: "lazer markalama makinesi",
+};
+
+/** Seceneklerin okunur hali: kisa aciklama ve one cikan ozellikler (ORNEK). */
+function optionPhrases(o: MachineOptions | undefined): string[] {
+  if (!o) return [];
+  // ["3-m", "4-m", "5-m"] -> "3, 4 ve 5 m"
+  const m = (list: string[]) => {
+    const n = list.map((x) => x.replace("-m", ""));
+    return `${n.length > 1 ? `${n.slice(0, -1).join(", ")} ve ${n[n.length - 1]}` : n[0]} m`;
+  };
+  if ("power" in o) return ["600 W ve 1000 W tepe güç seçenekleri"];
+  return [
+    ...("cooling" in o ? ["Hava ve su soğutma seçenekleri"] : []),
+    `${m(o.torch)} torç seçenekleri`,
+    ...("cooling" in o && o.interconnect ? [`${m(o.interconnect)} ara paket seçenekleri`] : []),
+  ];
+}
+
+machineSeeds.forEach((seed) => {
+  const brand = seed.brand ?? "Zenweld";
+  const options = machineOptions(seed);
+  // Birden cok SAP kalemli urunun sayfa kodu SAP'ta yoktur (KARARLAR K-72).
+  const sku = seed.sap ?? `ZW-${seed.slug.toUpperCase()}`;
+  const type = TYPE_BY_CATEGORY[seed.categorySlug];
+  const phrases = optionPhrases(seed.options);
+  // ORNEK icerik: gercek urun bilgileri gelince degistirilecek.
+  const short = `${brand} ${type}.${phrases.length ? ` ${phrases.join("; ")}.` : ""}`;
+  products.push({
+    id: `p-${seed.slug}`,
+    slug: seed.slug,
+    sku,
+    name: seed.name,
+    ...(seed.brand ? { brand: seed.brand } : {}),
+    section: "ekipmanlar",
+    categorySlug: seed.categorySlug,
+    processes: [],
+    shortDescription: short,
+    description: `${short} ${lorem}`,
+    priceExVat: REPRESENTATIVE_PRICE,
+    vatRate: 20,
+    currency: "TRY",
+    images: [{ url: PRODUCT_PHOTO, alt: seed.name }],
+    specs: [
+      { label: "Marka", value: brand },
+      { label: "Ürün Kodu", value: sku },
+      { label: "Ürün Türü", value: type.charAt(0).toLocaleUpperCase("tr") + type.slice(1) },
+    ],
+    inTheBox: [
+      "1 x Ana ünite",
+      ...(seed.options && !("power" in seed.options) ? ["1 x Torç (seçilen uzunlukta)"] : []),
+      "1 x Kullanım kılavuzu",
+    ],
+    highlights: [...phrases, "12 ay garanti", "Yetkili bayi ve servis ağı"].slice(0, 3),
+    ...(options ? { options } : {}),
+    quotable: true,
+    isNew: false,
+    manualUrl: "#",
+    warrantyMonths: 12,
+    createdAt: now,
+    updatedAt: now,
+    active: true,
+  });
+});
 
 /* ---------------------------------------------------------------- */
 /* Aksesuar / guvenlik / dolgu metali urunleri (placeholder icerik)  */
@@ -814,8 +456,8 @@ accessorySeeds.forEach((a, i) => {
 const HOT_SALE: Record<string, number> = {
   "ultimate-250-mtc": 12,
   "evomig-205-p": 15,
-  "arc-200": 20,
-  "multicut-40-cnc": 10,
+  "forcearc-200-mma": 20,
+  "multicut-85-cnc": 10,
   "mig-torcu-mb25": 18,
   "zenmask-auto-9000": 25,
   "gazalti-teli-sg2-08": 10,
@@ -830,9 +472,9 @@ const HOT_SALE: Record<string, number> = {
 const NEW_ARRIVALS = new Set([
   "evomig-205-p",
   "ultimate-205-mte-pro",
-  "ultimate-th-200",
-  "ultimate-arc-200-s",
-  "multicut-40-cnc",
+  "ultimate-251-thp",
+  "ultimate-255-mma",
+  "multicut-85-cnc",
   "zenmask-auto-9000",
   "zenmask-basic-500",
   "tig-torcu-wp26",
@@ -843,10 +485,11 @@ products.forEach((p) => {
   const percent = HOT_SALE[p.slug];
   if (percent) {
     // Urunde NORMAL fiyat saklanir, indirim gosterimde uygulanir.
-    // Yukaridaki fiyatlar musterinin odedigi (indirimli) tutarlar olarak
+    // Aksesuar fiyatlari musterinin odedigi (indirimli) tutarlar olarak
     // yazilmisti; ekranda ayni tutarlar gorunsun diye normal fiyat
-    // bunlardan geri hesaplanir.
-    p.priceExVat = Math.round(p.priceExVat / (1 - percent / 100) / 10) * 10;
+    // bunlardan geri hesaplanir. Ekipmanlarin temsili fiyati normal
+    // fiyattir, degismez.
+    if (p.section !== "ekipmanlar") p.priceExVat = Math.round(p.priceExVat / (1 - percent / 100) / 10) * 10;
     p.discount = { percent };
   }
 });

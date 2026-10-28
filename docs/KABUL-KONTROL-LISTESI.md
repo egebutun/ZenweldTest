@@ -123,6 +123,12 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       Kaynak Makineleri).
 - [ ] `/ekipmanlar/kaynak-makineleri` kategorileri **kartlarla** gösterir,
       ürün listelemez.
+- [ ] Ekipmanlar'da sahibinin listesindeki 35 ürün vardır (MMA 4, TIG 8,
+      MIG 10, Çok Fonksiyonlu 2, Plazma 4, Lazer Kaynak 1, Lazer Temizleme 3,
+      Lazer Markalama 3). Lazer Kaynak'ta yalnızca Y300 QCW var (Jasic lazer
+      kaynaklar sonra, KARARLAR K-74). Fiyatlar temsili: 999.999 ₺ + KDV.
+- [ ] Ürün adı model ve türü içerir (ör. "Ultimate 405 THP TIG Argon Kaynak
+      Makinesi"); Jasic ürünlerinin adında "Jasic" yazar.
 - [ ] Kategori sayfası ürünleri listeler; aynı gruptaki diğer kategorilerin
       şeridi yoktur.
 - [ ] Kategoride "Önerilen" sıralama paneldeki Sıra numarasına göredir;
@@ -167,18 +173,24 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Seçenek değişince "Stoktaki Bayileri Gör" ve online satıcılar o
       seçeneği stokta tutanlara göre değişir.
 
-**Birden çok seçenek** (panelden bir ürüne ikinci seçenek eklenerek; ör. MB-36
-MIG Torcu'na Soğutma: Hava / Su, Su · 3 m satılmıyor):
+**Birden çok seçenek** (Ultimate 405 THP ve Ultimate 405 MTS):
 
-- [ ] Her seçenek ayrı satırdır; seçenekler paneldeki sırayla, değerler
-      tanımdaki sırayla dizilir; ilk kombinasyon seçili gelir.
-- [ ] Hava · 3 m seçiliyken **Su** seçilince Su · 4 m'ye geçilir; 3 m kesik
-      çizgili ve soluk görünür.
-- [ ] Ürün kodu, fiyat ve Teknik Özellikler ("Soğutma: …", "Hortum Uzunluğu:
-      …") kombinasyona göre değişir; adres `?secenek=su-sogutmali_4-m` olur
-      ve bu link o kombinasyonla açılır.
-- [ ] Sepette ve teklif listesinde satır "Soğutma: Su Soğutmalı · Hortum
-      Uzunluğu: 4 m" yazar ve kombinasyonun kodunu gösterir.
+- [ ] Ultimate 405 THP'de Soğutma (Hava / Su) ve Torç Uzunluğu (4 m / 8 m)
+      ayrı satırdır; ilk kombinasyon Hava · 4 m seçili gelir, kod
+      **ZW30100000011-4M**.
+- [ ] **Su** ve **8 m** seçilince kod **ZW30100000012-8M**, adres
+      `?secenek=su_8-m`; Teknik Özellikler'de "Soğutma: Su Soğutmalı",
+      "Torç Uzunluğu: 8 m". Bu link o kombinasyonla açılır.
+- [ ] Ultimate 405 MTS'de üç seçenek (Soğutma, Torç Uzunluğu 3/4/5 m, Ara
+      Paket Uzunluğu 5/10 m); ör. Hava · 3 m · 5 m kodu
+      **ZW30100000027-3M-AP5M**.
+- [ ] Panelden bir kombinasyon çıkarılınca (ör. Su · 4 m) o değer diğer
+      seçimle birlikte kesik çizgili ve soluk görünür; seçilince satılan ilk
+      kombinasyona geçilir.
+- [ ] Sepette ve teklif listesinde satır "Soğutma: Su Soğutmalı · Torç
+      Uzunluğu: 8 m" yazar ve kombinasyonun kodunu gösterir.
+- [ ] Y300 QCW'de Tepe Güç seçenekleri: 600 W (**ZW40100000113**), 1000 W
+      (**ZW40100000114**).
 
 **Diğer:**
 
@@ -205,6 +217,8 @@ MIG Torcu'na Soğutma: Hava / Su, Su · 3 m satılmıyor):
 - [ ] Arama Türkçe karakter farkını gözetmez ("kaynak" / "KAYNAK").
 - [ ] Panelde ürüne yazılan anahtar kelimeyle ürün aramada bulunur.
 - [ ] Aramadaki fiyat ürünün kendi KDV oranıyla hesaplanır.
+- [ ] Seçenekli ürün kombinasyon koduyla bulunur (ör. `ZW30100000012` →
+      Ultimate 405 THP). Seçenekli ürünün kartında kod yazmaz.
 - [ ] Ürün Seçici açılır, üç soruyu sorar ve sonuç ekranına gelir.
       Sonuçların doğruluğu denenmez: sorular ve süzme mantığı bütün ürünler
       kesinleşince en son kurulacak ([KARARLAR.md](KARARLAR.md) K-69).

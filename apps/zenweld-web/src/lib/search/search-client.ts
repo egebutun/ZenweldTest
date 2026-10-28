@@ -81,7 +81,8 @@ export function buildDocuments(db: ZenweldDatabase): SearchDoc[] {
         // Paneldeki SEO sekmesinin anahtar kelimeleri
         p.seo?.keywords?.join(" ") ?? "",
       ].join(" "),
-      sku: p.sku,
+      // Seçenekli urun kombinasyon kodlariyla da bulunur (SAP kodu, ör. ZW30100000012).
+      sku: [p.sku, ...(p.options?.variants.map((v) => v.sku) ?? [])].join(" "),
       href: `/urun/${p.slug}`,
       image: p.images[0]?.url,
       // Sonuclarda musterinin odeyecegi (kampanyali, KDV dahil) fiyat gorunur.

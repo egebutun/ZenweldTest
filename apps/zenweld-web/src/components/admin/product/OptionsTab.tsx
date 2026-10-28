@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowUp, Plus, Trash2, X } from "lucide-react";
 import {
   MAX_PRODUCT_OPTIONS,
+  combinationLabel,
   normalizeCode,
   variantIdFor,
   type OptionDefinition,
@@ -177,7 +178,7 @@ export function OptionsTab({ draft, set }: ProductTabProps) {
   };
 
   const labelOf = (values: Record<string, string>) =>
-    defs.map((d) => d.values.find((x) => x.id === values[d.id])?.label ?? "?").join(" · ");
+    combinationLabel(defs.map((d) => ({ group: d.name, value: d.values.find((x) => x.id === values[d.id])?.label ?? "?" })));
   const rank = (values: Record<string, string>) =>
     defs.map((d) => d.values.findIndex((x) => x.id === values[d.id]));
   const byRank = (a: Record<string, string>, b: Record<string, string>) => {

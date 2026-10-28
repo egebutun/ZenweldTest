@@ -157,6 +157,12 @@ bir **varyanttır** (KARARLAR K-70).
 - Diğer seçeneklerdeki seçimle satılmayan değer soluk görünür ama seçilebilir.
 - Varyantlar önce birinci seçeneğin, sonra ikincisinin tanımdaki değer
   sırasıyla dizilir; "ilk varyant" bu sıradaki ilktir.
+- Kombinasyonun **kısa adı** (Teklif Al listesi, Stoktaki Bayileri Gör
+  başlığı, panelde kombinasyon kartı, stok ekranları ve stok şablonu)
+  değerlerden oluşur: "Su Soğutmalı · 8 m". Aynı birimle biten değerlerin
+  (iki uzunluk) önüne seçenek adı yazılır: "Hava Soğutmalı · Torç Uzunluğu
+  3 m · Ara Paket Uzunluğu 5 m". Sepette ve siparişte uzun ad yazar
+  ("Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m").
 
 **Örnek:** Soğutma × Torç Uzunluğu'nda Hava · 4 m, Hava · 8 m ve Su · 8 m
 satılıyor (Su · 4 m yok). Hava · 4 m seçiliyken Su seçilince Su · 8 m'ye

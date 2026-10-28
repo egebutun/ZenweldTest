@@ -23,7 +23,7 @@ export interface OptionGroupView {
 export interface VariantView extends ProductVariant {
   /** Secenek secenek degerler, urundeki secenek sirasiyla */
   parts: { groupId: string; group: string; valueId: string; value: string }[];
-  /** Kisa ad: "Su Soğutmalı · 8 m" (tek secenekte "8 m") */
+  /** Kisa ad: "Su Soğutmalı · 8 m" (tek secenekte "8 m"); bkz. combinationLabel */
   label: string;
   /** Uzun ad: "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m" */
   fullLabel: string;
@@ -33,6 +33,20 @@ export interface ProductOptionsView {
   groups: OptionGroupView[];
   /** Gecerli varyantlar; ilk secenegin deger sirasina, sonra ikincisininkine gore */
   variants: VariantView[];
+}
+
+/**
+ * Kombinasyonun kisa adi: degerler " · " ile. Ayni birimle biten degerlerin
+ * (iki uzunluk: "3 m" ve "5 m") hangi secenege ait oldugu anlasilsin diye
+ * onlarin onune secenek adi yazilir: "Hava Soğutmalı · Torç Uzunluğu 3 m ·
+ * Ara Paket Uzunluğu 5 m".
+ */
+export function combinationLabel(parts: { group: string; value: string }[]): string {
+  const unit = (value: string) => value.trim().split(/\s+/).pop() ?? "";
+  const units = parts.map((p) => unit(p.value));
+  return parts
+    .map((p, i) => (units.filter((u) => u === units[i]).length > 1 ? `${p.group} ${p.value}` : p.value))
+    .join(" · ");
 }
 
 /** Yeni varyantin kimligi: deger kimlikleri secenek sirasiyla ("su-sogutmali_8-m"). */
@@ -77,7 +91,7 @@ export function productOptionsView(
       return {
         ...v,
         parts,
-        label: parts.map((p) => p.value).join(" · "),
+        label: combinationLabel(parts),
         fullLabel: parts.map((p) => `${p.group}: ${p.value}`).join(" · "),
       };
     })

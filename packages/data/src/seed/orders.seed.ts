@@ -70,7 +70,7 @@ const card = (installments: number, last4: string, paidAt: string) => {
 
 const delivered = [item("zenmask-auto-9000", 1), item("gazalti-teli-sg2-08", 1)];
 const shipped = [item("evomig-205-p", 1), item("gazalti-teli-sg2-08", 4)];
-const preparing = [item("arc-200", 1)];
+const preparing = [item("forcearc-200-mma", 1)];
 
 const shippedTotals = totals(shipped);
 const shippedFee = Math.round(shippedTotals.total * 0.045);

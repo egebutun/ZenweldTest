@@ -32,7 +32,13 @@ export const quotes: Quote[] = [
     phone: "+90 533 222 22 22", taxNumber: "1234567890", city: "İstanbul",
     paymentPreference: "vadeli", termDays: 60,
     items: [
-      { productId: "p-ultimate-250-mtc", productName: "Ultimate 250 MTC", quantity: 4 },
+      {
+        productId: "p-ultimate-250-mtc",
+        productName: "Ultimate 250 MTC MIG Gazaltı Kaynak Makinesi",
+        sku: "ZW30100000024-3M",
+        variantLabel: "Torç Uzunluğu: 3 m",
+        quantity: 4,
+      },
       { productId: "p-zenmask-auto-9000", productName: "ZenMask Auto 9000", quantity: 8 },
     ],
     message: "Lorem ipsum dolor sit amet, teslimat Eylül sonuna kadar yapılabilir mi?",
@@ -45,7 +51,7 @@ export const quotes: Quote[] = [
     companyName: "Örnek Makina Ltd. Şti.", contactName: "Burak Şahin", email: "satinalma@ornekfirma.com",
     phone: "+90 535 333 33 33", taxNumber: "1122334455", city: "Bursa",
     paymentPreference: "cek",
-    items: [{ productId: "p-multicut-40-cnc", productName: "Multicut 40 CNC", quantity: 2 }],
+    items: [{ productId: "p-multicut-85-cnc", productName: "Multicut 85 CNC Plazma Kesme Makinesi", sku: "ZW30100000043", quantity: 2 }],
     message: "Lorem ipsum dolor sit amet.",
     createdAt: "2026-09-15T15:02:00+03:00", updatedAt: "2026-09-15T15:02:00+03:00",
   },
@@ -59,7 +65,7 @@ export const warranties: WarrantyRecord[] = [
     registeredAt: "2026-04-20T12:00:00+03:00", expiresAt: "2029-04-20", extended: true,
   },
   {
-    id: "w2", serialNumber: "ZWARC-2025-113407", categorySlug: "mma-ortulu-elektrod-kaynak-makineleri", productId: "p-arc-200",
+    id: "w2", serialNumber: "ZWARC-2025-113407", categorySlug: "mma-ortulu-elektrod-kaynak-makineleri", productId: "p-forcearc-200-mma",
     ownerName: "Zeynep Arslan", email: "hobi@demo.com", phone: "+90 536 444 44 44",
     city: "Ankara", postalCode: "06370", address: "Lorem Cad. No:3 Yenimahalle", sellerTaxNumber: "5556667778",
     registeredAt: "2025-12-05T09:20:00+03:00", expiresAt: "2027-12-05", extended: false,

@@ -4,6 +4,7 @@ import {
   applyDiscount,
   discountPercent,
   discountStatusOf,
+  combinationLabel,
   productOptionsView,
   salePriceExVat,
   validateDiscount,
@@ -195,6 +196,19 @@ describe("Birden çok seçenekli ürün", () => {
     // Su · 3 m yok: Su seçilince Su · 5 m'ye geçilir.
     expect(valueAvailable(view, hava3, cooling.id, "su")).toBe(false);
     expect(pickValue(view, hava3, cooling.id, "su")?.id).toBe("su_v5");
+  });
+
+  it("kısa ad değerlerden oluşur; aynı birimle biten değerlerin önüne seçenek adı yazılır", () => {
+    expect(combinationLabel([{ group: "Soğutma", value: "Su Soğutmalı" }, { group: "Torç Uzunluğu", value: "8 m" }])).toBe(
+      "Su Soğutmalı · 8 m",
+    );
+    expect(
+      combinationLabel([
+        { group: "Soğutma", value: "Hava Soğutmalı" },
+        { group: "Torç Uzunluğu", value: "3 m" },
+        { group: "Ara Paket Uzunluğu", value: "5 m" },
+      ]),
+    ).toBe("Hava Soğutmalı · Torç Uzunluğu 3 m · Ara Paket Uzunluğu 5 m");
   });
 
   it("en fazla 3 seçenek; her seçenekte değer olmalı; aynı kombinasyon iki kez olamaz", () => {

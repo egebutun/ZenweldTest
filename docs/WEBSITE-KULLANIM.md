@@ -290,7 +290,8 @@ Katalogda, anasayfa şeritlerinde, aramada, Ürün Seçici'de, favorilerde ve
   - Daha düşük kampanyada "%X indirim" yazar.
   - Panelde "Yeni ürün" işaretliyse "YENİ" yazar. Kampanyalı üründe de
     görünür.
-- **Ürün kodu ve adı:** Ad ürün sayfasına gider.
+- **Ürün kodu ve adı:** Ad ürün sayfasına gider. Seçenekli üründe kartta kod
+  yazmaz; kod seçilen kombinasyona göre ürün sayfasında görünür.
 - **Öne çıkan özellikler:** Panelde girilen ilk 3 özellik. Yer tutucu (lorem
   ipsum) metinler gösterilmez; hiç gerçek özellik yoksa kısa açıklama gösterilir.
 - **Fiyat:**
@@ -563,8 +564,9 @@ listelenir.
 
 **Arama kuralları:**
 
-- **Alan ağırlıkları:** Başlık ×4, ürün kodu ×3, alt başlık (kategori) ×2,
-  gövde ×1.
+- **Alan ağırlıkları:** Başlık ×4, ürün kodu ×3 (seçenekli üründe
+  kombinasyon kodları da; ör. `ZW30100000012` Ultimate 405 THP'yi bulur), alt
+  başlık (kategori) ×2, gövde ×1.
 - **Kelime başı eşleşmesi:** "pla" yazınca "Plazma" bulunur.
 - **Yazım hatası toleransı:** 3 harften uzun kelimelerde çalışır; "kanak
   makinesi" → Kaynak Makinesi.

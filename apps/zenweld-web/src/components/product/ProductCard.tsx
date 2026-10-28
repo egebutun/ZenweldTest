@@ -79,8 +79,10 @@ export function ProductCard({
       </Link>
 
       <div className={`flex flex-1 flex-col ${compact ? "p-3" : "p-4"}`}>
+        {/* Secenekli urunde kod secilen kombinasyona gore degisir; kartta yazmaz,
+            urun sayfasinda gorunur. Bos satir kart basliklarini hizali tutar. */}
         <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-zw-grey-500">
-          {product.sku}
+          {product.options?.variants.length ? "\u00a0" : product.sku}
         </div>
         <Link href={`/urun/${product.slug}`}>
           <h3

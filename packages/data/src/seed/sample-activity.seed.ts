@@ -14,9 +14,11 @@ import type {
   WarrantyRecord,
 } from "../types";
 import { salePriceExVat } from "../discount";
+import { productOptionsView } from "../variants";
 import { CARD_PROGRAMS, cardInstallments, installmentQuote, posCommission } from "../checkout";
 import { products } from "./products.seed";
 import { categories } from "./categories.seed";
+import { optionDefinitions } from "./options.seed";
 import { defaultSettings } from "./settings.seed";
 
 /**
@@ -169,13 +171,18 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
       ]);
       const pool = bySection(section).length ? bySection(section) : sellable;
       const p = pick(pool);
+      // Secenekli urunde satilan kombinasyonlardan biri: kodu ve secenek yazisi onunki.
+      const view = productOptionsView(p, optionDefinitions);
+      const variant = view ? pick(view.variants) : undefined;
       const qty = section === "dolgu-metalleri" ? between(1, 6) : section === "ekipmanlar" ? 1 : between(1, 3);
-      const unitPriceExVat = salePriceExVat(p);
-      const prev = lines.get(p.id);
-      lines.set(p.id, {
+      const unitPriceExVat = salePriceExVat({ ...p, priceExVat: p.priceExVat + (variant?.priceDeltaExVat ?? 0) });
+      const key = `${p.id}|${variant?.id ?? ""}`;
+      const prev = lines.get(key);
+      lines.set(key, {
         productId: p.id,
         productName: p.name,
-        sku: p.sku,
+        sku: variant?.sku ?? p.sku,
+        ...(variant ? { variantLabel: variant.fullLabel } : {}),
         quantity: (prev?.quantity ?? 0) + qty,
         unitPriceExVat,
         vatRate: p.vatRate,

@@ -238,7 +238,7 @@ yoksa önizleme boş çıkar.
 
 **Örnek ürün ve içerik fotoğrafları:**
 
-- **Ürünler:** Örnek verideki 60 ürünün hepsi depodaki tek bir Zenweld ürün
+- **Ürünler:** Örnek verideki 83 ürünün hepsi depodaki tek bir Zenweld ürün
   fotoğrafını kullanır
   (`apps/zenweld-web/public/images/products/zenweld-urun.webp`). Her ürünün
   kendi fotoğrafı panelden eklenmeli.

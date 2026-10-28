@@ -345,8 +345,8 @@ Her dosya kaynağın tam listesidir; hatalı yükleme geri alınabilir. Son 3 g�
 
 ```csv
 SKU;Ürün Adı;Adet;Fiyat;Link
-ZW-U250MTC;Ultimate 250 MTC;4;53.900,00;https://www.satici.com/urun/ultimate-250-mtc
-ZW-ARC200;ARC 200;12;12.450,00;https://www.satici.com/urun/arc-200
+ZW30100000024-3M;Ultimate 250 MTC MIG Gazaltı Kaynak Makinesi (3 m);4;1.185.000,00;https://www.satici.com/urun/ultimate-250-mtc
+ZW30100000072;ForceArc 200 MMA Elektrod Kaynak Makinesi;12;1.150.000,00;https://www.satici.com/urun/forcearc-200-mma
 ```
 
 Link sütunu yalnızca online satıcılarda ve online mağazası olan bayilerde okunur.
@@ -357,7 +357,7 @@ Dosya biçimi, kurallar ve backend'e geçiş (tablolar, API): [docs/STOK.md](doc
 
 ## Görseller
 
-- **Ürünler:** Örnek verideki 60 ürünün hepsi depodaki tek bir Zenweld ürün
+- **Ürünler:** Örnek verideki 83 ürünün hepsi depodaki tek bir Zenweld ürün
   fotoğrafını kullanır (`apps/zenweld-web/public/images/products/zenweld-urun.webp`).
   Her ürünün kendi fotoğrafı panelden eklenmelidir.
 - **Blog, haber, etkinlik, Hakkımızda, Welders Club:** Unsplash bağlantıları
@@ -385,9 +385,12 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
 2. **Veri gerçek bir veritabanına taşınmalı.** `packages/store/src/database.ts`
    içindeki okuma/yazma fonksiyonları değiştirilerek tüm uygulama aynı kalacak
    şekilde Supabase/Firebase/PostgreSQL'e bağlanabilir.
-3. **Ürün teknik verileri doğrulanmalı.** Amper, devrede kalma oranı ve ağırlık
-   gibi değerler internet kaynaklarından derlendi; `products.seed.ts` içinde
-   `DOGRULANMALI` notu bulunur. Resmî katalogla karşılaştırılmalıdır.
+3. **Ürün içeriği ve fiyatlar girilmeli.** Ekipmanlar'daki ürünlerin adı, kodu,
+   alt grubu, garantisi ve seçenekleri gerçektir; açıklama, teknik özellikler,
+   kutu içeriği ve fotoğraflar örnektir, fiyatlar temsilidir (999.999 ₺ + KDV).
+   Aksesuar kalemleri de örnektir (`products.seed.ts` içinde `ORNEK`,
+   `TEMSILI`, `DOGRULANMALI` notları). Ayrıntı:
+   [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Ürün içeriği.
 4. **Yasal metinler** (KVKK, gizlilik, iade, sözleşmeler…) şu an başlıkları
    hazır **taslaklardır**; hukuk danışmanının metinleriyle değiştirilmelidir.
 5. **Örnek satış hareketleri silinmeli:** Panel grafikleri için üretilen örnek

@@ -41,6 +41,7 @@ export const categories: Category[] = [
     image: img("lazer-kaynak-makineleri"),
     name: "Lazer Kaynak Makineleri",
     description: "Yüksek hızda, düşük ısı girdisiyle temiz ve ince dikişli kaynak.",
+    optionIds: ["tepe-guc"],
   },
   {
     id: "c1.1.2", code: "1.1.2", slug: "lazer-temizleme", section: "ekipmanlar", group: "lazer-makineleri", order: 2,
@@ -65,12 +66,14 @@ export const categories: Category[] = [
     image: img("tig-argon-kaynak-makineleri"),
     name: "TIG (GTAW) Argon Kaynak Makineleri",
     description: "Alüminyum dahil metallerde hassas kaynak işleri için ideal.",
+    optionIds: ["sogutma", "torc-uzunlugu"],
   },
   {
     id: "c1.2.3", code: "1.2.3", slug: "mig-gazalti-kaynak-makineleri", section: "ekipmanlar", group: "kaynak-makineleri", order: 3,
     image: img("mig-gazalti-kaynak-makineleri"),
     name: "MIG (GMAW) Gazaltı Kaynak Makineleri",
     description: "Araç panelinden metal imalatına kadar hızlı ve istikrarlı kaynak.",
+    optionIds: ["sogutma", "torc-uzunlugu", "ara-paket-uzunlugu"],
   },
   {
     id: "c1.2.4", code: "1.2.4", slug: "cok-fonksiyonlu-kaynak-makineleri", section: "ekipmanlar", group: "kaynak-makineleri", order: 4,
