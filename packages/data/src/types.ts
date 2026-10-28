@@ -163,6 +163,8 @@ export interface Product {
   name: string;
   /** Model kodu, orn. "Z03.01.15" */
   modelCode?: string;
+  /** Marka (orn. "Jasic"); bossa Zenweld. Arama motorlarina giden urun bilgisinde kullanilir. */
+  brand?: string;
   section: TopLevelSection;
   categorySlug: string;
   processes: WeldingProcess[];
@@ -217,7 +219,7 @@ export type PageSeoFields = Pick<SeoFields, "title" | "description">;
 
 /** Panelin SEO sekmesi: urun, blog yazisi, haber ve etkinlik. */
 export interface SeoFields {
-  /** Sayfa basligi (tam haliyle; bossa otomatik, orn. "Urun adi — Kategori | ZENWELD") */
+  /** Sayfa basligi (tam haliyle; bossa otomatik, orn. "Urun adi | ZENWELD") */
   title?: string;
   /** Arama sonucunda basligin altindaki aciklama (bossa kisa aciklama/ozet) */
   description?: string;

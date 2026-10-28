@@ -118,6 +118,7 @@ export function createProduct(partial: Partial<Product>): Product {
     active: partial.active ?? true,
     options: partial.options,
     modelCode: partial.modelCode,
+    brand: partial.brand,
     manualUrl: partial.manualUrl,
     seo: partial.seo,
   };

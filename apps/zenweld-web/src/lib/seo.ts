@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import {
   faqs,
   isDiscountActive,
+  productBrand,
   salePriceExVat,
   type BlogPost,
   type Category,
@@ -95,7 +96,7 @@ export function productJsonLd(
     sku: product.sku,
     mpn: product.modelCode ?? product.sku,
     image: product.images.map((img) => absoluteUrl(img.url)),
-    brand: { "@type": "Brand", name: "Zenweld" },
+    brand: { "@type": "Brand", name: productBrand(product) },
     category: category?.name,
     offers: {
       "@type": "Offer",
@@ -179,8 +180,12 @@ export function seoMetadata(seo: PageSeo): Pick<Metadata, "title" | "description
   };
 }
 
-export const productSeo = (product: Product, category?: Category) =>
-  pageSeo(product.seo, category ? `${product.name} — ${category.name}` : product.name, product.shortDescription);
+/**
+ * Urun sayfasinin otomatik basligi "<Urun adi> | ZENWELD": urun adi model ve
+ * turu icerir (KARARLAR K-71); kategori adi eklenmez, baslik Google'da
+ * kesilmesin.
+ */
+export const productSeo = (product: Product) => pageSeo(product.seo, product.name, product.shortDescription);
 
 export const blogPostSeo = (post: BlogPost) => pageSeo(post.seo, post.title, post.excerpt);
 

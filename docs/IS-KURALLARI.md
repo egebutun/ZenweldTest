@@ -562,7 +562,7 @@ benzersizdir.
 
 | Sayfa | Başlık boşsa | Açıklama boşsa |
 |---|---|---|
-| Ürün | "<Ürün adı> — <Kategori> \| ZENWELD" | Kısa açıklama |
+| Ürün | "<Ürün adı> \| ZENWELD" (kategori eklenmez; ad model ve türü içerir, KARARLAR K-71) | Kısa açıklama |
 | Kategori | "<Kategori> \| ZENWELD" | Kısa açıklama |
 | Grup | "<Grup> \| ZENWELD" | Grubun kısa açıklaması (boşsa kategori adlarından) |
 | Blog yazısı | "<Başlık> \| ZENWELD" | Özet |
@@ -575,6 +575,8 @@ benzersizdir.
 - Önerilen uzunluk: başlık 60, açıklama 160 karakter (aşınca uyarı, engel
   yok).
 - Anahtar kelimeler site içi aramada ve `keywords` etiketinde kullanılır.
+- Arama motorlarına giden ürün bilgisinde (yapısal veri ve `product:brand`)
+  marka, ürünün **Marka** alanıdır; boşsa Zenweld (KARARLAR K-08).
 
 **Arama motorlarına açıklık:**
 

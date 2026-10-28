@@ -204,6 +204,7 @@ Kategori ↔ tanım bağı (`category_options`) kategorinin `optionIds` alanıd�
 | `sku` | metin | Ürün kodu. Zorunlu; **tek kod havuzunda benzersiz** (bkz. [12](#12-kayıt-numaraları-ve-benzersiz-alanlar)) |
 | `name` | metin | Zorunlu; markasız ("Zenweld" yazılmaz) |
 | `modelCode` | metin? | Ör. "Z03.01.15" |
+| `brand` | metin? | Marka (ör. "Jasic"); boşsa Zenweld. Arama motorlarına giden ürün bilgisinde kullanılır |
 | `section` | bölüm | Kategorinin bölümü |
 | `categorySlug` | metin | Kategorinin linki |
 | `processes` | liste | Kaynak yöntemleri: `MIG`, `MAG`, `TIG`, `MMA`, `PULSE`, `PLAZMA`, `MULTI`. Ürün Seçici ve arama kullanır; panelde yok |

@@ -111,10 +111,32 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   değişmez.
 
 ### K-08 · Ürün adında marka yok
-- **Tarih:** 2026-10-20
+- **Tarih:** 2026-10-20 (ek: 2026-10-28)
 - **Karar:** Ürün adına "Zenweld" yazılmaz.
 - **Neden:** Sayfa başlığına "| ZENWELD" kendiliğinden eklenir; adda da
   olursa başlıkta iki kez yazar.
+- **Ek (2026-10-28):** Başka markanın ürününde marka adı adda kalır (ör.
+  "Jasic LS-20000F Lazer Temizleme Makinesi"); insanlar markayla arıyor.
+  Ürünün markası panelde **Marka** alanına yazılır (boşsa Zenweld); arama
+  motorlarına giden ürün bilgisinde bu marka kullanılır.
+
+### K-71 · Ürün adı model ve türü içerir; sayfa başlığında kategori yok
+- **Tarih:** 2026-10-28
+- **Karar:**
+  - Ekipmanlar ürünlerinin adı "model + ürün türü"dür; tür, Türkiye'de
+    aranan adıyla yazılır: "… TIG Argon Kaynak Makinesi", "… MIG Gazaltı
+    Kaynak Makinesi", "… MMA Elektrod Kaynak Makinesi", "… Çok Fonksiyonlu
+    Kaynak Makinesi", "… Plazma Kesme Makinesi", "… Lazer Kaynak /
+    Temizleme / Markalama Makinesi".
+  - Kartta, ürün sayfasında, sepette ve siparişte aynı ad görünür.
+  - Ürün sayfasının otomatik başlığı "<Ürün adı> | ZENWELD"dir; kategori
+    adı eklenmez (bütün ürünlerde).
+  - Ürün linki kısadır, model adından oluşur (ör. `/urun/ultimate-405-thp`).
+- **Neden:** Google başlığın yaklaşık ilk 60 karakterini gösterir; kategori
+  adı eklenince başlık kesiliyor ve "Kaynak Makinesi / Makineleri" tekrar
+  ediyordu. Ad hem model aramalarını ("405 THP") hem genel aramaları ("tig
+  kaynak makinesi", "argon kaynak makinesi") karşılar. Marka Google'da site
+  adı olarak ve başlığın sonunda görünür.
 
 ### K-09 · Kaynak yöntemi etiketleri kaldırıldı
 - **Tarih:** 2026-10-12

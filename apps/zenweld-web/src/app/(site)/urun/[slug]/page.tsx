@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { categories, products } from "@zenweld/data";
+import { categories, productBrand, products } from "@zenweld/data";
 import { JsonLd } from "@/components/common/JsonLd";
 import { catalogTrail } from "@/lib/catalog";
 import {
@@ -38,10 +38,9 @@ export async function generateMetadata({
     return { title: "Ürün bulunamadı" };
   }
 
-  const category = categories.find((c) => c.slug === product.categorySlug);
   // Panelin SEO sekmesi: ozel baslik tam haliyle kullanilir, bos alanlar
   // otomatik doldurulur.
-  const seo = productSeo(product, category);
+  const seo = productSeo(product);
   const description = seo.description;
   // Urunun fotografi yoksa paylasim karti olarak markali gorsel kullanilir.
   // Onceden 519 KB'lik dikey bir urun fotografi vardi; sosyal aglar bu
@@ -67,7 +66,7 @@ export async function generateMetadata({
       images: [image],
     },
     other: {
-      "product:brand": "Zenweld",
+      "product:brand": productBrand(product),
       "product:retailer_item_id": product.sku,
     },
   };

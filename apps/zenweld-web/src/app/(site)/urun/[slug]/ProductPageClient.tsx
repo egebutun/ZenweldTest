@@ -40,9 +40,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
   const product = useMemo(() => findProductBySlug(slug, db), [slug, db]);
   const moved = useMemo(() => (product ? undefined : movedProductPath(slug, db)), [product, slug, db]);
   useMovedRedirect(moved);
-  useSeoTitle(
-    product && productSeo(product, db.categories.find((c) => c.slug === product.categorySlug)).title,
-  );
+  useSeoTitle(product && productSeo(product).title);
 
   const view = useMemo(
     () => (product ? productOptionsView(product, db.optionDefinitions) : undefined),

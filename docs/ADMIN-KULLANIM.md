@@ -595,10 +595,13 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
 #### Temel Bilgiler
 
 - **Ürün Adı** (zorunlu): "Ürün adı zorunludur." Yeni üründe link addan
-  oluşur. Ada marka ("Zenweld") yazılmaz; sayfa başlığına "| ZENWELD"
-  kendiliğinden eklenir.
+  oluşur. Ada "Zenweld" yazılmaz; sayfa başlığına "| ZENWELD"
+  kendiliğinden eklenir. Başka markanın ürününde marka adda kalır (ör.
+  "Jasic …"). Ad model ve türü içerir (KARARLAR K-71).
 - **Ürün Kodu (SKU)** (zorunlu).
 - **Model Kodu.**
+- **Marka:** Kutuda "Zenweld" ipucu; altında "Boşsa Zenweld; arama
+  motorlarına bu marka gider". Başka markanın ürününde (ör. Jasic) yazılır.
 - **Garanti (ay).**
 - **Bölüm:** Değişince bölümün ilk kategorisi seçilir.
 - **Kategori:** Yalnızca seçili bölümün kategorileri.
@@ -786,7 +789,7 @@ online satıcılar, ortak yorumlar):
 - [Ortak SEO sekmesi](#2-ortak-davranışlar); link `/urun/<link>`.
 - Başka ürün aynı linki kullanıyorsa: ""<link>" adresi "<ad>" ürününde
   kullanılıyor."
-- Sayfa Başlığı boşsa "Ürün adı — Kategori | ZENWELD" kullanılır.
+- Sayfa Başlığı boşsa "Ürün adı | ZENWELD" kullanılır (kategori eklenmez).
 - Açıklama boşsa ürünün kısa açıklaması kullanılır.
 - Anahtar kelimeler site içi aramada işe yarar; Google bu etiketi sıralamada
   kullanmaz. Görünürlüğü asıl belirleyen başlık, açıklama ve sayfa içeriğidir.

@@ -110,7 +110,7 @@ export function ProductForm({ product }: { product?: Product }) {
           {...storedLinks("/urun", product && db.products.find((x) => x.id === product.id))}
           value={draft.seo}
           onChange={(seo) => form.set("seo", seo)}
-          compute={(seo) => productSeo({ ...draft, seo }, db.categories.find((c) => c.slug === draft.categorySlug))}
+          compute={(seo) => productSeo({ ...draft, seo })}
           descriptionFallback="ürünün kısa açıklaması"
         />
       )}

@@ -17,6 +17,14 @@ export function categoryHref(category: Pick<Category, "section" | "group" | "slu
   return `/${category.section}/${category.group}/${category.slug}`;
 }
 
+/** Markasi yazilmamis urunun markasi. */
+export const DEFAULT_BRAND = "Zenweld";
+
+/** Urunun markasi: panelde yazilan, bossa Zenweld. */
+export function productBrand(product: Pick<Product, "brand">): string {
+  return product.brand?.trim() || DEFAULT_BRAND;
+}
+
 /** Kategori icindeki "Önerilen" sira: Sıra numarasi kucuk olan once, esitse ada gore. */
 export function byProductOrder(a: Pick<Product, "order" | "name">, b: Pick<Product, "order" | "name">): number {
   return (a.order ?? Infinity) - (b.order ?? Infinity) || a.name.localeCompare(b.name, "tr");

@@ -365,8 +365,10 @@ MIG Torcu'na Soğutma: Hava / Su, Su · 3 m satılmıyor):
 
 ## 14. Arama motorları ve adresler
 
-- [ ] Sayfa başlıkları "<sayfa> | ZENWELD" biçimindedir; ürün "<ad> —
-      <kategori> | ZENWELD".
+- [ ] Sayfa başlıkları "<sayfa> | ZENWELD" biçimindedir; ürün de "<ad> |
+      ZENWELD" (kategori eklenmez).
+- [ ] Panelde ürüne Marka yazılınca (ör. Jasic) sayfa kaynağındaki ürün
+      bilgisinde (`"brand"` ve `product:brand`) o marka, boşsa Zenweld yazar.
 - [ ] Demo adresinde ve yerel bilgisayarda her sayfada "noindex" vardır;
       `robots.txt` site haritasını bildirmez.
 - [ ] `robots.txt` yalnızca `/api/` kapatır.

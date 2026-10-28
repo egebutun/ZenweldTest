@@ -1,6 +1,6 @@
 "use client";
 
-import type { TopLevelSection } from "@zenweld/data";
+import { DEFAULT_BRAND, type TopLevelSection } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { Checkbox, FormRow, Input, Select } from "@zenweld/ui";
 import { priceWithVat, slugify } from "@zenweld/utils";
@@ -15,7 +15,7 @@ const SECTIONS: { id: TopLevelSection; label: string }[] = [
   { id: "dolgu-metalleri", label: "Dolgu Metalleri" },
 ];
 
-/** Temel Bilgiler sekmesi: ad, kodlar, bolum/kategori, fiyat, kampanya, durum. */
+/** Temel Bilgiler sekmesi: ad, kodlar, marka, bolum/kategori, fiyat, kampanya, durum. */
 export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolean }) {
   const { draft, set, setDraft } = props;
   const db = useDatabase();
@@ -35,7 +35,7 @@ export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolea
         />
       </FormRow>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <FormRow label="Ürün Kodu (SKU)" required>
           <Input required value={draft.sku} onChange={(e) => set("sku", e.target.value)} />
         </FormRow>
@@ -43,6 +43,13 @@ export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolea
           <Input
             value={draft.modelCode ?? ""}
             onChange={(e) => set("modelCode", e.target.value)}
+          />
+        </FormRow>
+        <FormRow label="Marka" hint={`Boşsa ${DEFAULT_BRAND}; arama motorlarına bu marka gider`}>
+          <Input
+            value={draft.brand ?? ""}
+            placeholder={DEFAULT_BRAND}
+            onChange={(e) => set("brand", e.target.value)}
           />
         </FormRow>
         <FormRow label="Garanti (ay)">

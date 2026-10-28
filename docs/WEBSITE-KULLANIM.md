@@ -449,14 +449,14 @@ Yalnızca ürün sayfalarında, sağ altta bir düğme olarak durur.
 
 ### Arama motoru bilgileri
 
-- **Sayfa başlığı:** Panelin SEO sekmesinden gelir; boşsa "<Ürün adı> —
-  <Kategori> | ZENWELD".
+- **Sayfa başlığı:** Panelin SEO sekmesinden gelir; boşsa "<Ürün adı> |
+  ZENWELD" (kategori eklenmez).
 - **Açıklama:** SEO sekmesinden gelir; boşsa kısa açıklama.
 - **Paylaşım önizlemesi:** Ürünün ilk görseliyle (yoksa marka görseliyle)
   hazırlanır.
-- **Yapısal veri:** Google'a ürün bilgileri bildirilir: KDV dahil kampanyalı
-  fiyat ve kampanya bitişi, "stokta", "yeni ürün", teknik özellikler, konum
-  satırı.
+- **Yapısal veri:** Google'a ürün bilgileri bildirilir: marka (ürünün Marka
+  alanı, boşsa Zenweld), KDV dahil kampanyalı fiyat ve kampanya bitişi,
+  "stokta", "yeni ürün", teknik özellikler, konum satırı.
 - **Asıl adres (canonical):** `/urun/<link>`; seçenek linkleri ayrı sayfa
   sayılmaz.
 
