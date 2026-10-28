@@ -1492,7 +1492,7 @@ Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 - **Yer tutucu metinler:** Anasayfadaki "Neden Zenweld?", ürünlerin Garanti
   sekmesi, Welders Club avantaj açıklamaları, boş Adreslerim açıklaması, yasal
   metinler ve örnek blog yazıları lorem ipsum'dur.
-- **Ürün fotoğrafları:** Ekipmanlardan 20 ürünün fotoğrafı yok ve 5
+- **Ürün fotoğrafları:** Ekipmanlardan 18 ürünün fotoğrafı yok ve 4
   soğutmalı üründe bir soğutma halinin fotoğrafı eksik; bunlarda alt
   kategorinin kart çizimi görünür (KARARLAR K-77,
   [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları). Diğer bölümlerin

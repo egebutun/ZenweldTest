@@ -92,11 +92,13 @@ const MACHINE_PHOTOS = new Set([
   "ultimate-320-thp-ipanel-su-sogutmali",
   "ultimate-205-ac-dc",
   "ultimate-320-ac-dc-hava-sogutmali",
+  "ultimate-320-ac-dc-su-sogutmali",
   "ultimate-400-ac-dc-ipanel-hava-sogutmali",
   "ultimate-400-ac-dc-ipanel-su-sogutmali",
   "ultimate-405-mts-hava-sogutmali",
   "ultimate-405-mts-su-sogutmali",
   "ultimate-505-mts-su-sogutmali",
+  "ultimate-250-mtc",
   "ultimate-320-mtc-ipanel",
   "ultimate-255-mtc",
   "ultimate-355-mtc",
@@ -107,6 +109,7 @@ const MACHINE_PHOTOS = new Set([
   "multicut-105-cnc",
   "multicut-85-cnc",
   "multicut-60-s",
+  "jasic-ls-20000f-lazer-temizleme",
 ]);
 
 const COOLING_LABELS = { hava: "Hava Soğutmalı", su: "Su Soğutmalı" } as const;
