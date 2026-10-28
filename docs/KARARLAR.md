@@ -208,10 +208,10 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 
 ### K-74 · Jasic lazer kaynak ürünleri sonra eklenecek
 - **Tarih:** 2026-10-28
-- **Karar:** Lazer Kaynak'ta şimdilik yalnızca Y300 QCW vardır. Jasic lazer
-  kaynak makineleri, sahibi seçeneklerini ayrıntılı açıkladıktan sonra en
-  son eklenecek. Lazer Temizleme ve Lazer Markalama'daki Jasic ürünleri
-  girildi.
+- **Karar:** Lazer Kaynak'ta şimdilik yalnızca Y300 QCW vardır. Sahibinin
+  2026-10-27 listesindeki Jasic lazer kaynak makineleri sonra (belki çok
+  sonra), sahibi seçeneklerini ayrıntılı açıkladığında eklenecek. Lazer
+  Temizleme ve Lazer Markalama'daki Jasic ürünleri girildi.
 - **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Jasic lazer kaynak
   ürünleri.
 
@@ -246,7 +246,9 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Tarih:** 2026-10-28
 - **Karar:**
   - Bir ürün en fazla 3 seçenek kullanır (ör. Soğutma: Hava / Su ve Torç
-    Uzunluğu: 4 m / 8 m).
+    Uzunluğu: 4 m / 8 m). Sınırı geliştirici önerdi (seçenek sayısı arttıkça
+    kombinasyon ve kod sayısı katlanarak büyür); sahibi 2026-10-28'de
+    onayladı.
   - Satılan her kombinasyon (ör. Su Soğutmalı · 8 m) bir varyanttır: kendi
     ürün kodu (zorunlu, K-18), fiyat farkı, fotoğrafı, farklı teknik değerleri
     ve kutu içeriği olur. Satılmayan kombinasyonun varyantı yoktur; sitede

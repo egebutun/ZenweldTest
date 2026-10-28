@@ -27,7 +27,7 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi | "Ürün içeriği" 2 |
 | Ekipmanların gerçek fiyatları ve seçenek fiyat farkları | Sahibinin göndermesi | "Ürün içeriği" 3 |
 | Ara paket uzunluklarının gerçek değerleri | Sahibinin göndermesi | "Ürün içeriği" 4 |
-| Jasic lazer kaynak ürünleri | Sahibinin seçenekleri ayrıntılı açıklaması | "Jasic lazer kaynak ürünleri" bölümü |
+| Jasic lazer kaynak ürünleri (2026-10-27 listesindeki 6 model; belki çok sonra) | Sahibinin seçenekleri ayrıntılı açıklaması | "Jasic lazer kaynak ürünleri" bölümü |
 | Sitenin tasarımı | Sahibi yapacak | "Sitenin tasarımı" bölümü |
 
 ## Müşterinin siparişi iptal etmesi — ileride düşünülecek
@@ -314,9 +314,10 @@ K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler �
 
 ## Jasic lazer kaynak ürünleri — sahibi ayrıntılı açıklayacak
 
-Sahibinin 2026-10-27 listesinde Lazer Kaynak alt grubundaki 15 Jasic satırı
-(6 model) henüz girilmedi (KARARLAR K-74): LS-15000F (5 satır), LS-20000F
-(5), LS-30000D (2), ALS-40, LS-20000IV, LS-15000IV. Girerken netleşecekler:
+Sahibinin 2026-10-27 listesinde (ilk ürün listesi Excel'i) Lazer Kaynak alt
+grubundaki 15 Jasic satırı (6 model) henüz girilmedi (KARARLAR K-74): LS-15000F
+(5 satır), LS-20000F (5), LS-30000D (2), ALS-40, LS-20000IV, LS-15000IV.
+Sahibinin kararıyla sonra girilecek; belki çok sonra. Girerken netleşecekler:
 
 1. **Seçenekler:** Listede "Tel sürme ünitesi (tel sürmesiz / dahili / harici
    tek tel / harici çift tel / harici üç tel / otomasyon)" ve "Torç tipi
