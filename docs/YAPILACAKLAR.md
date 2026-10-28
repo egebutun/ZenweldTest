@@ -23,7 +23,7 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | KVKK başvuru formu (2b) | İleride düşünülecek; hesap silme için 2a (Hesabımı Sil) seçildi | "Hesap silme — açık konular" 10 |
 | Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | "Erişilebilirlik" bölümü |
 | Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil | "Görseller ve uzun listeler" bölümü |
-| Ekipmanların eksik fotoğrafları (18 ürün ve 4 soğutma hali) ve diğer bölümlerin ürün fotoğrafları | Sahibinin göndermesi | [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) |
+| Ekipmanların eksik fotoğrafları (19 ürün ve 4 soğutma hali) ve diğer bölümlerin ürün fotoğrafları | Sahibinin bulup göndermesi | [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) |
 | Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi (Force serisi 9 ürün geldi) | "Ürün içeriği" 2 |
 | Geçici ürün kodlarının (`ZW-GECICI-…`) SAP kodlarıyla değiştirilmesi | SAP kodlarının açılması | "Ürün içeriği" 6 |
 | Ekipmanların gerçek fiyatları ve seçenek fiyat farkları | Sahibinin göndermesi | "Ürün içeriği" 3 |
@@ -336,8 +336,9 @@ klasördeki `BURAYA-GORSEL-YUKLEYIN.md`). Fotoğrafı olmayan ürün ve soğutma
 hali, alt kategorinin kart çizimini gösterir.
 
 **Çeşit:** 2 = hava ve su soğutmalı hali ayrı fotoğraf; 1 = tek fotoğraf.
-Ekipmanların 40 ürününden 18'inin fotoğrafı tam; 18 üründe hiç fotoğraf yok,
-4 üründe bir soğutma hali eksik:
+Ekipmanların 40 ürününden 17'sinin fotoğrafı tam; 19 üründe hiç fotoğraf yok,
+4 üründe bir soğutma hali eksik. Sahibi bu fotoğrafları bulamadı; bulununca
+yüklenecek (2026-10-28):
 
 | Kategori | Model | Çeşit | Eksik | Yüklenecek dosya adı |
 |---|---|:-:|---|---|
@@ -358,14 +359,15 @@ Ekipmanların 40 ürününden 18'inin fotoğrafı tam; 18 üründe hiç fotoğra
 | Çok Fonksiyonlu | ForceMIG 205 DP | 1 | Fotoğraf | `forcemig-205-dp.jpg` |
 | Plazma | ForceCut 45 | 1 | Fotoğraf | `forcecut-45.jpg` |
 | Lazer Kaynak | Y300 QCW | 1 | Fotoğraf | `y300-qcw.jpg` |
+| Lazer Temizleme | Jasic LS-20000F | 1 | Fotoğraf | `jasic-ls-20000f-lazer-temizleme.jpg` |
 | Lazer Temizleme | Jasic LS-30000D | 1 | Fotoğraf | `jasic-ls-30000d-lazer-temizleme.jpg` |
 | Lazer Temizleme | Jasic 300 W Puls | 1 | Fotoğraf | `jasic-300-w-puls-lazer-temizleme.jpg` |
 | Lazer Markalama | FC-50 | 1 | Fotoğraf | `fc-50.jpg` |
 | Lazer Markalama | UV-5 | 1 | Fotoğraf | `uv-5.jpg` |
 | Lazer Markalama | Jasic 30 W Fiber | 1 | Fotoğraf | `jasic-30-w-fiber-lazer-markalama.jpg` |
 
-Jasic LS-20000F'e bağlanan fotoğraftaki makinenin üzerinde "LS-15000F"
-yazıyor; sahibine soruldu.
+Jasic LS-20000F için yüklenen fotoğraf yanlış çıktı (makinenin üzerinde
+"LS-15000F" yazıyordu) ve sahibinin isteğiyle silindi.
 
 Diğer bölümlerdeki (Güvenlik, Aksesuarlar, Dolgu Metalleri) 48 ürün hâlâ aynı
 genel Zenweld fotoğrafını kullanıyor (`zenweld-urun.webp`).
@@ -389,6 +391,10 @@ Sahibinin kararıyla sonra girilecek; belki çok sonra. Girerken netleşecekler:
 4. Ad ve link: "Jasic LS-15000F Lazer Kaynak Makinesi" gibi (KARARLAR K-08
    eki, K-71). Lazer Temizleme'deki Jasic LS-20000F / LS-30000D ile
    karışmasın diye link `jasic-ls-20000f-lazer-kaynak` gibi olmalı.
+5. **Fotoğraf:** 2026-10-28'de Lazer Temizleme'deki LS-20000F için yüklenip
+   silinen fotoğrafta "LS-15000F" yazıyordu; LS-15000F lazer kaynak
+   makinesinin fotoğrafı olabilir. Ürün girilirken sahibinden yeniden
+   istenmeli.
 
 ## Sitenin tasarımı — sahibi yapacak
 

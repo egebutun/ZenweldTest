@@ -838,7 +838,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 66).
+- `packages/data/src/index.ts`'tedir (bugün 67).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -849,7 +849,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 | Kayıt | Sayı | Not |
 |---|---|---|
-| Ürün | 88 | 40'ı Ekipmanlar (sahibinin listeleri; fiyat temsili, Force serisi dışında içerik örnek, KARARLAR K-73, K-75). 20'si seçenekli: 17 makine ve 3 aksesuar (MB-25 ve MB-36 MIG torçları, Gaz Nozulu Seti). Ekipmanların 22'sinde sahibinin fotoğrafı var; soğutmalı makinede her kombinasyon kendi soğutma halinin fotoğrafını gösterir (K-77) |
+| Ürün | 88 | 40'ı Ekipmanlar (sahibinin listeleri; fiyat temsili, Force serisi dışında içerik örnek, KARARLAR K-73, K-75). 20'si seçenekli: 17 makine ve 3 aksesuar (MB-25 ve MB-36 MIG torçları, Gaz Nozulu Seti). Ekipmanların 21'inde sahibinin fotoğrafı var; soğutmalı makinede her kombinasyon kendi soğutma halinin fotoğrafını gösterir (K-77) |
 | Grup / kategori | 11 / 45 | Ekipmanların 8 alt kategorisinde filtre var (KARARLAR K-76); ürünlere yalnızca Model Serisi eşli |
 | Seçenek tanımı | 6 | Hortum Uzunluğu, Paket, Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu (temsili), Tepe Güç |
 | Bayi / online satıcı | 29 / 9 | |

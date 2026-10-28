@@ -109,7 +109,6 @@ const MACHINE_PHOTOS = new Set([
   "multicut-105-cnc",
   "multicut-85-cnc",
   "multicut-60-s",
-  "jasic-ls-20000f-lazer-temizleme",
 ]);
 
 const COOLING_LABELS = { hava: "Hava Soğutmalı", su: "Su Soğutmalı" } as const;

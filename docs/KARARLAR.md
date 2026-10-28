@@ -286,8 +286,11 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     `<link>-hava-sogutmali.jpg` ve `<link>-su-sogutmali.jpg`.
   - Adında soğutma yazmayan fotoğrafların hangi hale ait olduğu fotoğrafa
     bakılarak belirlendi ve sahibince doğrulandı; `ultimate-320-mtc`
-    fotoğrafı Ultimate 320 MTC iPanel'indir. Sitede karşılığı olmayan
-    `ultimate-400-cel` fotoğrafı sahibinin isteğiyle silindi.
+    fotoğrafı Ultimate 320 MTC iPanel'indir. Sahibinin isteğiyle silinenler:
+    sitede karşılığı olmayan `ultimate-400-cel`, üzerinde "LS-15000F" yazan
+    Jasic LS-20000F fotoğrafı ve Force ürünlerinin geçici Jasic TIG200
+    fotoğrafı.
+  - Eksik fotoğraflar sahibi bulunca yüklenir.
 - **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları.
 
 ---
