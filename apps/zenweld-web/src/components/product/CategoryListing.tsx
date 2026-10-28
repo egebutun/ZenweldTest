@@ -166,7 +166,7 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
                 <X size={22} />
               </button>
             </div>
-            <ProductFilters {...panelProps} />
+            <ProductFilters {...panelProps} showTitle={false} />
             <Button
               fullWidth
               className="mt-6"

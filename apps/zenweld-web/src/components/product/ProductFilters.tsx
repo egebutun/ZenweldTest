@@ -27,6 +27,7 @@ export function ProductFilters({
   facets,
   onToggleValue,
   onClear,
+  showTitle = true,
 }: {
   value: FilterState;
   onChange: (next: FilterState) => void;
@@ -36,13 +37,15 @@ export function ProductFilters({
   onToggleValue: (filterId: string, valueId: string) => void;
   /** Siralamayi ve filtre secimini sifirlar */
   onClear: () => void;
+  /** Telefondaki pencerede baslik pencerenin kendisinde; burada tekrar yazilmaz */
+  showTitle?: boolean;
 }) {
   const t = useT();
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="font-display text-lg font-semibold uppercase">{t.filters.title}</h3>
+      <div className={`flex items-center ${showTitle ? "justify-between" : "justify-end"}`}>
+        {showTitle && <h3 className="font-display text-lg font-semibold uppercase">{t.filters.title}</h3>}
         <button
           onClick={onClear}
           className="text-xs font-semibold uppercase text-zw-red-600 hover:underline"
