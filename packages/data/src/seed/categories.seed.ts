@@ -56,7 +56,7 @@ export const categoryGroups: CategoryGroup[] = [
   { id: "g2.2", code: "2.2", slug: "koruyucu-giyim", section: "guvenlik", name: "Koruyucu Giyim", image: img("koruyucu-giyim"), order: 2 },
 
   // Sahibinin 2026-10-28 eki; kategori tablosunda numarasi yok (KARARLAR K-05 eki).
-  { id: "g3.0", slug: "lazer-aksesuarlari", section: "aksesuarlar", name: "Lazer Aksesuarları", order: 1 },
+  { id: "g3.0", slug: "lazer-aksesuarlari", section: "aksesuarlar", name: "Lazer Aksesuarları", image: img("lazer-aksesuarlari"), order: 1 },
   { id: "g3.1", code: "3.1", slug: "mig-aksesuarlari", section: "aksesuarlar", name: "MIG Aksesuarları", image: img("mig-aksesuarlari"), order: 2 },
   { id: "g3.2", code: "3.2", slug: "tig-aksesuarlari", section: "aksesuarlar", name: "TIG Aksesuarları", image: img("tig-aksesuarlari"), order: 3 },
   { id: "g3.3", code: "3.3", slug: "mma-aksesuarlari", section: "aksesuarlar", name: "MMA Aksesuarları", image: img("mma-aksesuarlari"), order: 4 },
@@ -168,28 +168,33 @@ export const categories: Category[] = [
   },
   {
     id: "c3.0.1", slug: "lazer-kaynak-kafalari", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 1,
+    image: img("lazer-kaynak-kafalari"),
     name: "Lazer Kaynak Kafaları",
     description:
       "El tipi kaynak kafaları (27S gibi), otomasyon ve robot kafaları (25A gibi) ile kafa, kablo ve bağlantı elemanlarının birlikte satıldığı komple kafa setleri.",
   },
   {
     id: "c3.0.2", slug: "lazer-temizleme-kafalari", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 2,
+    image: img("lazer-temizleme-kafalari"),
     name: "Lazer Temizleme Kafaları",
     description: "El tipi lazer temizleme kafaları ve setleri.",
   },
   {
     id: "c3.0.3", slug: "lazer-tel-surme-uniteleri", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 3,
+    image: img("lazer-tel-surme-uniteleri"),
     name: "Lazer Tel Sürme Üniteleri",
     description: "Tek tel, çift tel ve üç tel sürme üniteleri ile tel sürme kabloları ve bağlantı parçaları.",
   },
   {
     id: "c3.0.4", slug: "lazer-sarf-malzemeleri", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 4,
+    image: img("lazer-sarf-malzemeleri"),
     name: "Lazer Sarf Malzemeleri",
     description:
       "Sık değişen, stoktan satılan kalemler: koruyucu lensler (koruyucu camlar), kaynak nozulları, tel kılavuz uçları, conta ve O-ringler.",
   },
   {
     id: "c3.0.5", slug: "lazer-yedek-parcalari", section: "aksesuarlar", group: "lazer-aksesuarlari", order: 5,
+    image: img("lazer-yedek-parcalari"),
     name: "Lazer Yedek Parçaları",
     description:
       "Servis ve arıza nedeniyle değişen kalemler: odaklama ve kolimatör lensleri, lens tutucular ve kartuşlar, fiber kablolar, kafa içi kartlar, sensörler ve motorlar.",

@@ -778,8 +778,7 @@ kullanılamayacağı değerlendirilsin.
 
 1. Grup ve kategori kartlarındaki görseller şimdilik çizim (illüstrasyon);
    gerçek ürün/uygulama fotoğrafları gelince panelden (Ürünler → Kategoriler →
-   Kart Görseli) değiştirilmeli. Lazer Aksesuarları grubunun ve 5
-   kategorisinin kart görseli yok (markalı yer tutucu görünür).
+   Kart Görseli) değiştirilmeli.
 3. **Lazer Aksesuarları** (Aksesuarlar'ın ilk grubu, KARARLAR K-05 eki): 5
    kategorinin ürünleri sahibinden gelince girilecek; bugün kategoriler
    boş ("Bu kategoriye henüz ürün eklenmedi.").

@@ -838,7 +838,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 68).
+- `packages/data/src/index.ts`'tedir (bugün 69).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
