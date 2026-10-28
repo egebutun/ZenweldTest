@@ -11,7 +11,7 @@ import {
 } from "@zenweld/data";
 import { dealersWithProduct } from "@zenweld/store";
 import { optionsError, productCodeError } from "@/components/admin/product/OptionsTab";
-import { hoseLength, product } from "./ornek";
+import { cooling, hoseLength, options, product } from "./ornek";
 
 const DAY = 86_400_000;
 const now = new Date(2026, 9, 22, 12, 0).getTime();
@@ -57,7 +57,12 @@ describe("Stok dosyası", () => {
     product({
       id: "p2",
       sku: "ZW-HORTUM",
-      options: { optionId: hoseLength.id, variants: [{ valueId: "v5", sku: "ZW-HORTUM-5", priceDeltaExVat: 0 }] },
+      options: options([hoseLength.id], [[["v5"], "ZW-HORTUM-5"]]),
+    }),
+    product({
+      id: "p3",
+      sku: "ZW-405",
+      options: options([cooling.id, hoseLength.id], [[["su", "v5"], "ZW-405-SU-5"]]),
     }),
   ];
   const read = (table: unknown[][]) => readStockSheet(table, { withUrl: true });
@@ -97,16 +102,18 @@ describe("Stok dosyası", () => {
     expect(rows[1].url).toBeUndefined();
   });
 
-  it("kod eşleşmesinde boşluklar atılır ve büyük harfe çevrilir; seçenek kodu seçeneğe eşleşir", () => {
+  it("kod eşleşmesinde boşluklar atılır ve büyük harfe çevrilir; kombinasyon kodu o kombinasyona eşleşir", () => {
     const result = match([
       ["SKU", "Adet"],
       ["zw-trcmb25", "2"],
       ["ZW-HORTUM-5", "4"],
+      ["ZW-405-SU-5", "1"],
       ["BILINMEYEN", "1"],
     ]);
     expect(result.incoming.map((r) => [r.productId, r.variantId, r.quantity])).toEqual([
       ["p1", undefined, 2],
       ["p2", "v5", 4],
+      ["p3", "su_v5", 1],
     ]);
     expect(result.unmatched.map((r) => r.code)).toEqual(["BILINMEYEN"]);
   });
@@ -149,7 +156,7 @@ describe("Ürün kodları", () => {
     id: "baska",
     name: "Başka Ürün",
     sku: "ZW-BASKA",
-    options: { optionId: hoseLength.id, variants: [{ valueId: "v3", sku: "ZW-BASKA-3", priceDeltaExVat: 0 }] },
+    options: options([hoseLength.id], [[["v3"], "ZW-BASKA-3"]]),
   });
 
   it("karşılaştırmada boşluklar atılır ve büyük harfe çevrilir", () => {
@@ -168,7 +175,7 @@ describe("Ürün kodları", () => {
     const withVariants = (variants: { valueId: string; sku: string }[]) =>
       product({
         sku: "ZW-TORC",
-        options: { optionId: hoseLength.id, variants: variants.map((v) => ({ ...v, priceDeltaExVat: 0 })) },
+        options: options([hoseLength.id], variants.map((v) => [[v.valueId], v.sku] as [string[], string])),
       });
     expect(optionsError(withVariants([{ valueId: "v3", sku: "" }]), [hoseLength], [other])).toMatch(/zorunludur/);
     expect(optionsError(withVariants([{ valueId: "v3", sku: "zw-torc" }]), [hoseLength], [other])).not.toBeNull();

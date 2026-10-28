@@ -172,10 +172,28 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   değerin adı tek yerde düzeltilir; WooCommerce, Magento gibi sistemlerin
   kullandığı yapı.
 
-### K-15 · Ürün başına tek seçenek adı
+### K-15 · Ürün başına tek seçenek adı — Değişti (2026-10-28, yerine K-70)
 - **Tarih:** 2026-10-21
-- **Karar:** Bir üründe yalnızca bir seçenek adı olur (ör. yalnızca "Hortum
-  Uzunluğu"); kombinasyon (uzunluk × renk gibi) yoktur.
+- **Karar (eski):** Bir üründe yalnızca bir seçenek adı olur (ör. yalnızca
+  "Hortum Uzunluğu"); kombinasyon (uzunluk × renk gibi) yoktur.
+- **Değişti:** Gerçek ürünlerde soğutma, torç uzunluğu ve ara paket uzunluğu
+  birlikte seçildiği için sahibinin kararıyla kaldırıldı; yerine K-70.
+
+### K-70 · Bir üründe birden çok seçenek; her kombinasyon ayrı varyant
+- **Tarih:** 2026-10-28
+- **Karar:**
+  - Bir ürün en fazla 3 seçenek kullanır (ör. Soğutma: Hava / Su ve Torç
+    Uzunluğu: 4 m / 8 m).
+  - Satılan her kombinasyon (ör. Su Soğutmalı · 8 m) bir varyanttır: kendi
+    ürün kodu (zorunlu, K-18), fiyat farkı, fotoğrafı, farklı teknik değerleri
+    ve kutu içeriği olur. Satılmayan kombinasyonun varyantı yoktur; sitede
+    seçilemez.
+  - Sayfada her seçenek ayrı satırdır; bir değer seçilince diğer seçim
+    korunur, o kombinasyon yoksa o değeri içeren ilk kombinasyona geçilir.
+  - Panelde kombinasyonlar işaretlenen değerlerden kendiliğinden oluşur.
+- **Neden:** Sahibinin kararı; e-ticaret sistemlerinin (Shopify, WooCommerce,
+  Magento) ortak yapısı. Veritabanında tutulma biçimi:
+  [VERI-MODELI.md](VERI-MODELI.md) › Ürünler › Seçenekler.
 
 ### K-16 · Kategoride seçenek işareti kaldırma engellenmez
 - **Tarih:** 2026-10-21

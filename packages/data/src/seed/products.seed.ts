@@ -1,4 +1,4 @@
-import type { Product, ProductOptions } from "../types";
+import type { Product, ProductOptions, ProductVariant } from "../types";
 
 /**
  * Gercek Zenweld modelleri (zenweld.com ve yetkili bayi siteleri kaynakli).
@@ -857,36 +857,37 @@ products.forEach((p) => {
 /* Ornek: MB-25 (3 / 4 / 5 m) ve MB-36 (3 / 4 m) MIG torclari, Gaz      */
 /* Nozulu Seti (10'lu / 20'li). Secenek adi ve degerleri ortak tanimdan */
 /* gelir (options.seed.ts); "Hortum Uzunluğu: 4 m" gibi teknik satir    */
-/* secimden kendiliginden olusur. Bayi ve satici stogu secenek bazli    */
+/* secimden kendiliginden olusur. Bayi ve satici stogu varyant bazli    */
 /* tutulur (bkz. stock.seed.ts).                                        */
 /*                                                                     */
 /* "MB-25 MIG Torcu 4m" ve "MB-36 MIG Torcu 3m" onceden ayri urundu;    */
-/* eski linkleri (previousSlugs) ilgili secenekle acilir.               */
+/* eski linkleri (previousSlugs) ilgili varyantla acilir.               */
 /* ------------------------------------------------------------------ */
+
+/** Tek secenekli urunun varyantlari: kimligi ve kombinasyonu degerin kimligidir. */
+const singleOption = (
+  optionId: string,
+  rows: (Omit<ProductVariant, "id" | "values"> & { valueId: string })[],
+): ProductOptions => ({
+  optionIds: [optionId],
+  variants: rows.map(({ valueId, ...rest }) => ({ id: valueId, values: { [optionId]: valueId }, ...rest })),
+});
+
 const PRODUCT_OPTIONS: Record<string, ProductOptions> = {
-  "mig-torcu-mb25": {
-    optionId: "hortum-uzunlugu",
-    variants: [
-      { valueId: "3-m", sku: "ZW-TRC-MB25-3", priceDeltaExVat: 0, specOverrides: [{ label: "Ağırlık", value: "1,9 kg" }] },
-      { valueId: "4-m", sku: "ZW-TRC-MB25-4", priceDeltaExVat: 240, specOverrides: [{ label: "Ağırlık", value: "2,3 kg" }], previousSlugs: ["mig-torcu-mb25-4m"] },
-      { valueId: "5-m", sku: "ZW-TRC-MB25-5", priceDeltaExVat: 460, specOverrides: [{ label: "Ağırlık", value: "2,7 kg" }] },
-    ],
-  },
-  "mig-torcu-mb36": {
-    optionId: "hortum-uzunlugu",
-    variants: [
-      { valueId: "3-m", sku: "ZW-TRC-MB36-3", priceDeltaExVat: 0, specOverrides: [{ label: "Ağırlık", value: "2,4 kg" }], previousSlugs: ["mig-torcu-mb36-3m"] },
-      { valueId: "4-m", sku: "ZW-TRC-MB36-4", priceDeltaExVat: 300, specOverrides: [{ label: "Ağırlık", value: "2,9 kg" }] },
-    ],
-  },
+  "mig-torcu-mb25": singleOption("hortum-uzunlugu", [
+    { valueId: "3-m", sku: "ZW-TRC-MB25-3", priceDeltaExVat: 0, specOverrides: [{ label: "Ağırlık", value: "1,9 kg" }] },
+    { valueId: "4-m", sku: "ZW-TRC-MB25-4", priceDeltaExVat: 240, specOverrides: [{ label: "Ağırlık", value: "2,3 kg" }], previousSlugs: ["mig-torcu-mb25-4m"] },
+    { valueId: "5-m", sku: "ZW-TRC-MB25-5", priceDeltaExVat: 460, specOverrides: [{ label: "Ağırlık", value: "2,7 kg" }] },
+  ]),
+  "mig-torcu-mb36": singleOption("hortum-uzunlugu", [
+    { valueId: "3-m", sku: "ZW-TRC-MB36-3", priceDeltaExVat: 0, specOverrides: [{ label: "Ağırlık", value: "2,4 kg" }], previousSlugs: ["mig-torcu-mb36-3m"] },
+    { valueId: "4-m", sku: "ZW-TRC-MB36-4", priceDeltaExVat: 300, specOverrides: [{ label: "Ağırlık", value: "2,9 kg" }] },
+  ]),
   // 20'li paketin fiyati ornektir; panelden degistirilir.
-  "gaz-nozulu-seti": {
-    optionId: "paket",
-    variants: [
-      { valueId: "10-lu", sku: "ZW-NZL-SET-10", priceDeltaExVat: 0, inTheBox: ["10 x Gaz nozulu"] },
-      { valueId: "20-li", sku: "ZW-NZL-SET-20", priceDeltaExVat: 380, inTheBox: ["20 x Gaz nozulu"] },
-    ],
-  },
+  "gaz-nozulu-seti": singleOption("paket", [
+    { valueId: "10-lu", sku: "ZW-NZL-SET-10", priceDeltaExVat: 0, inTheBox: ["10 x Gaz nozulu"] },
+    { valueId: "20-li", sku: "ZW-NZL-SET-20", priceDeltaExVat: 380, inTheBox: ["20 x Gaz nozulu"] },
+  ]),
 };
 
 products.forEach((p) => {

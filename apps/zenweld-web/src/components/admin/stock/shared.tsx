@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
-import { productVariantGroup, type StockSourceType, type ZenweldDatabase } from "@zenweld/data";
+import { findVariant, productOptionsView, type StockSourceType, type ZenweldDatabase } from "@zenweld/data";
 import { useAuth } from "@zenweld/auth";
 import type { SourceStatus } from "@zenweld/store";
 import { Badge } from "@zenweld/ui";
@@ -54,13 +54,12 @@ export function useAdminName(): string | undefined {
   return user ? `${user.firstName} ${user.lastName}`.trim() : undefined;
 }
 
-/** "MB-25 MIG Torcu (Torç Uzunluğu: 5 m)" */
+/** "Ultimate 405 THP (Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m)" */
 export function productLabel(db: ZenweldDatabase, productId: string, variantId?: string): string {
   const p = db.products.find((x) => x.id === productId);
   if (!p) return "Silinmiş ürün";
-  const group = productVariantGroup(p, db.optionDefinitions);
-  const option = group?.options.find((o) => o.id === variantId);
-  return option ? `${p.name} (${group!.label}: ${option.label})` : p.name;
+  const variant = findVariant(productOptionsView(p, db.optionDefinitions), variantId);
+  return variant ? `${p.name} (${variant.fullLabel})` : p.name;
 }
 
 /** Elle satir ekleme ve kod eslestirmede secilebilecek urun/secenekler. */
@@ -69,10 +68,10 @@ export function productChoices(db: ZenweldDatabase) {
     .filter((p) => p.active)
     .sort((a, b) => a.name.localeCompare(b.name, "tr"))
     .flatMap((p) => {
-      const group = productVariantGroup(p, db.optionDefinitions);
-      const base = [{ value: `${p.id}|`, label: `${p.sku} — ${p.name}${group ? " (tüm seçenekler)" : ""}` }];
-      return group
-        ? [...base, ...group.options.map((o) => ({ value: `${p.id}|${o.id}`, label: `${o.sku} — ${p.name} (${o.label})` }))]
+      const view = productOptionsView(p, db.optionDefinitions);
+      const base = [{ value: `${p.id}|`, label: `${p.sku} — ${p.name}${view ? " (tüm seçenekler)" : ""}` }];
+      return view
+        ? [...base, ...view.variants.map((v) => ({ value: `${p.id}|${v.id}`, label: `${v.sku} — ${p.name} (${v.label})` }))]
         : base;
     });
 }

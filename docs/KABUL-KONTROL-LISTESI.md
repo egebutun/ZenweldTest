@@ -56,8 +56,8 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Tarayıcı testleri (`npm run build` sonra `npm run test:e2e`) geçer.
       Bunlar şu maddeleri kendiliğinden dener: bütün sayfaların açılması
       (hata, 404, "demo" yazısı, İngilizce, güvenlik politikası), güvenlik
-      başlıkları, seçenekli ürünün kartla satın alınması, sepette adet
-      sınırı, teklif gönderme ve numarası, belge yükleme/açma/indirme,
+      başlıkları, seçenekli ürünün kartla satın alınması, iki seçenekli
+      üründe kombinasyon seçimi, sepette adet sınırı, teklif gönderme ve numarası, belge yükleme/açma/indirme,
       garanti bitiş günü, şifre değiştirme ve hesap silme, iade talebi.
 
 ---
@@ -166,6 +166,19 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Seçenek değişince **yorumlar değişmez** (ortak havuz).
 - [ ] Seçenek değişince "Stoktaki Bayileri Gör" ve online satıcılar o
       seçeneği stokta tutanlara göre değişir.
+
+**Birden çok seçenek** (panelden bir ürüne ikinci seçenek eklenerek; ör. MB-36
+MIG Torcu'na Soğutma: Hava / Su, Su · 3 m satılmıyor):
+
+- [ ] Her seçenek ayrı satırdır; seçenekler paneldeki sırayla, değerler
+      tanımdaki sırayla dizilir; ilk kombinasyon seçili gelir.
+- [ ] Hava · 3 m seçiliyken **Su** seçilince Su · 4 m'ye geçilir; 3 m kesik
+      çizgili ve soluk görünür.
+- [ ] Ürün kodu, fiyat ve Teknik Özellikler ("Soğutma: …", "Hortum Uzunluğu:
+      …") kombinasyona göre değişir; adres `?secenek=su-sogutmali_4-m` olur
+      ve bu link o kombinasyonla açılır.
+- [ ] Sepette ve teklif listesinde satır "Soğutma: Su Soğutmalı · Hortum
+      Uzunluğu: 4 m" yazar ve kombinasyonun kodunu gösterir.
 
 **Diğer:**
 
@@ -455,7 +468,13 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Görsel yükleme: büyük dosya küçültülür; çoklu seçimde sıra korunur;
       ilk görsel kapaktır.
 - [ ] Seçenekler sekmesinde yalnızca kategoride işaretli tanımlar listelenir;
-      kodsuz seçenek kaydedilmez; seçeneğin fiyatı eksiye düşemez.
+      kodsuz kombinasyon kaydedilmez; kombinasyonun fiyatı eksiye düşemez.
+- [ ] En fazla 3 seçenek eklenir. Değer işaretlenince kombinasyonlar
+      kendiliğinden oluşur; çöp kombinasyonu "Satılmayan kombinasyonlar"a
+      taşır, oradan geri eklenir.
+- [ ] Seçenekli ürüne ikinci seçenek eklenip ilk değeri işaretlenince var
+      olan kombinasyonların kodları korunur; yeni değerin kombinasyonları boş
+      kodla gelir ve kod girilmeden kayıt olmaz.
 - [ ] Değer üründen kaldırılıp kaydedilince o değerin stok satırları silinir.
 - [ ] Link değiştirilince eski link yeni linke yönlenir; aynı link başka
       üründe varsa kayıt olmaz.
@@ -483,7 +502,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 
 ## 18. Panel: stok
 
-- [ ] Şablon İndir: yayındaki ürünler ve her seçenek kendi koduyla ayrı
+- [ ] Şablon İndir: yayındaki ürünler ve her kombinasyon kendi koduyla ayrı
       satırda.
 - [ ] Dosya yüklenince önizleme açılır: okunan sütunlar, eşleşen /
       tanınmayan / hatalı satırlar, stoğa girecek / değişecek / çıkacak.
@@ -502,8 +521,8 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Online mağazası olan bayinin linkli satırları hem haritada hem o
       mağazanın online satıcı kartında görünür; linksiz satır yalnızca
       haritada.
-- [ ] Seçenek koduyla gelen satır yalnızca o seçeneği, ana kodla gelen satır
-      bütün seçenekleri stokta gösterir.
+- [ ] Kombinasyon koduyla gelen satır yalnızca o kombinasyonu, ana kodla
+      gelen satır bütün kombinasyonları stokta gösterir.
 
 ---
 

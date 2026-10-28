@@ -1,55 +1,45 @@
-import type { Product, SpecRow, VariantGroupView, VariantView } from "@zenweld/data";
+import { findVariant, type Product, type ProductOptionsView, type SpecRow, type VariantView } from "@zenweld/data";
 
 /**
  * URUN SECENEKLERI (VARYANTLAR)
  *
- * Secilen secenege gore fiyati, urun kodunu ve teknik ozellik tablosunu
- * hesaplar. Secenek grubu urunden ve ortak tanimdan productVariantGroup ile
- * olusur; seceneksiz urunde (grup yok) urunun kendi degerleri doner.
+ * Secilen varyanta gore fiyati, urun kodunu ve teknik ozellik tablosunu
+ * hesaplar. Seceneklerin ekrandaki hali urunden ve ortak tanimlardan
+ * productOptionsView ile olusur; seceneksiz urunde (view yok) urunun kendi
+ * degerleri doner.
  */
-
-export interface VariantSelection {
-  /** secenek tanimi id -> deger id */
-  [groupId: string]: string;
-}
 
 /**
- * Secili secenek. Secim yapilmamissa (ya da secilen deger artik yoksa)
- * ilk secenek varsayilir; boylece sayfa acilir acilmaz gecerli bir fiyat
+ * Secili varyant. Secim yapilmamissa (ya da secilen varyant artik yoksa)
+ * ilk varyant varsayilir; boylece sayfa acilir acilmaz gecerli bir fiyat
  * gosterilir.
  */
-export function activeOption(
-  group: VariantGroupView | undefined,
-  selection: VariantSelection,
-): VariantView | undefined {
-  return group && (group.options.find((o) => o.id === selection[group.id]) ?? group.options[0]);
+export function activeVariant(view: ProductOptionsView | undefined, variantId?: string): VariantView | undefined {
+  return findVariant(view, variantId) ?? view?.variants[0];
 }
 
 /** Secimin urune uyguladigi sonuc: fiyat, kod, ozellikler, kutu icerigi, fotograf. */
-export function resolveVariant(
-  product: Product,
-  group: VariantGroupView | undefined,
-  selection: VariantSelection,
-) {
-  const option = activeOption(group, selection);
+export function resolveVariant(product: Product, view: ProductOptionsView | undefined, variantId?: string) {
+  const variant = activeVariant(view, variantId);
 
-  // Secenegin NORMAL fiyati. Kampanya varsa ayni indirim ORANI bu fiyata
+  // Varyantin NORMAL fiyati. Kampanya varsa ayni indirim ORANI bu fiyata
   // gosterimde uygulanir (salePriceExVat), boylece 3 m ve 5 m torcta
   // indirim yuzdesi ayni kalir.
-  const priceExVat = product.priceExVat + (option?.priceDeltaExVat ?? 0);
+  const priceExVat = product.priceExVat + (variant?.priceDeltaExVat ?? 0);
 
-  const sku = option?.sku || product.sku;
+  const sku = variant?.sku || product.sku;
 
-  // Urunun koduyla yazilmis satir ("Ürün Kodu") secenegin koduna doner
-  // (urun kodu bossa hicbir satir). Sonra secenegin kendi satiri ("Hortum
-  // Uzunluğu: 4 m") ve farkli degerleri: ayni etiketli satir varsa
-  // degistirilir, yoksa sona eklenir.
+  // Urunun koduyla yazilmis satir ("Ürün Kodu") varyantin koduna doner
+  // (urun kodu bossa hicbir satir). Sonra her secenegin kendi satiri
+  // ("Torç Uzunluğu: 8 m") ve varyantin farkli degerleri: ayni etiketli
+  // satir varsa degistirilir, yoksa sona eklenir.
   const ownCode = product.sku.trim();
   const specs: SpecRow[] = product.specs.map((row) =>
     ownCode && row.value.trim() === ownCode ? { ...row, value: sku } : { ...row },
   );
-  if (group && option) {
-    for (const override of [{ label: group.label, value: option.label }, ...(option.specOverrides ?? [])]) {
+  if (variant) {
+    const rows = [...variant.parts.map((p) => ({ label: p.group, value: p.value })), ...(variant.specOverrides ?? [])];
+    for (const override of rows) {
       const i = specs.findIndex((row) => row.label === override.label);
       if (i >= 0) specs[i] = override;
       else specs.push(override);
@@ -60,22 +50,51 @@ export function resolveVariant(
     priceExVat,
     specs,
     sku,
-    inTheBox: option?.inTheBox ?? product.inTheBox,
-    /** Secenegin fotografi; yoksa urunun ilk fotografi */
-    image: option?.image,
-    variantId: option?.id,
-    option,
+    inTheBox: variant?.inTheBox ?? product.inTheBox,
+    /** Varyantin fotografi; yoksa urunun ilk fotografi */
+    image: variant?.image,
+    variantId: variant?.id,
+    variant,
   };
 }
 
-/** Secili secenegin okunur hali: "Hortum Uzunluğu: 5 m". Seceneksiz urunde bos. */
-export function variantLabel(group: VariantGroupView | undefined, selection: VariantSelection): string | undefined {
-  const option = activeOption(group, selection);
-  return group && option ? `${group.label}: ${option.label}` : undefined;
+/** Secili varyantin okunur hali: "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m". Seceneksiz urunde bos. */
+export function variantLabel(view: ProductOptionsView | undefined, variantId?: string): string | undefined {
+  return activeVariant(view, variantId)?.fullLabel;
 }
 
-/** Secimi tamamlar (secilmediyse ilk secenek); seceneksiz urunde bos. */
-export function completeSelection(group: VariantGroupView | undefined, selection: VariantSelection): VariantSelection {
-  const option = activeOption(group, selection);
-  return group && option ? { [group.id]: option.id } : {};
+/** Diger seceneklerdeki secim korunarak bu degerle satilan varyant. */
+function exactMatch(
+  view: ProductOptionsView,
+  current: VariantView | undefined,
+  groupId: string,
+  valueId: string,
+): VariantView | undefined {
+  return view.variants.find((v) =>
+    view.groups.every((g) => v.values[g.id] === (g.id === groupId ? valueId : current?.values[g.id])),
+  );
+}
+
+/**
+ * Bir secenekte deger secilince gidilecek varyant. Diger seceneklerdeki
+ * secim korunur; o kombinasyon satilmiyorsa bu degeri iceren ilk varyanta
+ * gecilir (diger secenekler ona gore degisir).
+ */
+export function pickValue(
+  view: ProductOptionsView,
+  current: VariantView | undefined,
+  groupId: string,
+  valueId: string,
+): VariantView | undefined {
+  return exactMatch(view, current, groupId, valueId) ?? view.variants.find((v) => v.values[groupId] === valueId);
+}
+
+/** Bu deger, diger seceneklerdeki mevcut secimle birlikte satiliyor mu. */
+export function valueAvailable(
+  view: ProductOptionsView,
+  current: VariantView | undefined,
+  groupId: string,
+  valueId: string,
+): boolean {
+  return Boolean(exactMatch(view, current, groupId, valueId));
 }

@@ -72,9 +72,12 @@ okurdu).
   kodlaması (Excel'in eski CSV kaydı) denenir; Türkçe karakterler bozulmaz.
 - **Excel:** `.xlsx` okunur (ilk sayfa). Eski `.xls` okunmaz; Excel'de `.xlsx` ya da
   `.csv` olarak kaydedilmesi istenir. En fazla 5 MB.
-- **Kod eşleşmesi:** ürün SKU'su, seçenek SKU'su (3 m / 5 m torç gibi) ya da
-  kaynağa özel eşleştirme tablosu. Boşluklar ve büyük/küçük harf önemsizdir.
-- **Şablon:** kaynak sayfasındaki **Şablon İndir**, bizim SKU'larımızı, ürün adlarını
+- **Kod eşleşmesi:** ürün SKU'su, kombinasyon (varyant) SKU'su (3 m / 5 m torç,
+  Su Soğutmalı · 8 m makine gibi) ya da kaynağa özel eşleştirme tablosu.
+  Boşluklar ve büyük/küçük harf önemsizdir. Ürünün ana koduyla gelen satır
+  ürünün bütün kombinasyonları için sayılır.
+- **Şablon:** kaynak sayfasındaki **Şablon İndir**, bizim SKU'larımızı (seçenekli
+  üründe her kombinasyon ayrı satırda, ör. "Ultimate 405 THP (Su Soğutmalı · 8 m)"), ürün adlarını
   ve kaynağın mevcut adet, fiyat (ve link) değerlerini içeren CSV verir; bayiye
   gönderilip doldurtulabilir.
 
@@ -137,7 +140,7 @@ CREATE INDEX stock_imports_source ON stock_imports (source_type, source_id, crea
 CREATE TABLE dealer_stock (
   dealer_id    text NOT NULL REFERENCES dealers (id) ON DELETE CASCADE,
   product_id   text NOT NULL REFERENCES products (id) ON DELETE CASCADE,
-  variant_id   text NOT NULL DEFAULT '',   -- '' = ürünün tüm seçenekleri
+  variant_id   text NOT NULL DEFAULT '',   -- '' = ürünün tüm varyantları (kombinasyonları)
   sku          text NOT NULL,              -- dosyadaki kod
   quantity     int  NOT NULL CHECK (quantity >= 0),
   price        numeric(12, 2),             -- KDV dahil; sitede gösterilmez
@@ -182,7 +185,7 @@ iki tabloya yazılmaz.
 Ürün sayfası sorguları (`$2` = stale_days, 0 = sınırsız):
 
 ```sql
--- Stoktaki bayiler (harita); $3 = seçili seçenek ya da ''
+-- Stoktaki bayiler (harita); $3 = seçili varyant ya da ''
 SELECT ds.dealer_id FROM dealer_stock ds
 JOIN dealers d ON d.id = ds.dealer_id AND d.active
 WHERE ds.product_id = $1 AND ds.quantity > 0
@@ -190,7 +193,7 @@ WHERE ds.product_id = $1 AND ds.quantity > 0
   AND ($2 = 0 OR ds.updated_at > now() - make_interval(days => $2));
 
 -- Online satıcı kartları: online satıcılar + online mağazası olan bayiler;
--- $3 = seçili seçenek ya da ''
+-- $3 = seçili varyant ya da ''
 SELECT rs.retailer_id, rs.variant_id, rs.url FROM retailer_stock rs
 JOIN retailers r ON r.id = rs.retailer_id AND r.active
 WHERE rs.product_id = $1 AND rs.quantity > 0 AND rs.url IS NOT NULL

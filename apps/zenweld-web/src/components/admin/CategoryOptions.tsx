@@ -35,7 +35,7 @@ export function CategoryOptionsPanel({
   const definitions = listOptionDefinitions(db);
 
   const usedBy = (id: string) =>
-    categorySlug ? db.products.filter((p) => p.categorySlug === categorySlug && p.options?.optionId === id).length : 0;
+    categorySlug ? db.products.filter((p) => p.categorySlug === categorySlug && p.options?.optionIds.includes(id)).length : 0;
 
   const toggle = (o: OptionDefinition) => {
     if (!selected.includes(o.id)) return onChange([...selected, o.id]);

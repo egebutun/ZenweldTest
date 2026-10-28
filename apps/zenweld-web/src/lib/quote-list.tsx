@@ -9,9 +9,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { productVariantGroup } from "@zenweld/data";
+import { findVariant, productOptionsView } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
-import { resolveVariant, variantLabel } from "./variants";
+import { resolveVariant } from "./variants";
 
 /**
  * "Teklif Listesi" — alisveris sepetinden (lib/cart.tsx) ayridir.
@@ -21,13 +21,13 @@ import { resolveVariant, variantLabel } from "./variants";
  *
  * Liste tarayicida saklanir. Icindeki bir urun sonradan yayindan
  * kaldirilirsa listede gorunmez ve teklife eklenmez. Secenekli urunde
- * secenek de saklanir; ayni urunun farkli secenekleri ayri satirdir.
- * Secenegi artik bulunmayan satir da (sepetteki gibi) gorunmez.
+ * varyant da saklanir; ayni urunun farkli varyantlari ayri satirdir.
+ * Varyanti artik bulunmayan satir da (sepetteki gibi) gorunmez.
  */
 
 export interface QuoteLineItem {
   productId: string;
-  /** Secenekli urunde secilen secenek (deger kimligi) */
+  /** Secenekli urunde secilen varyantin kimligi */
   variantId?: string;
   productName: string;
   quantity: number;
@@ -37,7 +37,7 @@ export interface QuoteLineItem {
 export interface QuoteListLine extends QuoteLineItem {
   key: string;
   sku: string;
-  /** "Hortum Uzunluğu: 5 m" */
+  /** "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m" */
   variantLabel?: string;
 }
 
@@ -64,15 +64,15 @@ export function QuoteListProvider({ children }: { children: ReactNode }) {
       stored.flatMap((i): QuoteListLine[] => {
         const product = db.products.find((p) => p.id === i.productId && p.active);
         if (!product) return [];
-        const group = productVariantGroup(product, db.optionDefinitions);
-        if (group && !group.options.some((o) => o.id === i.variantId)) return [];
-        const selection = group && i.variantId ? { [group.id]: i.variantId } : {};
+        const view = productOptionsView(product, db.optionDefinitions);
+        if (view && !findVariant(view, i.variantId)) return [];
+        const variant = resolveVariant(product, view, i.variantId);
         return [
           {
             ...i,
             key: lineKey(i),
-            sku: resolveVariant(product, group, selection).sku,
-            variantLabel: variantLabel(group, selection),
+            sku: variant.sku,
+            variantLabel: variant.variant?.fullLabel,
           },
         ];
       }),

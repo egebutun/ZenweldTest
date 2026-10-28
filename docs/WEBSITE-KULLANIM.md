@@ -321,17 +321,26 @@ hiçbiri değilse 404 çıkar.
 - **Ürün adı ve kısa açıklama.**
 - **Bilgi satırı:**
   - "YENİ" rozeti (işaretliyse) ve "<N> ay garanti".
-  - **Ürün Kodu:** Seçenekli üründe seçilen seçeneğin kodu.
+  - **Ürün Kodu:** Seçenekli üründe seçilen kombinasyonun kodu.
   - **Model:** Model kodu girilmişse.
 - **Seçenek seçici** (yalnızca seçenekli üründe):
-  - Seçenek adı (ör. "Hortum Uzunluğu") ve değer düğmeleri (3 m, 4 m, 5 m).
-  - Değerler panelde tanımlanan sırayla dizilir; ilk değer seçili gelir.
-  - Seçenek değişince fiyat, ürün kodu (üstte ve Teknik Özellikler tablosunda),
+  - Her seçenek ayrı satırdır (en fazla 3): seçenek adı (ör. "Soğutma",
+    "Torç Uzunluğu") ve değer düğmeleri (Hava Soğutmalı / Su Soğutmalı,
+    4 m / 8 m).
+  - Seçenekler panelde ürüne eklendiği sırayla, değerler Seçenek
+    Tanımları'ndaki sırayla dizilir; ilk kombinasyon seçili gelir.
+  - Bir değer seçilince diğer seçeneklerdeki seçim korunur. O kombinasyon
+    satılmıyorsa o değeri içeren ilk kombinasyona geçilir.
+  - Diğer seçimlerle birlikte satılmayan değer **kesik çizgili ve soluk**
+    görünür (üzerine gelince "Bu seçimle birlikte satılmıyor; seçilirse diğer
+    seçenekler değişir"); yine de tıklanabilir.
+  - Seçim değişince fiyat, ürün kodu (üstte ve Teknik Özellikler tablosunda),
     teknik özellikler, kutu içeriği, fotoğraf, bayi listesi ve online satıcılar
     değişir. Kurallar: [IS-KURALLARI.md](IS-KURALLARI.md).
-  - **Yorumlar değişmez;** ürünün tüm seçenekleri için ortaktır.
-  - Seçim adrese yazılır (`/urun/mig-torcu-mb25?secenek=5-m`); bu link o
-    seçenekle açılır. Geçersiz seçenek yazılmışsa ilk seçenek açılır.
+  - **Yorumlar değişmez;** ürünün tüm kombinasyonları için ortaktır.
+  - Seçim adrese yazılır (`/urun/mig-torcu-mb25?secenek=5-m`; iki seçenekte
+    ör. `?secenek=su-sogutmali_8-m`); bu link o kombinasyonla açılır. Geçersiz
+    kombinasyon yazılmışsa ilk kombinasyon açılır.
 - **Fiyat:**
   - Kampanyada önce "%X indirim" rozeti çıkar; %25 ve üzerinde "Flaş İndirim"
     yazar ve alev simgesi eklenir.
@@ -344,18 +353,19 @@ hiçbiri değilse 404 çıkar.
 - **Sepete ekleme:**
   - Adet kutusu (1–99; – ve + düğmeleri, elle de yazılır).
   - **Sepete Ekle** düğmesi ve favori kalbi.
-  - Ekleyince "Sepete eklendi · Sepete Git →" çıkar. Seçili seçenek de
+  - Ekleyince "Sepete eklendi · Sepete Git →" çıkar. Seçili kombinasyon da
     eklenir.
 - **Stoktaki Bayileri Gör:**
   - Pencerede bayi bulucuyu açar
     ([7. bölüm](#7-bayi-ve-servis-bulucu)).
-  - Yalnızca bu ürünü (seçenekli üründe seçilen seçeneği) stokta tutan bayiler
-    listelenir.
-  - Üstte "Aranan ürün: <ad> (<seçenek>)" yazar.
+  - Yalnızca bu ürünü (seçenekli üründe seçilen kombinasyonu) stokta tutan
+    bayiler listelenir.
+  - Üstte "Aranan ürün: <ad> (<kombinasyon>)" yazar (ör. "(Su Soğutmalı ·
+    8 m)").
 - **"Ayrıca online alışveriş olarak şurada da mevcuttur:"**
-  - Ürünü (seçenekli üründe seçilen seçeneği) stokta tutan online satıcıların
-    kartları; kendi mağazamız en başta, diğerleri ada göre.
-  - Kart, satıcının o ürüne ya da seçeneğe ait sayfasına yeni sekmede gider.
+  - Ürünü (seçenekli üründe seçilen kombinasyonu) stokta tutan online
+    satıcıların kartları; kendi mağazamız en başta, diğerleri ada göre.
+  - Kart, satıcının o ürüne ya da kombinasyona ait sayfasına yeni sekmede gider.
   - Satıcının fiyatı ve adedi gösterilmez.
   - 8'den fazla satıcı varsa "Daha Fazla Göster" ile açılır.
   - Altında "Stok bilgisi <tarih> itibarıyladır" yazar.
@@ -369,9 +379,9 @@ hiçbiri değilse 404 çıkar.
 
 | Sekme | İçerik |
 |---|---|
-| **Teknik Özellikler** | Özellik–değer tablosu. Seçenekli üründe seçeneğin satırı ("Hortum Uzunluğu: 5 m") eklenir, seçeneğe özel değerler (ör. Ağırlık) uygulanır ve ürün kodu satırı seçeneğin kodunu gösterir. |
+| **Teknik Özellikler** | Özellik–değer tablosu. Seçenekli üründe her seçeneğin satırı ("Soğutma: Su Soğutmalı", "Torç Uzunluğu: 8 m") eklenir, kombinasyona özel değerler (ör. Ağırlık) uygulanır ve ürün kodu satırı kombinasyonun kodunu gösterir. |
 | **Ürün Açıklaması** | Uzun açıklama. Kullanım kılavuzu bağlantısı girilmişse "Kullanım Kılavuzu (PDF)". |
-| **Kutu İçeriği** | Madde listesi (seçeneğe göre değişebilir). Liste boşsa sekme görünmez. |
+| **Kutu İçeriği** | Madde listesi (kombinasyona göre değişebilir). Liste boşsa sekme görünmez. |
 | **Garanti** | "<N> ay garanti", bir metin (yer tutucu) ve **Garanti Kaydı →**, **Garanti Sorgula →** bağlantıları. |
 | **SSS** | Sık sorulan soruların tamamı (açılır-kapanır). |
 
@@ -506,9 +516,9 @@ listelenir.
 **Ürün sayfası hali:**
 
 - Yalnızca o ürünü stokta tutan bayiler listelenir.
-- **Seçenekli üründe:** Yalnızca seçilen seçeneği stokta tutanlar listelenir.
-  Bayi stoğu seçenek belirtilmeden verilmişse, ürünün bütün seçenekleri için
-  geçerli sayılır.
+- **Seçenekli üründe:** Yalnızca seçilen kombinasyonu stokta tutanlar
+  listelenir. Bayi stoğu kombinasyon belirtilmeden (ürünün ana koduyla)
+  verilmişse, ürünün bütün kombinasyonları için geçerli sayılır.
 - **Stokta sayılma koşulları:** Adedin 0'dan büyük olması ve stok bilgisinin
   güncel olması gerekir (varsayılan son 3 gün; panelden değişir).
 - Ayrıntı: [STOK.md](STOK.md).
@@ -615,19 +625,19 @@ Adres: `/urun-secici`. `?malzeme=celik` gibi bir ön seçimle açılırsa
 
 Adres: `/sepet`. Sepet için giriş gerekmez; ödeme adımında istenir.
 
-- **Saklanan bilgi:** Sepette yalnızca ürün, seçenek ve adet saklanır. Fiyat
+- **Saklanan bilgi:** Sepette yalnızca ürün, kombinasyon ve adet saklanır. Fiyat
   her zaman ürünün **o anki** fiyatından (kampanya dahil) hesaplanır; panelde
   fiyat değişirse sepet de güncel fiyatı gösterir.
 - **Satır kuralları:**
-  - Aynı ürünün aynı seçeneği tek satırdır; tekrar eklenince adet artar.
-    Farklı seçenekler ayrı satırdır.
+  - Aynı ürünün aynı kombinasyonu tek satırdır; tekrar eklenince adet artar.
+    Farklı kombinasyonlar ayrı satırdır.
   - Adet 1–99 arasıdır.
 - **Gizlenen satırlar:** Yayından kaldırılan ürünün satırı ve seçilen
-  seçeneği artık bulunmayan satır (ör. seçenek panelden kaldırıldıysa)
-  gösterilmez; başka bir seçenek sessizce satılmaz.
+  kombinasyonu artık bulunmayan satır (ör. kombinasyon panelden
+  kaldırıldıysa) gösterilmez; başka bir kombinasyon sessizce satılmaz.
 - **Satır:**
-  - Görsel (seçeneğin fotoğrafı, yoksa ürününki), ürün adı (ürüne bağlantı),
-    seçenek ("Hortum Uzunluğu: 5 m").
+  - Görsel (kombinasyonun fotoğrafı, yoksa ürününki), ürün adı (ürüne
+    bağlantı), seçenekler ("Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m").
   - Birim fiyat ve satır toplamı (KDV dahil).
   - Adet kutusu ve **Kaldır**.
 - **Sipariş Özeti:**
@@ -1011,13 +1021,14 @@ gelinir.
    - Hata mesajları: "Lütfen firma ve iletişim bilgilerindeki zorunlu alanları
      doldurun.", "Lütfen geçerli bir e-posta adresi girin."
 2. **Ürünler:**
-   - **Teklif Listeniz:** Ürün adı, altında seçenek ve ürün kodu ("Hortum
+   - **Teklif Listeniz:** Ürün adı, altında seçenekler ve ürün kodu ("Hortum
      Uzunluğu: 5 m · ZW-TRC-MB25-5"), adet kutusu (en az 1), **Çıkar**.
    - **Ürün ekleme:** "Ürün Ekle…" listesinden seçip **Ekle**.
      - Listede panelde "Teklife açık" işaretli, yayındaki ürünler vardır.
-     - Seçenekli ürün her seçeneğiyle ayrı satırdır ("MB-25 MIG Torcu — 5 m
-       (ZW-TRC-MB25-5)"); seçeneksiz ürün "Ad (kod)" diye yazar.
-     - Aynı ürün ve seçenek tekrar eklenirse adet artar.
+     - Seçenekli ürün her kombinasyonuyla ayrı satırdır ("MB-25 MIG Torcu —
+       5 m (ZW-TRC-MB25-5)"; iki seçenekte "— Su Soğutmalı · 8 m (…)");
+       seçeneksiz ürün "Ad (kod)" diye yazar.
+     - Aynı ürün ve kombinasyon tekrar eklenirse adet artar.
    - **Saklanma (Demo notu):** Liste tarayıcıda tutulur. Yayından kalkan ürün
      ya da seçeneği artık bulunmayan satır gösterilmez.
    - **Liste boşsa:** "Teklif listeniz boş. Ürün sayfalarından ürün

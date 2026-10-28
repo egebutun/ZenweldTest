@@ -91,16 +91,24 @@ export interface SpecRow {
 /* ------------------------------------------------------------------ */
 /* Urun secenekleri (varyantlar)                                       */
 /*                                                                     */
-/* Ornek: bir MIG torcunun 3 m ve 5 m secenekleri. Urun tek bir secenek */
-/* tanimini kullanir (OptionDefinition) ve kullandigi degerler icin     */
-/* birer satir tutar. Ad ve sira tanimdan okunur; satir yalnizca bu     */
-/* urune ozel olanlari (kod, fiyat farki, farkli olan bilgiler) tutar.  */
+/* Ornek: bir TIG makinesinin Soğutma (Hava / Su) ve Torç Uzunluğu      */
+/* (4 m / 8 m) secenekleri. Urun en fazla 3 secenek tanimi kullanir     */
+/* (OptionDefinition); satilan her kombinasyon bir varyanttir (Su ·     */
+/* 8 m). Ad ve sira tanimdan okunur; varyant yalnizca bu urune ozel     */
+/* olanlari (kod, fiyat farki, farkli olan bilgiler) tutar. Satilmayan  */
+/* kombinasyonun varyanti yoktur.                                       */
 /* ------------------------------------------------------------------ */
 
 export interface ProductVariant {
-  /** Tanimdaki degerin kimligi; secenegin urundeki kimligi de budur (stok, sepet) */
-  valueId: string;
-  /** Secenegin kendi urun kodu (zorunlu, benzersiz) */
+  /**
+   * Varyantin urundeki kimligi (stok, sepet, teklif, ?secenek= linki).
+   * Olusturuldugu andaki deger kimliklerinden uretilir ("su-sogutmali_8-m";
+   * tek secenekli urunde degerin kimligi, "4-m") ve sonra degismez.
+   */
+  id: string;
+  /** Kombinasyon: secenek tanimi kimligi -> deger kimligi; urunun her seceneginden bir deger */
+  values: Record<string, string>;
+  /** Varyantin kendi urun kodu (zorunlu, benzersiz) */
   sku: string;
   /** Ana fiyata eklenecek fark (KDV haric, TRY). Eksi de olabilir. */
   priceDeltaExVat: number;
@@ -110,13 +118,13 @@ export interface ProductVariant {
   inTheBox?: string[];
   /** Bossa urunun fotograflari */
   image?: string;
-  /** Secenek onceden ayri bir urunken kullanilan linkler; bu secenekle acilir */
+  /** Varyant onceden ayri bir urunken kullanilan linkler; bu varyantla acilir */
   previousSlugs?: string[];
 }
 
 export interface ProductOptions {
-  /** OptionDefinition kimligi (orn. "hortum-uzunlugu") */
-  optionId: string;
+  /** Kullanilan secenek tanimlari (OptionDefinition kimlikleri), sayfadaki sirasiyla; en fazla 3 */
+  optionIds: string[];
   variants: ProductVariant[];
 }
 
@@ -278,7 +286,7 @@ export type StockSourceType = "dealer" | "retailer";
  */
 export interface StockRow {
   productId: string;
-  /** Secenekli urunde secenegin id'si; bos ise urunun tum secenekleri. */
+  /** Secenekli urunde varyantin kimligi; bos ise urunun tum varyantlari. */
   variantId?: string;
   /** Dosyadaki kod (bizim SKU ya da bayinin kendi kodu) */
   sku: string;
@@ -402,7 +410,7 @@ export interface QuoteItem {
   productName: string;
   /** Teklif anindaki urun kodu (secenekli urunde secenegin kodu) */
   sku?: string;
-  /** Teklif anindaki secenek, orn. "Hortum Uzunluğu: 5 m" */
+  /** Teklif anindaki secenekler, orn. "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m" */
   variantLabel?: string;
   quantity: number;
   note?: string;
@@ -451,7 +459,7 @@ export interface OrderItem {
   productId: string;
   productName: string;
   sku: string;
-  /** Secili secenek, orn. "Hortum Uzunluğu: 5 m" */
+  /** Secili secenekler, orn. "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m" */
   variantLabel?: string;
   quantity: number;
   /** Siparis anindaki birim fiyat (KDV haric, indirim uygulanmis) */

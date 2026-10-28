@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Check, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { createQuote, listProducts, useDatabase } from "@zenweld/store";
-import { productVariantGroup, type PaymentPreference, type Product, type User } from "@zenweld/data";
+import { productOptionsView, type PaymentPreference, type Product, type User } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
@@ -55,16 +55,16 @@ export default function QuotePage() {
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  // Secenekli urun her secenegiyle ayri satir olarak listelenir; teklif
-  // secenegin kodu ve adiyla gider.
+  // Secenekli urun her varyantiyla ayri satir olarak listelenir; teklif
+  // varyantin kodu ve adiyla gider.
   const quotableChoices = useMemo(
     () =>
       listProducts(db)
         .filter((p) => p.quotable)
         .flatMap((p): { value: string; label: string; product: Product; variantId?: string }[] => {
-          const group = productVariantGroup(p, db.optionDefinitions);
-          return group
-            ? group.options.map((o) => ({ value: `${p.id}|${o.id}`, label: `${p.name} — ${o.label} (${o.sku})`, product: p, variantId: o.id }))
+          const view = productOptionsView(p, db.optionDefinitions);
+          return view
+            ? view.variants.map((v) => ({ value: `${p.id}|${v.id}`, label: `${p.name} — ${v.label} (${v.sku})`, product: p, variantId: v.id }))
             : [{ value: `${p.id}|`, label: `${p.name} (${p.sku})`, product: p, variantId: undefined }];
         }),
     [db],

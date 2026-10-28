@@ -177,7 +177,7 @@ function CardCartButton({ product }: { product: Product }) {
     <button
       type="button"
       onClick={() => {
-        cart.add(product.id, {});
+        cart.add(product.id);
         setAdded(true);
       }}
       className={`${className} bg-zw-ink hover:bg-zw-red-600`}

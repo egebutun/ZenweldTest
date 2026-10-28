@@ -3,38 +3,95 @@ import type { OptionDefinition, Product, ProductVariant } from "./types";
 /**
  * URUN SECENEKLERININ EKRANDAKI HALI
  *
- * Urun secenek satirlarini (kod, fiyat farki ...) ortak tanimdaki ad ve
+ * Urunun varyantlarini (kod, fiyat farki ...) ortak tanimlardaki ad ve
  * sirayla birlestirir. Ad ve sira tek yerden (tanim) gelir; tanimda bir
  * degerin adi duzeltilince her urunde degisir.
  */
 
-export interface VariantView extends ProductVariant {
-  /** Degerin kimligi (= valueId); stokta ve sepette secenegin kimligi */
-  id: string;
-  /** Tanimdaki ad: "4 m" */
-  label: string;
-}
+/** Bir urunde en fazla kac secenek (Soğutma, Torç Uzunluğu ...) kullanilir. */
+export const MAX_PRODUCT_OPTIONS = 3;
 
-export interface VariantGroupView {
+export interface OptionGroupView {
   /** Tanimin kimligi */
   id: string;
-  /** Tanimin adi: "Hortum Uzunluğu" */
+  /** Tanimin adi: "Torç Uzunluğu" */
   label: string;
-  options: VariantView[];
+  /** Bu urunde en az bir varyantta gecen degerler, tanimdaki sirayla */
+  values: { id: string; label: string }[];
 }
 
-/** Seceneksiz urunde ya da tanim silinmisse undefined; tanimda olmayan deger atlanir. */
-export function productVariantGroup(
+export interface VariantView extends ProductVariant {
+  /** Secenek secenek degerler, urundeki secenek sirasiyla */
+  parts: { groupId: string; group: string; valueId: string; value: string }[];
+  /** Kisa ad: "Su Soğutmalı · 8 m" (tek secenekte "8 m") */
+  label: string;
+  /** Uzun ad: "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m" */
+  fullLabel: string;
+}
+
+export interface ProductOptionsView {
+  groups: OptionGroupView[];
+  /** Gecerli varyantlar; ilk secenegin deger sirasina, sonra ikincisininkine gore */
+  variants: VariantView[];
+}
+
+/** Yeni varyantin kimligi: deger kimlikleri secenek sirasiyla ("su-sogutmali_8-m"). */
+export function variantIdFor(optionIds: string[], values: Record<string, string>): string {
+  return optionIds.map((id) => values[id]).join("_");
+}
+
+/**
+ * Seceneksiz urunde ya da tanimlardan biri silinmisse undefined. Tanimda
+ * olmayan degeri iceren varyant atlanir.
+ */
+export function productOptionsView(
   product: Pick<Product, "options">,
   definitions: OptionDefinition[],
-): VariantGroupView | undefined {
+): ProductOptionsView | undefined {
   const own = product.options;
-  if (!own?.variants.length) return undefined;
-  const definition = definitions.find((d) => d.id === own.optionId);
-  if (!definition) return undefined;
-  const options = definition.values.flatMap((value) => {
-    const variant = own.variants.find((v) => v.valueId === value.id);
-    return variant ? [{ ...variant, id: value.id, label: value.label }] : [];
-  });
-  return options.length ? { id: definition.id, label: definition.name, options } : undefined;
+  if (!own?.variants.length || !own.optionIds.length) return undefined;
+  const defs = own.optionIds.map((id) => definitions.find((d) => d.id === id));
+  if (defs.some((d) => !d)) return undefined;
+  const used = defs as OptionDefinition[];
+
+  const valid = own.variants.filter((v) => used.every((d) => d.values.some((x) => x.id === v.values[d.id])));
+  if (!valid.length) return undefined;
+
+  const groups: OptionGroupView[] = used.map((d) => ({
+    id: d.id,
+    label: d.name,
+    values: d.values
+      .filter((x) => valid.some((v) => v.values[d.id] === x.id))
+      .map((x) => ({ id: x.id, label: x.label })),
+  }));
+  const rank = (v: ProductVariant) => used.map((d) => d.values.findIndex((x) => x.id === v.values[d.id]));
+
+  const variants = valid
+    .map((v): VariantView => {
+      const parts = used.map((d) => ({
+        groupId: d.id,
+        group: d.name,
+        valueId: v.values[d.id],
+        value: d.values.find((x) => x.id === v.values[d.id])!.label,
+      }));
+      return {
+        ...v,
+        parts,
+        label: parts.map((p) => p.value).join(" · "),
+        fullLabel: parts.map((p) => `${p.group}: ${p.value}`).join(" · "),
+      };
+    })
+    .sort((a, b) => {
+      const ra = rank(a);
+      const rb = rank(b);
+      const i = ra.findIndex((x, n) => x !== rb[n]);
+      return i < 0 ? 0 : ra[i] - rb[i];
+    });
+
+  return { groups, variants };
+}
+
+/** Kimligi verilen varyant; yoksa undefined. */
+export function findVariant(view: ProductOptionsView | undefined, variantId: string | undefined): VariantView | undefined {
+  return variantId ? view?.variants.find((v) => v.id === variantId) : undefined;
 }

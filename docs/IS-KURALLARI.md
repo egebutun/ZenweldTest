@@ -116,14 +116,19 @@ Kod: `packages/data/src/discount.ts`.
 
 ## 3. Seçenekli ürün
 
-Bir ürün tek sayfada seçenekleriyle satılabilir (ör. hortum uzunluğu 3 m /
-5 m).
+Bir ürün tek sayfada seçenekleriyle satılabilir (ör. Soğutma: Hava / Su ve
+Torç Uzunluğu: 4 m / 8 m). Satılan her kombinasyon (ör. Su Soğutmalı · 8 m)
+bir **varyanttır** (KARARLAR K-70).
 
 **Kurallar:**
 
-- Bir üründe **tek bir seçenek adı** olur (ör. yalnızca "Hortum Uzunluğu").
+- Bir üründe **en fazla 3 seçenek** olur.
 - Seçenek adları ve değerleri ortak [Seçenek Tanımları](ADMIN-KULLANIM.md#9-seçenek-tanımları)'ndan
-  gelir; değerlerin adı ve sırası tanımdan okunur.
+  gelir; adların ve değerlerin sırası tanımdan, seçeneklerin sayfadaki sırası
+  üründen okunur.
+- Varyantın her seçenekten bir değeri olur; aynı kombinasyon bir üründe iki
+  kez olamaz. Satılmayan kombinasyonun varyantı yoktur.
+- Her varyantın kodu zorunludur (bkz. [12](#12-ürün-kodları)).
 - Ürüne ancak ürünün kategorisinde işaretli tanımlar eklenebilir. Kategoride
   işaretin kaldırılması o kategorideki ürünlerin mevcut seçeneklerini
   değiştirmez.
@@ -133,29 +138,44 @@ Bir ürün tek sayfada seçenekleriyle satılabilir (ör. hortum uzunluğu 3 m /
 
 | Bilgi | Kural |
 |---|---|
-| Fiyat | Normal fiyat = ürünün fiyatı + seçeneğin fiyat farkı (KDV hariç; eksi olabilir, toplam eksiye düşemez). Kampanya varsa **aynı oran** bu fiyata uygulanır |
-| Ürün kodu | Seçeneğin kodu |
-| Teknik özellikler | Ürünün koduyla yazılmış satır seçeneğin koduna döner; "<Seçenek>: <değer>" satırı eklenir; seçeneğin farklı satırları aynı adlı satırın yerine geçer, yoksa sona eklenir |
-| Kutu içeriği | Seçeneğin ayrı listesi varsa o, yoksa ürününki |
-| Fotoğraf | Seçeneğin fotoğrafı varsa o, yoksa ürünün fotoğrafları |
-| Stoktaki bayiler ve online satıcılar | Yalnızca o seçeneği stokta tutanlar (bkz. [11](#11-bayi-ve-online-satıcı-stoğu)) |
-| Yorumlar | **Değişmez**; bütün seçenekler aynı yorumları paylaşır |
+| Fiyat | Normal fiyat = ürünün fiyatı + varyantın fiyat farkı (KDV hariç; eksi olabilir, toplam eksiye düşemez). Kampanya varsa **aynı oran** bu fiyata uygulanır |
+| Ürün kodu | Varyantın kodu |
+| Teknik özellikler | Ürünün koduyla yazılmış satır varyantın koduna döner; her seçenek için "<Seçenek>: <değer>" satırı eklenir; varyantın farklı satırları aynı adlı satırın yerine geçer, yoksa sona eklenir |
+| Kutu içeriği | Varyantın ayrı listesi varsa o, yoksa ürününki |
+| Fotoğraf | Varyantın fotoğrafı varsa o, yoksa ürünün fotoğrafları |
+| Stoktaki bayiler ve online satıcılar | Yalnızca o varyantı stokta tutanlar (bkz. [11](#11-bayi-ve-online-satıcı-stoğu)) |
+| Yorumlar | **Değişmez**; bütün varyantlar aynı yorumları paylaşır |
 
 **Örnek:** Ürün 1.000 ₺ + KDV, 5 m seçeneği +200 ₺, kampanya %15 → 1.200 ×
 0,85 = 1.020 ₺ + KDV → KDV dahil 1.224 ₺.
 
+**Seçim:**
+
+- Bir seçenekte değer seçilince diğer seçeneklerdeki seçim korunur. O
+  kombinasyon satılmıyorsa o değeri içeren ilk varyanta geçilir (diğer
+  seçenekler ona göre değişir).
+- Diğer seçeneklerdeki seçimle satılmayan değer soluk görünür ama seçilebilir.
+- Varyantlar önce birinci seçeneğin, sonra ikincisinin tanımdaki değer
+  sırasıyla dizilir; "ilk varyant" bu sıradaki ilktir.
+
+**Örnek:** Soğutma × Torç Uzunluğu'nda Hava · 4 m, Hava · 8 m ve Su · 8 m
+satılıyor (Su · 4 m yok). Hava · 4 m seçiliyken Su seçilince Su · 8 m'ye
+geçilir; bu sırada 4 m soluk görünür.
+
 **Adres:**
 
-- Seçim adrese yazılır: `/urun/<ürün>?secenek=<değer>`. Bu adres sayfayı o
-  seçenekle açar.
-- Seçim yoksa ya da adresteki değer artık yoksa ilk seçenek seçili gelir.
+- Seçim adrese yazılır: `/urun/<ürün>?secenek=<varyant>` (ör.
+  `?secenek=su-sogutmali_8-m`; tek seçenekte değerin kimliği, `?secenek=5-m`).
+  Bu adres sayfayı o varyantla açar.
+- Seçim yoksa ya da adresteki varyant artık yoksa ilk varyant seçili gelir.
 - Arama motoruna sayfa tek adresle (seçeneksiz) bildirilir.
 
 **Sepet ve teklif listesi:**
 
-- Aynı ürünün farklı seçenekleri ayrı satırdır.
-- Sepette ya da teklif listesinde duran seçenek üründen kaldırılırsa o satır
-  **gösterilmez** (başka bir seçenek yerine sessizce satılmasın diye).
+- Aynı ürünün farklı varyantları ayrı satırdır; satırda bütün seçenekler
+  yazar ("Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m").
+- Sepette ya da teklif listesinde duran varyant üründen kaldırılırsa o satır
+  **gösterilmez** (başka bir varyant yerine sessizce satılmasın diye).
 
 Kod: `apps/zenweld-web/src/lib/variants.ts`, `packages/data/src/variants.ts`.
 
@@ -452,9 +472,10 @@ Ayrıntı: [STOK.md](STOK.md). Özet:
   online satıcılar. Online mağazası olan bayi, bayinin dosyasından gelir.
   Zenweld'in kendi mağazası en başta, diğerleri ada göre.
 - Bir satıcı birden çok satırda olsa da bir kez gösterilir.
-- **Seçenekli üründe:** Yalnızca seçilen seçeneği stokta tutanlar. Seçeneği
-  belirtilmemiş (ürünün ana koduyla gelen) satır bütün seçenekler için
-  geçerli sayılır. Seçeneğin kendi satırı varsa kart onun linkine gider.
+- **Seçenekli üründe:** Yalnızca seçilen varyantı (kombinasyonu) stokta
+  tutanlar. Varyantı belirtilmemiş (ürünün ana koduyla gelen) satır bütün
+  varyantlar için geçerli sayılır. Varyantın kendi satırı varsa kart onun
+  linkine gider.
 - Satıcının adedi ve fiyatı **sitede gösterilmez**.
 
 **Stok dosyası:**
@@ -474,15 +495,15 @@ Kod: `packages/data/src/stock.ts`, `packages/store/src/repo/stock.ts`.
 
 ## 12. Ürün kodları
 
-- Ürün kodu ve seçenek kodları **tek havuzdadır** ve hepsi birbirinden
-  farklı olmalıdır:
-  - Ürün kodu başka bir ürünün ya da herhangi bir seçeneğin koduyla aynı
+- Ürün kodu ve varyant (kombinasyon) kodları **tek havuzdadır** ve hepsi
+  birbirinden farklı olmalıdır:
+  - Ürün kodu başka bir ürünün ya da herhangi bir varyantın koduyla aynı
     olamaz.
-  - Seçenek kodu ürünün kendi koduyla, aynı ürünün başka seçeneğiyle ya da
-    başka bir ürün/seçenek koduyla aynı olamaz.
+  - Varyant kodu ürünün kendi koduyla, aynı ürünün başka varyantıyla ya da
+    başka bir ürün/varyant koduyla aynı olamaz.
 - Karşılaştırmada **boşluklar atılır ve büyük harfe çevrilir**
   (`zw-trc mb25` = `ZW-TRCMB25`).
-- Seçenekli üründe her seçeneğin kodu zorunludur.
+- Seçenekli üründe her varyantın kodu zorunludur.
 - **Neden:** Bayi ve satıcı stok dosyaları ürünleri bu kodla eşleştirir; aynı
   kod iki yerde olursa stok yanlış ürüne yazılır.
 - Dosyadaki kod bu havuzda yoksa ve daha önce eşleştirilmemişse "tanınmayan
@@ -508,7 +529,7 @@ Kod: `packages/data/src/stock.ts` › `normalizeCode`,
 
 | Sayfa | Adres |
 |---|---|
-| Ürün | `/urun/<ürün>` (seçenekle: `?secenek=<değer>`) |
+| Ürün | `/urun/<ürün>` (seçenekle: `?secenek=<varyant>`) |
 | Bölüm | `/<bölüm>` (ör. `/ekipmanlar`) |
 | Grup | `/<bölüm>/<grup>` |
 | Kategori | `/<bölüm>/<grup>/<kategori>` |

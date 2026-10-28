@@ -21,7 +21,8 @@ export function categoriesUsingOption(id: string, db: ZenweldDatabase = getSnaps
 /** Tanimi (valueId verilirse o degeri) kullanan urunler; kullanilan tanim ve deger silinemez. */
 export function productsUsingOption(id: string, valueId?: string, db: ZenweldDatabase = getSnapshot()): Product[] {
   return db.products.filter(
-    (p) => p.options?.optionId === id && (!valueId || p.options.variants.some((v) => v.valueId === valueId)),
+    (p) =>
+      p.options?.optionIds.includes(id) && (!valueId || p.options.variants.some((v) => v.values[id] === valueId)),
   );
 }
 

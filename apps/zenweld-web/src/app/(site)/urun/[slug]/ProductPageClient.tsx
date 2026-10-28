@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { notFound } from "next/navigation";
 import { FileText } from "lucide-react";
-import { productVariantGroup } from "@zenweld/data";
+import { productOptionsView } from "@zenweld/data";
 import { findProductBySlug, listProducts, movedProductPath, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
 import Link from "next/link";
@@ -24,7 +24,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { ProductSupportChat } from "@/components/support/ProductSupportChat";
 import { VariantPicker } from "@/components/product/VariantPicker";
 import { ProductReviewsSection } from "@/components/product/ProductReviewsSection";
-import { resolveVariant, type VariantSelection } from "@/lib/variants";
+import { resolveVariant } from "@/lib/variants";
 import { useT } from "@/lib/i18n-client";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { catalogTrail } from "@/lib/catalog";
@@ -35,7 +35,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
   const t = useT();
   const db = useDatabase();
   const [tab, setTab] = useState("specs");
-  const [selection, setSelection] = useState<VariantSelection>({});
+  const [variantId, setVariantId] = useState<string>();
 
   const product = useMemo(() => findProductBySlug(slug, db), [slug, db]);
   const moved = useMemo(() => (product ? undefined : movedProductPath(slug, db)), [product, slug, db]);
@@ -44,33 +44,34 @@ export function ProductPageClient({ slug }: { slug: string }) {
     product && productSeo(product, db.categories.find((c) => c.slug === product.categorySlug)).title,
   );
 
-  const group = useMemo(
-    () => (product ? productVariantGroup(product, db.optionDefinitions) : undefined),
+  const view = useMemo(
+    () => (product ? productOptionsView(product, db.optionDefinitions) : undefined),
     [product, db],
   );
 
-  // ?secenek=5-m ile gelen link o secenekle acilir. Google'a sayfa tek
-  // adresle gider (canonical: /urun/...). Ilk cizimde ornek veri kullanilir;
-  // panelde eklenen deger tarayicidaki veri yuklenince bulunur, bu yuzden
-  // link secenek bulunana ya da ziyaretci secim yapana kadar yeniden denenir.
+  // ?secenek=su-sogutmali_8-m ile gelen link o varyantla acilir. Google'a
+  // sayfa tek adresle gider (canonical: /urun/...). Ilk cizimde ornek veri
+  // kullanilir; panelde eklenen varyant tarayicidaki veri yuklenince
+  // bulunur, bu yuzden link varyant bulunana ya da ziyaretci secim yapana
+  // kadar yeniden denenir.
   const linkPending = useRef(true);
   useEffect(() => {
-    if (!linkPending.current || !group) return;
+    if (!linkPending.current || !view) return;
     const wanted = new URLSearchParams(window.location.search).get("secenek");
     if (!wanted) {
       linkPending.current = false;
-    } else if (group.options.some((o) => o.id === wanted)) {
+    } else if (view.variants.some((v) => v.id === wanted)) {
       linkPending.current = false;
-      setSelection({ [group.id]: wanted });
+      setVariantId(wanted);
     }
-  }, [group]);
+  }, [view]);
 
-  // Secim adrese de yazilir; kopyalanan link bu secenekle acilir.
-  const choose = (groupId: string, optionId: string) => {
+  // Secim adrese de yazilir; kopyalanan link bu varyantla acilir.
+  const choose = (id: string) => {
     linkPending.current = false;
-    setSelection((sel) => ({ ...sel, [groupId]: optionId }));
+    setVariantId(id);
     const url = new URL(window.location.href);
-    url.searchParams.set("secenek", optionId);
+    url.searchParams.set("secenek", id);
     window.history.replaceState(null, "", url);
   };
 
@@ -91,7 +92,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
   // degistirmemek icin secimi uygulanmis bir urun nesnesi turetiyoruz.
   // priceExVat secenegin NORMAL fiyatidir; kampanya indirimi gosterimde
   // uygulanir. Yorumlar urunun tumu icindir; secimle degismez.
-  const variant = resolveVariant(product, group, selection);
+  const variant = resolveVariant(product, view, variantId);
   const shown: typeof product = {
     ...product,
     priceExVat: variant.priceExVat,
@@ -147,18 +148,14 @@ export function ProductPageClient({ slug }: { slug: string }) {
               <ProductMeta product={shown} />
             </div>
 
-            <VariantPicker
-              group={group}
-              selection={selection}
-              onChange={choose}
-            />
+            <VariantPicker view={view} active={variant.variant} onChange={choose} />
 
             <PriceBlock product={shown} />
             <ProductHighlights product={product} />
 
             <div className="mt-6 space-y-3">
-              <AddToCart product={product} selection={selection} />
-              <WhereToBuyButton product={shown} variantId={variant.variantId} variantLabel={variant.option?.label} />
+              <AddToCart product={product} variantId={variant.variantId} />
+              <WhereToBuyButton product={shown} variantId={variant.variantId} variantLabel={variant.variant?.label} />
             </div>
 
             <OnlineRetailers product={shown} variantId={variant.variantId} />

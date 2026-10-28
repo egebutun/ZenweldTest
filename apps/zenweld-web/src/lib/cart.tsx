@@ -9,36 +9,38 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { cartTotals, productVariantGroup, salePriceExVat, type CartTotals, type Product } from "@zenweld/data";
+import { cartTotals, findVariant, productOptionsView, salePriceExVat, type CartTotals, type Product } from "@zenweld/data";
 import { getShopSettings, useDatabase, useNow } from "@zenweld/store";
 import { priceWithVat } from "@zenweld/utils";
-import { completeSelection, resolveVariant, variantLabel, type VariantSelection } from "./variants";
+import { activeVariant, resolveVariant } from "./variants";
 
 /**
  * ALISVERIS SEPETI
  *
- * Sepette yalnizca urun, secenek ve adet saklanir; fiyat her zaman o anki
+ * Sepette yalnizca urun, varyant ve adet saklanir; fiyat her zaman o anki
  * urun kaydindan (kampanya dahil) hesaplanir. Boylece yonetim panelinde
  * fiyat degisirse sepet de guncel fiyati gosterir. Yayindan kaldirilan
- * urun ve secilen secenegi artik bulunmayan satir sepette gorunmez.
+ * urun ve secilen varyanti artik bulunmayan satir sepette gorunmez.
  *
  * Sepet tarayicida saklanir; uye girisi yalnizca odeme adiminda istenir.
  */
 
 interface StoredLine {
   productId: string;
-  selection: VariantSelection;
+  /** Secenekli urunde varyantin kimligi */
+  variantId?: string;
   quantity: number;
 }
 
 export interface CartLine {
-  /** urun + secenekler; ayni urunun farkli secenekleri ayri satirdir */
+  /** urun + varyant; ayni urunun farkli varyantlari ayri satirdir */
   key: string;
   product: Product;
-  selection: VariantSelection;
+  variantId?: string;
+  /** "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m" */
   variantLabel?: string;
   sku: string;
-  /** Secenegin fotografi, yoksa urunun ilk fotografi */
+  /** Varyantin fotografi, yoksa urunun ilk fotografi */
   image?: string;
   quantity: number;
   unitExVat: number;
@@ -54,7 +56,8 @@ interface CartValue {
   /** Toplam urun adedi (baslikta gosterilir) */
   count: number;
   totals: CartTotals;
-  add: (productId: string, selection: VariantSelection, quantity?: number) => void;
+  /** Secenekli urunde varyant verilmezse ilk varyant eklenir. */
+  add: (productId: string, variantId?: string, quantity?: number) => void;
   setQuantity: (key: string, quantity: number) => void;
   remove: (key: string) => void;
   clear: () => void;
@@ -63,8 +66,20 @@ interface CartValue {
 const STORAGE_KEY = "zenweld.cart.v1";
 export const MAX_LINE_QUANTITY = 99;
 
-const lineKey = (productId: string, selection: VariantSelection) =>
-  [productId, ...Object.keys(selection).sort().map((g) => `${g}=${selection[g]}`)].join("|");
+const lineKey = (productId: string, variantId?: string) => `${productId}|${variantId ?? ""}`;
+
+/**
+ * Varyant kimligi. Eski sepet satiri secimi "secenek -> deger" olarak
+ * saklardi; tek secenekli urunde varyantin kimligi degerin kimligidir.
+ */
+function storedVariantId(line: { variantId?: unknown; selection?: unknown }): string | undefined {
+  if (typeof line.variantId === "string") return line.variantId;
+  if (line.selection && typeof line.selection === "object") {
+    const values = Object.values(line.selection as Record<string, unknown>);
+    if (values.length === 1 && typeof values[0] === "string") return values[0];
+  }
+  return undefined;
+}
 
 /** Adet her zaman 1-99 arasinda tam sayi; 0, eksi veya kesirli adet sepete girmez. */
 const clampQuantity = (quantity: number) =>
@@ -80,7 +95,7 @@ function parseStored(raw: string | null): StoredLine[] {
       l && typeof l.productId === "string"
         ? [{
             productId: l.productId,
-            selection: l.selection && typeof l.selection === "object" ? l.selection : {},
+            variantId: storedVariantId(l),
             quantity: clampQuantity(l.quantity),
           }]
         : [],
@@ -131,19 +146,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
       stored.flatMap((s) => {
         const product = db.products.find((p) => p.id === s.productId && p.active);
         if (!product) return [];
-        const group = productVariantGroup(product, db.optionDefinitions);
-        // Secilen secenek artik yoksa (urunden kaldirildi ya da kimligi
-        // degisti) satir gosterilmez; yoksa sessizce baska secenek satilirdi.
-        if (group && !group.options.some((o) => o.id === s.selection[group.id])) return [];
-        const variant = resolveVariant(product, group, s.selection);
+        const view = productOptionsView(product, db.optionDefinitions);
+        // Secilen varyant artik yoksa (urunden kaldirildi) satir gosterilmez;
+        // yoksa sessizce baska bir varyant satilirdi.
+        if (view && !findVariant(view, s.variantId)) return [];
+        const variant = resolveVariant(product, view, s.variantId);
         const unitExVat = salePriceExVat({ ...product, priceExVat: variant.priceExVat }, now);
         const unitIncVat = priceWithVat(unitExVat, product.vatRate);
         return [
           {
-            key: lineKey(s.productId, s.selection),
+            key: lineKey(s.productId, s.variantId),
             product,
-            selection: s.selection,
-            variantLabel: variantLabel(group, s.selection),
+            variantId: s.variantId,
+            variantLabel: variant.variant?.fullLabel,
             sku: variant.sku,
             image: variant.image ?? product.images[0]?.url,
             quantity: s.quantity,
@@ -158,19 +173,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   const add = useCallback<CartValue["add"]>(
-    (productId, selection, quantity = 1) => {
+    (productId, variantId, quantity = 1) => {
       const product = db.products.find((p) => p.id === productId);
       if (!product) return;
-      const full = completeSelection(productVariantGroup(product, db.optionDefinitions), selection);
-      const key = lineKey(productId, full);
+      const chosen = activeVariant(productOptionsView(product, db.optionDefinitions), variantId)?.id;
+      const key = lineKey(productId, chosen);
       update((prev) =>
-        prev.some((l) => lineKey(l.productId, l.selection) === key)
+        prev.some((l) => lineKey(l.productId, l.variantId) === key)
           ? prev.map((l) =>
-              lineKey(l.productId, l.selection) === key
+              lineKey(l.productId, l.variantId) === key
                 ? { ...l, quantity: clampQuantity(l.quantity + quantity) }
                 : l,
             )
-          : [...prev, { productId, selection: full, quantity: clampQuantity(quantity) }],
+          : [...prev, { productId, variantId: chosen, quantity: clampQuantity(quantity) }],
       );
     },
     [db, update],
@@ -180,7 +195,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (key, quantity) =>
       update((prev) =>
         prev.map((l) =>
-          lineKey(l.productId, l.selection) === key
+          lineKey(l.productId, l.variantId) === key
             ? { ...l, quantity: clampQuantity(quantity) }
             : l,
         ),
@@ -189,7 +204,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   const remove = useCallback<CartValue["remove"]>(
-    (key) => update((prev) => prev.filter((l) => lineKey(l.productId, l.selection) !== key)),
+    (key) => update((prev) => prev.filter((l) => lineKey(l.productId, l.variantId) !== key)),
     [update],
   );
 

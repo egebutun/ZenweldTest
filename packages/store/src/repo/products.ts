@@ -46,7 +46,7 @@ export function movedProductPath(slug: string, db: ZenweldDatabase = getSnapshot
   if (moved) return `/urun/${moved.slug}`;
   for (const p of products) {
     const variant = p.options?.variants.find((v) => v.previousSlugs?.includes(slug));
-    if (variant) return `/urun/${p.slug}?secenek=${encodeURIComponent(variant.valueId)}`;
+    if (variant) return `/urun/${p.slug}?secenek=${encodeURIComponent(variant.id)}`;
   }
   return undefined;
 }
@@ -66,11 +66,11 @@ export function saveProduct(product: Product): void {
     const next = { ...withPreviousSlugs(db.products, product), updatedAt: nowIso() };
     if (idx >= 0) db.products[idx] = next;
     else db.products.unshift({ ...next, createdAt: nowIso() });
-    // Urunden kaldirilan seceneklerin stok satirlari ve kod eslestirmeleri de
-    // silinir. Secenek tanimi degistiyse hepsi silinir: iki tanimda ayni
-    // kimlikli deger ("3-m") olabilir, eski stok yeni secenegin sanilmasin.
-    const sameOption = before?.optionId === product.options?.optionId;
-    const kept = new Set(sameOption ? product.options?.variants.map((v) => v.valueId) : []);
+    // Urunden kaldirilan varyantlarin stok satirlari ve kod eslestirmeleri de
+    // silinir. Secenek listesi degistiyse hepsi silinir: iki tanimda ayni
+    // kimlikli deger ("3-m") olabilir, eski stok yeni varyantin sanilmasin.
+    const sameOptions = (before?.optionIds ?? []).join("|") === (product.options?.optionIds ?? []).join("|");
+    const kept = new Set(sameOptions ? product.options?.variants.map((v) => v.id) : []);
     const live = (r: { productId: string; variantId?: string }) =>
       r.productId !== product.id || !r.variantId || kept.has(r.variantId);
     db.dealerStock = db.dealerStock.filter(live);

@@ -35,9 +35,9 @@ const iso = (ms: number) => new Date(ms).toISOString();
 const samplePrice = (product: Product, h: number) =>
   Math.round((product.priceExVat * (1 + product.vatRate / 100) * (0.96 + (h % 9) / 100)) / 10) * 10;
 
-/** Urunun (secenekli urunde secenegin) saticinin sitesindeki ornek sayfasi */
-const productUrl = (websiteUrl: string, product: Product, valueId?: string) =>
-  `${websiteUrl.replace(/\/$/, "")}/urun/${product.slug}${valueId ? `-${valueId}` : ""}`;
+/** Urunun (secenekli urunde varyantin) saticinin sitesindeki ornek sayfasi */
+const productUrl = (websiteUrl: string, product: Product, variantId?: string) =>
+  `${websiteUrl.replace(/\/$/, "")}/urun/${product.slug}${variantId ? `-${variantId}` : ""}`;
 
 export function createSampleStock(nowMs: number = Date.now()): {
   dealerStock: DealerStock[];
@@ -83,17 +83,17 @@ export function createSampleStock(nowMs: number = Date.now()): {
     products.forEach((product) => {
       const options = product.options?.variants ?? [undefined];
       options.forEach((option, index) => {
-        const h = hash(`${product.id}${option ? `-${option.valueId}` : ""}`, retailer.id);
+        const h = hash(`${product.id}${option ? `-${option.id}` : ""}`, retailer.id);
         if (h % 100 >= 92) return; // satici bu urunu hic satmiyor
         const inStock = h % 100 < 55 - index * 12;
         rows.push({
           retailerId: retailer.id,
           productId: product.id,
-          variantId: option?.valueId,
+          variantId: option?.id,
           sku: option?.sku ?? product.sku,
           quantity: inStock ? (h % 17) + 1 : 0,
           price: samplePrice(product, h),
-          url: productUrl(retailer.websiteUrl, product, option?.valueId),
+          url: productUrl(retailer.websiteUrl, product, option?.id),
           updatedAt: iso(at),
         });
       });
@@ -110,19 +110,19 @@ export function createSampleStock(nowMs: number = Date.now()): {
     products.forEach((product) => {
       const options = product.options?.variants ?? [undefined];
       options.forEach((option, index) => {
-        const h = hash(dealer.id, `${product.id}${option ? `-${option.valueId}` : ""}`);
+        const h = hash(dealer.id, `${product.id}${option ? `-${option.id}` : ""}`);
         if (h % 100 >= 85) return; // bayi bu urunu hic tutmuyor
         // Uzun secenekler daha az bayide bulunur.
         const inStock = h % 100 < 62 - index * 14;
         rows.push({
           dealerId: dealer.id,
           productId: product.id,
-          variantId: option?.valueId,
+          variantId: option?.id,
           sku: option?.sku ?? product.sku,
           quantity: inStock ? (h % 9) + 1 : 0,
           price: samplePrice(product, h),
           // Online magazasi olan bayi: urunlerin cogu sitesinde de satiliyor.
-          url: store && h % 10 !== 0 ? productUrl(store.websiteUrl, product, option?.valueId) : undefined,
+          url: store && h % 10 !== 0 ? productUrl(store.websiteUrl, product, option?.id) : undefined,
           updatedAt: iso(at),
         });
       });

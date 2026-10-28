@@ -4,14 +4,14 @@ import {
   applyDiscount,
   discountPercent,
   discountStatusOf,
-  productVariantGroup,
+  productOptionsView,
   salePriceExVat,
   validateDiscount,
 } from "@zenweld/data";
 import { priceWithVat } from "@zenweld/utils";
-import { resolveVariant, variantLabel } from "@/lib/variants";
+import { pickValue, resolveVariant, valueAvailable, variantLabel } from "@/lib/variants";
 import { optionsError } from "@/components/admin/product/OptionsTab";
-import { hoseLength, product } from "./ornek";
+import { cooling, hoseLength, options, product } from "./ornek";
 
 /* docs/IS-KURALLARI.md › 1. Fiyat ve KDV */
 describe("Fiyat ve KDV", () => {
@@ -92,24 +92,24 @@ describe("Seçenekli ürün", () => {
       { label: "Ağırlık", value: "1 kg" },
     ],
     inTheBox: ["Torç"],
-    options: {
-      optionId: hoseLength.id,
-      // Urundeki sira tanimdan farkli; ekranda tanimin sirasi gecerli.
-      variants: [
-        { valueId: "v5", sku: "ZW-TORC-5", priceDeltaExVat: 200, specOverrides: [{ label: "Ağırlık", value: "2 kg" }] },
-        { valueId: "v3", sku: "ZW-TORC-3", priceDeltaExVat: 0, inTheBox: ["Torç", "Yedek uç"] },
+    // Urundeki sira tanimdan farkli; ekranda tanimin sirasi gecerli.
+    options: options(
+      [hoseLength.id],
+      [
+        [["v5"], "ZW-TORC-5", { priceDeltaExVat: 200, specOverrides: [{ label: "Ağırlık", value: "2 kg" }] }],
+        [["v3"], "ZW-TORC-3", { inTheBox: ["Torç", "Yedek uç"] }],
       ],
-    },
+    ),
   });
-  const group = productVariantGroup(torch, [hoseLength]);
+  const view = productOptionsView(torch, [hoseLength]);
 
   it("değerlerin adı ve sırası ortak tanımdan gelir", () => {
-    expect(group?.label).toBe("Hortum Uzunluğu");
-    expect(group?.options.map((o) => o.label)).toEqual(["3 m", "5 m"]);
+    expect(view?.groups.map((g) => g.label)).toEqual(["Hortum Uzunluğu"]);
+    expect(view?.variants.map((v) => v.label)).toEqual(["3 m", "5 m"]);
   });
 
   it("örnek: 1.000 ₺ + 200 ₺ fark, %15 kampanya → 1.020 ₺ + KDV → KDV dahil 1.224 ₺", () => {
-    const resolved = resolveVariant(torch, group, { [hoseLength.id]: "v5" });
+    const resolved = resolveVariant(torch, view, "v5");
     expect(resolved.priceExVat).toBe(1200);
     const campaign = product({ discount: { percent: 15 } });
     const sale = applyDiscount(resolved.priceExVat, discountPercent(campaign));
@@ -118,7 +118,7 @@ describe("Seçenekli ürün", () => {
   });
 
   it("ürün kodu ve teknik özellikler seçeneğe göre değişir", () => {
-    const resolved = resolveVariant(torch, group, { [hoseLength.id]: "v5" });
+    const resolved = resolveVariant(torch, view, "v5");
     expect(resolved.sku).toBe("ZW-TORC-5");
     expect(resolved.specs).toEqual([
       { label: "Ürün Kodu", value: "ZW-TORC-5" },
@@ -128,21 +128,86 @@ describe("Seçenekli ürün", () => {
   });
 
   it("kutu içeriği: seçeneğin listesi varsa o, yoksa ürününki", () => {
-    expect(resolveVariant(torch, group, { [hoseLength.id]: "v3" }).inTheBox).toEqual(["Torç", "Yedek uç"]);
-    expect(resolveVariant(torch, group, { [hoseLength.id]: "v5" }).inTheBox).toEqual(["Torç"]);
+    expect(resolveVariant(torch, view, "v3").inTheBox).toEqual(["Torç", "Yedek uç"]);
+    expect(resolveVariant(torch, view, "v5").inTheBox).toEqual(["Torç"]);
   });
 
-  it("seçim yoksa ya da seçilen değer artık yoksa ilk seçenek seçili gelir", () => {
-    expect(resolveVariant(torch, group, {}).sku).toBe("ZW-TORC-3");
-    expect(resolveVariant(torch, group, { [hoseLength.id]: "v4" }).sku).toBe("ZW-TORC-3");
-    expect(variantLabel(group, {})).toBe("Hortum Uzunluğu: 3 m");
+  it("seçim yoksa ya da seçilen kombinasyon artık yoksa ilk kombinasyon seçili gelir", () => {
+    expect(resolveVariant(torch, view).sku).toBe("ZW-TORC-3");
+    expect(resolveVariant(torch, view, "v4").sku).toBe("ZW-TORC-3");
+    expect(variantLabel(view)).toBe("Hortum Uzunluğu: 3 m");
   });
 
   it("seçeneğin fiyatı eksiye düşemez", () => {
     const cheap = product({
       priceExVat: 100,
-      options: { optionId: hoseLength.id, variants: [{ valueId: "v3", sku: "ZW-UCUZ-3", priceDeltaExVat: -150 }] },
+      options: options([hoseLength.id], [[["v3"], "ZW-UCUZ-3", { priceDeltaExVat: -150 }]]),
     });
     expect(optionsError(cheap, [hoseLength], [])).toMatch(/eksiye düşüyor/);
+  });
+});
+
+/* docs/IS-KURALLARI.md › 3. Seçenekli ürün (birden çok seçenek) */
+describe("Birden çok seçenekli ürün", () => {
+  // Soğutma × Hortum Uzunluğu; "Su · 3 m" satılmıyor (varyantı yok).
+  const machine = product({
+    sku: "ZW-405",
+    priceExVat: 10000,
+    specs: [{ label: "Ürün Kodu", value: "ZW-405" }],
+    options: options(
+      [cooling.id, hoseLength.id],
+      [
+        [["su", "v5"], "ZW-405-SU-5", { priceDeltaExVat: 1500 }],
+        [["hava", "v5"], "ZW-405-HAVA-5"],
+        [["hava", "v3"], "ZW-405-HAVA-3"],
+      ],
+    ),
+  });
+  const view = productOptionsView(machine, [cooling, hoseLength])!;
+
+  it("her kombinasyon ayrı varyant; sıra önce birinci seçeneğin, sonra ikincinin tanımdaki sırası", () => {
+    expect(view.groups.map((g) => g.label)).toEqual(["Soğutma", "Hortum Uzunluğu"]);
+    expect(view.groups[1].values.map((v) => v.label)).toEqual(["3 m", "5 m"]);
+    expect(view.variants.map((v) => v.label)).toEqual([
+      "Hava Soğutmalı · 3 m",
+      "Hava Soğutmalı · 5 m",
+      "Su Soğutmalı · 5 m",
+    ]);
+  });
+
+  it("kod, fiyat ve teknik özellikler kombinasyona göre; her seçeneğin satırı eklenir", () => {
+    const resolved = resolveVariant(machine, view, "su_v5");
+    expect(resolved.sku).toBe("ZW-405-SU-5");
+    expect(resolved.priceExVat).toBe(11500);
+    expect(resolved.specs).toEqual([
+      { label: "Ürün Kodu", value: "ZW-405-SU-5" },
+      { label: "Soğutma", value: "Su Soğutmalı" },
+      { label: "Hortum Uzunluğu", value: "5 m" },
+    ]);
+    expect(variantLabel(view, "su_v5")).toBe("Soğutma: Su Soğutmalı · Hortum Uzunluğu: 5 m");
+  });
+
+  it("bir değer seçilince diğer seçim korunur; o kombinasyon satılmıyorsa o değeri içeren ilk kombinasyona geçilir", () => {
+    const hava3 = view.variants.find((v) => v.id === "hava_v3");
+    const hava5 = view.variants.find((v) => v.id === "hava_v5");
+    expect(pickValue(view, hava3, hoseLength.id, "v5")?.id).toBe("hava_v5");
+    expect(pickValue(view, hava5, cooling.id, "su")?.id).toBe("su_v5");
+    // Su · 3 m yok: Su seçilince Su · 5 m'ye geçilir.
+    expect(valueAvailable(view, hava3, cooling.id, "su")).toBe(false);
+    expect(pickValue(view, hava3, cooling.id, "su")?.id).toBe("su_v5");
+  });
+
+  it("en fazla 3 seçenek; her seçenekte değer olmalı; aynı kombinasyon iki kez olamaz", () => {
+    const four = product({ options: { optionIds: ["a", "b", "c", "d"], variants: [] } });
+    expect(optionsError(four, [], [])).toMatch(/en fazla 3/);
+    const missing = product({
+      options: options([cooling.id, hoseLength.id], [[["hava", "v3"], "ZW-A"], [["su", ""], "ZW-B"]]),
+    });
+    expect(optionsError(missing, [cooling, hoseLength], [])).toMatch(/her seçenekten bir değer/);
+    const twice = product({
+      options: options([cooling.id, hoseLength.id], [[["hava", "v3"], "ZW-A"], [["hava", "v3"], "ZW-B"]]),
+    });
+    expect(optionsError(twice, [cooling, hoseLength], [])).toMatch(/iki kez/);
+    expect(optionsError(machine, [cooling, hoseLength], [])).toBeNull();
   });
 });

@@ -1,4 +1,4 @@
-import type { OptionDefinition, PaymentPos, Product, ShopSettings } from "@zenweld/data";
+import type { OptionDefinition, PaymentPos, Product, ProductOptions, ProductVariant, ShopSettings } from "@zenweld/data";
 
 /**
  * TESTLERDE KULLANILAN ORNEK KAYITLAR
@@ -45,6 +45,36 @@ export const hoseLength: OptionDefinition = {
     { id: "v5", label: "5 m" },
   ],
 } as OptionDefinition;
+
+/** "Soğutma" tanimi: degerler tanimdaki sirayla Hava Soğutmalı, Su Soğutmalı. */
+export const cooling: OptionDefinition = {
+  id: "opt-sogutma",
+  name: "Soğutma",
+  values: [
+    { id: "hava", label: "Hava Soğutmalı" },
+    { id: "su", label: "Su Soğutmalı" },
+  ],
+} as OptionDefinition;
+
+/**
+ * Seceneklerin varyantlari. Her satir: kombinasyon (secenek sirasiyla deger
+ * kimlikleri) ve kod; kimlik degerlerden olusur ("su_v4").
+ */
+export function options(
+  optionIds: string[],
+  rows: ([values: string[], sku: string] | [values: string[], sku: string, rest: Partial<ProductVariant>])[],
+): ProductOptions {
+  return {
+    optionIds,
+    variants: rows.map(([values, sku, rest]) => ({
+      id: values.join("_"),
+      values: Object.fromEntries(optionIds.map((o, i) => [o, values[i]])),
+      sku,
+      priceDeltaExVat: 0,
+      ...rest,
+    })),
+  };
+}
 
 export function pos(overrides: Partial<PaymentPos> = {}): PaymentPos {
   return {

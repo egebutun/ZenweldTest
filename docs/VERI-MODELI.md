@@ -125,13 +125,13 @@ bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmışt
 | Kategori | Grup | `section` + `group` (grubun linki) | Bugün linkle bağlı; backend'de grup kimliğiyle bağlanmalı |
 | Kategori | Seçenek tanımları | `optionIds[]` | Çoka çok; yalnızca "listelensin" bağı |
 | Ürün | Kategori | `categorySlug` (+ `section`) | Bugün linkle bağlı; backend'de kategori kimliğiyle bağlanmalı. `section` kategoriden türetilebilir |
-| Ürün | Seçenek tanımı | `options.optionId` | Ürün başına en fazla bir tanım |
-| Ürün seçeneği | Seçenek değeri | `options.variants[].valueId` | Değer, ürünün tanımından olmalı |
+| Ürün | Seçenek tanımları | `options.optionIds[]` | Ürün başına en fazla 3 tanım, sayfadaki sırasıyla |
+| Varyant (kombinasyon) | Seçenek değerleri | `options.variants[].values` | Ürünün her seçeneğinden bir değer; değer o tanımdan olmalı |
 | Bayi | Online satıcı | `retailerId` | Bire bir: bir mağaza en fazla bir bayiye bağlı |
-| Bayi stok satırı | Bayi, ürün, seçenek | `dealerId`, `productId`, `variantId` | Ayrıntı: [STOK.md](STOK.md) |
-| Satıcı stok satırı | Satıcı, ürün, seçenek | `retailerId`, `productId`, `variantId` | |
+| Bayi stok satırı | Bayi, ürün, varyant | `dealerId`, `productId`, `variantId` | Ayrıntı: [STOK.md](STOK.md) |
+| Satıcı stok satırı | Satıcı, ürün, varyant | `retailerId`, `productId`, `variantId` | |
 | Stok işlemi | Bayi ya da satıcı | `sourceType` + `sourceId` | |
-| Kod eşleştirmesi | Bayi/satıcı, ürün, seçenek | `sourceId`, `productId`, `variantId` | |
+| Kod eşleştirmesi | Bayi/satıcı, ürün, varyant | `sourceId`, `productId`, `variantId` | |
 | Adres | Üye | `userId` | |
 | Teklif | Üye (isteğe bağlı) | `userId` | Ziyaretçi de teklif ister |
 | Teklif satırı | Ürün | `productId` | Ad, kod ve seçenek kopya |
@@ -236,22 +236,53 @@ Kategori ↔ tanım bağı (`category_options`) kategorinin `optionIds` alanıd�
 | `startsAt` | tarih-saat? | Boşsa hemen başlar |
 | `endsAt` | tarih-saat? | Boşsa süresiz; başlangıçtan sonra olmalı |
 
-**Seçenekler (`options` → `product_variants`):**
+**Seçenekler (`options` → `product_options`, `product_variants`, `variant_values`):**
+
+Bir ürün en fazla 3 seçenek kullanır (ör. Soğutma ve Torç Uzunluğu). Satılan
+her kombinasyon (ör. Su Soğutmalı · 8 m) bir **varyanttır**; satılmayan
+kombinasyonun varyantı yoktur (KARARLAR K-70).
 
 | Alan | Tür | Açıklama |
 |---|---|---|
-| `optionId` | metin | Ürünün tek seçenek tanımı |
-| `variants[].valueId` | metin | Tanımdaki değerin kimliği. Seçeneğin ürün içindeki kimliği de budur (stok, sepet, `?secenek=` adresi) |
-| `variants[].sku` | metin | Seçeneğin ürün kodu; zorunlu, tek kod havuzunda benzersiz |
+| `optionIds` | metin[] | Ürünün kullandığı seçenek tanımları, sayfadaki sırasıyla (1–3) |
+| `variants[].id` | metin | Varyantın ürün içindeki kimliği (stok, sepet, teklif listesi, `?secenek=` adresi). Oluşturulduğu andaki değer kimliklerinden üretilir (`su-sogutmali_8-m`; tek seçenekte değerin kimliği, `4-m`) ve sonra değişmez |
+| `variants[].values` | nesne | Kombinasyon: `{ <tanım kimliği>: <değer kimliği> }`; ürünün her seçeneğinden bir değer |
+| `variants[].sku` | metin | Varyantın ürün kodu; zorunlu, tek kod havuzunda benzersiz |
 | `variants[].priceDeltaExVat` | sayı | Ana fiyata eklenen fark (KDV hariç); eksi olabilir, toplam eksiye düşemez |
 | `variants[].specOverrides` | satırlar? | Yalnızca farklı olan teknik özellikler; aynı adlı satırın yerine geçer |
 | `variants[].inTheBox` | metin[]? | Boşsa ürünün kutu içeriği |
 | `variants[].image` | metin? | Ürünün görsellerinden biri; boşsa ürünün fotoğrafları |
-| `variants[].previousSlugs` | metin[]? | Bu seçenek önceden ayrı ürünken kullanılan linkler |
+| `variants[].previousSlugs` | metin[]? | Bu varyant önceden ayrı ürünken kullanılan linkler |
 
-- Seçeneklerin adı ve sırası tanımdan okunur; ürün yalnızca kendine özel
-  olanları tutar.
-- Değeri olmayan seçenek kaydedilmez.
+- Seçeneklerin ve değerlerin adı ve sırası tanımdan okunur; ürün yalnızca
+  kendine özel olanları tutar.
+- Varyantlar ekranda önce birinci seçeneğin, sonra ikincisinin tanımdaki
+  değer sırasıyla dizilir.
+- Kombinasyonu olmayan seçenek kaydedilmez; aynı kombinasyon bir üründe iki
+  kez olamaz.
+- Seçenek listesi (tanımlar) değişince varyant kimlikleri yeniden üretilir;
+  sıra değişince değişmez.
+
+**Backend'de seçenekli ürün (e-ticaret sistemlerinin ortak yapısı):**
+
+| Tablo | Ne tutar |
+|---|---|
+| `products` | Ürün sayfası: ad, link, marka, kategori, açıklama, garanti. Fiyat ve stok burada değil, varyanttadır |
+| `option_definitions`, `option_values` | Ortak seçenek adları ve değerleri, sırasıyla |
+| `product_options` | Ürünün kullandığı tanımlar ve sayfadaki sırası (`productId`, `optionId`, `position`) |
+| `product_variants` | Satılabilir her kalem: kimlik, ürün, ürün kodu (benzersiz), fiyat farkı, aktif, fotoğraf, farklı teknik değerler |
+| `variant_values` | Varyantın kombinasyonu (`variantId`, `optionId`, `valueId`); varyant başına seçenek başına tek değer; aynı üründe aynı kombinasyon tek |
+| `dealer_stock`, `retailer_stock` | Stok her zaman varyanta bağlanır |
+| `order_items`, `quote_items` | Varyant ve o anki kopyası (kod, ad, seçenek yazısı, birim fiyat) |
+
+- **Seçeneksiz ürün de tek varyantlı tutulmalı** (varsayılan varyant). Böylece
+  sepet, sipariş ve stok her zaman varyanta bağlanır. Bugün demoda seçeneksiz
+  ürünün kodu ve fiyatı ürünün kendisindedir; backend'e geçerken varsayılan
+  varyanta taşınmalı.
+- **SAP ile eşleşme:** SAP Business One'da standart olarak "ana ürün + varyant"
+  yapısı yoktur; her satılabilir kalem ayrı bir kalemdir (ItemCode). Doğal
+  eşleşme "varyantın ürün kodu = SAP kalem kodu"dur. Sitede türetilen ve SAP'ta
+  olmayan kodlar için bkz. [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün seçenekleri.
 
 ### SEO alanları
 
@@ -315,8 +346,9 @@ Bayiler sitenin üyesi değildir; sitede bayi girişi yoktur.
 | İşlem özeti | (`stock_imports` içinde) | `rows`, `matched`, `unmatched`, `invalid`, `added`, `changed`, `zeroed` |
 | Kod eşleştirmesi | `sku_aliases` | `sourceId`, `code` (büyük harf, boşluksuz), `productId`, `variantId?` |
 
-- `variantId` boşsa satır ürünün bütün seçenekleri için geçerlidir.
-- Bir kaynakta aynı ürün ve seçenek için tek satır olur.
+- `variantId` boşsa (dosyada ürünün ana kodu geçtiyse) satır ürünün bütün
+  varyantları için geçerlidir.
+- Bir kaynakta aynı ürün ve varyant için tek satır olur.
 - Sitede "stokta" sayılmak için: adet > 0 ve satır, stok geçerlilik
   süresinden eski değil ([Ayarlar](#stok-ayarı)).
 
@@ -388,7 +420,7 @@ Bayiler sitenin üyesi değildir; sitede bayi girişi yoktur.
 | `productId` | metin | |
 | `productName` | metin | Kopya |
 | `sku` | metin? | Teklif anındaki kod (seçenekli üründe seçeneğin kodu) |
-| `variantLabel` | metin? | Kopya, ör. "Hortum Uzunluğu: 5 m" |
+| `variantLabel` | metin? | Kopya, ör. "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m" |
 | `quantity` | sayı | En az 1 |
 | `note` | metin? | Kullanılmıyor |
 
@@ -715,18 +747,18 @@ başlangıç değeri.
 
 | Ne | Kapsam | Not |
 |---|---|---|
-| Ürün kodu ve seçenek kodları | Tek havuz | Ürün kodu, başka ürünün kodu ya da herhangi bir seçeneğin koduyla aynı olamaz. Boşluksuz ve büyük harfe çevrilerek karşılaştırılır. İki tabloya yayıldığı için ortak kod tablosu ya da tetikleyici gerekir |
+| Ürün kodu ve varyant kodları | Tek havuz | Ürün kodu, başka ürünün kodu ya da herhangi bir varyantın koduyla aynı olamaz. Boşluksuz ve büyük harfe çevrilerek karşılaştırılır. İki tabloya yayıldığı için ortak kod tablosu ya da tetikleyici gerekir |
 | Ürün linki | Ürünler | |
 | Kategori linki | Bütün site | |
 | Grup linki | Bölüm içinde | |
 | Blog, haber, etkinlik linki | Kendi türü içinde | |
 | Seçenek tanımı adı | Tanımlar | Türkçe büyük/küçük harf duyarsız |
 | Seçenek değeri adı | Tanım içinde | Türkçe büyük/küçük harf duyarsız |
-| Ürünün seçeneği | Ürün + değer | Bir değer bir üründe bir kez |
+| Ürünün varyantı | Ürün + kombinasyon | Bir kombinasyon bir üründe bir kez |
 | Üye e-postası | Üyeler | Büyük/küçük harf duyarsız |
 | Garanti seri numarası | Garantiler | Büyük harfe çevrilerek |
 | Bayinin online mağazası | Bayiler | Bir mağaza en fazla bir bayiye |
-| Stok satırı | Kaynak + ürün + seçenek | |
+| Stok satırı | Kaynak + ürün + varyant | |
 | Kod eşleştirmesi | Kaynak + kod | |
 | Sipariş, teklif, servis numarası | Kendi türü içinde | |
 | Varsayılan POS | POS'lar | En fazla bir |
@@ -742,7 +774,7 @@ sağlanmalı.
 | Silinen | Engel | Birlikte silinen / değişen |
 |---|---|---|
 | Ürün | — | Bayi ve satıcı stok satırları, kod eşleştirmeleri. Belgelerdeki ürün bağı kalkar (belge kalır). Sipariş, teklif, garanti, servis ve yorum kayıtları kalır |
-| Ürünün bir seçeneği (değeri) | — | O seçeneğin stok satırları ve kod eşleştirmeleri; eski ürün linki yönlendirmesi. Ürünün seçenek tanımı değişirse bütün seçenekli stok satırları |
+| Ürünün bir varyantı (kombinasyonu) | — | O varyantın stok satırları ve kod eşleştirmeleri; eski ürün linki yönlendirmesi. Ürünün seçenek listesi (tanımları) değişirse bütün varyantlı stok satırları |
 | Kategori | İçinde ürün varsa silinmez | — |
 | Grup | İçinde kategori varsa silinmez | — |
 | Seçenek tanımı | Bir üründe kullanılıyorsa silinmez | Kategorilerdeki bağı |
@@ -768,7 +800,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 | `zenweld.db.v1` | localStorage | Bütün veritabanı (`ZenweldDatabase`, `version` alanıyla) | Veritabanı |
 | `zenweld.session.v1` | localStorage | Site oturumu: üyenin kimliği | Sunucu oturumu |
 | `zenweld.admin.session.v1` | localStorage | Panel oturumu: yöneticinin kimliği | Sunucu oturumu |
-| `zenweld.cart.v1` | localStorage | Sepet: `[{ productId, selection: { <tanım>: <değer> }, quantity }]` | Tarayıcıda kalabilir; fiyat her açılışta üründen hesaplanır |
+| `zenweld.cart.v1` | localStorage | Sepet: `[{ productId, variantId?, quantity }]` (eski `selection` biçimli satırlar tek seçenekte okunur) | Tarayıcıda kalabilir; fiyat her açılışta üründen hesaplanır |
 | `zenweld.quotelist.v1` | localStorage | Teklif listesi: `[{ productId, variantId?, productName, quantity }]` | Tarayıcıda kalabilir |
 | `zenweld.favourites.v1` | localStorage | Favori ürün kimlikleri | Üyeye bağlanabilir |
 | `zenweld.cookie-consent.v1` | localStorage | Çerez tercihi: `{ choice: "all" | "necessary", at }` | Tarayıcıda kalır |

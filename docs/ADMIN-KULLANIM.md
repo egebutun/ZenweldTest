@@ -619,8 +619,8 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
   - **Bitiş:** "Boş bırakılırsa süresiz".
   - Canlı önizleme: Normal fiyat (üstü çizili), Kampanya fiyatı (KDV dahil)
     ve kampanya rozeti.
-  - Seçenekli üründe: "Seçenekli ürün: aynı indirim oranı tüm seçeneklere
-    (ör. 3 m / 5 m) uygulanır."
+  - Seçenekli üründe: "Seçenekli ürün: aynı indirim oranı bütün
+    kombinasyonlara (ör. 3 m / 5 m) uygulanır."
   - Hatalar: "İndirim oranı %1 ile %90 arasında tam sayı olmalıdır." /
     "Kampanya bitişi, başlangıçtan sonra olmalıdır."
 - **Yayında (aktif)**, **Teklife açık** (Teklif Al listesinde çıkar), **Yeni
@@ -658,18 +658,20 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
 
 #### Seçenekler
 
-Bir ürün tek sayfada seçenekleriyle satılabilir (ör. hortum uzunluğu 3 m /
-5 m). Her seçeneğin kendi ürün kodu ve fiyatı olur. Kurallar:
+Bir ürün tek sayfada seçenekleriyle satılabilir (ör. Soğutma: Hava / Su ve
+Torç Uzunluğu: 4 m / 8 m). Satılan her kombinasyonun (ör. Su Soğutmalı · 8 m)
+kendi ürün kodu ve fiyatı olur. Kurallar:
 
-- Bir üründe yalnızca bir seçenek adı olur (ör. yalnızca "Hortum
-  Uzunluğu").
+- Bir üründe en fazla 3 seçenek olur.
 - Seçenekler ortak [Seçenek Tanımları](#9-seçenek-tanımları)'ndan gelir;
   ürünün kategorisinde işaretli olanlar listelenir.
+- Satılmayan kombinasyonun kaydı (varyantı) olmaz; sitede seçilemez.
 
 **Seçeneği olmayan ürün:**
 
-- "Ürün tek sayfada seçenekleriyle satılır (ör. 3 m / 5 m); her seçeneğin
-  kendi ürün kodu ve fiyatı olur."
+- "Ürün tek sayfada seçenekleriyle satılır (ör. Soğutma: Hava / Su, Torç
+  Uzunluğu: 4 m / 8 m); satılan her kombinasyonun kendi ürün kodu ve fiyatı
+  olur."
 - **Seçenek** listesi ("Hortum Uzunluğu (3 m, 4 m, 5 m)") ve **Seçenek
   Ekle**.
 - Kategoride işaretli seçenek yoksa: ""<Kategori>" kategorisinde işaretli
@@ -679,63 +681,92 @@ Bir ürün tek sayfada seçenekleriyle satılabilir (ör. hortum uzunluğu 3 m /
 
 **Seçenekli ürün:**
 
-- Üstte "Seçenek: <ad>" ve **Seçeneği Kaldır**. Değer varsa onay sorulur:
-  "Seçenek ve tüm değerleri bu üründen kaldırılsın mı?"
-- Seçenek tanımı silinmişse: "Bu ürünün seçenek tanımı bulunamadı (silinmiş
-  olabilir)." ve **Seçeneği Kaldır**.
-- **Değer ekle:** Tanımdaki, bu üründe henüz olmayan değerler düğme olarak
-  çıkar.
-- "Listede olmayan bir değer gerekiyorsa Seçenek Tanımları ekranında "<ad>"
-  tanımına ekleyin."
-- Hiç değer yoksa: "Henüz değer eklenmedi. Bu üründe satılan değerleri
-  aşağıdan ekleyin." Değersiz seçenek kaydedilmez.
+- Üstte açıklama ("Her seçenekte bu üründe satılan değerleri işaretleyin;
+  kombinasyonlar kendiliğinden oluşur …") ve **Tüm Seçenekleri Kaldır**.
+  Kombinasyon varsa onay sorulur: "Seçenekler ve tüm kombinasyonlar bu
+  üründen kaldırılsın mı?"
+- Seçenek tanımlarından biri silinmişse: "Bu ürünün seçenek tanımlarından
+  biri bulunamadı (silinmiş olabilir)." ve **Seçenekleri Kaldır**.
+- **Her seçenek bir kutudur** ("1. Soğutma", "2. Torç Uzunluğu"; numara
+  sitedeki sıradır):
+  - Tanımın bütün değerleri düğme olarak çıkar; bu üründe satılanlar
+    işaretlenir. Değer işaretlenince yeni kombinasyonlar eklenir; işaret
+    kaldırılınca o değeri içeren kombinasyonlar kalkar (kodu girilmiş
+    kombinasyon varsa onay sorulur: "Bu değeri içeren kombinasyonlar ve
+    kodları kaldırılsın mı?").
+  - Yukarı ok seçeneği sitede bir üste taşır (kombinasyonlar ve kodlar
+    değişmez).
+  - Çöp seçeneği kaldırır. Kombinasyon varsa onay sorulur: "Seçenek
+    kaldırılsın mı? Kombinasyonlar birleşir; her birleşenden ilkinin
+    bilgileri kalır." Tek seçenek kaldıysa **Tüm Seçenekleri Kaldır** gibi
+    davranır.
+- **Seçenek ekle** (en fazla 3): Kategoride işaretli, üründe olmayan
+  tanımlar listelenir. Yoksa: "Kategoride işaretli başka seçenek yok."
+  Yeni seçenekte değer işaretlenene kadar "<Seçenek> için en az bir değer
+  işaretleyin; kombinasyonlar ondan sonra oluşur." yazar. İlk değer
+  işaretlenince var olan kombinasyonlar bu değerle devam eder (kodları
+  korunur); sonraki değerlerin kombinasyonları boş kodla eklenir.
+- "Listede olmayan bir değer gerekiyorsa Seçenek Tanımları ekranında ilgili
+  tanıma ekleyin."
 
-**Her değerin kartı:**
+**Kombinasyonlar (N):**
 
-- Başlıkta değer adı ve çöp (değeri bu üründen kaldırır).
+- Her kombinasyon bir karttır (ör. "Hava Soğutmalı · 4 m"); sıra, seçenek
+  ve değer sırasına göredir.
+- Kartın çöpü kombinasyonu "satılmıyor" yapar (kodu girilmişse onay
+  sorulur). Çıkarılanlar altta **Satılmayan kombinasyonlar:** diye düğme
+  olarak durur; tıklayınca geri eklenir.
+- Hiç kombinasyon kalmazsa: "Satılan kombinasyon yok. Aşağıdan geri ekleyin
+  ya da değer işaretleyin."
+
+**Her kombinasyonun kartı:**
+
 - **Ürün kodu (SKU)** (zorunlu). Kutuda "ör. <ana kod>-…" ipucu.
 - **Fiyat farkı (KDV hariç, ₺):** "Ana fiyata eklenir; eksi olabilir".
 - **Normal fiyat:** Hesaplanır ("<KDV hariç> + KDV · <KDV dahil>").
-- Bir zamanlar ayrı ürün olup bu seçeneğe dönüştürülen değerde: "Eski ürün
-  linki /urun/<link> bu seçenekle açılır." Değer üründen kaldırılırsa bu
-  yönlendirme de kalkar.
-- **"Bu değerde farklı olanlar (isteğe bağlı)"** (doluysa açık gelir):
+- Bir zamanlar ayrı ürün olup bu kombinasyona dönüştürülen kayıtta: "Eski
+  ürün linki /urun/<link> bu kombinasyonla açılır." Kombinasyon üründen
+  kaldırılırsa bu yönlendirme de kalkar.
+- **"Bu kombinasyonda farklı olanlar (isteğe bağlı)"** (doluysa açık gelir):
   - **Fotoğraf:** "Ürünün fotoğrafı" ya da ürünün görsellerinden biri.
     Üründe görsel yoksa: "Önce Görseller sekmesinden ürüne fotoğraf
     ekleyin." Seçilen fotoğraf sonradan üründen silinirse seçim de kalkar.
-  - **Teknik özellik farkları:** "Yalnızca bu değerde farklı olan satırlar
-    (ör. Ağırlık); aynı adlı satırın yerine geçer. "<Seçenek>: <değer>"
-    satırı kendiliğinden eklenir." **Satır Ekle**.
-  - **Kutu içeriği:** "Ürünün kutu içeriği kullanılıyor." ve **Bu değer için
-    ayrı liste** (ürünün listesini kopyalar). Ayrı listede **Madde Ekle** ve
-    **Ürünün listesine dön**.
+  - **Teknik özellik farkları:** "Yalnızca bu kombinasyonda farklı olan
+    satırlar (ör. Ağırlık); aynı adlı satırın yerine geçer. "<Seçenek>:
+    <değer>" satırı kendiliğinden eklenir." **Satır Ekle**.
+  - **Kutu içeriği:** "Ürünün kutu içeriği kullanılıyor." ve **Bu
+    kombinasyon için ayrı liste** (ürünün listesini kopyalar). Ayrı listede
+    **Madde Ekle** ve **Ürünün listesine dön**.
 - Boş satır ve maddeler kayıtta atılır.
 
-**Kodların kuralı** (ürün kodu ve seçenek kodları tek havuzdadır; bayi ve
-satıcı stok dosyaları bu kodlarla eşleşir):
+**Kodların kuralı** (ürün kodu ve kombinasyon kodları tek havuzdadır; bayi
+ve satıcı stok dosyaları bu kodlarla eşleşir):
 
 - Kodlar karşılaştırılırken boşluklar atılır, büyük harfe çevrilir.
-- Ürün kodu başka bir ürünün ya da başka bir ürünün seçeneğinin koduyla aynı
-  olamaz:
+- Ürün kodu başka bir ürünün ya da başka bir ürünün kombinasyonunun koduyla
+  aynı olamaz:
   - "Ürün kodu (<kod>) "<ad>" ürününde kullanılıyor."
-  - "Ürün kodu (<kod>) "<ad>" ürününün seçeneğinde kullanılıyor."
-- Seçenek kodu:
-  - Boş olamaz: ""<değer>" seçeneğinin ürün kodu zorunludur."
-  - Ürünün kendi koduyla aynı olamaz: ""<değer>" seçeneğinin kodu (<kod>)
-    ürünün kendi koduyla aynı olamaz."
-  - Aynı ürünün başka değeriyle aynı olamaz: "… "<diğer değer>" seçeneğinde
-    de var."
-  - Başka ürün ya da seçenek koduyla aynı olamaz (yukarıdaki mesajlar).
-- Seçeneğin fiyatı eksiye düşemez: ""<değer>" seçeneğinin fiyatı eksiye
-  düşüyor."
+  - "Ürün kodu (<kod>) "<ad>" ürününün bir kombinasyonunda kullanılıyor."
+- Kombinasyon kodu:
+  - Boş olamaz: ""<kombinasyon>" kombinasyonunun ürün kodu zorunludur."
+  - Ürünün kendi koduyla aynı olamaz: ""<kombinasyon>" kombinasyonunun kodu
+    (<kod>) ürünün kendi koduyla aynı olamaz."
+  - Aynı ürünün başka kombinasyonuyla aynı olamaz: "… "<diğer>"
+    kombinasyonunda da var."
+  - Başka ürün ya da kombinasyon koduyla aynı olamaz (yukarıdaki mesajlar).
+- Kombinasyonun fiyatı eksiye düşemez: ""<kombinasyon>" kombinasyonunun
+  fiyatı eksiye düşüyor."
+- Değeri işaretlenmemiş seçenek varken: ""<Seçenek>" seçeneği için en az bir
+  değer işaretleyin."
 - Hata olunca form Seçenekler sekmesine geçer.
 
 **Kaydedince:**
 
-- Üründen kaldırılan değerlerin bayi/satıcı stok satırları ve kod
+- Üründen kaldırılan kombinasyonların bayi/satıcı stok satırları ve kod
   eşleştirmeleri silinir.
-- Seçenek adı değiştirildiyse (başka tanım seçildiyse) ürünün bütün
-  seçenekli stok satırları silinir.
+- Seçenek eklendiyse ya da kaldırıldıysa ürünün bütün kombinasyonlu stok
+  satırları silinir (kombinasyonların kimliği yeniden oluşur). Seçeneklerin
+  yalnızca sırası değiştiyse stok kalır.
 
 **Ayrı bir ürünü seçeneğe dönüştürmek** (ör. "MB-25 MIG Torcu 4m" ürününü
 "MB-25 MIG Torcu"nun 4 m seçeneği yapmak):

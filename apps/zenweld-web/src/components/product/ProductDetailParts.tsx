@@ -29,7 +29,6 @@ import { useT } from "@/lib/i18n-client";
 import { openSupportChat } from "@/lib/support-chat";
 import { MAX_LINE_QUANTITY, useCart } from "@/lib/cart";
 import { useFavourites } from "@/lib/favourites";
-import type { VariantSelection } from "@/lib/variants";
 import { formatDateTime, formatPrice, priceWithVat } from "@zenweld/utils";
 
 /* ---------------------------------------------------------------- */
@@ -142,15 +141,15 @@ export function PriceBlock({ product }: { product: Product }) {
 /* ---------------------------------------------------------------- */
 
 /**
- * Adet secimi + Sepete Ekle + Favorilere ekle. Secili urun secenekleriyle
- * birlikte eklenir; favori urun bazindadir (Hesabim > Favorilerim).
+ * Adet secimi + Sepete Ekle + Favorilere ekle. Secili varyantiyla birlikte
+ * eklenir; favori urun bazindadir (Hesabim > Favorilerim).
  */
 export function AddToCart({
   product,
-  selection,
+  variantId,
 }: {
   product: Product;
-  selection: VariantSelection;
+  variantId?: string;
 }) {
   const t = useT();
   const cart = useCart();
@@ -171,7 +170,7 @@ export function AddToCart({
           className="max-sm:px-3 max-sm:text-sm"
           leftIcon={<ShoppingCart size={20} className="max-[389px]:hidden" />}
           onClick={() => {
-            cart.add(product.id, selection, quantity);
+            cart.add(product.id, variantId, quantity);
             setAdded(true);
           }}
         >
@@ -261,9 +260,9 @@ export function QuantityStepper({
 
 export function WhereToBuyButton({
   product,
-  /** Secili urun secenegi; bayi listesi buna gore filtrelenir. */
+  /** Secili varyant; bayi listesi buna gore filtrelenir. */
   variantId,
-  /** Secili secenegin adi (orn. "5 m"); listenin basliginda urun adinin yaninda */
+  /** Secili varyantin kisa adi (orn. "Su Soğutmalı · 8 m"); listenin basliginda urun adinin yaninda */
   variantLabel,
 }: {
   product: Product;

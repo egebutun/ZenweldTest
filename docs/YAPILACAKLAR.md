@@ -107,36 +107,43 @@ numarası ve ETBİS bilgisi yok. Sözleşmelerdeki MERSİS alanı da boş ("[—
 ## Ürün seçenekleri (3 m / 5 m gibi) — backend
 
 Panel ve site hazır: Seçenek Tanımları, kategorinin Seçenekler sekmesi, ürünün
-Seçenekler sekmesi, ürün sayfası, sepet, sipariş ve Teklif Al. Veri şimdilik
-tarayıcıda. Örnek olarak MB-25 ve MB-36 MIG torçlarında (Hortum Uzunluğu) ve
-Gaz Nozulu Seti'nde (Paket) var. Gerçek ürünler ve hangilerinin seçenekli
-olduğu belirlenince panelden girilecek.
+Seçenekler sekmesi (en fazla 3 seçenek, kombinasyonlar), ürün sayfası, sepet,
+sipariş ve Teklif Al. Veri şimdilik tarayıcıda. Örnek olarak MB-25 ve MB-36
+MIG torçlarında (Hortum Uzunluğu) ve Gaz Nozulu Seti'nde (Paket) var.
+Önerilen tablo yapısı: [VERI-MODELI.md](VERI-MODELI.md) › Ürünler ›
+Seçenekler (KARARLAR K-70).
 
 1. **Tablolar:**
-   - `option_definitions`: seçenek adı ("Hortum Uzunluğu"); ad benzersiz.
+   - `option_definitions`: seçenek adı ("Torç Uzunluğu"); ad benzersiz.
    - `option_values`: tanım, ad ("4 m"), sıra; tanım içinde ad benzersiz.
    - `category_options`: kategori ↔ tanım; yalnızca bağlantı (bu kategorideki
      ürüne seçenek eklenirken hangi tanımlar listelenir). Kategori ya da tanım
      silinince bağlantı da silinir (CASCADE).
-   - `products.option_definition_id`: ürünün tek seçeneği; boşsa seçeneksiz.
-   - `product_variants`: ürün, değer, ürün kodu, fiyat farkı (KDV hariç) ve
-     yalnızca farklı olanlar: teknik özellik satırları, kutu içeriği, fotoğraf.
-     (ürün, değer) benzersiz; ürün silinince satırlar da silinir (CASCADE).
+   - `product_options`: ürün, tanım, sıra (ürün başına en fazla 3; (ürün,
+     tanım) benzersiz).
+   - `product_variants`: ürün, ürün kodu, fiyat farkı (KDV hariç) ve yalnızca
+     farklı olanlar: teknik özellik satırları, kutu içeriği, fotoğraf. Ürün
+     silinince satırlar da silinir (CASCADE).
+   - `variant_values`: varyant, tanım, değer. (varyant, tanım) benzersiz;
+     aynı üründe aynı kombinasyon tek.
+   - Seçeneksiz ürün de tek varyantlı tutulmalı (varsayılan varyant); bugün
+     demoda kodu ve fiyatı ürünün üstünde.
 2. **Kurallar (veritabanında da sağlanmalı; bugün panel kontrol ediyor):**
-   - Ürünün değerleri yalnızca kendi tanımından olur
-     (`product_variants` değerinin tanımı = `products.option_definition_id`).
+   - Varyantın her seçenekten tam bir değeri olur; değer o seçeneğin
+     tanımından olur.
    - Üründe kullanılan değer ve tanım silinemez (RESTRICT); panel kaç üründe
      kullanıldığını yazar.
-   - Ürün kodları tek havuzda benzersiz: ürün kodu ve seçenek kodu başka hiçbir
-     ürün ya da seçenek koduyla aynı olamaz. İki tabloya yayıldığı için ortak
-     bir kod tablosu (kod UNIQUE, ürün, seçenek) ya da tetikleyici gerekir.
+   - Ürün kodları tek havuzda benzersiz: ürün kodu ve varyant kodu başka hiçbir
+     ürün ya da varyant koduyla aynı olamaz. İki tabloya yayıldığı için ortak
+     bir kod tablosu (kod UNIQUE, ürün, varyant) ya da tetikleyici gerekir.
      Bayi ve satıcı stok dosyaları bu kodla eşleşir (`buildCodeIndex`).
-   - Değer üründen kaldırılınca o değerin stok satırları (`dealer_stock`,
+   - Varyant üründen kaldırılınca stok satırları (`dealer_stock`,
      `retailer_stock`) ve kod eşleştirmeleri (`sku_aliases`) aynı işlemde
-     (transaction) silinir (bugün: `saveProduct`). Stok tablolarında
-     `variant_id = ''` ürünün tüm seçenekleri demektir ([STOK.md](STOK.md)).
+     (transaction) silinir (bugün: `saveProduct`). Ürünün seçenek listesi
+     değişince bütün varyantlı stok satırları silinir. Stok tablolarında
+     `variant_id = ''` ürünün tüm varyantları demektir ([STOK.md](STOK.md)).
 3. **Eski linkler:** Ayrı bir ürün seçeneğe dönüştürülünce eski linki
-   `/urun/<ürün>?secenek=<değer>` adresine 301 ile yönlenmeli (örnek:
+   `/urun/<ürün>?secenek=<varyant>` adresine 301 ile yönlenmeli (örnek:
    `/urun/mig-torcu-mb25-4m` → `/urun/mig-torcu-mb25?secenek=4-m`). Bunun için
    SEO bölümündeki `previous_paths` tablosuna seçenek (değer) sütunu eklenir.
    Demoda tarayıcı yönlendiriyor (`movedProductPath`). Panelde ayrı ürünü
@@ -147,13 +154,24 @@ olduğu belirlenince panelden girilecek.
    kaldırır. Bugün elle yapılırsa eski link 404 verir, yorumlar görünmez olur
    ve stoklar bir sonraki stok dosyasına kadar boş kalır.
 4. **Sipariş ve teklif:** `order_items` ve `quote_items` o anki ürün adını,
-   seçenek adını ("Hortum Uzunluğu: 5 m") ve kodunu kopya olarak saklar;
-   sonradan ad değişse ya da seçenek silinse de geçmiş kayıt değişmez. Sepet ve
-   teklif listesi ürün ve değer kimliğini tutar.
-5. **Yorumlar** ürüne bağlıdır (`reviews.product_id`); tüm seçenekler aynı
+   seçenekleri ("Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m") ve kodunu kopya
+   olarak saklar; sonradan ad değişse ya da varyant silinse de geçmiş kayıt
+   değişmez. Sepet ve teklif listesi ürün ve varyant kimliğini tutar.
+5. **Yorumlar** ürüne bağlıdır (`reviews.product_id`); tüm varyantlar aynı
    yorumları gösterir.
-6. **Sayfa adresi:** `?secenek=` sayfayı yalnızca o seçenekle açar. Canonical
+6. **Sayfa adresi:** `?secenek=` sayfayı yalnızca o varyantla açar. Canonical
    adres parametresizdir; site haritasında ürün tek satırdır.
+7. **SAP ve bayi kodları (stok ve sipariş tasarımında karar verilecek):**
+   - SAP Business One'da her satılabilir kalem ayrı bir kalemdir; doğal eşleşme
+     "varyant kodu = SAP kalem kodu"dur.
+   - Bazı kombinasyonların kodu sitede türetilir (ör. SAP'taki makine kodunun
+     sonuna torç uzunluğu: `-4M`, `-8M`). Bu kodların SAP'ta da açılıp
+     açılmayacağına karar verilecek.
+   - Bayilerin stok dosyasında yalnızca SAP kodu (torç uzunluğu belirtilmeden)
+     gelirse bugün ya ürünün ana koduyla eşleşir (bütün kombinasyonlarda
+     stokta görünür) ya da tanınmayan kod olarak elle tek bir kombinasyona
+     eşleştirilir. Bir SAP kodunun birden çok kombinasyona (ör. Hava · 4 m ve
+     Hava · 8 m) sayılması istenirse eşleştirme buna göre genişletilmeli.
 
 ## Canlı sunucu (hosting) kararı ve Vercel temizliği
 

@@ -1,5 +1,5 @@
 import type { OptionDefinition, Product, SkuAlias, StockImportSummary, StockRow } from "./types";
-import { productVariantGroup } from "./variants";
+import { productOptionsView } from "./variants";
 
 /**
  * STOK DOSYASI — OKUMA, ESLESTIRME, FARK
@@ -193,7 +193,7 @@ export function buildCodeIndex(products: Product[], aliases: SkuAlias[], sourceI
   products.forEach((p) => {
     index.set(normalizeCode(p.sku), { productId: p.id });
     p.options?.variants.forEach((v) => {
-      if (v.sku) index.set(normalizeCode(v.sku), { productId: p.id, variantId: v.valueId });
+      if (v.sku) index.set(normalizeCode(v.sku), { productId: p.id, variantId: v.id });
     });
   });
   aliases
@@ -347,9 +347,9 @@ export function stockTemplateRows(
   const header = ["SKU", "Ürün Adı", "Adet", "Fiyat", ...(options.withUrl ? ["Link"] : [])];
   const rows: string[][] = [header];
   products.forEach((p) => {
-    const variants = productVariantGroup(p, options.definitions)?.options;
+    const variants = productOptionsView(p, options.definitions)?.variants;
     const lines = variants?.length
-      ? variants.map((o) => ({ sku: o.sku, name: `${p.name} (${o.label})`, variantId: o.id }))
+      ? variants.map((v) => ({ sku: v.sku, name: `${p.name} (${v.label})`, variantId: v.id }))
       : [{ sku: p.sku, name: p.name, variantId: undefined }];
     lines.forEach((l) => {
       const level = byKey.get(stockKey({ productId: p.id, variantId: l.variantId })) ?? byKey.get(stockKey({ productId: p.id }));
