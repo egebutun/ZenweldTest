@@ -360,7 +360,8 @@ Dosya biçimi, kurallar ve backend'e geçiş (tablolar, API): [docs/STOK.md](doc
 - **Ürünler:** Ekipmanların fotoğrafları sahibinden gelir
   (`apps/zenweld-web/public/images/products/<ürün linki>.webp`; soğutmalı
   üründe `-hava-sogutmali` / `-su-sogutmali` ekli). Fotoğrafı henüz olmayan
-  ekipman, alt kategorisinin kart çizimini gösterir; eksikler
+  ekipman, alt kategorisinin kart çizimini gösterir (Force serisinin 9 ürünü
+  ortak geçici bir fotoğrafı: `force-serisi-gecici.webp`); eksikler
   [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Ürün fotoğrafları. Diğer
   bölümlerdeki 48 ürün genel bir Zenweld fotoğrafını kullanır
   (`zenweld-urun.webp`). Her ürünün fotoğrafı panelden de değiştirilebilir.

@@ -296,6 +296,10 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     Jasic LS-20000F fotoğrafı ve Force ürünlerinin geçici Jasic TIG200
     fotoğrafı.
   - Eksik fotoğraflar sahibi bulunca yüklenir.
+  - **Ek (2026-10-28):** Force serisinin 9 ürünü (ForceArc 200, 250, 280; ForceMIG 125, 185 MP, 200, 205 DP; ForceTIG 200; ForceCut 45)
+    gerçek fotoğrafları gelene kadar sahibinin verdiği geçici ortak
+    fotoğrafı (Jasic ARC280 görseli, `force-serisi-gecici.webp`) gösterir.
+    ForceArc 400 CEL bu listede yoktur; çizim gösterir.
 - **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları.
 
 ---

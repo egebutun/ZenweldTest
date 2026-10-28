@@ -1494,7 +1494,8 @@ Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
   metinler ve örnek blog yazıları lorem ipsum'dur.
 - **Ürün fotoğrafları:** Ekipmanlardan 19 ürünün fotoğrafı yok ve 4
   soğutmalı üründe bir soğutma halinin fotoğrafı eksik; bunlarda alt
-  kategorinin kart çizimi görünür (KARARLAR K-77,
+  kategorinin kart çizimi görünür. Force serisinin 9 ürününde ortak geçici
+  bir fotoğraf görünür (KARARLAR K-77,
   [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları). Diğer bölümlerin
   ürünleri genel bir Zenweld fotoğrafını kullanır.
 - **Kategori filtreleri:** Şebeke Voltajı, Amper ve Güç (W) filtrelerinin

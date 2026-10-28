@@ -111,6 +111,23 @@ const MACHINE_PHOTOS = new Set([
   "multicut-60-s",
 ]);
 
+/**
+ * Gercek fotografi gelene kadar Force serisi 9 urunun gecici ortak fotografi
+ * (sahibinin istegi, KARARLAR K-77 eki). ForceArc 400 CEL bunlardan degil.
+ */
+const FORCE_TEMP_PHOTO = "/images/products/force-serisi-gecici.webp";
+const FORCE_TEMP = new Set([
+  "forcearc-200-mma",
+  "forcearc-250-mma",
+  "forcearc-280-mma",
+  "forcemig-125",
+  "forcemig-185-mp",
+  "forcemig-200",
+  "forcemig-205-dp",
+  "forcetig-200",
+  "forcecut-45",
+]);
+
 const COOLING_LABELS = { hava: "Hava Soğutmalı", su: "Su Soğutmalı" } as const;
 
 /**
@@ -121,7 +138,8 @@ function machinePhotos(seed: MachineSeed): { images: ProductImage[]; byCooling?:
   const drawing = categories.find((c) => c.slug === seed.categorySlug)?.image ?? PRODUCT_PHOTO;
   const photo = (name: string) => (MACHINE_PHOTOS.has(name) ? `/images/products/${name}.webp` : undefined);
   if (!seed.options || !("cooling" in seed.options)) {
-    return { images: [{ url: photo(seed.slug) ?? drawing, alt: seed.name }] };
+    const temp = FORCE_TEMP.has(seed.slug) ? FORCE_TEMP_PHOTO : undefined;
+    return { images: [{ url: photo(seed.slug) ?? temp ?? drawing, alt: seed.name }] };
   }
   const halves = (["hava", "su"] as const).map((c) => ({ c, url: photo(`${seed.slug}-${c}-sogutmali`) }));
   if (halves.every((h) => !h.url)) return { images: [{ url: drawing, alt: seed.name }] };

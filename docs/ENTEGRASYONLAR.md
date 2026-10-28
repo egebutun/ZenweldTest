@@ -240,7 +240,8 @@ yoksa önizleme boş çıkar.
 
 - **Ürünler:** Ekipmanların fotoğrafları sahibinden gelir ve depodadır
   (`apps/zenweld-web/public/images/products/`); fotoğrafı henüz olmayan
-  ekipman alt kategorisinin kart çizimini gösterir (KARARLAR K-77). Diğer
+  ekipman alt kategorisinin kart çizimini, Force serisinin 9 ürünü ortak
+  geçici bir fotoğrafı gösterir (KARARLAR K-77). Diğer
   bölümlerdeki ürünler tek bir genel Zenweld fotoğrafını kullanır
   (`zenweld-urun.webp`); gerçekleri panelden eklenmeli.
 - **Blog, haber, etkinlik, Hakkımızda ve Welders Club görselleri**

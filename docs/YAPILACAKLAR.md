@@ -333,7 +333,10 @@ Ekipmanların gerçek fotoğrafları sahibinden gelir (KARARLAR K-77). Fotoğraf
 sonra `.webp` hali üretilir ve ürün örnek veriye bağlanır
 (`packages/data/src/seed/products.seed.ts` › `MACHINE_PHOTOS`; bkz.
 klasördeki `BURAYA-GORSEL-YUKLEYIN.md`). Fotoğrafı olmayan ürün ve soğutma
-hali, alt kategorinin kart çizimini gösterir.
+hali, alt kategorinin kart çizimini gösterir. Force serisinin 9 ürünü
+(ForceArc 200, 250, 280; ForceMIG 125, 185 MP, 200, 205 DP; ForceTIG 200; ForceCut 45) şimdilik ortak geçici bir fotoğraf
+gösterir (`force-serisi-gecici.webp`, KARARLAR K-77 eki); gerçekleri gelince
+geçici fotoğraf kaldırılır.
 
 **Çeşit:** 2 = hava ve su soğutmalı hali ayrı fotoğraf; 1 = tek fotoğraf.
 Ekipmanların 40 ürününden 17'sinin fotoğrafı tam; 19 üründe hiç fotoğraf yok,

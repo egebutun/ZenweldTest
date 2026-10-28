@@ -19,7 +19,10 @@ Yüklenen fotoğrafın sitede görünmesi için:
    içindeki `MACHINE_PHOTOS` listesine eklenir ve veri sürümü artırılır.
 
 Fotoğrafı olmayan ürün ve soğutma hali, alt kategorinin kart çizimini
-gösterir (`public/images/categories/`).
+gösterir (`public/images/categories/`). Force serisinin 9 ürünü gerçek
+fotoğrafları gelene kadar **`force-serisi-gecici.webp`** dosyasını gösterir
+(`products.seed.ts` › `FORCE_TEMP`); gerçek fotoğraf yüklenip
+`MACHINE_PHOTOS`'a eklenince o kullanılır.
 
 ## Diğer bölümler
 
