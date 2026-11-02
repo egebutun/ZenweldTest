@@ -56,7 +56,7 @@ yazar (`categorySlug`).
 | Para | `numeric(12,2)` | Türk lirası; kuruş kayması olmaz. Hangi tutarın KDV dahil, hangisinin hariç olduğu kolon adında yazar (`_ex_vat` = KDV hariç) |
 | Oran (%) | `numeric(5,2)` | KDV, komisyon, vade farkı |
 | Sabit değer listesi | `text` + `CHECK` | Durum, rol, bölüm gibi. Yeni değer eklemek bir betikle yapılır |
-| Ekranda hep birlikte okunan liste | `jsonb` | Teknik özellik satırları, kutu içeriği, öne çıkanlar, görsel listesi, SEO alanları, ayarlar |
+| Ekranda hep birlikte okunan liste | `jsonb` | Teknik özellik satırları, kutu içeriği, öne çıkanlar, görsel listesi, SEO alanları, ayarlar. İçindeki alan adları uygulamadaki gibidir (`fullName`, `ratePercent`); kayıt katmanı dönüştürmeden okur |
 | Kimliği ya da kuralı olan her şey | ayrı tablo | Varyantlar, ürün kodları, filtre eşlemeleri, sipariş satırları |
 
 **Zorunlu:** "Kural" sütununda **zorunlu** yazmayan kolon boş bırakılabilir.
@@ -124,7 +124,7 @@ tabloya birebir gider. Farklı olanlar:
 | İletişim, bayilik, Welders Club, ürün destek formları yalnızca e-posta | `dealer_applications`, `support_messages`, `welders_club_signups` | Sahibinin kararı (K-81) |
 | Zenweld deposunda her ürün stokta sayılıyor (K-20) | `warehouse_stock`, `sap_sync_runs` | Depo stoğu SAP'tan okunur (K-82) |
 | Siparişin kargo bilgisi (`shipment`) siparişin içinde; kargo firmaları ayarlarda metin listesi | `shipments`, `carriers` | İade gönderisi de tutulabilsin; takip bağlantısı verilebilsin |
-| Kupon yok | `coupons`, `coupon_targets`, `coupon_redemptions` | Sahibinin isteği; site ve panel özelliği henüz yok |
+| Kuponun `productIds`, `categoryIds`, `customerEmails` listeleri | `coupon_targets`, `coupon_customers` | Silinen ürün ve kategori kupondan da çıksın; e-postayla arama yapılabilsin (K-85, K-86) |
 | Bütün form e-postaları tek adrese gidiyor (`SUPPORT_EMAIL`, varsayılan info@zenweld.com) | `email_recipients` | Alıcı ileride forma göre değişebilir (K-81) |
 | Gönderilen e-postaların kaydı yok | `email_log` | Hangi sayfa ve özellik için gönderildiği tutulur (K-81) |
 | Panel değişikliklerinin kaydı yok | `audit_log` | Sahibinin kararı (K-81) |
@@ -299,7 +299,7 @@ Koddaki: `options.variants`.
 |---|---|---|---|
 | `product_id` | text | → `products` (zincir) | |
 | `id` | text | zorunlu | Ürün içindeki kimlik (`su_8-m`); değişmez. Stok, sepet ve `?secenek=` linki bunu kullanır |
-| `combination_key` | text | zorunlu; ürün içinde benzersiz (yeni) | Değerlerin sıralı yazımı; bir kombinasyon bir üründe bir kez |
+| `combination_key` | text | zorunlu; ürün içinde benzersiz (yeni) | Değerlerin sıralı yazımı: ürünün seçenek sırasıyla `tanım=değer`, `\|` ile (`sogutma=su\|torc=8-m`); bir kombinasyon bir üründe bir kez |
 | `sku` | text | zorunlu; `sku_codes` ile tek havuzda benzersiz | |
 | `price_delta_ex_vat` | numeric(12,2) | zorunlu; eksi olabilir | Fiyat farkı |
 | `spec_overrides` | jsonb | | Yalnızca farklı teknik özellikler |
@@ -565,7 +565,7 @@ Anahtar: (`quote_id`, `line`).
 | `user_id` | text | → `users` (boşalır) | Sipariş yalnızca üyeden; üye silinse de sipariş kalır |
 | `status` | text | zorunlu; `awaiting_payment`, `preparing`, `shipped`, `delivered`, `cancelled` | |
 | `customer_name`, `email`, `phone` | text | zorunlu | Kopya |
-| `shipping_address` | jsonb | zorunlu | Kopya: `{ full_name, phone, city, district, line }` |
+| `shipping_address` | jsonb | zorunlu | Kopya: `{ fullName, phone, city, district, line }` |
 | `invoice` | jsonb | zorunlu | Kopya: tür, ad ya da firma, T.C. kimlik no ya da vergi bilgisi, adres |
 | `subtotal` | numeric(12,2) | zorunlu | Ürünler toplamı (KDV dahil, kupon öncesi) |
 | `vat` | numeric(12,2) | zorunlu | Ürünlere ödenen tutarın (ürünler toplamı − kupon) içindeki KDV |
@@ -864,7 +864,7 @@ Silme: silinemez.
 | `hero_title`, `hero_subtitle` | text | zorunlu | |
 | `hero_image` | text | | |
 | `stats` | jsonb | zorunlu | Rakam kutuları `[{ id, value, label }]` |
-| `sections` | jsonb | zorunlu | Bölümler `[{ id, title, body, image_url }]` |
+| `sections` | jsonb | zorunlu | Bölümler `[{ id, title, body, imageUrl }]` |
 | `updated_at` | timestamptz | zorunlu | |
 
 ### `page_seo` — sabit sayfaların arama bilgileri
@@ -934,8 +934,8 @@ Koddaki: `settings.shop.pos`.
 | `active` | boolean | zorunlu | |
 | `is_default` | boolean | zorunlu; en fazla bir POS | Programı eşleşmeyen kartlar buradan tek çekim |
 | `position` | int | zorunlu | Aynı programda üstteki geçerli |
-| `installments` | jsonb | zorunlu | Müşteriye sunulan taksitler `[{ count, rate_percent, enabled }]` |
-| `commissions` | jsonb | zorunlu | Bankanın kestiği oranlar `[{ count, rate_percent }]` |
+| `installments` | jsonb | zorunlu | Müşteriye sunulan taksitler `[{ count, ratePercent, enabled }]` |
+| `commissions` | jsonb | zorunlu | Bankanın kestiği oranlar `[{ count, ratePercent }]` |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
 ### `carriers` — kargo firmaları (yeni)
@@ -1167,6 +1167,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `migrations/0005_kisiye-ozel-kupon.sql` | Kişiye özel kupon: `coupons.audience` ve `coupon_customers` |
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
+| `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
 
 **Geçiş betikleri:** Sırayla ve bir kez çalışır; hangilerinin çalıştığı
 veritabanında tutulur (`drizzle.__drizzle_migrations`). Aynı betikler
@@ -1197,9 +1198,36 @@ link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 |---|---|
 | `npm run db:migrate` | Henüz çalışmamış betikleri çalıştırır |
 | `npm run db:reset` | Bilgisayardaki veritabanını silip tabloları baştan kurar; yalnızca `localhost` adresinde çalışır |
+| `npm run db:seed` | Sitenin örnek verisini boş veritabanına yükler (aşağıda); yalnızca `localhost` adresinde çalışır |
 | `npm run db:generate` | Şema değişince yeni geçiş betiği üretir |
 | `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
 | `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
 
 Testler tablo listesinin ve kolonların bu dosyayla aynı olduğunu da
 dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer.
+
+**Örnek veri (`npm run db:seed`, `src/seed.ts`):** Sitenin bugün
+tarayıcıda kurduğu örnek verinin tamamı (`packages/data` ›
+`createSeedDatabase`; ürünler, kategoriler, bayiler ve stokları, üyeler,
+siparişler, teklifler, kuponlar, içerik, ayarlar) tablolara yazılır. Ne
+yazıldığı tablo tablo ekrana basılır.
+
+- Yalnızca **boş** veritabanına yüklenir (`products` boş değilse durur:
+  önce `npm run db:reset`) ve yalnızca bilgisayarda (`localhost`) çalışır.
+  Örnek üye ve siparişler içerdiği için canlı ya da deneme sunucusuna
+  yüklenmez (YAPILACAKLAR › Veritabanı).
+- Tek işlemde yazılır; bir satır kurala takılırsa hiçbir şey yazılmaz.
+- Eşleme "Bugünkü veriden farklar" tablosuna göredir. Ayrıca:
+  - Silinmiş bir ürüne ya da üyeye bağlı kopya kayıtlarda (teklif ve
+    sipariş satırı, yorum, servis, garanti) bağ boş kalır; ad ve kod
+    kopyası durur.
+  - Kargo firmalarının kimliği adından üretilir (`Yurtiçi Kargo` →
+    `yurtici-kargo`); siparişin kargo bilgisi `shipments`'a gider.
+  - Zenweld depo stoğu tek bir başarılı SAP okuması (`sap_sync_runs`)
+    olarak yazılır.
+  - Örnek üyelerin şifre özeti bugünkü basit özettir; sunucuda giriş
+    yazılınca güçlü özete (argon2id) geçilecek (YAPILACAKLAR › Üyelik).
+- Testler (`tests/db/ornek-veri.test.ts`) yüklemenin hatasız olduğunu,
+  tablolardaki satır sayılarının veriyle aynı olduğunu ve başlıca bağları
+  (ürün → kategori → grup, varyant değerleri, sipariş ve kargo, kupon
+  kapsamı, depo stoğu) dener.

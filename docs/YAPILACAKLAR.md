@@ -491,10 +491,14 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
    taşınmalı. Kayıt türleri, alanlar, ilişkiler ve silme kuralları:
    [VERI-MODELI.md](VERI-MODELI.md); tablolar ve kolonlar:
    [VERITABANI.md](VERITABANI.md) (liste onaylandı).
-   - Aşama 1 (sürüyor): tablo ve kolon listesi (bitti) → geçiş betikleri,
-     yerel PostgreSQL, komutlar ve veritabanı testleri (bitti, `packages/db`)
-     → örnek veriyi yükleme (`npm run db:seed`, sıradaki). Site bu sırada
-     tarayıcıda çalışmaya devam eder.
+   - Aşama 1 (bitti): tablo ve kolon listesi → geçiş betikleri, yerel
+     PostgreSQL, komutlar ve veritabanı testleri (`packages/db`) → örnek
+     veriyi yükleme (`npm run db:seed`; yalnızca bilgisayarda, boş
+     veritabanına). Site bu sırada tarayıcıda çalışmaya devam eder.
+   - Canlı için ilk yükleme ayrıca hazırlanacak: katalog, kategoriler,
+     seçenekler, yasal metinler ve ayarlar yüklenir; örnek üye, sipariş,
+     teklif, servis, garanti ve stok hareketleri yüklenmez. Bayiler,
+     satıcılar, POS ve IBAN bilgileri gerçekleriyle girilir.
    - Canlıda her gün `SELECT purge_audit_log();` çalıştırılmalı (2 yıldan
      eski değişiklik kayıtları; sunucudaki zamanlanmış iş ya da `pg_cron`).
    - BT ekibinden istenecekler: PostgreSQL 18 (olmazsa en az 16), yönetilen servis
@@ -573,6 +577,8 @@ hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
    oturum tarayıcıda tutuluyor. Şifreler güçlü bir özetle (bcrypt, argon2)
    saklanmalı; oturum sunucuda tutulmalı (ör. httpOnly çerez); yönetim
    paneli sayfaları ve panel işlemleri sunucuda yönetici rolüyle korunmalı.
+   `npm run db:seed` örnek üyeleri bugünkü basit özetle yazar; giriş sunucuya
+   taşınınca güçlü özetle yazacak şekilde değiştirilmeli.
 2. **Şifre sıfırlama:** "Şifremi unuttum" bugün yalnızca mesaj gösteriyor,
    e-posta gitmiyor. Tek kullanımlık ve süreli bir bağlantı e-postayla
    gönderilmeli.

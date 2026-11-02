@@ -66,13 +66,19 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Veritabanı: boş bir PostgreSQL'de `npm run db:migrate` hatasız biter
       ve 64 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
       `npm run db:generate` "No schema changes" der.
+- [ ] `npm run db:seed` boş veritabanına örnek veriyi yükler ve tablo
+      tablo satır sayılarını yazar (ör. products 40, orders 133); ikinci
+      çalıştırmada "Veritabanında kayıt var…" deyip durur. `npm run
+      db:studio`'da ürünler, siparişler ve kuponlar görünür.
 - [ ] Veritabanı testleri (`npm run test:db`) geçer. Şunları dener: tablo
       listesi ve kolonlar [VERITABANI.md](VERITABANI.md) ile aynı; ürün ve
       varyant kodları tek havuzda; Türkçe harf duyarsız adlar; üye e-postası;
       silme kuralları; filtre değerinin kategoriyle uyumu; tek varsayılan
       adres ve POS; kayıt numarası; değişiklik kaydının korunması ve 2 yıllık
-      temizlik; kupon kodu, sınırları ve kullanımı; kargo gönderisi; SAP depo
-      stoğu; form kayıtlarının sabit değerleri.
+      temizlik; kupon kodu, sınırları ve kullanımı; kişiye özel kupon
+      e-postaları; kargo gönderisi; SAP depo stoğu; form kayıtlarının sabit
+      değerleri; örnek verinin tablolara hatasız yüklenmesi, satır sayıları
+      ve başlıca bağlar.
 
 ---
 

@@ -908,6 +908,8 @@ sunucuya taşınmalı (veritabanı, oturum).
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
   Artırınca demo tarayıcılarındaki panel değişiklikleri kaybolur.
 - Backend'de bunun yerine veritabanı geçişleri (migration) kullanılmalı.
+- Aynı örnek veri `npm run db:seed` ile bilgisayardaki PostgreSQL'e de
+  yüklenir ([VERITABANI.md](VERITABANI.md) › Kod, betikler ve komutlar).
 
 **Örnek veri** (`packages/data/src/seed/`):
 

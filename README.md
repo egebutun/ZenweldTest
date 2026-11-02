@@ -70,6 +70,7 @@ npm run test:e2e    # tarayıcı testleri (önce npm run build; sunucuyu kendisi
 npm run test:db     # veritabanı testleri (çalışan PostgreSQL gerekir; aşağıda)
 npm run db:migrate  # veritabanı tablolarını kurar / günceller
 npm run db:reset    # bilgisayardaki veritabanını silip tabloları baştan kurar
+npm run db:seed     # sitenin örnek verisini boş veritabanına yükler
 npm run db:generate # şema değişince yeni geçiş betiği üretir
 npm run db:studio   # tabloları tarayıcıda gösterir
 ```
@@ -245,7 +246,7 @@ ZenweldTest/
 │   ├── db/                         Sunucu veritabanı (PostgreSQL): şema, geçiş betikleri, komutlar
 │   │   ├── src/schema/             Tablolar (docs/VERITABANI.md ile aynı)
 │   │   ├── migrations/             Geçiş betikleri (0000 üretilen, 0001 elle yazılan kurallar)
-│   │   └── scripts/                npm run db:migrate / db:reset
+│   │   └── scripts/                npm run db:migrate / db:reset / db:seed
 │   │
 │   ├── store/                      Backend yerine geçen veri katmanı
 │   │   └── src/
@@ -368,8 +369,9 @@ docker compose up -d
 #    DATABASE_URL=postgres://zenweld:zenweld@localhost:5432/zenweld
 #    TEST_DATABASE_URL=postgres://zenweld:zenweld@localhost:5432/zenweld_test
 
-# 3. Tabloları kurun ve testleri çalıştırın
+# 3. Tabloları kurun, örnek veriyi yükleyin ve testleri çalıştırın
 npm run db:migrate
+npm run db:seed
 npm run test:db
 
 # 4. Tablolara bakmak için (tarayıcıda açılır)
@@ -384,6 +386,10 @@ npm run db:studio
   TablePlus, Postico ya da DBeaver gibi bir programla da bağlanabilir
   (adres, kullanıcı ve şifre `DATABASE_URL`'deki).
 
+- **Örnek veri:** `npm run db:seed` sitenin örnek verisini (ürünler,
+  bayiler, üyeler, siparişler, kuponlar…) boş veritabanına yükler; yalnızca
+  bilgisayarda çalışır. Baştan yüklemek için: `npm run db:reset` sonra
+  `npm run db:seed`.
 - Geçiş betikleri `packages/db/migrations/`'dadır ve sırayla, bir kez
   çalışır; aynı betikler sunucuda da çalıştırılır. Çalışmış bir betik
   değiştirilmez; şema değişince `npm run db:generate` yeni betik üretir.

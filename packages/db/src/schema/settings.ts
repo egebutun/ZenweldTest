@@ -1,6 +1,7 @@
 import { boolean, check, integer, jsonb, pgTable, text, uniqueIndex } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { oneOf, timestamps, tstz } from "./columns";
+import type { InstallmentOption, PaymentPos } from "@zenweld/data";
 import { users } from "./users";
 
 /**
@@ -10,18 +11,12 @@ import { users } from "./users";
  * degiskenidir (CLAUDE.md › Guvenlik).
  */
 
-/** Musteriye sunulan taksit: { count, rate_percent, enabled } */
-export interface PosInstallmentRow {
-  count: number;
-  rate_percent: number;
-  enabled: boolean;
-}
-
-/** Bankanin kestigi oran: { count, rate_percent } (count 1 = tek cekim) */
-export interface PosCommissionRow {
-  count: number;
-  rate_percent: number;
-}
+/**
+ * Taksit ve komisyon satirlari uygulamadaki sekliyle durur (JSON alan adlari
+ * uygulamadaki gibi, VERITABANI.md › Genel kurallar).
+ */
+type PosInstallmentRow = InstallmentOption;
+type PosCommissionRow = PaymentPos["commissions"][number];
 
 export const settings = pgTable(
   "settings",
