@@ -94,27 +94,28 @@ export function HotSale() {
   if (items.length === 0) return null;
 
   return (
-    <section className="bg-zw-ink text-white">
+    // Zemin acik: alttaki Yeni Gelenler (cok acik gri) ile ayni gorunum;
+    // tam beyaz oldugu icin iki bolum birbirinden ayrilir.
+    <section className="bg-white">
       <div className="zw-container zw-section">
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-zw-red-500">
-              <Flame size={18} />
+        <SectionHeading
+          eyebrow={
+            <span className="flex items-center gap-1.5">
+              <Flame size={15} />
               {t.home.hotSaleEyebrow}
-            </div>
-            <h2 className="mt-2 font-display text-3xl font-bold uppercase sm:text-4xl">
-              {t.home.hotSaleTitle}
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm text-zw-grey-300">{t.home.hotSaleSubtitle}</p>
-          </div>
-          <Link
-            href="/ekipmanlar"
-            className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-white hover:text-zw-red-500 sm:self-auto"
-          >
-            {t.common.viewAll} <ArrowRight size={16} />
-          </Link>
-        </div>
-
+            </span>
+          }
+          title={t.home.hotSaleTitle}
+          subtitle={t.home.hotSaleSubtitle}
+          action={
+            <Link
+              href="/ekipmanlar"
+              className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:self-auto"
+            >
+              {t.common.viewAll} <ArrowRight size={16} />
+            </Link>
+          }
+        />
         <ProductMarquee products={items} />
       </div>
     </section>
