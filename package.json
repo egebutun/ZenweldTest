@@ -14,7 +14,11 @@
     "lint": "eslint .",
     "typecheck": "npm run typecheck --workspaces --if-present && tsc --noEmit -p tests",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:generate": "npm run generate --workspace=@zenweld/db",
+    "db:migrate": "tsx packages/db/scripts/migrate.ts",
+    "db:reset": "tsx packages/db/scripts/reset.ts",
+    "test:db": "vitest run --config vitest.db.config.mts"
   },
   "engines": {
     "node": ">=20"
@@ -22,9 +26,12 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
     "@playwright/test": "^1.56.1",
+    "@types/pg": "^8.23.1",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.28",
     "sharp": "^0.35.4",
+    "tsx": "^4.23.15",
     "vitest": "^5.0.5"
   }
 }

@@ -213,7 +213,19 @@ Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
 22 Ekim 2026'da `npm audit fix` ile yama sürümlerine geçildi (next 15.5.28,
 sharp 0.35.5, source-map-js 1.2.2); kritik açık dahil 4 açıktan 2'si kapandı.
 
-- **Kalan:** `npm audit` 7 açık gösterir:
+- **2 Kasım 2026 güncellemesi:** `npm audit` 20 açık gösterir (19 orta, 1
+  yüksek); hepsi geliştirme araçlarında ya da Next'in kendi postcss'inde:
+  - Next'in postcss'i (2): aşağıda anlatılan, değişmedi.
+  - Kod denetimi (ESLint) zinciri (14): `minimatch` paketine çıkan yeni bir
+    uyarıdan (çok iç içe dosya kalıbıyla yavaşlatma); `braces` uyarısının
+    yerini aldı. Araç yalnızca geliştirirken projenin kendi dosyalarını
+    denetler.
+  - Veritabanı geçiş betiği aracı `drizzle-kit` (4): içindeki eski
+    `esbuild`'in geliştirme sunucusu uyarısı. drizzle-kit bu sunucuyu
+    açmaz; yalnızca geliştiricinin bilgisayarında betik üretirken çalışır,
+    siteye ve sunucuya girmez.
+  - Siteye giden kütüphanelerde yeni açık yok.
+- **Kalan (22 Ekim 2026):** `npm audit` 7 açık gösterir:
   - **2 tanesi** Next 15'in kendi içine sabitlediği eski postcss (8.4.31)
     yüzündendir; yalnızca Next 16'ya geçince kapanır. Bu açıklar saldırganın
     hazırladığı bir CSS dosyası işlenince ortaya çıkar. postcss yalnızca
@@ -479,9 +491,19 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
    taşınmalı. Kayıt türleri, alanlar, ilişkiler ve silme kuralları:
    [VERI-MODELI.md](VERI-MODELI.md); tablolar ve kolonlar:
    [VERITABANI.md](VERITABANI.md) (liste onaylandı).
-   - Aşama 1 (sürüyor): tablo ve kolon listesi → geçiş betikleri (SQL) →
-     yerel PostgreSQL ve komutlar → örnek veriyi yükleme → testler. Site bu
-     sırada tarayıcıda çalışmaya devam eder.
+   - Aşama 1 (sürüyor): tablo ve kolon listesi (bitti) → geçiş betikleri,
+     yerel PostgreSQL, komutlar ve veritabanı testleri (bitti, `packages/db`)
+     → örnek veriyi yükleme (`npm run db:seed`, sıradaki). Site bu sırada
+     tarayıcıda çalışmaya devam eder.
+   - Canlıda her gün `SELECT purge_audit_log();` çalıştırılmalı (2 yıldan
+     eski değişiklik kayıtları; sunucudaki zamanlanmış iş ya da `pg_cron`).
+   - BT ekibinden istenecekler: PostgreSQL 16 veya üstü, yönetilen servis
+     (AWS RDS ya da Google Cloud SQL), ICU desteği açık (Türkçe harf
+     karşılaştırması); canlı ve deneme için iki veritabanı; bağlantı adresi
+     (`DATABASE_URL`, yalnızca sunucuda); şifreli (SSL) bağlantı; günlük
+     yedek ve en az 30 gün geriye dönüş; KVKK'ya uygun bölge (bkz. Canlı
+     sunucu); görseller ve belgeler için dosya deposu (S3 ya da Cloud
+     Storage).
    - Sonraki aşamalar: veri erişimi (sunucu), üyelik ve oturum, siteyi ve
      paneli veritabanına bağlama, dosya deposu, canlıya hazırlık.
    - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları

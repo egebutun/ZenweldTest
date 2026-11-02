@@ -4,11 +4,12 @@ Bu dosya sitenin ve panelin sunucu veritabanını tablo tablo anlatır: her
 tablonun kolonları, türleri, hangi kolonun zorunlu ya da benzersiz olduğu,
 tabloların birbirine nasıl bağlandığı ve bir kayıt silinince ne olduğu.
 
-**Durum (2026-11-02):** Liste sahibince onaylandı; tablolar henüz
-kurulmadı, site ve panel bugün verileri tarayıcıda tutuyor. Geçiş betikleri
-(SQL) bu dosyaya göre yazılacak (KARARLAR K-81). Betikler yazıldıktan sonra
-tabloların asıl tanımı koddadır (`packages/db`); bu dosya aynı commit'te
-güncel tutulur.
+**Durum (2026-11-02):** Liste sahibince onaylandı (KARARLAR K-81). Tablolar
+kodda (`packages/db/src/schema/`) ve geçiş betiklerinde hazır; bilgisayardaki
+PostgreSQL'de kuruluyor ve testleri geçiyor. **Site ve panel henüz
+veritabanını kullanmıyor**; verileri tarayıcıda tutmaya devam ediyor.
+Tabloların asıl tanımı koddadır; bu dosya her şema değişikliğinde aynı
+commit'te güncellenir. Kod ve komutlar: [14](#14-kod-betikler-ve-komutlar).
 
 İlgili dosyalar:
 
@@ -35,6 +36,7 @@ güncel tutulur.
 11. [Formlar, e-postalar, kayıt numaraları ve değişiklik kaydı](#11-formlar-e-postalar-kayıt-numaraları-ve-değişiklik-kaydı)
 12. [Tablo listesi](#12-tablo-listesi)
 13. [Açık sorular](#13-açık-sorular)
+14. [Kod, betikler ve komutlar](#14-kod-betikler-ve-komutlar)
 
 ---
 
@@ -76,9 +78,10 @@ kodu, seçenek adı ve fiyatı o anın kopyasıdır; ürün değişse ya da sili
 değişmez.
 
 **Türkçe büyük/küçük harf:** "Benzersiz (harf duyarsız)" yazan kolonlar
-Türkçe kurallarla karşılaştırılır (İ/i, I/ı). Bunun için veritabanında
-Türkçe, büyük/küçük harf duyarsız bir karşılaştırma tanımı (ICU `tr`)
-kullanılır.
+Türkçe kurallarla karşılaştırılır (I/ı, İ/i; "Işık" = "IŞIK", "Isık"
+farklı). Veritabanında Türkçe küçük harfe çevrilmiş hali üzerinden benzersiz
+dizinle sağlanır (`lower(ad COLLATE "tr-x-icu")`); PostgreSQL'in ICU desteği
+gerekir (AWS ve Google Cloud'un PostgreSQL servislerinde vardır).
 
 **Dosyalar:** Görsel ve belge kolonlarında yalnızca adres ya da dosya
 deposundaki yol durur; dosyanın kendisi veritabanına yazılmaz (bugün panelden
@@ -328,7 +331,7 @@ değerleri silinir.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
-| `code` | text | anahtar | Boşlukları atılmış, büyük harfe çevrilmiş kod |
+| `code` | text | anahtar | Boşlukları atılmış, büyük harfe çevrilmiş kod (tire kalır: `zw-trc mb25` → `ZW-TRCMB25`) |
 | `product_id` | text | → `products` (zincir) | |
 | `variant_id` | text | zorunlu; boş metin = ürünün kendi kodu | |
 
@@ -930,7 +933,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 |---|---|---|---|
 | `id` | bigint | anahtar; sırayla artar | |
 | `at` | timestamptz | zorunlu | |
-| `actor_user_id` | text | → `users` (boşalır) | İşlemi yapan yönetici |
+| `actor_user_id` | text | bağlantısız | İşlemi yapan yönetici; kayıt değiştirilemediği için yönetici silinse de kimlik kalır |
 | `actor_name` | text | zorunlu | Kopya; yönetici silinse de okunur |
 | `action` | text | zorunlu; `create`, `update`, `delete`, `login`, `logout` | Panele giriş ve çıkışlar da yazılır |
 | `entity_type` | text | zorunlu | Tablo adı (`products`, `orders`…); giriş/çıkışta `users` |
@@ -973,3 +976,52 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
    üyenin geçmiş kayıtları ne kadar tutulacak? Sahibi avukata soracak
    (YAPILACAKLAR › Hesap silme). Cevaba göre bu dosyaya saklama süreleri ve
    kendiliğinden silme eklenir.
+
+---
+
+## 14. Kod, betikler ve komutlar
+
+**Kod:** `packages/db`
+
+| Yer | İçerik |
+|---|---|
+| `src/schema/` | Tabloların tanımı (Drizzle ORM), konuya göre dosyalar: `catalog`, `network` (bayi, satıcı, stok), `users`, `sales` (teklif, sipariş, iade), `support` (servis, garanti, yorum), `content`, `settings`, `system` (formlar, e-postalar, numaralar, değişiklik kaydı) |
+| `migrations/0000_kurulum.sql` | Tabloları kuran betik; şemadan üretilir (`npm run db:generate`) |
+| `migrations/0001_kurallar.sql` | Tablo tanımıyla ifade edilemeyen kurallar; elle yazılır (aşağıda) |
+| `src/client.ts` | Bağlantı (`DATABASE_URL`) |
+| `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
+
+**Geçiş betikleri:** Sırayla ve bir kez çalışır; hangilerinin çalıştığı
+veritabanında tutulur (`drizzle.__drizzle_migrations`). Aynı betikler
+bilgisayarda, testte, deneme ve canlı sunucuda aynı sonucu verir. Çalışmış
+bir betik değiştirilmez; şema değişince yeni betik üretilir.
+
+**Veritabanındaki kurallar** (`0001_kurallar.sql`):
+
+| Ad | Ne yapar |
+|---|---|
+| `products_sku`, `product_variants_sku` (tetikleyici) | Ürün ve varyant kodunu `sku_codes`'a yazar; kod kullanılıyorsa kaydı reddeder ("Ürün kodu başka bir üründe ya da seçenekte kullanılıyor") |
+| `zw_normalize_sku()` | Kodu karşılaştırma biçimine çevirir (boşluksuz, büyük harf) |
+| `*_redirects` (tetikleyici) | Ürün, kategori, grup, blog, haber ya da etkinlik silinince eski linklerini siler; varyant silinince ona yönlenen eski ürün linkini siler |
+| `product_filter_values_category`, `products_category_moved` (tetikleyici) | Ürüne yalnızca kendi kategorisinin filtre değeri işaretlenir; ürün başka kategoriye taşınınca eski değerler silinir |
+| `audit_log_guard`, `audit_log_no_truncate` (tetikleyici) | Değişiklik kaydı değiştirilemez ve silinemez |
+| `purge_audit_log()` | 2 yıldan eski değişiklik kayıtlarını siler; silinen sayıyı döndürür. Canlıda her gün çalıştırılmalı (YAPILACAKLAR › Veritabanı) |
+| `next_record_number(önek)` | Kayıt numarasını tek işlemde artırıp döndürür (`next_record_number('TKL-2026-')` → 50) |
+
+**Kayıt katmanının sağlayacakları** (veritabanında değil; site ve panel
+bağlanırken): üyenin tam bir varsayılan adresi olması, son aktif
+yöneticinin silinememesi, anasayfa yorum şeridinde en fazla 10 yorum, eski
+link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
+ürünün her seçeneğinden tam bir değer alması.
+
+**Komutlar** (kurulum: [README](../README.md) › Veritabanı):
+
+| Komut | Ne yapar |
+|---|---|
+| `npm run db:migrate` | Henüz çalışmamış betikleri çalıştırır |
+| `npm run db:reset` | Bilgisayardaki veritabanını silip tabloları baştan kurar; yalnızca `localhost` adresinde çalışır |
+| `npm run db:generate` | Şema değişince yeni geçiş betiği üretir |
+| `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
+
+Testler tablo listesinin ve kolonların bu dosyayla aynı olduğunu da
+dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer.

@@ -1,0 +1,23 @@
+# Bilgisayarda PostgreSQL 16 (geliştirme ve veritabanı testleri).
+#
+#   docker compose up -d      # başlat (arka planda)
+#   docker compose down       # durdur (veri kalır)
+#
+# Bağlantı adresleri apps/zenweld-web/.env.local'a yazılır (örneği
+# .env.example; README › Veritabanı). Bu kullanıcı adı ve şifre yalnızca
+# bilgisayardaki veritabanı içindir; sunucuda kullanılmaz.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: zenweld
+      POSTGRES_PASSWORD: zenweld
+      POSTGRES_DB: zenweld
+    ports:
+      - "5432:5432"
+    volumes:
+      - zenweld-db:/var/lib/postgresql/data
+      - ./packages/db/docker/test-veritabani.sql:/docker-entrypoint-initdb.d/test-veritabani.sql:ro
+
+volumes:
+  zenweld-db:

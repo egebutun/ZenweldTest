@@ -67,6 +67,10 @@ npm run typecheck   # TypeScript kontrolü
 npm run lint        # kod denetimi (ESLint)
 npm test            # iş kuralları testleri (fiyat, kampanya, taksit, stok, garanti…)
 npm run test:e2e    # tarayıcı testleri (önce npm run build; sunucuyu kendisi açar)
+npm run test:db     # veritabanı testleri (çalışan PostgreSQL gerekir; aşağıda)
+npm run db:migrate  # veritabanı tablolarını kurar / günceller
+npm run db:reset    # bilgisayardaki veritabanını silip tabloları baştan kurar
+npm run db:generate # şema değişince yeni geçiş betiği üretir
 ```
 
 ---
@@ -207,9 +211,12 @@ ZenweldTest/
 ├── eslint.config.mjs               Kod denetimi ayarları
 ├── vitest.config.mts               İş kuralları testlerinin ayarları
 ├── playwright.config.ts            Tarayıcı testlerinin ayarları
+├── vitest.db.config.mts            Veritabanı testlerinin ayarları
+├── docker-compose.yml              Bilgisayarda PostgreSQL 16
 ├── tests/
 │   ├── unit/                       İş kuralları testleri (npm test)
-│   └── e2e/                        Tarayıcı testleri (npm run test:e2e)
+│   ├── e2e/                        Tarayıcı testleri (npm run test:e2e)
+│   └── db/                         Veritabanı testleri (npm run test:db)
 │
 ├── packages/
 │   ├── data/                       Paylaşılan veri modeli ve başlangıç verisi
@@ -232,6 +239,11 @@ ZenweldTest/
 │   │           ├── events.seed.ts · company.seed.ts · reviews.seed.ts
 │   │           ├── documents.seed.ts · legal.seed.ts · settings.seed.ts
 │   │           └── images.ts           Unsplash görsel havuzu (blog, haber, etkinlik…)
+│   │
+│   ├── db/                         Sunucu veritabanı (PostgreSQL): şema, geçiş betikleri, komutlar
+│   │   ├── src/schema/             Tablolar (docs/VERITABANI.md ile aynı)
+│   │   ├── migrations/             Geçiş betikleri (0000 üretilen, 0001 elle yazılan kurallar)
+│   │   └── scripts/                npm run db:migrate / db:reset
 │   │
 │   ├── store/                      Backend yerine geçen veri katmanı
 │   │   └── src/
@@ -331,8 +343,36 @@ başlangıç verisiyle yeniden kurulur, yani panelde yapılmış değişiklikler
 gider.
 
 Bütün kayıt türleri ve alanları: [docs/VERI-MODELI.md](docs/VERI-MODELI.md).
-Sunucu veritabanının (PostgreSQL) tabloları ve kolonları, taslak:
+Sunucu veritabanının (PostgreSQL) tabloları ve kolonları:
 [docs/VERITABANI.md](docs/VERITABANI.md).
+
+### Veritabanı (PostgreSQL) — hazırlanıyor
+
+Sunucu veritabanının tabloları `packages/db`'de hazırlanıyor (KARARLAR
+K-81). **Site henüz veritabanını kullanmıyor**; yukarıdaki tarayıcı verisiyle
+çalışır. Tabloları bilgisayarda kurmak ve denemek için:
+
+```bash
+# 1. PostgreSQL 16'yı başlatın (Docker ile; Docker yoksa PostgreSQL 16 kurup
+#    zenweld kullanıcısını ve zenweld, zenweld_test veritabanlarını açın)
+docker compose up -d
+
+# 2. Bağlantı adreslerini apps/zenweld-web/.env.local'a yazın
+#    (örnekleri .env.example'da):
+#    DATABASE_URL=postgres://zenweld:zenweld@localhost:5432/zenweld
+#    TEST_DATABASE_URL=postgres://zenweld:zenweld@localhost:5432/zenweld_test
+
+# 3. Tabloları kurun ve testleri çalıştırın
+npm run db:migrate
+npm run test:db
+```
+
+- Geçiş betikleri `packages/db/migrations/`'dadır ve sırayla, bir kez
+  çalışır; aynı betikler sunucuda da çalıştırılır. Çalışmış bir betik
+  değiştirilmez; şema değişince `npm run db:generate` yeni betik üretir.
+- `docker-compose.yml`'deki kullanıcı adı ve şifre yalnızca bilgisayardaki
+  veritabanı içindir. Sunucunun bağlantı adresi yalnızca sunucuda ortam
+  değişkeni olarak durur.
 
 ---
 
@@ -389,9 +429,10 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
 1. **Kimlik doğrulama sunucuya taşınmalı.** Şu an şifre karşılaştırması tarayıcıda
    yapılıyor ve `/yonetim` paneli tarayıcı tarafında korunuyor — bu gerçek bir
    güvenlik değildir. Supabase Auth, Auth0 veya kendi backend'iniz kullanılmalı.
-2. **Veri gerçek bir veritabanına taşınmalı.** `packages/store/src/database.ts`
-   içindeki okuma/yazma fonksiyonları değiştirilerek tüm uygulama aynı kalacak
-   şekilde Supabase/Firebase/PostgreSQL'e bağlanabilir.
+2. **Veri gerçek bir veritabanına taşınmalı.** Sunucu veritabanı PostgreSQL'dir
+   (KARARLAR K-81); tabloları `packages/db`'de hazırlanıyor
+   ([docs/VERITABANI.md](docs/VERITABANI.md)). Site ve panel aşama aşama
+   bağlanacak ([docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Veritabanı).
 3. **Ürün içeriği ve fiyatlar girilmeli.** Ekipmanlar'daki ürünlerin adı, kodu,
    alt grubu, garantisi ve seçenekleri gerçektir; Force serisi 9 ürün dışında
    açıklama, teknik özellikler ve kutu içeriği örnektir; fotoğraflar örnektir,
@@ -520,4 +561,5 @@ icon.png ve apple-icon.png yeniden oluşturulur.
 ## Teknoloji
 
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·
-MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · Vitest · Playwright · npm workspaces
+MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · Vitest · Playwright · npm workspaces ·
+PostgreSQL 16 + Drizzle ORM (hazırlanıyor)

@@ -59,6 +59,15 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       başlıkları, seçenekli ürünün kartla satın alınması, iki seçenekli
       üründe kombinasyon seçimi, sepette adet sınırı, teklif gönderme ve numarası, belge yükleme/açma/indirme,
       garanti bitiş günü, şifre değiştirme ve hesap silme, iade talebi.
+- [ ] Veritabanı: boş bir PostgreSQL'de `npm run db:migrate` hatasız biter
+      ve 54 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
+      `npm run db:generate` "No schema changes" der.
+- [ ] Veritabanı testleri (`npm run test:db`) geçer. Şunları dener: tablo
+      listesi ve kolonlar [VERITABANI.md](VERITABANI.md) ile aynı; ürün ve
+      varyant kodları tek havuzda; Türkçe harf duyarsız adlar; üye e-postası;
+      silme kuralları; filtre değerinin kategoriyle uyumu; tek varsayılan
+      adres ve POS; kayıt numarası; değişiklik kaydının korunması ve 2 yıllık
+      temizlik.
 
 ---
 

@@ -44,7 +44,7 @@ veritabanında, tarayıcıda ya da depoda (GitHub) **asla** durmaz.
 | Ofis haritası ve yol tarifi | **Bağlı** (Google Haritalar gömme ve bağlantı; anahtar gerekmez) | — |
 | Telefon, WhatsApp, e-posta | **Bağlı** (bağlantılar) | — |
 | Sosyal medya | **Bağlı** (bağlantılar ve paylaşım önizlemesi) | — |
-| Veritabanı | Tarayıcı deposu (demo) | Sunucu veritabanı ([VERI-MODELI.md](VERI-MODELI.md)) |
+| Veritabanı | Tarayıcı deposu (demo). PostgreSQL tabloları hazırlanıyor; site henüz kullanmıyor | Sunucu veritabanı PostgreSQL ([VERITABANI.md](VERITABANI.md)); sunucuyu BT ekibi sağlar |
 | Dosya deposu | Tarayıcı (demo) | Nesne deposu (görseller ve belgeler) |
 | Bülten, şifre sıfırlama, müşteriye e-posta, analitik, e-Fatura, kargo | Yok | Bkz. [10](#10-henüz-bağlanmayanlar) |
 
@@ -304,6 +304,8 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 | ESLint (eslint-config-next) | Kod denetimi; yalnızca geliştirirken ve derlemede çalışır, siteye girmez |
 | Vitest | İş kuralları testleri; yalnızca geliştirirken çalışır, siteye girmez |
 | Playwright | Tarayıcı testleri; yalnızca geliştirirken çalışır, siteye girmez |
+| Drizzle ORM, pg | Veritabanı tabloları ve bağlantısı (`packages/db`); bugün yalnızca `npm run db:*` komutları ve veritabanı testleri kullanır |
+| drizzle-kit, tsx | Geçiş betiklerini üretme ve komutları çalıştırma; yalnızca geliştirirken çalışır, siteye girmez |
 
 Sürümler: `apps/zenweld-web/package.json`, kök `package.json`.
 
@@ -332,6 +334,8 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `SUPPORT_EMAIL` | Yönetici | Form e-postalarının alıcısı; varsayılan `info@zenweld.com` |
 | `SUPPORT_FROM` | Yönetici | Doğrulanmış gönderici adresi |
 | `NEXT_PUBLIC_MAIN_SITE_URL` | Yönetici (isteğe bağlı) | Panel ileride ayrı bir adrese (ör. `admin.zenweld.com`) taşınırsa ana sitenin adresi; paneldeki "Sayfayı gör" bağlantıları bunu kullanır. Bugün gerekmez |
+| `DATABASE_URL` | Yönetici (gizli) | Veritabanı (PostgreSQL) bağlantı adresi. Bugün site kullanmıyor; yalnızca `npm run db:*` komutları ([VERITABANI.md](VERITABANI.md)) |
+| `TEST_DATABASE_URL` | Geliştirici | Yalnızca veritabanı testleri (`npm run test:db`); her çalıştırmada silinip baştan kurulur, `DATABASE_URL` ile aynı olamaz |
 | `NEXT_PUBLIC_BUILD_TIME` | Otomatik (derleme) | Derleme anı; sunucu çıktısı ile tarayıcının ilk çiziminin aynı anı kullanması için |
 | `VERCEL_ENV`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_URL` | Otomatik (Vercel) | Site adresi tanımlı değilse yedek; önizleme sürümleri her zaman aramaya kapalı |
 
