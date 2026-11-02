@@ -387,8 +387,8 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | Konu | Bugün | Gereken |
 |---|---|---|
 | **Veritabanı ve sunucu API'si** | Bütün veri tarayıcıda; PostgreSQL tabloları hazır | Siteyi ve paneli veritabanına bağlama ([VERITABANI.md](VERITABANI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
-| **SAP Business One (depo stoğu)** | Yok | SAP ekibinin hazırladığı "kullanılabilir stok" görünümü (view) sunucuda düzenli aralıklarla okunup `warehouse_stock`'a yazılır (KARARLAR K-82). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı), görünümün adı, kolonları ve okuma sıklığı SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur |
-| **SAP Business One (satış siparişi)** | Yok | Site siparişlerinin SAP'a satış siparişi olarak aktarılıp aktarılmayacağı sahibine sorulacak ([VERITABANI.md](VERITABANI.md) › Açık sorular) |
+| **SAP Business One (depo stoğu)** | Yok | SAP ekibinin hazırladığı "kullanılabilir stok" görünümü (`AVAILABLE_STOCK`, ad kesinleşmedi) sunucuda 15 dakikada bir okunup `warehouse_stock`'a yazılır (KARARLAR K-82, K-84). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı) ve görünümün kolonları SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur |
+| **SAP Business One (satış siparişi)** | Yok | Site siparişleri SAP'a satış siparişi olarak kaydedilecek (KARARLAR K-84); SAP'ın sipariş API'si (ör. `SALES_ORDER`) ve bağlantı bilgileri SAP ekibinden gelecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Zenweld depo stoğu (SAP)) |
 | **Dosya deposu** | Görseller veritabanında, belgeler tarayıcıda | Nesne deposu |
 | **Ödeme kuruluşu** | Demo | Bkz. [3](#3-kartla-ödeme) |
 | **Müşteriye e-posta** | Yok | Sipariş onayı ve sözleşme kopyası (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi |

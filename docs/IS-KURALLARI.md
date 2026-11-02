@@ -804,11 +804,11 @@ Kod: `packages/data/src/filters.ts`; sayfada
 
 ## 20. Zenweld depo stoğu
 
-Sahibinin kararı (KARARLAR K-82). Kod: `packages/data/src/warehouse.ts`.
+Sahibinin kararı (KARARLAR K-82, K-84). Kod: `packages/data/src/warehouse.ts`.
 
 **Kaynak:** Zenweld deposunun stoğu SAP'tan gelir. SAP ekibinin hazırladığı
 "kullanılabilir stok" görünümü SAP kalem kodu başına miktar verir; sunucu
-bunu düzenli aralıklarla okuyup kendi veritabanına yazar (`warehouse_stock`).
+bunu 15 dakikada bir okuyup kendi veritabanına yazar (`warehouse_stock`).
 Sayfa açılırken SAP'a gidilmez. Panelden değiştirilmez. Bugün demo
 verisinde örnek stok vardır (Demo notu).
 
@@ -818,7 +818,8 @@ verisinde örnek stok vardır (Demo notu).
 - Seçenekli ürün: seçeneğin kodundan torç uzunluğu (`-3M`) ve ara paket
   uzunluğu (`-AP5M`) ekleri atılınca SAP kodu kalır (KARARLAR K-72).
   - **Örnek:** `ZW30100000027-3M-AP5M` → `ZW30100000027`.
-  - Yalnızca torç ya da ara paket uzunluğu farklı olan seçenekler aynı SAP
+  - SAP'ta torç ve ara paket uzunluğuna göre ayrı stok kalemi yoktur
+    (K-84). Yalnızca bu uzunlukları farklı olan seçenekler aynı SAP
     kalemini paylaşır ve aynı stoğu gösterir.
   - Kendi SAP kodu olan seçenek (ör. soğutma ya da güç) kendi stoğunu
     gösterir.

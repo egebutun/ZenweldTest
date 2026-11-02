@@ -411,9 +411,10 @@ eşleştirmeleri de silinir.
 
 ### `warehouse_stock` ve `sap_sync_runs` — Zenweld depo stoğu (SAP) (yeni)
 
-Sahibinin kararı (K-82): Zenweld deposunun stoğu SAP'tan okunur. SAP ekibi
-model başına "kullanılabilir stok" görünümü (view) hazırlıyor. Sunucu bu
-görünümü düzenli aralıklarla okuyup `warehouse_stock`'a yazar; site ve panel
+Sahibinin kararı (K-82, K-84): Zenweld deposunun stoğu SAP'tan okunur. SAP
+ekibi model başına "kullanılabilir stok" görünümü (view) hazırlıyor (adı
+`AVAILABLE_STOCK`, kesinleşmedi). Sunucu bu görünümü 15 dakikada bir okuyup
+`warehouse_stock`'a yazar; site ve panel
 stoğu buradan okur, sayfa açılırken SAP'a gidilmez (hız, K-83). Ürün ve
 seçenek kodlarıyla eşleşmesi ve "stokta yok" kuralı: [IS-KURALLARI.md ›
 Zenweld depo stoğu](IS-KURALLARI.md#20-zenweld-depo-stoğu).
@@ -1124,17 +1125,17 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
    üyenin geçmiş kayıtları ne kadar tutulacak? Sahibi avukata soracak
    (YAPILACAKLAR › Hesap silme). Cevaba göre bu dosyaya saklama süreleri ve
    kendiliğinden silme eklenir.
-2. **SAP stok görünümü (SAP ekibi):** Görünümün adı ve kolonları (kalem kodu,
-   kullanılabilir miktar, kalem adı); sunucunun bağlanma yolu (SAP Business
-   One Service Layer ya da veritabanına salt okunur kullanıcı); ne sıklıkla
-   okunacağı (öneri: 5 dakikada bir). Cevaba göre `warehouse_stock`'a kolon
-   eklenebilir.
-3. **Site siparişleri SAP'a satış siparişi olarak aktarılacak mı?** Şirketin
-   satış siparişleri SAP'a giriliyor. Aktarılacaksa siparişe SAP belge
-   numarası ve aktarım durumu kolonları eklenir.
-4. **Kupon kuralları:** Kampanyalı ürünlerde geçerli mi, kargo ve vade farkı
-   indirimden önce mi sonra mı hesaplanır, iptal ve iadede kullanım geri
-   sayılır mı (öneri: iptalde sayılmaz, `released_at`)?
+2. **SAP stok görünümü (SAP ekibi):** Adı `AVAILABLE_STOCK` olacak
+   (kesinleşmedi), 15 dakikada bir okunacak (K-84). Kolonları (kalem kodu,
+   kullanılabilir miktar, kalem adı) ve sunucunun bağlanma yolu (SAP
+   Business One Service Layer ya da veritabanına salt okunur kullanıcı)
+   bekleniyor. Cevaba göre `warehouse_stock`'a kolon eklenebilir.
+3. **Site siparişlerinin SAP'a aktarılması:** Aktarılacak (K-84). SAP'ın
+   sipariş API'sinin (ör. `SALES_ORDER`) bilgileri gelince siparişe SAP
+   belge numarası ve aktarım durumu kolonları eklenir.
+4. **Kupon kuralları:** Başka indirimle birleşir, kargoya uygulanmaz
+   (K-85). Ücretsiz kargo sınırı, vade farkı, iptal ve iade ayrıntıları
+   kupon ekranlarıyla birlikte kesinleşecek.
 
 ---
 

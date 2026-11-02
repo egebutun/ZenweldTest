@@ -418,8 +418,8 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     yazar; ürün sepete eklenemez.
   - Görünüm sayfa açılırken sorgulanmaz; sunucu düzenli aralıklarla okuyup
     kendi veritabanına yazar (K-83).
-- **Açık konu:** SAP görünümünün adı, kolonları, bağlantı yolu ve okuma
-  sıklığı SAP ekibinden gelecek ([VERITABANI.md](VERITABANI.md) › Açık
+- **Açık konu:** Görünümün adı ve okuma sıklığı K-84'te. Kolonları ve
+  bağlantı yolu SAP ekibinden gelecek ([VERITABANI.md](VERITABANI.md) › Açık
   sorular).
 
 ### K-83 · Her zaman en hızlı ve en uygun yol
@@ -433,6 +433,29 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     küçültülmüş (webp) gelir.
 - **Neden:** Sahibinin isteği: her zaman en optimum ve sitenin hızlı
   olacağı yollar seçilsin.
+
+### K-84 · SAP: stok 15 dakikada bir okunur; site siparişleri SAP'a satış siparişi olarak girilir
+- **Tarih:** 2026-11-02
+- **Karar:**
+  - SAP stok görünümünün adı `AVAILABLE_STOCK` olacak (kesinleşmedi;
+    farklı çıkarsa değiştirilir).
+  - Sunucu görünümü **15 dakikada bir** okur.
+  - SAP'ta torç ve ara paket uzunluğuna göre ayrı stok kalemi yoktur. Bu
+    seçenekler makinenin SAP kaleminin stoğunu gösterir
+    ([IS-KURALLARI.md](IS-KURALLARI.md) › Zenweld depo stoğu).
+  - Site siparişleri SAP'a **satış siparişi** olarak kaydedilir (SAP'ın
+    sipariş API'siyle, ör. `SALES_ORDER`).
+- **Açık konu:** Görünümün kolonları, bağlantı yolu ve bilgileri, sipariş
+  API'sinin ayrıntıları SAP ekibinden gelecek. Sipariş API'si bilgisi
+  gelince siparişe SAP belge numarası ve aktarım durumu eklenir.
+
+### K-85 · Kupon başka indirimle birleşir, kargoya uygulanmaz
+- **Tarih:** 2026-11-02
+- **Karar:**
+  - Kupon, kampanya (indirimli fiyat) gibi başka indirimlerle birlikte
+    kullanılabilir; kampanyalı fiyatın üstüne uygulanır.
+  - Kupon kargo ücretine uygulanmaz.
+  - Kupon ekranları sitede ve panelde yapılacak.
 
 ### K-21 · Online sipariş yalnızca üyelerden
 - **Tarih:** 2026-10-11
