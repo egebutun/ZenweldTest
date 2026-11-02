@@ -4,7 +4,7 @@ import type { Category, OptionDefinition, Product, ZenweldDatabase } from "@zenw
 import { getSnapshot, mutate, uid } from "../database";
 
 /* ------------------------------------------------------------------ */
-/* Secenek tanimlari (Hortum Uzunluğu, Paket ...)                      */
+/* Secenek tanimlari (Soğutma, Torç Uzunluğu ...)                     */
 /* Tanimlar tek yerde durur; kategoriler optionIds ile hangilerinin     */
 /* listelenecegini secer, urun secenekleri kimlikle baglanir.           */
 /* ------------------------------------------------------------------ */

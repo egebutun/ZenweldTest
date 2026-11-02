@@ -557,7 +557,7 @@ benzersizdir.
 - Kategorinin linki ya da grubu değişince ürünleri kategoriye bağlı kalır;
   ürün adresleri değişmez.
 - Bir ürünün seçeneğine dönüştürülmüş eski ürünün adresi o seçenekle açılır
-  (`/urun/mig-torcu-mb25-4m` → `/urun/mig-torcu-mb25?secenek=4-m`).
+  (`/urun/<eski ürün>` → `/urun/<ürün>?secenek=4-m`).
 - Yeni link başka bir kaydın eski linkiyse eski yönlendirme kalkar; link yeni
   kaydı açar.
 - Ürün, blog, haber ve etkinlikte yalnızca **yayındaki** kayda yönlendirilir.

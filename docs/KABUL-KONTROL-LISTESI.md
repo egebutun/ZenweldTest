@@ -9,7 +9,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - Her madde bir **işlem → beklenen sonuç** çiftidir. Sonuç tutuyorsa kutu
   işaretlenir.
 - Parantez içindeki somut değerler bugünkü **örnek veriden** gelir (ör.
-  MB-25 MIG Torcu). Örnek veri değiştiyse aynı durumu gösteren başka bir
+  Ultimate 250 MTC). Örnek veri değiştiyse aynı durumu gösteren başka bir
   kayıtla denenir; kural aynıdır.
 - Denemeye **temiz tarayıcı verisiyle** başlanır (gizli pencere ya da site
   verisi silinmiş tarayıcı); panelde yapılan denemeler örnek veriyi değiştirir.
@@ -128,6 +128,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       Üniteleri, Lazer Sarf Malzemeleri ve Lazer Yedek Parçaları vardır.
       Kartlarda sahibinin notlarından yazılan açıklama ve "0 ürün" görünür;
       kategori sayfası "Bu kategoriye henüz ürün eklenmedi." yazar.
+- [ ] Güvenlik, Aksesuarlar ve Dolgu Metalleri'nde ürün yoktur (KARARLAR
+      K-78): menüleri, bölüm ve grup sayfaları açılır; kartlarda "0 ürün",
+      kategori sayfalarında "Bu kategoriye henüz ürün eklenmedi." yazar.
 - [ ] Ekipmanlar'da sahibinin listelerindeki 40 ürün vardır (MMA 6, TIG 8,
       MIG 9, Çok Fonksiyonlu 6, Plazma 4, Lazer Kaynak 1, Lazer Temizleme 3,
       Lazer Markalama 3). Lazer Kaynak'ta yalnızca Y300 QCW var (Jasic lazer
@@ -183,26 +186,21 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 
 - [ ] Büyük fiyat KDV dahildir; altında "<tutar> KDV Hariç · KDV %20" yazar.
 - [ ] Kampanyalı üründe normal fiyat üstü çizili, kampanya fiyatı vurgulu
-      (MB-25 3 m: normal 2.412 ₺, kampanya %18 → **1.978 ₺**, KDV hariç
-      1.648 ₺).
-- [ ] %25 ve üzeri kampanyada "Flaş İndirim" yazar (Zenmask Auto 9000: %25 →
-      4.140 ₺).
+      (Ultimate 250 MTC: normal 1.199.999 ₺, kampanya %12 → **1.055.999 ₺**,
+      KDV hariç 879.999 ₺).
+- [ ] %25 ve üzeri kampanyada "Flaş İndirim" yazar (ForceArc 200 MMA: %25 →
+      899.999 ₺).
 
-**Seçenekler** (MB-25 MIG Torcu):
+**Seçenekler** (Ultimate 250 MTC; torç uzunlukları temsili):
 
-- [ ] Sayfa açılınca ilk seçenek seçilidir (3 m).
-- [ ] **4 m** seçilince: fiyat **2.214 ₺**, ürün kodu **ZW-TRC-MB25-4**,
-      adres `?secenek=4-m`.
-- [ ] **5 m** seçilince: fiyat **2.430 ₺** (KDV hariç 2.025 ₺), kod
-      **ZW-TRC-MB25-5**; Teknik Özellikler'de "Ürün Kodu: ZW-TRC-MB25-5",
-      "Hortum Uzunluğu: 5 m", "Ağırlık: 2,7 kg".
-- [ ] `/urun/mig-torcu-mb25?secenek=5-m` doğrudan açılınca 5 m seçili gelir.
-- [ ] **Eski ayrı ürünün linki** `/urun/mig-torcu-mb25-4m` →
-      `/urun/mig-torcu-mb25?secenek=4-m`; `/urun/mig-torcu-mb36-3m` → MB-36
-      3 m seçeneği.
-- [ ] Gaz Nozulu Seti **20'li** seçilince: kod **ZW-NZL-SET-20**, fiyat
-      **960 ₺**, Kutu İçeriği "20 x Gaz nozulu", Teknik Özellikler "Paket:
-      20'li".
+- [ ] Sayfa açılınca ilk seçenek seçilidir (3 m), kod **ZW30100000024-3M**.
+- [ ] **4 m** seçilince ürün kodu **ZW30100000024-4M**, adres `?secenek=4-m`.
+- [ ] **5 m** seçilince kod **ZW30100000024-5M**; Teknik Özellikler'de "Ürün
+      Kodu: ZW30100000024-5M" ve "Torç Uzunluğu: 5 m".
+- [ ] `/urun/ultimate-250-mtc?secenek=5-m` doğrudan açılınca 5 m seçili gelir.
+- [ ] Kombinasyona panelde ayrı fiyat farkı, kutu içeriği ya da teknik değer
+      girilince o kombinasyon seçildiğinde sitede o değerler görünür (örnek
+      veride yok; panelde Seçenekler sekmesinden denenir).
 - [ ] Seçenek değişince **yorumlar değişmez** (ortak havuz).
 - [ ] Seçenek değişince "Stoktaki Bayileri Gör" ve online satıcılar o
       seçeneği stokta tutanlara göre değişir.
@@ -343,8 +341,8 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       ziyaretçi ve kurumsal üyede firma ünvanı zorunlu, bireysel üyede
       isteğe bağlı.
 - [ ] Ürün listesinde yalnızca yayında ve "Teklife açık" ürünler vardır;
-      seçenekli ürün her seçeneğiyle ayrı satırdır ("MB-25 MIG Torcu — 5 m
-      (ZW-TRC-MB25-5)").
+      seçenekli ürün her seçeneğiyle ayrı satırdır ("Ultimate 250 MTC MIG
+      Gazaltı Kaynak Makinesi — 5 m (ZW30100000024-5M)").
 - [ ] Ürün eklenmeden teklif gönderilmez.
 - [ ] Vadeli ödemede vade 30/45/60/90/120 gün (varsayılan 60).
 - [ ] Gönderince teklif numarası `TKL-<yıl>-<4 hane>` görünür; liste boşalır;

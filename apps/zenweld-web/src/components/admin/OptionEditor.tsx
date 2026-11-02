@@ -10,7 +10,7 @@ import { slugify } from "@zenweld/utils";
 /**
  * SECENEK TANIMI PENCERESI (yeni / duzenle)
  *
- * Ad (orn. "Hortum Uzunluğu") ve sirali degerler (3 m, 4 m ...). Seçenek
+ * Ad (orn. "Torç Uzunluğu") ve sirali degerler (3 m, 4 m ...). Seçenek
  * Tanımları ekraninda ve kategorinin Seçenekler sekmesinde (yeni tanim)
  * kullanilir. Kaydedince tanim hemen yazilir; onSaved kaydi alir. Urunde
  * kullanilan deger silinemez.
@@ -48,7 +48,7 @@ export function OptionDefinitionModal({
         <FormRow label="Seçenek Adı" required>
           <Input
             value={draft.name}
-            placeholder="ör. Hortum Uzunluğu, Paket"
+            placeholder="ör. Soğutma, Torç Uzunluğu"
             onChange={(e) => setDraft({ ...draft, name: e.target.value })}
           />
         </FormRow>

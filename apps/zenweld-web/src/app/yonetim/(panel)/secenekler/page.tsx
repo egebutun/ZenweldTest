@@ -18,7 +18,7 @@ import { OptionDefinitionModal } from "@/components/admin/OptionEditor";
 /**
  * SECENEK TANIMLARI (Ürünler › Seçenek Tanımları)
  *
- * Urun seceneklerinin ortak tanimlari: ad ve sirali degerler (Hortum
+ * Urun seceneklerinin ortak tanimlari: ad ve sirali degerler (Torç
  * Uzunluğu: 3 m, 4 m ...). Kategoriler hangi tanimlarin listelenecegini
  * kendi Seçenekler sekmesinden secer; ayni tanim birden cok kategoride
  * kullanilabilir. Bir degerin adi duzeltilince her yerde degisir. Urunde

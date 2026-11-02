@@ -39,7 +39,7 @@ export const quotes: Quote[] = [
         variantLabel: "Torç Uzunluğu: 3 m",
         quantity: 4,
       },
-      { productId: "p-zenmask-auto-9000", productName: "ZenMask Auto 9000", quantity: 8 },
+      { productId: "p-forcearc-200-mma", productName: "ForceArc 200 MMA Elektrod Kaynak Makinesi", sku: "ZW30100000072", quantity: 2 },
     ],
     message: "Lorem ipsum dolor sit amet, teslimat Eylül sonuna kadar yapılabilir mi?",
     assignedTo: "Satış – Mehmet B.",

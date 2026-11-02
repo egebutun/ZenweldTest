@@ -4,7 +4,6 @@ import type {
   OrderItem,
   OrderStatus,
   OrderStatusEvent,
-  Product,
   Quote,
   QuoteStatus,
   ServiceReason,
@@ -110,7 +109,6 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
 
   const sellable = products.filter((p) => p.active && p.priceExVat > 0);
   const machines = sellable.filter((p) => p.section === "ekipmanlar");
-  const bySection = (s: Product["section"]) => sellable.filter((p) => p.section === s);
 
   /* ---------------- Uyeler ---------------- */
   const users: User[] = Array.from({ length: 64 }, (_, i) => {
@@ -162,19 +160,16 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
       line: `Örnek Mah. ${between(1, 120)}. Sok. No:${between(1, 60)}`,
     };
 
-    // 1-3 kalem; dolgu metali ve aksesuar coklu adet alinir
+    // 1-3 kalem (ornek veride yalnizca ekipmanlar var); dolgu metali ve
+    // aksesuar coklu adet alinir
     const lines = new Map<string, OrderItem>();
     const count = weighted<number>([[1, 60], [2, 30], [3, 10]]);
     for (let k = 0; k < count; k++) {
-      const section = weighted<Product["section"]>([
-        ["ekipmanlar", 34], ["aksesuarlar", 30], ["dolgu-metalleri", 22], ["guvenlik", 14],
-      ]);
-      const pool = bySection(section).length ? bySection(section) : sellable;
-      const p = pick(pool);
+      const p = pick(sellable);
       // Secenekli urunde satilan kombinasyonlardan biri: kodu ve secenek yazisi onunki.
       const view = productOptionsView(p, optionDefinitions);
       const variant = view ? pick(view.variants) : undefined;
-      const qty = section === "dolgu-metalleri" ? between(1, 6) : section === "ekipmanlar" ? 1 : between(1, 3);
+      const qty = p.section === "dolgu-metalleri" ? between(1, 6) : p.section === "ekipmanlar" ? 1 : between(1, 3);
       const unitPriceExVat = salePriceExVat({ ...p, priceExVat: p.priceExVat + (variant?.priceDeltaExVat ?? 0) });
       const key = `${p.id}|${variant?.id ?? ""}`;
       const prev = lines.get(key);

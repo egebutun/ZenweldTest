@@ -366,8 +366,8 @@ bulunamadı."
 
 **Ürünler:**
 
-- Ürün adı; altında ürün kodu ve seçenek ("ZW-TRC-MB25-5 · Hortum Uzunluğu:
-  5 m").
+- Ürün adı; altında ürün kodu ve seçenek ("ZW30100000024-5M · Torç
+  Uzunluğu: 5 m").
 - Adet, Birim (KDV dahil), Tutar.
 - Ara toplam, İçindeki KDV, Kargo (0 ise "Ücretsiz"), Vade farkı (varsa),
   **Toplam**.
@@ -675,7 +675,7 @@ kendi ürün kodu ve fiyatı olur. Kurallar:
 - "Ürün tek sayfada seçenekleriyle satılır (ör. Soğutma: Hava / Su, Torç
   Uzunluğu: 4 m / 8 m); satılan her kombinasyonun kendi ürün kodu ve fiyatı
   olur."
-- **Seçenek** listesi ("Hortum Uzunluğu (3 m, 4 m, 5 m)") ve **Seçenek
+- **Seçenek** listesi ("Torç Uzunluğu (3 m, 4 m, 5 m, 8 m)") ve **Seçenek
   Ekle**.
 - Kategoride işaretli seçenek yoksa: ""<Kategori>" kategorisinde işaretli
   seçenek yok. Seçenekler kategorinin Seçenekler sekmesinden işaretlenir:
@@ -771,8 +771,8 @@ ve satıcı stok dosyaları bu kodlarla eşleşir):
   satırları silinir (kombinasyonların kimliği yeniden oluşur). Seçeneklerin
   yalnızca sırası değiştiyse stok kalır.
 
-**Ayrı bir ürünü seçeneğe dönüştürmek** (ör. "MB-25 MIG Torcu 4m" ürününü
-"MB-25 MIG Torcu"nun 4 m seçeneği yapmak):
+**Ayrı bir ürünü seçeneğe dönüştürmek** (ör. "X Torcu 4 m" diye ayrı girilmiş
+bir ürünü "X Torcu"nun 4 m seçeneği yapmak):
 
 1. Ayrı ürün silinir; kodu boşa çıkar.
 2. Ana ürüne değer eklenir ve o kod seçeneğe yazılır.
@@ -987,7 +987,7 @@ Adres: `/yonetim/secenekler`. Açıklama: "Ürün seçeneklerinin adı ve
 değerleri. Hangi kategoride listeleneceği kategorinin Seçenekler sekmesinden
 seçilir."
 
-Tanımlar ortaktır: aynı tanım (ör. "Hortum Uzunluğu: 3 m, 4 m, 5 m") birden
+Tanımlar ortaktır: aynı tanım (ör. "Torç Uzunluğu: 3 m, 4 m, 5 m, 8 m") birden
 çok kategoride kullanılabilir. Bir değerin adı düzeltilince her yerde
 değişir.
 
@@ -1003,7 +1003,7 @@ değişir.
 
 **Yeni Seçenek / Seçeneği Düzenle penceresi:**
 
-- **Seçenek Adı** (zorunlu): "ör. Hortum Uzunluğu, Paket".
+- **Seçenek Adı** (zorunlu): "ör. Soğutma, Torç Uzunluğu".
 - **Değerler:**
   - Sıralı listedir; oklarla sıralanır. Sitede de bu sırayla görünür.
   - Değerin adı yerinde düzeltilebilir.
@@ -1079,8 +1079,8 @@ Kaynak yoksa "Bayi/satıcı bulunamadı."
 - **Şablon İndir:** `<ad>-stok-sablonu.csv`. Yayındaki bütün ürünler ve
   seçenekleri, bu kaynağın bugünkü adetleriyle; bayiye gönderilip
   doldurtulabilir.
-  - Seçenekli üründe her seçenek kendi koduyla ayrı satırdır (ör. MB-25 3 m /
-    4 m / 5 m).
+  - Seçenekli üründe her seçenek kendi koduyla ayrı satırdır (ör. Ultimate
+    250 MTC 3 m / 4 m / 5 m).
   - Dosyadaki seçenek kodu stoğu o seçeneğe yazar; ürünün ana kodu bütün
     seçenekler için geçerli sayılır.
 - **Dosya Yükle (CSV / XLSX):** `.csv`, `.xlsx`, `.txt`. Dosya okunamazsa

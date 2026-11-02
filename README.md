@@ -219,8 +219,8 @@ ZenweldTest/
 │   │       ├── checkout.ts · discount.ts · variants.ts · stock.ts   Ortak hesaplar
 │   │       ├── catalog.ts · legal.ts · highlights.ts
 │   │       └── seed/
-│   │           ├── products.seed.ts    60 örnek ürün (3'ü seçenekli)
-│   │           ├── options.seed.ts     Seçenek tanımları (Hortum Uzunluğu, Paket)
+│   │           ├── products.seed.ts    40 ekipman (17'si seçenekli)
+│   │           ├── options.seed.ts     Seçenek tanımları (Soğutma, Torç Uzunluğu…)
 │   │           ├── categories.seed.ts  Bölüm / grup / kategori ağacı
 │   │           ├── dealers.seed.ts     29 bayi (TR koordinatlı)
 │   │           ├── retailers.seed.ts   Online satıcılar (Başak Hırdavat vb.)
@@ -362,9 +362,9 @@ Dosya biçimi, kurallar ve backend'e geçiş (tablolar, API): [docs/STOK.md](doc
   üründe `-hava-sogutmali` / `-su-sogutmali` ekli). Fotoğrafı henüz olmayan
   ekipman, alt kategorisinin kart çizimini gösterir (Force serisinin 9 ürünü
   ortak geçici bir fotoğrafı: `force-serisi-gecici.webp`); eksikler
-  [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Ürün fotoğrafları. Diğer
-  bölümlerdeki 48 ürün genel bir Zenweld fotoğrafını kullanır
-  (`zenweld-urun.webp`). Her ürünün fotoğrafı panelden de değiştirilebilir.
+  [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Ürün fotoğrafları.
+  Güvenlik, Aksesuarlar ve Dolgu Metalleri'nde bugün ürün yok. Her ürünün
+  fotoğrafı panelden de değiştirilebilir.
 - **Blog, haber, etkinlik, Hakkımızda, Welders Club:** Unsplash bağlantıları
   (`packages/data/src/seed/images.ts`). Bunlar **gerçek Zenweld fotoğrafları
   değildir**, genel kaynak/sanayi fotoğraflarıdır.

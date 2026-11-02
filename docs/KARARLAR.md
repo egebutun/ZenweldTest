@@ -302,6 +302,18 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     ForceArc 400 CEL bu listede yoktur; çizim gösterir.
 - **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları.
 
+### K-78 · Güvenlik, Aksesuarlar ve Dolgu Metalleri'ndeki örnek ürünler silindi
+- **Tarih:** 2026-11-02
+- **Karar:**
+  - Bu üç bölümdeki 48 ürünün hepsi örnekti; sahibinin isteğiyle silindi.
+    Bölümler, gruplar, kategoriler ve menüler kalır; kategoriler gerçek
+    ürünler girilene kadar boştur.
+  - Yalnızca bu ürünler için konmuş seçenek tanımları (Hortum Uzunluğu,
+    Paket) ve genel ürün fotoğrafı (`zenweld-urun.webp`) da kaldırıldı.
+  - Örnek sipariş, teklif, stok ve yorumlar ekipmanlara göre yeniden
+    kuruldu. Kampanya örneklerinde %25 ve üzeri "Flaş İndirim" örneği
+    ForceArc 200 MMA'dır; en az 10 onaylı yorum vardır.
+
 ---
 
 ## 3. Ürün seçenekleri
@@ -309,8 +321,8 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 ### K-13 · Seçenekli ürün tek sayfadır
 - **Tarih:** 2026-10-21
 - **Karar:** Aynı ürünün uzunluk, paket gibi farkları ayrı ürün değil,
-  **tek ürün sayfasında seçenek** olur (ör. MB-25 MIG Torcu 3 m / 4 m /
-  5 m). Bu yapı bütün ürünlere uygulanabilir, belli kategorilere özel
+  **tek ürün sayfasında seçenek** olur (ör. bir torcun 3 m / 4 m / 5 m
+  halleri). Bu yapı bütün ürünlere uygulanabilir, belli kategorilere özel
   değildir.
 
 ### K-14 · Seçenek tanımları ortaktır, kategori yalnızca seçer

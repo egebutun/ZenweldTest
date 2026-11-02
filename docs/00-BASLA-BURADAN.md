@@ -96,7 +96,7 @@ IS-KURALLARI'nda yazar.
 | **Grup** | Bölümün altındaki ürün ailesi (ör. Kaynak Makineleri). Panelden yönetilir. |
 | **Kategori** | Grubun altındaki ürün listesi (ör. MIG Torçları). Ürün tek bir kategoriye bağlıdır. |
 | **Ürün kodu (SKU)** | Ürünün ve her seçeneğinin benzersiz kodu. Bayi ve satıcı stok dosyaları bu kodla eşleşir. |
-| **Seçenek tanımı** | Ürün seçeneklerinin ortak adı ve değerleri. Örnek: "Hortum Uzunluğu" tanımının değerleri 3 m, 4 m, 5 m, 10 m'dir. Bir tanım birden çok kategoride kullanılabilir. |
+| **Seçenek tanımı** | Ürün seçeneklerinin ortak adı ve değerleri. Örnek: "Torç Uzunluğu" tanımının değerleri 3 m, 4 m, 5 m, 8 m'dir. Bir tanım birden çok kategoride kullanılabilir. |
 | **Değer** | Seçenek tanımının bir seçeneği (ör. "5 m"). |
 | **Seçenek (varyant)** | Bir değerin bir üründeki karşılığı: kendi ürün kodu, fiyat farkı ve isteğe bağlı farklı bilgileri vardır. Tek ürün sayfası, örneğin 3 m / 4 m / 5 m seçenekleriyle satılır. |
 | **Kampanya** | Üründe süreli ya da süresiz indirim oranı. Seçenekli üründe tüm seçeneklere aynı oran uygulanır. |

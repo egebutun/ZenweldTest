@@ -57,7 +57,8 @@ tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
 - **Eski link yönlendirmesi:** Linki panelde değiştirilen ürün, grup,
   kategori, blog yazısı, haber ve etkinliğin eski adresi yeni adrese gider.
   Bir ürünün seçeneğine dönüştürülen eski ürünün adresi o seçenekle açılır
-  (ör. `/urun/mig-torcu-mb25-4m` → `/urun/mig-torcu-mb25?secenek=4-m`).
+  (ör. `/urun/<eski ürün>` → `/urun/<ürün>?secenek=4-m`; bugün örnek veride
+  böyle bir ürün yok).
 - **Üye bilgileri formlara dolu gelir:** Giriş yapmış üyede Teklif Al,
   Bayilik Başvurusu, Servis Talebi, Garanti Kaydı, ürün değerlendirmesi ve
   ürün destek sohbetinde ad, e-posta, telefon, şehir ve firma bilgileri
@@ -356,8 +357,8 @@ hiçbiri değilse 404 çıkar.
     teknik özellikler, kutu içeriği, fotoğraf, bayi listesi ve online satıcılar
     değişir. Kurallar: [IS-KURALLARI.md](IS-KURALLARI.md).
   - **Yorumlar değişmez;** ürünün tüm kombinasyonları için ortaktır.
-  - Seçim adrese yazılır (`/urun/mig-torcu-mb25?secenek=5-m`; iki seçenekte
-    ör. `?secenek=su-sogutmali_8-m`); bu link o kombinasyonla açılır. Geçersiz
+  - Seçim adrese yazılır (`/urun/ultimate-250-mtc?secenek=5-m`; iki ya da üç
+    seçenekte ör. `?secenek=su_8-m`); bu link o kombinasyonla açılır. Geçersiz
     kombinasyon yazılmışsa ilk kombinasyon açılır.
 - **Fiyat:**
   - Kampanyada önce "%X indirim" rozeti çıkar; %25 ve üzerinde "Flaş İndirim"
@@ -1040,12 +1041,13 @@ gelinir.
    - Hata mesajları: "Lütfen firma ve iletişim bilgilerindeki zorunlu alanları
      doldurun.", "Lütfen geçerli bir e-posta adresi girin."
 2. **Ürünler:**
-   - **Teklif Listeniz:** Ürün adı, altında seçenekler ve ürün kodu ("Hortum
-     Uzunluğu: 5 m · ZW-TRC-MB25-5"), adet kutusu (en az 1), **Çıkar**.
+   - **Teklif Listeniz:** Ürün adı, altında seçenekler ve ürün kodu ("Torç
+     Uzunluğu: 5 m · ZW30100000024-5M"), adet kutusu (en az 1), **Çıkar**.
    - **Ürün ekleme:** "Ürün Ekle…" listesinden seçip **Ekle**.
      - Listede panelde "Teklife açık" işaretli, yayındaki ürünler vardır.
-     - Seçenekli ürün her kombinasyonuyla ayrı satırdır ("MB-25 MIG Torcu —
-       5 m (ZW-TRC-MB25-5)"; iki seçenekte "— Su Soğutmalı · 8 m (…)");
+     - Seçenekli ürün her kombinasyonuyla ayrı satırdır ("Ultimate 250 MTC
+       MIG Gazaltı Kaynak Makinesi — 5 m (ZW30100000024-5M)"; iki seçenekte
+       "— Su Soğutmalı · 8 m (…)");
        seçeneksiz ürün "Ad (kod)" diye yazar.
      - Aynı ürün ve kombinasyon tekrar eklenirse adet artar.
    - **Saklanma (Demo notu):** Liste tarayıcıda tutulur. Yayından kalkan ürün

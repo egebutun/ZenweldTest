@@ -24,13 +24,6 @@ fotoğrafları gelene kadar **`force-serisi-gecici.webp`** dosyasını gösterir
 (`products.seed.ts` › `FORCE_TEMP`); gerçek fotoğraf yüklenip
 `MACHINE_PHOTOS`'a eklenince o kullanılır.
 
-## Diğer bölümler
-
-Güvenlik, Aksesuarlar ve Dolgu Metalleri'ndeki ürünler bu klasördeki
-**`zenweld-urun.webp`** dosyasını kullanır (eski tarayıcılar için yanında
-`.png` hali var). Dosya yoksa site kırılmaz; markalı Zenweld yer tutucu
-görseli gösterilir.
-
 ## WebP'ye çevirme
 
 Proje kökünde `node scripts/optimize-images.mjs` bu klasördeki büyük

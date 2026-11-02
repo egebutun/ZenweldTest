@@ -191,7 +191,7 @@ Menüde bölümün altında sol kolondaki gruplar (ör. Kaynak Makineleri).
 | Alan | Tür | Açıklama |
 |---|---|---|
 | `id` | metin | |
-| `name` | metin | Ör. "Hortum Uzunluğu". Benzersiz (Türkçe büyük/küçük harf duyarsız) |
+| `name` | metin | Ör. "Torç Uzunluğu". Benzersiz (Türkçe büyük/küçük harf duyarsız) |
 | `values[]` | liste | Sıralı değerler |
 | `values[].id` | metin | Değerin ilk adından üretilir (`4-m`) ve **hiç değişmez**; aynısı varsa sonuna `-2`, `-3` eklenir |
 | `values[].label` | metin | Ör. "4 m". Tanım içinde benzersiz; ad düzeltilebilir |
@@ -838,7 +838,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 70).
+- `packages/data/src/index.ts`'tedir (bugün 71).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -849,16 +849,16 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 | Kayıt | Sayı | Not |
 |---|---|---|
-| Ürün | 88 | 40'ı Ekipmanlar (sahibinin listeleri; fiyat temsili, Force serisi dışında içerik örnek, KARARLAR K-73, K-75). 20'si seçenekli: 17 makine ve 3 aksesuar (MB-25 ve MB-36 MIG torçları, Gaz Nozulu Seti). Ekipmanların 21'inde sahibinin fotoğrafı var, Force serisinin 9'unda geçici ortak fotoğraf; soğutmalı makinede her kombinasyon kendi soğutma halinin fotoğrafını gösterir (K-77) |
+| Ürün | 40 | Hepsi Ekipmanlar'da (sahibinin listeleri; fiyat temsili, Force serisi dışında içerik örnek, KARARLAR K-73, K-75). Güvenlik, Aksesuarlar ve Dolgu Metalleri'ndeki 48 örnek ürün sahibinin isteğiyle silindi; bu bölümlerin kategorileri boş (KARARLAR K-78). 17'si seçenekli (makineler). Ekipmanların 21'inde sahibinin fotoğrafı var, Force serisinin 9'unda geçici ortak fotoğraf; soğutmalı makinede her kombinasyon kendi soğutma halinin fotoğrafını gösterir (K-77) |
 | Grup / kategori | 12 / 50 | Aksesuarlar'daki Lazer Aksesuarları grubunun 5 kategorisinde henüz ürün yok (KARARLAR K-05 eki). Ekipmanların 8 alt kategorisinde filtre var (KARARLAR K-76); ürünlere yalnızca Model Serisi eşli |
-| Seçenek tanımı | 6 | Hortum Uzunluğu, Paket, Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu (temsili), Tepe Güç |
+| Seçenek tanımı | 4 | Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu (temsili), Tepe Güç |
 | Bayi / online satıcı | 29 / 9 | |
-| Stok satırı (bayi / satıcı) | ~4.060 / ~610 | Veri ilk kurulduğunda o günün tarihiyle üretilir |
+| Stok satırı (bayi / satıcı) | ~2.750 / ~415 | Veri ilk kurulduğunda o günün tarihiyle üretilir |
 | Üye | 69 | 1 yönetici, 46 bireysel, 22 kurumsal |
 | Sipariş / teklif | 133 / 48 | |
 | Servis talebi / garanti | 34 / 54 | |
 | İade talebi | 0 | Hesabım'dan açılır |
-| Yorum | 11 | |
+| Yorum | 11 | 10'u onaylı, 1'i onay bekliyor; hepsi ekipmanlarda |
 | Blog / haber / etkinlik | 6 / 2 / 8 | |
 | SSS / temsilci / yasal metin | 8 / 11 / 11 | |
 | Belge | 0 | Panelden yüklenir |

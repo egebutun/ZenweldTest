@@ -118,8 +118,8 @@ numarası ve ETBİS bilgisi yok. Sözleşmelerdeki MERSİS alanı da boş ("[—
 
 Panel ve site hazır: Seçenek Tanımları, kategorinin Seçenekler sekmesi, ürünün
 Seçenekler sekmesi (en fazla 3 seçenek, kombinasyonlar), ürün sayfası, sepet,
-sipariş ve Teklif Al. Veri şimdilik tarayıcıda. Örnek olarak MB-25 ve MB-36
-MIG torçlarında (Hortum Uzunluğu) ve Gaz Nozulu Seti'nde (Paket) var.
+sipariş ve Teklif Al. Veri şimdilik tarayıcıda. Örnek veride 17 makinede var
+(Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu, Tepe Güç; uzunluklar temsili).
 Önerilen tablo yapısı: [VERI-MODELI.md](VERI-MODELI.md) › Ürünler ›
 Seçenekler (KARARLAR K-70).
 
@@ -154,7 +154,7 @@ Seçenekler (KARARLAR K-70).
      `variant_id = ''` ürünün tüm varyantları demektir ([STOK.md](STOK.md)).
 3. **Eski linkler:** Ayrı bir ürün seçeneğe dönüştürülünce eski linki
    `/urun/<ürün>?secenek=<varyant>` adresine 301 ile yönlenmeli (örnek:
-   `/urun/mig-torcu-mb25-4m` → `/urun/mig-torcu-mb25?secenek=4-m`). Bunun için
+   `/urun/<eski ürün>` → `/urun/<ürün>?secenek=4-m`). Bunun için
    SEO bölümündeki `previous_paths` tablosuna seçenek (değer) sütunu eklenir.
    Demoda tarayıcı yönlendiriyor (`movedProductPath`). Panelde ayrı ürünü
    seçeneğe dönüştürme ekranı yok. Eklenip eklenmeyeceğine gerçek ürünler
@@ -372,8 +372,8 @@ yüklenecek (2026-10-28):
 Jasic LS-20000F için yüklenen fotoğraf yanlış çıktı (makinenin üzerinde
 "LS-15000F" yazıyordu) ve sahibinin isteğiyle silindi.
 
-Diğer bölümlerdeki (Güvenlik, Aksesuarlar, Dolgu Metalleri) 48 ürün hâlâ aynı
-genel Zenweld fotoğrafını kullanıyor (`zenweld-urun.webp`).
+Güvenlik, Aksesuarlar ve Dolgu Metalleri'nde bugün ürün yok (örnek ürünler
+silindi, KARARLAR K-78); ürün eklenince fotoğrafı panelden verilir.
 
 ## Jasic lazer kaynak ürünleri — sahibi ayrıntılı açıklayacak
 

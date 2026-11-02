@@ -21,7 +21,7 @@ export type TopLevelSection =
  */
 export interface OptionDefinition {
   id: string;
-  /** Orn. "Hortum Uzunluğu", "Paket" */
+  /** Orn. "Soğutma", "Torç Uzunluğu" */
   name: string;
   values: OptionValue[];
 }
@@ -999,7 +999,7 @@ export interface ZenweldDatabase {
   products: Product[];
   categories: Category[];
   categoryGroups: CategoryGroup[];
-  /** Ortak secenek tanimlari (Hortum Uzunluğu, Paket ...) */
+  /** Ortak secenek tanimlari (Soğutma, Torç Uzunluğu ...) */
   optionDefinitions: OptionDefinition[];
   dealers: Dealer[];
   retailers: Retailer[];

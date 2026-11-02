@@ -37,8 +37,8 @@ export function visibleProducts(
 
 /**
  * Eski urun linkinin yeni adresi: linki degisen urun ya da bir urunun
- * secenegine donusen eski urun (orn. /urun/mig-torcu-mb25-4m ->
- * /urun/mig-torcu-mb25?secenek=4-m). Eski link yoksa undefined.
+ * secenegine donusen eski urun (orn. /urun/torc-4m ->
+ * /urun/torc?secenek=4-m). Eski link yoksa undefined.
  */
 export function movedProductPath(slug: string, db: ZenweldDatabase = getSnapshot()): string | undefined {
   const products = listProducts(db);

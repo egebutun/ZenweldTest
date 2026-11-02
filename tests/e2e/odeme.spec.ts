@@ -16,15 +16,15 @@ const TEST_TC = "10000000146";
 test.describe("üye", () => {
   test.use({ storageState: SESSION.member });
 
-  test("seçenekli ürün kartla satın alınır", async ({ page, problems }) => {
-    await page.goto("/urun/mig-torcu-mb25?secenek=5-m");
+  // Odeme akisini dener; urunun icerigi ve fiyati onemli degil (seceneksiz bir ekipman).
+  test("ürün kartla satın alınır", async ({ page, problems }) => {
+    await page.goto("/urun/ultimate-255-mma");
     const main = page.locator("main");
-    await expect(main).toContainText("ZW-TRC-MB25-5");
-    await expect(main).toContainText("2.430");
+    await expect(main).toContainText("ZW30100000001");
     await page.getByRole("button", { name: "Sepete Ekle" }).first().click();
 
     await page.goto("/sepet");
-    await expect(main).toContainText("ZW-TRC-MB25-5");
+    await expect(main).toContainText("ZW30100000001");
 
     await page.goto("/odeme");
     const tc = page.locator("input[maxlength='11']").first();
@@ -44,7 +44,7 @@ test.describe("üye", () => {
 });
 
 test("sepette adet 1 ile 99 arasında tutulur", async ({ page, problems }) => {
-  await page.goto("/urun/mig-torcu-mb25");
+  await page.goto("/urun/ultimate-255-mma");
   await page.getByRole("button", { name: "Sepete Ekle" }).first().click();
   await page.goto("/sepet");
   const quantity = page.getByLabel("Adet").first();

@@ -86,7 +86,7 @@ okurdu).
 ```csv
 SKU;Ürün Adı;Adet;Fiyat
 ZW30100000012-8M;Ultimate 405 THP TIG Argon Kaynak Makinesi (Su Soğutmalı · 8 m);2;1.180.000,00
-ZW-TRC-MB25-3;MB-25 MIG Torcu (3 m);12;1.980,00
+ZW30100000024-3M;Ultimate 250 MTC MIG Gazaltı Kaynak Makinesi (3 m);4;1.050.000,00
 ZW30100000072;ForceArc 200 MMA Elektrod Kaynak Makinesi;0;
 ```
 

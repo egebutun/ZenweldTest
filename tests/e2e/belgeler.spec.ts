@@ -33,13 +33,13 @@ test("MSDS belgesi yüklenir, sitede görünür, açılır ve indirilir", async 
   await save();
   await expect(modal).toContainText("25 MB'tan büyük");
 
-  // Baslik dosya adindan gelir; urune baglanir.
-  await modal.locator("input[type=file]").setInputFiles(pdf("ZW-SG2-MSDS.pdf"));
+  // Baslik dosya adindan gelir; urune baglanir (hangi urun oldugu onemli degil).
+  await modal.locator("input[type=file]").setInputFiles(pdf("ZW-DENEME-MSDS.pdf"));
   const title = modal.locator("input:not([type=file]):not([type=checkbox])").first();
-  await expect(title).toHaveValue("ZW-SG2-MSDS");
-  await title.fill("SG2 Gazaltı Teli MSDS");
-  const sg2 = (await readDb(page)).products.find((p) => /SG2/.test(p.name))!;
-  await modal.locator("select").selectOption(sg2.id);
+  await expect(title).toHaveValue("ZW-DENEME-MSDS");
+  await title.fill("Deneme Ürünü MSDS");
+  const product = (await readDb(page)).products.find((p) => p.slug === "ultimate-255-mma")!;
+  await modal.locator("select").selectOption(product.id);
   await save();
   await expect(page.locator("body")).toContainText("MSDS (1)");
 
@@ -51,8 +51,8 @@ test("MSDS belgesi yüklenir, sitede görünür, açılır ve indirilir", async 
 
   await page.goto("/msds");
   const main = page.locator("main");
-  await expect(main).toContainText("SG2 Gazaltı Teli MSDS");
-  await expect(main).toContainText(sg2.sku);
+  await expect(main).toContainText("Deneme Ürünü MSDS");
+  await expect(main).toContainText(product.sku);
   await expect(main).toContainText("PDF");
 
   const [tab] = await Promise.all([page.waitForEvent("popup"), page.getByRole("button", { name: "Görüntüle" }).click()]);

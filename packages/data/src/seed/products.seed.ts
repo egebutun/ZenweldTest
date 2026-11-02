@@ -4,18 +4,6 @@ import { machineContent } from "./machine-content.seed";
 
 const now = "2026-09-16T08:00:00+03:00";
 
-/**
- * Ekipmanlar disindaki urunlerde kullanilan Zenweld urun fotografi.
- *
- * Dosya public/images/products/ klasorunde bulunur.
- * Farkli urunlere farkli fotograf vermek icin: Yonetim Paneli > Urunler >
- * Duzenle > Gorseller sekmesinden URL girin veya dosya yukleyin.
- */
-/* 748x1064 PNG (519 KB) yerine 800 px webp (27 KB). Orijinal PNG dosyasi
-   duruyor; webp desteklemeyen tarayici ProductImage uzerinden ona duser.
-   Yeni gorsel eklendiginde: node scripts/optimize-images.mjs */
-const PRODUCT_PHOTO = "/images/products/zenweld-urun.webp";
-
 const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
 
 export const products: Product[] = [];
@@ -135,7 +123,7 @@ const COOLING_LABELS = { hava: "Hava Soğutmalı", su: "Su Soğutmalı" } as con
  * fotograftir; varyant kendi halinin fotografini gosterir (byCooling).
  */
 function machinePhotos(seed: MachineSeed): { images: ProductImage[]; byCooling?: Record<"hava" | "su", string> } {
-  const drawing = categories.find((c) => c.slug === seed.categorySlug)?.image ?? PRODUCT_PHOTO;
+  const drawing = categories.find((c) => c.slug === seed.categorySlug)?.image ?? "";
   const photo = (name: string) => (MACHINE_PHOTOS.has(name) ? `/images/products/${name}.webp` : undefined);
   if (!seed.options || !("cooling" in seed.options)) {
     const temp = FORCE_TEMP.has(seed.slug) ? FORCE_TEMP_PHOTO : undefined;
@@ -345,221 +333,6 @@ machineSeeds.forEach((seed) => {
   });
 });
 
-/* ---------------------------------------------------------------- */
-/* Aksesuar / guvenlik / dolgu metali urunleri (placeholder icerik)  */
-/* ---------------------------------------------------------------- */
-
-interface AccessorySeed {
-  slug: string;
-  sku: string;
-  name: string;
-  section: Product["section"];
-  categorySlug: string;
-  price: number;
-  short: string;
-  /** Menu kartinda gorunen 1-2 satislik ozellik */
-  highlights?: string[];
-}
-
-const accessorySeeds: AccessorySeed[] = [
-  { slug: "zenmask-auto-9000", sku: "ZW-MASK9000", name: "ZenMask Auto 9000", section: "guvenlik", categorySlug: "otomatik-kararan-bas-maskeleri", price: 3450, short: "Gerçek renk teknolojili otomatik kararan kaynak maskesi, 4 sensörlü.", highlights: ["Gerçek renk (True Color) görüş", "4 sensörlü, 1/25000 sn tepki", "DIN 5-13 kademesiz ayar"] },
-  { slug: "zenmask-basic-500", sku: "ZW-MASK500", name: "ZenMask Basic 500", section: "guvenlik", categorySlug: "otomatik-kararan-bas-maskeleri", price: 1290, short: "Giriş seviyesi otomatik kararan kaynak maskesi, 2 sensörlü.", highlights: ["Giriş seviyesi, hafif kask", "2 sensörlü otomatik kararma", "Değiştirilebilir ön cam"] },
-  { slug: "kaynak-eldiveni-pro", sku: "ZW-GLV-PRO", name: "Pro Kaynak Eldiveni", section: "guvenlik", categorySlug: "kaynak-eldivenleri", price: 480, short: "Sığır derisi, kevlar dikişli, ısıya dayanıklı kaynak eldiveni.", highlights: ["Sığır derisi, kevlar dikiş", "Isıya ve kıvılcıma dayanıklı", "Astarlı, uzun manşetli"] },
-  { slug: "kaynak-onlugu-deri", sku: "ZW-APR-01", name: "Deri Kaynak Önlüğü", section: "guvenlik", categorySlug: "kaynak-onlukleri", price: 890, short: "Kıvılcıma ve ısıya dayanıklı tam boy deri kaynak önlüğü.", highlights: ["Tam boy deri koruma", "Ayarlanabilir omuz askısı", "Kıvılcım ve cüruf geçirmez"] },
-  { slug: "mig-torcu-mb25", sku: "ZW-TRC-MB25", name: "MB-25 MIG Torcu", section: "aksesuarlar", categorySlug: "mig-torclari", price: 1650, short: "250A kapasiteli, Euro bağlantılı MIG kaynak torcu. 3, 4 ve 5 metre seçenekleriyle.", highlights: ["250 A / %60 devrede kalma", "Euro bağlantılı hortum", "Yaygın sarf malzeme bulunabilirliği"] },
-  { slug: "mig-torcu-mb36", sku: "ZW-TRC-MB36", name: "MB-36 MIG Torcu", section: "aksesuarlar", categorySlug: "mig-torclari", price: 2050, short: "350A kapasiteli, ağır hizmet MIG kaynak torcu. 3 ve 4 metre seçenekleriyle.", highlights: ["350 A ağır hizmet kapasitesi", "3 m ve 4 m hortum seçenekleri", "Kalın kesitte sürekli kaynak"] },
-  { slug: "tig-torcu-wp26", sku: "ZW-TRC-WP26", name: "WP-26 TIG Torcu 4m", section: "aksesuarlar", categorySlug: "tig-torclari", price: 1980, short: "Hava soğutmalı, 200A kapasiteli 4 metre TIG kaynak torcu.", highlights: ["200 A hava soğutmalı", "4 m esnek hortum paketi", "Standart WP-26 sarf uyumu"] },
-  { slug: "gaz-nozulu-seti", sku: "ZW-NZL-SET", name: "Gaz Nozulu Seti", section: "aksesuarlar", categorySlug: "mig-torc-sarf-malzemeleri", price: 420, short: "MB-25 uyumlu gaz nozulu seti. 10'lu ve 20'li paket seçenekleriyle.", highlights: ["MB-25 torçlarla uyumlu", "10'lu ve 20'li paket seçenekleri", "Bakır gövde, uzun ömür"] },
-  { slug: "kontak-meme-seti", sku: "ZW-TIP-SET", name: "Kontak Meme Seti M6 (20'li)", section: "aksesuarlar", categorySlug: "mig-torc-sarf-malzemeleri", price: 380, short: "0.8 / 1.0 / 1.2 mm ölçülerinde 20 adetlik kontak meme seti.", highlights: ["0.8 / 1.0 / 1.2 mm karışık", "M6 diş, MB-25 uyumlu", "20 adetlik paket"] },
-  { slug: "gazalti-teli-sg2-08", sku: "ZW-WIRE-SG208", name: "SG2 Gazaltı Teli 0.8 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "karbonlu-celik-mig-telleri", price: 1450, short: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", highlights: ["Bakır kaplı SG2 kalite", "0.8 mm, 15 kg makara", "Düşük sıçrantı, düzgün dikiş"] },
-  { slug: "gazalti-teli-sg2-10", sku: "ZW-WIRE-SG210", name: "SG2 Gazaltı Teli 1.0 mm (15 kg)", section: "dolgu-metalleri", categorySlug: "karbonlu-celik-mig-telleri", price: 1420, short: "Bakır kaplı SG2 kalite gazaltı kaynak teli, 15 kg makara.", highlights: ["Bakır kaplı SG2 kalite", "1.0 mm, 15 kg makara", "Kalın kesitte yüksek verim"] },
-  { slug: "tig-cubugu-308l", sku: "ZW-ROD-308L", name: "308L Paslanmaz TIG Çubuğu 2.4 mm", section: "dolgu-metalleri", categorySlug: "paslanmaz-celik-tig-telleri", price: 2250, short: "304/308 paslanmaz çelik kaynağı için 5 kg'lık TIG çubuğu paketi.", highlights: ["304 / 308 paslanmaz için", "2.4 mm, 5 kg paket", "Korozyona dayanıklı dikiş"] },
-];
-
-/* ------------------------------------------------------------------ */
-/* DEMO AKSESUAR KALEMLERI — !! DOGRULANMALI !!                        */
-/*                                                                     */
-/* Mega menudeki 3x3 urun izgarasini ve "Tumunu Gor (N)" davranisini   */
-/* test edebilmek icin eklenen ornek kalemlerdir. Model tipleri         */
-/* sektorde yaygin standartlardir (MB-15/24/25/36, WP-17/26 vb.);       */
-/* fiyatlar ve aciklamalar temsilidir. Zenweld'in gercek urun           */
-/* listesiyle degistirilmeli veya silinmelidir.                        */
-/*                                                                     */
-/* Kategori dagilimi (menu testi icin):                                 */
-/*   MIG > MIG Torclari        14 urun  -> "Tumunu Gor (14)" cikar      */
-/*   MIG > Sarf Malzemeleri    12 urun  -> "Tumunu Gor (12)" cikar      */
-/*   MIG > Yedek Parca          5 urun  -> ikinci satir yarim           */
-/* ------------------------------------------------------------------ */
-
-type Demo = [slug: string, sku: string, name: string, cat: string, price: number,
-  short: string, a: string, b: string, c: string];
-
-const demoAccessories: Demo[] = [
-  /* --- MIG Aksesuarları > MIG Torçları --- */
-  ["mig-torcu-mb15", "ZW-TRC-MB15", "MB-15 MIG Torcu 3m", "mig-torclari", 980,
-    "180A kapasiteli, hafif gövdeli 3 metre MIG torcu.",
-    "İnce sacta kolay kullanım", "Hafif gövde, 180 A", "Değiştirilebilir kısa boyun"],
-  ["mig-torcu-mb24", "ZW-TRC-MB24", "MB-24 MIG Torcu 3m", "mig-torclari", 1320,
-    "250A kapasiteli, Euro bağlantılı 3 metre MIG torcu.",
-    "Euro bağlantı standardı", "250 A / %60 devrede kalma", "Yaygın sarf bulunabilirliği"],
-  ["mig-torcu-mb38", "ZW-TRC-MB38", "MB-38 MIG Torcu 4m", "mig-torclari", 2680,
-    "400A kapasiteli, endüstriyel kullanım için 4 metre MIG torcu.",
-    "400 A endüstriyel kapasite", "Güçlendirilmiş hortum paketi", "Uzun ömürlü kontak meme yuvası"],
-  ["mig-torcu-mb401-su", "ZW-TRC-MB401W", "MB-401 Su Soğutmalı MIG Torcu 3m", "mig-torclari", 4450,
-    "400A kapasiteli, su soğutmalı 3 metre MIG torcu.",
-    "Su soğutma ile uzun süreli kaynak", "Daha düşük torç sıcaklığı", "Hızlı geçmeli su bağlantısı"],
-  ["mig-torcu-mb501-su", "ZW-TRC-MB501W", "MB-501 Su Soğutmalı MIG Torcu 4m", "mig-torclari", 5750,
-    "500A kapasiteli, su soğutmalı 4 metre MIG torcu.",
-    "500 A sürekli kaynak kapasitesi", "Robot ve otomasyona uygun", "Yüksek akımda düşük yıpranma"],
-  ["mig-spool-gun-200", "ZW-TRC-SG200", "SG-200 Spool Gun 4m", "mig-torclari", 6250,
-    "Alüminyum kaynağı için makaralı besleme üniteli 4 metre torç.",
-    "Alüminyum telde besleme sorunu yok", "Entegre 1 kg makara", "Torç üzerinden hız ayarı"],
-  ["mig-push-pull-torc", "ZW-TRC-PP8", "Push-Pull Alüminyum Torcu 8m", "mig-torclari", 12900,
-    "Uzun mesafede alüminyum kaynağı için 8 metre push-pull torç.",
-    "8 m uzaklıkta stabil tel akışı", "Alüminyum ve paslanmaz uyumlu", "Dijital hız göstergesi"],
-  ["mig-torcu-kisa-boyun", "ZW-TRC-KB25", "MB-25 Kısa Boyun Torç 2m", "mig-torclari", 1480,
-    "Dar alanlarda çalışma için kısa boyunlu 2 metre MIG torcu.",
-    "Dar alanda rahat erişim", "Standart MB-25 sarf uyumu", "Hafif, tek elle kullanım"],
-
-  /* --- MIG Aksesuarları > MIG Torç Sarf Malzemeleri --- */
-  ["kontak-meme-seti-m8", "ZW-TIP-M8", "Kontak Meme Seti M8 (20'li)", "mig-torc-sarf-malzemeleri", 460,
-    "MB-36 uyumlu, 1.0 / 1.2 mm ölçülerinde 20 adetlik kontak meme seti.",
-    "MB-36 / MB-38 uyumlu", "20 adetlik ekonomik paket", "Bakır alaşım, uzun ömür"],
-  ["gaz-dagitici-seti", "ZW-DIF-SET", "Gaz Dağıtıcı (Difüzör) Seti (5'li)", "mig-torc-sarf-malzemeleri", 390,
-    "MB-25 uyumlu 5 adetlik gaz dağıtıcı seti.",
-    "Homojen gaz dağılımı", "Isıya dayanıklı pirinç gövde", "Kolay sökülüp takılır"],
-  ["tel-kilavuzu-3m", "ZW-LNR-3", "Tel Kılavuzu (Liner) 3m 0.8-1.0 mm", "mig-torc-sarf-malzemeleri", 320,
-    "3 metre torçlar için çelik spiral tel kılavuzu.",
-    "Düzgün tel akışı", "0.8 – 1.0 mm tel uyumu", "Çelik spiral yapı"],
-  ["tel-kilavuzu-4m", "ZW-LNR-4", "Tel Kılavuzu (Liner) 4m 1.0-1.2 mm", "mig-torc-sarf-malzemeleri", 380,
-    "4 metre torçlar için çelik spiral tel kılavuzu.",
-    "Uzun torçta tel sıkışmasını önler", "1.0 – 1.2 mm tel uyumu", "Kesilerek boy ayarlanabilir"],
-  ["makara-seti-v-kanal", "ZW-ROL-V", "Çelik Makara Seti V Kanal 0.8/1.0", "mig-torc-sarf-malzemeleri", 540,
-    "Çelik tel besleme için V kanallı makara seti.",
-    "Sertleştirilmiş çelik", "Çift ölçü: 0.8 / 1.0 mm", "Standart besleme üniteleriyle uyumlu"],
-  ["anti-spatter-sprey", "ZW-AS-400", "Anti-Spatter Sprey 400 ml", "mig-torc-sarf-malzemeleri", 210,
-    "Nozul ve iş parçasında sıçrantı yapışmasını önleyen sprey.",
-    "Nozul ömrünü uzatır", "Silikonsuz formül", "İş parçasına boya öncesi uyumlu"],
-  ["nozul-temizleme-seti", "ZW-CLN-SET", "Nozul Temizleme Seti", "mig-torc-sarf-malzemeleri", 290,
-    "Nozul ve meme temizliği için eğe ve raybalardan oluşan set.",
-    "Sarf ömrünü uzatır", "Çantalı 8 parça", "Taşınabilir çantalı"],
-
-  /* --- MIG Aksesuarları > MIG Torç Yedek Parçaları --- */
-  ["mb25-torc-boynu", "ZW-SPR-N25", "MB-25 Torç Boynu (Swan Neck)", "mig-torc-yedek-parcalari", 890,
-    "MB-25 torçlar için yedek eğik boyun.",
-    "Orijinal geometri", "Tek parça değişim", "Sızdırmaz o-ring dahil"],
-  ["mb36-torc-boynu", "ZW-SPR-N36", "MB-36 Torç Boynu (Swan Neck)", "mig-torc-yedek-parcalari", 1150,
-    "MB-36 torçlar için yedek eğik boyun.",
-    "350 A kapasite", "Güçlendirilmiş bakır iç yapı", "Yüksek akıma dayanıklı"],
-  ["torc-tetik-anahtari", "ZW-SPR-SW", "Torç Tetik Anahtarı", "mig-torc-yedek-parcalari", 240,
-    "MB serisi torçlar için yedek tetik mikro anahtarı.",
-    "Tüm MB serisi uyumlu", "Kolay montaj", "Kablolu hazır set"],
-  ["euro-baglanti-adaptoru", "ZW-SPR-EU", "Euro Bağlantı Adaptörü", "mig-torc-yedek-parcalari", 560,
-    "Torç ile makine arasında standart Euro bağlantı adaptörü.",
-    "Pirinç gövde", "Gaz sızdırmaz conta", "Tüm MB serisiyle uyumlu"],
-  ["torc-govde-kulp-seti", "ZW-SPR-HG", "MB-25 Torç Gövde ve Kulp Seti", "mig-torc-yedek-parcalari", 720,
-    "MB-25 torçlar için yedek gövde ve kulp seti.",
-    "Isıya dayanıklı polimer", "Vidalı montaj", "Kaymaz yüzey"],
-
-  /* --- MIG Aksesuarları > MIG Torçları (MAG uygulamaları) --- */
-  ["mag-torcu-mb25", "ZW-TRC-MG25", "MB-25 MAG Torcu 3m", "mig-torclari", 1650,
-    "CO2 ve karışım gaz uygulamaları için 250A 3 metre MAG torcu.",
-    "CO2 ve karışım gaz uyumu", "250 A kapasite", "3 m Euro bağlantı"],
-  ["mag-torcu-mb36", "ZW-TRC-MG36", "MB-36 MAG Torcu 4m", "mig-torclari", 2350,
-    "Ağır hizmet MAG uygulamaları için 350A 4 metre torç.",
-    "Kalın kesitte yüksek verim", "350 A ağır hizmet", "Güçlendirilmiş hortum"],
-  ["mag-torcu-mb501-su", "ZW-TRC-MG501W", "MB-501 Su Soğutmalı MAG Torcu 4m", "mig-torclari", 5950,
-    "Yoğun üretim için 500A su soğutmalı 4 metre MAG torcu.",
-    "Sürekli üretime uygun", "Su soğutmalı gövde", "Hızlı geçmeli su bağlantısı"],
-  ["mag-torcu-kisa-boyun", "ZW-TRC-MGKB", "MAG Kısa Boyun Torç 3m", "mig-torclari", 1720,
-    "Dar alanlarda MAG kaynağı için kısa boyunlu 3 metre torç.",
-    "Dar alanda erişim", "Standart sarf uyumu", "Hafif gövde"],
-
-  /* --- MIG Aksesuarları > MIG Torç Sarf Malzemeleri (MAG) --- */
-  ["mag-gaz-nozulu-seti", "ZW-NZL-MG", "CO2 Gaz Nozulu Seti (10'lu)", "mig-torc-sarf-malzemeleri", 440,
-    "MAG uygulamaları için 10 adetlik konik gaz nozulu seti.",
-    "Sıçrantıya dayanıklı kaplama", "10 adetlik paket", "Konik ağız, dar dikişe uygun"],
-  ["mag-kontak-meme-cucrzr", "ZW-TIP-CZ", "Kontak Meme Seti M6 CuCrZr (20'li)", "mig-torc-sarf-malzemeleri", 520,
-    "Yüksek akımda uzun ömürlü CuCrZr alaşımlı kontak meme seti.",
-    "Yüksek akımda uzun ömür", "CuCrZr alaşım", "M6 diş standardı"],
-  ["mag-difuzor-seti", "ZW-DIF-MG", "MAG Difüzör Seti (5'li)", "mig-torc-sarf-malzemeleri", 410,
-    "MAG torçları için 5 adetlik gaz dağıtıcı seti.",
-    "Dengeli gaz akışı", "Isıya dayanıklı", "Kolay sökülüp takılır"],
-
-  /* --- TIG Aksesuarları > Tungsten Elektrodlar + TIG Torç Sarf Malzemeleri --- */
-  ["tungsten-wl15-24", "ZW-TNG-WL24", "WL-15 Tungsten Elektrot 2.4 mm (10'lu)", "tungsten-elektrodlar", 890,
-    "Altın renk kodlu, lantanlı tungsten elektrot, 10 adet.",
-    "AC ve DC'de kullanılabilir", "Kolay ark tutuşturma", "Radyoaktif değil (lantanlı)"],
-  ["tungsten-wc20-16", "ZW-TNG-WC16", "WC-20 Tungsten Elektrot 1.6 mm (10'lu)", "tungsten-elektrodlar", 780,
-    "Gri renk kodlu, seryumlu tungsten elektrot, 10 adet.",
-    "Düşük akımda kararlı ark", "İnce kesit için ideal", "Uzun elektrot ömrü"],
-  ["seramik-nozul-seti-wp26", "ZW-CUP-26", "WP-26 Seramik Nozul Seti (10'lu)", "tig-torc-sarf-malzemeleri", 460,
-    "WP-26 torçlar için 4 – 8 numara seramik nozul seti.",
-    "4 – 8 numara karışık", "Yüksek ısı dayanımı", "Isıl şoka dayanıklı"],
-  ["pens-seti-wp26", "ZW-COL-26", "WP-26 Pens (Collet) Seti", "tig-torc-sarf-malzemeleri", 380,
-    "1.6 / 2.4 / 3.2 mm ölçülerinde pens ve pens gövdesi seti.",
-    "Üç ölçü tek sette", "Bakır alaşım", "Pens ve gövde bir arada"],
-  ["gaz-lensi-seti-wp26", "ZW-GLN-26", "WP-26 Gaz Lensi Seti", "tig-torc-sarf-malzemeleri", 640,
-    "Daha geniş ve düzgün gaz örtüsü için gaz lensi seti.",
-    "Paslanmazda oksitlenmeyi azaltır", "Daha geniş gaz örtüsü", "Uzun uzatma için uygun"],
-  ["arka-kapak-seti-wp26", "ZW-CAP-26", "WP-26 Arka Kapak Seti (3'lü)", "tig-torc-sarf-malzemeleri", 260,
-    "Kısa, orta ve uzun boy arka kapaklardan oluşan set.",
-    "Üç boy bir arada", "Sızdırmaz o-ring", "Dar alanda kısa kapak"],
-
-  /* --- TIG Aksesuarları > TIG Torç Yedek Parçaları --- */
-  ["wp26-torc-kafasi", "ZW-SPR-H26", "WP-26 Torç Kafası", "tig-torc-yedek-parcalari", 980,
-    "WP-26 TIG torçlar için yedek torç kafası.",
-    "200 A hava soğutmalı", "Orijinal ölçü", "Orijinal ölçülerde"],
-  ["wp26-hortum-seti", "ZW-SPR-C26", "WP-26 Hortum Seti 4m", "tig-torc-yedek-parcalari", 1240,
-    "WP-26 torçlar için 4 metre yedek kablo ve hortum paketi.",
-    "Esnek kauçuk hortum", "4 m tam takım", "Gaz ve akım tek pakette"],
-  ["wp17-torc-govdesi", "ZW-SPR-B17", "WP-17 Torç Gövdesi", "tig-torc-yedek-parcalari", 760,
-    "WP-17 TIG torçlar için yedek gövde ve kulp.",
-    "150 A hava soğutmalı", "Isıya dayanıklı kulp", "Kaymaz kulp"],
-];
-
-demoAccessories.forEach(([slug, sku, name, cat, price, short, a, b, c]) => {
-  accessorySeeds.push({
-    slug, sku, name,
-    section: "aksesuarlar",
-    categorySlug: cat,
-    price,
-    short,
-    highlights: [a, b, c],
-  });
-});
-
-accessorySeeds.forEach((a, i) => {
-  products.push({
-    id: `p-${a.slug}`,
-    slug: a.slug,
-    sku: a.sku,
-    name: a.name,
-    section: a.section,
-    categorySlug: a.categorySlug,
-    processes: [],
-    shortDescription: a.short,
-    description: lorem,
-    priceExVat: a.price,
-    vatRate: 20,
-    currency: "TRY",
-    images: [{ url: PRODUCT_PHOTO, alt: a.name }],
-    specs: [
-      { label: "Marka", value: "Zenweld" },
-      { label: "Ürün Kodu", value: a.sku },
-      { label: "Menşei", value: "Türkiye" },
-    ],
-    inTheBox: ["1 x " + a.name],
-    highlights: a.highlights ?? [],
-    quotable: true,
-    isNew: i < 2,
-    warrantyMonths: 12,
-    createdAt: now,
-    updatedAt: now,
-    active: true,
-  });
-});
-
 /* ------------------------------------------------------------------ */
 /* Kampanyalar — !! DEMO VERISI, DOGRULANMALI !!                       */
 /*                                                                     */
@@ -575,11 +348,9 @@ accessorySeeds.forEach((a, i) => {
 const HOT_SALE: Record<string, number> = {
   "ultimate-250-mtc": 12,
   "evomig-205-p": 15,
-  "forcearc-200-mma": 20,
+  // %25 ve uzeri "Flaş İndirim" etiketinin ornegi
+  "forcearc-200-mma": 25,
   "multicut-85-cnc": 10,
-  "mig-torcu-mb25": 18,
-  "zenmask-auto-9000": 25,
-  "gazalti-teli-sg2-08": 10,
 };
 
 /**
@@ -594,67 +365,16 @@ const NEW_ARRIVALS = new Set([
   "ultimate-251-thp",
   "ultimate-255-mma",
   "multicut-85-cnc",
-  "zenmask-auto-9000",
-  "zenmask-basic-500",
-  "tig-torcu-wp26",
+  "forcemig-185-mp",
+  "forcecut-45",
+  "y300-qcw",
 ]);
 
 products.forEach((p) => {
   if (NEW_ARRIVALS.has(p.slug)) p.isNew = true;
   const percent = HOT_SALE[p.slug];
-  if (percent) {
-    // Urunde NORMAL fiyat saklanir, indirim gosterimde uygulanir.
-    // Aksesuar fiyatlari musterinin odedigi (indirimli) tutarlar olarak
-    // yazilmisti; ekranda ayni tutarlar gorunsun diye normal fiyat
-    // bunlardan geri hesaplanir. Ekipmanlarin temsili fiyati normal
-    // fiyattir, degismez.
-    if (p.section !== "ekipmanlar") p.priceExVat = Math.round(p.priceExVat / (1 - percent / 100) / 10) * 10;
-    p.discount = { percent };
-  }
-});
-
-/* ------------------------------------------------------------------ */
-/* Secenekli urunler (varyantlar)                                      */
-/*                                                                     */
-/* Ornek: MB-25 (3 / 4 / 5 m) ve MB-36 (3 / 4 m) MIG torclari, Gaz      */
-/* Nozulu Seti (10'lu / 20'li). Secenek adi ve degerleri ortak tanimdan */
-/* gelir (options.seed.ts); "Hortum Uzunluğu: 4 m" gibi teknik satir    */
-/* secimden kendiliginden olusur. Bayi ve satici stogu varyant bazli    */
-/* tutulur (bkz. stock.seed.ts).                                        */
-/*                                                                     */
-/* "MB-25 MIG Torcu 4m" ve "MB-36 MIG Torcu 3m" onceden ayri urundu;    */
-/* eski linkleri (previousSlugs) ilgili varyantla acilir.               */
-/* ------------------------------------------------------------------ */
-
-/** Tek secenekli urunun varyantlari: kimligi ve kombinasyonu degerin kimligidir. */
-const singleOption = (
-  optionId: string,
-  rows: (Omit<ProductVariant, "id" | "values"> & { valueId: string })[],
-): ProductOptions => ({
-  optionIds: [optionId],
-  variants: rows.map(({ valueId, ...rest }) => ({ id: valueId, values: { [optionId]: valueId }, ...rest })),
-});
-
-const PRODUCT_OPTIONS: Record<string, ProductOptions> = {
-  "mig-torcu-mb25": singleOption("hortum-uzunlugu", [
-    { valueId: "3-m", sku: "ZW-TRC-MB25-3", priceDeltaExVat: 0, specOverrides: [{ label: "Ağırlık", value: "1,9 kg" }] },
-    { valueId: "4-m", sku: "ZW-TRC-MB25-4", priceDeltaExVat: 240, specOverrides: [{ label: "Ağırlık", value: "2,3 kg" }], previousSlugs: ["mig-torcu-mb25-4m"] },
-    { valueId: "5-m", sku: "ZW-TRC-MB25-5", priceDeltaExVat: 460, specOverrides: [{ label: "Ağırlık", value: "2,7 kg" }] },
-  ]),
-  "mig-torcu-mb36": singleOption("hortum-uzunlugu", [
-    { valueId: "3-m", sku: "ZW-TRC-MB36-3", priceDeltaExVat: 0, specOverrides: [{ label: "Ağırlık", value: "2,4 kg" }], previousSlugs: ["mig-torcu-mb36-3m"] },
-    { valueId: "4-m", sku: "ZW-TRC-MB36-4", priceDeltaExVat: 300, specOverrides: [{ label: "Ağırlık", value: "2,9 kg" }] },
-  ]),
-  // 20'li paketin fiyati ornektir; panelden degistirilir.
-  "gaz-nozulu-seti": singleOption("paket", [
-    { valueId: "10-lu", sku: "ZW-NZL-SET-10", priceDeltaExVat: 0, inTheBox: ["10 x Gaz nozulu"] },
-    { valueId: "20-li", sku: "ZW-NZL-SET-20", priceDeltaExVat: 380, inTheBox: ["20 x Gaz nozulu"] },
-  ]),
-};
-
-products.forEach((p) => {
-  const options = PRODUCT_OPTIONS[p.slug];
-  if (options) p.options = options;
+  // Urunde NORMAL fiyat saklanir, indirim gosterimde uygulanir.
+  if (percent) p.discount = { percent };
 });
 
 // Kategori icindeki sira: bu dosyadaki siraya gore 1, 2, 3 ... (panelden degisir).
