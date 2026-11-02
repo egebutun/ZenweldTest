@@ -10,6 +10,7 @@ describe("Sepet ve kargo", () => {
   it("örnek: ara toplam 4.800 ₺ → kargo 250 ₺, toplam 5.050 ₺, ücretsiz kargoya 200 ₺ kaldı", () => {
     expect(cartTotals({ lines: [{ totalIncVat: 4800, totalExVat: 4000 }] }, settings)).toEqual({
       subtotal: 4800,
+      couponDiscount: 0,
       vat: 800,
       shipping: 250,
       remainingForFreeShipping: 200,

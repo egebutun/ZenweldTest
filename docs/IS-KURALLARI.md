@@ -19,7 +19,7 @@ Kuralların koddaki yeri her bölümün sonunda yazar. Bir kural değişirse
 yalnızca o yer değişmeli; site, panel ve sipariş kaydı aynı yeri kullanır.
 
 Fiyat, kampanya, seçenek, sepet, kart ve taksit, havale süresi, garanti,
-stok, ürün kodu ve kategori filtresi kuralları ile bu dosyadaki örnekler `tests/unit`
+stok, ürün kodu, kategori filtresi ve kupon kuralları ile bu dosyadaki örnekler `tests/unit`
 altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 
 ---
@@ -46,6 +46,7 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 18. [Form e-postaları](#18-form-e-postaları)
 19. [Kategori filtreleri](#19-kategori-filtreleri)
 20. [Zenweld depo stoğu](#20-zenweld-depo-stoğu)
+21. [Kuponlar](#21-kuponlar)
 
 ---
 
@@ -209,12 +210,15 @@ Kod: `apps/zenweld-web/src/lib/variants.ts`, `packages/data/src/variants.ts`.
 - **Ara toplam** = satır tutarlarının toplamı.
 - **İçindeki KDV** = her satırda (KDV dahil − KDV hariç) toplamı; bilgi
   amaçlıdır.
+- **Kupon** (varsa): ara toplamdan düşülür ([21](#21-kuponlar)). KDV,
+  kupondan sonraki tutarın KDV'sidir.
 - **Kargo:**
-  - Ara toplam **ücretsiz kargo sınırına** eşit ya da büyükse 0.
+  - Ara toplam − kupon, **ücretsiz kargo sınırına** eşit ya da büyükse 0.
   - Sepet boşsa 0.
-  - Aksi halde Mağaza Ayarları'ndaki kargo ücreti.
-- **Ücretsiz kargoya kalan** = sınır − ara toplam (sınır aşıldıysa 0).
-- **Toplam** = ara toplam + kargo.
+  - Aksi halde Mağaza Ayarları'ndaki kargo ücreti. Kupon kargo ücretine
+    uygulanmaz.
+- **Ücretsiz kargoya kalan** = sınır − (ara toplam − kupon) (sınır aşıldıysa 0).
+- **Toplam** = ara toplam − kupon + kargo.
 - Kartla taksitte vade farkı bu toplamın üstüne eklenir (bkz.
   [5](#5-kartla-ödeme-taksit-ve-banka-komisyonu)).
 
@@ -265,8 +269,8 @@ Kod: `packages/data/src/checkout.ts` › `cartTotals`,
 
 **Vade farkı:**
 
-- Vade farkı = toplam (kargo dahil) × taksitin vade farkı oranı / 100, **tam
-  liraya yuvarlanır.**
+- Vade farkı = toplam (kupon düşülmüş, kargo dahil) × taksitin vade farkı
+  oranı / 100, **tam liraya yuvarlanır.**
 - Ödenecek tutar = toplam + vade farkı.
 - Aylık taksit = ödenecek tutar / taksit sayısı (yalnızca gösterim).
 - Oran %0 ise müşteri peşin fiyatına taksit yapar; komisyonu Zenweld öder.
@@ -334,6 +338,8 @@ Siparişi yalnızca **üye** verir.
 - Kargo firması ve takip numarası zorunludur. Kargodaki siparişte takip
   numarası düzeltilebilir; ilk kargoya verilme tarihi değişmez.
 - Teslim edilmiş ya da iptal edilmiş sipariş iptal edilemez.
+- İptal edilen siparişte (havale süresinin dolması dahil) kupon kullanımı
+  geri sayılır ([21](#21-kuponlar)).
 - İptal nedenini müşteri görür. Ödemesi alınmış siparişin iadesi banka ya da
   ödeme kuruluşu üzerinden **ayrıca** yapılır; sistem iade yapmaz.
 - Müşteri sitede siparişini iptal edemez (bugün düğme yok; ileride
@@ -738,7 +744,7 @@ kurulumu ve demo davranışı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md).
 | Garanti Kaydı | "Yeni garanti kaydı — <model> (<seri no>)" | Model, Seri no, Ad Soyad, E-posta, Telefon, Şehir, Posta kodu, Adres, Satıcı VKN, 12 ay uzatma isteği | Garantiler |
 | Ürün yorumu | "Yeni ürün yorumu — <ürün>" | Ürün, Yazan, Puan, Başlık, Fotoğraf / video; Yorum | Yorumlar (onay bekler) |
 | Üye Ol | "Yeni üye — <ad> (<tür>)" | Ad Soyad, E-posta, Telefon, Şehir, Üyelik, Firma, Bülten izni | Üyeler |
-| Sipariş | "Yeni sipariş — <no> — <toplam>" | Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — tutar), Toplam, Ödeme, Teslimat adresi, Fatura (kurumsalda firma, vergi dairesi, VKN; bireyselde ad); Müşteri notu | Siparişler |
+| Sipariş | "Yeni sipariş — <no> — <toplam>" | Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — tutar), Kupon (varsa: kod (−indirim)), Toplam, Ödeme, Teslimat adresi, Fatura (kurumsalda firma, vergi dairesi, VKN; bireyselde ad); Müşteri notu | Siparişler |
 | İade talebi | "Yeni iade talebi — <talep no> — <sipariş no>" | Talep no, Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — kod), Neden; Açıklama | İade Talepleri |
 | Welders Club | "Welders Club katılım — <ad>" | Ad, E-posta, Şehir | — |
 | Bayilik Başvurusu | "Bayilik başvurusu — <firma>" | Firma unvanı, Vergi dairesi / no, Şehir, Faaliyet alanı, Sektördeki yıl, Çalıştığı markalar, Showroom var mı, Servis kabiliyeti, Yetkili kişi, E-posta, Telefon, Not. Sunucu firma ve e-posta olmadan kabul etmez | — |
@@ -847,3 +853,95 @@ verisinde örnek stok vardır (Demo notu).
   istenebilir.
 - Bayi ve online satıcı stokları ayrıdır ([11](#11-bayi-ve-online-satıcı-stoğu));
   Zenweld deposunda olmayan ürünün stoktaki bayileri gösterilmeye devam eder.
+
+---
+
+## 21. Kuponlar
+
+Sahibinin kararı (KARARLAR K-85). Kod: `packages/data/src/coupon.ts`,
+`packages/data/src/checkout.ts` › `cartTotals`,
+`packages/store/src/repo/coupons.ts`.
+
+**Kupon kaydı** (Panel › Satış › Kuponlar):
+
+- **Kod:** 3–30 karakter; harf (Türkçe karakter olmadan), rakam ve tire.
+  Büyük harfle saklanır ve başka kuponda kullanılamaz. Müşterinin yazdığı
+  kodda boşluklar atılır, harfler büyütülür; Türkçe klavyedeki "İ" ve "ı"
+  da "I" sayılır.
+- **Tür ve değer:** Yüzde (1–100) ya da sabit TL (en az 1, KDV dahil);
+  ikisi de tam sayı.
+- **En az sepet tutarı** (isteğe bağlı), **başlangıç ve bitiş** (isteğe
+  bağlı; bitiş başlangıçtan sonra), **toplam kullanım sınırı** ve **kişi
+  başı kullanım sınırı** (isteğe bağlı, en az 1).
+- **Kapsam:** Bütün ürünler ya da seçilen ürün ve kategoriler (en az bir
+  seçim). Kategori seçilince kategorideki bütün ürünler kapsama girer.
+- **Aktif / pasif.** Kullanılmış kupon silinmez, pasife alınır.
+
+**Kuponun durumu** (sırayla bakılır):
+
+| Durum | Ne zaman |
+|---|---|
+| Pasif | Pasife alınmış |
+| Süresi doldu | Bitiş geçti |
+| Planlandı | Başlangıç gelmedi |
+| Sınır doldu | Geçerli kullanım sayısı toplam sınıra ulaştı |
+| Geçerli | Diğerlerinin hiçbiri değil |
+
+**Kullanım sayısı:** Kupon, sipariş verilince kullanılmış sayılır (havale
+siparişi de). Sipariş iptal edilirse (havale süresinin dolması dahil)
+kullanım geri sayılır ve sınırlarda sayılmaz. İade (cayma) kullanımı geri
+saymaz.
+
+**Sepete uygulanması:**
+
+1. Kod yoksa ya da kupon pasifse: "geçerli değil". Süresi dolmuş,
+   başlamamış ya da sınırı dolmuşsa nedeni söylenir.
+2. **Kişi başı sınır:** Üyenin geçerli kullanım sayısı sınıra ulaştıysa
+   kupon uygulanmaz. Sepette ziyaretçiyken denetlenmez; ödeme sayfasında
+   üye bellidir ve yeniden denetlenir.
+3. **En az sepet tutarı:** Sepetteki bütün ürünlerin kampanyalı, KDV dahil
+   toplamına bakılır (kargo ve kupon hariç; kupon belirli ürünler için
+   olsa da).
+4. **Uyan ürünler:** Bütün ürünler ya da kapsamdaki ürünler ve
+   kategorilerindeki ürünler. Sepette uyan ürün yoksa kupon kabul edilmez.
+5. **İndirim:**
+   - Yüzde: uyan ürünlerin toplamı × oran / 100, **tam liraya
+     yuvarlanır**.
+   - Sabit TL: siparişte bir kez düşülür; uyan ürünlerin toplamını
+     geçemez.
+   - Kupon, kampanya gibi başka indirimlerle birleşir: kampanyalı fiyatın
+     üstüne uygulanır.
+6. **Satırlara dağıtım:** İndirim uyan satırlara tutarlarıyla orantılı
+   dağıtılır (kuruşa yuvarlanır; yuvarlama farkı son uyan satıra yazılır,
+   toplam indirime eşit kalır). Bu pay siparişin her satırında saklanır.
+
+- Siparişte tek kupon kullanılır. Teklifte kupon yoktur.
+- Kupon kargo ücretine uygulanmaz. Ücretsiz kargo sınırı, kupon
+  düşüldükten sonraki tutara bakar ([4](#4-sepet-ve-kargo)).
+- Vade farkı, kupon düşülmüş toplamdan hesaplanır
+  ([5](#5-kartla-ödeme-taksit-ve-banka-komisyonu)).
+- **KDV:** Kupon KDV matrahını düşürür. Her satırın KDV'si, indirimli
+  tutarına oranla azalır (kuruşa yuvarlanır).
+- Uygulanmış kupon sonradan uygulanamaz hale gelirse (süresi doldu, pasife
+  alındı, sınır doldu, sepet değişti) indirim düşülmez ve kupon
+  kaldırılana ya da sorun gidene kadar sipariş verilmez.
+- **İade:** İade edilen ürün için müşteriye ödenecek tutar, satır tutarından
+  o satıra düşen kupon payı çıkarılarak bulunur (para iadesi panelden
+  yapılmaz, K-27).
+
+**Örnekler:**
+
+- %10, bütün ürünler; sepette 6.000 ₺ ve 4.000 ₺'lik iki ürün → indirim
+  1.000 ₺; satırlara 600 ₺ ve 400 ₺.
+- 500 ₺ kupon yalnızca bir kategoride; sepette o kategoriden 300 ₺'lik,
+  başka kategoriden 5.000 ₺'lik ürün → indirim 300 ₺ (uyan tutarı geçemez).
+- Ücretsiz kargo sınırı 5.000 ₺, kargo 250 ₺; sepet 5.200 ₺, kupon 300 ₺ →
+  4.900 ₺ + kargo 250 ₺ = toplam 5.150 ₺.
+- KDV dahil 6.000 ₺'lik ürün (içinde 1.000 ₺ KDV), %10 kupon → indirim
+  600 ₺, KDV 900 ₺.
+- Toplam 5.150 ₺, 6 taksit, vade farkı %4,5 → vade farkı 232 ₺, ödenecek
+  5.382 ₺.
+
+**Canlıda:** Sipariş anında sunucu kuponu ve indirimi aynı kurallarla
+yeniden hesaplar; kullanım sınırı aynı anda gelen siparişlerde aşılmayacak
+şekilde denetlenir ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Kuponlar).

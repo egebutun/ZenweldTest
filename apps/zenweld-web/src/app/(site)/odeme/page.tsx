@@ -37,6 +37,7 @@ import {
 } from "@/components/shop/LegalDocument";
 import { OrderSummary } from "@/components/shop/OrderSummary";
 import { useCart } from "@/lib/cart";
+import { couponProblemText } from "@/lib/coupon";
 import { useT } from "@/lib/i18n-client";
 import { notifyZenweld } from "@/lib/notify";
 import {
@@ -168,6 +169,8 @@ export default function CheckoutPage() {
   const billingAddress = sameAddress ? shipping : invoiceAddress;
 
   const { totals } = cart;
+  // Uygulanan kupon (K-85); indirim satirlara dagitilmis olarak kaydedilir.
+  const applied = cart.coupon?.result.ok ? cart.coupon.result : undefined;
   // Kartin bankasi (POS) ve sunulan taksitler; POS yoksa kartla odeme alinamaz.
   const { pos, options } = cardInstallments(totals.total, cardProgram(card.number), shop);
   const option = options.find((o) => o.count === card.installments) ?? options[0] ?? { count: 1, ratePercent: 0, enabled: true };
@@ -190,7 +193,7 @@ export default function CheckoutPage() {
             address: billingAddress,
           }
         : { type, fullName: inv.fullName, tcKimlikNo: inv.tcKimlikNo, address: billingAddress },
-    items: cart.lines.map((l) => ({
+    items: cart.lines.map((l, i) => ({
       productId: l.product.id,
       productName: l.product.name,
       sku: l.sku,
@@ -199,8 +202,10 @@ export default function CheckoutPage() {
       unitPriceExVat: l.unitExVat,
       vatRate: l.product.vatRate,
       unitPrice: l.unitIncVat,
+      ...(applied?.lineDiscounts[i] ? { couponDiscount: applied.lineDiscounts[i] } : {}),
     })),
     subtotal: totals.subtotal,
+    coupon: applied ? { couponId: applied.coupon.id, code: applied.coupon.code, discount: applied.discount } : undefined,
     vat: totals.vat,
     shipping: totals.shipping,
     installmentFee: quote.fee,
@@ -227,6 +232,10 @@ export default function CheckoutPage() {
   const validate = (): string | null => {
     // Sepete eklendikten sonra stogu biten urun siparise giremez (K-82).
     if (cart.hasOutOfStock) return t.cart.outOfStockBlock;
+    // Kupon siparis aninda yeniden denetlenir (sure, sinirlar, uyenin hakki).
+    if (cart.coupon && !cart.coupon.result.ok) {
+      return t.cart.couponBlock.replace("{reason}", couponProblemText(cart.coupon.result, t));
+    }
     if (!addressComplete(shipping)) return t.checkout.required;
     if (!addressComplete(billingAddress)) return t.checkout.required;
     if (type === "individual") {
@@ -277,6 +286,7 @@ export default function CheckoutPage() {
         items: record.items.map(
           (i) => `${i.quantity} × ${i.productName}${i.variantLabel ? ` (${i.variantLabel})` : ""} — ${formatPrice(i.unitPrice * i.quantity)}`,
         ),
+        coupon: record.coupon ? `${record.coupon.code} (−${formatPrice(record.coupon.discount)})` : undefined,
         total: formatPrice(record.total),
         payment: paymentSummary(record.payment, t),
         shipping: `${a.fullName}, ${a.line}, ${a.district} / ${a.city}`,
@@ -459,7 +469,7 @@ export default function CheckoutPage() {
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <OrderSummary totals={totals} installmentFee={quote.fee}>
+          <OrderSummary totals={totals} couponCode={applied?.coupon.code} installmentFee={quote.fee}>
             <ul className="mb-5 space-y-2 border-b border-zw-grey-200 pb-4 text-xs text-zw-grey-700">
               {cart.lines.map((l) => (
                 <li key={l.key} className="flex justify-between gap-3">

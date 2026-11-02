@@ -102,7 +102,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 
 | Grup | Sayfalar |
 |---|---|
-| Satış | Siparişler · Teklifler · İade Talepleri · Mağaza Ayarları |
+| Satış | Siparişler · Teklifler · İade Talepleri · Kuponlar · Mağaza Ayarları |
 | Ürünler | Ürünler · Kategoriler · Seçenek Tanımları · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler |
@@ -351,6 +351,8 @@ bulunamadı."
 
 - **Ödeme Alındı:** Havale süresi son ödeme **gününün sonunda** (23:59) dolar.
   Süre dolmuşsa sipariş onaylanmaz; "Ödeme süresi doldu" notuyla iptal edilir.
+- **Kupon:** İptal edilen siparişte (süresi dolan havale dahil) kuponun
+  kullanımı geri sayılır; müşteri kuponu yeniden kullanabilir.
 - **Kargo firması** listesi [Mağaza Ayarları](#6-mağaza-ayarları)'ndan
   gelir. Sonradan listeden çıkarılmış ama siparişte kayıtlı firma "<firma>
   (listede yok)" diye görünür.
@@ -368,9 +370,12 @@ bulunamadı."
 
 - Ürün adı; altında ürün kodu ve seçenek ("ZW30100000024-5M · Torç
   Uzunluğu: 5 m").
-- Adet, Birim (KDV dahil), Tutar.
-- Ara toplam, İçindeki KDV, Kargo (0 ise "Ücretsiz"), Vade farkı (varsa),
-  **Toplam**.
+- Adet, Birim (KDV dahil), Tutar. Kuponlu siparişte tutarın altında
+  "Kupon payı −<tutar>": kupon indiriminin o satıra düşen payı. İade edilen
+  ürün için müşteriye ödenecek tutar bu pay düşülerek bulunur.
+- Ara toplam, Kupon (<KOD>, tıklayınca kupon açılır; varsa), İçindeki KDV
+  (kupondan sonraki tutarın KDV'si), Kargo (0 ise "Ücretsiz"), Vade farkı
+  (varsa), **Toplam**.
 - Bütün bilgiler sipariş anındaki kopyadır; ürün sonradan değişse ya da
   silinse de sipariş değişmez.
 
@@ -415,6 +420,73 @@ Bireysel üyelerin Hesabım › Siparişlerim'den açtığı iade (cayma) talepl
   - Durum (Yeni, İnceleniyor, Onaylandı, Reddedildi) ve iç not; **Kaydet** →
     "Kaydedildi". Müşteri durumu sipariş detayında görür.
 - Talep silinmez.
+
+### Kuponlar (`/yonetim/kuponlar`)
+
+Müşterinin sepette yazdığı indirim kodları (kurallar:
+[IS-KURALLARI.md](IS-KURALLARI.md#21-kuponlar), KARARLAR K-85).
+
+**Liste:**
+
+- Başlıkta "<n> kupon listeleniyor" ve **Yeni Kupon**.
+- **Arama** (kod ya da ad) ve **durum süzgeci**: Tüm durumlar / Geçerli /
+  Planlandı / Süresi doldu / Sınır doldu / Pasif.
+- **Tablo:** Kupon (kod ve ad), İndirim ("%5" ya da "25.000 ₺"; altında
+  "Bütün ürünler", "<n> kategori", "<n> ürün", "en az <tutar>"),
+  Geçerlilik ("Süresiz" ya da "<başlangıç> → <bitiş>"), Kullanım (geçerli
+  kullanım / toplam sınır; altında "kişi başı <n>"), Durum rozeti.
+  En yeni kupon üstte. Boşsa "Kayıt bulunamadı."
+- **Durum:**
+  - Pasif: kupon pasife alınmış.
+  - Süresi doldu: bitiş geçmiş.
+  - Planlandı: başlangıç gelmemiş.
+  - Sınır doldu: toplam kullanım sınırına ulaşılmış.
+  - Geçerli: diğer durumların hiçbiri değil.
+- **İşlemler:** Aktif yap / Pasife al (göz simgesi), Düzenle, Sil.
+  - Hiç kullanılmamış kupon "<KOD> kuponu silinsin mi? Bu işlem geri
+    alınamaz." onayıyla silinir.
+  - Siparişte kullanılmış kupon silinemez (simge soluk; "Siparişlerde
+    kullanılan kupon silinemez; pasife alabilirsiniz.").
+
+**Yeni kupon ve düzenleme** (`/yonetim/kuponlar/yeni`,
+`/yonetim/kuponlar/<id>`; düzenlemede başlıkta kod, durum ve kullanım
+sayısı, **← Tüm kuponlar**):
+
+- **Temel Bilgiler:**
+  - Kupon Kodu (zorunlu): 3–30 karakter; harf (Türkçe karakter olmadan),
+    rakam ve tire. Yazarken büyük harfe çevrilir; müşteri küçük harfle de
+    yazabilir.
+  - Ad / Not: yalnızca panelde görünür.
+  - İndirim Türü: Yüzde (%) ya da Sabit tutar (₺, KDV dahil).
+  - İndirim Oranı (%) ya da İndirim Tutarı (₺) (zorunlu, tam sayı).
+  - En Az Sepet Tutarı (₺): ürünlerin KDV dahil toplamı; boşsa sınır yok.
+  - Başlangıç ve Bitiş (tarih-saat): boşsa hemen geçerli / süresiz.
+  - Toplam Kullanım Sınırı ve Kişi Başı Kullanım Sınırı: boşsa sınırsız.
+  - Aktif (pasif kupon sepette kabul edilmez).
+- **Kapsam:** Bütün ürünler ya da Yalnızca seçilen ürün ve kategoriler.
+  - Seçimde arama kutusu, Kategoriler ("Grup › Kategori") ve Ürünler (ad ve
+    kod) listeleri vardır; seçilenler üstte etiket olarak görünür, × ile
+    çıkarılır.
+  - Kategori seçilince kategorideki bütün ürünler (sonradan eklenenler
+    dahil) kupona girer.
+  - Silinen ürün ya da kategori kupondan da çıkar.
+- **Kullanımlar** (yalnızca düzenlemede): Sipariş (tıklayınca sipariş
+  detayı), Üye, İndirim, Tarih, Durum ("Kullanıldı" ya da "İptal edildi ·
+  sayılmıyor"). Boşsa "Bu kupon henüz kullanılmadı."
+- **Kuponu Oluştur** / **Değişiklikleri Kaydet** → "Kupon kaydedildi."
+  Yeni kupon kaydedilince düzenleme sayfası açılır.
+- **Hata mesajları:**
+  - "Kupon kodu 3–30 karakter olmalıdır; yalnızca Türkçe karakter içermeyen
+    harf, rakam ve tire kullanılabilir."
+  - "İndirim oranı %1 ile %100 arasında tam sayı olmalıdır." / "İndirim
+    tutarı en az 1 ₺ ve tam sayı olmalıdır."
+  - "En az sepet tutarı 0 ya da daha büyük olmalıdır."
+  - "Bitiş, başlangıçtan sonra olmalıdır."
+  - "Kullanım sınırları en az 1 ve tam sayı olmalıdır (sınırsız için boş
+    bırakın)."
+  - "Kupon belirli ürünler içinse en az bir ürün ya da kategori
+    seçilmelidir." (Kapsam sekmesi açılır)
+  - ""<KOD>" kodu başka bir kuponda kullanılıyor."
 
 ---
 
@@ -1810,6 +1882,9 @@ yazıların punto ve renklerini buradan ayarlayın."
 | `/yonetim/siparisler/<id>` | Sipariş detayı |
 | `/yonetim/teklifler` | Teklifler |
 | `/yonetim/iade-talepleri` | İade Talepleri |
+| `/yonetim/kuponlar` | Kuponlar |
+| `/yonetim/kuponlar/yeni` | Yeni kupon |
+| `/yonetim/kuponlar/<id>` | Kupon düzenleme ve kullanımları |
 | `/yonetim/magaza` | Mağaza Ayarları |
 | `/yonetim/urunler` | Ürünler |
 | `/yonetim/urunler/yeni` | Yeni ürün |

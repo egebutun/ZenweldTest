@@ -35,6 +35,8 @@ export interface LegalContext {
   invoice: string;
   items: { name: string; variant?: string; quantity: number; unitPrice: number }[];
   subtotal: number;
+  /** Kupon indirimi (KDV dahil) ve kodu */
+  coupon?: { code: string; discount: number };
   shipping: number;
   installmentFee: number;
   total: number;
@@ -64,7 +66,7 @@ export function paymentSummary(payment: OrderPayment, t: Dictionary): string {
 /** Sozlesmeye giren siparis bilgileri (odeme sayfasindaki taslak ya da kayitli siparis). */
 export type LegalOrder = Pick<
   Order,
-  "customerName" | "email" | "phone" | "shippingAddress" | "invoice" | "items" | "subtotal" | "shipping" | "installmentFee" | "total" | "payment"
+  "customerName" | "email" | "phone" | "shippingAddress" | "invoice" | "items" | "subtotal" | "coupon" | "shipping" | "installmentFee" | "total" | "payment"
 >;
 
 /**
@@ -93,6 +95,7 @@ export function orderLegalContext(order: LegalOrder, date: string, t: Dictionary
       unitPrice: item.unitPrice,
     })),
     subtotal: order.subtotal,
+    coupon: order.coupon ? { code: order.coupon.code, discount: order.coupon.discount } : undefined,
     shipping: order.shipping,
     installmentFee: order.installmentFee,
     total: order.total,
@@ -120,6 +123,7 @@ const TEXT = {
   unit: "Birim fiyat (KDV dahil)",
   total: "Toplam",
   subtotal: "Ürünler toplamı",
+  coupon: "Kupon indirimi ({code})",
   shipping: "Kargo ücreti",
   installmentFee: "Vade farkı",
   grandTotal: "Ödenecek toplam tutar (KDV dahil)",
@@ -206,6 +210,9 @@ export function LegalDocument({
             <Facts
               rows={[
                 [t.subtotal, formatPrice(context.subtotal)],
+                ...(context.coupon
+                  ? [[t.coupon.replace("{code}", context.coupon.code), `−${formatPrice(context.coupon.discount)}`] as [string, ReactNode]]
+                  : []),
                 [t.shipping, context.shipping === 0 ? t.free : formatPrice(context.shipping)],
                 ...(context.installmentFee > 0
                   ? [[t.installmentFee, formatPrice(context.installmentFee)] as [string, ReactNode]]

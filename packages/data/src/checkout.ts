@@ -11,10 +11,16 @@ import type { InstallmentOption, PaymentPos, ShopSettings } from "./types";
 export interface CartTotalsInput {
   /** Satir bazinda KDV dahil ve KDV haric tutarlar */
   lines: { totalIncVat: number; totalExVat: number }[];
+  /** Kupon indiriminin satirlara dusen payi (KDV dahil; lines ile ayni sirada) */
+  lineDiscounts?: number[];
 }
 
 export interface CartTotals {
+  /** Urunler toplami (kampanyali, kupon oncesi) */
   subtotal: number;
+  /** Kupon indirimi (KDV dahil); kupon yoksa 0 */
+  couponDiscount: number;
+  /** Urunlere odenen tutar (subtotal - kupon) icindeki KDV; kurusa yuvarlanir */
   vat: number;
   shipping: number;
   /** Kargo bedava olana kadar kalan tutar (0 = bedava) */
@@ -22,17 +28,29 @@ export interface CartTotals {
   total: number;
 }
 
-export function cartTotals({ lines }: CartTotalsInput, shop: ShopSettings): CartTotals {
+/**
+ * Sepet toplamlari. Kupon kargoya uygulanmaz; ucretsiz kargo siniri kupon
+ * dusulduktan sonraki urun tutarina bakar (KARARLAR K-85). Kupon KDV
+ * matrahini dusurur: her satirin KDV'si indirimli tutara gore azalir.
+ */
+export function cartTotals({ lines, lineDiscounts = [] }: CartTotalsInput, shop: ShopSettings): CartTotals {
   const subtotal = lines.reduce((sum, l) => sum + l.totalIncVat, 0);
-  const vat = lines.reduce((sum, l) => sum + (l.totalIncVat - l.totalExVat), 0);
-  const free = subtotal >= shop.freeShippingThreshold;
+  const couponDiscount = Math.round(lineDiscounts.reduce((sum, d) => sum + d, 0) * 100) / 100;
+  const vat = lines.reduce((sum, l, i) => {
+    const lineVat = l.totalIncVat - l.totalExVat;
+    const d = lineDiscounts[i] ?? 0;
+    return sum + (d > 0 && l.totalIncVat > 0 ? (lineVat * (l.totalIncVat - d)) / l.totalIncVat : lineVat);
+  }, 0);
+  const goods = subtotal - couponDiscount;
+  const free = goods >= shop.freeShippingThreshold;
   const shipping = subtotal === 0 || free ? 0 : shop.shippingFee;
   return {
     subtotal,
-    vat,
+    couponDiscount,
+    vat: Math.round(vat * 100) / 100,
     shipping,
-    remainingForFreeShipping: free ? 0 : shop.freeShippingThreshold - subtotal,
-    total: subtotal + shipping,
+    remainingForFreeShipping: free ? 0 : shop.freeShippingThreshold - goods,
+    total: goods + shipping,
   };
 }
 

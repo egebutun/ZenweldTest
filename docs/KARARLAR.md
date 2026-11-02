@@ -455,7 +455,27 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   - Kupon, kampanya (indirimli fiyat) gibi başka indirimlerle birlikte
     kullanılabilir; kampanyalı fiyatın üstüne uygulanır.
   - Kupon kargo ücretine uygulanmaz.
-  - Kupon ekranları sitede ve panelde yapılacak.
+  - Kupon ekranları sitede (sepet) ve panelde (Satış › Kuponlar) vardır.
+  - Sahibinin onayladığı ayrıntılar:
+    - Siparişte tek kupon kullanılır.
+    - Yüzdelik kupon uyan ürünlerin toplamına uygulanır; TL kupon siparişte
+      bir kez düşülür ve uyan ürünlerin toplamını geçemez. İndirim tam
+      liraya yuvarlanır.
+    - Kupon belirli ürün ya da kategoriler içinse yalnızca onlara
+      uygulanır; sepette uyan ürün yoksa kabul edilmez.
+    - En az sepet tutarı bütün sepetin ürün toplamına bakar (kargo ve
+      kupon hariç).
+    - Ücretsiz kargo sınırı kupon düşüldükten sonraki tutara bakar.
+    - Vade farkı kupon düşüldükten sonraki toplamdan hesaplanır.
+    - Kupon KDV matrahını düşürür; KDV indirimli tutardan hesaplanır.
+    - Kupon, sipariş verilince kullanılmış sayılır (havale dahil). Sipariş
+      iptal olursa kullanım geri sayılır; iade (cayma) geri saymaz. İade
+      edilen ürün için ödenecek tutar, o ürüne düşen kupon payı çıkarılarak
+      bulunur.
+    - Kodda büyük/küçük harf fark etmez. Kupon sepette girilir; kişi başı
+      sınır ve süre sipariş anında yeniden denetlenir. Teklifte kupon
+      yoktur.
+- **Kurallar ve örnekler:** [IS-KURALLARI.md](IS-KURALLARI.md) › Kuponlar.
 
 ### K-21 · Online sipariş yalnızca üyelerden
 - **Tarih:** 2026-10-11

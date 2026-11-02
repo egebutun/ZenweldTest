@@ -3,6 +3,7 @@
 import type { Order, OrderStatus, Quote, ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nextCode, nowIso } from "./shared";
+import { addRedemption, releaseRedemption } from "./coupons";
 
 /* ------------------------------------------------------------------ */
 /* Teklifler                                                           */
@@ -66,7 +67,8 @@ export type NewOrder = Omit<
 
 /**
  * Siparisi kaydeder. Kartla odenen siparis dogrudan "Hazirlaniyor"a,
- * havale/EFT siparisi "Odeme Bekleniyor"a duser.
+ * havale/EFT siparisi "Odeme Bekleniyor"a duser. Kupon varsa kullanimi
+ * ayni anda yazilir.
  */
 export function placeOrder(order: NewOrder): Order {
   const at = nowIso();
@@ -84,16 +86,17 @@ export function placeOrder(order: NewOrder): Order {
     // Numara kayit aninda en guncel listeden verilir.
     record.code = nextCode(draft, draft.orders.map((o) => o.code), `SIP-${new Date().getFullYear()}-`, 5);
     draft.orders.unshift({ ...record });
+    addRedemption(draft, record);
   });
   return record;
 }
 
-function updateOrder(id: string, update: (order: Order, at: string) => void): boolean {
+function updateOrder(id: string, update: (order: Order, at: string, db: ZenweldDatabase) => void): boolean {
   return mutate((db) => {
     const order = db.orders.find((o) => o.id === id);
     if (!order) return;
     const at = nowIso();
-    update(order, at);
+    update(order, at, db);
     order.updatedAt = at;
   });
 }
@@ -109,10 +112,11 @@ function pushStatus(order: Order, status: OrderStatus, at: string, note?: string
  */
 export function markOrderPaid(id: string): boolean {
   let paid = false;
-  updateOrder(id, (o, at) => {
+  updateOrder(id, (o, at, db) => {
     if (o.status !== "awaiting_payment") return;
     if (isTransferExpired(o)) {
       pushStatus(o, "cancelled", at, PAYMENT_EXPIRED_NOTE);
+      releaseRedemption(db, o.id, at);
       return;
     }
     o.payment = { ...o.payment, paidAt: at };
@@ -138,10 +142,12 @@ export function markOrderDelivered(id: string): void {
   });
 }
 
+/** Siparisi iptal eder; kupon kullanimi geri sayilir. */
 export function cancelOrder(id: string, note?: string): void {
-  updateOrder(id, (o, at) => {
+  updateOrder(id, (o, at, db) => {
     if (o.status === "delivered" || o.status === "cancelled") return;
     pushStatus(o, "cancelled", at, note);
+    releaseRedemption(db, o.id, at);
   });
 }
 
@@ -183,6 +189,7 @@ export function cancelExpiredTransfers(now: Date = new Date()): void {
       .filter((o) => ids.has(o.id))
       .forEach((o) => {
         pushStatus(o, "cancelled", at, PAYMENT_EXPIRED_NOTE);
+        releaseRedemption(draft, o.id, at);
         o.updatedAt = at;
       });
   });

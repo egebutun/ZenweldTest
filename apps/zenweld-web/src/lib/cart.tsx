@@ -9,8 +9,18 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { cartTotals, findVariant, productOptionsView, salePriceExVat, type CartTotals, type Product } from "@zenweld/data";
-import { getShopSettings, isProductInStock, useDatabase, useNow } from "@zenweld/store";
+import { useAuth } from "@zenweld/auth";
+import {
+  cartTotals,
+  findVariant,
+  normalizeCouponCode,
+  productOptionsView,
+  salePriceExVat,
+  type CartTotals,
+  type CouponResult,
+  type Product,
+} from "@zenweld/data";
+import { checkCoupon, getShopSettings, isProductInStock, useDatabase, useNow } from "@zenweld/store";
 import { priceWithVat } from "@zenweld/utils";
 import { activeVariant, resolveVariant } from "./variants";
 
@@ -27,6 +37,11 @@ import { activeVariant, resolveVariant } from "./variants";
  * Zenweld deposunda (SAP) olmayan urun ya da secenek sepete eklenmez; sepete
  * eklendikten sonra stogu biten satir isaretlenir ve odemeye gecilemez
  * (KARARLAR K-82).
+ *
+ * Kupon: sepete bir kupon kodu yazilabilir (KARARLAR K-85). Kod tarayicida
+ * saklanir; indirim her seferinde guncel sepete gore yeniden hesaplanir.
+ * Sonradan uygulanamaz hale gelen kupon (sure doldu, sepet degisti)
+ * isaretlenir ve kaldirilana kadar odemeye gecilemez.
  */
 
 interface StoredLine {
@@ -53,6 +68,14 @@ export interface CartLine {
   totalIncVat: number;
   /** Zenweld deposunda var mi; yoksa odemeye gecilemez */
   inStock: boolean;
+  /** Urunun kategorisinin kimligi (kuponun kapsami icin) */
+  categoryId?: string;
+}
+
+/** Sepete yazilmis kupon ve guncel sepete gore sonucu. */
+export interface CartCoupon {
+  code: string;
+  result: CouponResult;
 }
 
 interface CartValue {
@@ -64,6 +87,11 @@ interface CartValue {
   totals: CartTotals;
   /** Stokta olmayan satir var mi (varsa odemeye gecilemez) */
   hasOutOfStock: boolean;
+  /** Sepete yazilmis kupon; uygulanamiyorsa result.ok false (odemeye gecilemez) */
+  coupon: CartCoupon | null;
+  /** Kodu dener; uygulanabiliyorsa sepete yazar. Sonucu dondurur. */
+  applyCoupon: (code: string) => CouponResult;
+  removeCoupon: () => void;
   /** Secenekli urunde varyant verilmezse ilk varyant eklenir. Stokta olmayan eklenmez. */
   add: (productId: string, variantId?: string, quantity?: number) => void;
   setQuantity: (key: string, quantity: number) => void;
@@ -72,6 +100,7 @@ interface CartValue {
 }
 
 const STORAGE_KEY = "zenweld.cart.v1";
+const COUPON_KEY = "zenweld.cart.coupon.v1";
 export const MAX_LINE_QUANTITY = 99;
 
 const lineKey = (productId: string, variantId?: string) => `${productId}|${variantId ?? ""}`;
@@ -118,12 +147,15 @@ const CartContext = createContext<CartValue | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const db = useDatabase();
   const now = useNow();
+  const { user } = useAuth();
   const [stored, setStored] = useState<StoredLine[]>([]);
+  const [couponCode, setCouponCode] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     try {
       setStored(parseStored(window.localStorage.getItem(STORAGE_KEY)));
+      setCouponCode(window.localStorage.getItem(COUPON_KEY) || null);
     } catch {
       /* yok say */
     }
@@ -132,6 +164,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // sonraki degisikligi oradaki eklemeyi silerdi.
     const onStorage = (event: StorageEvent) => {
       if (event.key === STORAGE_KEY || event.key === null) setStored(parseStored(event.newValue));
+      if (event.key === COUPON_KEY || event.key === null) setCouponCode(event.newValue || null);
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
@@ -175,6 +208,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             totalExVat: unitExVat * s.quantity,
             totalIncVat: unitIncVat * s.quantity,
             inStock: isProductInStock(product, s.variantId, db),
+            categoryId: db.categories.find((c) => c.slug === product.categorySlug)?.id,
           },
         ];
       }),
@@ -218,21 +252,68 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [update],
   );
 
-  const clear = useCallback(() => update(() => []), [update]);
+  const storeCoupon = useCallback((code: string | null) => {
+    setCouponCode(code);
+    try {
+      if (code) window.localStorage.setItem(COUPON_KEY, code);
+      else window.localStorage.removeItem(COUPON_KEY);
+    } catch {
+      /* yok say */
+    }
+  }, []);
+
+  const clear = useCallback(() => {
+    update(() => []);
+    storeCoupon(null);
+  }, [update, storeCoupon]);
+
+  // Kupon her seferinde guncel sepet, uye ve ana gore yeniden hesaplanir.
+  const evaluate = useCallback(
+    (code: string) =>
+      checkCoupon(
+        code,
+        lines.map((l) => ({ productId: l.product.id, categoryId: l.categoryId, totalIncVat: l.totalIncVat })),
+        { userId: user?.id, at: now },
+        db,
+      ),
+    [lines, user, now, db],
+  );
+
+  const coupon = useMemo<CartCoupon | null>(
+    () => (couponCode ? { code: couponCode, result: evaluate(couponCode) } : null),
+    [couponCode, evaluate],
+  );
+
+  const applyCoupon = useCallback<CartValue["applyCoupon"]>(
+    (code) => {
+      const result = evaluate(code);
+      if (result.ok) storeCoupon(normalizeCouponCode(code));
+      return result;
+    },
+    [evaluate, storeCoupon],
+  );
+
+  const removeCoupon = useCallback(() => storeCoupon(null), [storeCoupon]);
 
   const value = useMemo<CartValue>(
     () => ({
       ready,
       lines,
       count: lines.reduce((sum, l) => sum + l.quantity, 0),
-      totals: cartTotals({ lines }, getShopSettings(db)),
+      totals: cartTotals(
+        { lines, lineDiscounts: coupon?.result.ok ? coupon.result.lineDiscounts : undefined },
+        getShopSettings(db),
+      ),
       hasOutOfStock: lines.some((l) => !l.inStock),
+      coupon,
+      applyCoupon,
+      removeCoupon,
       add,
       setQuantity,
       remove,
       clear,
     }),
-    [ready, lines, db, add, setQuantity, remove, clear],
+    [ready, lines, db, coupon, applyCoupon, removeCoupon, add, setQuantity, remove, clear],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -123,6 +123,12 @@ function OrderDetail() {
         </ul>
         <dl className="mt-3 space-y-1.5 border-t border-zw-grey-200 pt-3 text-sm">
           <Row label={t.cart.subtotal} value={formatPrice(order.subtotal)} />
+          {order.coupon && (
+            <Row
+              label={t.cart.couponDiscount.replace("{code}", order.coupon.code)}
+              value={<span className="text-emerald-700">−{formatPrice(order.coupon.discount)}</span>}
+            />
+          )}
           <Row
             label={t.cart.shipping}
             value={order.shipping === 0 ? t.cart.free : formatPrice(order.shipping)}

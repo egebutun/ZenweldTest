@@ -392,6 +392,57 @@ export interface WarehouseStockRow {
   syncedAt: string;
 }
 
+/* ------------------------------------------------------------------ */
+/* Kuponlar (KARARLAR K-85, IS-KURALLARI › Kuponlar)                    */
+/* ------------------------------------------------------------------ */
+
+export type CouponDiscountType = "percent" | "amount";
+
+export interface Coupon {
+  id: string;
+  /** Musterinin yazdigi kod: buyuk harf, harf/rakam/tire (bkz. normalizeCouponCode) */
+  code: string;
+  /** Panelde tanimak icin ad ya da not */
+  name?: string;
+  /** Yuzde ya da sabit TL */
+  discountType: CouponDiscountType;
+  /** Yuzde (1-100) ya da TL (KDV dahil); tam sayi */
+  discountValue: number;
+  /** En az sepet tutari: urunlerin KDV dahil toplami (kargo ve kupon haric) */
+  minCartTotal?: number;
+  /** Bossa hemen gecerli */
+  startsAt?: string;
+  /** Bossa suresiz */
+  endsAt?: string;
+  /** Toplam kullanim siniri; bossa sinirsiz */
+  totalUsageLimit?: number;
+  /** Uye basina kullanim siniri; bossa sinirsiz */
+  perUserLimit?: number;
+  /** "all": butun urunler; "targets": yalnizca productIds ve categoryIds */
+  scope: "all" | "targets";
+  productIds: string[];
+  /** Kategori kimlikleri (Category.id); kategorideki butun urunler */
+  categoryIds: string[];
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Kuponun kullanildigi siparis (DB: coupon_redemptions). */
+export interface CouponRedemption {
+  id: string;
+  couponId: string;
+  /** Kopya */
+  couponCode: string;
+  userId?: string;
+  orderId: string;
+  /** Uygulanan indirim (KDV dahil) */
+  discountAmount: number;
+  createdAt: string;
+  /** Siparis iptal edilince dolar; kullanim sinirlarinda sayilmaz */
+  releasedAt?: string;
+}
+
 /** Bayinin kendi urun kodu -> bizim urunumuz (DB: sku_aliases). */
 export interface SkuAlias {
   sourceId: string;
@@ -510,6 +561,11 @@ export interface OrderItem {
   vatRate: number;
   /** Siparis anindaki birim fiyat (KDV dahil) */
   unitPrice: number;
+  /**
+   * Kupon indiriminin bu satira dusen payi (satirin tamami icin, KDV dahil).
+   * Iadede musteriye odenecek tutar bu pay dusulerek bulunur. Kupon yoksa bos.
+   */
+  couponDiscount?: number;
 }
 
 export interface OrderAddress {
@@ -563,6 +619,14 @@ export interface OrderShipment {
   deliveredAt?: string;
 }
 
+/** Sipariste kullanilan kupon (siparis anindaki kopya). */
+export interface OrderCoupon {
+  couponId: string;
+  code: string;
+  /** Uygulanan indirim (KDV dahil) */
+  discount: number;
+}
+
 export interface OrderStatusEvent {
   status: OrderStatus;
   at: string;
@@ -580,9 +644,11 @@ export interface Order {
   shippingAddress: OrderAddress;
   invoice: OrderInvoice;
   items: OrderItem[];
-  /** Urunler toplami (KDV dahil) */
+  /** Urunler toplami (KDV dahil, kupon oncesi) */
   subtotal: number;
-  /** subtotal icindeki KDV tutari (bilgi amacli) */
+  /** Kullanilan kupon; indirim subtotal'dan dusulur (IS-KURALLARI › Kuponlar) */
+  coupon?: OrderCoupon;
+  /** Urunlere odenen tutar (subtotal - kupon) icindeki KDV (bilgi amacli) */
   vat: number;
   /** Kargo ucreti (KDV dahil); esigin uzerinde 0 */
   shipping: number;
@@ -1028,6 +1094,8 @@ export interface ZenweldDatabase {
   addresses: Address[];
   quotes: Quote[];
   orders: Order[];
+  coupons: Coupon[];
+  couponRedemptions: CouponRedemption[];
   blogPosts: BlogPost[];
   events: ZenweldEvent[];
   news: NewsItem[];

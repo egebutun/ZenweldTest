@@ -185,7 +185,8 @@ doldurur.
 grafikleri; menüde:
 
 - **Satış:** Siparişler (havale onayı, kargo takip no, teslim, iptal), Teklifler,
-  İade Talepleri, Mağaza Ayarları (kargo, POS ve taksitler, havale hesapları)
+  İade Talepleri, Kuponlar (indirim kodları ve kullanımları), Mağaza Ayarları
+  (kargo, POS ve taksitler, havale hesapları)
 - **Ürünler:** Ürünler (seçenekler ve SEO dahil), Kategoriler, Seçenek
   Tanımları, Stok Matrisi (bayi ve satıcıların CSV/XLSX stok dosyaları), Yorumlar
 - **Bayi ve Satış Ağı:** Bayiler, Online Satıcılar, Satış Temsilcileri

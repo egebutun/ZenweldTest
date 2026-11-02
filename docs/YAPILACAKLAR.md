@@ -543,18 +543,24 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
    ne zaman yapılacağı (öneri: ödeme kesinleşince); başarısız aktarımın
    yeniden denenmesi ve panelde görünmesi.
 
-## Kuponlar — site ve panel
+## Kuponlar — backend
 
-Sahibinin isteğiyle kupon tabloları eklendi (`coupons`, `coupon_targets`,
-`coupon_redemptions`; [VERITABANI.md](VERITABANI.md)). Sitede ve panelde
-kupon özelliği yok; şimdi yapılacak (KARARLAR K-85). Yapılacaklar:
+Kupon özelliği sitede ve panelde var (KARARLAR K-85,
+[IS-KURALLARI.md](IS-KURALLARI.md#21-kuponlar)); bugün indirim tarayıcıda
+hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
 
-1. Kurallar: başka indirimle birleşir, kargoya uygulanmaz (K-85). Kalan
-   ayrıntılar (ücretsiz kargo sınırı, vade farkı, iptal ve iade) sahibinin
-   onayıyla K-85'e eklenecek.
-2. Panel: Kuponlar ekranı (ekle, düzenle, pasife al, kullanımlar).
-3. Site: sepette kupon kodu alanı, indirimin özete ve siparişe yazılması.
-4. İş kuralları ve testleri ([IS-KURALLARI.md](IS-KURALLARI.md)).
+1. **Sunucuda yeniden hesap:** Sipariş anında sunucu kuponu kodla bulur,
+   aynı kurallarla (`packages/data/src/coupon.ts`) indirimi ve satır
+   paylarını yeniden hesaplar; tarayıcıdan gelen tutara güvenilmez.
+2. **Kullanım sınırı yarışı:** Aynı anda gelen siparişler toplam ve kişi
+   başı sınırı aşmamalı: sipariş, kupon kullanımı (`coupon_redemptions`) ve
+   sınır kontrolü tek işlemde yapılır (kupon satırı kilitlenir).
+3. **İptal:** Sipariş iptalinde (havale süresinin dolması dahil, zamanlanmış
+   görevle) `released_at` aynı işlemde dolar.
+4. **Değişiklik kaydı:** Kupon ekleme, düzenleme, pasife alma ve silme
+   `audit_log`'a yazılır (KARARLAR K-81).
+5. **Kaba deneme:** Sepette art arda yanlış kod denemesi sınırlanır (ör.
+   dakikada 10).
 
 ## Üyelik, oturum ve şifre — backend
 

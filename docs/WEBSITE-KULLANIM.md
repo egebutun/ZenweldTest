@@ -675,12 +675,33 @@ Adres: `/sepet`. Sepet için giriş gerekmez; ödeme adımında istenir.
   - Birim fiyat ve satır toplamı (KDV dahil).
   - Adet kutusu ve **Kaldır**.
 - **Sipariş Özeti:**
-  - Tutarlar: Ara Toplam (KDV dahil), "KDV (fiyatlara dahil)", Kargo
-    ("Ücretsiz" ya da ücret), Toplam.
+  - **Kupon kodu:** Özetin üstünde "Kupon kodu" alanı ve **Uygula** vardır
+    (giriş gerekmez; büyük/küçük harf fark etmez).
+    - Uygulanırsa alanın yerine "<KOD> kuponu uygulandı." ve **Kuponu
+      kaldır** çıkar; tutarlarda "Kupon (<KOD>)" satırı indirimi eksi olarak
+      gösterir.
+    - Uygulanamazsa kod kaydedilmez ve nedeni yazar: "Bu kupon kodu geçerli
+      değil.", "Bu kupon <tarih> tarihinde başlıyor.", "Bu kuponun süresi
+      dolmuş.", "Bu kuponun kullanım sınırı dolmuş.", "Bu kuponu kullanım
+      hakkınız dolmuş." (giriş yapmış üyede), "Bu kupon <tutar> ve üzeri
+      sepetlerde geçerlidir.", "Sepetinizde bu kuponun geçerli olduğu ürün
+      yok."
+    - Uygulanmış kupon sonradan geçersiz kalırsa (süresi doldu, pasife
+      alındı, sepet değişti) kutu kırmızı olur ve nedeni yazar; indirim
+      düşülmez, **Ödemeye Geç** devre dışı kalır ve altında "Kupon
+      uygulanamıyor: <neden> Kuponu kaldırarak devam edebilirsiniz." yazar.
+      Sorun giderilince (ör. sepete ürün eklenince) kupon kendiliğinden
+      yeniden uygulanır.
+    - Kupon kodu sepetle birlikte tarayıcıda saklanır; sipariş verilince
+      silinir. Hesap kuralları: [IS-KURALLARI.md](IS-KURALLARI.md#21-kuponlar).
+  - Tutarlar: Ara Toplam (KDV dahil), kupon (varsa), "KDV (fiyatlara dahil)"
+    (kupondan sonraki tutarın KDV'si), Kargo ("Ücretsiz" ya da ücret), Toplam.
   - Kargo durumu: Kargo bedavaya kalan tutar varsa "<tutar> daha ekleyin, kargo
     ücretsiz olsun." yazar; yoksa "Kargonuz ücretsiz!".
-  - Kargo kuralı: Ara toplam, Mağaza Ayarları'ndaki eşiğin (varsayılan
-    5.000 ₺) üzerindeyse kargo ücretsizdir; değilse kargo ücreti eklenir.
+  - Kargo kuralı: Ara toplamdan kupon düşüldükten sonra kalan tutar, Mağaza
+    Ayarları'ndaki eşiğin (varsayılan 5.000 ₺) üzerindeyse kargo
+    ücretsizdir; değilse kargo ücreti eklenir. Kupon kargo ücretine
+    uygulanmaz.
   - Düğmeler: **Ödemeye Geç** ve **Alışverişe Devam Et**.
 - **Boş sepet:** "Sepetiniz boş — Ürün sayfalarından sepete ürün
   ekleyebilirsiniz." ve **Alışverişe Devam Et**.
@@ -700,6 +721,11 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
 - **Stokta olmayan ürün:** Sepette depoda olmayan bir satır varsa sipariş
   verilmez; **Siparişi Tamamla**'ya basınca "Sepetinizde stokta olmayan
   ürün var…" uyarısı çıkar.
+- **Kupon:** Sepette uygulanan kupon özette "Kupon (<KOD>)" satırıyla
+  görünür; ödeme sayfasında değiştirilmez (sepete dönülür). Kupon üyeye göre
+  yeniden denetlenir: kupon artık uygulanamıyorsa (ör. üyenin kullanım hakkı
+  dolmuş) indirim düşülmez ve sipariş verilmez; düğmeye basınca "Kupon
+  uygulanamıyor: <neden> Kuponu kaldırarak devam edebilirsiniz." çıkar.
 
 ### 1. Teslimat Adresi
 
@@ -765,8 +791,9 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
 
 ### Özet ve onay
 
-- **İçerik:** Ürün satırları (adet × ad) ve tutarlar; kartla taksitte vade
-  farkı ayrı satırdır.
+- **İçerik:** Ürün satırları (adet × ad) ve tutarlar; kupon ve kartla
+  taksitte vade farkı ayrı satırdır. Vade farkı kupon düşülmüş toplamdan
+  hesaplanır.
 - **Onay kutusu:** "Ön Bilgilendirme Formu ile Mesafeli Satış Sözleşmesi'ni
   okudum ve kabul ediyorum." İki bağlantı da pencerede, **o siparişin
   bilgileriyle doldurulmuş** metni açar.
@@ -793,9 +820,11 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
     Mağaza Ayarları'ndaki gün sayısıdır.
 - **Kaydedilenler:** Sözleşmenin onaylandığı an ve sipariş anındaki ürün adı,
   seçenek adı, kodu, birim fiyatı ve KDV oranı saklanır. Sonradan ürün değişse
-  de sipariş değişmez.
-- **E-posta:** `info@zenweld.com`'a "Yeni sipariş" e-postası gider. T.C. kimlik
-  numarası ve kart bilgisi e-postaya yazılmaz.
+  de sipariş değişmez. Kupon varsa kodu, indirimi ve indirimin her satıra
+  düşen payı da saklanır; kupon kullanılmış sayılır.
+- **E-posta:** `info@zenweld.com`'a "Yeni sipariş" e-postası gider (kupon
+  varsa "Kupon" satırıyla). T.C. kimlik numarası ve kart bilgisi e-postaya
+  yazılmaz.
 - **Sonrası:** Sepet boşalır ve müşteri sipariş detayına gider; bkz.
   [Siparişlerim](#siparişlerim-ve-sipariş-detayı).
 
@@ -980,8 +1009,8 @@ kartlar ilgili sayfaya gider.
   hesaplardan birine yapın; açıklamaya <sipariş no> yazın..." ve banka
   hesapları (IBAN kopyalanır).
 - **Kargoya verildiyse:** Kargo firması ve takip numarası (kopyalanır).
-- **Ürünler:** Ürün ve seçenek, adet, satır tutarı; Ara Toplam, Kargo, vade
-  farkı (varsa), Toplam.
+- **Ürünler:** Ürün ve seçenek, adet, satır tutarı; Ara Toplam, kupon
+  (varsa, "Kupon (<KOD>)"), Kargo, vade farkı (varsa), Toplam.
 - **Ödeme, adresler ve sözleşmeler:**
   - Ödeme: "Visa •••• 1111 · 3 taksit", "Tek çekim" ya da "Havale / EFT".
   - Teslimat adresi ve fatura bilgileri.

@@ -29,6 +29,13 @@
       "when": 1793620848871,
       "tag": "0003_stok-kargo-kupon-formlar",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793623633229,
+      "tag": "0004_kupon-satir-payi",
+      "breakpoints": true
     }
   ]
 }

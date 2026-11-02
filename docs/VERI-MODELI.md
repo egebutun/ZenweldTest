@@ -141,6 +141,9 @@ bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmışt
 | Sipariş | Üye (zorunlu) | `userId` | Sipariş yalnızca üyeden |
 | İade talebi | Sipariş, üye | `orderId`, `userId` | Satırları siparişin satırlarına sırayla (`line`) bağlı |
 | Sipariş satırı | Ürün | `productId` | Ad, kod, seçenek ve fiyat kopya |
+| Sipariş | Kupon (isteğe bağlı) | `coupon.couponId` | Kod ve indirim kopya |
+| Kupon | Ürünler, kategoriler | `productIds[]`, `categoryIds[]` | Kapsam "seçilenler" ise; kategori kimlikle bağlı |
+| Kupon kullanımı | Kupon, sipariş, üye | `couponId`, `orderId`, `userId` | Siparişte en fazla bir |
 | Servis talebi | Kategori, ürün, üye (isteğe bağlı) | `categorySlug`, `productId`, `userId` | Kategori bugün linkle bağlı; backend'de kimlikle bağlanmalı |
 | Garanti kaydı | Kategori, ürün | `categorySlug`, `productId` | Kategori bugün linkle bağlı; backend'de kimlikle bağlanmalı. Üyeye e-postayla eşleşir (kimlikle değil) |
 | Yorum | Ürün, üye (isteğe bağlı) | `productId`, `userId` | Seçenekten bağımsız; bütün seçenekler aynı yorumları görür |
@@ -478,11 +481,12 @@ Siparişi yalnızca üye verir. Durum akışı ve tutar hesapları:
 | `shippingAddress` | adres | Bkz. aşağıda |
 | `invoice` | fatura | Bkz. aşağıda |
 | `items[]` | satırlar | Bkz. aşağıda |
-| `subtotal` | sayı | Ürünler toplamı, KDV dahil |
-| `vat` | sayı | `subtotal` içindeki KDV (bilgi) |
+| `subtotal` | sayı | Ürünler toplamı, KDV dahil, kupon öncesi |
+| `coupon` | kupon? | Kullanılan kupon: `{ couponId, code, discount }` (indirim KDV dahil; kod ve indirim kopya) |
+| `vat` | sayı | `subtotal − kupon` içindeki KDV (bilgi; kuruşlu) |
 | `shipping` | sayı | Kargo ücreti, KDV dahil; ücretsizse 0 |
 | `installmentFee` | sayı | Taksitli ödemede vade farkı |
-| `total` | sayı | Müşterinin ödediği toplam |
+| `total` | sayı | Müşterinin ödediği toplam: `subtotal − kupon + shipping + installmentFee` |
 | `payment` | ödeme | Bkz. aşağıda |
 | `shipment` | kargo? | Kargoya verilince |
 | `history[]` | olaylar | Her durum değişikliği: `{ status, at, note? }` |
@@ -502,6 +506,7 @@ Siparişi yalnızca üye verir. Durum akışı ve tutar hesapları:
 | `unitPriceExVat` | sayı | Birim fiyat, KDV hariç, indirim uygulanmış |
 | `vatRate` | sayı | |
 | `unitPrice` | sayı | Birim fiyat, KDV dahil |
+| `couponDiscount` | sayı? | Kupon indiriminin bu satıra düşen payı (satırın tamamı, KDV dahil, kuruşlu); iadede ödenecek tutar bundan bulunur |
 
 ### Adres ve fatura (siparişin içinde)
 
@@ -550,6 +555,42 @@ Bireysel üyenin teslim edilen siparişi için açtığı iade (cayma) talebi
 | `status` | durum | `new` (Yeni), `reviewing` (İnceleniyor), `approved` (Onaylandı), `rejected` (Reddedildi) |
 | `adminNote` | metin? | Yalnızca panelde |
 | `createdAt`, `updatedAt` | tarih | |
+
+### Kuponlar (`coupons`)
+
+Müşterinin sepette yazdığı indirim kodu (kurallar:
+[IS-KURALLARI.md](IS-KURALLARI.md#21-kuponlar), KARARLAR K-85).
+
+| Alan | Tür | Açıklama |
+|---|---|---|
+| `id` | metin | |
+| `code` | metin | Büyük harf; harf, rakam, tire (3–30); benzersiz |
+| `name` | metin? | Panelde tanımak için ad ya da not |
+| `discountType` | durum | `percent` (yüzde) ya da `amount` (sabit TL) |
+| `discountValue` | sayı | Yüzde (1–100) ya da TL (KDV dahil); tam sayı |
+| `minCartTotal` | sayı? | En az sepet tutarı (ürünlerin KDV dahil toplamı) |
+| `startsAt`, `endsAt` | tarih-saat? | Boşsa hemen geçerli / süresiz |
+| `totalUsageLimit`, `perUserLimit` | sayı? | Toplam ve üye başı kullanım sınırı; boşsa sınırsız |
+| `scope` | durum | `all` (bütün ürünler) ya da `targets` (seçilenler) |
+| `productIds`, `categoryIds` | liste | Kapsam `targets` ise seçilen ürün ve kategori kimlikleri; `all`'da boş. Veritabanında `coupon_targets` satırları |
+| `active` | evet/hayır | Pasif kupon sepette kabul edilmez |
+| `createdAt`, `updatedAt` | tarih-saat | |
+
+### Kupon kullanımları (`couponRedemptions`)
+
+| Alan | Tür | Açıklama |
+|---|---|---|
+| `id` | metin | |
+| `couponId` | metin | |
+| `couponCode` | metin | Kopya |
+| `userId` | metin? | Siparişi veren üye |
+| `orderId` | metin | Sipariş; siparişte en fazla bir kupon |
+| `discountAmount` | sayı | Uygulanan indirim (KDV dahil) |
+| `createdAt` | tarih-saat | Sipariş anı |
+| `releasedAt` | tarih-saat? | Sipariş iptal edilince dolar; kullanım sınırlarında sayılmaz |
+
+- Kullanım sipariş kaydıyla aynı anda yazılır; sipariş iptal edilince
+  (havale süresinin dolması dahil) `releasedAt` dolar.
 
 ---
 
@@ -795,6 +836,8 @@ başlangıç değeri.
 | Bayinin online mağazası | Bayiler | Bir mağaza en fazla bir bayiye |
 | Stok satırı | Kaynak + ürün + varyant | |
 | Kod eşleştirmesi | Kaynak + kod | |
+| Kupon kodu | Kuponlar | Büyük harfe çevrilerek |
+| Siparişin kupon kullanımı | Siparişler | Siparişte en fazla bir kupon |
 | Sipariş, teklif, servis numarası | Kendi türü içinde | |
 | Varsayılan POS | POS'lar | En fazla bir |
 | Varsayılan adres | Üyenin adresleri | Tam olarak bir (adresi varsa) |
@@ -808,9 +851,10 @@ sağlanmalı.
 
 | Silinen | Engel | Birlikte silinen / değişen |
 |---|---|---|
-| Ürün | — | Bayi ve satıcı stok satırları, kod eşleştirmeleri. Belgelerdeki ürün bağı kalkar (belge kalır). Sipariş, teklif, garanti, servis ve yorum kayıtları kalır |
+| Ürün | — | Bayi ve satıcı stok satırları, kod eşleştirmeleri, kuponların kapsamındaki ürün. Belgelerdeki ürün bağı kalkar (belge kalır). Sipariş, teklif, garanti, servis ve yorum kayıtları kalır |
 | Ürünün bir varyantı (kombinasyonu) | — | O varyantın stok satırları ve kod eşleştirmeleri; eski ürün linki yönlendirmesi. Ürünün seçenek listesi (tanımları) değişirse bütün varyantlı stok satırları |
-| Kategori | İçinde ürün varsa silinmez | — |
+| Kategori | İçinde ürün varsa silinmez | Kuponların kapsamındaki kategori |
+| Kupon | Siparişte kullanıldıysa silinmez (pasife alınır) | — |
 | Kategori filtresi ya da filtre değeri | — (kaç üründe işaretli olduğu söylenip onay istenir) | Kategorinin ürünlerindeki o filtre ya da değer |
 | Grup | İçinde kategori varsa silinmez | — |
 | Seçenek tanımı | Bir üründe kullanılıyorsa silinmez | Kategorilerdeki bağı |
@@ -837,6 +881,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 | `zenweld.session.v1` | localStorage | Site oturumu: üyenin kimliği | Sunucu oturumu |
 | `zenweld.admin.session.v1` | localStorage | Panel oturumu: yöneticinin kimliği | Sunucu oturumu |
 | `zenweld.cart.v1` | localStorage | Sepet: `[{ productId, variantId?, quantity }]` (eski `selection` biçimli satırlar tek seçenekte okunur) | Tarayıcıda kalabilir; fiyat her açılışta üründen hesaplanır |
+| `zenweld.cart.coupon.v1` | localStorage | Sepete uygulanan kupon kodu (büyük harf); sipariş verilince silinir | Tarayıcıda kalabilir; indirim sunucuda yeniden hesaplanır |
 | `zenweld.quotelist.v1` | localStorage | Teklif listesi: `[{ productId, variantId?, productName, quantity }]` | Tarayıcıda kalabilir |
 | `zenweld.favourites.v1` | localStorage | Favori ürün kimlikleri | Üyeye bağlanabilir |
 | `zenweld.cookie-consent.v1` | localStorage | Çerez tercihi: `{ choice: "all" | "necessary", at }` | Tarayıcıda kalır |
@@ -854,7 +899,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 73).
+- `packages/data/src/index.ts`'tedir (bugün 74).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -875,6 +920,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 | Sipariş / teklif | 133 / 48 | |
 | Servis talebi / garanti | 34 / 54 | |
 | İade talebi | 0 | Hesabım'dan açılır |
+| Kupon / kupon kullanımı | 3 / 0 | HOSGELDIN5 (%5, bütün ürünler, kişi başı 1), LAZER25000 (25.000 ₺, Lazer Kaynak Makineleri, en az 500.000 ₺, 20 kullanım, 60 gün), YAZ10 (%10, süresi dolmuş); tarihler kurulum anına göre |
 | Yorum | 11 | 10'u onaylı, 1'i onay bekliyor; hepsi ekipmanlarda |
 | Blog / haber / etkinlik | 6 / 2 / 8 | |
 | SSS / temsilci / yasal metin | 8 / 11 / 11 | |

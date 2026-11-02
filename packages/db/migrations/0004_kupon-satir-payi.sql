@@ -1,0 +1,2 @@
+ALTER TABLE "order_items" ADD COLUMN "coupon_discount" numeric(12, 2) DEFAULT 0 NOT NULL;--> statement-breakpoint
+ALTER TABLE "order_items" ADD CONSTRAINT "order_items_coupon_discount" CHECK ("order_items"."coupon_discount" >= 0);

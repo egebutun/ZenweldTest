@@ -25,3 +25,4 @@ export * from "./categories";
 export * from "./options";
 export * from "./returns";
 export * from "./warehouse";
+export * from "./coupons";

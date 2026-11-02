@@ -567,8 +567,8 @@ Anahtar: (`quote_id`, `line`).
 | `customer_name`, `email`, `phone` | text | zorunlu | Kopya |
 | `shipping_address` | jsonb | zorunlu | Kopya: `{ full_name, phone, city, district, line }` |
 | `invoice` | jsonb | zorunlu | Kopya: tür, ad ya da firma, T.C. kimlik no ya da vergi bilgisi, adres |
-| `subtotal` | numeric(12,2) | zorunlu | Ürünler toplamı (KDV dahil) |
-| `vat` | numeric(12,2) | zorunlu | İçindeki KDV |
+| `subtotal` | numeric(12,2) | zorunlu | Ürünler toplamı (KDV dahil, kupon öncesi) |
+| `vat` | numeric(12,2) | zorunlu | Ürünlere ödenen tutarın (ürünler toplamı − kupon) içindeki KDV |
 | `shipping` | numeric(12,2) | zorunlu | Kargo (KDV dahil) |
 | `installment_fee` | numeric(12,2) | zorunlu | Vade farkı |
 | `coupon_code` | text | (yeni) | Kopya: kullanılan kupon |
@@ -621,6 +621,7 @@ gönderisi. Bugün siparişte en fazla bir gönderi vardır.
 | `unit_price_ex_vat` | numeric(12,2) | zorunlu | İndirim uygulanmış, KDV hariç |
 | `vat_rate` | numeric(5,2) | zorunlu | |
 | `unit_price` | numeric(12,2) | zorunlu | KDV dahil |
+| `coupon_discount` | numeric(12,2) | zorunlu; ≥ 0; varsayılan 0 | Kupon indiriminin bu satıra düşen payı (satırın tamamı, KDV dahil); iadede ödenecek tutar bundan bulunur (yeni) |
 
 Anahtar: (`order_id`, `line`).
 
@@ -690,8 +691,12 @@ Anahtar: (`return_request_id`, `order_line`). Silme: panelde silinmez.
 
 ### `coupons`, `coupon_targets`, `coupon_redemptions` — kuponlar (yeni)
 
-Sahibinin isteği (2026-11-02). Tablolar hazır; sitede ve panelde kupon
-özelliği henüz yok, kuralları sahibine sorulacak (YAPILACAKLAR › Kuponlar).
+Sahibinin isteği (2026-11-02, KARARLAR K-85). Sitede (sepet) ve panelde
+(Satış › Kuponlar) kupon özelliği var; bugün tarayıcıdaki veride
+(`coupons`, `couponRedemptions`; [VERI-MODELI.md](VERI-MODELI.md)).
+Kurallar: [IS-KURALLARI.md › Kuponlar](IS-KURALLARI.md#21-kuponlar).
+Kuponun `productIds` ve `categoryIds` listeleri `coupon_targets`
+satırlarına yazılır.
 
 `coupons`:
 
@@ -1133,9 +1138,6 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 3. **Site siparişlerinin SAP'a aktarılması:** Aktarılacak (K-84). SAP'ın
    sipariş API'sinin (ör. `SALES_ORDER`) bilgileri gelince siparişe SAP
    belge numarası ve aktarım durumu kolonları eklenir.
-4. **Kupon kuralları:** Başka indirimle birleşir, kargoya uygulanmaz
-   (K-85). Ücretsiz kargo sınırı, vade farkı, iptal ve iade ayrıntıları
-   kupon ekranlarıyla birlikte kesinleşecek.
 
 ---
 
@@ -1149,6 +1151,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `migrations/0000_kurulum.sql` | Tabloları kuran betik; şemadan üretilir (`npm run db:generate`) |
 | `migrations/0001_kurallar.sql` | Tablo tanımıyla ifade edilemeyen kurallar; elle yazılır (aşağıda) |
 | `migrations/0002_kaldirilanlar.sql`, `0003_stok-kargo-kupon-formlar.sql` | 2026-11-02 eklemeleri: `form_submissions` ve siparişteki kargo kolonları kaldırıldı; SAP depo stoğu, kargo, kupon ve form tabloları eklendi. Kaldırma ve ekleme ayrı betiktedir (betik üretici, aynı betikte "ad mı değişti" diye sorar) |
+| `migrations/0004_kupon-satir-payi.sql` | Sipariş satırına kupon payı (`order_items.coupon_discount`) |
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
 

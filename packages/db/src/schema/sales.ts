@@ -169,11 +169,14 @@ export const orderItems = pgTable(
     vatRate: percent("vat_rate").notNull(),
     /** KDV dahil */
     unitPrice: money("unit_price").notNull(),
+    /** Kupon indiriminin bu satira dusen payi (satirin tamami, KDV dahil) */
+    couponDiscount: money("coupon_discount").notNull().default(0),
   },
   (t) => [
     primaryKey({ name: "order_items_pk", columns: [t.orderId, t.line] }),
     index("order_items_product").on(t.productId),
     check("order_items_quantity", sql`${t.quantity} >= 1`),
+    check("order_items_coupon_discount", sql`${t.couponDiscount} >= 0`),
   ],
 );
 

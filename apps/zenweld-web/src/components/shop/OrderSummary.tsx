@@ -7,16 +7,22 @@ import { formatPrice } from "@zenweld/utils";
 import { useT } from "@/lib/i18n-client";
 
 /**
- * Sepet ve odeme sayfasindaki tutar ozeti. Taksitli odemede vade farki
- * ayri satirda gosterilir.
+ * Sepet ve odeme sayfasindaki tutar ozeti. Kupon indirimi ve taksitli
+ * odemede vade farki ayri satirda gosterilir.
  */
 export function OrderSummary({
   totals,
+  couponCode,
   installmentFee = 0,
+  before,
   children,
 }: {
   totals: CartTotals;
+  /** Uygulanan kuponun kodu (indirim satirinin adi) */
+  couponCode?: string;
   installmentFee?: number;
+  /** Tutarlarin ustunde gosterilir (sepette kupon alani) */
+  before?: ReactNode;
   children?: ReactNode;
 }) {
   const t = useT();
@@ -25,11 +31,18 @@ export function OrderSummary({
   return (
     <div className="rounded-[4px] border border-zw-grey-200 bg-zw-grey-50 p-5">
       <h2 className="font-display text-xl font-bold uppercase">{t.cart.summary}</h2>
+      {before && <div className="mt-4">{before}</div>}
       <dl className="mt-4 space-y-2 text-sm">
         <div className={row}>
           <dt className="text-zw-grey-600">{t.cart.subtotal}</dt>
           <dd className="font-semibold">{formatPrice(totals.subtotal)}</dd>
         </div>
+        {totals.couponDiscount > 0 && (
+          <div className={row} data-testid="coupon-row">
+            <dt className="text-zw-grey-600">{t.cart.couponDiscount.replace("{code}", couponCode ?? "")}</dt>
+            <dd className="font-semibold text-emerald-700">−{formatPrice(totals.couponDiscount)}</dd>
+          </div>
+        )}
         <div className={`${row} text-xs text-zw-grey-500`}>
           <dt>{t.cart.vatIncluded}</dt>
           <dd>{formatPrice(totals.vat)}</dd>

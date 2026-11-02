@@ -115,6 +115,7 @@ const TEMPLATES: Record<string, Template> = {
       ["email", "E-posta"],
       ["phone", "Telefon"],
       ["items", "Ürünler"],
+      ["coupon", "Kupon"],
       ["total", "Toplam"],
       ["payment", "Ödeme"],
       ["shipping", "Teslimat adresi"],

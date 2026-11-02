@@ -5,8 +5,10 @@ import { Button, EmptyState, ProductImage } from "@zenweld/ui";
 import { formatPrice } from "@zenweld/utils";
 import Link from "next/link";
 import { QuantityStepper } from "@/components/product/ProductDetailParts";
+import { CouponField } from "@/components/shop/CouponField";
 import { OrderSummary } from "@/components/shop/OrderSummary";
 import { useCart } from "@/lib/cart";
+import { couponProblemText } from "@/lib/coupon";
 import { useT } from "@/lib/i18n-client";
 
 export default function CartPage() {
@@ -33,6 +35,13 @@ export default function CartPage() {
       </div>
     );
   }
+
+  // Stokta olmayan urun ya da uygulanamayan kupon varsa odemeye gecilmez.
+  const block = cart.hasOutOfStock
+    ? t.cart.outOfStockBlock
+    : cart.coupon && !cart.coupon.result.ok
+      ? t.cart.couponBlock.replace("{reason}", couponProblemText(cart.coupon.result, t))
+      : null;
 
   return (
     <div className="zw-container py-10">
@@ -105,13 +114,13 @@ export default function CartPage() {
         </ul>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <OrderSummary totals={cart.totals}>
-            {cart.hasOutOfStock ? (
+          <OrderSummary totals={cart.totals} couponCode={cart.coupon?.code} before={<CouponField />}>
+            {block ? (
               <>
                 <Button size="lg" fullWidth disabled>
                   {t.cart.checkout}
                 </Button>
-                <p className="mt-2 text-center text-sm font-semibold text-zw-red-600">{t.cart.outOfStockBlock}</p>
+                <p className="mt-2 text-center text-sm font-semibold text-zw-red-600">{block}</p>
               </>
             ) : (
               <Link href="/odeme">

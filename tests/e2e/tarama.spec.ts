@@ -26,6 +26,8 @@ const PANEL = [
   "/siparisler",
   "/teklifler",
   "/iade-talepleri",
+  "/kuponlar",
+  "/kuponlar/yeni",
   "/magaza",
   "/urunler",
   "/urunler/yeni",

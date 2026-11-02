@@ -59,7 +59,10 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       başlıkları, seçenekli ürünün kartla satın alınması, iki seçenekli
       üründe kombinasyon seçimi, sepette adet sınırı, teklif gönderme ve numarası, belge yükleme/açma/indirme,
       garanti bitiş günü, şifre değiştirme ve hesap silme, iade talebi,
-      depo stoğu (STOKTA YOK, sepet ve ödeme engeli, panel sütunu).
+      depo stoğu (STOKTA YOK, sepet ve ödeme engeli, panel sütunu), kupon
+      (panelde oluşturma ve hata, sepette uygulama ve geçersiz kod, sonradan
+      geçersiz kalan kuponla ödeme engeli, kuponlu sipariş ve kişi başı
+      sınır).
 - [ ] Veritabanı: boş bir PostgreSQL'de `npm run db:migrate` hatasız biter
       ve 63 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
       `npm run db:generate` "No schema changes" der.
@@ -294,6 +297,23 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Stoksuz ürün için Teklif Al'da teklif istenebilir; stoktaki bayiler
       ürün sayfasında gösterilmeye devam eder.
 
+**Kupon** (örnek veride HOSGELDIN5, LAZER25000, YAZ10; [IS-KURALLARI.md ›
+21](IS-KURALLARI.md#21-kuponlar)):
+
+- [ ] Sepette "hosgeldin5" yazılıp Uygula'ya basılınca "HOSGELDIN5 kuponu
+      uygulandı." ve özette "Kupon (HOSGELDIN5)" satırı çıkar; indirim
+      ara toplamın %5'idir (tam lira).
+- [ ] YAZ10: "Bu kuponun süresi dolmuş."; olmayan kod: "Bu kupon kodu
+      geçerli değil."; kod sepete kaydedilmez.
+- [ ] LAZER25000 lazer kaynak makinesi olmayan sepette "Sepetinizde bu
+      kuponun geçerli olduğu ürün yok."; 500.000 ₺ altındaki sepette en az
+      tutar uyarısı verir.
+- [ ] Kupon düşüldükten sonra tutar ücretsiz kargo sınırının altına inerse
+      kargo ücreti eklenir; kupon kargoya uygulanmaz.
+- [ ] Uygulanmış kupon panelden pasife alınınca sepette kırmızı uyarı çıkar,
+      indirim düşülmez ve Ödemeye Geç devre dışı kalır; Kuponu kaldır ile
+      devam edilir.
+
 ---
 
 ## 8. Ödeme ve sipariş
@@ -322,6 +342,11 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Sipariş sonrası sepet boşalır ve sipariş detayı açılır.
 - [ ] Sipariş detayında ürün adı, seçenek ve kod sipariş anındaki gibidir;
       ürün panelde değiştirilse de değişmez.
+- [ ] Kuponlu siparişte ödeme özetinde, sözleşmelerde, sipariş detayında ve
+      "Yeni sipariş" e-postasında kupon satırı görünür; vade farkı kupon
+      düşülmüş toplamdan hesaplanır.
+- [ ] Kişi başı 1 kullanımlı kuponla sipariş veren üye aynı kuponu tekrar
+      uyguladığında "Bu kuponu kullanım hakkınız dolmuş." görür.
 
 ---
 
@@ -507,6 +532,10 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       doldu" notuyla iptal olur ve onaylanamaz; son gün 23:59'a kadar
       onaylanabilir.
 - [ ] Kartlı siparişte tahmini banka komisyonu ve net tahsilat görünür.
+- [ ] Kuponlu siparişte "Kupon (<KOD>)" satırı kupona bağlantılıdır ve her
+      ürün satırında "Kupon payı" yazar; sipariş iptal edilince kuponun
+      Kullanımlar sekmesinde "İptal edildi · sayılmıyor" olur ve kullanım
+      sayısı azalır.
 
 **Teklifler:**
 
@@ -520,6 +549,19 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       açıklama, iletişim bilgileri ve para iadesi uyarısı çıkar.
 - [ ] Durum Onaylandı yapılıp kaydedilince müşteri sipariş detayında
       "Onaylandı" görür ve kalan ürünler için süre içinde yeni talep açabilir.
+
+**Kuponlar:**
+
+- [ ] Satış › Kuponlar'da örnek kuponlar durumlarıyla görünür (YAZ10
+      "Süresi doldu"); arama ve durum süzgeci çalışır.
+- [ ] Yeni kupon: kod yazarken büyük harfe döner; "AB" gibi kısa kod,
+      %101, bitişi başlangıçtan önce tarih ve aynı kod kaydedilmez, mesaj
+      verir.
+- [ ] Kapsam "Yalnızca seçilen…" iken seçim yapılmadan kaydedilmez; seçilen
+      kategori ve ürünler etiket olarak görünür.
+- [ ] Pasife alınan kupon sepette "Bu kupon kodu geçerli değil." verir.
+- [ ] Kullanılmamış kupon silinir; siparişte kullanılmış kuponun sil simgesi
+      soluktur.
 
 **Mağaza Ayarları:**
 

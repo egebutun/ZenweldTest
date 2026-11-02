@@ -101,6 +101,7 @@ IS-KURALLARI'nda yazar.
 | **Değer** | Seçenek tanımının bir seçeneği (ör. "5 m"). |
 | **Seçenek (varyant)** | Bir değerin bir üründeki karşılığı: kendi ürün kodu, fiyat farkı ve isteğe bağlı farklı bilgileri vardır. Tek ürün sayfası, örneğin 3 m / 4 m / 5 m seçenekleriyle satılır. |
 | **Kampanya** | Üründe süreli ya da süresiz indirim oranı. Seçenekli üründe tüm seçeneklere aynı oran uygulanır. |
+| **Kupon** | Müşterinin sepette yazdığı indirim kodu (yüzde ya da sabit TL). Kampanyalı fiyatın üstüne uygulanır, kargoya uygulanmaz. Panelde Satış › Kuponlar'dan yönetilir. |
 | **Bayi** | Fiziksel satış noktası; haritada görünür. Yetkili servis de olabilir. |
 | **Online satıcı** | Zenweld ürünlerini kendi sitesinde satan mağaza. Ürün sayfasında kart olarak görünür; kart, ürünün o mağazadaki sayfasına gider. |
 | **Online mağazası olan bayi** | Hem fiziksel bayi hem online satıcı olan kaynak. Tek stok dosyası gönderir. |

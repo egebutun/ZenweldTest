@@ -120,6 +120,9 @@ export function deleteCategory(id: string): boolean {
   if (!category || countCategoryProducts(category) > 0) return false;
   mutate((db) => {
     db.categories = db.categories.filter((c) => c.id !== id);
+    db.coupons.forEach((c) => {
+      c.categoryIds = c.categoryIds.filter((k) => k !== id);
+    });
   });
   return true;
 }

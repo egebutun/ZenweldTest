@@ -78,13 +78,34 @@ export default function AdminOrderDetailPage({ params }: { params: Promise<{ id:
                     </td>
                     <td className="py-2 text-right">{i.quantity}</td>
                     <td className="py-2 text-right">{formatPrice(i.unitPrice)}</td>
-                    <td className="py-2 text-right font-semibold">{formatPrice(i.unitPrice * i.quantity)}</td>
+                    <td className="py-2 text-right font-semibold">
+                      {formatPrice(i.unitPrice * i.quantity)}
+                      {i.couponDiscount ? (
+                        <div className="text-xs font-normal text-zw-grey-500" title="İadede ödenecek tutar bu pay düşülerek bulunur">
+                          Kupon payı −{formatPrice(i.couponDiscount)}
+                        </div>
+                      ) : null}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <dl className="mt-3 space-y-1 border-t border-zw-grey-200 pt-3 text-sm">
               <Row label="Ara toplam" value={formatPrice(order.subtotal)} />
+              {order.coupon && (
+                <Row
+                  label={
+                    <>
+                      Kupon (
+                      <Link href={`/yonetim/kuponlar/${order.coupon.couponId}`} className="font-semibold text-zw-red-600 hover:underline">
+                        {order.coupon.code}
+                      </Link>
+                      )
+                    </>
+                  }
+                  value={<span className="text-emerald-700">−{formatPrice(order.coupon.discount)}</span>}
+                />
+              )}
               <Row label="İçindeki KDV" value={formatPrice(order.vat)} muted />
               <Row label="Kargo" value={order.shipping === 0 ? "Ücretsiz" : formatPrice(order.shipping)} />
               {order.installmentFee > 0 && <Row label="Vade farkı" value={formatPrice(order.installmentFee)} />}
@@ -349,7 +370,7 @@ function Title({ children }: { children: React.ReactNode }) {
   return <h2 className="mb-3 text-xs font-bold uppercase tracking-wide text-zw-grey-600">{children}</h2>;
 }
 
-function Row({ label, value, muted }: { label: string; value: React.ReactNode; muted?: boolean }) {
+function Row({ label, value, muted }: { label: React.ReactNode; value: React.ReactNode; muted?: boolean }) {
   return (
     <div className={`flex justify-between gap-4 ${muted ? "text-xs text-zw-grey-500" : ""}`}>
       <dt className={muted ? "" : "text-zw-grey-600"}>{label}</dt>

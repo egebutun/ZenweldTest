@@ -138,5 +138,8 @@ export function deleteProduct(id: string): void {
     db.documents.forEach((d) => {
       if (d.productId === id) delete d.productId;
     });
+    db.coupons.forEach((c) => {
+      c.productIds = c.productIds.filter((p) => p !== id);
+    });
   });
 }
