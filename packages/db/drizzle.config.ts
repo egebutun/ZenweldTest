@@ -1,8 +1,10 @@
 import { defineConfig } from "drizzle-kit";
+import "./scripts/env";
 
 /**
- * Gecis betiklerini uretme ayari (npm run db:generate). Betikler
- * migrations/ klasorundedir ve sirayla calisir (npm run db:migrate).
+ * Gecis betiklerini uretme (npm run db:generate) ve tablo goruntuleyici
+ * (npm run db:studio) ayari. Betikler migrations/ klasorundedir ve sirayla
+ * calisir (npm run db:migrate).
  */
 export default defineConfig({
   dialect: "postgresql",

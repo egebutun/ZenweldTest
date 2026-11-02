@@ -68,9 +68,10 @@ ilgili belge **aynı commit'te** güncellenir:
   - `npm run test:e2e`: tarayıcı testleri (`tests/e2e`); önce `npm run build`.
   - `npm run test:db`: veritabanı testleri (`tests/db`); çalışan PostgreSQL ve
     `TEST_DATABASE_URL` gerekir (README › Veritabanı).
-  - `npm run db:migrate` / `db:reset` / `db:generate`: tabloları kurar /
-    bilgisayardaki veritabanını sıfırlar / şema değişince yeni geçiş betiği
-    üretir.
+  - `npm run db:migrate` / `db:reset` / `db:generate` / `db:studio`:
+    tabloları kurar / bilgisayardaki veritabanını sıfırlar / şema değişince
+    yeni geçiş betiği üretir / tabloları tarayıcıda gösterir. Hedef sürüm
+    PostgreSQL 18.
 - **Testler:** `tests/unit`, `docs/IS-KURALLARI.md`'deki kuralları ve
   örnekleri dener; `tests/e2e` sitenin ve panelin tarayıcıda çalıştığını
   dener (sayfa taraması, ödeme, seçenekler, filtreler, teklif, belgeler, garanti, hesap, iade). Bir kural ya da

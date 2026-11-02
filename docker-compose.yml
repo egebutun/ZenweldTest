@@ -1,4 +1,4 @@
-# Bilgisayarda PostgreSQL 16 (geliştirme ve veritabanı testleri).
+# Bilgisayarda PostgreSQL 18 (geliştirme ve veritabanı testleri).
 #
 #   docker compose up -d      # başlat (arka planda)
 #   docker compose down       # durdur (veri kalır)
@@ -8,7 +8,7 @@
 # bilgisayardaki veritabanı içindir; sunucuda kullanılmaz.
 services:
   db:
-    image: postgres:16
+    image: postgres:18
     environment:
       POSTGRES_USER: zenweld
       POSTGRES_PASSWORD: zenweld
@@ -16,7 +16,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - zenweld-db:/var/lib/postgresql/data
+      # PostgreSQL 18 görüntüsünde veri klasörü bu klasörün altındadır.
+      - zenweld-db:/var/lib/postgresql
       - ./packages/db/docker/test-veritabani.sql:/docker-entrypoint-initdb.d/test-veritabani.sql:ro
 
 volumes:

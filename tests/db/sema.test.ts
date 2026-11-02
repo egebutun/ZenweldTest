@@ -110,14 +110,21 @@ describe("Türkçe büyük/küçük harf duyarsız benzersizlik", () => {
   });
 });
 
+/**
+ * "Silinemez" (engeller) kuralina takilan islemin hata kodu. PostgreSQL 18
+ * 23001 (restrict_violation) dondurur; 17 ve oncesi 23503 dondururdu.
+ * Hedef surum 18'dir (KARARLAR K-81).
+ */
+const RESTRICTED = "23001";
+
 describe("silme kuralları (VERI-MODELI › Silme kuralları)", () => {
   it("içinde ürün olan kategori, içinde kategori olan grup silinmez", async () => {
     await inTransaction(async (db) => {
       await group(db);
       await category(db);
       await product(db, "p1", "ZW-1");
-      expect((await expectFailure(db, "DELETE FROM categories WHERE id = 'c1'")).code).toBe("23503");
-      expect((await expectFailure(db, "DELETE FROM category_groups WHERE id = 'g1'")).code).toBe("23503");
+      expect((await expectFailure(db, "DELETE FROM categories WHERE id = 'c1'")).code).toBe(RESTRICTED);
+      expect((await expectFailure(db, "DELETE FROM category_groups WHERE id = 'g1'")).code).toBe(RESTRICTED);
     });
   });
 
@@ -161,8 +168,8 @@ describe("silme kuralları (VERI-MODELI › Silme kuralları)", () => {
       await optionDefinition(db);
       await product(db, "p1", "ZW-1");
       await variant(db, "p1", "3-m", "ZW-1-3M");
-      expect((await expectFailure(db, "DELETE FROM option_values WHERE id = '3-m'")).code).toBe("23503");
-      expect((await expectFailure(db, "DELETE FROM option_definitions WHERE id = 'uzunluk'")).code).toBe("23503");
+      expect((await expectFailure(db, "DELETE FROM option_values WHERE id = '3-m'")).code).toBe(RESTRICTED);
+      expect((await expectFailure(db, "DELETE FROM option_definitions WHERE id = 'uzunluk'")).code).toBe(RESTRICTED);
       // Kullanılmayan değer silinir.
       await db.query("DELETE FROM option_values WHERE id = '5-m'");
     });

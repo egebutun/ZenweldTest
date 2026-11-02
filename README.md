@@ -71,6 +71,7 @@ npm run test:db     # veritabanı testleri (çalışan PostgreSQL gerekir; aşa�
 npm run db:migrate  # veritabanı tablolarını kurar / günceller
 npm run db:reset    # bilgisayardaki veritabanını silip tabloları baştan kurar
 npm run db:generate # şema değişince yeni geçiş betiği üretir
+npm run db:studio   # tabloları tarayıcıda gösterir
 ```
 
 ---
@@ -212,7 +213,7 @@ ZenweldTest/
 ├── vitest.config.mts               İş kuralları testlerinin ayarları
 ├── playwright.config.ts            Tarayıcı testlerinin ayarları
 ├── vitest.db.config.mts            Veritabanı testlerinin ayarları
-├── docker-compose.yml              Bilgisayarda PostgreSQL 16
+├── docker-compose.yml              Bilgisayarda PostgreSQL 18
 ├── tests/
 │   ├── unit/                       İş kuralları testleri (npm test)
 │   ├── e2e/                        Tarayıcı testleri (npm run test:e2e)
@@ -353,9 +354,13 @@ K-81). **Site henüz veritabanını kullanmıyor**; yukarıdaki tarayıcı veris
 çalışır. Tabloları bilgisayarda kurmak ve denemek için:
 
 ```bash
-# 1. PostgreSQL 16'yı başlatın (Docker ile; Docker yoksa PostgreSQL 16 kurup
-#    zenweld kullanıcısını ve zenweld, zenweld_test veritabanlarını açın)
+# 1. PostgreSQL 18'i başlatın. Docker ile:
 docker compose up -d
+#    Bilgisayarda PostgreSQL 18 zaten kuruluysa (Postgres.app, Homebrew)
+#    Docker yerine bir kez şunları çalıştırın:
+#    psql -d postgres -c "CREATE ROLE zenweld LOGIN PASSWORD 'zenweld' CREATEDB"
+#    psql -d postgres -c "CREATE DATABASE zenweld OWNER zenweld"
+#    psql -d postgres -c "CREATE DATABASE zenweld_test OWNER zenweld"
 
 # 2. Bağlantı adreslerini apps/zenweld-web/.env.local'a yazın
 #    (örnekleri .env.example'da):
@@ -365,7 +370,18 @@ docker compose up -d
 # 3. Tabloları kurun ve testleri çalıştırın
 npm run db:migrate
 npm run test:db
+
+# 4. Tablolara bakmak için (tarayıcıda açılır)
+npm run db:studio
 ```
+
+- **Hedef sürüm PostgreSQL 18**; kodun ve betiklerin 16 ve 17'de de
+  çalışması beklenir ama testler 18'de yapılır (KARARLAR K-81).
+- **Tabloları görmek:** `npm run db:studio` tabloları tarayıcıda Excel
+  gibi gösterir (https://local.drizzle.studio). Sayfa bu adresten açılır ama
+  veriler bilgisayardaki veritabanından gelir, internete gitmez. İsteyen
+  TablePlus, Postico ya da DBeaver gibi bir programla da bağlanabilir
+  (adres, kullanıcı ve şifre `DATABASE_URL`'deki).
 
 - Geçiş betikleri `packages/db/migrations/`'dadır ve sırayla, bir kez
   çalışır; aynı betikler sunucuda da çalıştırılır. Çalışmış bir betik
@@ -562,4 +578,4 @@ icon.png ve apple-icon.png yeniden oluşturulur.
 
 Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·
 MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · Vitest · Playwright · npm workspaces ·
-PostgreSQL 16 + Drizzle ORM (hazırlanıyor)
+PostgreSQL 18 + Drizzle ORM (hazırlanıyor)

@@ -497,7 +497,7 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      tarayıcıda çalışmaya devam eder.
    - Canlıda her gün `SELECT purge_audit_log();` çalıştırılmalı (2 yıldan
      eski değişiklik kayıtları; sunucudaki zamanlanmış iş ya da `pg_cron`).
-   - BT ekibinden istenecekler: PostgreSQL 16 veya üstü, yönetilen servis
+   - BT ekibinden istenecekler: PostgreSQL 18 (olmazsa en az 16), yönetilen servis
      (AWS RDS ya da Google Cloud SQL), ICU desteği açık (Türkçe harf
      karşılaştırması); canlı ve deneme için iki veritabanı; bağlantı adresi
      (`DATABASE_URL`, yalnızca sunucuda); şifreli (SSL) bağlantı; günlük

@@ -305,7 +305,7 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 | Vitest | İş kuralları testleri; yalnızca geliştirirken çalışır, siteye girmez |
 | Playwright | Tarayıcı testleri; yalnızca geliştirirken çalışır, siteye girmez |
 | Drizzle ORM, pg | Veritabanı tabloları ve bağlantısı (`packages/db`); bugün yalnızca `npm run db:*` komutları ve veritabanı testleri kullanır |
-| drizzle-kit, tsx | Geçiş betiklerini üretme ve komutları çalıştırma; yalnızca geliştirirken çalışır, siteye girmez |
+| drizzle-kit, tsx | Geçiş betiklerini üretme, tablo görüntüleyici (`npm run db:studio`) ve komutları çalıştırma; yalnızca geliştirirken çalışır, siteye girmez |
 
 Sürümler: `apps/zenweld-web/package.json`, kök `package.json`.
 

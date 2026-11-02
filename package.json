@@ -18,7 +18,8 @@
     "db:generate": "npm run generate --workspace=@zenweld/db",
     "db:migrate": "tsx packages/db/scripts/migrate.ts",
     "db:reset": "tsx packages/db/scripts/reset.ts",
-    "test:db": "vitest run --config vitest.db.config.mts"
+    "test:db": "vitest run --config vitest.db.config.mts",
+    "db:studio": "npm run studio --workspace=@zenweld/db"
   },
   "engines": {
     "node": ">=20"

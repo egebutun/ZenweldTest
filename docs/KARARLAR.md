@@ -789,7 +789,8 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 ### K-81 · Sunucu veritabanı PostgreSQL; formlar ve panel değişiklikleri de saklanır
 - **Tarih:** 2026-11-02
 - **Karar:**
-  - Sunucu veritabanı **PostgreSQL**'dir. Sunucuyu (AWS, Google Cloud gibi)
+  - Sunucu veritabanı **PostgreSQL 18**'dir (en uzun destek süresi; BT 18
+    veremezse en az 16, 2026-11-02). Sunucuyu (AWS, Google Cloud gibi)
     BT ekibi sağlar; bilgiler gelince işlenir. O zamana kadar geliştirme
     yerel bir PostgreSQL ile yapılır; tabloları kuran betikler depoda durur
     ve her ortamda aynı çalışır.

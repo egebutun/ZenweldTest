@@ -77,6 +77,11 @@ kuralları](VERI-MODELI.md#13-silme-kuralları)'na göredir:
 kodu, seçenek adı ve fiyatı o anın kopyasıdır; ürün değişse ya da silinse de
 değişmez.
 
+**Sürüm:** PostgreSQL 18 (KARARLAR K-81). Not: 18'de "engeller" kuralına
+takılan silme 23001 (`restrict_violation`) hata koduyla döner; 17 ve
+öncesinde 23503 dönerdi. Kayıt katmanı hatayı Türkçe mesaja çevirirken
+ikisini de tanımalıdır.
+
 **Türkçe büyük/küçük harf:** "Benzersiz (harf duyarsız)" yazan kolonlar
 Türkçe kurallarla karşılaştırılır (I/ı, İ/i; "Işık" = "IŞIK", "Isık"
 farklı). Veritabanında Türkçe küçük harfe çevrilmiş hali üzerinden benzersiz
@@ -1022,6 +1027,7 @@ link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 | `npm run db:reset` | Bilgisayardaki veritabanını silip tabloları baştan kurar; yalnızca `localhost` adresinde çalışır |
 | `npm run db:generate` | Şema değişince yeni geçiş betiği üretir |
 | `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
+| `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
 
 Testler tablo listesinin ve kolonların bu dosyayla aynı olduğunu da
 dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer.
