@@ -273,7 +273,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       checkCoupon(
         code,
         lines.map((l) => ({ productId: l.product.id, categoryId: l.categoryId, totalIncVat: l.totalIncVat })),
-        { userId: user?.id, at: now },
+        { userId: user?.id, userEmail: user?.email, at: now },
         db,
       ),
     [lines, user, now, db],

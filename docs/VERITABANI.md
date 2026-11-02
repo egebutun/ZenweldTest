@@ -695,8 +695,9 @@ Sahibinin isteği (2026-11-02, KARARLAR K-85). Sitede (sepet) ve panelde
 (Satış › Kuponlar) kupon özelliği var; bugün tarayıcıdaki veride
 (`coupons`, `couponRedemptions`; [VERI-MODELI.md](VERI-MODELI.md)).
 Kurallar: [IS-KURALLARI.md › Kuponlar](IS-KURALLARI.md#21-kuponlar).
-Kuponun `productIds` ve `categoryIds` listeleri `coupon_targets`
-satırlarına yazılır.
+Kuponun `productIds` ve `categoryIds` listeleri `coupon_targets`,
+kişiye özel kuponun `customerEmails` listesi `coupon_customers` satırlarına
+yazılır.
 
 `coupons`:
 
@@ -712,6 +713,7 @@ satırlarına yazılır.
 | `total_usage_limit` | int | ≥ 1 | Toplam kullanım sınırı; boşsa sınırsız |
 | `per_user_limit` | int | ≥ 1 | Kişi başı kullanım sınırı; boşsa sınırsız |
 | `scope` | text | zorunlu; `all`, `targets` | Bütün ürünler ya da yalnızca `coupon_targets` |
+| `audience` | text | zorunlu; `all`, `customers`; varsayılan `all` | Herkes ya da yalnızca `coupon_customers`'taki e-postalar (kişiye özel, K-86) (yeni) |
 | `active` | boolean | zorunlu | |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
@@ -726,6 +728,16 @@ satırlarına yazılır.
 
 Her satırda ya ürün ya kategori dolu olur; aynı ürün ya da kategori bir
 kuponda bir kez.
+
+`coupon_customers` (kişiye özel kuponun e-posta adresleri, K-86; yeni):
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | bigint | anahtar; sırayla artar | |
+| `coupon_id` | text | zorunlu; → `coupons` (zincir) | |
+| `email` | text | zorunlu; kuponda bir kez (büyük/küçük harf duyarsız) | Üyeye değil e-postaya bağlıdır: kişi henüz üye olmasa da eklenir; o e-postayla giriş yapan üye kullanır |
+
+E-postaya göre arama için dizin vardır (ileride Hesabım'da "Kuponlarım").
 
 `coupon_redemptions` (kim, hangi siparişte, ne kadar indirim aldı):
 
@@ -1113,13 +1125,13 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | Üyeler | `users`, `addresses`, `sessions`, `password_reset_tokens`, `favourites` | 5 |
 | Teklif | `quotes`, `quote_items` | 2 |
 | Sipariş, kargo ve iade | `orders`, `order_items`, `order_status_history`, `payment_transactions`, `shipments`, `return_requests`, `return_request_items` | 7 |
-| Kuponlar | `coupons`, `coupon_targets`, `coupon_redemptions` | 3 |
+| Kuponlar | `coupons`, `coupon_targets`, `coupon_customers`, `coupon_redemptions` | 4 |
 | Servis, garanti, yorum | `service_requests`, `warranties`, `reviews` | 3 |
 | İçerik | `blog_posts`, `news`, `events`, `faqs`, `sales_reps`, `legal_pages`, `about_page`, `page_seo`, `document_pages`, `documents` | 10 |
 | Ayarlar, ödeme ve kargo | `settings`, `payment_pos`, `bank_accounts`, `carriers` | 4 |
 | Formlar | `dealer_applications`, `support_messages`, `welders_club_signups` | 3 |
 | Sistem | `email_recipients`, `email_log`, `record_counters`, `audit_log` | 4 |
-| **Toplam** | | **63** |
+| **Toplam** | | **64** |
 
 ---
 
@@ -1152,6 +1164,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `migrations/0001_kurallar.sql` | Tablo tanımıyla ifade edilemeyen kurallar; elle yazılır (aşağıda) |
 | `migrations/0002_kaldirilanlar.sql`, `0003_stok-kargo-kupon-formlar.sql` | 2026-11-02 eklemeleri: `form_submissions` ve siparişteki kargo kolonları kaldırıldı; SAP depo stoğu, kargo, kupon ve form tabloları eklendi. Kaldırma ve ekleme ayrı betiktedir (betik üretici, aynı betikte "ad mı değişti" diye sorar) |
 | `migrations/0004_kupon-satir-payi.sql` | Sipariş satırına kupon payı (`order_items.coupon_discount`) |
+| `migrations/0005_kisiye-ozel-kupon.sql` | Kişiye özel kupon: `coupons.audience` ve `coupon_customers` |
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
 

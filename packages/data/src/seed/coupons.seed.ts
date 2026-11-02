@@ -3,9 +3,10 @@ import type { Coupon } from "../types";
 /**
  * ORNEK KUPONLAR (KARARLAR K-85)
  *
- * Kupon ekranlari denenebilsin diye uc kupon: butun urunlerde gecerli,
- * yalnizca bir kategoride gecerli ve suresi dolmus. Tarihler kurulum anina
- * gore verilir.
+ * Kupon ekranlari denenebilsin diye dort kupon: butun urunlerde gecerli,
+ * yalnizca bir kategoride gecerli, suresi dolmus ve kisiye ozel (iki
+ * e-postaya: biri ornek uye, biri henuz uye degil; KARARLAR K-86). Tarihler
+ * kurulum anina gore verilir.
  */
 const DAY = 86_400_000;
 
@@ -22,6 +23,8 @@ export function createSampleCoupons(now: number): Coupon[] {
       scope: "all",
       productIds: [],
       categoryIds: [],
+      audience: "all",
+      customerEmails: [],
       active: true,
       createdAt: at(-30),
       updatedAt: at(-30),
@@ -39,6 +42,8 @@ export function createSampleCoupons(now: number): Coupon[] {
       productIds: [],
       // Lazer Kaynak Makineleri
       categoryIds: ["c1.1.1"],
+      audience: "all",
+      customerEmails: [],
       active: true,
       createdAt: at(-10),
       updatedAt: at(-10),
@@ -54,9 +59,28 @@ export function createSampleCoupons(now: number): Coupon[] {
       scope: "all",
       productIds: [],
       categoryIds: [],
+      audience: "all",
+      customerEmails: [],
       active: true,
       createdAt: at(-125),
       updatedAt: at(-125),
+    },
+    {
+      id: "cpn-ozel15",
+      code: "OZEL15",
+      name: "Ürün tanıtımı ziyaretinde verilen kişiye özel kupon",
+      discountType: "percent",
+      discountValue: 15,
+      endsAt: at(30),
+      perUserLimit: 1,
+      scope: "all",
+      productIds: [],
+      categoryIds: [],
+      audience: "customers",
+      customerEmails: ["satinalma@ornekfirma.com", "usta@ornekatolye.com"],
+      active: true,
+      createdAt: at(-2),
+      updatedAt: at(-2),
     },
   ];
 }

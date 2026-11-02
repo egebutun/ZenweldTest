@@ -432,7 +432,8 @@ Müşterinin sepette yazdığı indirim kodları (kurallar:
 - **Arama** (kod ya da ad) ve **durum süzgeci**: Tüm durumlar / Geçerli /
   Planlandı / Süresi doldu / Sınır doldu / Pasif.
 - **Tablo:** Kupon (kod ve ad), İndirim ("%5" ya da "25.000 ₺"; altında
-  "Bütün ürünler", "<n> kategori", "<n> ürün", "en az <tutar>"),
+  "Bütün ürünler", "<n> kategori", "<n> ürün", "en az <tutar>",
+  "kişiye özel (<n> e-posta)"),
   Geçerlilik ("Süresiz" ya da "<başlangıç> → <bitiş>"), Kullanım (geçerli
   kullanım / toplam sınır; altında "kişi başı <n>"), Durum rozeti.
   En yeni kupon üstte. Boşsa "Kayıt bulunamadı."
@@ -470,6 +471,16 @@ sayısı, **← Tüm kuponlar**):
   - Kategori seçilince kategorideki bütün ürünler (sonradan eklenenler
     dahil) kupona girer.
   - Silinen ürün ya da kategori kupondan da çıkar.
+- **Kimler Kullanabilir** (sekmede kişiye özel kuponun e-posta sayısı):
+  Herkes ya da Yalnızca belirli kişiler (kişiye özel, KARARLAR K-86).
+  - Kişiye özelde e-posta yazılıp **Ekle**'ye (ya da Enter'a) basılır;
+    yazarken üyelerin e-postaları önerilir. Geçersiz adreste "Geçerli bir
+    e-posta adresi yazın."
+  - Listede her e-postanın yanında üyeyse adı ("<Ad Soyad> · üye"), değilse
+    "henüz üye değil" yazar; × ile çıkarılır.
+  - Kuponu yalnızca bu e-postalarla giriş yapan üyeler kullanır; kişi henüz
+    üye değilse aynı e-postayla üye olunca kullanır. Kod kişiye satış
+    ekibince iletilir (site e-posta göndermez).
 - **Kullanımlar** (yalnızca düzenlemede): Sipariş (tıklayınca sipariş
   detayı), Üye, İndirim, Tarih, Durum ("Kullanıldı" ya da "İptal edildi ·
   sayılmıyor"). Boşsa "Bu kupon henüz kullanılmadı."
@@ -486,6 +497,8 @@ sayısı, **← Tüm kuponlar**):
     bırakın)."
   - "Kupon belirli ürünler içinse en az bir ürün ya da kategori
     seçilmelidir." (Kapsam sekmesi açılır)
+  - "Kişiye özel kupon için en az bir e-posta adresi eklenmelidir." /
+    "Geçersiz e-posta adresi: <adres>" (Kimler Kullanabilir sekmesi açılır)
   - ""<KOD>" kodu başka bir kuponda kullanılıyor."
 
 ---

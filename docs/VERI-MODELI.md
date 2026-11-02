@@ -143,6 +143,7 @@ bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmışt
 | Sipariş satırı | Ürün | `productId` | Ad, kod, seçenek ve fiyat kopya |
 | Sipariş | Kupon (isteğe bağlı) | `coupon.couponId` | Kod ve indirim kopya |
 | Kupon | Ürünler, kategoriler | `productIds[]`, `categoryIds[]` | Kapsam "seçilenler" ise; kategori kimlikle bağlı |
+| Kişiye özel kupon | Üye (e-postayla) | `customerEmails[]` | Kimlikle değil e-postayla eşleşir; kişi henüz üye olmayabilir |
 | Kupon kullanımı | Kupon, sipariş, üye | `couponId`, `orderId`, `userId` | Siparişte en fazla bir |
 | Servis talebi | Kategori, ürün, üye (isteğe bağlı) | `categorySlug`, `productId`, `userId` | Kategori bugün linkle bağlı; backend'de kimlikle bağlanmalı |
 | Garanti kaydı | Kategori, ürün | `categorySlug`, `productId` | Kategori bugün linkle bağlı; backend'de kimlikle bağlanmalı. Üyeye e-postayla eşleşir (kimlikle değil) |
@@ -573,6 +574,8 @@ Müşterinin sepette yazdığı indirim kodu (kurallar:
 | `totalUsageLimit`, `perUserLimit` | sayı? | Toplam ve üye başı kullanım sınırı; boşsa sınırsız |
 | `scope` | durum | `all` (bütün ürünler) ya da `targets` (seçilenler) |
 | `productIds`, `categoryIds` | liste | Kapsam `targets` ise seçilen ürün ve kategori kimlikleri; `all`'da boş. Veritabanında `coupon_targets` satırları |
+| `audience` | durum | `all` (herkes) ya da `customers` (kişiye özel, KARARLAR K-86) |
+| `customerEmails` | liste | Kişiye özel kuponun e-posta adresleri (küçük harf); `all`'da boş. Üyeye değil e-postaya bağlı. Veritabanında `coupon_customers` satırları |
 | `active` | evet/hayır | Pasif kupon sepette kabul edilmez |
 | `createdAt`, `updatedAt` | tarih-saat | |
 
@@ -899,7 +902,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 74).
+- `packages/data/src/index.ts`'tedir (bugün 75).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -920,7 +923,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 | Sipariş / teklif | 133 / 48 | |
 | Servis talebi / garanti | 34 / 54 | |
 | İade talebi | 0 | Hesabım'dan açılır |
-| Kupon / kupon kullanımı | 3 / 0 | HOSGELDIN5 (%5, bütün ürünler, kişi başı 1), LAZER25000 (25.000 ₺, Lazer Kaynak Makineleri, en az 500.000 ₺, 20 kullanım, 60 gün), YAZ10 (%10, süresi dolmuş); tarihler kurulum anına göre |
+| Kupon / kupon kullanımı | 4 / 0 | HOSGELDIN5 (%5, bütün ürünler, kişi başı 1), LAZER25000 (25.000 ₺, Lazer Kaynak Makineleri, en az 500.000 ₺, 20 kullanım, 60 gün), YAZ10 (%10, süresi dolmuş), OZEL15 (%15, kişiye özel: bir örnek kurumsal üyenin ve henüz üye olmayan bir kişinin e-postası, kişi başı 1, 30 gün); tarihler kurulum anına göre |
 | Yorum | 11 | 10'u onaylı, 1'i onay bekliyor; hepsi ekipmanlarda |
 | Blog / haber / etkinlik | 6 / 2 / 8 | |
 | SSS / temsilci / yasal metin | 8 / 11 / 11 | |

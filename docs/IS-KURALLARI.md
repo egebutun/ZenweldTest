@@ -858,7 +858,7 @@ verisinde örnek stok vardır (Demo notu).
 
 ## 21. Kuponlar
 
-Sahibinin kararı (KARARLAR K-85). Kod: `packages/data/src/coupon.ts`,
+Sahibinin kararları (KARARLAR K-85, K-86). Kod: `packages/data/src/coupon.ts`,
 `packages/data/src/checkout.ts` › `cartTotals`,
 `packages/store/src/repo/coupons.ts`.
 
@@ -875,6 +875,9 @@ Sahibinin kararı (KARARLAR K-85). Kod: `packages/data/src/coupon.ts`,
   başı kullanım sınırı** (isteğe bağlı, en az 1).
 - **Kapsam:** Bütün ürünler ya da seçilen ürün ve kategoriler (en az bir
   seçim). Kategori seçilince kategorideki bütün ürünler kapsama girer.
+- **Kimler kullanabilir:** Herkes ya da yalnızca belirli e-posta adresleri
+  (kişiye özel, KARARLAR K-86; en az bir geçerli e-posta). E-postalar küçük
+  harfle saklanır; kişi henüz üye olmasa da eklenir.
 - **Aktif / pasif.** Kullanılmış kupon silinmez, pasife alınır.
 
 **Kuponun durumu** (sırayla bakılır):
@@ -896,22 +899,28 @@ saymaz.
 
 1. Kod yoksa ya da kupon pasifse: "geçerli değil". Süresi dolmuş,
    başlamamış ya da sınırı dolmuşsa nedeni söylenir.
-2. **Kişi başı sınır:** Üyenin geçerli kullanım sayısı sınıra ulaştıysa
-   kupon uygulanmaz. Sepette ziyaretçiyken denetlenmez; ödeme sayfasında
-   üye bellidir ve yeniden denetlenir.
-3. **En az sepet tutarı:** Sepetteki bütün ürünlerin kampanyalı, KDV dahil
+2. **Kişiye özel kupon:** Giriş yapan üyenin e-postası (büyük/küçük harf
+   fark etmez) kuponun e-postalarından biri değilse uygulanmaz: "Bu kupon
+   hesabınıza tanımlı değil. Kuponun verildiği e-posta adresiyle giriş
+   yapın."
+3. **Kişi başı sınır:** Üyenin geçerli kullanım sayısı sınıra ulaştıysa
+   kupon uygulanmaz.
+   - 2 ve 3 sepette ziyaretçiyken denetlenmez (kupon uygulanır; kişiye
+     özel kuponda "ödeme adımında e-posta adresi kontrol edilir" notu
+     çıkar). Ödeme sayfasında üye bellidir ve yeniden denetlenir.
+4. **En az sepet tutarı:** Sepetteki bütün ürünlerin kampanyalı, KDV dahil
    toplamına bakılır (kargo ve kupon hariç; kupon belirli ürünler için
    olsa da).
-4. **Uyan ürünler:** Bütün ürünler ya da kapsamdaki ürünler ve
+5. **Uyan ürünler:** Bütün ürünler ya da kapsamdaki ürünler ve
    kategorilerindeki ürünler. Sepette uyan ürün yoksa kupon kabul edilmez.
-5. **İndirim:**
+6. **İndirim:**
    - Yüzde: uyan ürünlerin toplamı × oran / 100, **tam liraya
      yuvarlanır**.
    - Sabit TL: siparişte bir kez düşülür; uyan ürünlerin toplamını
      geçemez.
    - Kupon, kampanya gibi başka indirimlerle birleşir: kampanyalı fiyatın
      üstüne uygulanır.
-6. **Satırlara dağıtım:** İndirim uyan satırlara tutarlarıyla orantılı
+7. **Satırlara dağıtım:** İndirim uyan satırlara tutarlarıyla orantılı
    dağıtılır (kuruşa yuvarlanır; yuvarlama farkı son uyan satıra yazılır,
    toplam indirime eşit kalır). Bu pay siparişin her satırında saklanır.
 

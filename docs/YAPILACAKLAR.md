@@ -561,6 +561,10 @@ hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
    `audit_log`'a yazılır (KARARLAR K-81).
 5. **Kaba deneme:** Sepette art arda yanlış kod denemesi sınırlanır (ör.
    dakikada 10).
+6. **Kişiye özel kupon:** Üyenin e-postası sunucudaki oturumdan alınır;
+   üye e-postasını değiştirebilecekse yeni e-posta doğrulanmadan kişiye
+   özel kupon kullanılamamalı. İsteğe bağlı: Hesabım'da "Kuponlarım"
+   (e-postaya tanımlı kuponlar).
 
 ## Üyelik, oturum ve şifre — backend
 

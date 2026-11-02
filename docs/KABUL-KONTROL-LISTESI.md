@@ -62,9 +62,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       depo stoğu (STOKTA YOK, sepet ve ödeme engeli, panel sütunu), kupon
       (panelde oluşturma ve hata, sepette uygulama ve geçersiz kod, sonradan
       geçersiz kalan kuponla ödeme engeli, kuponlu sipariş ve kişi başı
-      sınır).
+      sınır, kişiye özel kupon panelde ve sepette).
 - [ ] Veritabanı: boş bir PostgreSQL'de `npm run db:migrate` hatasız biter
-      ve 63 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
+      ve 64 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
       `npm run db:generate` "No schema changes" der.
 - [ ] Veritabanı testleri (`npm run test:db`) geçer. Şunları dener: tablo
       listesi ve kolonlar [VERITABANI.md](VERITABANI.md) ile aynı; ürün ve
@@ -297,8 +297,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Stoksuz ürün için Teklif Al'da teklif istenebilir; stoktaki bayiler
       ürün sayfasında gösterilmeye devam eder.
 
-**Kupon** (örnek veride HOSGELDIN5, LAZER25000, YAZ10; [IS-KURALLARI.md ›
-21](IS-KURALLARI.md#21-kuponlar)):
+**Kupon** (örnek veride HOSGELDIN5, LAZER25000, YAZ10, OZEL15;
+[IS-KURALLARI.md › 21](IS-KURALLARI.md#21-kuponlar)):
 
 - [ ] Sepette "hosgeldin5" yazılıp Uygula'ya basılınca "HOSGELDIN5 kuponu
       uygulandı." ve özette "Kupon (HOSGELDIN5)" satırı çıkar; indirim
@@ -310,6 +310,10 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       tutar uyarısı verir.
 - [ ] Kupon düşüldükten sonra tutar ücretsiz kargo sınırının altına inerse
       kargo ücreti eklenir; kupon kargoya uygulanmaz.
+- [ ] Kişiye özel OZEL15: girişsiz sepette uygulanır ve "ödeme adımında
+      … kontrol edilir" notu çıkar; README'deki Bireysel hesapla giriş
+      yapılınca "Bu kupon hesabınıza tanımlı değil…" olur ve ödemeye
+      geçilmez. Panelde OZEL15'e bu hesabın e-postası eklenince uygulanır.
 - [ ] Uygulanmış kupon panelden pasife alınınca sepette kırmızı uyarı çıkar,
       indirim düşülmez ve Ödemeye Geç devre dışı kalır; Kuponu kaldır ile
       devam edilir.
@@ -559,6 +563,10 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       verir.
 - [ ] Kapsam "Yalnızca seçilen…" iken seçim yapılmadan kaydedilmez; seçilen
       kategori ve ürünler etiket olarak görünür.
+- [ ] Kimler Kullanabilir › "Yalnızca belirli kişiler" seçilip e-posta
+      eklenmeden kaydedilmez; geçersiz e-posta eklenmez; üye olan e-postanın
+      yanında adı, olmayanın yanında "henüz üye değil" yazar; listede
+      "kişiye özel (<n> e-posta)" görünür.
 - [ ] Pasife alınan kupon sepette "Bu kupon kodu geçerli değil." verir.
 - [ ] Kullanılmamış kupon silinir; siparişte kullanılmış kuponun sil simgesi
       soluktur.

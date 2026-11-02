@@ -6,10 +6,7 @@ import { orders } from "./sales";
 import { users } from "./users";
 
 /**
- * KUPONLAR (docs/VERITABANI.md › 7)
- *
- * Tablolar hazir; sitede ve panelde kupon ozelligi henuz yok
- * (YAPILACAKLAR › Kuponlar).
+ * KUPONLAR (docs/VERITABANI.md › 7; KARARLAR K-85, K-86)
  */
 
 export const coupons = pgTable(
@@ -33,6 +30,8 @@ export const coupons = pgTable(
     perUserLimit: integer("per_user_limit"),
     /** all: butun urunler; targets: yalnizca coupon_targets'taki urun ve kategoriler */
     scope: text("scope").notNull().default("all"),
+    /** all: herkes; customers: yalnizca coupon_customers'taki e-postalar (kisiye ozel) */
+    audience: text("audience").notNull().default("all"),
     active: boolean("active").notNull().default(true),
     ...timestamps(),
   },
@@ -44,6 +43,7 @@ export const coupons = pgTable(
       sql`${t.discountValue} > 0 AND (${t.discountType} <> 'percent' OR ${t.discountValue} <= 100)`,
     ),
     check("coupons_scope", oneOf(t.scope, ["all", "targets"])),
+    check("coupons_audience", oneOf(t.audience, ["all", "customers"])),
     check("coupons_dates", sql`${t.endsAt} IS NULL OR ${t.startsAt} IS NULL OR ${t.endsAt} > ${t.startsAt}`),
     check("coupons_limits", sql`coalesce(${t.totalUsageLimit}, 1) >= 1 AND coalesce(${t.perUserLimit}, 1) >= 1`),
   ],
@@ -64,6 +64,25 @@ export const couponTargets = pgTable(
     check("coupon_targets_one", sql`num_nonnulls(${t.productId}, ${t.categoryId}) = 1`),
     uniqueIndex("coupon_targets_product").on(t.couponId, t.productId).where(sql`${t.productId} IS NOT NULL`),
     uniqueIndex("coupon_targets_category").on(t.couponId, t.categoryId).where(sql`${t.categoryId} IS NOT NULL`),
+  ],
+);
+
+/**
+ * Kisiye ozel kuponun e-posta adresleri (audience = customers). Uyeye degil
+ * e-postaya baglidir: kisi henuz uye olmasa da eklenir.
+ */
+export const couponCustomers = pgTable(
+  "coupon_customers",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+    couponId: text("coupon_id")
+      .notNull()
+      .references(() => coupons.id, { onDelete: "cascade" }),
+    email: text("email").notNull(),
+  },
+  (t) => [
+    uniqueIndex("coupon_customers_email").on(t.couponId, sql`lower(${t.email})`),
+    index("coupon_customers_lookup").on(sql`lower(${t.email})`),
   ],
 );
 

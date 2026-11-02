@@ -178,6 +178,7 @@ function scopeText(c: Coupon): string {
     c.categoryIds.length ? `${c.categoryIds.length} kategori` : "",
     c.productIds.length ? `${c.productIds.length} ürün` : "",
     c.minCartTotal ? `en az ${formatPrice(c.minCartTotal)}` : "",
+    c.audience === "customers" ? `kişiye özel (${c.customerEmails.length} e-posta)` : "",
   ].filter(Boolean);
   return parts.join(" · ");
 }

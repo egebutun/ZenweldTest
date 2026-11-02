@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TicketPercent, X } from "lucide-react";
+import { useAuth } from "@zenweld/auth";
 import { Button, Input } from "@zenweld/ui";
 import { useCart } from "@/lib/cart";
 import { couponProblemText } from "@/lib/coupon";
@@ -13,11 +14,13 @@ import { useT } from "@/lib/i18n-client";
  * Kod yazilip Uygula'ya basilir; uygulanamiyorsa nedeni yazar ve kod
  * sepete kaydedilmez. Uygulanan kupon sonradan gecersiz kalirsa (sure
  * doldu, sepet degisti) nedeni kirmizi yazar; kaldirilana kadar odemeye
- * gecilemez.
+ * gecilemez. Kisiye ozel kupon ziyaretciye uygulanir; e-postasi odeme
+ * adiminda, giris yapan uyeye gore denetlenir.
  */
 export function CouponField() {
   const t = useT();
   const cart = useCart();
+  const { user } = useAuth();
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -48,6 +51,9 @@ export function CouponField() {
           </button>
         </div>
         {!result.ok && <p className="mt-1 text-xs font-semibold text-zw-red-700">{couponProblemText(result, t)}</p>}
+        {result.ok && !user && result.coupon.audience === "customers" && (
+          <p className="mt-1 text-xs text-zw-grey-600">{t.cart.couponPersonal}</p>
+        )}
       </div>
     );
   }

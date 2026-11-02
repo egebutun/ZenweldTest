@@ -25,6 +25,8 @@ function coupon(overrides: Partial<Coupon> = {}): Coupon {
     scope: "all",
     productIds: [],
     categoryIds: [],
+    audience: "all",
+    customerEmails: [],
     active: true,
     createdAt: "2026-10-01T00:00:00Z",
     updatedAt: "2026-10-01T00:00:00Z",
@@ -78,6 +80,12 @@ describe("Kuponun panelde girilmesi", () => {
     ).toMatch(/Bitiş/);
     expect(validateCoupon(coupon({ totalUsageLimit: 0 }))).toMatch(/Kullanım sınırları/);
     expect(validateCoupon(coupon({ perUserLimit: 1 }))).toBeNull();
+  });
+
+  it("kişiye özel kuponda en az bir geçerli e-posta adresi olur", () => {
+    expect(validateCoupon(coupon({ audience: "customers" }))).toMatch(/en az bir e-posta/);
+    expect(validateCoupon(coupon({ audience: "customers", customerEmails: ["ali@firma"] }))).toMatch(/Geçersiz e-posta/);
+    expect(validateCoupon(coupon({ audience: "customers", customerEmails: ["ali@firma.com"] }))).toBeNull();
   });
 
   it("belirli ürünler için olan kuponda en az bir ürün ya da kategori seçilir", () => {
@@ -166,6 +174,30 @@ describe("Kuponun sepete uygulanması", () => {
     expect(evaluateCoupon(c, [line("a", 100)], { redemptions, at: NOW }).ok).toBe(true);
     const released = [used("k1", "u1", "2026-10-11T00:00:00Z")];
     expect(evaluateCoupon(c, [line("a", 100)], { redemptions: released, userId: "u1", at: NOW }).ok).toBe(true);
+  });
+});
+
+describe("Kişiye özel kupon (KARARLAR K-86)", () => {
+  const personal = coupon({ audience: "customers", customerEmails: ["ali@firma.com"] });
+
+  it("yalnızca tanımlı e-postayla giriş yapan üyeye uygulanır; büyük/küçük harf fark etmez", () => {
+    const lines = [line("a", 1000)];
+    expect(evaluateCoupon(personal, lines, { ...at, userId: "u1", userEmail: "Ali@Firma.com" }).ok).toBe(true);
+    expect(evaluateCoupon(personal, lines, { ...at, userId: "u2", userEmail: "veli@firma.com" })).toMatchObject({
+      ok: false,
+      problem: "notForYou",
+    });
+  });
+
+  it("sepette ziyaretçiye uygulanır; e-posta ödeme adımında denetlenir", () => {
+    expect(evaluateCoupon(personal, [line("a", 1000)], at).ok).toBe(true);
+  });
+
+  it("süresi dolmuş kişiye özel kuponda önce süre söylenir", () => {
+    const expired = { ...personal, endsAt: "2026-11-01T00:00:00Z" };
+    expect(evaluateCoupon(expired, [line("a", 1000)], { ...at, userEmail: "veli@firma.com" })).toMatchObject({
+      problem: "expired",
+    });
   });
 });
 

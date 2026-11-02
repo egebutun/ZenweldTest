@@ -5,6 +5,7 @@ import {
   couponUsageCount,
   evaluateCoupon,
   normalizeCouponCode,
+  normalizeEmail,
   validateCoupon,
   type Coupon,
   type CouponCartLine,
@@ -59,7 +60,8 @@ export function couponStatusOf(coupon: Coupon, db: ZenweldDatabase = getSnapshot
 /**
  * Kuponu ekler ya da gunceller; sorun varsa hata metni doner. Kod buyuk
  * harfe cevrilir ve baska kuponda kullanilamaz. Butun urunler icin olan
- * kuponda secili urun ve kategoriler silinir.
+ * kuponda secili urun ve kategoriler, herkese acik kuponda e-postalar
+ * silinir; e-postalar kucuk harfe cevrilir.
  */
 export function saveCoupon(
   input: CouponDraft & { id?: string },
@@ -71,6 +73,8 @@ export function saveCoupon(
     name: rest.name?.trim() || undefined,
     productIds: rest.scope === "all" ? [] : [...new Set(rest.productIds)],
     categoryIds: rest.scope === "all" ? [] : [...new Set(rest.categoryIds)],
+    customerEmails:
+      rest.audience === "all" ? [] : [...new Set(rest.customerEmails.map(normalizeEmail).filter(Boolean))],
   };
   const problem = validateCoupon(draft);
   if (problem) return { ok: false, error: problem };
@@ -96,14 +100,19 @@ export function deleteCoupon(id: string): boolean {
   });
 }
 
-/** Sepete yazilan kodu degerlendirir (sepet ve odeme sayfasi). */
+/** Sepete yazilan kodu degerlendirir (sepet ve odeme sayfasi); uye bilinmiyorsa userId/userEmail bos. */
 export function checkCoupon(
   code: string,
   lines: CouponCartLine[],
-  { userId, at }: { userId?: string; at?: Date } = {},
+  { userId, userEmail, at }: { userId?: string; userEmail?: string; at?: Date } = {},
   db: ZenweldDatabase = getSnapshot(),
 ): CouponResult {
-  return evaluateCoupon(findCouponByCode(code, db), lines, { redemptions: db.couponRedemptions, userId, at });
+  return evaluateCoupon(findCouponByCode(code, db), lines, {
+    redemptions: db.couponRedemptions,
+    userId,
+    userEmail,
+    at,
+  });
 }
 
 /* Siparisle birlikte cagrilir (commerce.ts); ayni yazma isleminin icinde. */

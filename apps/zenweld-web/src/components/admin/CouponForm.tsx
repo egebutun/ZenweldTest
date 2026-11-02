@@ -4,9 +4,9 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
-import { byProductOrder, type Coupon, type CouponDiscountType } from "@zenweld/data";
+import { byProductOrder, normalizeEmail, type Coupon, type CouponDiscountType } from "@zenweld/data";
 import { couponRedemptions, saveCoupon, useDatabase } from "@zenweld/store";
-import { Badge, Checkbox, FormRow, Input, Select } from "@zenweld/ui";
+import { Badge, Button, Checkbox, FormRow, Input, Select } from "@zenweld/ui";
 import { formatDateTime, formatPrice, fromDateTimeLocal, toDateTimeLocal } from "@zenweld/utils";
 import { ContentFormShell, FormPanel, useContentForm } from "./content-form";
 
@@ -14,8 +14,9 @@ import { ContentFormShell, FormPanel, useContentForm } from "./content-form";
  * KUPON FORMU (Satis > Kuponlar; KARARLAR K-85, IS-KURALLARI › 21)
  *
  * Sekmeler: temel bilgiler (kod, indirim, tarihler, sinirlar), kapsam
- * (butun urunler ya da secilen urun ve kategoriler) ve duzenlemede
- * kuponun kullanildigi siparisler.
+ * (butun urunler ya da secilen urun ve kategoriler), kimler kullanabilir
+ * (herkes ya da kisiye ozel: e-posta adresleri, KARARLAR K-86) ve
+ * duzenlemede kuponun kullanildigi siparisler.
  */
 
 /** Formdaki hali: sayilar yazildigi gibi tutulur, kayitta cevrilir. */
@@ -32,6 +33,8 @@ interface CouponFormState {
   scope: Coupon["scope"];
   productIds: string[];
   categoryIds: string[];
+  audience: Coupon["audience"];
+  customerEmails: string[];
   active: boolean;
 }
 
@@ -53,6 +56,8 @@ function toForm(c?: Coupon): CouponFormState {
     scope: c?.scope ?? "all",
     productIds: c?.productIds ?? [],
     categoryIds: c?.categoryIds ?? [],
+    audience: c?.audience ?? "all",
+    customerEmails: c?.customerEmails ?? [],
     active: c?.active ?? true,
   };
 }
@@ -81,10 +86,13 @@ export function CouponForm({ coupon }: { coupon?: Coupon }) {
       scope: draft.scope,
       productIds: draft.productIds,
       categoryIds: draft.categoryIds,
+      audience: draft.audience,
+      customerEmails: draft.customerEmails,
       active: draft.active,
     });
     if (!result.ok) {
-      return form.fail(result.error, /ürün ya da kategori/.test(result.error) ? "kapsam" : "temel");
+      const tab = /ürün ya da kategori/.test(result.error) ? "kapsam" : /e-posta/.test(result.error) ? "kisiler" : "temel";
+      return form.fail(result.error, tab);
     }
     if (isNew) router.push(`/yonetim/kuponlar/${result.id}`);
     else form.flashSaved();
@@ -101,6 +109,11 @@ export function CouponForm({ coupon }: { coupon?: Coupon }) {
       tabs={[
         { id: "temel", label: "Temel Bilgiler" },
         { id: "kapsam", label: "Kapsam", badge: draft.scope === "targets" ? targetCount : undefined },
+        {
+          id: "kisiler",
+          label: "Kimler Kullanabilir",
+          badge: draft.audience === "customers" ? draft.customerEmails.length : undefined,
+        },
         ...(isNew ? [] : [{ id: "kullanimlar", label: "Kullanımlar", badge: usage.length }]),
       ]}
     >
@@ -247,6 +260,36 @@ export function CouponForm({ coupon }: { coupon?: Coupon }) {
         </FormPanel>
       )}
 
+      {form.tab === "kisiler" && (
+        <FormPanel>
+          <div className="flex flex-col gap-2 sm:flex-row sm:gap-6">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="radio"
+                name="audience"
+                checked={draft.audience === "all"}
+                onChange={() => set("audience", "all")}
+                className="accent-zw-red-600"
+              />
+              Herkes
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="radio"
+                name="audience"
+                checked={draft.audience === "customers"}
+                onChange={() => set("audience", "customers")}
+                className="accent-zw-red-600"
+              />
+              Yalnızca belirli kişiler (kişiye özel)
+            </label>
+          </div>
+          {draft.audience === "customers" && (
+            <CustomerEmails emails={draft.customerEmails} onChange={(emails) => set("customerEmails", emails)} />
+          )}
+        </FormPanel>
+      )}
+
       {form.tab === "kullanimlar" && coupon && <UsageTable couponId={coupon.id} />}
     </ContentFormShell>
   );
@@ -351,6 +394,91 @@ function TargetPicker({
           ))}
         </PickList>
       </div>
+    </div>
+  );
+}
+
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Kisiye ozel kuponun e-posta adresleri. Kisi henuz uye olmasa da eklenir;
+ * o e-postayla uye olup giris yapinca kuponu kullanabilir.
+ */
+function CustomerEmails({ emails, onChange }: { emails: string[]; onChange: (emails: string[]) => void }) {
+  const db = useDatabase();
+  const [value, setValue] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const members = useMemo(() => db.users.filter((u) => u.role !== "admin"), [db]);
+  const memberOf = (email: string) => members.find((u) => normalizeEmail(u.email) === email);
+
+  const add = () => {
+    const email = normalizeEmail(value);
+    if (!EMAIL.test(email)) return setError("Geçerli bir e-posta adresi yazın.");
+    if (!emails.includes(email)) onChange([...emails, email]);
+    setValue("");
+    setError(null);
+  };
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm text-zw-grey-600">
+        Kuponu yalnızca bu e-posta adresleriyle giriş yapan üyeler kullanabilir. Kişi henüz üye değilse aynı
+        e-postayla üye olunca kullanır. Genellikle kişi başı kullanım sınırı 1 yapılır.
+      </p>
+      <div className="flex gap-2">
+        <Input
+          type="email"
+          list="coupon-member-emails"
+          aria-label="E-posta adresi"
+          placeholder="ornek@firma.com"
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setError(null);
+          }}
+          onKeyDown={(e) => {
+            // Enter formu kaydetmesin, adresi eklesin.
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add();
+            }
+          }}
+        />
+        <datalist id="coupon-member-emails">
+          {members.map((u) => (
+            <option key={u.id} value={u.email}>{`${u.firstName} ${u.lastName}`}</option>
+          ))}
+        </datalist>
+        <Button type="button" variant="outline" onClick={add}>
+          Ekle
+        </Button>
+      </div>
+      {error && <p className="text-xs font-semibold text-zw-red-700">{error}</p>}
+      {emails.length > 0 && (
+        <ul className="divide-y divide-zw-grey-100 rounded-[4px] border border-zw-grey-200" data-testid="coupon-emails">
+          {emails.map((email) => {
+            const member = memberOf(email);
+            return (
+              <li key={email} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
+                <span>
+                  <span className="font-semibold">{email}</span>
+                  <span className="ml-2 text-xs text-zw-grey-500">
+                    {member ? `${member.firstName} ${member.lastName} · üye` : "henüz üye değil"}
+                  </span>
+                </span>
+                <button
+                  type="button"
+                  title="Çıkar"
+                  onClick={() => onChange(emails.filter((e) => e !== email))}
+                  className="rounded-[2px] p-1 text-zw-grey-500 hover:bg-zw-grey-100 hover:text-zw-red-600"
+                >
+                  <X size={14} />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

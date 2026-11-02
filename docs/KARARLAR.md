@@ -477,6 +477,20 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
       yoktur.
 - **Kurallar ve örnekler:** [IS-KURALLARI.md](IS-KURALLARI.md) › Kuponlar.
 
+### K-86 · Kişiye özel kupon
+- **Tarih:** 2026-11-02
+- **Karar:** Kupon belirli kişilere özel olabilir. Örnek: ürün tanıtımına
+  gidildiğinde müşteriye "sana özel bu kuponu kullanabilirsin" denir.
+  - Kişiye özel kupon **e-posta adreslerine** tanımlanır. Kişi o gün henüz
+    üye olmasa da e-postası eklenir; aynı e-postayla üye olup giriş yapınca
+    kuponu kullanır.
+  - Başka e-postayla giriş yapan üye kuponu kullanamaz: "Bu kupon
+    hesabınıza tanımlı değil…".
+  - Sepette ziyaretçiye uygulanır; e-posta ödeme adımında, giriş yapan
+    üyeye göre denetlenir (sipariş yalnızca üyeden, K-21).
+- **Neden:** Sahibinin isteği; satış ekibinin yüz yüze verdiği indirim
+  yalnızca o kişide kalsın.
+
 ### K-21 · Online sipariş yalnızca üyelerden
 - **Tarih:** 2026-10-11
 - **Karar:** Misafir alışverişi yoktur; sipariş için giriş gerekir.

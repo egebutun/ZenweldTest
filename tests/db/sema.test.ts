@@ -294,6 +294,21 @@ describe("kuponlar (2026-11-02)", () => {
     });
   });
 
+  it("kişiye özel kupon: e-posta kuponda bir kez (harf duyarsız); kitle yalnızca all ya da customers", async () => {
+    await inTransaction(async (db) => {
+      await db.query(
+        "INSERT INTO coupons (id, code, discount_type, discount_value, audience) VALUES ('k1', 'OZEL', 'percent', 10, 'customers')",
+      );
+      await db.query("INSERT INTO coupon_customers (coupon_id, email) VALUES ('k1', 'ali@firma.com')");
+      expect(
+        (await expectFailure(db, "INSERT INTO coupon_customers (coupon_id, email) VALUES ('k1', 'ALI@firma.com')")).code,
+      ).toBe("23505");
+      expect((await expectFailure(db, "UPDATE coupons SET audience = 'herkes'")).code).toBe("23514");
+      await db.query("DELETE FROM coupons WHERE id = 'k1'");
+      expect((await db.query("SELECT count(*)::int AS n FROM coupon_customers")).rows[0].n).toBe(0);
+    });
+  });
+
   it("siparişte en fazla bir kupon; kullanılmış kupon silinmez", async () => {
     await inTransaction(async (db) => {
       await user(db, "u1", "a@ornek.com");

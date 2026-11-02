@@ -423,6 +423,13 @@ export interface Coupon {
   productIds: string[];
   /** Kategori kimlikleri (Category.id); kategorideki butun urunler */
   categoryIds: string[];
+  /**
+   * Kimler kullanabilir: "all" herkes; "customers" yalnizca customerEmails'teki
+   * e-postayla giris yapan uye (kisiye ozel kupon, KARARLAR K-86)
+   */
+  audience: "all" | "customers";
+  /** Kisiye ozel kuponun e-posta adresleri (kucuk harf); audience "all" ise bos */
+  customerEmails: string[];
   active: boolean;
   createdAt: string;
   updatedAt: string;

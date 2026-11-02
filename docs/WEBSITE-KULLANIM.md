@@ -682,10 +682,15 @@ Adres: `/sepet`. Sepet için giriş gerekmez; ödeme adımında istenir.
       gösterir.
     - Uygulanamazsa kod kaydedilmez ve nedeni yazar: "Bu kupon kodu geçerli
       değil.", "Bu kupon <tarih> tarihinde başlıyor.", "Bu kuponun süresi
-      dolmuş.", "Bu kuponun kullanım sınırı dolmuş.", "Bu kuponu kullanım
-      hakkınız dolmuş." (giriş yapmış üyede), "Bu kupon <tutar> ve üzeri
-      sepetlerde geçerlidir.", "Sepetinizde bu kuponun geçerli olduğu ürün
-      yok."
+      dolmuş.", "Bu kuponun kullanım sınırı dolmuş.", "Bu kupon hesabınıza
+      tanımlı değil. Kuponun verildiği e-posta adresiyle giriş yapın."
+      (kişiye özel kupon, başka e-postayla giriş yapmış üyede), "Bu kuponu
+      kullanım hakkınız dolmuş." (giriş yapmış üyede), "Bu kupon <tutar> ve
+      üzeri sepetlerde geçerlidir.", "Sepetinizde bu kuponun geçerli olduğu
+      ürün yok."
+    - Kişiye özel kupon giriş yapmamış ziyaretçiye de uygulanır; altında
+      "Kişiye özel kupon: ödeme adımında giriş yaptığınız e-posta adresi
+      kontrol edilir." yazar.
     - Uygulanmış kupon sonradan geçersiz kalırsa (süresi doldu, pasife
       alındı, sepet değişti) kutu kırmızı olur ve nedeni yazar; indirim
       düşülmez, **Ödemeye Geç** devre dışı kalır ve altında "Kupon
@@ -724,7 +729,8 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
 - **Kupon:** Sepette uygulanan kupon özette "Kupon (<KOD>)" satırıyla
   görünür; ödeme sayfasında değiştirilmez (sepete dönülür). Kupon üyeye göre
   yeniden denetlenir: kupon artık uygulanamıyorsa (ör. üyenin kullanım hakkı
-  dolmuş) indirim düşülmez ve sipariş verilmez; düğmeye basınca "Kupon
+  dolmuş ya da kişiye özel kupon üyenin e-postasına tanımlı değil) indirim
+  düşülmez ve sipariş verilmez; düğmeye basınca "Kupon
   uygulanamıyor: <neden> Kuponu kaldırarak devam edebilirsiniz." çıkar.
 
 ### 1. Teslimat Adresi

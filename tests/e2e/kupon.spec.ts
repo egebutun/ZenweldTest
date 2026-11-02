@@ -1,6 +1,6 @@
 import type { Coupon } from "@zenweld/data";
 import { withLuhn } from "../unit/ornek";
-import { SESSION, changeDb, expect, readDb, test } from "./yardimci";
+import { SESSION, changeDb, demoAccount, expect, readDb, test } from "./yardimci";
 import type { Page } from "@playwright/test";
 
 /**
@@ -27,6 +27,8 @@ function testCoupon(overrides: Partial<Coupon>): Coupon {
     scope: "all",
     productIds: [],
     categoryIds: [],
+    audience: "all",
+    customerEmails: [],
     active: true,
     createdAt: at,
     updatedAt: at,
@@ -77,6 +79,31 @@ test.describe("panel", () => {
     await page.getByRole("button", { name: "Kuponu Oluştur" }).click();
     await expect(page.locator("main, body").first()).toContainText("3–30 karakter");
     await expect(page).toHaveURL(/\/yonetim\/kuponlar\/yeni/);
+    expect(problems).toEqual([]);
+  });
+
+  test("yönetici kişiye özel kupon oluşturur", async ({ page, problems }) => {
+    await page.goto("/yonetim/kuponlar/yeni");
+    await page.getByLabel("Kupon Kodu").fill("OZEL-E2E");
+    await page.getByLabel("İndirim Oranı (%)").fill("10");
+    await page.getByRole("button", { name: /Kimler Kullanabilir/ }).click();
+    await page.getByLabel("Yalnızca belirli kişiler (kişiye özel)").check();
+    await page.getByRole("button", { name: "Kuponu Oluştur" }).click();
+    await expect(page.locator("body")).toContainText("Kişiye özel kupon için en az bir e-posta adresi eklenmelidir.");
+
+    const input = page.getByLabel("E-posta adresi");
+    await input.fill("yanlis-adres");
+    await page.getByRole("button", { name: "Ekle", exact: true }).click();
+    await expect(page.locator("body")).toContainText("Geçerli bir e-posta adresi yazın.");
+    await input.fill("Usta@OrnekAtolye.com");
+    await input.press("Enter");
+    await expect(page.getByTestId("coupon-emails")).toContainText("usta@ornekatolye.com");
+    await expect(page.getByTestId("coupon-emails")).toContainText("henüz üye değil");
+    await page.getByRole("button", { name: "Kuponu Oluştur" }).click();
+    await expect(page).toHaveURL(/\/yonetim\/kuponlar\/cpn/);
+
+    await page.goto("/yonetim/kuponlar");
+    await expect(page.locator("tr", { hasText: "OZEL-E2E" })).toContainText("kişiye özel (1 e-posta)");
     expect(problems).toEqual([]);
   });
 });
@@ -154,6 +181,20 @@ test.describe("üye", () => {
     await cartWithProduct(page);
     await applyCoupon(page, "TEKSEFER");
     await expect(page.locator("main")).toContainText("Bu kuponu kullanım hakkınız dolmuş.");
+    expect(problems).toEqual([]);
+  });
+
+  test("kişiye özel kupon yalnızca tanımlı e-postadaki üyeye uygulanır", async ({ page, problems }) => {
+    const email = demoAccount("Bireysel").email;
+    await page.goto("/");
+    await addCoupon(page, testCoupon({ code: "BASKASINA", audience: "customers", customerEmails: ["baska@firma.com"] }));
+    await addCoupon(page, testCoupon({ code: "SANAOZEL", audience: "customers", customerEmails: [email.toUpperCase()] }));
+    await cartWithProduct(page);
+
+    await applyCoupon(page, "BASKASINA");
+    await expect(page.locator("main")).toContainText("Bu kupon hesabınıza tanımlı değil.");
+    await applyCoupon(page, "sanaozel");
+    await expect(page.getByTestId("coupon-row")).toContainText("Kupon (SANAOZEL)");
     expect(problems).toEqual([]);
   });
 });

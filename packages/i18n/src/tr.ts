@@ -528,11 +528,13 @@ export const tr = {
       scheduled: "Bu kupon {date} tarihinde başlıyor.",
       expired: "Bu kuponun süresi dolmuş.",
       exhausted: "Bu kuponun kullanım sınırı dolmuş.",
+      notForYou: "Bu kupon hesabınıza tanımlı değil. Kuponun verildiği e-posta adresiyle giriş yapın.",
       userLimit: "Bu kuponu kullanım hakkınız dolmuş.",
       minTotal: "Bu kupon {amount} ve üzeri sepetlerde geçerlidir.",
       noEligible: "Sepetinizde bu kuponun geçerli olduğu ürün yok.",
     },
     couponBlock: "Kupon uygulanamıyor: {reason} Kuponu kaldırarak devam edebilirsiniz.",
+    couponPersonal: "Kişiye özel kupon: ödeme adımında giriş yaptığınız e-posta adresi kontrol edilir.",
   },
   checkout: {
     title: "Ödeme",

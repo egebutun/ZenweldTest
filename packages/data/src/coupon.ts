@@ -23,6 +23,23 @@ export function normalizeCouponCode(code: string): string {
   return code.replace(/\s+/g, "").replace(/[İı]/g, "I").toUpperCase();
 }
 
+/** E-postanin karsilastirma bicimi: bosluksuz, kucuk harf. */
+export function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Kisiye ozel kupon bu e-postaya tanimli mi (herkese aciksa her zaman evet).
+ * Iki taraf da karsilastirma bicimine cevrilir; kayittaki adres buyuk harfle
+ * girilmis olsa da eslesir.
+ */
+export function couponAllowsEmail(coupon: Pick<Coupon, "audience" | "customerEmails">, email: string): boolean {
+  const key = normalizeEmail(email);
+  return coupon.audience === "all" || coupon.customerEmails.some((e) => normalizeEmail(e) === key);
+}
+
 export type CouponStatus = "active" | "scheduled" | "expired" | "exhausted" | "inactive";
 
 /**
@@ -73,6 +90,11 @@ export function validateCoupon(c: CouponDraft): string | null {
   if (c.scope === "targets" && c.productIds.length + c.categoryIds.length === 0) {
     return "Kupon belirli ürünler içinse en az bir ürün ya da kategori seçilmelidir.";
   }
+  if (c.audience === "customers") {
+    if (c.customerEmails.length === 0) return "Kişiye özel kupon için en az bir e-posta adresi eklenmelidir.";
+    const wrong = c.customerEmails.find((e) => !EMAIL_PATTERN.test(e));
+    if (wrong) return `Geçersiz e-posta adresi: ${wrong}`;
+  }
   return null;
 }
 
@@ -85,12 +107,16 @@ export interface CouponCartLine {
   totalIncVat: number;
 }
 
-/** Kuponun neden uygulanmadigi. invalid: kod yok ya da kupon pasif. */
+/**
+ * Kuponun neden uygulanmadigi. invalid: kod yok ya da kupon pasif;
+ * notForYou: kisiye ozel kupon giris yapan uyenin e-postasina tanimli degil.
+ */
 export type CouponProblem =
   | "invalid"
   | "scheduled"
   | "expired"
   | "exhausted"
+  | "notForYou"
   | "userLimit"
   | "minTotal"
   | "noEligible";
@@ -121,18 +147,26 @@ export function couponAppliesTo(coupon: Coupon, line: Pick<CouponCartLine, "prod
  * - En az sepet tutari, butun urunlerin toplamina bakar (kargo ve kupon haric).
  * - Yuzdelik kupon uyan urunlerin toplamina uygulanir; TL kupon bir kez
  *   dusulur ve uyan urunlerin toplamini gecemez.
- * - Kisi basi sinir yalnizca userId verilince denetlenir (sepette ziyaretci
- *   olabilir; odemede uye bellidir).
+ * - Kisiye ozel kuponun e-postasi ve kisi basi sinir yalnizca uye bilinince
+ *   denetlenir (sepette ziyaretci olabilir; odemede uye bellidir).
  */
 export function evaluateCoupon(
   coupon: Coupon | undefined,
   lines: CouponCartLine[],
-  { redemptions, userId, at = new Date() }: { redemptions: CouponRedemption[]; userId?: string; at?: Date },
+  {
+    redemptions,
+    userId,
+    userEmail,
+    at = new Date(),
+  }: { redemptions: CouponRedemption[]; userId?: string; userEmail?: string; at?: Date },
 ): CouponResult {
   if (!coupon) return { ok: false, problem: "invalid" };
   const status = couponStatus(coupon, couponUsageCount(coupon.id, redemptions), at);
   if (status === "inactive") return { ok: false, coupon, problem: "invalid" };
   if (status !== "active") return { ok: false, coupon, problem: status };
+  if (userEmail !== undefined && !couponAllowsEmail(coupon, userEmail)) {
+    return { ok: false, coupon, problem: "notForYou" };
+  }
   if (coupon.perUserLimit && userId && couponUsageCount(coupon.id, redemptions, userId) >= coupon.perUserLimit) {
     return { ok: false, coupon, problem: "userLimit" };
   }

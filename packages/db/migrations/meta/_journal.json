@@ -36,6 +36,13 @@
       "when": 1793623633229,
       "tag": "0004_kupon-satir-payi",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793625093824,
+      "tag": "0005_kisiye-ozel-kupon",
+      "breakpoints": true
     }
   ]
 }
