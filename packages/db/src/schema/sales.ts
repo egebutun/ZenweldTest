@@ -4,7 +4,7 @@ import type { OrderAddress, OrderInvoice } from "@zenweld/data";
 import { money, oneOf, percent, timestamps, tstz } from "./columns";
 import { products } from "./catalog";
 import { users } from "./users";
-import { paymentPos } from "./settings";
+import { carriers, paymentPos } from "./settings";
 
 /**
  * TEKLIFLER, SIPARISLER VE IADELER (docs/VERITABANI.md › 6 ve 7)
@@ -83,6 +83,10 @@ export const orders = pgTable(
     vat: money("vat").notNull(),
     shipping: money("shipping").notNull(),
     installmentFee: money("installment_fee").notNull().default(0),
+    /** Kopya: kullanilan kupon (coupon_redemptions'ta ayrintisi) */
+    couponCode: text("coupon_code"),
+    /** Kupon indirimi (KDV dahil) */
+    couponDiscount: money("coupon_discount").notNull().default(0),
     total: money("total").notNull(),
     paymentMethod: text("payment_method").notNull(),
     installments: integer("installments"),
@@ -98,10 +102,6 @@ export const orders = pgTable(
     paidAt: tstz("paid_at"),
     /** Havalede son odeme ani */
     dueAt: tstz("due_at"),
-    carrier: text("carrier"),
-    trackingNumber: text("tracking_number"),
-    shippedAt: tstz("shipped_at"),
-    deliveredAt: tstz("delivered_at"),
     customerNote: text("customer_note"),
     adminNote: text("admin_note"),
     termsAcceptedAt: tstz("terms_accepted_at").notNull(),
@@ -117,6 +117,35 @@ export const orders = pgTable(
     ),
     check("orders_payment_method", oneOf(t.paymentMethod, ["card", "transfer"])),
     check("orders_card_last4", sql`${t.cardLast4} ~ '^[0-9]{4}$'`),
+  ],
+);
+
+/**
+ * Kargo gonderileri: siparisin gonderisi (outbound) ve iadede musterinin geri
+ * gonderisi (return). Bugun sipariste en fazla bir gonderi vardir.
+ */
+export const shipments = pgTable(
+  "shipments",
+  {
+    id: text("id").primaryKey(),
+    orderId: text("order_id")
+      .notNull()
+      .references(() => orders.id, { onDelete: "restrict" }),
+    kind: text("kind").notNull().default("outbound"),
+    /** Iade gonderisinde bagli iade talebi */
+    returnRequestId: text("return_request_id").references(() => returnRequests.id, { onDelete: "set null" }),
+    carrierId: text("carrier_id").references(() => carriers.id, { onDelete: "set null" }),
+    /** Kopya: kargo firmasinin adi */
+    carrierName: text("carrier_name").notNull(),
+    trackingNumber: text("tracking_number").notNull(),
+    shippedAt: tstz("shipped_at").notNull(),
+    deliveredAt: tstz("delivered_at"),
+    ...timestamps(),
+  },
+  (t) => [
+    index("shipments_order").on(t.orderId),
+    check("shipments_kind", oneOf(t.kind, ["outbound", "return"])),
+    check("shipments_dates", sql`${t.deliveredAt} IS NULL OR ${t.deliveredAt} >= ${t.shippedAt}`),
   ],
 );
 

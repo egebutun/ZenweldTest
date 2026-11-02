@@ -520,6 +520,39 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
    listesi, çerez tercihi); hangisinin nereye taşınacağı:
    [VERI-MODELI.md](VERI-MODELI.md) › Tarayıcıda tutulanlar.
 
+## Zenweld depo stoğu (SAP) — backend
+
+Sahibinin kararı (KARARLAR K-82): Zenweld deposunun stoğu SAP'tan okunur;
+stokta olmayan ürün sepete eklenmez. Tablolar hazır (`warehouse_stock`,
+`sap_sync_runs`; [VERITABANI.md](VERITABANI.md)).
+
+1. SAP ekibinden: görünümün adı ve kolonları (kalem kodu, kullanılabilir
+   miktar, kalem adı), bağlanma yolu (SAP Business One Service Layer ya da
+   veritabanına salt okunur kullanıcı) ve bağlantı bilgileri (yalnızca
+   sunucuda ortam değişkeni).
+2. Sunucuda zamanlanmış okuma (öneri: 5 dakikada bir); her okuma
+   `sap_sync_runs`'a yazılır, başarılı okuma `warehouse_stock`'u tek işlemde
+   yeniler. Başarısız okumada son başarılı stok kalır; panelde son okuma
+   zamanı ve hata görünür.
+3. Stok değişen ürünlerin sayfaları önbellekten yenilenir (KARARLAR K-83).
+4. Ödeme anında stok son kez kontrol edilir; stok bitmişse sipariş
+   alınmaz.
+5. Site siparişlerinin SAP'a satış siparişi olarak aktarılıp aktarılmayacağı
+   sahibine sorulacak.
+
+## Kuponlar — site ve panel
+
+Sahibinin isteğiyle kupon tabloları eklendi (`coupons`, `coupon_targets`,
+`coupon_redemptions`; [VERITABANI.md](VERITABANI.md)). Sitede ve panelde
+kupon özelliği yok. Yapılacaklar:
+
+1. Kuralların sahibine sorulması: kampanyalı ürünlerde geçerli mi; kargo
+   ve vade farkı indirimden önce mi sonra mı hesaplanır; iptal ve iadede
+   kullanım geri sayılır mı.
+2. Panel: Kuponlar ekranı (ekle, düzenle, pasife al, kullanımlar).
+3. Site: sepette kupon kodu alanı, indirimin özete ve siparişe yazılması.
+4. İş kuralları ve testleri ([IS-KURALLARI.md](IS-KURALLARI.md)).
+
 ## Üyelik, oturum ve şifre — backend
 
 1. **Kimlik doğrulama ve yetki sunucuda yapılmalı.** Bugün şifre tarayıcıda

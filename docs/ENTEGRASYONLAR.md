@@ -386,7 +386,9 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 
 | Konu | Bugün | Gereken |
 |---|---|---|
-| **Veritabanı ve sunucu API'si** | Bütün veri tarayıcıda | Sunucu veritabanı ([VERI-MODELI.md](VERI-MODELI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
+| **Veritabanı ve sunucu API'si** | Bütün veri tarayıcıda; PostgreSQL tabloları hazır | Siteyi ve paneli veritabanına bağlama ([VERITABANI.md](VERITABANI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
+| **SAP Business One (depo stoğu)** | Yok | SAP ekibinin hazırladığı "kullanılabilir stok" görünümü (view) sunucuda düzenli aralıklarla okunup `warehouse_stock`'a yazılır (KARARLAR K-82). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı), görünümün adı, kolonları ve okuma sıklığı SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur |
+| **SAP Business One (satış siparişi)** | Yok | Site siparişlerinin SAP'a satış siparişi olarak aktarılıp aktarılmayacağı sahibine sorulacak ([VERITABANI.md](VERITABANI.md) › Açık sorular) |
 | **Dosya deposu** | Görseller veritabanında, belgeler tarayıcıda | Nesne deposu |
 | **Ödeme kuruluşu** | Demo | Bkz. [3](#3-kartla-ödeme) |
 | **Müşteriye e-posta** | Yok | Sipariş onayı ve sözleşme kopyası (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi |
@@ -394,7 +396,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | **Bülten** | Kayıt kutusu var, hiçbir yere gitmez | Bülten servisi seçilip bağlanmalı |
 | **Analitik** (ziyaret, dönüşüm, sepette bırakılan) | Yok | Google Analytics vb.; çerez onayına bağlı yüklenmeli ve adresleri güvenlik politikasına (CSP) eklenmeli. Çerez ayarları penceresine analiz/pazarlama kategorileri eklenmeli |
 | **e-Arşiv / e-Fatura** | Yok | Muhasebe yazılımı ya da entegratör |
-| **Kargo** | Takip numarası elle girilir | İsteğe bağlı: takip bağlantısı, etiket oluşturma |
+| **Kargo** | Takip numarası elle girilir | İsteğe bağlı: takip bağlantısı (tablo hazır: `carriers.tracking_url`), etiket oluşturma, kargo firmasından teslim bilgisi |
 | **ETBİS ve MERSİS** | Yok | Ticaret Bakanlığı kaydı; numaralar sözleşmelere |
 | **Zamanlanmış görevler** | Sayfa açılınca çalışıyor | Havale süresi dolan siparişleri iptal; kampanya başlangıç/bitişinde ürün sayfasını yenileme |
 | **Bayi B2B uygulaması** | Yok | Ayrı uygulama ([YAPILACAKLAR.md](YAPILACAKLAR.md)) |

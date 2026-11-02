@@ -275,3 +275,75 @@ describe("değer kontrolleri", () => {
     });
   });
 });
+
+describe("kuponlar (2026-11-02)", () => {
+  it("kod büyük/küçük harf duyarsız benzersiz; yüzde 100'ü aşamaz; hedef ya ürün ya kategori", async () => {
+    await inTransaction(async (db) => {
+      await group(db);
+      await category(db);
+      await product(db, "p1", "ZW-1");
+      const coupon = (id: string, code: string, type = "percent", value = 10) =>
+        db.query("INSERT INTO coupons (id, code, discount_type, discount_value) VALUES ($1, $2, $3, $4)", [id, code, type, value]);
+      await coupon("k1", "YAZ10");
+      expect((await expectFailure(db, "INSERT INTO coupons (id, code, discount_type, discount_value) VALUES ('k2', 'yaz10', 'percent', 5)")).code).toBe("23505");
+      expect((await expectFailure(db, "INSERT INTO coupons (id, code, discount_type, discount_value) VALUES ('k3', 'COK', 'percent', 120)")).code).toBe("23514");
+      await coupon("k4", "500TL", "amount", 500);
+      await db.query("INSERT INTO coupon_targets (coupon_id, product_id) VALUES ('k1', 'p1')");
+      expect((await expectFailure(db, "INSERT INTO coupon_targets (coupon_id, product_id, category_id) VALUES ('k1', 'p1', 'c1')")).code).toBe("23514");
+      expect((await expectFailure(db, "INSERT INTO coupon_targets (coupon_id) VALUES ('k1')")).code).toBe("23514");
+    });
+  });
+
+  it("siparişte en fazla bir kupon; kullanılmış kupon silinmez", async () => {
+    await inTransaction(async (db) => {
+      await user(db, "u1", "a@ornek.com");
+      await db.query("INSERT INTO coupons (id, code, discount_type, discount_value) VALUES ('k1', 'YAZ10', 'percent', 10)");
+      await db.query(
+        `INSERT INTO orders (id, code, user_id, status, customer_name, email, phone, shipping_address, invoice,
+           subtotal, vat, shipping, total, payment_method, terms_accepted_at, coupon_code, coupon_discount)
+         VALUES ('o1', 'SIP-2026-00001', 'u1', 'preparing', 'Ad', 'a@ornek.com', '1', '{}', '{}', 1200, 200, 0, 1080, 'card', now(), 'YAZ10', 120)`,
+      );
+      const redeem = "INSERT INTO coupon_redemptions (coupon_id, coupon_code, user_id, order_id, discount_amount) VALUES ('k1', 'YAZ10', 'u1', 'o1', 120)";
+      await db.query(redeem);
+      expect((await expectFailure(db, redeem)).code).toBe("23505");
+      expect((await expectFailure(db, "DELETE FROM coupons WHERE id = 'k1'")).code).toBe(RESTRICTED);
+    });
+  });
+});
+
+describe("kargo, SAP stoğu ve formlar (2026-11-02)", () => {
+  it("gönderi türü ve teslim tarihi kontrol edilir; kargo firması adı benzersiz", async () => {
+    await inTransaction(async (db) => {
+      await user(db, "u1", "a@ornek.com");
+      await db.query(
+        `INSERT INTO orders (id, code, user_id, status, customer_name, email, phone, shipping_address, invoice,
+           subtotal, vat, shipping, total, payment_method, terms_accepted_at)
+         VALUES ('o1', 'SIP-2026-00001', 'u1', 'shipped', 'Ad', 'a@ornek.com', '1', '{}', '{}', 1200, 200, 0, 1200, 'card', now())`,
+      );
+      await db.query("INSERT INTO carriers (id, name, tracking_url, position) VALUES ('yk', 'Yurtiçi Kargo', 'https://ornek/{takip}', 1)");
+      expect((await expectFailure(db, "INSERT INTO carriers (id, name, position) VALUES ('yk2', 'Yurtiçi Kargo', 2)")).code).toBe("23505");
+      await db.query(
+        "INSERT INTO shipments (id, order_id, carrier_id, carrier_name, tracking_number, shipped_at) VALUES ('s1', 'o1', 'yk', 'Yurtiçi Kargo', '123', now())",
+      );
+      expect((await expectFailure(db, "UPDATE shipments SET delivered_at = shipped_at - interval '1 day'")).code).toBe("23514");
+      expect((await expectFailure(db, "UPDATE shipments SET kind = 'baska'")).code).toBe("23514");
+    });
+  });
+
+  it("SAP depo stoğu eksi olamaz; formların sabit değerleri kontrol edilir", async () => {
+    await inTransaction(async (db) => {
+      await db.query("INSERT INTO sap_sync_runs (status, rows_read) VALUES ('success', 1)");
+      await db.query("INSERT INTO warehouse_stock (sap_item_code, quantity, synced_at) VALUES ('ZW30100000001', 3, now())");
+      expect((await expectFailure(db, "UPDATE warehouse_stock SET quantity = -1")).code).toBe("23514");
+      await db.query(
+        "INSERT INTO dealer_applications (id, company_name, email, years_in_sector, has_showroom) VALUES ('b1', 'Firma', 'a@ornek.com', '10+', true)",
+      );
+      expect((await expectFailure(db, "UPDATE dealer_applications SET years_in_sector = '20'")).code).toBe("23514");
+      expect(
+        (await expectFailure(db, "INSERT INTO support_messages (id, type, message) VALUES ('m1', 'baska', 'Soru')")).code,
+      ).toBe("23514");
+      await db.query("INSERT INTO support_messages (id, type, message) VALUES ('m2', 'urun-destek', 'Soru')");
+      await db.query("INSERT INTO welders_club_signups (id, name, email) VALUES ('w1', 'Ad', 'a@ornek.com')");
+    });
+  });
+});

@@ -398,12 +398,41 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 
 ## 4. Satış, ödeme ve teklif
 
-### K-20 · Zenweld'de her ürün her zaman stokta
+### K-20 · Zenweld'de her ürün her zaman stokta — Değişti (2026-11-02, yerine K-82)
 - **Tarih:** 2026-10-11
-- **Karar:** Zenweld deposu için stok sınırı yoktur; yayındaki her ürün
-  sepete eklenebilir. Bayilerde ve online satıcılarda stok varsa ayrıca
+- **Karar (eski):** Zenweld deposu için stok sınırı yoktur; yayındaki her
+  ürün sepete eklenebilir. Bayilerde ve online satıcılarda stok varsa ayrıca
   gösterilir.
-- **Neden:** Site sahibinin bilgisi: Zenweld'de stoksuz kalma durumu yok.
+- **Değişti:** Sahibinin bilgisi: Zenweld deposunda her üründe stok
+  olmayabilir; depo stoğu SAP'tan okunur. Yerine K-82.
+
+### K-82 · Zenweld depo stoğu SAP'tan; stokta olmayan ürün sepete eklenmez
+- **Tarih:** 2026-11-02
+- **Karar:**
+  - Zenweld deposunun stoğu SAP'tan okunur. SAP ekibi ürün/model başına
+    "kullanılabilir stok" görünümü (view) hazırlar; site bu görünümü okuyarak
+    stok olup olmadığını anlar. Bayi ve online satıcı stokları ayrıca
+    gösterilmeye devam eder.
+  - Panelde Ürünler listesinde depo stoğu görünür.
+  - Depoda stoğu olmayan ürünün sayfasında ve ürün kartında **STOKTA YOK**
+    yazar; ürün sepete eklenemez.
+  - Görünüm sayfa açılırken sorgulanmaz; sunucu düzenli aralıklarla okuyup
+    kendi veritabanına yazar (K-83).
+- **Açık konu:** SAP görünümünün adı, kolonları, bağlantı yolu ve okuma
+  sıklığı SAP ekibinden gelecek ([VERITABANI.md](VERITABANI.md) › Açık
+  sorular).
+
+### K-83 · Her zaman en hızlı ve en uygun yol
+- **Tarih:** 2026-11-02
+- **Karar:** Teknik seçimlerde sitenin hızı önceliklidir. Örnekler:
+  - Dış sistemler (SAP, bayi dosyaları) sayfa açılırken sorgulanmaz; veri
+    önceden kendi veritabanımıza alınır.
+  - Sayfalar sunucuda hazırlanıp önbellekte tutulur; yalnızca değişen
+    sayfalar yenilenir.
+  - Sık yapılan sorgular için veritabanında dizin bulunur; görseller
+    küçültülmüş (webp) gelir.
+- **Neden:** Sahibinin isteği: her zaman en optimum ve sitenin hızlı
+  olacağı yollar seçilsin.
 
 ### K-21 · Online sipariş yalnızca üyelerden
 - **Tarih:** 2026-10-11
@@ -808,6 +837,12 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     tutulur.
   - Gönderilen her e-postanın sitenin hangi özelliği (Welders Club, Servis
     Talebi…) ve sayfası için gönderildiği kaydedilir.
+  - **Ek (2026-11-02):** Formlar kendi tablolarındadır: bayilik başvuruları
+    (`dealer_applications`), iletişim ve ürün destek mesajları
+    (`support_messages`), Welders Club katılımları (`welders_club_signups`).
+    Sahibinin isteğiyle kupon tabloları (`coupons`, `coupon_targets`,
+    `coupon_redemptions`) ile kargo tabloları (`carriers`, `shipments`)
+    eklendi; kupon özelliğinin site ve panel kısmı sonra yapılacak.
   - Kişisel verilerin saklama süresi avukata sorulacak (VERITABANI.md ›
     Açık sorular).
 - **Ayrıntı:** Tablolar ve kolonlar [VERITABANI.md](VERITABANI.md).

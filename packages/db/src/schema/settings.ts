@@ -58,6 +58,17 @@ export const paymentPos = pgTable(
   (t) => [uniqueIndex("payment_pos_one_default").on(t.isDefault).where(sql`${t.isDefault}`)],
 );
 
+/** Kargo firmalari (settings.shop.carriers); siparise takip no girilirken secilir. */
+export const carriers = pgTable("carriers", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull().unique("carriers_name"),
+  /** Takip sayfasi: {takip} yerine takip numarasi yazilir; bossa baglanti verilmez */
+  trackingUrl: text("tracking_url"),
+  active: boolean("active").notNull().default(true),
+  position: integer("position").notNull(),
+  ...timestamps(),
+});
+
 /** Havale hesaplari (settings.shop.bankAccounts). */
 export const bankAccounts = pgTable("bank_accounts", {
   id: text("id").primaryKey(),

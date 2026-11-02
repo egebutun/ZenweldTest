@@ -121,7 +121,10 @@ tabloya birebir gider. Farklı olanlar:
 | `recordCounters` | `record_counters` | Aynı anda gelen iki kayıt aynı numarayı almasın |
 | Favoriler tarayıcıda | `favourites` | Üye başka cihazda da görsün |
 | Oturum tarayıcıda | `sessions` | Oturum sunucuda tutulmalı (YAPILACAKLAR › Üyelik) |
-| İletişim, bayilik, Welders Club, ürün destek formları yalnızca e-posta | `form_submissions` | Sahibinin kararı (K-81) |
+| İletişim, bayilik, Welders Club, ürün destek formları yalnızca e-posta | `dealer_applications`, `support_messages`, `welders_club_signups` | Sahibinin kararı (K-81) |
+| Zenweld deposunda her ürün stokta sayılıyor (K-20) | `warehouse_stock`, `sap_sync_runs` | Depo stoğu SAP'tan okunur (K-82) |
+| Siparişin kargo bilgisi (`shipment`) siparişin içinde; kargo firmaları ayarlarda metin listesi | `shipments`, `carriers` | İade gönderisi de tutulabilsin; takip bağlantısı verilebilsin |
+| Kupon yok | `coupons`, `coupon_targets`, `coupon_redemptions` | Sahibinin isteği; site ve panel özelliği henüz yok |
 | Bütün form e-postaları tek adrese gidiyor (`SUPPORT_EMAIL`, varsayılan info@zenweld.com) | `email_recipients` | Alıcı ileride forma göre değişebilir (K-81) |
 | Gönderilen e-postaların kaydı yok | `email_log` | Hangi sayfa ve özellik için gönderildiği tutulur (K-81) |
 | Panel değişikliklerinin kaydı yok | `audit_log` | Sahibinin kararı (K-81) |
@@ -406,6 +409,42 @@ SQL olarak yazılı; aynen kullanılır. Özet:
 Silme: bayi ya da satıcı silinince stok satırları, stok işlemleri ve kod
 eşleştirmeleri de silinir.
 
+### `warehouse_stock` ve `sap_sync_runs` — Zenweld depo stoğu (SAP) (yeni)
+
+Sahibinin kararı (K-82): Zenweld deposunun stoğu SAP'tan okunur. SAP ekibi
+model başına "kullanılabilir stok" görünümü (view) hazırlıyor. Sunucu bu
+görünümü düzenli aralıklarla okuyup `warehouse_stock`'a yazar; site ve panel
+stoğu buradan okur, sayfa açılırken SAP'a gidilmez (hız, K-83). Ürün ve
+seçenek kodlarıyla eşleşmesi ve "stokta yok" kuralı: KARARLAR K-82.
+
+`warehouse_stock`:
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `sap_item_code` | text | anahtar | SAP kalem kodu (boşluksuz, büyük harf) |
+| `item_name` | text | | SAP'taki kalem adı; eşleşmeyen kodu panelde tanımak için |
+| `quantity` | numeric(14,3) | zorunlu; ≥ 0 | Kullanılabilir stok (kg ile satılanlar için ondalıklı) |
+| `synced_at` | timestamptz | zorunlu | SAP'tan okunduğu an |
+| `sync_run_id` | bigint | → `sap_sync_runs` (boşalır) | |
+
+Her başarılı okumada tablo tek işlemde yenilenir: SAP görünümünde artık
+olmayan kalem silinir.
+
+`sap_sync_runs`:
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | bigint | anahtar; sırayla artar | |
+| `kind` | text | zorunlu; `stock` | Ne okundu |
+| `started_at` | timestamptz | zorunlu | |
+| `finished_at` | timestamptz | | |
+| `status` | text | zorunlu; `running`, `success`, `failed` | |
+| `rows_read` | int | | Görünümden okunan satır |
+| `error` | text | | Başarısızsa hata |
+
+Okuma başarısız olursa son başarılı stok kullanılmaya devam eder; panel son
+başarılı okumanın zamanını gösterir.
+
 ---
 
 ## 5. Üyeler ve oturumlar
@@ -530,6 +569,8 @@ Anahtar: (`quote_id`, `line`).
 | `vat` | numeric(12,2) | zorunlu | İçindeki KDV |
 | `shipping` | numeric(12,2) | zorunlu | Kargo (KDV dahil) |
 | `installment_fee` | numeric(12,2) | zorunlu | Vade farkı |
+| `coupon_code` | text | (yeni) | Kopya: kullanılan kupon |
+| `coupon_discount` | numeric(12,2) | zorunlu (yeni) | Kupon indirimi (KDV dahil); kupon yoksa 0 |
 | `total` | numeric(12,2) | zorunlu | Ödenen toplam |
 | `payment_method` | text | zorunlu; `card`, `transfer` | |
 | `installments` | int | | Kartta taksit sayısı |
@@ -540,13 +581,29 @@ Anahtar: (`quote_id`, `line`).
 | `commission_percent` | numeric(5,2) | | Kopya: bankanın kestiği oran |
 | `paid_at` | timestamptz | | |
 | `due_at` | timestamptz | | Havalede son ödeme anı |
-| `carrier`, `tracking_number` | text | | Kargo |
-| `shipped_at`, `delivered_at` | timestamptz | | |
 | `customer_note`, `admin_note` | text | | |
 | `terms_accepted_at` | timestamptz | zorunlu | Ön bilgilendirme ve sözleşme onayı |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
-Silme: panelde silinmez.
+Kargo bilgisi `shipments`'tadır. Silme: panelde silinmez.
+
+### `shipments` — kargo gönderileri (yeni)
+
+Koddaki: `orders.shipment`. Siparişin gönderisi ve iadede müşterinin geri
+gönderisi. Bugün siparişte en fazla bir gönderi vardır.
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `order_id` | text | zorunlu; → `orders` | |
+| `kind` | text | zorunlu; `outbound`, `return` | Gönderi ya da iade gönderisi |
+| `return_request_id` | text | → `return_requests` (boşalır) | İade gönderisinde |
+| `carrier_id` | text | → `carriers` (boşalır) | |
+| `carrier_name` | text | zorunlu | Kopya |
+| `tracking_number` | text | zorunlu | |
+| `shipped_at` | timestamptz | zorunlu | |
+| `delivered_at` | timestamptz | gönderiden önce olamaz | |
+| `created_at`, `updated_at` | timestamptz | zorunlu | |
 
 ### `order_items` — sipariş satırları
 
@@ -628,6 +685,53 @@ Banka POS'u bağlanınca kesinleşecek; bugün ödeme demo.
 | `quantity` | int | zorunlu; ≥ 1 | |
 
 Anahtar: (`return_request_id`, `order_line`). Silme: panelde silinmez.
+
+### `coupons`, `coupon_targets`, `coupon_redemptions` — kuponlar (yeni)
+
+Sahibinin isteği (2026-11-02). Tablolar hazır; sitede ve panelde kupon
+özelliği henüz yok, kuralları sahibine sorulacak (YAPILACAKLAR › Kuponlar).
+
+`coupons`:
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `code` | text | zorunlu; benzersiz (büyük/küçük harf duyarsız) | Müşterinin yazdığı kod |
+| `name` | text | | Panelde tanımak için ad ya da not |
+| `discount_type` | text | zorunlu; `percent`, `amount` | Yüzde ya da sabit TL |
+| `discount_value` | numeric(12,2) | zorunlu; > 0; yüzdede en fazla 100 | |
+| `min_cart_total` | numeric(12,2) | | En az sepet tutarı (KDV dahil) |
+| `starts_at`, `ends_at` | timestamptz | bitiş başlangıçtan sonra | Boşsa sınırsız |
+| `total_usage_limit` | int | ≥ 1 | Toplam kullanım sınırı; boşsa sınırsız |
+| `per_user_limit` | int | ≥ 1 | Kişi başı kullanım sınırı; boşsa sınırsız |
+| `scope` | text | zorunlu; `all`, `targets` | Bütün ürünler ya da yalnızca `coupon_targets` |
+| `active` | boolean | zorunlu | |
+| `created_at`, `updated_at` | timestamptz | zorunlu | |
+
+`coupon_targets` (kupon belirli ürün ya da kategorilere özelse):
+
+| Kolon | Tür | Kural |
+|---|---|---|
+| `id` | bigint | anahtar; sırayla artar |
+| `coupon_id` | text | zorunlu; → `coupons` (zincir) |
+| `product_id` | text | → `products` (zincir) |
+| `category_id` | text | → `categories` (zincir) |
+
+Her satırda ya ürün ya kategori dolu olur; aynı ürün ya da kategori bir
+kuponda bir kez.
+
+`coupon_redemptions` (kim, hangi siparişte, ne kadar indirim aldı):
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | bigint | anahtar; sırayla artar | |
+| `coupon_id` | text | zorunlu; → `coupons` (engeller) | Kullanılmış kupon silinmez, pasife alınır |
+| `coupon_code` | text | zorunlu | Kopya |
+| `user_id` | text | → `users` (boşalır) | |
+| `order_id` | text | zorunlu; benzersiz; → `orders` | Siparişte en fazla bir kupon |
+| `discount_amount` | numeric(12,2) | zorunlu; > 0 | Uygulanan indirim (KDV dahil) |
+| `created_at` | timestamptz | zorunlu | |
+| `released_at` | timestamptz | | Sipariş iptal edilince dolar; kullanım sınırlarında sayılmaz |
 
 ---
 
@@ -794,7 +898,7 @@ Silme: dosyası da silinir.
 | `updated_by` | text | → `users` (boşalır) (yeni) | |
 
 - `shop`: kargo bedava eşiği, kargo ücreti, taksit için en düşük tutar,
-  havale süresi (gün), kargo firmaları.
+  havale süresi (gün). Kargo firmaları `carriers`'tadır.
 - `stock`: stok kaydının sitede geçerli sayıldığı gün sayısı.
 - `rich_text`: biçimli metinlerin görünümü (Görünüm sayfası).
 
@@ -815,6 +919,19 @@ Koddaki: `settings.shop.pos`.
 | `commissions` | jsonb | zorunlu | Bankanın kestiği oranlar `[{ count, rate_percent }]` |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
+### `carriers` — kargo firmaları (yeni)
+
+Koddaki: `settings.shop.carriers` (bugün yalnızca adlar).
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `name` | text | zorunlu; benzersiz | |
+| `tracking_url` | text | | Takip sayfası; `{takip}` yerine takip numarası yazılır. Boşsa bağlantı verilmez |
+| `active` | boolean | zorunlu | |
+| `position` | int | zorunlu | |
+| `created_at`, `updated_at` | timestamptz | zorunlu | |
+
 ### `bank_accounts` — havale hesapları
 
 | Kolon | Tür | Kural |
@@ -828,37 +945,59 @@ Koddaki: `settings.shop.pos`.
 
 ## 11. Formlar, e-postalar, kayıt numaraları ve değişiklik kaydı
 
-### `form_submissions` — yalnızca e-postaya giden formlar (yeni)
+### Yalnızca e-postaya giden formlar (yeni)
 
 Sahibinin kararı (K-81): bugün yalnızca info@zenweld.com'a e-posta olarak
 giden formlar veritabanında da saklanır. E-posta yine gider; kayıt, e-posta
-gitmese de alınır.
+gitmese de alınır; gidip gitmediği `email_log`'dadır. Panel ekranları siteyi
+veritabanına bağlarken eklenecek. Bülten kaydı bunlara girmez; bülten
+servisi kararını bekliyor (YAPILACAKLAR › Bülten ve İYS).
 
-| `type` | Form |
-|---|---|
-| `bayilik` | Bayilik Başvurusu |
-| `iletisim` | İletişim |
-| `urun-destek` | Ürün sayfasındaki destek sorusu |
-| `welders-club` | Welders Club katılım |
+`dealer_applications` — Bayilik Başvurusu:
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `type` | text | zorunlu; yukarıdaki dört değer | |
-| `status` | text | zorunlu; `new`, `read`, `done` | Panelde takip |
-| `name` | text | | Ad soyad ya da yetkili kişi |
-| `email`, `phone`, `city`, `company_name`, `subject` | text | | Formda varsa |
-| `message` | text | | Mesaj, soru ya da not |
-| `product_id` | text | → `products` (boşalır) | Ürün destek sorusunda |
+| `status` | text | zorunlu; `new`, `reviewing`, `approved`, `rejected` | |
+| `company_name` | text | zorunlu | Firma ünvanı |
+| `tax_info` | text | | "Vergi dairesi / no" (formda tek alan) |
+| `city`, `sector`, `brands` | text | | Şehir, faaliyet alanı, çalıştığı markalar |
+| `years_in_sector` | text | `0-2`, `3-5`, `6-10`, `10+` | |
+| `has_showroom`, `has_service` | boolean | | Showroom / teknik servis var mı |
+| `contact_name`, `phone` | text | | |
+| `email` | text | zorunlu | |
+| `message` | text | | Not |
 | `user_id` | text | → `users` (boşalır) | Giriş yapmışsa |
-| `data` | jsonb | zorunlu | Forma özgü diğer alanlar (bayilikte vergi dairesi/no, faaliyet alanı, sektördeki yıl, çalıştığı markalar, showroom, servis kabiliyeti; ürün sorusunda ürün kodu ve sayfa adresi) |
+| `dealer_id` | text | → `dealers` (boşalır) | Başvuru onaylanıp bayi kaydı açılınca |
 | `admin_note` | text | | |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
-E-postanın gidip gitmediği `email_log`'dadır. Bülten kaydı bu tabloya
-girmez; bülten servisi kararını bekliyor (YAPILACAKLAR › Bülten ve İYS).
-Panelde bu kayıtları gösterecek ekran siteyi veritabanına bağlarken
-eklenecek.
+`support_messages` — İletişim formu ve ürün sayfasındaki destek sorusu:
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `type` | text | zorunlu; `iletisim`, `urun-destek` | |
+| `status` | text | zorunlu; `new`, `read`, `answered` | |
+| `name`, `email`, `phone` | text | | |
+| `subject` | text | | İletişim formunda konu |
+| `message` | text | zorunlu | |
+| `product_id` | text | → `products` (boşalır) | Ürün sorusunda |
+| `product_name`, `product_sku` | text | | Kopya |
+| `page_url` | text | | Formun gönderildiği sayfa |
+| `user_id` | text | → `users` (boşalır) | |
+| `admin_note` | text | | |
+| `created_at`, `updated_at` | timestamptz | zorunlu | |
+
+`welders_club_signups` — Welders Club katılım:
+
+| Kolon | Tür | Kural |
+|---|---|---|
+| `id` | text | anahtar |
+| `name`, `email` | text | zorunlu |
+| `city` | text | |
+| `user_id` | text | → `users` (boşalır) |
+| `created_at` | timestamptz | zorunlu |
 
 ### `email_recipients` — e-postaların alıcıları (yeni)
 
@@ -907,7 +1046,7 @@ sayfası için gönderildiği tutulur.
 | `id` | bigint | anahtar; sırayla artar | |
 | `type` | text | zorunlu | E-posta türü (yukarıdaki liste): hangi özellik için gönderildiği |
 | `source_path` | text | | Formun gönderildiği sayfa (`/welders-club`, `/urun/ultimate-250-mtc`) |
-| `entity_type`, `entity_id` | text | | Bağlı kayıt (ör. `quotes` + teklifin kimliği, `form_submissions` + kaydın kimliği) |
+| `entity_type`, `entity_id` | text | | Bağlı kayıt (ör. `quotes` + teklifin kimliği, `dealer_applications` + başvurunun kimliği) |
 | `recipients` | text[] | zorunlu | Gönderildiği adresler |
 | `reply_to` | text | | Yanıtla denince gidilecek adres (formu dolduran) |
 | `subject` | text | zorunlu | Konu satırı |
@@ -963,14 +1102,17 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 |---|---|---|
 | Katalog | `category_groups`, `categories`, `category_option_definitions`, `category_filters`, `category_filter_values`, `option_definitions`, `option_values`, `products`, `product_options`, `product_variants`, `product_variant_values`, `product_filter_values`, `sku_codes`, `redirects` | 14 |
 | Bayi ve stok | `dealers`, `retailers`, `dealer_stock`, `retailer_stock`, `stock_imports`, `sku_aliases` | 6 |
+| Zenweld depo stoğu (SAP) | `warehouse_stock`, `sap_sync_runs` | 2 |
 | Üyeler | `users`, `addresses`, `sessions`, `password_reset_tokens`, `favourites` | 5 |
 | Teklif | `quotes`, `quote_items` | 2 |
-| Sipariş ve iade | `orders`, `order_items`, `order_status_history`, `payment_transactions`, `return_requests`, `return_request_items` | 6 |
+| Sipariş, kargo ve iade | `orders`, `order_items`, `order_status_history`, `payment_transactions`, `shipments`, `return_requests`, `return_request_items` | 7 |
+| Kuponlar | `coupons`, `coupon_targets`, `coupon_redemptions` | 3 |
 | Servis, garanti, yorum | `service_requests`, `warranties`, `reviews` | 3 |
 | İçerik | `blog_posts`, `news`, `events`, `faqs`, `sales_reps`, `legal_pages`, `about_page`, `page_seo`, `document_pages`, `documents` | 10 |
-| Ayarlar ve ödeme | `settings`, `payment_pos`, `bank_accounts` | 3 |
-| Sistem | `form_submissions`, `email_recipients`, `email_log`, `record_counters`, `audit_log` | 5 |
-| **Toplam** | | **54** |
+| Ayarlar, ödeme ve kargo | `settings`, `payment_pos`, `bank_accounts`, `carriers` | 4 |
+| Formlar | `dealer_applications`, `support_messages`, `welders_club_signups` | 3 |
+| Sistem | `email_recipients`, `email_log`, `record_counters`, `audit_log` | 4 |
+| **Toplam** | | **63** |
 
 ---
 
@@ -981,6 +1123,17 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
    üyenin geçmiş kayıtları ne kadar tutulacak? Sahibi avukata soracak
    (YAPILACAKLAR › Hesap silme). Cevaba göre bu dosyaya saklama süreleri ve
    kendiliğinden silme eklenir.
+2. **SAP stok görünümü (SAP ekibi):** Görünümün adı ve kolonları (kalem kodu,
+   kullanılabilir miktar, kalem adı); sunucunun bağlanma yolu (SAP Business
+   One Service Layer ya da veritabanına salt okunur kullanıcı); ne sıklıkla
+   okunacağı (öneri: 5 dakikada bir). Cevaba göre `warehouse_stock`'a kolon
+   eklenebilir.
+3. **Site siparişleri SAP'a satış siparişi olarak aktarılacak mı?** Şirketin
+   satış siparişleri SAP'a giriliyor. Aktarılacaksa siparişe SAP belge
+   numarası ve aktarım durumu kolonları eklenir.
+4. **Kupon kuralları:** Kampanyalı ürünlerde geçerli mi, kargo ve vade farkı
+   indirimden önce mi sonra mı hesaplanır, iptal ve iadede kullanım geri
+   sayılır mı (öneri: iptalde sayılmaz, `released_at`)?
 
 ---
 
@@ -990,9 +1143,10 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 
 | Yer | İçerik |
 |---|---|
-| `src/schema/` | Tabloların tanımı (Drizzle ORM), konuya göre dosyalar: `catalog`, `network` (bayi, satıcı, stok), `users`, `sales` (teklif, sipariş, iade), `support` (servis, garanti, yorum), `content`, `settings`, `system` (formlar, e-postalar, numaralar, değişiklik kaydı) |
+| `src/schema/` | Tabloların tanımı (Drizzle ORM), konuya göre dosyalar: `catalog`, `network` (bayi, satıcı, stok), `users`, `sales` (teklif, sipariş, kargo gönderisi, iade), `coupons`, `sap` (depo stoğu), `support` (servis, garanti, yorum), `content`, `settings` (ayarlar, POS, banka, kargo firmaları), `forms` (bayilik, destek mesajları, Welders Club), `system` (e-postalar, numaralar, değişiklik kaydı) |
 | `migrations/0000_kurulum.sql` | Tabloları kuran betik; şemadan üretilir (`npm run db:generate`) |
 | `migrations/0001_kurallar.sql` | Tablo tanımıyla ifade edilemeyen kurallar; elle yazılır (aşağıda) |
+| `migrations/0002_kaldirilanlar.sql`, `0003_stok-kargo-kupon-formlar.sql` | 2026-11-02 eklemeleri: `form_submissions` ve siparişteki kargo kolonları kaldırıldı; SAP depo stoğu, kargo, kupon ve form tabloları eklendi. Kaldırma ve ekleme ayrı betiktedir (betik üretici, aynı betikte "ad mı değişti" diye sorar) |
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
 

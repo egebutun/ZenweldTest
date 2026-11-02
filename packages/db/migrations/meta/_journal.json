@@ -15,6 +15,20 @@
       "when": 1793618999768,
       "tag": "0001_kurallar",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793620848184,
+      "tag": "0002_kaldirilanlar",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793620848871,
+      "tag": "0003_stok-kargo-kupon-formlar",
+      "breakpoints": true
     }
   ]
 }

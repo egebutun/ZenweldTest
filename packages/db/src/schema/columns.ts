@@ -37,7 +37,7 @@ export function trKey(column: AnyPgColumn): SQL {
 }
 
 function quote(value: string): string {
-  if (!/^[a-z0-9_-]+$/.test(value)) throw new Error(`Gecersiz sabit deger: ${value}`);
+  if (!/^[a-z0-9_+-]+$/.test(value)) throw new Error(`Gecersiz sabit deger: ${value}`);
   return `'${value}'`;
 }
 

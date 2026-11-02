@@ -12,4 +12,7 @@ export * from "./sales";
 export * from "./support";
 export * from "./content";
 export * from "./settings";
+export * from "./coupons";
+export * from "./sap";
+export * from "./forms";
 export * from "./system";

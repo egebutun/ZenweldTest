@@ -1,16 +1,12 @@
 import { sql } from "drizzle-orm";
 import { bigint, check, index, inet, integer, jsonb, pgTable, text } from "drizzle-orm/pg-core";
-import { oneOf, timestamps, tstz } from "./columns";
-import { products } from "./catalog";
+import { oneOf, tstz } from "./columns";
 import { users } from "./users";
 
 /**
- * FORMLAR, E-POSTALAR, KAYIT NUMARALARI VE DEGISIKLIK KAYDI
+ * E-POSTALAR, KAYIT NUMARALARI VE DEGISIKLIK KAYDI
  * (docs/VERITABANI.md › 11, KARARLAR K-81)
  */
-
-/** Bugun yalnizca e-postaya giden formlar. */
-export const FORM_TYPES = ["bayilik", "iletisim", "urun-destek", "welders-club"] as const;
 
 /** Zenweld'e giden e-postalarin turleri (IS-KURALLARI › Form e-postalari). */
 export const EMAIL_TYPES = [
@@ -26,35 +22,6 @@ export const EMAIL_TYPES = [
   "siparis",
   "iade",
 ] as const;
-
-export const formSubmissions = pgTable(
-  "form_submissions",
-  {
-    id: text("id").primaryKey(),
-    type: text("type").notNull(),
-    status: text("status").notNull().default("new"),
-    name: text("name"),
-    email: text("email"),
-    phone: text("phone"),
-    city: text("city"),
-    companyName: text("company_name"),
-    subject: text("subject"),
-    message: text("message"),
-    /** Urun destek sorusunda */
-    productId: text("product_id").references(() => products.id, { onDelete: "set null" }),
-    /** Giris yapmissa */
-    userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
-    /** Forma ozgu diger alanlar */
-    data: jsonb("data").$type<Record<string, string>>().notNull().default({}),
-    adminNote: text("admin_note"),
-    ...timestamps(),
-  },
-  (t) => [
-    index("form_submissions_type").on(t.type, t.createdAt.desc()),
-    check("form_submissions_type", oneOf(t.type, FORM_TYPES)),
-    check("form_submissions_status", oneOf(t.status, ["new", "read", "done"])),
-  ],
-);
 
 /** E-postalarin alicilari, tur basina. Satir yoksa varsayilan adres (SUPPORT_EMAIL). */
 export const emailRecipients = pgTable(
