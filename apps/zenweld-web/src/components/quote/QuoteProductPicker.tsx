@@ -10,7 +10,8 @@ import { resolveVariant } from "@/lib/variants";
 import { VariantPicker } from "@/components/product/VariantPicker";
 
 /**
- * TEKLIF AL › URUN SECICI
+ * TEKLIF AL URUN LISTESI (Teklif Al'in 2. adimi). Ana sayfadaki "Ürün
+ * Seçici" testiyle (/urun-secici) ilgisi yoktur.
  *
  * Ekipmanlar'in gruplari (Lazer Makineleri, Kaynak Makineleri) sekme, alt
  * kategorileri cip olarak gorunur; secili alt kategorinin modelleri

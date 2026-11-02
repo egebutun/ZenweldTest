@@ -343,7 +343,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] 2. adımda ürünler Lazer Makineleri / Kaynak Makineleri ve onların
       türlerine ayrılmış, fotoğraflı listelenir. Grupların "N model"
       toplamı Ekipmanlar'daki yayındaki ürün sayısıdır; başka bölümün ürünü
-      yoktur (panelde bir ürünü Aksesuarlar'a taşıyınca seçiciden çıkar).
+      yoktur (panelde bir ürünü Aksesuarlar'a taşıyınca listeden çıkar).
 - [ ] Modele tıklayınca altında panel açılır. Seçenekli modelde
       (ör. Ultimate 405 MTS) Su Soğutmalı seçilince fotoğraf su soğutmalı
       hale, ürün kodu o kombinasyonun koduna geçer.

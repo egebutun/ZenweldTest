@@ -19,7 +19,7 @@ async function toProducts(page: Page): Promise<void> {
   await page.getByRole("button", { name: "İleri" }).click();
 }
 
-/** Urun seciciden grup, tur ve model secer. */
+/** Teklif Al urun listesinden grup, tur ve model secer. */
 async function pickModel(page: Page, group: RegExp, category: RegExp, model: string): Promise<void> {
   await page.getByRole("tab", { name: group }).click();
   await page.getByRole("button", { name: category }).click();
@@ -96,8 +96,8 @@ test("seçenekli modelde seçenek seçilir; fotoğraf ve kod seçime göre deği
   expect(problems).toEqual([]);
 });
 
-test("seçicide Ekipmanlar'daki yayındaki ürünlerin hepsi var, başka bölümün ürünü yok", async ({ page, problems }) => {
-  // KARARLAR K-79: bir ekipman Aksesuarlar'a tasininca seciciden cikar.
+test("Teklif Al ürün listesinde Ekipmanlar'daki yayındaki ürünlerin hepsi var, başka bölümün ürünü yok", async ({ page, problems }) => {
+  // KARARLAR K-79: bir ekipman Aksesuarlar'a tasininca listeden cikar.
   await page.goto("/teklif-al");
   await changeDb(page, (d) => {
     d.products.find((p) => p.slug === "ultimate-255-mma")!.section = "aksesuarlar";

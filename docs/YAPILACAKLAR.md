@@ -745,14 +745,28 @@ ifadesi çıkarılmalı.
 **Sahibin kararı (2026-10-27, KARARLAR K-69):** Ürün Seçici bütün ürünler
 kesinleşince, en son ele alınacak. Bugün ürünlerin tamamı kesin olmadığı için
 sağlıklı sonuç vermiyor; şu anki sonuçları önemli değil, ona göre ayar
-yapılmaz. O zaman karar verilecekler:
+yapılmaz.
 
-1. Hangi soruların sorulacağı ve her sorunun seçenekleri.
-2. Süzme (eşleştirme) mantığı: hangi cevabın hangi ürünleri getireceği.
+Ürün Seçici, ana sayfadaki "Hangi kaynak makinesi size uygun?" bandının açtığı
+testtir (`/urun-secici`). Teklif Al sayfasındaki ürün listesiyle ilgisi yoktur.
+
+**Nasıl kurulacak (sahibin kararı, 2026-11-02, K-69 eki):**
+
+- Sorular ve cevapları panelden yönetilir: yeni soru eklenebilir, var olan
+  sorular ve cevapları düzenlenebilir (bugün sorular kodda sabit).
+- Ürünler panelde cevaplara eşlenir (kategori filtrelerindeki eşleme
+  tablosuna benzer bir ekran).
+- Test sonucunda, verilen cevaplara eşlenmiş ürünler gelir.
+
+O zaman karar verilecekler:
+
+1. İlk soru seti: hangi soruların sorulacağı ve her sorunun cevapları.
+2. Cevapların birleşmesi: birden çok soruda verilen cevaplara göre hangi
+   ürünlerin geleceği (ör. hepsine eşlenmiş ürünler mi, en çok eşleşen
+   ürünler önce mi); hiçbir ürün eşleşmezse ne gösterileceği.
 3. Lazer makinelerinin (lazer kaynak, temizleme, markalama) Ürün Seçici'de
    nasıl yer alacağı; bugünkü sorular (çelik, paslanmaz, alüminyum, kesim)
    lazer makinelerine uymuyor.
-4. Bu bilgilerin ürünlere panelden mi girileceği.
 
 **Kaynak yöntemi ve elektrik bilgisi:** Ürün Seçici bugün bu iki bilgiye
 bakıyor (1. adım malzeme → ürünün kaynak yöntemleri, 3. adım elektrik →

@@ -1041,8 +1041,10 @@ gelinir.
    - Hata mesajları: "Lütfen firma ve iletişim bilgilerindeki zorunlu alanları
      doldurun.", "Lütfen geçerli bir e-posta adresi girin."
 2. **Ürünler** (KARARLAR K-79, K-80):
-   - **Ürün Seçin:** "Makine grubunu ve türünü seçin, sonra modele tıklayın.
-     Seçenekli modelde seçenekler altta açılır."
+   - **Ürün Seçin** (Teklif Al ürün listesi; ana sayfadaki
+     [Ürün Seçici](#9-ürün-seçici) testinden ayrıdır): "Makine grubunu ve
+     türünü seçin, sonra modele tıklayın. Seçenekli modelde seçenekler altta
+     açılır."
      - **Gruplar:** Ekipmanlar'ın grupları (Lazer Makineleri, Kaynak
        Makineleri) yan yana düğmelerdir; her birinde "N model" yazar. Sıra
        menüdekiyle aynıdır; açılışta ilk grup seçilidir.
@@ -1052,7 +1054,7 @@ gelinir.
        listelenir (kategorideki "Önerilen" sırayla). Altında seçenekli
        modelde "Seçenekli", seçeneksizde ürün kodu yazar; listeye eklenmiş
        modelde "✓ Listede" çıkar.
-     - Seçicide Ekipmanlar'daki yayındaki ürünlerin hepsi vardır; diğer
+     - Bu listede Ekipmanlar'daki yayındaki ürünlerin hepsi vardır; diğer
        bölümlerin ürünleri yoktur. Ürünü olmayan tür ve grup görünmez.
    - **Seçilen model:** Modele tıklayınca altında bir panel açılır (aynı
      modele tekrar tıklayınca kapanır; telefonda sayfa panele kayar):

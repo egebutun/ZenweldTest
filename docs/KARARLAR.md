@@ -177,6 +177,11 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   da test edilirken sonuçlarına göre ayar yapılmaz.
 - **Neden:** Ürünlerin tamamı henüz kesin değil; sorular ve eşleştirme ancak
   bütün ürünler belli olunca doğru kurulabilir.
+- **Ek (2026-11-02):** Ürün Seçici kurulurken sorular ve cevapları panelden
+  yönetilecek: yeni soru eklenebilecek, var olan sorular ve cevapları
+  düzenlenebilecek. Ürünler panelde cevaplara eşlenecek; test sonucunda
+  verilen cevaplara eşlenmiş ürünler gelecek. İşin kendisi yine en son
+  yapılacak.
 - **Ayrıntı:** [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün Seçici ve arama.
 
 ### K-72 · Ürün kodu SAP kodudur; seçenek ve sayfa kodları
@@ -439,7 +444,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   2026-10-19 (mobil menüden kaldırıldı), 2026-10-22 (kesin karar)
 - **Karar:**
   - Ürün sayfasında "Teklif Al" ya da "teklife ekle" düğmesi **yoktur ve
-    olmayacaktır.** Ürünler yalnızca Teklif Al sayfasındaki ürün seçiciden
+    olmayacaktır.** Ürünler yalnızca Teklif Al sayfasındaki ürün listesinden
     eklenir (K-80).
   - Mobil menüde Teklif Al bağlantısı yoktur (masaüstüyle aynı). Teklif Al'a
     anasayfadaki bantlardan gelinir.
@@ -460,9 +465,10 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 ### K-80 · Teklif Al'da ürün grup ve türe göre, seçenekler modelden sonra seçilir
 - **Tarih:** 2026-11-02
 - **Karar:**
-  - Tek bir uzun açılır liste yerine ürünler Ekipmanlar'ın gruplarına (Lazer
-    Makineleri, Kaynak Makineleri) ve bunların alt kategorilerine ayrılmış,
-    fotoğraflı olarak listelenir.
+  - Teklif Al ürün listesinde, tek bir uzun açılır liste yerine ürünler
+    Ekipmanlar'ın gruplarına (Lazer Makineleri, Kaynak Makineleri) ve
+    bunların alt kategorilerine ayrılmış, fotoğraflı olarak listelenir. Bu
+    liste ana sayfadaki Ürün Seçici testinden (K-69) ayrıdır.
   - Seçenekli üründe kişi önce modeli seçer; seçenekler altında açılır.
     Seçime göre fotoğraf ve ürün kodu ürün sayfasındaki gibi değişir.
 - **Neden:** Bütün kombinasyonların yazı olarak alt alta dizildiği liste
@@ -825,7 +831,7 @@ Konuşulmuş ama kararı bekleyen ya da sonraya bırakılmış işler. Ayrıntı
 | Konu | Durum |
 |---|---|
 | **Teklif Al metinleri** | Sayfadaki metinler kurumsal müşteriye hitap ediyor; herkese hitap edecek şekilde yeniden yazılacak. Müdür kararı bekleniyor |
-| **Ürün Seçici ve arama** | Bütün ürünler kesinleşince, en son yeniden tasarlanacak (K-69); eski yöntem verisi o zaman silinecek |
+| **Ürün Seçici ve arama** | Bütün ürünler kesinleşince, en son yeniden tasarlanacak (K-69); sorular panelden yönetilecek, ürünler cevaplara eşlenecek (K-69 eki); eski yöntem verisi o zaman silinecek |
 | **İlgili ürünler** | Öneri mantığı (sepet birlikteliği, aynı kategoride çok satanlar, makineye uygun aksesuarlar) sonra kurulacak |
 | **Kategori filtrelerinin değerleri** | Şebeke Voltajı, Amper ve Güç (W) değerleri ile Model Serisi dışındaki filtrelerin ürünlere eşlenmesi ürünler kesinleşince (K-76) |
 | **Çerez ayarları ve analitik** | Analiz aracı seçilince ayarlar penceresi doldurulacak |
