@@ -237,7 +237,6 @@ Kategori ↔ tanım bağı (`category_options`) kategorinin `optionIds` alanıd�
 | `highlights[]` | metin[] | Öne çıkan özellikler; ilk 3'ü menü kartında |
 | `options` | seçenekler? | Bkz. aşağıda |
 | `filterValues` | nesne? | Kategori filtrelerindeki değerleri: `{ <filtre kimliği>: [<değer kimliği>, …] }`. Bir filtrede birden çok değer olabilir; seçenekli üründe değer ürünün tamamı içindir. Kayıtta kategoride olmayan filtre ve değer silinir. Backend'de `product_filter_values` (`productId`, `filterId`, `valueId`) |
-| `quotable` | evet/hayır | Teklif Al listesinde çıkar mı |
 | `isNew` | evet/hayır | "Yeni" rozeti |
 | `order` | sayı? | Kategori içindeki sıra; boş olan sona, eşitler ada göre |
 | `manualUrl` | metin? | Kullanım kılavuzu PDF'i |
@@ -838,7 +837,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 71).
+- `packages/data/src/index.ts`'tedir (bugün 72).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**

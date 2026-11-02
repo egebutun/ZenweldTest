@@ -1044,7 +1044,8 @@ gelinir.
    - **Teklif Listeniz:** Ürün adı, altında seçenekler ve ürün kodu ("Torç
      Uzunluğu: 5 m · ZW30100000024-5M"), adet kutusu (en az 1), **Çıkar**.
    - **Ürün ekleme:** "Ürün Ekle…" listesinden seçip **Ekle**.
-     - Listede panelde "Teklife açık" işaretli, yayındaki ürünler vardır.
+     - Listede Ekipmanlar'daki yayındaki ürünlerin hepsi vardır; diğer
+       bölümlerin ürünleri yoktur (KARARLAR K-79).
      - Seçenekli ürün her kombinasyonuyla ayrı satırdır ("Ultimate 250 MTC
        MIG Gazaltı Kaynak Makinesi — 5 m (ZW30100000024-5M)"; iki seçenekte
        "— Su Soğutmalı · 8 m (…)");

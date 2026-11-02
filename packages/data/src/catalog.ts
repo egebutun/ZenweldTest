@@ -17,6 +17,14 @@ export function categoryHref(category: Pick<Category, "section" | "group" | "slu
   return `/${category.section}/${category.group}/${category.slug}`;
 }
 
+/**
+ * Teklif yalnizca Ekipmanlar'daki urunler icin istenir (KARARLAR K-79):
+ * Teklif Al listesinde Ekipmanlar'daki yayindaki urunlerin hepsi cikar.
+ */
+export function isQuotable(product: Pick<Product, "active" | "section">): boolean {
+  return product.active && product.section === "ekipmanlar";
+}
+
 /** Markasi yazilmamis urunun markasi. */
 export const DEFAULT_BRAND = "Zenweld";
 

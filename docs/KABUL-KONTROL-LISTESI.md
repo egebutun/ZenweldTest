@@ -340,8 +340,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Yetkili, geçerli e-posta ve telefon olmadan 2. adıma geçilmez;
       ziyaretçi ve kurumsal üyede firma ünvanı zorunlu, bireysel üyede
       isteğe bağlı.
-- [ ] Ürün listesinde yalnızca yayında ve "Teklife açık" ürünler vardır;
-      seçenekli ürün her seçeneğiyle ayrı satırdır ("Ultimate 250 MTC MIG
+- [ ] Ürün listesinde Ekipmanlar'daki yayındaki ürünlerin hepsi vardır;
+      başka bölümün ürünü yoktur (panelde bir ürünü Aksesuarlar'a taşıyınca
+      listeden çıkar). Seçenekli ürün her seçeneğiyle ayrı satırdır ("Ultimate 250 MTC MIG
       Gazaltı Kaynak Makinesi — 5 m (ZW30100000024-5M)").
 - [ ] Ürün eklenmeden teklif gönderilmez.
 - [ ] Vadeli ödemede vade 30/45/60/90/120 gün (varsayılan 60).

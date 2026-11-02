@@ -220,8 +220,6 @@ export interface Product {
    * urune baglidir, secenege degil.
    */
   filterValues?: ProductFilterValues;
-  /** Teklif Al akisina acik mi */
-  quotable: boolean;
   isNew: boolean;
   /**
    * Kategori icindeki sira (panelde "Sıra"): kategori sayfasindaki "Önerilen"

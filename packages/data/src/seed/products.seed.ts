@@ -323,7 +323,6 @@ machineSeeds.forEach((seed) => {
     highlights: content?.highlights ?? [...phrases, "12 ay garanti", "Yetkili bayi ve servis ağı"].slice(0, 3),
     ...(options ? { options } : {}),
     ...(series ? { filterValues: { "model-serisi": [series] } } : {}),
-    quotable: true,
     isNew: false,
     manualUrl: "#",
     warrantyMonths: 12,

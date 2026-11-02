@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { SESSION, expect, test } from "./yardimci";
+import { SESSION, changeDb, expect, readDb, test } from "./yardimci";
 
 /**
  * TEKLIF AL VE KAYIT NUMARASI (docs/IS-KURALLARI.md › 8 ve 17, KARARLAR K-64)
@@ -9,13 +9,17 @@ import { SESSION, expect, test } from "./yardimci";
  */
 test.use({ storageState: SESSION.admin });
 
-async function sendQuote(page: Page): Promise<string> {
-  await page.goto("/teklif-al");
+async function fillContact(page: Page): Promise<void> {
   const inputs = page.locator("main input");
   await inputs.nth(0).fill("Deneme Firma");
   await inputs.nth(1).fill("Deneme Kişi");
   await inputs.nth(3).fill("deneme@ornek.com");
   await inputs.nth(4).fill("05551112233");
+}
+
+async function sendQuote(page: Page): Promise<string> {
+  await page.goto("/teklif-al");
+  await fillContact(page);
   await page.getByRole("button", { name: "İleri" }).click();
   const products = page.locator("main select").first();
   await products.selectOption({ index: 1 });
@@ -46,13 +50,28 @@ test("teklif gönderilir; en son teklif silinse de numarası yeniden verilmez", 
 
 test("ürün eklenmeden teklif gönderilmez", async ({ page }) => {
   await page.goto("/teklif-al");
-  const inputs = page.locator("main input");
-  await inputs.nth(0).fill("Deneme Firma");
-  await inputs.nth(1).fill("Deneme Kişi");
-  await inputs.nth(3).fill("deneme@ornek.com");
-  await inputs.nth(4).fill("05551112233");
+  await fillContact(page);
   for (let i = 0; i < 3; i++) await page.getByRole("button", { name: "İleri" }).click();
   await page.getByRole("button", { name: "Teklif Talebini Gönder" }).click();
   await expect(page.locator("main")).toContainText("Teklif listeniz boş");
   await expect(page.locator("main")).not.toContainText("Teklif talebiniz alındı");
+});
+
+test("listede Ekipmanlar'daki yayındaki ürünlerin hepsi var, başka bölümün ürünü yok", async ({ page, problems }) => {
+  // KARARLAR K-79: bir ekipman Aksesuarlar'a tasininca listeden cikar.
+  await page.goto("/teklif-al");
+  await changeDb(page, (d) => {
+    d.products.find((p) => p.slug === "ultimate-255-mma")!.section = "aksesuarlar";
+  });
+  const db = await readDb(page);
+  const moved = db.products.find((p) => p.slug === "ultimate-255-mma")!;
+  const equipment = db.products.filter((p) => p.active && p.section === "ekipmanlar");
+
+  await fillContact(page);
+  await page.getByRole("button", { name: "İleri" }).click();
+  const choices = await page.locator("main select").first().locator("option").allInnerTexts();
+  const listed = (name: string) => choices.some((c) => c.startsWith(`${name} (`) || c.startsWith(`${name} — `));
+  expect(listed(moved.name)).toBe(false);
+  for (const p of equipment) expect(listed(p.name), p.name).toBe(true);
+  expect(problems).toEqual([]);
 });

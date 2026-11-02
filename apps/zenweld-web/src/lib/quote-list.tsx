@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { findVariant, productOptionsView } from "@zenweld/data";
+import { findVariant, isQuotable, productOptionsView } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { resolveVariant } from "./variants";
 
@@ -20,7 +20,8 @@ import { resolveVariant } from "./variants";
  * sayfasinda bu listeye ekler; satis ekibi teklifi ayrica hazirlar.
  *
  * Liste tarayicida saklanir. Icindeki bir urun sonradan yayindan
- * kaldirilirsa listede gorunmez ve teklife eklenmez. Secenekli urunde
+ * kaldirilir ya da Ekipmanlar disina tasinirsa (isQuotable, KARARLAR K-79)
+ * listede gorunmez ve teklife eklenmez. Secenekli urunde
  * varyant da saklanir; ayni urunun farkli varyantlari ayri satirdir.
  * Varyanti artik bulunmayan satir da (sepetteki gibi) gorunmez.
  */
@@ -62,7 +63,7 @@ export function QuoteListProvider({ children }: { children: ReactNode }) {
   const items = useMemo(
     () =>
       stored.flatMap((i): QuoteListLine[] => {
-        const product = db.products.find((p) => p.id === i.productId && p.active);
+        const product = db.products.find((p) => p.id === i.productId && isQuotable(p));
         if (!product) return [];
         const view = productOptionsView(product, db.optionDefinitions);
         if (view && !findVariant(view, i.variantId)) return [];

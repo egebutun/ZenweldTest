@@ -13,6 +13,7 @@ import type {
   WarrantyRecord,
 } from "../types";
 import { salePriceExVat } from "../discount";
+import { isQuotable } from "../catalog";
 import { productOptionsView } from "../variants";
 import { CARD_PROGRAMS, cardInstallments, installmentQuote, posCommission } from "../checkout";
 import { products } from "./products.seed";
@@ -109,6 +110,8 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
 
   const sellable = products.filter((p) => p.active && p.priceExVat > 0);
   const machines = sellable.filter((p) => p.section === "ekipmanlar");
+  // Teklif yalnizca Ekipmanlar'daki urunler icin (KARARLAR K-79).
+  const quotable = products.filter(isQuotable);
 
   /* ---------------- Uyeler ---------------- */
   const users: User[] = Array.from({ length: 64 }, (_, i) => {
@@ -301,7 +304,7 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
             ? weighted<QuoteStatus>([["new", 10], ["reviewing", 40], ["sent", 50]])
             : weighted<QuoteStatus>([["reviewing", 8], ["sent", 22], ["won", 38], ["lost", 32]]);
       const items = Array.from({ length: between(1, 3) }, () => {
-        const p = pick(machines.length ? machines : sellable);
+        const p = pick(quotable);
         return { productId: p.id, productName: p.name, quantity: between(2, 12) };
       });
       const last = pick(LAST);

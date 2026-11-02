@@ -446,6 +446,17 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   ekleyebilirsiniz" yazıyor; Teklif Al metinleriyle birlikte değişecek
   (bkz. [13](#13-henüz-karar-verilmemiş-konular)).
 
+### K-79 · Teklif yalnızca Ekipmanlar için
+- **Tarih:** 2026-11-02
+- **Karar:**
+  - Teklif yalnızca Ekipmanlar'daki ürünler için istenir. Teklif Al
+    listesinde Ekipmanlar'daki **yayındaki ürünlerin hepsi** çıkar;
+    Güvenlik, Aksesuarlar ve Dolgu Metalleri'ndeki ürünler çıkmaz.
+  - Panelde ürün bazında "Teklife açık" işareti yoktur; ürünün teklife
+    girip girmediğini bölümü belirler.
+  - Tarayıcıda saklanan teklif listesindeki bir ürün Ekipmanlar dışına
+    taşınırsa listede görünmez ve teklife eklenmez.
+
 ### K-27 · Müşteriye otomatik iade yok
 - **Karar:** Sipariş iptalinde para iadesi panelden yapılmaz; banka ya da
   ödeme kuruluşu üzerinden ayrıca yapılır.

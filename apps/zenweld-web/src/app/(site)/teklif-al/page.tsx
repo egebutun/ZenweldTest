@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Check, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { createQuote, listProducts, useDatabase } from "@zenweld/store";
-import { productOptionsView, type PaymentPreference, type Product, type User } from "@zenweld/data";
+import { isQuotable, productOptionsView, type PaymentPreference, type Product, type User } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
@@ -55,12 +55,13 @@ export default function QuotePage() {
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  // Secenekli urun her varyantiyla ayri satir olarak listelenir; teklif
-  // varyantin kodu ve adiyla gider.
+  // Yalnizca Ekipmanlar'daki yayindaki urunler (isQuotable). Secenekli urun
+  // her varyantiyla ayri satir olarak listelenir; teklif varyantin kodu ve
+  // adiyla gider.
   const quotableChoices = useMemo(
     () =>
       listProducts(db)
-        .filter((p) => p.quotable)
+        .filter(isQuotable)
         .flatMap((p): { value: string; label: string; product: Product; variantId?: string }[] => {
           const view = productOptionsView(p, db.optionDefinitions);
           return view
