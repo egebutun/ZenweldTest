@@ -31,6 +31,7 @@ ilgili belge **aynı commit'te** güncellenir:
 | Sitedeki davranış | `docs/WEBSITE-KULLANIM.md` |
 | Panel ekranı | `docs/ADMIN-KULLANIM.md` |
 | Veri alanı ya da kayıt türü | `docs/VERI-MODELI.md` |
+| Veritabanı tablosu ya da kolonu | `docs/VERITABANI.md` |
 | Hesap ve kurallar (fiyat, taksit, stok, kod, link…) | `docs/IS-KURALLARI.md` |
 | Dış servisler ve ortam değişkenleri | `docs/ENTEGRASYONLAR.md` |
 | Sahibin verdiği yeni karar | `docs/KARARLAR.md` (yeni K numarası ve tarihle) |

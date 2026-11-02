@@ -797,11 +797,18 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     betikler, örnek veriyi yükleme, testler); bu sırada site ve panel
     tarayıcıdaki veriyle çalışmaya devam eder.
   - Bugün yalnızca e-postaya giden formlar veritabanında da saklanır:
-    Bayilik Başvurusu ve iletişim formları (İletişim; ürün sayfasındaki
-    destek sorusu ve Welders Club'ın da dahil olması sahibinin onayını
-    bekliyor).
+    Bayilik Başvurusu, İletişim, ürün sayfasındaki destek sorusu ve Welders
+    Club.
   - Panelde yapılan her değişiklik kaydedilir: kim, ne zaman, hangi kayıtta,
-    eski ve yeni değer.
+    eski ve yeni değer. Panele giriş ve çıkışlar da yazılır. Kayıtlar 2 yıl
+    saklanır.
+  - Form e-postaları bugün hepsi info@zenweld.com'a gider; ileride forma
+    göre farklı adreslere gidebilir. Alıcılar e-posta türü başına
+    tutulur.
+  - Gönderilen her e-postanın sitenin hangi özelliği (Welders Club, Servis
+    Talebi…) ve sayfası için gönderildiği kaydedilir.
+  - Kişisel verilerin saklama süresi avukata sorulacak (VERITABANI.md ›
+    Açık sorular).
 - **Ayrıntı:** Tablolar ve kolonlar [VERITABANI.md](VERITABANI.md).
 
 ---

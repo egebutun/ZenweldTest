@@ -4,8 +4,8 @@ Bu dosya sitenin ve panelin sunucu veritabanını tablo tablo anlatır: her
 tablonun kolonları, türleri, hangi kolonun zorunlu ya da benzersiz olduğu,
 tabloların birbirine nasıl bağlandığı ve bir kayıt silinince ne olduğu.
 
-**Durum (2026-11-02):** Taslak. Tablolar henüz kurulmadı; site ve panel
-bugün verileri tarayıcıda tutuyor. Bu liste onaylanınca geçiş betikleri
+**Durum (2026-11-02):** Liste sahibince onaylandı; tablolar henüz
+kurulmadı, site ve panel bugün verileri tarayıcıda tutuyor. Geçiş betikleri
 (SQL) bu dosyaya göre yazılacak (KARARLAR K-81). Betikler yazıldıktan sonra
 tabloların asıl tanımı koddadır (`packages/db`); bu dosya aynı commit'te
 güncel tutulur.
@@ -32,7 +32,7 @@ güncel tutulur.
 8. [Servis talepleri, garantiler, yorumlar](#8-servis-talepleri-garantiler-yorumlar)
 9. [İçerik](#9-içerik)
 10. [Ayarlar ve ödeme](#10-ayarlar-ve-ödeme)
-11. [Formlar, kayıt numaraları ve değişiklik kaydı](#11-formlar-kayıt-numaraları-ve-değişiklik-kaydı)
+11. [Formlar, e-postalar, kayıt numaraları ve değişiklik kaydı](#11-formlar-e-postalar-kayıt-numaraları-ve-değişiklik-kaydı)
 12. [Tablo listesi](#12-tablo-listesi)
 13. [Açık sorular](#13-açık-sorular)
 
@@ -114,6 +114,8 @@ tabloya birebir gider. Farklı olanlar:
 | Favoriler tarayıcıda | `favourites` | Üye başka cihazda da görsün |
 | Oturum tarayıcıda | `sessions` | Oturum sunucuda tutulmalı (YAPILACAKLAR › Üyelik) |
 | İletişim, bayilik, Welders Club, ürün destek formları yalnızca e-posta | `form_submissions` | Sahibinin kararı (K-81) |
+| Bütün form e-postaları tek adrese gidiyor (`SUPPORT_EMAIL`, varsayılan info@zenweld.com) | `email_recipients` | Alıcı ileride forma göre değişebilir (K-81) |
+| Gönderilen e-postaların kaydı yok | `email_log` | Hangi sayfa ve özellik için gönderildiği tutulur (K-81) |
 | Panel değişikliklerinin kaydı yok | `audit_log` | Sahibinin kararı (K-81) |
 
 Tarayıcıda kalacaklar (sepet, teklif listesi, çerez tercihi):
@@ -816,7 +818,7 @@ Koddaki: `settings.shop.pos`.
 
 ---
 
-## 11. Formlar, kayıt numaraları ve değişiklik kaydı
+## 11. Formlar, e-postalar, kayıt numaraları ve değişiklik kaydı
 
 ### `form_submissions` — yalnızca e-postaya giden formlar (yeni)
 
@@ -842,13 +844,72 @@ gitmese de alınır.
 | `product_id` | text | → `products` (boşalır) | Ürün destek sorusunda |
 | `user_id` | text | → `users` (boşalır) | Giriş yapmışsa |
 | `data` | jsonb | zorunlu | Forma özgü diğer alanlar (bayilikte vergi dairesi/no, faaliyet alanı, sektördeki yıl, çalıştığı markalar, showroom, servis kabiliyeti; ürün sorusunda ürün kodu ve sayfa adresi) |
-| `email_sent_at` | timestamptz | | E-posta gittiyse |
 | `admin_note` | text | | |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
-Bülten kaydı bu tabloya girmez; bülten servisi kararını bekliyor
-(YAPILACAKLAR › Bülten ve İYS). Panelde bu kayıtları gösterecek ekran
-siteyi veritabanına bağlarken eklenecek.
+E-postanın gidip gitmediği `email_log`'dadır. Bülten kaydı bu tabloya
+girmez; bülten servisi kararını bekliyor (YAPILACAKLAR › Bülten ve İYS).
+Panelde bu kayıtları gösterecek ekran siteyi veritabanına bağlarken
+eklenecek.
+
+### `email_recipients` — e-postaların alıcıları (yeni)
+
+Sahibinin kararı (K-81): bugün bütün form e-postaları info@zenweld.com'a
+gider; ileride forma göre farklı adreslere gidebilir. Alıcılar e-posta türü
+başına tutulur; başlangıçta hepsi info@zenweld.com'dur.
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `type` | text | anahtar | E-posta türü (aşağıda) |
+| `recipients` | text[] | zorunlu; en az bir geçerli adres | Alıcı adresleri |
+| `updated_at` | timestamptz | zorunlu | |
+| `updated_by` | text | → `users` (boşalır) | |
+
+Bir türün satırı yoksa e-posta sunucudaki varsayılan adrese
+(`SUPPORT_EMAIL`, yoksa info@zenweld.com) gider. Alıcıları değiştirecek
+panel ekranı siteyi veritabanına bağlarken eklenecek.
+
+**E-posta türleri** (bugün Zenweld'e giden e-postalar; IS-KURALLARI › Form
+e-postaları):
+
+| `type` | Sitedeki özellik |
+|---|---|
+| `iletisim` | İletişim formu |
+| `bayilik` | Bayilik Başvurusu |
+| `welders-club` | Welders Club katılım |
+| `urun-destek` | Ürün sayfasındaki destek sorusu |
+| `teklif` | Teklif Al |
+| `servis` | Servis Talebi |
+| `garanti` | Garanti Kaydı |
+| `yorum` | Ürün değerlendirmesi |
+| `uye` | Üye Ol |
+| `siparis` | Ödeme (sipariş) |
+| `iade` | İade talebi |
+
+Müşteriye gidecek e-postalar (sipariş onayı, şifre sıfırlama…) kurulunca
+türleri bu listeye eklenir.
+
+### `email_log` — gönderilen e-postalar (yeni)
+
+Sahibinin kararı (K-81): gönderilen her e-postanın sitenin hangi özelliği ve
+sayfası için gönderildiği tutulur.
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | bigint | anahtar; sırayla artar | |
+| `type` | text | zorunlu | E-posta türü (yukarıdaki liste): hangi özellik için gönderildiği |
+| `source_path` | text | | Formun gönderildiği sayfa (`/welders-club`, `/urun/ultimate-250-mtc`) |
+| `entity_type`, `entity_id` | text | | Bağlı kayıt (ör. `quotes` + teklifin kimliği, `form_submissions` + kaydın kimliği) |
+| `recipients` | text[] | zorunlu | Gönderildiği adresler |
+| `reply_to` | text | | Yanıtla denince gidilecek adres (formu dolduran) |
+| `subject` | text | zorunlu | Konu satırı |
+| `status` | text | zorunlu; `sent`, `failed`, `skipped` | `skipped`: e-posta servisinin anahtarı tanımlı değil ya da bot tuzağı |
+| `provider_message_id` | text | | E-posta servisinin verdiği numara |
+| `error` | text | | Hata mesajı |
+| `created_at` | timestamptz | zorunlu | |
+
+E-postanın metni saklanmaz (kişisel veri; içerik zaten bağlı kayıtta
+duruyor). Aranır: türe, bağlı kayda ve tarihe göre.
 
 ### `record_counters` — kayıt numaraları
 
@@ -871,16 +932,18 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `at` | timestamptz | zorunlu | |
 | `actor_user_id` | text | → `users` (boşalır) | İşlemi yapan yönetici |
 | `actor_name` | text | zorunlu | Kopya; yönetici silinse de okunur |
-| `action` | text | zorunlu; `create`, `update`, `delete` | |
-| `entity_type` | text | zorunlu | Tablo adı (`products`, `orders`…) |
-| `entity_id` | text | zorunlu | |
+| `action` | text | zorunlu; `create`, `update`, `delete`, `login`, `logout` | Panele giriş ve çıkışlar da yazılır |
+| `entity_type` | text | zorunlu | Tablo adı (`products`, `orders`…); giriş/çıkışta `users` |
+| `entity_id` | text | zorunlu | Girişte yöneticinin kendi kimliği |
 | `entity_label` | text | | Okunur ad (ürün adı, sipariş no) |
 | `changes` | jsonb | | Değişen alanlar: `{ alan: [eski, yeni] }`; silmede kaydın son hali |
 | `ip` | inet | | |
 
 - Kayıt, değişiklikle aynı işlemde yazılır; değişiklik yapılıp kaydı
   düşmemesi olamaz.
-- Kayıtlar sonradan değiştirilemez ve silinemez (yalnızca eklenir).
+- Kayıtlar sonradan değiştirilemez ve elle silinemez (yalnızca eklenir).
+- **2 yıl** saklanır; daha eski kayıtlar her gün kendiliğinden silinir
+  (sahibinin kararı, K-81).
 - Şifre özeti ve oturum bilgisi `changes`'e yazılmaz.
 - Aranır: kayda göre (`entity_type`, `entity_id`) ve tarihe göre.
 
@@ -898,20 +961,15 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | Servis, garanti, yorum | `service_requests`, `warranties`, `reviews` | 3 |
 | İçerik | `blog_posts`, `news`, `events`, `faqs`, `sales_reps`, `legal_pages`, `about_page`, `page_seo`, `document_pages`, `documents` | 10 |
 | Ayarlar ve ödeme | `settings`, `payment_pos`, `bank_accounts` | 3 |
-| Sistem | `form_submissions`, `record_counters`, `audit_log` | 3 |
-| **Toplam** | | **52** |
+| Sistem | `form_submissions`, `email_recipients`, `email_log`, `record_counters`, `audit_log` | 5 |
+| **Toplam** | | **54** |
 
 ---
 
 ## 13. Açık sorular
 
-Sahibine sorulacak; cevaba göre bu dosya güncellenir.
-
-1. **Değişiklik kaydı ne kadar saklansın?** Öneri: 2 yıl.
-2. **Panele giriş ve çıkışlar da değişiklik kaydına yazılsın mı?** Öneri:
-   evet; kim, ne zaman, hangi adresten girdiği görülür.
-3. **"İletişim formları" kapsamı:** İletişim, ürün sayfasındaki destek
-   sorusu ve Welders Club dahil edildi. Biri dışarıda kalacaksa söylenmeli.
-4. **Kişisel verilerin saklama süresi (KVKK):** Sipariş faturasındaki T.C.
-   kimlik no, form kayıtları ve silinen üyenin geçmiş kayıtları ne kadar
-   tutulacak? Hukuk ile konuşulacak (YAPILACAKLAR › Hesap silme).
+1. **Kişisel verilerin saklama süresi (KVKK):** Sipariş faturasındaki T.C.
+   kimlik no, form kayıtları, gönderilen e-postaların kaydı ve silinen
+   üyenin geçmiş kayıtları ne kadar tutulacak? Sahibi avukata soracak
+   (YAPILACAKLAR › Hesap silme). Cevaba göre bu dosyaya saklama süreleri ve
+   kendiliğinden silme eklenir.

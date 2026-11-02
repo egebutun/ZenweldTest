@@ -478,12 +478,15 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
 1. Bütün kayıt türleri sunucu veritabanına (PostgreSQL, KARARLAR K-81)
    taşınmalı. Kayıt türleri, alanlar, ilişkiler ve silme kuralları:
    [VERI-MODELI.md](VERI-MODELI.md); tablolar ve kolonlar:
-   [VERITABANI.md](VERITABANI.md) (taslak, onay bekliyor).
+   [VERITABANI.md](VERITABANI.md) (liste onaylandı).
    - Aşama 1 (sürüyor): tablo ve kolon listesi → geçiş betikleri (SQL) →
      yerel PostgreSQL ve komutlar → örnek veriyi yükleme → testler. Site bu
      sırada tarayıcıda çalışmaya devam eder.
    - Sonraki aşamalar: veri erişimi (sunucu), üyelik ve oturum, siteyi ve
      paneli veritabanına bağlama, dosya deposu, canlıya hazırlık.
+   - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları
+     (bayilik, iletişim, ürün destek, Welders Club), e-posta alıcıları (tür
+     başına), gönderilen e-postalar ve değişiklik kaydı (KARARLAR K-81).
 2. Okuma ve yazma tek yerde toplanmış (`packages/store/src/database.ts`); bu
    katman ve `packages/store/src/repo/` fonksiyonları sunucu API'sine
    bağlanmalı.
