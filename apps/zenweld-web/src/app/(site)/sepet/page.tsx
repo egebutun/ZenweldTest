@@ -69,6 +69,11 @@ export default function CartPage() {
                     <div className="mt-0.5 text-sm text-zw-grey-600">{line.variantLabel}</div>
                   )}
                   <div className="mt-0.5 text-xs text-zw-grey-500">{line.sku}</div>
+                  {!line.inStock && (
+                    <div className="mt-1 inline-block rounded-[3px] bg-zw-ink px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">
+                      {t.product.outOfStock}
+                    </div>
+                  )}
                   <div className="mt-1 text-xs text-zw-grey-500">
                     {t.cart.unitPrice}: {formatPrice(line.unitIncVat)}
                   </div>
@@ -101,11 +106,20 @@ export default function CartPage() {
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <OrderSummary totals={cart.totals}>
-            <Link href="/odeme">
-              <Button size="lg" fullWidth>
-                {t.cart.checkout}
-              </Button>
-            </Link>
+            {cart.hasOutOfStock ? (
+              <>
+                <Button size="lg" fullWidth disabled>
+                  {t.cart.checkout}
+                </Button>
+                <p className="mt-2 text-center text-sm font-semibold text-zw-red-600">{t.cart.outOfStockBlock}</p>
+              </>
+            ) : (
+              <Link href="/odeme">
+                <Button size="lg" fullWidth>
+                  {t.cart.checkout}
+                </Button>
+              </Link>
+            )}
             <p className="mt-2 text-center text-xs text-zw-grey-500">{t.cart.loginToCheckout}</p>
             <Link
               href="/"

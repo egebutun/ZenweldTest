@@ -45,6 +45,7 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 17. [Kayıt numaraları](#17-kayıt-numaraları)
 18. [Form e-postaları](#18-form-e-postaları)
 19. [Kategori filtreleri](#19-kategori-filtreleri)
+20. [Zenweld depo stoğu](#20-zenweld-depo-stoğu)
 
 ---
 
@@ -798,3 +799,50 @@ Kompakt seçilse de liste değişmez.
 
 Kod: `packages/data/src/filters.ts`; sayfada
 `apps/zenweld-web/src/components/product/CategoryListing.tsx`.
+
+---
+
+## 20. Zenweld depo stoğu
+
+Sahibinin kararı (KARARLAR K-82). Kod: `packages/data/src/warehouse.ts`.
+
+**Kaynak:** Zenweld deposunun stoğu SAP'tan gelir. SAP ekibinin hazırladığı
+"kullanılabilir stok" görünümü SAP kalem kodu başına miktar verir; sunucu
+bunu düzenli aralıklarla okuyup kendi veritabanına yazar (`warehouse_stock`).
+Sayfa açılırken SAP'a gidilmez. Panelden değiştirilmez. Bugün demo
+verisinde örnek stok vardır (Demo notu).
+
+**Ürünün SAP kalemi:**
+
+- Seçeneksiz ürün: ürün kodu SAP kodudur.
+- Seçenekli ürün: seçeneğin kodundan torç uzunluğu (`-3M`) ve ara paket
+  uzunluğu (`-AP5M`) ekleri atılınca SAP kodu kalır (KARARLAR K-72).
+  - **Örnek:** `ZW30100000027-3M-AP5M` → `ZW30100000027`.
+  - Yalnızca torç ya da ara paket uzunluğu farklı olan seçenekler aynı SAP
+    kalemini paylaşır ve aynı stoğu gösterir.
+  - Kendi SAP kodu olan seçenek (ör. soğutma ya da güç) kendi stoğunu
+    gösterir.
+- Kodlar boşlukları atılıp büyük harfe çevrilerek eşleştirilir.
+- SAP'ta karşılığı olmayan kod (ör. geçici kod, K-75) stokta sayılmaz.
+
+**Stokta mı:**
+
+- Seçili seçeneğin SAP kalemindeki miktar 0'dan büyükse stoktadır.
+- Ürün kartında ve panelde ürün, seçeneklerinden en az biri stoktaysa
+  stokta sayılır. Toplam stok, ürünün SAP kalemlerinin toplamıdır (paylaşılan
+  kalem bir kez sayılır).
+- **Örnek:** Ultimate 405 MTS'nin hava soğutmalı kalemi 2, su soğutmalı
+  kalemi 0 ise: kartta STOKTA YOK yazmaz, panelde "2 adet" ve "1/2 SAP
+  kalemi stoksuz" yazar; ürün sayfasında Su Soğutmalı seçilince STOKTA YOK.
+
+**Sepet ve sipariş:**
+
+- Stokta olmayan ürün ya da seçenek sepete eklenmez.
+- Sepete eklendikten sonra stoğu biten satırla ödemeye geçilmez ve sipariş
+  verilmez; satır sepetten çıkarılınca ya da stok gelince devam edilir.
+- Stok, sepetteki adetle karşılaştırılmaz: stok 0'dan büyükse istenen adet
+  sepete eklenebilir.
+- Teklif Al stoktan bağımsızdır; stokta olmayan ürün için de teklif
+  istenebilir.
+- Bayi ve online satıcı stokları ayrıdır ([11](#11-bayi-ve-online-satıcı-stoğu));
+  Zenweld deposunda olmayan ürünün stoktaki bayileri gösterilmeye devam eder.

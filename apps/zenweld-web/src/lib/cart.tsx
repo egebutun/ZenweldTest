@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { cartTotals, findVariant, productOptionsView, salePriceExVat, type CartTotals, type Product } from "@zenweld/data";
-import { getShopSettings, useDatabase, useNow } from "@zenweld/store";
+import { getShopSettings, isProductInStock, useDatabase, useNow } from "@zenweld/store";
 import { priceWithVat } from "@zenweld/utils";
 import { activeVariant, resolveVariant } from "./variants";
 
@@ -23,6 +23,10 @@ import { activeVariant, resolveVariant } from "./variants";
  * urun ve secilen varyanti artik bulunmayan satir sepette gorunmez.
  *
  * Sepet tarayicida saklanir; uye girisi yalnizca odeme adiminda istenir.
+ *
+ * Zenweld deposunda (SAP) olmayan urun ya da secenek sepete eklenmez; sepete
+ * eklendikten sonra stogu biten satir isaretlenir ve odemeye gecilemez
+ * (KARARLAR K-82).
  */
 
 interface StoredLine {
@@ -47,6 +51,8 @@ export interface CartLine {
   unitIncVat: number;
   totalExVat: number;
   totalIncVat: number;
+  /** Zenweld deposunda var mi; yoksa odemeye gecilemez */
+  inStock: boolean;
 }
 
 interface CartValue {
@@ -56,7 +62,9 @@ interface CartValue {
   /** Toplam urun adedi (baslikta gosterilir) */
   count: number;
   totals: CartTotals;
-  /** Secenekli urunde varyant verilmezse ilk varyant eklenir. */
+  /** Stokta olmayan satir var mi (varsa odemeye gecilemez) */
+  hasOutOfStock: boolean;
+  /** Secenekli urunde varyant verilmezse ilk varyant eklenir. Stokta olmayan eklenmez. */
   add: (productId: string, variantId?: string, quantity?: number) => void;
   setQuantity: (key: string, quantity: number) => void;
   remove: (key: string) => void;
@@ -166,6 +174,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             unitIncVat,
             totalExVat: unitExVat * s.quantity,
             totalIncVat: unitIncVat * s.quantity,
+            inStock: isProductInStock(product, s.variantId, db),
           },
         ];
       }),
@@ -177,6 +186,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const product = db.products.find((p) => p.id === productId);
       if (!product) return;
       const chosen = activeVariant(productOptionsView(product, db.optionDefinitions), variantId)?.id;
+      if (!isProductInStock(product, chosen, db)) return;
       const key = lineKey(productId, chosen);
       update((prev) =>
         prev.some((l) => lineKey(l.productId, l.variantId) === key)
@@ -216,6 +226,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       lines,
       count: lines.reduce((sum, l) => sum + l.quantity, 0),
       totals: cartTotals({ lines }, getShopSettings(db)),
+      hasOutOfStock: lines.some((l) => !l.inStock),
       add,
       setQuantity,
       remove,

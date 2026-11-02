@@ -371,6 +371,22 @@ Bayiler sitenin üyesi değildir; sitede bayi girişi yoktur.
 - Sitede "stokta" sayılmak için: adet > 0 ve satır, stok geçerlilik
   süresinden eski değil ([Ayarlar](#stok-ayarı)).
 
+**Zenweld depo stoğu (SAP)** (`warehouseStock` → `warehouse_stock`,
+KARARLAR K-82):
+
+| Alan | Tür | Açıklama |
+|---|---|---|
+| `sapItemCode` | metin | SAP kalem kodu (boşluksuz, büyük harf) |
+| `itemName` | metin? | SAP'taki kalem adı |
+| `quantity` | sayı | Kullanılabilir stok |
+| `syncedAt` | tarih-saat | SAP'tan okunduğu an |
+
+- Ürüne ve seçeneğe SAP kodu üzerinden bağlanır; kimlikle bağlı değildir
+  ([IS-KURALLARI.md › Zenweld depo stoğu](IS-KURALLARI.md#20-zenweld-depo-stoğu)).
+- Panelden değiştirilmez. Demoda örnek veridir: her SAP kalemine örnek adet;
+  ForceArc 280 MMA ve UV-5 ile Ultimate 405 MTS'nin su soğutmalı kalemi
+  stoksuzdur (`packages/data/src/seed/warehouse.seed.ts`).
+
 ---
 
 ## 5. Üyeler ve adresler
@@ -838,7 +854,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 **Veri sürümü (`DB_VERSION`):**
 
-- `packages/data/src/index.ts`'tedir (bugün 72).
+- `packages/data/src/index.ts`'tedir (bugün 73).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -854,6 +870,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 | Seçenek tanımı | 4 | Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu (temsili), Tepe Güç |
 | Bayi / online satıcı | 29 / 9 | |
 | Stok satırı (bayi / satıcı) | ~2.750 / ~415 | Veri ilk kurulduğunda o günün tarihiyle üretilir |
+| Zenweld depo stoğu (SAP kalemi) | 50 | 3'ü stoksuz (yukarıda) |
 | Üye | 69 | 1 yönetici, 46 bireysel, 22 kurumsal |
 | Sipariş / teklif | 133 / 48 | |
 | Servis talebi / garanti | 34 / 54 | |

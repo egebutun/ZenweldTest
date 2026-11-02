@@ -74,7 +74,7 @@ ilgili belge **aynı commit'te** güncellenir:
     PostgreSQL 18.
 - **Testler:** `tests/unit`, `docs/IS-KURALLARI.md`'deki kuralları ve
   örnekleri dener; `tests/e2e` sitenin ve panelin tarayıcıda çalıştığını
-  dener (sayfa taraması, ödeme, seçenekler, filtreler, teklif, belgeler, garanti, hesap, iade). Bir kural ya da
+  dener (sayfa taraması, ödeme, seçenekler, filtreler, teklif, belgeler, garanti, hesap, iade, depo stoğu). Bir kural ya da
   ekran değişince ilgili test de aynı commit'te güncellenir.
 - **Doğrulama:** Her değişiklikten sonra typecheck, lint, test ve build
   çalıştırılır; davranış değiştiyse tarayıcı testleri de.

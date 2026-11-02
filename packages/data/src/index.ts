@@ -8,6 +8,7 @@ export * from "./catalog";
 export * from "./variants";
 export * from "./filters";
 export * from "./returns";
+export * from "./warehouse";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";
@@ -40,9 +41,10 @@ import { about, salesReps } from "./seed/company.seed";
 import { legalPages } from "./seed/legal.seed";
 import { documentPages } from "./seed/documents.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
+import { createSampleWarehouseStock } from "./seed/warehouse.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 72;
+export const DB_VERSION = 73;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida
@@ -65,6 +67,7 @@ export function createSeedDatabase(now: number = Date.now()): ZenweldDatabase {
       retailerStock: stock.retailerStock,
       stockImports: stock.stockImports,
       skuAliases: [],
+      warehouseStock: createSampleWarehouseStock(now),
       users: [...users, ...sample.users],
       addresses,
       quotes: [...quotes, ...sample.quotes],

@@ -307,6 +307,9 @@ Katalogda, anasayfa şeritlerinde, aramada, Ürün Seçici'de, favorilerde ve
   - Daha düşük kampanyada "%X indirim" yazar.
   - Panelde "Yeni ürün" işaretliyse "YENİ" yazar. Kampanyalı üründe de
     görünür.
+  - Ürünün hiçbir seçeneği Zenweld deposunda yoksa görselin altında
+    **STOKTA YOK** yazar ([IS-KURALLARI.md › Zenweld depo
+    stoğu](IS-KURALLARI.md#20-zenweld-depo-stoğu)).
 - **Ürün kodu ve adı:** Ad ürün sayfasına gider. Seçenekli üründe kartta kod
   yazmaz; kod seçilen kombinasyona göre ürün sayfasında görünür.
 - **Öne çıkan özellikler:** Panelde girilen ilk 3 özellik. Yer tutucu (lorem
@@ -321,6 +324,8 @@ Katalogda, anasayfa şeritlerinde, aramada, Ürün Seçici'de, favorilerde ve
     seçilir.
   - Seçeneksiz üründe **Sepete Ekle**: 1 adet ekler; düğme **Sepete Git**'e
     dönüşür.
+  - Ürün depoda yoksa düğme yerine devre dışı **STOKTA YOK** yazar; sepete
+    eklenmez.
 
 ---
 
@@ -374,6 +379,10 @@ hiçbiri değilse 404 çıkar.
   - **Sepete Ekle** düğmesi ve favori kalbi.
   - Ekleyince "Sepete eklendi · Sepete Git →" çıkar. Seçili kombinasyon da
     eklenir.
+  - Seçili kombinasyon Zenweld deposunda yoksa adet kutusu ve **Sepete Ekle**
+    yerine devre dışı **STOKTA YOK** düğmesi görünür; sepete eklenmez. Başka
+    bir kombinasyon seçilince (o depodaysa) düğme geri gelir. Stoktaki
+    bayiler ve online satıcılar ayrıca gösterilmeye devam eder.
 - **Stoktaki Bayileri Gör:**
   - Pencerede bayi bulucuyu açar
     ([7. bölüm](#7-bayi-ve-servis-bulucu)).
@@ -652,6 +661,11 @@ Adres: `/sepet`. Sepet için giriş gerekmez; ödeme adımında istenir.
   - Aynı ürünün aynı kombinasyonu tek satırdır; tekrar eklenince adet artar.
     Farklı kombinasyonlar ayrı satırdır.
   - Adet 1–99 arasıdır.
+- **Stokta olmayan satır:** Depoda olmayan ürün sepete hiç eklenmez. Sepete
+  eklendikten sonra stoğu biten satırda **STOKTA YOK** yazar; **Ödemeye Geç**
+  devre dışı kalır ve altında "Sepetinizde stokta olmayan ürün var. Siparişe
+  devam etmek için bu ürünü sepetten çıkarın." yazar. Stok gelince düğme
+  kendiliğinden açılır.
 - **Gizlenen satırlar:** Yayından kaldırılan ürünün satırı ve seçilen
   kombinasyonu artık bulunmayan satır (ör. kombinasyon panelden
   kaldırıldıysa) gösterilmez; başka bir kombinasyon sessizce satılmaz.
@@ -683,6 +697,9 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
   sonra da korunur." **Giriş Yap** düğmesi girişten sonra ödemeye geri döner;
   yanında **Üye Ol** vardır.
 - **Sepet boşsa:** Boş sepet mesajı görünür.
+- **Stokta olmayan ürün:** Sepette depoda olmayan bir satır varsa sipariş
+  verilmez; **Siparişi Tamamla**'ya basınca "Sepetinizde stokta olmayan
+  ürün var…" uyarısı çıkar.
 
 ### 1. Teslimat Adresi
 

@@ -58,7 +58,8 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       (hata, 404, "demo" yazısı, İngilizce, güvenlik politikası), güvenlik
       başlıkları, seçenekli ürünün kartla satın alınması, iki seçenekli
       üründe kombinasyon seçimi, sepette adet sınırı, teklif gönderme ve numarası, belge yükleme/açma/indirme,
-      garanti bitiş günü, şifre değiştirme ve hesap silme, iade talebi.
+      garanti bitiş günü, şifre değiştirme ve hesap silme, iade talebi,
+      depo stoğu (STOKTA YOK, sepet ve ödeme engeli, panel sütunu).
 - [ ] Veritabanı: boş bir PostgreSQL'de `npm run db:migrate` hatasız biter
       ve 63 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
       `npm run db:generate` "No schema changes" der.
@@ -277,6 +278,21 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Yayından kaldırılan ürünün satırı sepette görünmez.
 - [ ] Ürünün sepetteki seçeneği panelden kaldırılınca o satır görünmez.
 - [ ] Sepet sayfa yenilenince ve sekmeler arasında korunur.
+
+**Zenweld depo stoğu** (örnek veride ForceArc 280 MMA ve UV-5 stoksuz,
+Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
+20](IS-KURALLARI.md#20-zenweld-depo-stoğu)):
+
+- [ ] ForceArc 280 MMA'nın kartında görselin altında STOKTA YOK yazar ve
+      kart düğmesi devre dışı STOKTA YOK'tur; ürün sayfasında adet kutusu ve
+      Sepete Ekle yerine devre dışı STOKTA YOK görünür.
+- [ ] Ultimate 405 MTS'nin kartında STOKTA YOK yazmaz; ürün sayfasında Su
+      Soğutmalı seçilince STOKTA YOK, Hava Soğutmalı seçilince Sepete Ekle.
+- [ ] Sepete eklenmiş bir ürünün stoğu 0 olunca sepette STOKTA YOK yazar,
+      Ödemeye Geç devre dışı kalır ve uyarı çıkar; ödeme sayfasında Siparişi
+      Tamamla aynı uyarıyı verir.
+- [ ] Stoksuz ürün için Teklif Al'da teklif istenebilir; stoktaki bayiler
+      ürün sayfasında gösterilmeye devam eder.
 
 ---
 
@@ -583,6 +599,10 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 ---
 
 ## 18. Panel: stok
+
+- [ ] Ürünler listesinde Depo Stoğu sütunu vardır; üstte "Depo stoğu SAP'tan
+      okunur, panelden değiştirilmez · son okuma: …" yazar. ForceArc 280 MMA
+      "Stokta yok"; Ultimate 405 MTS "<N> adet" ve "1/2 SAP kalemi stoksuz".
 
 - [ ] Şablon İndir: yayındaki ürünler ve her kombinasyon kendi koduyla ayrı
       satırda.

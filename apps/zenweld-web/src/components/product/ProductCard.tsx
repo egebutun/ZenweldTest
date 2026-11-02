@@ -9,7 +9,7 @@ import {
   salePriceExVat,
   type Product,
 } from "@zenweld/data";
-import { useNow } from "@zenweld/store";
+import { isProductInStock, useDatabase, useNow } from "@zenweld/store";
 import { Badge, FlashFrame, ProductImage } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
@@ -29,6 +29,9 @@ export function ProductCard({
   const favourites = useFavourites();
 
   const now = useNow();
+  const db = useDatabase();
+  // Zenweld deposunda (SAP) hicbir secenegi yoksa "STOKTA YOK" (KARARLAR K-82).
+  const inStock = isProductInStock(product, undefined, db);
 
   const highlights = productHighlights(product);
   // Fiyat ve kampanya kurallari tek yerden gelir (packages/data/src/discount.ts).
@@ -75,6 +78,11 @@ export function ProductCard({
               <Badge tone={discount > 0 ? "dark" : "red"}>{t.product.new}</Badge>
             )}
           </div>
+          {!inStock && (
+            <span className="absolute inset-x-0 bottom-0 bg-zw-ink/85 py-1.5 text-center text-xs font-bold uppercase tracking-wide text-white">
+              {t.product.outOfStock}
+            </span>
+          )}
         </div>
       </Link>
 
@@ -133,7 +141,7 @@ export function ProductCard({
           <div className="mt-1 text-xs text-zw-grey-500">
             {t.product.priceIncVat} · {formatPrice(sale)} {t.product.priceExVat}
           </div>
-          <CardCartButton product={product} />
+          <CardCartButton product={product} inStock={inStock} />
         </div>
       </div>
     </div>
@@ -151,12 +159,21 @@ export function ProductCard({
  * secenekli urunde (3 m / 5 m torc gibi) once secim yapilsin diye urun
  * sayfasina gidilir.
  */
-function CardCartButton({ product }: { product: Product }) {
+function CardCartButton({ product, inStock }: { product: Product; inStock: boolean }) {
   const t = useT();
   const cart = useCart();
   const [added, setAdded] = useState(false);
   const className =
     "mt-3 flex w-full items-center justify-center gap-2 rounded-[4px] py-2.5 text-center text-xs font-bold uppercase tracking-wide text-white transition-colors";
+
+  // Depoda yok: sepete eklenmez (KARARLAR K-82).
+  if (!inStock) {
+    return (
+      <span aria-disabled="true" className={`${className} cursor-not-allowed bg-zw-grey-300 text-zw-grey-700`}>
+        {t.product.outOfStock}
+      </span>
+    );
+  }
 
   if (product.options?.variants.length) {
     return (

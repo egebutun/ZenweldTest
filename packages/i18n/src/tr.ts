@@ -191,6 +191,7 @@ export const tr = {
     model: "Model",
     discount: "indirim",
     flashDeal: "Flaş İndirim",
+    outOfStock: "STOKTA YOK",
     campaignEnds: "Kampanya {date} tarihinde sona eriyor",
     normalPrice: "Normal fiyat",
     new: "YENİ",
@@ -514,6 +515,7 @@ export const tr = {
     freeShippingReached: "Kargonuz ücretsiz!",
     checkout: "Ödemeye Geç",
     loginToCheckout: "Ödeme adımında üye girişi istenir.",
+    outOfStockBlock: "Sepetinizde stokta olmayan ürün var. Siparişe devam etmek için bu ürünü sepetten çıkarın.",
     items: "{count} ürün",
   },
   checkout: {

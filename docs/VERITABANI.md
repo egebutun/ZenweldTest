@@ -415,7 +415,8 @@ Sahibinin kararı (K-82): Zenweld deposunun stoğu SAP'tan okunur. SAP ekibi
 model başına "kullanılabilir stok" görünümü (view) hazırlıyor. Sunucu bu
 görünümü düzenli aralıklarla okuyup `warehouse_stock`'a yazar; site ve panel
 stoğu buradan okur, sayfa açılırken SAP'a gidilmez (hız, K-83). Ürün ve
-seçenek kodlarıyla eşleşmesi ve "stokta yok" kuralı: KARARLAR K-82.
+seçenek kodlarıyla eşleşmesi ve "stokta yok" kuralı: [IS-KURALLARI.md ›
+Zenweld depo stoğu](IS-KURALLARI.md#20-zenweld-depo-stoğu).
 
 `warehouse_stock`:
 

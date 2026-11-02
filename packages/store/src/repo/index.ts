@@ -24,3 +24,4 @@ export * from "./documents";
 export * from "./categories";
 export * from "./options";
 export * from "./returns";
+export * from "./warehouse";

@@ -225,6 +225,8 @@ export default function CheckoutPage() {
   const legalContext = orderLegalContext(draft, new Date().toISOString(), t);
 
   const validate = (): string | null => {
+    // Sepete eklendikten sonra stogu biten urun siparise giremez (K-82).
+    if (cart.hasOutOfStock) return t.cart.outOfStockBlock;
     if (!addressComplete(shipping)) return t.checkout.required;
     if (!addressComplete(billingAddress)) return t.checkout.required;
     if (type === "individual") {

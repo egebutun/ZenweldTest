@@ -2,17 +2,18 @@
 
 import { useMemo, useState } from "react";
 import { Eye, EyeOff, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { byProductOrder, isDiscountActive, salePriceExVat, type TopLevelSection } from "@zenweld/data";
-import { deleteProduct, saveProduct, useDatabase, useNow } from "@zenweld/store";
+import { byProductOrder, isDiscountActive, productSapCodes, salePriceExVat, type TopLevelSection } from "@zenweld/data";
+import { deleteProduct, productWarehouseQuantity, saveProduct, useDatabase, useNow, warehouseSyncedAt } from "@zenweld/store";
 import { Badge, Button, CampaignBadge, Input, ProductImage, Select } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { SECTION_TITLES, groupCategories, sectionGroups } from "@/lib/catalog";
 import Link from "next/link";
-import { formatPrice, priceWithVat } from "@zenweld/utils";
+import { formatDateTime, formatPrice, priceWithVat } from "@zenweld/utils";
 
 export default function AdminProductsPage() {
   const db = useDatabase();
   const now = useNow();
+  const syncedAt = warehouseSyncedAt(db);
   const [query, setQuery] = useState("");
   const [section, setSection] = useState("");
 
@@ -71,6 +72,11 @@ export default function AdminProductsPage() {
         </Select>
       </div>
 
+      <p className="mb-2 text-xs text-zw-grey-500">
+        Depo stoğu SAP'tan okunur, panelden değiştirilmez
+        {syncedAt ? ` · son okuma: ${formatDateTime(syncedAt)}` : ""}.
+      </p>
+
       <div className="overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white">
         <table className="w-full text-sm">
           <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
@@ -79,6 +85,7 @@ export default function AdminProductsPage() {
               <th className="px-4 py-3">Kategori</th>
               <th className="px-4 py-3">Sıra</th>
               <th className="px-4 py-3">Fiyat</th>
+              <th className="px-4 py-3">Depo Stoğu</th>
               <th className="px-4 py-3">Durum</th>
               <th className="px-4 py-3 text-right">İşlem</th>
             </tr>
@@ -127,6 +134,9 @@ export default function AdminProductsPage() {
                     </div>
                   </td>
                   <td className="px-4 py-2.5">
+                    <WarehouseCell product={p} />
+                  </td>
+                  <td className="px-4 py-2.5">
                     <div className="flex flex-wrap gap-1">
                       <CampaignBadge discount={p.discount} now={now} />
                       {!p.active && <Badge tone="grey">Yayında değil</Badge>}
@@ -168,5 +178,27 @@ export default function AdminProductsPage() {
         </table>
       </div>
     </>
+  );
+}
+
+/**
+ * Zenweld depo stogu (SAP, KARARLAR K-82): butun seceneklerin toplami.
+ * Secenekli urunde bazi SAP kalemleri stoksuzsa ayrica yazar.
+ */
+function WarehouseCell({ product }: { product: Parameters<typeof productSapCodes>[0] }) {
+  const db = useDatabase();
+  const total = productWarehouseQuantity(product, undefined, db);
+  if (total <= 0) return <Badge tone="dark">Stokta yok</Badge>;
+  const codes = productSapCodes(product);
+  const empty = codes.filter((code) => productWarehouseQuantity({ sku: code }, undefined, db) <= 0).length;
+  return (
+    <div>
+      <div className="font-semibold">{total.toLocaleString("tr-TR")} adet</div>
+      {empty > 0 && (
+        <div className="text-xs text-zw-red-600">
+          {empty}/{codes.length} SAP kalemi stoksuz
+        </div>
+      )}
+    </div>
   );
 }

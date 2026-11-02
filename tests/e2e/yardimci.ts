@@ -78,6 +78,7 @@ export async function changeDb(page: Page, change: (db: ZenweldDatabase) => void
  * konusu degildir): Deneme Soğutma (Hava / Su) ve Deneme Uzunluk (3 m / 4 m).
  * Varyantlar: Hava · 3 m (ZW-E2E-H3), Hava · 4 m (ZW-E2E-H4), Su · 4 m
  * (ZW-E2E-S4); "Su · 3 m" satilmaz. Su kombinasyonunun kendi fotografi var.
+ * Uc kombinasyonun da Zenweld deposunda (SAP) stogu vardir.
  */
 export const TEST_PHOTO = {
   hava: "/images/categories/mma-ortulu-elektrod-kaynak-makineleri.svg",
@@ -120,5 +121,20 @@ export async function addTestOptions(page: Page, slug: string): Promise<void> {
       optionIds: ["e2e-sogutma", "e2e-uzunluk"],
       variants: [row("hava", "3-m", "ZW-E2E-H3"), row("hava", "4-m", "ZW-E2E-H4"), row("su", "4-m", "ZW-E2E-S4")],
     };
+    const syncedAt = new Date().toISOString();
+    for (const sapItemCode of ["ZW-E2E-H3", "ZW-E2E-H4", "ZW-E2E-S4"]) {
+      db.warehouseStock.push({ sapItemCode, quantity: 5, syncedAt });
+    }
+  });
+}
+
+/** Zenweld depo stogunu (SAP) ayarlar: kalem kodu -> adet; satiri yoksa eklenir. */
+export async function setWarehouseStock(page: Page, quantities: Record<string, number>): Promise<void> {
+  await changeDb(page, (db) => {
+    for (const [sapItemCode, quantity] of Object.entries(quantities)) {
+      const row = db.warehouseStock.find((r) => r.sapItemCode === sapItemCode);
+      if (row) row.quantity = quantity;
+      else db.warehouseStock.push({ sapItemCode, quantity, syncedAt: new Date().toISOString() });
+    }
   });
 }

@@ -375,6 +375,23 @@ export interface StockImportSummary {
   zeroed: number;
 }
 
+/**
+ * Zenweld depo stogu: SAP'in "kullanilabilir stok" gorunumundeki bir kalem
+ * (DB: warehouse_stock, KARARLAR K-82). Sunucu gorunumu duzenli araliklarla
+ * okuyup yazar; demoda ornek veridir. Urun ve secenek kodlariyla eslesmesi:
+ * packages/data/src/warehouse.ts.
+ */
+export interface WarehouseStockRow {
+  /** SAP kalem kodu (bosluksuz, buyuk harf) */
+  sapItemCode: string;
+  /** SAP'taki kalem adi */
+  itemName?: string;
+  /** Kullanilabilir stok */
+  quantity: number;
+  /** SAP'tan okundugu an */
+  syncedAt: string;
+}
+
 /** Bayinin kendi urun kodu -> bizim urunumuz (DB: sku_aliases). */
 export interface SkuAlias {
   sourceId: string;
@@ -1005,6 +1022,8 @@ export interface ZenweldDatabase {
   retailerStock: RetailerStock[];
   stockImports: StockImport[];
   skuAliases: SkuAlias[];
+  /** Zenweld depo stogu (SAP), KARARLAR K-82 */
+  warehouseStock: WarehouseStockRow[];
   users: User[];
   addresses: Address[];
   quotes: Quote[];

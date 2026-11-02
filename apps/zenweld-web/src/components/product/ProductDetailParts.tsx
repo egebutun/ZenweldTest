@@ -147,9 +147,12 @@ export function PriceBlock({ product }: { product: Product }) {
 export function AddToCart({
   product,
   variantId,
+  inStock = true,
 }: {
   product: Product;
   variantId?: string;
+  /** Secili secenek Zenweld deposunda (SAP) var mi; yoksa sepete eklenmez (K-82) */
+  inStock?: boolean;
 }) {
   const t = useT();
   const cart = useCart();
@@ -161,21 +164,29 @@ export function AddToCart({
   return (
     <div>
       <div className="flex gap-2 sm:gap-3">
-        <QuantityStepper value={quantity} onChange={setQuantity} size="lg" />
-        <Button
-          size="lg"
-          fullWidth
-          // Telefonda adet kutusu ve favori butonuyla ayni satira sigsin:
-          // yazi kuculur, cok dar ekranda sepet simgesi gizlenir.
-          className="max-sm:px-3 max-sm:text-sm"
-          leftIcon={<ShoppingCart size={20} className="max-[389px]:hidden" />}
-          onClick={() => {
-            cart.add(product.id, variantId, quantity);
-            setAdded(true);
-          }}
-        >
-          {t.cart.addToCart}
-        </Button>
+        {inStock ? (
+          <>
+            <QuantityStepper value={quantity} onChange={setQuantity} size="lg" />
+            <Button
+              size="lg"
+              fullWidth
+              // Telefonda adet kutusu ve favori butonuyla ayni satira sigsin:
+              // yazi kuculur, cok dar ekranda sepet simgesi gizlenir.
+              className="max-sm:px-3 max-sm:text-sm"
+              leftIcon={<ShoppingCart size={20} className="max-[389px]:hidden" />}
+              onClick={() => {
+                cart.add(product.id, variantId, quantity);
+                setAdded(true);
+              }}
+            >
+              {t.cart.addToCart}
+            </Button>
+          </>
+        ) : (
+          <Button size="lg" fullWidth disabled>
+            {t.product.outOfStock}
+          </Button>
+        )}
         <button
           type="button"
           onClick={() => favourites.toggle(product.id)}
@@ -189,7 +200,7 @@ export function AddToCart({
           <Heart size={22} className={favourite ? "fill-zw-red-600" : ""} />
         </button>
       </div>
-      {added && (
+      {added && inStock && (
         <div className="mt-3 flex items-center justify-between gap-3 rounded-[4px] border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800">
           <span className="flex items-center gap-2">
             <Check size={16} />

@@ -554,11 +554,19 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
   Dolgu Metalleri.
 - **Sıralama:** Sitedeki gibi; menüdeki kategori sırası, kategori içinde
   Sıra numarası.
+- Tablonun üstünde: "Depo stoğu SAP'tan okunur, panelden değiştirilmez ·
+  son okuma: <tarih saat>."
 - **Tablo:**
   - Ürün: kapak görseli, ad, ürün kodu.
   - Kategori, Sıra (yoksa —).
   - Fiyat: KDV dahil normal fiyat; kampanya geçerliyse kampanya fiyatı ve
     üstü çizili normal fiyat. Altta "<KDV hariç> + KDV".
+  - Depo Stoğu: Zenweld deposundaki kullanılabilir stok ("<N> adet";
+    seçenekli üründe bütün seçeneklerin toplamı, aynı SAP kalemini paylaşan
+    seçenekler bir kez sayılır). Seçenekli üründe bazı SAP kalemleri
+    stoksuzsa altında "<x>/<y> SAP kalemi stoksuz" yazar. Hiç yoksa
+    "Stokta yok" rozeti. Stok SAP'tan gelir, panelden değiştirilemez
+    ([IS-KURALLARI.md › Zenweld depo stoğu](IS-KURALLARI.md#20-zenweld-depo-stoğu)).
   - Durum: kampanya rozeti, yayında değilse "Yayında değil".
   - İşlem: göz (**Yayından kaldır** / **Yayına al**, anında), kalem
     (**Düzenle**), çöp (**Sil**).

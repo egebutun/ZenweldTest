@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { notFound } from "next/navigation";
 import { FileText } from "lucide-react";
 import { productOptionsView } from "@zenweld/data";
-import { findProductBySlug, listProducts, movedProductPath, useDatabase } from "@zenweld/store";
+import { findProductBySlug, isProductInStock, listProducts, movedProductPath, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
 import Link from "next/link";
 import { OnlineRetailers } from "@/components/product/OnlineRetailers";
@@ -152,7 +152,11 @@ export function ProductPageClient({ slug }: { slug: string }) {
             <ProductHighlights product={product} />
 
             <div className="mt-6 space-y-3">
-              <AddToCart product={product} variantId={variant.variantId} />
+              <AddToCart
+                product={product}
+                variantId={variant.variantId}
+                inStock={isProductInStock(product, variant.variantId, db)}
+              />
               <WhereToBuyButton product={shown} variantId={variant.variantId} variantLabel={variant.variant?.label} />
             </div>
 
