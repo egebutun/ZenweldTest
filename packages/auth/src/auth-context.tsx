@@ -90,11 +90,11 @@ export function AuthProvider({
   const [userId, setUserId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
+  // roles dizisi her render'da yeniden olusabilir; icerigine bagliyoruz.
+  const rolesKey = roles?.join("|");
   const allowed = useCallback(
-    (u: User) => !roles || roles.includes(u.role),
-    // roles dizisi her render'da yeniden olusabilir; icerigine bagliyoruz.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [roles?.join("|")],
+    (u: User) => !rolesKey || rolesKey.split("|").includes(u.role),
+    [rolesKey],
   );
 
   /** Bu uygulamaya giris yapabilecek hesaplar arasinda e-posta arar. */

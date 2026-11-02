@@ -1,10 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
+ * ISTEK ONCESI KONTROL (Next 16'da "proxy"; eski adi middleware)
+ *
  * Eski urun grubu sayfalari (/ekipmanlar?grup=lazer-makineleri) kaldirildi;
  * "?grup=" iceren her adres 404 doner.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   if (!request.nextUrl.searchParams.has("grup")) return NextResponse.next();
 
   const url = request.nextUrl.clone();

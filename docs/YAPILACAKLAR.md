@@ -208,41 +208,24 @@ birlikte karar verilmeli.
 Proje standart bir Next.js projesidir; Vercel'e bağımlı değildir ve her
 Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
 
-## Next.js 16'ya geçiş (güvenlik)
+## Next.js 16
 
-22 Ekim 2026'da `npm audit fix` ile yama sürümlerine geçildi (next 15.5.28,
-sharp 0.35.5, source-map-js 1.2.2); kritik açık dahil 4 açıktan 2'si kapandı.
+2 Kasım 2026'da Next.js 16.4.4 ve React 19.3'e geçildi (KARARLAR K-87).
 
-- **2 Kasım 2026 güncellemesi:** `npm audit` 20 açık gösterir (19 orta, 1
-  yüksek); hepsi geliştirme araçlarında ya da Next'in kendi postcss'inde:
-  - Next'in postcss'i (2): aşağıda anlatılan, değişmedi.
-  - Kod denetimi (ESLint) zinciri (14): `minimatch` paketine çıkan yeni bir
-    uyarıdan (çok iç içe dosya kalıbıyla yavaşlatma); `braces` uyarısının
-    yerini aldı. Araç yalnızca geliştirirken projenin kendi dosyalarını
-    denetler.
-  - Veritabanı geçiş betiği aracı `drizzle-kit` (4): içindeki eski
-    `esbuild`'in geliştirme sunucusu uyarısı. drizzle-kit bu sunucuyu
-    açmaz; yalnızca geliştiricinin bilgisayarında betik üretirken çalışır,
-    siteye ve sunucuya girmez.
-  - Siteye giden kütüphanelerde yeni açık yok.
-- **Kalan (22 Ekim 2026):** `npm audit` 7 açık gösterir:
-  - **2 tanesi** Next 15'in kendi içine sabitlediği eski postcss (8.4.31)
-    yüzündendir; yalnızca Next 16'ya geçince kapanır. Bu açıklar saldırganın
-    hazırladığı bir CSS dosyası işlenince ortaya çıkar. postcss yalnızca
-    derleme sırasında projenin kendi CSS dosyalarını işler; ziyaretçiden CSS
-    alınmaz.
-  - **5 tanesi** kod denetimi aracının (ESLint, `eslint-config-next`)
-    kullandığı `braces` paketinden gelir (çok iç içe dosya kalıbıyla
-    yavaşlatma). Araç yalnızca geliştirirken ve derlemede projenin kendi
-    dosyalarını denetler; siteye girmez, dışarıdan veri almaz. 22 Ekim 2026
-    itibarıyla düzeltilmiş sürümü yok; çıkınca `npm update` ile alınır.
-- **Risk düşük:** Yedi açığın hiçbiri ziyaretçinin gönderdiği veriyle
-  tetiklenemez.
-- **Karar:** Geçiş ertelendi; canlı sunucu kararıyla birlikte planlı yapılacak.
-- **Nasıl:** Next'in 16 sürüm geçiş kılavuzu adım adım uygulanır (ana sürüm
-  değişikliği; bazı dosya ve ayar adları değişir). Sonra typecheck, build ve
-  [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) baştan uygulanır;
-  `npm audit` temiz çıkmalı.
+- **Güvenlik taraması:** `npm audit --omit=dev` (siteye giden
+  kütüphaneler) 0 açık. Tamamı 20 orta düzey uyarı, hepsi geliştirme
+  araçlarında: kod denetimi (ESLint) zincirindeki `minimatch` ve
+  `drizzle-kit`'in içindeki eski `esbuild`. İkisi de yalnızca
+  geliştiricinin bilgisayarında çalışır, siteye ve sunucuya girmez,
+  dışarıdan veri almaz. Düzeltilmiş sürümleri çıkınca `npm update` ile
+  alınır.
+- **Kapatılan kural:** 16 ile gelen `react-hooks/set-state-in-effect`
+  kuralı kapalı (eslint.config.mjs). Şu bileşenler tarayıcı deposunu sayfa
+  açıldıktan sonra okuyup durumu efektte yazar: sepet, favoriler, teklif
+  listesi, oturum (`packages/auth`), çerez bandı, karşılama penceresi ve
+  birkaç görünüm ayarı. Veri sunucuya taşınırken (Üyelik ve Yazma adımları)
+  bu bileşenler `useSyncExternalStore` ya da sunucu verisiyle yeniden
+  yazılır ve kural yeniden açılır.
 
 ## Güvenlik başlıkları — canlıya çıkarken
 

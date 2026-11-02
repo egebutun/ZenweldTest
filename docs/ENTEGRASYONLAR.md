@@ -293,7 +293,7 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 
 | Kütüphane | Ne için |
 |---|---|
-| Next.js 15, React 19 | Site ve panel |
+| Next.js 16, React 19 | Site ve panel |
 | Tailwind CSS 4 | Biçim |
 | lucide-react | Simgeler |
 | Leaflet | Bayi haritası |
@@ -301,7 +301,7 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 | read-excel-file | Stok dosyası (.xlsx) okuma; CSV kendi okuyucumuzla |
 | @fontsource (Inter, Barlow Condensed) | Yazı tipleri sitenin kendi sunucusundan gelir; Google Fonts'a istek gitmez |
 | sharp | Derleme öncesi logo kırpma |
-| ESLint (eslint-config-next) | Kod denetimi; yalnızca geliştirirken ve derlemede çalışır, siteye girmez |
+| ESLint (eslint-config-next) | Kod denetimi; yalnızca geliştirirken ve derlemeden önce çalışır (`npm run build` önce bunu çalıştırır), siteye girmez |
 | Vitest | İş kuralları testleri; yalnızca geliştirirken çalışır, siteye girmez |
 | Playwright | Tarayıcı testleri; yalnızca geliştirirken çalışır, siteye girmez |
 | Drizzle ORM, pg | Veritabanı tabloları ve bağlantısı (`packages/db`); bugün yalnızca `npm run db:*` komutları ve veritabanı testleri kullanır |

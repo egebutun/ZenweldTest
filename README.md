@@ -44,7 +44,7 @@ oturumları için kurallar: [CLAUDE.md](CLAUDE.md).
 ## Hızlı Başlangıç
 
 ```bash
-# Gereksinim: Node.js 20+ (proje Node 22 ile geliştirildi)
+# Gereksinim: Node.js 20.9+ (proje Node 22 ile geliştirildi)
 npm install
 
 # İsteğe bağlı: e-posta ve site adresi ayarları (boşken de çalışır)
@@ -583,6 +583,6 @@ icon.png ve apple-icon.png yeniden oluşturulur.
 
 ## Teknoloji
 
-Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4 ·
+Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind CSS v4 ·
 MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · Vitest · Playwright · npm workspaces ·
 PostgreSQL 18 + Drizzle ORM (hazırlanıyor)

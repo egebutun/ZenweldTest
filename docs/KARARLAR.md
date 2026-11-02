@@ -908,6 +908,32 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 
 ## 12. Belgeler ve çalışma şekli
 
+
+### K-87 · Next.js 16'ya geçildi
+- **Tarih:** 2026-11-02
+- **Karar:** Site veriyi veritabanından okumaya başlamadan önce Next.js
+  16'ya geçildi (önce canlı sunucu kararına bağlanmıştı; sahibi öne aldı).
+  Sayfaların önbellek düzeni 16'nın yöntemiyle bir kez kurulsun, açık kalan
+  güvenlik uyarıları kapansın.
+- **Sonuç:** Derleme Turbopack ile yapılır. Kod denetimi derlemeden önce
+  çalışır (16'da derleme kendisi çalıştırmıyor). 16'nın getirdiği "efekt
+  içinde setState" kuralı kapalı: sepet, favoriler, teklif listesi, oturum
+  ve çerez tercihi tarayıcı deposundan bilerek sayfa açıldıktan sonra
+  okunur; bu bileşenler veri sunucuya taşınırken yeniden yazılacak
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Next.js 16).
+
+### K-88 · Veri kaynağı ayrı bir ayarla seçilir; önbellek 60 saniye
+- **Tarih:** 2026-11-02
+- **Karar:**
+  - Sitenin veriyi veritabanından mı yoksa bugünkü gibi tarayıcıdan mı
+    okuyacağı ayrı bir ayarla seçilir; bağlantı adresi (`DATABASE_URL`)
+    tanımlı diye kendiliğinden veritabanına geçilmez. Ayar kapalıyken site
+    bugünkü gibi çalışır.
+  - Panel veritabanına yazmaya başlayana kadar veritabanından okunan
+    sayfalar en fazla 60 saniye önbellekte tutulur; veritabanında yapılan
+    bir değişiklik en geç bir dakikada sitede görünür.
+- **Neden:** Geçiş boyunca demo çalışmaya devam etsin; geliştirici
+  bilgisayarında panel ile site birbirinden kopmasın.
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**
@@ -959,5 +985,4 @@ Konuşulmuş ama kararı bekleyen ya da sonraya bırakılmış işler. Ayrıntı
 | **Kurumsal alıcıda cayma hakkı** | Hukukçuyla netleşecek |
 | **Bülten servisi** | Seçilip bağlanacak (İYS kaydıyla) |
 | **Ayrı ürünü seçeneğe dönüştürme ekranı** | Gerçek ürünler girilmeye başlanınca karar verilecek (2026-10-22) |
-| **Next.js 16'ya geçiş** | Ertelendi (2026-10-22); canlı sunucu kararıyla birlikte planlı yapılacak. Kalan 2 güvenlik bulgusunun riski düşük |
 | **Bayi B2B uygulaması** | Ayrı proje; bayi hesaplarını kimin yöneteceği o zaman netleşecek |

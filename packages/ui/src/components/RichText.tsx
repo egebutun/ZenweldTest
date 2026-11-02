@@ -89,7 +89,8 @@ export function RichText({
   const db = useDatabase();
   const style = overrides ?? getRichTextStyle(db);
   const blocks = parse(source);
-  let paragraphSeen = false;
+  // Ilk paragraf giris paragrafi olur (lead) ve ustunde bosluk birakilmaz.
+  const firstParagraph = blocks.findIndex((b) => b.kind === "paragraph");
 
   const vars = {
     "--zw-rt-accent": style.accentColor,
@@ -144,9 +145,8 @@ export function RichText({
           );
         }
 
-        const isLead = lead && !paragraphSeen;
-        const first = !paragraphSeen;
-        paragraphSeen = true;
+        const first = i === firstParagraph;
+        const isLead = lead && first;
         return (
           <p
             key={i}

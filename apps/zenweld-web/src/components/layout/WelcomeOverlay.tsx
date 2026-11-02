@@ -39,6 +39,16 @@ export function WelcomeOverlay() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  const close = () => {
+    setClosing(true);
+    try {
+      window.sessionStorage.setItem(STORAGE_KEY, "1");
+    } catch {
+      /* yok say */
+    }
+    window.setTimeout(() => setOpen(false), 260);
+  };
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -52,16 +62,6 @@ export function WelcomeOverlay() {
       document.body.style.overflow = prev;
     };
   }, [open]);
-
-  const close = () => {
-    setClosing(true);
-    try {
-      window.sessionStorage.setItem(STORAGE_KEY, "1");
-    } catch {
-      /* yok say */
-    }
-    window.setTimeout(() => setOpen(false), 260);
-  };
 
   if (!open) return null;
 
