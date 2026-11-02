@@ -1040,22 +1040,38 @@ gelinir.
    - İsteğe bağlı: Vergi No, Şehir.
    - Hata mesajları: "Lütfen firma ve iletişim bilgilerindeki zorunlu alanları
      doldurun.", "Lütfen geçerli bir e-posta adresi girin."
-2. **Ürünler:**
-   - **Teklif Listeniz:** Ürün adı, altında seçenekler ve ürün kodu ("Torç
-     Uzunluğu: 5 m · ZW30100000024-5M"), adet kutusu (en az 1), **Çıkar**.
-   - **Ürün ekleme:** "Ürün Ekle…" listesinden seçip **Ekle**.
-     - Listede Ekipmanlar'daki yayındaki ürünlerin hepsi vardır; diğer
-       bölümlerin ürünleri yoktur (KARARLAR K-79).
-     - Seçenekli ürün her kombinasyonuyla ayrı satırdır ("Ultimate 250 MTC
-       MIG Gazaltı Kaynak Makinesi — 5 m (ZW30100000024-5M)"; iki seçenekte
-       "— Su Soğutmalı · 8 m (…)");
-       seçeneksiz ürün "Ad (kod)" diye yazar.
-     - Aynı ürün ve kombinasyon tekrar eklenirse adet artar.
-   - **Saklanma (Demo notu):** Liste tarayıcıda tutulur. Yayından kalkan ürün
-     ya da seçeneği artık bulunmayan satır gösterilmez.
-   - **Liste boşsa:** "Teklif listeniz boş. Ürün sayfalarından ürün
-     ekleyebilirsiniz." Bu metin değişecek, çünkü ürün sayfasında teklif
-     düğmesi yok (bkz. [Bilinen durumlar](#25-bilinen-durumlar)).
+2. **Ürünler** (KARARLAR K-79, K-80):
+   - **Ürün Seçin:** "Makine grubunu ve türünü seçin, sonra modele tıklayın.
+     Seçenekli modelde seçenekler altta açılır."
+     - **Gruplar:** Ekipmanlar'ın grupları (Lazer Makineleri, Kaynak
+       Makineleri) yan yana düğmelerdir; her birinde "N model" yazar. Sıra
+       menüdekiyle aynıdır; açılışta ilk grup seçilidir.
+     - **Türler:** Altında seçili grubun alt kategorileri model sayısıyla
+       sıralanır; açılışta ilki seçilidir. Telefonda yana kayar.
+     - **Modeller:** Seçili türün modelleri fotoğraf ve adla satır satır
+       listelenir (kategorideki "Önerilen" sırayla). Altında seçenekli
+       modelde "Seçenekli", seçeneksizde ürün kodu yazar; listeye eklenmiş
+       modelde "✓ Listede" çıkar.
+     - Seçicide Ekipmanlar'daki yayındaki ürünlerin hepsi vardır; diğer
+       bölümlerin ürünleri yoktur. Ürünü olmayan tür ve grup görünmez.
+   - **Seçilen model:** Modele tıklayınca altında bir panel açılır (aynı
+     modele tekrar tıklayınca kapanır; telefonda sayfa panele kayar):
+     - Fotoğraf, tür adı, model adı ve "Ürün kodu".
+     - Seçenekli modelde seçenek düğmeleri ürün sayfasındakiyle aynıdır:
+       açılışta ilk kombinasyon seçilidir; seçime göre fotoğraf ve ürün kodu
+       değişir; diğer seçimlerle satılmayan değer soluk görünür.
+     - Adet (− / +, en az 1) ve **Teklif Listesine Ekle**; eklenince
+       "Teklif listenize eklendi." yazar.
+     - Aynı ürün ve kombinasyon tekrar eklenirse listedeki adet artar.
+   - **Teklif Listeniz (N):** Her satırda seçilen kombinasyonun fotoğrafı,
+     ürün adı, altında seçenekler ve ürün kodu ("Torç Uzunluğu: 5 m ·
+     ZW30100000024-5M"), adet kutusu (en az 1) ve silme düğmesi (Çıkar).
+     Seçenekli ürünün her kombinasyonu ayrı satırdır.
+   - **Saklanma (Demo notu):** Liste tarayıcıda tutulur. Yayından kalkan ya da
+     Ekipmanlar dışına taşınan ürün ve seçeneği artık bulunmayan satır
+     gösterilmez.
+   - **Liste boşsa:** "Teklif listeniz boş. Yukarıdan model seçip listeye
+     ekleyin."
 3. **Ödeme Tercihi** (zorunlu):
    - Seçenekler: **Vadeli Ödeme**, **Çek ile Ödeme**, **Havale / EFT**,
      **Görüşelim**.
@@ -1482,12 +1498,9 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 
 Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 
-- **Teklif Al metinleri:** Teklif listesi boşken "Ürün sayfalarından ürün
-  ekleyebilirsiniz." yazıyor. Ürün sayfasında teklif düğmesi olmayacağına
-  karar verildiği için bu metin değişecek; ürünler Teklif Al sayfasındaki
-  listeden eklenir. Değişiklik, Teklif Al metinlerinin herkese hitap edecek
-  şekilde yeniden yazılmasıyla birlikte yapılacak; o iş müdür kararını
-  bekliyor ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
+- **Teklif Al metinleri:** Sayfanın açıklaması ve anasayfadaki teklif kutusu
+  kurumsal müşteriye hitap ediyor; herkese hitap edecek şekilde yeniden
+  yazılacak. Müdür kararını bekliyor ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
 - **Bülten kaydı:** Hiçbir yere gönderilmez; bülten servisi seçilince
   bağlanacak.
 - **Çerez ayarları penceresi:** Henüz boştur; analiz ve pazarlama

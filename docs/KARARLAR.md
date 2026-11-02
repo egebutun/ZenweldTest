@@ -439,12 +439,12 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   2026-10-19 (mobil menüden kaldırıldı), 2026-10-22 (kesin karar)
 - **Karar:**
   - Ürün sayfasında "Teklif Al" ya da "teklife ekle" düğmesi **yoktur ve
-    olmayacaktır.** Ürünler yalnızca Teklif Al sayfasındaki listeden seçilir.
+    olmayacaktır.** Ürünler yalnızca Teklif Al sayfasındaki ürün seçiciden
+    eklenir (K-80).
   - Mobil menüde Teklif Al bağlantısı yoktur (masaüstüyle aynı). Teklif Al'a
     anasayfadaki bantlardan gelinir.
-- **Açık iş:** Teklif listesi boşken "Ürün sayfalarından ürün
-  ekleyebilirsiniz" yazıyor; Teklif Al metinleriyle birlikte değişecek
-  (bkz. [13](#13-henüz-karar-verilmemiş-konular)).
+  - Boş teklif listesinde ürün sayfasına yönlendiren yazı yoktur (2026-11-02):
+    "Teklif listeniz boş. Yukarıdan model seçip listeye ekleyin."
 
 ### K-79 · Teklif yalnızca Ekipmanlar için
 - **Tarih:** 2026-11-02
@@ -456,6 +456,18 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     girip girmediğini bölümü belirler.
   - Tarayıcıda saklanan teklif listesindeki bir ürün Ekipmanlar dışına
     taşınırsa listede görünmez ve teklife eklenmez.
+
+### K-80 · Teklif Al'da ürün grup ve türe göre, seçenekler modelden sonra seçilir
+- **Tarih:** 2026-11-02
+- **Karar:**
+  - Tek bir uzun açılır liste yerine ürünler Ekipmanlar'ın gruplarına (Lazer
+    Makineleri, Kaynak Makineleri) ve bunların alt kategorilerine ayrılmış,
+    fotoğraflı olarak listelenir.
+  - Seçenekli üründe kişi önce modeli seçer; seçenekler altında açılır.
+    Seçime göre fotoğraf ve ürün kodu ürün sayfasındaki gibi değişir.
+- **Neden:** Bütün kombinasyonların yazı olarak alt alta dizildiği liste
+  okunmuyordu.
+- **Ayrıntı:** [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md) › Teklif Al.
 
 ### K-27 · Müşteriye otomatik iade yok
 - **Karar:** Sipariş iptalinde para iadesi panelden yapılmaz; banka ya da

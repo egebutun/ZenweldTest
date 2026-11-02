@@ -340,10 +340,18 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Yetkili, geçerli e-posta ve telefon olmadan 2. adıma geçilmez;
       ziyaretçi ve kurumsal üyede firma ünvanı zorunlu, bireysel üyede
       isteğe bağlı.
-- [ ] Ürün listesinde Ekipmanlar'daki yayındaki ürünlerin hepsi vardır;
-      başka bölümün ürünü yoktur (panelde bir ürünü Aksesuarlar'a taşıyınca
-      listeden çıkar). Seçenekli ürün her seçeneğiyle ayrı satırdır ("Ultimate 250 MTC MIG
-      Gazaltı Kaynak Makinesi — 5 m (ZW30100000024-5M)").
+- [ ] 2. adımda ürünler Lazer Makineleri / Kaynak Makineleri ve onların
+      türlerine ayrılmış, fotoğraflı listelenir. Grupların "N model"
+      toplamı Ekipmanlar'daki yayındaki ürün sayısıdır; başka bölümün ürünü
+      yoktur (panelde bir ürünü Aksesuarlar'a taşıyınca seçiciden çıkar).
+- [ ] Modele tıklayınca altında panel açılır. Seçenekli modelde
+      (ör. Ultimate 405 MTS) Su Soğutmalı seçilince fotoğraf su soğutmalı
+      hale, ürün kodu o kombinasyonun koduna geçer.
+- [ ] Adet artırılıp **Teklif Listesine Ekle**'ye basınca "Teklif listenize
+      eklendi." yazar; Teklif Listeniz'de satır o kombinasyonun fotoğrafı,
+      seçenekleri ve koduyla görünür; modelde "✓ Listede" çıkar.
+- [ ] Liste boşken "Teklif listeniz boş. Yukarıdan model seçip listeye
+      ekleyin." yazar; ürün sayfasına yönlendiren yazı yoktur.
 - [ ] Ürün eklenmeden teklif gönderilmez.
 - [ ] Vadeli ödemede vade 30/45/60/90/120 gün (varsayılan 60).
 - [ ] Gönderince teklif numarası `TKL-<yıl>-<4 hane>` görünür; liste boşalır;

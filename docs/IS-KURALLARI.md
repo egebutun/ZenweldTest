@@ -383,7 +383,9 @@ teklif Hesabım › Tekliflerim'de görünür.
   Metalleri'ndeki ürünler teklife giremez (KARARLAR K-79).
 - Tarayıcıda saklanan teklif listesindeki ürün yayından kalkar ya da
   Ekipmanlar dışına taşınırsa listede görünmez ve teklife eklenmez.
-- Seçenekli ürün her seçeneğiyle ayrı satırdır.
+- Seçenekli üründe önce model, sonra seçenekler seçilir; teklif listesinde
+  her seçenek kombinasyonu ayrı satırdır. Aynı kombinasyon tekrar eklenirse
+  adet artar.
 - En az bir ürün olmalı; adet en az 1.
 - Ürün sayfasında teklife ekleme düğmesi yoktur ve olmayacaktır (karar,
   [KARARLAR.md](KARARLAR.md)); ürünler yalnızca Teklif Al sayfasındaki

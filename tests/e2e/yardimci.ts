@@ -71,3 +71,54 @@ export async function changeDb(page: Page, change: (db: ZenweldDatabase) => void
   await page.evaluate((json) => localStorage.setItem("zenweld.db.v1", json), JSON.stringify(db));
   await page.reload();
 }
+
+/**
+ * Seceneksiz bir ekipmana yalnizca bu tarayicida gecerli iki deneme secenegi
+ * kurar (ornek veriden bagimsiz; urunlerin gercek secenekleri testlerin
+ * konusu degildir): Deneme Soğutma (Hava / Su) ve Deneme Uzunluk (3 m / 4 m).
+ * Varyantlar: Hava · 3 m (ZW-E2E-H3), Hava · 4 m (ZW-E2E-H4), Su · 4 m
+ * (ZW-E2E-S4); "Su · 3 m" satilmaz. Su kombinasyonunun kendi fotografi var.
+ */
+export const TEST_PHOTO = {
+  hava: "/images/categories/mma-ortulu-elektrod-kaynak-makineleri.svg",
+  su: "/images/products/ultimate-405-mts-su-sogutmali.webp",
+};
+
+export async function addTestOptions(page: Page, slug: string): Promise<void> {
+  await changeDb(page, (db) => {
+    db.optionDefinitions.push(
+      {
+        id: "e2e-sogutma",
+        name: "Deneme Soğutma",
+        values: [
+          { id: "hava", label: "Hava Soğutmalı" },
+          { id: "su", label: "Su Soğutmalı" },
+        ],
+      },
+      {
+        id: "e2e-uzunluk",
+        name: "Deneme Uzunluk",
+        values: [
+          { id: "3-m", label: "3 m" },
+          { id: "4-m", label: "4 m" },
+        ],
+      },
+    );
+    const product = db.products.find((p) => p.slug === slug)!;
+    product.images = [
+      { url: TEST_PHOTO.hava, alt: "Hava" },
+      { url: TEST_PHOTO.su, alt: "Su" },
+    ];
+    const row = (cooling: string, length: string, sku: string) => ({
+      id: `${cooling}_${length}`,
+      values: { "e2e-sogutma": cooling, "e2e-uzunluk": length },
+      sku,
+      priceDeltaExVat: 0,
+      ...(cooling === "su" ? { image: TEST_PHOTO.su } : {}),
+    });
+    product.options = {
+      optionIds: ["e2e-sogutma", "e2e-uzunluk"],
+      variants: [row("hava", "3-m", "ZW-E2E-H3"), row("hava", "4-m", "ZW-E2E-H4"), row("su", "4-m", "ZW-E2E-S4")],
+    };
+  });
+}

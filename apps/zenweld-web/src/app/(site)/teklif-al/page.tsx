@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Check, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Check, Trash2 } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { createQuote, listProducts, useDatabase } from "@zenweld/store";
-import { isQuotable, productOptionsView, type PaymentPreference, type Product, type User } from "@zenweld/data";
-import { Alert, Badge, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
+import { createQuote, useDatabase } from "@zenweld/store";
+import { productOptionsView, type PaymentPreference, type User } from "@zenweld/data";
+import { Alert, Badge, Button, FormRow, Input, ProductImage, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { notifyZenweld } from "@/lib/notify";
@@ -13,6 +13,8 @@ import { useMemberPrefill } from "@/lib/member-prefill";
 import { useQuoteList } from "@/lib/quote-list";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";
+import { QuoteProductPicker } from "@/components/quote/QuoteProductPicker";
+import { resolveVariant } from "@/lib/variants";
 
 const STEPS = 4;
 
@@ -34,8 +36,6 @@ export default function QuotePage() {
   const [step, setStep] = useState(1);
   const [code, setCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // "urunId|secenekId" (seceneksiz urunde "urunId|")
-  const [addChoice, setAddChoice] = useState("");
   const bot = useBotTrap();
 
   const [form, setForm] = useState({
@@ -55,21 +55,13 @@ export default function QuotePage() {
   const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  // Yalnizca Ekipmanlar'daki yayindaki urunler (isQuotable). Secenekli urun
-  // her varyantiyla ayri satir olarak listelenir; teklif varyantin kodu ve
-  // adiyla gider.
-  const quotableChoices = useMemo(
-    () =>
-      listProducts(db)
-        .filter(isQuotable)
-        .flatMap((p): { value: string; label: string; product: Product; variantId?: string }[] => {
-          const view = productOptionsView(p, db.optionDefinitions);
-          return view
-            ? view.variants.map((v) => ({ value: `${p.id}|${v.id}`, label: `${p.name} — ${v.label} (${v.sku})`, product: p, variantId: v.id }))
-            : [{ value: `${p.id}|`, label: `${p.name} (${p.sku})`, product: p, variantId: undefined }];
-        }),
-    [db],
-  );
+  // Listedeki satirin fotografi: secilen secenegin fotografi, yoksa urununki.
+  const lineImage = (productId: string, variantId?: string) => {
+    const product = db.products.find((p) => p.id === productId);
+    if (!product) return undefined;
+    const view = productOptionsView(product, db.optionDefinitions);
+    return resolveVariant(product, view, variantId).image ?? product.images[0]?.url;
+  };
 
   const stepTitles = [t.quote.step1, t.quote.step2, t.quote.step3, t.quote.step4];
 
@@ -255,77 +247,65 @@ export default function QuotePage() {
 
           {step === 2 && (
             <>
-              <h2 className="font-display text-xl font-bold uppercase">{t.quote.yourList}</h2>
+              <div>
+                <h2 className="font-display text-xl font-bold uppercase">{t.quote.pickTitle}</h2>
+                <p className="mt-1 text-sm text-zw-grey-600">{t.quote.pickHint}</p>
+              </div>
+
+              <QuoteProductPicker
+                inList={quoteList.has}
+                onAdd={(product, variantId, quantity) =>
+                  quoteList.add({ productId: product.id, variantId, productName: product.name }, quantity)
+                }
+              />
+
+              <h2 className="pt-4 font-display text-xl font-bold uppercase">
+                {t.quote.yourList}
+                {quoteList.items.length > 0 && (
+                  <span className="ml-2 text-zw-grey-400">({quoteList.items.length})</span>
+                )}
+              </h2>
 
               {quoteList.items.length === 0 ? (
                 <Alert tone="info">{t.quote.emptyList}</Alert>
               ) : (
-                <div className="overflow-hidden rounded-[4px] border border-zw-grey-200">
-                  <table className="w-full text-sm">
-                    <tbody className="divide-y divide-zw-grey-100">
-                      {quoteList.items.map((item) => (
-                        <tr key={item.key}>
-                          <td className="px-4 py-3">
-                            <div className="font-semibold">{item.productName}</div>
-                            <div className="text-xs text-zw-grey-500">
-                              {item.variantLabel && `${item.variantLabel} · `}
-                              {item.sku}
-                            </div>
-                          </td>
-                          <td className="w-28 px-4 py-3">
-                            <input
-                              type="number"
-                              min={1}
-                              value={item.quantity}
-                              onChange={(e) =>
-                                quoteList.setQuantity(item.key, Number(e.target.value))
-                              }
-                              className="w-20 rounded-[3px] border border-zw-grey-300 px-2 py-1"
-                            />
-                          </td>
-                          <td className="w-12 px-4 py-3">
-                            <button
-                              onClick={() => quoteList.remove(item.key)}
-                              aria-label={t.quote.remove}
-                              className="text-zw-grey-400 hover:text-zw-red-600"
-                            >
-                              <Trash2 size={17} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <Select
-                  value={addChoice}
-                  onChange={(e) => setAddChoice(e.target.value)}
-                  className="flex-1"
-                >
-                  <option value="">{t.quote.addProduct}…</option>
-                  {quotableChoices.map((c) => (
-                    <option key={c.value} value={c.value}>
-                      {c.label}
-                    </option>
+                <ul className="divide-y divide-zw-grey-100 overflow-hidden rounded-[4px] border border-zw-grey-200">
+                  {quoteList.items.map((item) => (
+                    <li key={item.key} className="flex items-center gap-3 px-3 py-3 sm:px-4">
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-[3px] bg-zw-grey-50">
+                        <ProductImage
+                          src={lineImage(item.productId, item.variantId)}
+                          alt={item.productName}
+                          label={item.productName}
+                          className="h-full w-full object-contain p-1"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-semibold leading-snug">{item.productName}</div>
+                        <div className="text-xs text-zw-grey-500">
+                          {item.variantLabel && `${item.variantLabel} · `}
+                          {item.sku}
+                        </div>
+                      </div>
+                      <input
+                        type="number"
+                        min={1}
+                        aria-label={t.quote.quantity}
+                        value={item.quantity}
+                        onChange={(e) => quoteList.setQuantity(item.key, Number(e.target.value))}
+                        className="w-16 rounded-[3px] border border-zw-grey-300 px-2 py-1"
+                      />
+                      <button
+                        onClick={() => quoteList.remove(item.key)}
+                        aria-label={t.quote.remove}
+                        className="text-zw-grey-400 hover:text-zw-red-600"
+                      >
+                        <Trash2 size={17} />
+                      </button>
+                    </li>
                   ))}
-                </Select>
-                <Button
-                  variant="outline"
-                  leftIcon={<Plus size={16} />}
-                  onClick={() => {
-                    const choice = quotableChoices.find((c) => c.value === addChoice);
-                    if (choice) {
-                      quoteList.add({ productId: choice.product.id, variantId: choice.variantId, productName: choice.product.name });
-                      setAddChoice("");
-                    }
-                  }}
-                >
-                  {t.common.add}
-                </Button>
-              </div>
+                </ul>
+              )}
             </>
           )}
 
