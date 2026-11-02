@@ -331,6 +331,8 @@ başlangıç verisiyle yeniden kurulur, yani panelde yapılmış değişiklikler
 gider.
 
 Bütün kayıt türleri ve alanları: [docs/VERI-MODELI.md](docs/VERI-MODELI.md).
+Sunucu veritabanının (PostgreSQL) tabloları ve kolonları, taslak:
+[docs/VERITABANI.md](docs/VERITABANI.md).
 
 ---
 

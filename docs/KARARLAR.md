@@ -786,6 +786,24 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   kategori gruba bugün **linkle** bağlı. Panel bunu doğru yönettiği için
   sorun yok; backend'de kimlikle bağlanmalı.
 
+### K-81 · Sunucu veritabanı PostgreSQL; formlar ve panel değişiklikleri de saklanır
+- **Tarih:** 2026-11-02
+- **Karar:**
+  - Sunucu veritabanı **PostgreSQL**'dir. Sunucuyu (AWS, Google Cloud gibi)
+    BT ekibi sağlar; bilgiler gelince işlenir. O zamana kadar geliştirme
+    yerel bir PostgreSQL ile yapılır; tabloları kuran betikler depoda durur
+    ve her ortamda aynı çalışır.
+  - Backend aşama aşama kurulur. İlk aşama veritabanıdır (tablolar,
+    betikler, örnek veriyi yükleme, testler); bu sırada site ve panel
+    tarayıcıdaki veriyle çalışmaya devam eder.
+  - Bugün yalnızca e-postaya giden formlar veritabanında da saklanır:
+    Bayilik Başvurusu ve iletişim formları (İletişim; ürün sayfasındaki
+    destek sorusu ve Welders Club'ın da dahil olması sahibinin onayını
+    bekliyor).
+  - Panelde yapılan her değişiklik kaydedilir: kim, ne zaman, hangi kayıtta,
+    eski ve yeni değer.
+- **Ayrıntı:** Tablolar ve kolonlar [VERITABANI.md](VERITABANI.md).
+
 ---
 
 ## 12. Belgeler ve çalışma şekli

@@ -3,7 +3,8 @@
 Bu dosya sitenin ve panelin sakladığı bütün kayıtları anlatır: hangi kayıt
 türleri var, her birinin alanları, aralarındaki bağlar, hangi alanların
 benzersiz olduğu ve bir kayıt silinince ne olduğu. Backend kurulurken
-tabloların bu dosyaya göre açılması amaçlanır.
+tabloların bu dosyaya göre açılması amaçlanır; tabloların kolon kolon
+karşılığı [VERITABANI.md](VERITABANI.md)'dedir.
 
 İlgili dosyalar:
 

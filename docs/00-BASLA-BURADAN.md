@@ -73,12 +73,13 @@ Diğer temel bilgiler:
 | 2 | [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md) | Sitenin her sayfası ve özelliği |
 | 3 | [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md) | Yönetim panelinin her ekranı |
 | 4 | [VERI-MODELI.md](VERI-MODELI.md) | Saklanan bütün kayıtlar, alanları, birbirleriyle bağlantıları ve silme kuralları |
-| 5 | [IS-KURALLARI.md](IS-KURALLARI.md) | Hesaplar ve kurallar: fiyat, KDV, kampanya, taksit, stok, ürün kodları, linkler, durum akışları, e-postalar |
-| 6 | [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) | Dış sistemler: ödeme, e-posta, harita, barındırma, çerez onayı, güvenlik başlıkları; gerekli ayarların adları |
-| 7 | [STOK.md](STOK.md) | Bayi ve satıcı stok dosyalarının biçimi, eşleşme kuralları, backend'e geçiş |
-| 8 | [KARARLAR.md](KARARLAR.md) | Alınan kararlar ve nedenleri |
-| 9 | [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) | Bir özelliğin doğru çalıştığını doğrulamak için madde madde test listesi |
-| 10 | [YAPILACAKLAR.md](YAPILACAKLAR.md) | Sonraya bırakılan işler ve backend'e geçiş notları |
+| 5 | [VERITABANI.md](VERITABANI.md) | Sunucu veritabanının (PostgreSQL) tabloları ve kolonları |
+| 6 | [IS-KURALLARI.md](IS-KURALLARI.md) | Hesaplar ve kurallar: fiyat, KDV, kampanya, taksit, stok, ürün kodları, linkler, durum akışları, e-postalar |
+| 7 | [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) | Dış sistemler: ödeme, e-posta, harita, barındırma, çerez onayı, güvenlik başlıkları; gerekli ayarların adları |
+| 8 | [STOK.md](STOK.md) | Bayi ve satıcı stok dosyalarının biçimi, eşleşme kuralları, backend'e geçiş |
+| 9 | [KARARLAR.md](KARARLAR.md) | Alınan kararlar ve nedenleri |
+| 10 | [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) | Bir özelliğin doğru çalıştığını doğrulamak için madde madde test listesi |
+| 11 | [YAPILACAKLAR.md](YAPILACAKLAR.md) | Sonraya bırakılan işler ve backend'e geçiş notları |
 | — | [README.md](../README.md) (proje kökünde) | Teknik başlangıç: kurulum, çalıştırma, demo hesaplar, proje yapısı |
 | — | [CLAUDE.md](../CLAUDE.md) (proje kökünde) | Bu projede çalışan Claude oturumları için çalışma kuralları |
 
