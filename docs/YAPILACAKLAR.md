@@ -37,21 +37,26 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
    bir zamanlayıcıyla çağrılır; okuma kaydı, tek işlemde yenileme, hatada
    son iyi stoğun korunması, stok değişince sayfaların o anda yenilenmesi
    (`npm run sap:stok` elle okutur). SAP yerine bugün CSV dosyası okunur.
-6. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
+6. Aşama 4 — Üyelik ve oturum sunucuda (KARARLAR K-94, K-95; veritabanı
+   modunda): şifre argon2id ile, oturum yalnızca sunucunun okuyabildiği
+   çerezde (site 30 gün, panel 8 saat); kayıt, giriş, çıkış, profil, şifre
+   değiştirme, hesap silme ve şifre sıfırlama sunucuda; tek giriş hata
+   mesajı, yanlış şifre sınırı; panel sayfaları yönetici oturumu olmadan
+   gönderilmiyor; `npm run yonetici:olustur`.
+7. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
    tarayıcı testleri.
 
 ### Kalan kod işleri (önerilen sırayla)
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 4 — Üyelik ve oturum sunucuda** (KARARLAR K-94): 4.1 şifre özeti (argon2id), oturumlar ve `npm run yonetici:olustur` (bitti); 4.2 site üyeliği sunucuda: kayıt, giriş, çıkış, profil, şifre değiştirme, hesap silme; tek giriş hata mesajı, deneme sınırı, en az 8 karakter (bitti); 4.3 panel girişi ve `/yonetim`'in sunucuda korunması (bitti); 4.4 şifre sıfırlama (e-posta Resend kurulunca gider); 4.5 tarayıcı testleri | — |
-| 2 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | Aşama 4 |
-| 3 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
-| 4 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
-| 5 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
-| 6 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
-| 7 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
-| 8 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
+| 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
+| 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
+| 5 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
+| 6 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
+| 7 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
 
 ### Kodla çözülmeyen, şimdiden başlatılması gerekenler
 
@@ -117,8 +122,8 @@ canlı sunucuda ayrıca ölçülmeli.
 
 Ayrıntı: aşağıdaki [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) bölümü.
 
-- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur. Okuma işi hazır ve bugün deneme dosyasını okuyor; SAP bilgileri gelince yalnızca bağlantı parçası yazılır (4. madde).
-- **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (5. madde).
+- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur. Okuma işi hazır ve bugün deneme dosyasını okuyor; SAP bilgileri gelince yalnızca bağlantı parçası yazılır (3. madde).
+- **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (4. madde).
 
 ## Karar bekleyen frontend işleri (özet)
 
@@ -674,8 +679,8 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      - Birden fazla sunucu çalışacaksa önbellek ortak bir yerde (ör. Redis)
        tutulmalı; yoksa yenileme yalnızca isteği alan sunucuda olur. Tek
        sunucuda gerekmez (K-92).
-   - Sonraki aşamalar: 4 üyelik ve oturum sunucuda; 5 panel ve site
-     kayıtları veritabanına; 6 dosya deposu; canlıya hazırlık.
+   - Aşama 4 (üyelik ve oturum sunucuda) bitti. Sonraki aşamalar: 5 panel
+     ve site kayıtları veritabanına; 6 dosya deposu; canlıya hazırlık.
    - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları
      (bayilik, iletişim, ürün destek, Welders Club), e-posta alıcıları (tür
      başına), gönderilen e-postalar ve değişiklik kaydı (KARARLAR K-81).
@@ -708,7 +713,7 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
   - Hata olursa son iyi stoğun korunması.
   - Stok değişince sayfaların o anda yenilenmesi.
 
-  Ayrıntı: [VERITABANI.md](VERITABANI.md) › 14 › SAP stok okuma. Bilgiler gelince yalnızca SAP'a bağlanan küçük parça yazılır (yukarıdaki yol haritasında 4. madde).
+  Ayrıntı: [VERITABANI.md](VERITABANI.md) › 14 › SAP stok okuma. Bilgiler gelince yalnızca SAP'a bağlanan küçük parça yazılır (yukarıdaki yol haritasında 3. madde).
 - **Sipariş:** Service Layer üzerinden satış siparişi oluşturulur (müşteri kartı; satırlarda kalem kodu, adet, fiyat, depo). Karar gerekiyor: her web müşterisi SAP'ta ayrı cari mi, yoksa tek bir "web satış" carisi mi?
 - **SAP ekibine sorulacaklar:**
   - B1 sürümü ve veritabanı türü (HANA / SQL Server).
@@ -768,12 +773,9 @@ hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
    rolüyle korunmalı. Ara dönem: Panel › Üyeler listesi tarayıcıdaki örnek üyeleri
    gösterir; veritabanındaki üyeler Aşama 5'te panele gelir. `npm run db:seed` örnek hesapları eski demo özetiyle yazar;
    ilk girişte güçlü özete çevrilir.
-2. **Şifre sıfırlama:** "Şifremi unuttum" bugün yalnızca mesaj gösteriyor,
-   e-posta gitmiyor. Tek kullanımlık ve süreli bir bağlantı e-postayla
-   gönderilmeli.
-3. **Favoriler üyeye bağlanmalı:** Bugün tarayıcıda (`zenweld.favourites.v1`);
+2. **Favoriler üyeye bağlanmalı:** Bugün tarayıcıda (`zenweld.favourites.v1`);
    üye başka cihazda giriş yapınca favorilerini görmüyor.
-4. **Hesap silinince kalan veriler:** "Hesap silme — açık konular" bölümü.
+3. **Hesap silinince kalan veriler:** "Hesap silme — açık konular" bölümü.
 
 ## Hesap silme — açık konular (KVKK ve yasal saklama)
 

@@ -10,7 +10,7 @@ import { SESSION, expect, test } from "./yardimci";
  * yok (CLAUDE.md, KARARLAR K-01).
  */
 
-const OUTSIDE_SITEMAP = ["/giris", "/kayit", "/sifremi-unuttum", "/arama?q=kaynak", "/sepet"];
+const OUTSIDE_SITEMAP = ["/giris", "/kayit", "/sifremi-unuttum", "/sifre-sifirla", "/arama?q=kaynak", "/sepet"];
 const ACCOUNT = [
   "/hesabim",
   "/hesabim/profil",

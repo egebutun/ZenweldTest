@@ -78,6 +78,36 @@ export const botResult = (): MailResult => ({ ok: true, delivered: true, demo: i
 
 export const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+/** E-postayi Resend'e verir; anahtar yoksa gonderilmez. */
+async function deliver(message: {
+  to: string;
+  subject: string;
+  html?: string;
+  text?: string;
+  replyTo?: string;
+}): Promise<MailResult> {
+  const demo = isNoIndex();
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return { ok: true, delivered: false, demo, reason: "eposta-yapilandirilmadi" };
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: process.env.SUPPORT_FROM || "Zenweld Web <onboarding@resend.dev>",
+        to: [message.to],
+        reply_to: message.replyTo && isEmail(message.replyTo) ? message.replyTo : undefined,
+        subject: message.subject.slice(0, 200),
+        html: message.html,
+        text: message.text,
+      }),
+    });
+    return res.ok ? { ok: true, delivered: true, demo } : { ok: true, delivered: false, demo, reason: "servis-hatasi" };
+  } catch {
+    return { ok: true, delivered: false, demo, reason: "baglanti-hatasi" };
+  }
+}
+
 /** Zenweld'e e-posta: baslik, alan tablosu ve istege bagli uzun metin. */
 export async function sendMail({
   subject,
@@ -94,10 +124,6 @@ export async function sendMail({
   /** Yanit dogrudan formu doldurana gitsin */
   replyTo?: string;
 }): Promise<MailResult> {
-  const demo = isNoIndex();
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return { ok: true, delivered: false, demo, reason: "eposta-yapilandirilmadi" };
-
   const cell = "border:1px solid #e2e5e8;vertical-align:top";
   const html = `
     <h2>${escapeHtml(title)}</h2>
@@ -112,21 +138,10 @@ export async function sendMail({
     </table>
     ${note && note[1] ? `<h3>${escapeHtml(note[0])}</h3><p style="white-space:pre-wrap">${escapeHtml(note[1])}</p>` : ""}
   `;
+  return deliver({ to: SUPPORT_EMAIL, subject, html, replyTo });
+}
 
-  try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: process.env.SUPPORT_FROM || "Zenweld Web <onboarding@resend.dev>",
-        to: [SUPPORT_EMAIL],
-        reply_to: replyTo && isEmail(replyTo) ? replyTo : undefined,
-        subject: subject.slice(0, 200),
-        html,
-      }),
-    });
-    return res.ok ? { ok: true, delivered: true, demo } : { ok: true, delivered: false, demo, reason: "servis-hatasi" };
-  } catch {
-    return { ok: true, delivered: false, demo, reason: "baglanti-hatasi" };
-  }
+/** Musteriye duz metin e-posta (sifre sifirlama ...). */
+export function sendCustomerMail({ to, subject, text }: { to: string; subject: string; text: string }): Promise<MailResult> {
+  return deliver({ to, subject, text });
 }

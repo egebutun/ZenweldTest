@@ -55,6 +55,11 @@ veritabanında, tarayıcıda ya da depoda (GitHub) **asla** durmaz.
 **Ne yapar:** Sitedeki formlar gönderilince Zenweld'e
 (`info@zenweld.com`) e-posta gider. Formlar ve içerikleri:
 [IS-KURALLARI.md › Form e-postaları](IS-KURALLARI.md#18-form-e-postaları).
+Veritabanı modunda müşteriye de bir e-posta gider: şifre sıfırlama
+bağlantısı (düz metin, "Zenweld şifre sıfırlama"; KARARLAR K-95). Bu
+e-postanın gitmemesi ziyaretçiye gösterilmez (hesabın olup olmadığı belli
+olmasın); sunucu kaydına "Şifre sıfırlama e-postası gönderilemedi" yazılır,
+bağlantı yazılmaz.
 
 **Bugün:** Kurulu değil; `RESEND_API_KEY` hiçbir yerde tanımlı olmadığı
 için **hiçbir e-posta gitmiyor**. Demo adresinde form yine "gönderildi"
@@ -420,7 +425,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | **Dosya deposu** | Görseller veritabanında, belgeler tarayıcıda | Nesne deposu |
 | **Ödeme kuruluşu** | Demo | Bkz. [3](#3-kartla-ödeme) |
 | **Müşteriye e-posta** | Yok | Sipariş onayı ve sözleşme kopyası (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi |
-| **Şifremi Unuttum** | Ekran var, e-posta gitmez | Şifre sıfırlama bağlantısı e-postası |
+| **Şifremi Unuttum** | Veritabanı modunda bağlantı üretiliyor ve Resend'e veriliyor (K-95) | Resend kurulumu (yukarıdaki 2) |
 | **Bülten** | Kayıt kutusu var, hiçbir yere gitmez | Bülten servisi seçilip bağlanmalı |
 | **Analitik** (ziyaret, dönüşüm, sepette bırakılan) | Yok | Google Analytics vb.; çerez onayına bağlı yüklenmeli ve adresleri güvenlik politikasına (CSP) eklenmeli. Çerez ayarları penceresine analiz/pazarlama kategorileri eklenmeli |
 | **e-Arşiv / e-Fatura** | Yok | Muhasebe yazılımı ya da entegratör |

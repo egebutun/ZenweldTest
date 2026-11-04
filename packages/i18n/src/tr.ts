@@ -369,6 +369,21 @@ export const tr = {
       wrongPassword: "Şifre hatalı.",
       failed: "İşlem yapılamadı. Lütfen tekrar deneyin.",
       unreachable: "Sunucuya ulaşılamadı. Lütfen tekrar deneyin.",
+      resetLinkInvalid: "Bağlantı geçersiz ya da süresi dolmuş. Lütfen yeniden şifre sıfırlama isteyin.",
+    },
+    /** Sifre sifirlama (KARARLAR K-95) */
+    reset: {
+      requestSubmit: "Sıfırlama Bağlantısı Gönder",
+      requestSent:
+        "Bu e-postayla kayıtlı bir hesap varsa şifre sıfırlama bağlantısı gönderildi. Bağlantı 1 saat geçerlidir. Gelen kutunuzda yoksa istenmeyen e-postalara bakın.",
+      title: "Yeni Şifre",
+      subtitle: "Hesabınız için yeni bir şifre belirleyin.",
+      submit: "Şifreyi Değiştir",
+      done: "Şifreniz değiştirildi. Yeni şifrenizle giriş yapabilirsiniz.",
+      newRequest: "Yeni bağlantı iste",
+      mailSubject: "Zenweld şifre sıfırlama",
+      mailBody:
+        "Merhaba {name},\n\nZenweld hesabınız için şifre sıfırlama istendi. Yeni şifre belirlemek için aşağıdaki bağlantıyı açın. Bağlantı 1 saat geçerlidir ve bir kez kullanılabilir.\n\n{link}\n\nBu isteği siz yapmadıysanız bu e-postayı dikkate almayın; şifreniz değişmez.",
     },
   },
   account: {

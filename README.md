@@ -406,8 +406,9 @@ npm run start --workspace apps/zenweld-web
     `npm run site:yenile` çalıştırın, sayfa bir sonraki açılışta yenidir.
     Yalnızca bir türü yenilemek için: `npm run site:yenile -- katalog`
     (türler: katalog, depo-stogu, stok, bayiler, yorumlar, icerik).
-  - **Üyelik sunucuda (Aşama 4.2):** kayıt, giriş, çıkış, profil, şifre
-    değiştirme ve hesap silme veritabanından yapılır; oturum güvenli bir
+  - **Üyelik sunucuda (Aşama 4):** kayıt, giriş, çıkış, profil, şifre
+    değiştirme, hesap silme ve şifre sıfırlama (e-posta Resend kurulunca
+    gider) veritabanından yapılır; oturum güvenli bir
     çerezde durur. Demo hesaplarıyla (`db:seed`) girilir; ilk girişte
     şifreleri güçlü özete çevrilir. Siparişler, teklifler, adresler,
     favoriler ve formlar bu aşamada tarayıcıda kalır.

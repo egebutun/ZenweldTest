@@ -14,6 +14,8 @@ import {
   login,
   readSession,
   register,
+  requestPasswordReset,
+  resetPassword,
   updateProfile,
 } from "../../packages/auth/src/server";
 import * as schema from "../../packages/db/src/schema";
@@ -218,6 +220,65 @@ describe("üyelik işlemleri (site)", () => {
       expect(await deleteAccount(db, "u-uye", { password: "yeni-sifre-1" })).toEqual({ ok: true });
       expect((await client.query("SELECT count(*)::int AS n FROM users WHERE id = 'u-uye'")).rows[0].n).toBe(0);
       expect(await readSession(db, here.token, "site", start)).toBeNull();
+    });
+  });
+});
+
+describe("şifre sıfırlama (K-95)", () => {
+  const minutes = (m: number) => new Date(start.getTime() + m * 60_000);
+  const tokens = async (client: PoolClient) =>
+    (await client.query("SELECT token_hash, used_at FROM password_reset_tokens WHERE user_id = 'u-uye'")).rows;
+
+  it("bağlantı yalnızca aktif üyeye; 15 dakikada bir; yeni bağlantı eskisini geçersiz kılar", async () => {
+    await withUsers(async (db, client) => {
+      expect(await requestPasswordReset(db, "yok@ornek.com", start)).toBeNull();
+      expect(await requestPasswordReset(db, "yonetici@ornek.com", start)).toBeNull();
+
+      const first = await requestPasswordReset(db, " UYE@ornek.com ", start);
+      expect(first).toMatchObject({ email: "uye@ornek.com", expiresAt: minutes(60) });
+      const stored = await tokens(client);
+      expect(stored).toHaveLength(1);
+      expect(stored[0].token_hash).not.toBe(first!.token);
+
+      expect(await requestPasswordReset(db, "uye@ornek.com", minutes(14))).toBeNull();
+      const second = await requestPasswordReset(db, "uye@ornek.com", minutes(15));
+      expect(second).not.toBeNull();
+      expect(await tokens(client)).toHaveLength(1);
+      expect(await resetPassword(db, { token: first!.token, password: "yeni-sifre-1" }, minutes(16))).toMatchObject({
+        ok: false,
+        error: AUTH_ERRORS.resetLinkInvalid,
+      });
+
+      await client.query("UPDATE users SET status = 'suspended' WHERE id = 'u-uye'");
+      expect(await requestPasswordReset(db, "uye@ornek.com", minutes(40))).toBeNull();
+    });
+  });
+
+  it("yeni şifre: tek kullanım, 1 saat; bütün oturumlar kapanır, kilit açılır", async () => {
+    await withUsers(async (db, client) => {
+      const session = await createSession(db, "u-uye", "site", {}, start);
+      await client.query("UPDATE users SET failed_login_count = 4, login_locked_until = $1 WHERE id = 'u-uye'", [minutes(30)]);
+      const link = (await requestPasswordReset(db, "uye@ornek.com", start))!;
+
+      expect(await resetPassword(db, { token: link.token, password: "kisa" }, minutes(5))).toMatchObject({
+        error: "Şifre en az 8 karakter olmalıdır.",
+      });
+      expect(await resetPassword(db, { token: "baska", password: "yeni-sifre-1" }, minutes(5))).toMatchObject({
+        error: AUTH_ERRORS.resetLinkInvalid,
+      });
+      expect(await resetPassword(db, { token: link.token, password: "yeni-sifre-1" }, minutes(61))).toMatchObject({
+        error: AUTH_ERRORS.resetLinkInvalid,
+      });
+      expect(await resetPassword(db, { token: link.token, password: "yeni-sifre-1" }, minutes(5))).toEqual({ ok: true });
+      expect(await resetPassword(db, { token: link.token, password: "yeni-sifre-2" }, minutes(6))).toMatchObject({
+        error: AUTH_ERRORS.resetLinkInvalid,
+      });
+
+      expect(await readSession(db, session.token, "site", minutes(5))).toBeNull();
+      const [user] = (await client.query("SELECT failed_login_count, login_locked_until FROM users WHERE id = 'u-uye'")).rows;
+      expect(user).toEqual({ failed_login_count: 0, login_locked_until: null });
+      const ok = await login(db, { email: "uye@ornek.com", password: "yeni-sifre-1" }, "site", {}, minutes(7));
+      expect(ok.ok).toBe(true);
     });
   });
 });

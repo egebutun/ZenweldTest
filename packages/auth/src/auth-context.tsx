@@ -59,6 +59,10 @@ interface AuthContextValue {
    * teklif, servis ve iade talebi, garanti ve yorumlar kalir.
    */
   deleteAccount: (password: string) => Promise<AuthResult>;
+  /** Sifre sifirlama baglantisi ister; hesap olsa da olmasa da ayni sonuc. */
+  requestPasswordReset: (email: string) => Promise<AuthResult>;
+  /** E-postadaki baglantinin anahtariyla yeni sifre. */
+  resetPassword: (token: string, password: string) => Promise<AuthResult>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -173,6 +177,16 @@ function ServerAuth({ children, api }: { children: ReactNode; api: string }) {
       },
       deleteAccount: async (password) => {
         const answer = await call(api, "hesap-sil", { password });
+        if (!answer.ok) return { ok: false, error: answer.error };
+        setUser(null);
+        return { ok: true };
+      },
+      requestPasswordReset: async (email) => {
+        const answer = await call(api, "sifre-unuttum", { email });
+        return answer.ok ? { ok: true } : { ok: false, error: answer.error };
+      },
+      resetPassword: async (token, password) => {
+        const answer = await call(api, "sifre-sifirla", { token, password });
         if (!answer.ok) return { ok: false, error: answer.error };
         setUser(null);
         return { ok: true };
@@ -320,9 +334,27 @@ function BrowserAuth({
     [user, remember],
   );
 
+  // Demo modunda e-posta gonderilmez; sifirlama baglantisi yoktur.
+  const requestPasswordReset = useCallback<AuthContextValue["requestPasswordReset"]>(async () => ({ ok: true }), []);
+  const resetPassword = useCallback<AuthContextValue["resetPassword"]>(
+    async () => ({ ok: false, error: AUTH_ERRORS.resetLinkInvalid }),
+    [],
+  );
+
   const value = useMemo(
-    () => ({ user, ready, login, logout, register, updateProfile, changePassword, deleteAccount }),
-    [user, ready, login, logout, register, updateProfile, changePassword, deleteAccount],
+    () => ({
+      user,
+      ready,
+      login,
+      logout,
+      register,
+      updateProfile,
+      changePassword,
+      deleteAccount,
+      requestPasswordReset,
+      resetPassword,
+    }),
+    [user, ready, login, logout, register, updateProfile, changePassword, deleteAccount, requestPasswordReset, resetPassword],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

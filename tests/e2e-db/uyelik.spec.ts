@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type { APIRequestContext, Page } from "@playwright/test";
 import { demoHash } from "../../packages/auth/src/hash";
 import { demoAccount } from "../e2e/yardimci";
@@ -6,8 +7,9 @@ import { closeDatabase, expect, memberLogin, sql, test } from "./yardimci";
 /**
  * SITE UYELIGI SUNUCUDA (Asama 4.2; IS-KURALLARI › 16, KARARLAR K-94)
  *
- * Veritabani modunda kayit, giris, cikis, sifre degistirme ve hesap silme
- * sunucudan yapilir; oturum yalnizca sunucunun okuyabildigi cerezdedir.
+ * Veritabani modunda kayit, giris, cikis, sifre degistirme, hesap silme ve
+ * sifre sifirlama (Asama 4.4, K-95) sunucudan yapilir; oturum yalnizca
+ * sunucunun okuyabildigi cerezdedir.
  * Her test kendi uyesini olusturur.
  */
 test.describe.configure({ mode: "serial" });
@@ -190,4 +192,56 @@ test("başka bir siteden gelen istek ve oturumsuz işlem reddedilir", async ({ r
   const anonymous = await request.post("/api/uyelik/sifre", { data: { current: "a", next: "uzun-sifre-1" } });
   expect([anonymous.status(), (await anonymous.json()).error]).toEqual([401, "Oturumunuz kapanmış. Lütfen yeniden giriş yapın."]);
   expect((await (await request.get("/api/uyelik/ben")).json()).user).toBeNull();
+});
+
+test("şifre sıfırlama: aynı mesaj; bağlantıyla yeni şifre, tek kullanım, diğer oturumlar kapanır", async ({ page, browser }) => {
+  const email = newEmail("sifirla");
+  const other = await browser.newContext();
+  try {
+    // Baska bir cihazda acik oturum.
+    await registerViaApi((await other.newPage()).request, email, "uzun-sifre-1");
+
+    const linksOf = async () =>
+      (await sql<{ n: number }>("SELECT count(*)::int AS n FROM password_reset_tokens t JOIN users u ON u.id = t.user_id WHERE u.email = $1", [email]))[0].n;
+    for (const who of ["olmayan-hesap@ornek.com", email]) {
+      await page.goto("/sifremi-unuttum");
+      await page.fill("#email", who);
+      await page.getByRole("button", { name: "Sıfırlama Bağlantısı Gönder" }).click();
+      await expect(page.locator("main")).toContainText("Bu e-postayla kayıtlı bir hesap varsa şifre sıfırlama bağlantısı gönderildi.");
+    }
+    expect(await linksOf()).toBe(1);
+
+    // E-posta bu ortamda gitmez: bilinen bir anahtar dogrudan yazilir.
+    const token = `e2e-${Date.now()}`;
+    await sql("DELETE FROM password_reset_tokens WHERE user_id = (SELECT id FROM users WHERE email = $1)", [email]);
+    await sql(
+      `INSERT INTO password_reset_tokens (token_hash, user_id, expires_at)
+       SELECT $2, id, now() + interval '1 hour' FROM users WHERE email = $1`,
+      [email, createHash("sha256").update(token).digest("hex")],
+    );
+
+    await page.goto("/sifre-sifirla");
+    await expect(page.locator("main")).toContainText("Bağlantı geçersiz ya da süresi dolmuş.");
+
+    await page.goto(`/sifre-sifirla?anahtar=${token}`);
+    await page.fill("#reset-password", "yeni-sifre-33");
+    await page.fill("#reset-password-again", "yeni-sifre-33");
+    await page.getByRole("button", { name: "Şifreyi Değiştir" }).click();
+    await expect(page).toHaveURL(/\/giris\?sifre=degisti/);
+    await expect(page.locator("main")).toContainText("Şifreniz değiştirildi. Yeni şifrenizle giriş yapabilirsiniz.");
+    expect(await sessionsOf(email)).toBe(0);
+
+    await loginViaForm(page, email, "yeni-sifre-33");
+    await expect(page).toHaveURL(/\/hesabim/);
+
+    // Ayni baglanti ikinci kez calismaz.
+    await page.goto(`/sifre-sifirla?anahtar=${token}`);
+    await page.fill("#reset-password", "baska-sifre-44");
+    await page.fill("#reset-password-again", "baska-sifre-44");
+    await page.getByRole("button", { name: "Şifreyi Değiştir" }).click();
+    await expect(page.locator("main")).toContainText("Bağlantı geçersiz ya da süresi dolmuş.");
+    await expect(page.getByRole("link", { name: "Yeni bağlantı iste" })).toBeVisible();
+  } finally {
+    await other.close();
+  }
 });

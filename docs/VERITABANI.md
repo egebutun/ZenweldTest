@@ -502,6 +502,10 @@ burada ([14](#14-kod-betikler-ve-komutlar) › Şifre ve oturum).
 
 ### `password_reset_tokens` — şifre sıfırlama (yeni)
 
+Veritabanı modunda kullanılır (Aşama 4.4, KARARLAR K-95):
+`token_hash` bağlantıdaki anahtarın sha256 özetidir; anahtarın kendisi
+yalnızca e-postadadır. Üye başına en fazla bir geçerli bağlantı durur.
+
 | Kolon | Tür | Kural |
 |---|---|---|
 | `token_hash` | text | anahtar |
@@ -1362,6 +1366,15 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   oturumu sunucuda okur; geçerli yönetici oturumu yoksa sayfa gönderilmez,
   giriş ekranına yönlendirilir. Çerez ve istek denetimi iki uçta ortak:
   `lib/server/session-cookie.ts`.
+- **Şifre sıfırlama (Aşama 4.4, K-95; `packages/auth/src/server/password-reset.ts`):**
+  `POST /api/uyelik/sifre-unuttum` hesap olsa da olmasa da aynı yanıtı
+  verir; hesap aktif bir üyeyse 32 baytlık anahtar üretilir, özeti
+  `password_reset_tokens`'a yazılır (üyenin eski bağlantıları silinir) ve
+  bağlantı (`<NEXT_PUBLIC_SITE_URL>/sifre-sifirla?anahtar=…`; adres isteğin
+  Host başlığından alınmaz) üyeye e-postayla gider. Aynı üye için 15
+  dakikada bir. `POST /api/uyelik/sifre-sifirla` anahtarı ve yeni şifreyi
+  alır: 1 saat içinde ve kullanılmamışsa şifre değişir, bağlantı kullanılmış
+  olur, üyenin bütün oturumları silinir, yanlış şifre sayacı sıfırlanır.
 - **`npm run yonetici:olustur`:** `DATABASE_URL`'deki veritabanında e-posta,
   ad, soyad, telefon ve şifre (ekrana yazılmaz, iki kez) sorup yönetici
   hesabı açar. Canlıya hiç hesap yüklenmediği için (K-91) ilk yönetici
@@ -1370,11 +1383,13 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   çalışmaz.
 - Test: `tests/db/oturum.test.ts` (özet, eski özetin çevrilmesi, oturumun
   türü ve rolü, süreler, askı, çıkış ve diğer oturumların kapanması; kayıt,
-  giriş, deneme sınırı, profil, şifre değiştirme, hesap silme);
+  giriş, deneme sınırı, profil, şifre değiştirme, hesap silme, şifre
+  sıfırlama);
   `tests/unit/uyelik.test.ts` (şifre kuralı, deneme sınırı);
   `tests/e2e-db/uyelik.spec.ts` (tarayıcıda: kayıt, çerez, çıkış, giriş,
   tek mesaj, deneme sınırı, diğer cihazın oturumu, profil, hesap silme,
-  eski özetin çevrilmesi, başka siteden istek); `tests/e2e-db/panel.spec.ts`
+  eski özetin çevrilmesi, başka siteden istek, şifre sıfırlama);
+  `tests/e2e-db/panel.spec.ts`
   (oturumsuz panelin gönderilmemesi, 8 saatlik oturum, üyenin panele
   girememesi, çıkış, askı, süre dolması, deneme sınırı).
 

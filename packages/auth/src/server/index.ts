@@ -6,3 +6,4 @@ export * from "../rules";
 export * from "./accounts";
 export * from "./password";
 export * from "./session";
+export * from "./password-reset";

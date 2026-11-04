@@ -930,8 +930,31 @@ ve Mesafeli Sözleşmeler Yönetmeliği gereği ödeme öncesi onaylanır).
 
 ### Şifremi Unuttum (`/sifremi-unuttum`)
 
-E-posta girilir; "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi."
-yazar. **Demo notu:** Bugün gerçekte e-posta gönderilmez.
+- E-posta girilir, **Sıfırlama Bağlantısı Gönder**'e basılır.
+- Hesap olsa da olmasa da aynı mesaj çıkar (KARARLAR K-95): "Bu e-postayla
+  kayıtlı bir hesap varsa şifre sıfırlama bağlantısı gönderildi. Bağlantı 1
+  saat geçerlidir. Gelen kutunuzda yoksa istenmeyen e-postalara bakın."
+- **Veritabanı modunda** hesap varsa (aktif bireysel ya da kurumsal üye)
+  üyenin e-postasına bağlantı gider: "Zenweld şifre sıfırlama". Bağlantı 1
+  saat geçerlidir ve bir kez kullanılır. Aynı hesap için 15 dakikada bir
+  bağlantı gönderilir; yeni bağlantı eskisini geçersiz kılar. E-posta
+  Resend kurulunca gider ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 2).
+- **Demo modunda** e-posta gönderilmez.
+
+### Yeni Şifre (`/sifre-sifirla`)
+
+E-postadaki bağlantı bu sayfayı açar (`/sifre-sifirla?anahtar=…`).
+
+- Alanlar: Yeni Şifre (en az 8 karakter), Yeni Şifre (Tekrar). Düğme:
+  **Şifreyi Değiştir**.
+- Başarılıysa üyenin bütün oturumları kapanır ve Giriş sayfası açılır:
+  "Şifreniz değiştirildi. Yeni şifrenizle giriş yapabilirsiniz."
+- Bağlantı yoksa, süresi dolmuşsa ya da kullanılmışsa: "Bağlantı geçersiz ya
+  da süresi dolmuş. Lütfen yeniden şifre sıfırlama isteyin." ve **Yeni
+  bağlantı iste** (Şifremi Unuttum'a gider).
+- Diğer hatalar: "Şifreler eşleşmiyor.", "Şifre en az 8 karakter
+  olmalıdır."
+- Sayfa arama motorlarına kapalıdır.
 
 ### Çıkış (`/cikis`)
 

@@ -8,9 +8,14 @@ import {
   publicUser,
   readSession,
   register,
+  requestPasswordReset,
+  resetPassword,
   updateProfile,
 } from "@zenweld/auth/server";
+import { tr } from "@zenweld/i18n";
+import { getSiteUrl } from "@/lib/seo";
 import { database, usesDatabase } from "@/lib/server/db";
+import { sendCustomerMail } from "@/lib/server/mail";
 import {
   SESSION_COOKIES,
   clearSessionCookie,
@@ -33,6 +38,9 @@ import {
  *   POST /api/uyelik/profil     profil alanlari
  *   POST /api/uyelik/sifre      {current, next}
  *   POST /api/uyelik/hesap-sil  {password}
+ *   POST /api/uyelik/sifre-unuttum  {email}: hesap olsa da olmasa da ayni
+ *                               yanit; varsa sifirlama baglantisi e-postayla
+ *   POST /api/uyelik/sifre-sifirla  {token, password}
  *
  * Oturum cerezi ve istek denetimi: lib/server/session-cookie.ts. Kurallar:
  * packages/auth/src/server.
@@ -78,6 +86,24 @@ export async function POST(request: NextRequest, context: Context) {
   if (islem === "cikis") {
     await deleteSession(db, token);
     return clearSessionCookie(json({ ok: true }), request, SCOPE);
+  }
+  if (islem === "sifre-unuttum") {
+    const reset = await db.transaction((tx) => requestPasswordReset(tx, body.email));
+    if (reset) {
+      // Baglanti sitenin tanimli adresiyle kurulur (istegin Host basligiyla degil).
+      const link = `${getSiteUrl()}/sifre-sifirla?anahtar=${reset.token}`;
+      const mail = await sendCustomerMail({
+        to: reset.email,
+        subject: tr.auth.reset.mailSubject,
+        text: tr.auth.reset.mailBody.replace("{name}", reset.firstName).replace("{link}", link),
+      });
+      if (!mail.delivered) console.warn(`Şifre sıfırlama e-postası gönderilemedi (${mail.reason}).`);
+    }
+    return json({ ok: true });
+  }
+  if (islem === "sifre-sifirla") {
+    const result = await db.transaction((tx) => resetPassword(tx, { token: body.token, password: body.password }));
+    return result.ok ? clearSessionCookie(json({ ok: true }), request, SCOPE) : failure(result);
   }
 
   const session = await readSession(db, token, SCOPE);

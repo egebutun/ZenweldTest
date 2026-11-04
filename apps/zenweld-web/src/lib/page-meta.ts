@@ -81,6 +81,7 @@ const PAGES = {
   "/giris": { name: "Giriş Yap", title: "Giriş Yap", description: "Zenweld hesabınıza giriş yapın.", noindex: true },
   "/kayit": { name: "Üye Ol", title: "Üye Ol", description: "Zenweld hesabı oluşturun.", noindex: true },
   "/sifremi-unuttum": { name: "Şifremi Unuttum", title: "Şifremi Unuttum", description: "Şifre sıfırlama.", noindex: true },
+  "/sifre-sifirla": { name: "Yeni Şifre", title: "Yeni Şifre", description: "Yeni şifre belirleyin.", noindex: true },
   "/cikis": { name: "Çıkış", title: "Çıkış", description: "Oturum kapatılıyor.", noindex: true },
   "/sepet": { name: "Sepetim", title: "Sepetim", description: "Zenweld alışveriş sepeti.", noindex: true },
   "/odeme": { name: "Ödeme", title: "Ödeme", description: "Siparişinizi tamamlayın.", noindex: true },

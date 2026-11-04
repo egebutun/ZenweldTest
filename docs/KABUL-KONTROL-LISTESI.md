@@ -430,6 +430,14 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       tarayıcıda aynı üyeyle girilip birinde şifre değiştirilince diğerinde
       Hesabım "Giriş Yap" kutusunu gösterir. Demo üyesinin (`bireysel@demo.com`)
       eski şifresi ilk girişte güçlü özete çevrilir.
+- [ ] Şifre sıfırlama (veritabanı modu, K-95): Şifremi Unuttum'da kayıtlı ve
+      kayıtsız e-postayla aynı mesaj çıkar; kayıtlı üye için
+      `password_reset_tokens`'a bir satır yazılır, 15 dakika içinde tekrar
+      istenince yeni satır yazılmaz. Resend tanımlıysa üyeye "Zenweld şifre
+      sıfırlama" e-postası gelir; bağlantıyla yeni şifre belirlenince Giriş
+      sayfasında "Şifreniz değiştirildi…" yazar, diğer cihazdaki oturum
+      kapanır. Aynı bağlantı ikinci kez ve 1 saatten sonra "Bağlantı geçersiz
+      ya da süresi dolmuş." der; `/sifre-sifirla` bağlantısız açılınca da.
 - [ ] Veritabanı modunda panel (Aşama 4.3): oturumsuz `/yonetim/urunler`
       giriş ekranına (`?next=%2Fyonetim%2Furunler`) gider; yönetici girişinden
       sonra Ürünler açılır. `zw_panel` çerezi HttpOnly'dir; `sessions`'ta

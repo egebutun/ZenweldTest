@@ -686,6 +686,16 @@ Kod: `packages/store/src/repo/reviews.ts`.
 - **Şifre değiştirme (Hesabım › Profil):** Mevcut şifre doğru olmalı; yeni
   şifre en az 8 karakter ve tekrarıyla aynı olmalı. Oturum açık kalır;
   veritabanı modunda üyenin diğer oturumları kapanır.
+- **Şifre sıfırlama (veritabanı modu, KARARLAR K-95):** "Şifremi unuttum"da
+  hesap olsa da olmasa da aynı mesaj. Hesap aktif bir bireysel ya da
+  kurumsal üyeyse e-postasına tek kullanımlık bağlantı gider; bağlantı 1 saat
+  geçerlidir. Aynı hesap için 15 dakikada en fazla bir bağlantı; yeni bağlantı
+  eskisini geçersiz kılar. Yeni şifre en az 8 karakter; değişince üyenin
+  bütün oturumları kapanır, yanlış şifre sayacı ve kilit sıfırlanır.
+  Yöneticinin şifresi `npm run yonetici:olustur` ile değişir.
+  - **Örnek:** 09:00'da istenen bağlantı 10:00'a kadar geçerli; 09:10'daki
+    ikinci istek bağlantı üretmez, 09:15'teki üretir ve 09:00'daki
+    bağlantıyı geçersiz kılar.
 - **Üye silinince:** Kayıtlı adresleri de silinir; siparişleri, teklifleri,
   servis talepleri, iade talepleri, garanti kayıtları ve yorumları kalır.
   - Yönetici panelden siler ya da üye kendi hesabını Hesabım › Profil ›

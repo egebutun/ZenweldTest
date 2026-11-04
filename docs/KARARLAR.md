@@ -1038,6 +1038,19 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   (`packages/auth/src/server`); sitedeki kayıt, giriş ve şifre ekranları
   4.2'de bu kurallara geçer.
 
+### K-95 · Şifre sıfırlama bağlantısı
+- **Tarih:** 2026-11-04
+- **Karar:**
+  - "Şifremi unuttum"da hesap olsa da olmasa da aynı mesaj gösterilir.
+  - Hesap varsa e-postayla tek kullanımlık bir bağlantı gider; bağlantı
+    **1 saat** geçerlidir.
+  - Aynı hesap için **15 dakikada en fazla bir** bağlantı üretilir; yeni
+    bağlantı eskisini geçersiz kılar.
+  - Yeni şifre belirlenince üyenin bütün oturumları kapanır; üye giriş
+    sayfasına gider.
+- **Neden:** Bağlantı ele geçse de kısa süre ve tek kullanım zararı
+  sınırlar; sık istek kutuyu doldurmasın.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**
