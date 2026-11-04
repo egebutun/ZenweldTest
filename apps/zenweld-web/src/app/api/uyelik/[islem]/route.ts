@@ -1,15 +1,22 @@
 import type { NextRequest } from "next/server";
 import {
   AUTH_ERRORS,
+  addFavourites,
   changePassword,
   deleteAccount,
+  deleteAddress,
   deleteSession,
+  listAddresses,
+  listFavourites,
   login,
   publicUser,
   readSession,
   register,
+  removeFavourite,
   requestPasswordReset,
   resetPassword,
+  saveAddress,
+  setDefaultAddress,
   updateProfile,
 } from "@zenweld/auth/server";
 import { tr } from "@zenweld/i18n";
@@ -41,6 +48,13 @@ import {
  *   POST /api/uyelik/sifre-unuttum  {email}: hesap olsa da olmasa da ayni
  *                               yanit; varsa sifirlama baglantisi e-postayla
  *   POST /api/uyelik/sifre-sifirla  {token, password}
+ *   GET  /api/uyelik/adresler   uyenin adresleri (Asama 5.1, K-96)
+ *   POST /api/uyelik/adres-kaydet     {id?, title, fullName, ...}
+ *   POST /api/uyelik/adres-sil        {id}
+ *   POST /api/uyelik/adres-varsayilan {id}
+ *   GET  /api/uyelik/favoriler  uyenin favori urunleri
+ *   POST /api/uyelik/favori-ekle      {ids}: tek urun ya da giriste tarayicidaki liste
+ *   POST /api/uyelik/favori-cikar     {id}
  *
  * Oturum cerezi ve istek denetimi: lib/server/session-cookie.ts. Kurallar:
  * packages/auth/src/server.
@@ -53,9 +67,15 @@ type Context = { params: Promise<{ islem: string }> };
 
 export async function GET(request: NextRequest, context: Context) {
   const { islem } = await context.params;
-  if (!usesDatabase() || islem !== "ben") return notFound();
+  if (!usesDatabase() || !["ben", "adresler", "favoriler"].includes(islem)) return notFound();
   const token = request.cookies.get(SESSION_COOKIES[SCOPE])?.value;
   const session = await readSession(database(), token, SCOPE);
+  if (islem !== "ben") {
+    if (!session) return clearSessionCookie(json({ ok: false, error: AUTH_ERRORS.sessionEnded }, 401), request, SCOPE);
+    return islem === "adresler"
+      ? json({ ok: true, addresses: await listAddresses(database(), session.user.id) })
+      : json({ ok: true, ids: await listFavourites(database(), session.user.id) });
+  }
   if (!session) {
     const response = json({ ok: true, user: null });
     return token ? clearSessionCookie(response, request, SCOPE) : response;
@@ -121,6 +141,27 @@ export async function POST(request: NextRequest, context: Context) {
     case "hesap-sil": {
       const result = await deleteAccount(db, userId, body);
       return result.ok ? clearSessionCookie(json({ ok: true }), request, SCOPE) : failure(result);
+    }
+    case "adres-kaydet":
+    case "adres-sil":
+    case "adres-varsayilan": {
+      // Varsayilan adres kurali birden fazla yazmada korunur: tek islem.
+      const result = await db.transaction((tx) =>
+        islem === "adres-kaydet"
+          ? saveAddress(tx, userId, body)
+          : islem === "adres-sil"
+            ? deleteAddress(tx, userId, body.id)
+            : setDefaultAddress(tx, userId, body.id),
+      );
+      return result.ok ? json({ ok: true, addresses: result.addresses }) : failure(result);
+    }
+    case "favori-ekle":
+    case "favori-cikar": {
+      const result =
+        islem === "favori-ekle"
+          ? await db.transaction((tx) => addFavourites(tx, userId, body.ids))
+          : await removeFavourite(db, userId, body.id);
+      return result.ok ? json({ ok: true, ids: result.ids }) : failure(result);
     }
     default:
       return notFound();

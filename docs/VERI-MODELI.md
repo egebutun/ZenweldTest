@@ -427,6 +427,8 @@ KARARLAR K-82):
 - Üyenin ilk adresi varsayılan olur.
 - Varsayılan adres silinirse kalan ilk adres varsayılan olur.
 - Adresi yalnızca sahibi değiştirebilir.
+- Üye başına en fazla 20 adres (K-96). Veritabanı modunda adresler
+  sunucudadır (Aşama 5.1).
 
 ---
 
@@ -886,7 +888,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 | `zenweld.cart.v1` | localStorage | Sepet: `[{ productId, variantId?, quantity }]` (eski `selection` biçimli satırlar tek seçenekte okunur) | Tarayıcıda kalabilir; fiyat her açılışta üründen hesaplanır |
 | `zenweld.cart.coupon.v1` | localStorage | Sepete uygulanan kupon kodu (büyük harf); sipariş verilince silinir | Tarayıcıda kalabilir; indirim sunucuda yeniden hesaplanır |
 | `zenweld.quotelist.v1` | localStorage | Teklif listesi: `[{ productId, variantId?, productName, quantity }]` | Tarayıcıda kalabilir |
-| `zenweld.favourites.v1` | localStorage | Favori ürün kimlikleri | Üyeye bağlanabilir |
+| `zenweld.favourites.v1` | localStorage | Favori ürün kimlikleri (giriş yapmamış ziyaretçi ve demo modu) | Veritabanı modunda üyenin favorileri `favourites` tablosunda; girişte bu liste hesaba eklenir ve boşaltılır (K-96) |
 | `zenweld.cookie-consent.v1` | localStorage | Çerez tercihi: `{ choice: "all" | "necessary", at }` | Tarayıcıda kalır |
 | `zenweld.admin.range` | localStorage | Panel ana sayfasındaki dönem seçimi | Tarayıcıda kalır |
 | `zenweld.welcome.seen` | sessionStorage | Karşılama penceresi bu oturumda gösterildi | Tarayıcıda kalır |

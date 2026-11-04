@@ -4,27 +4,22 @@ import { useState } from "react";
 import { MapPin, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import type { Address } from "@zenweld/data";
 import { useAuth } from "@zenweld/auth";
-import {
-  addAddress,
-  addressesForUser,
-  deleteAddress,
-  setDefaultAddress,
-  updateAddress,
-  useDatabase,
-} from "@zenweld/store";
 import { Alert, Badge, Button, EmptyState, FormRow, Input } from "@zenweld/ui";
 import { AddressFields, EMPTY_ADDRESS, addressComplete } from "@/components/shop/AddressFields";
+import { useAddresses, type AddressInput, type AddressResult } from "@/lib/addresses";
 import { useT } from "@/lib/i18n-client";
 
 export default function AddressesPage() {
   const t = useT();
   const { user } = useAuth();
-  const db = useDatabase();
+  const { addresses, ready, save, remove, makeDefault } = useAddresses();
   // "new": yeni adres formu; Address: o adresin duzenleme formu
   const [editing, setEditing] = useState<Address | "new" | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   if (!user) return null;
-  const addresses = addressesForUser(user.id, db);
+  if (!ready) return <div className="py-10 text-center text-zw-grey-500">{t.common.loading}</div>;
+  const report = (result: AddressResult) => setError(result.ok ? null : (result.error ?? null));
   const addButton = (
     <Button leftIcon={<Plus size={17} />} onClick={() => setEditing("new")}>
       {t.account.newAddress}
@@ -38,10 +33,10 @@ export default function AddressesPage() {
         key={current?.id ?? "new"}
         heading={current ? t.account.editAddress : t.account.newAddress}
         initial={current}
-        onSave={(fields) => {
-          if (current) updateAddress(user.id, current.id, fields);
-          else addAddress({ ...fields, userId: user.id });
-          setEditing(null);
+        onSave={async (fields) => {
+          const result = await save(fields, current?.id);
+          if (result.ok) setEditing(null);
+          return result;
         }}
         onCancel={() => setEditing(null)}
       />
@@ -63,6 +58,7 @@ export default function AddressesPage() {
 
   return (
     <div className="space-y-4">
+      {error && <Alert tone="danger">{error}</Alert>}
       <div className="flex justify-end">{addButton}</div>
       <div className="grid gap-4 sm:grid-cols-2">
         {addresses.map((a) => (
@@ -85,14 +81,14 @@ export default function AddressesPage() {
                 <Pencil size={14} /> {t.account.edit}
               </button>
               {!a.isDefault && (
-                <button type="button" onClick={() => setDefaultAddress(user.id, a.id)} className={actionCls}>
+                <button type="button" onClick={async () => report(await makeDefault(a.id))} className={actionCls}>
                   <Star size={14} /> {t.account.setDefault}
                 </button>
               )}
               <button
                 type="button"
-                onClick={() => {
-                  if (window.confirm(t.account.deleteAddressConfirm.replace("{title}", a.title))) deleteAddress(user.id, a.id);
+                onClick={async () => {
+                  if (window.confirm(t.account.deleteAddressConfirm.replace("{title}", a.title))) report(await remove(a.id));
                 }}
                 className={actionCls}
               >
@@ -115,10 +111,11 @@ function AddressForm({
 }: {
   heading: string;
   initial?: Address;
-  onSave: (fields: Omit<Address, "id" | "userId" | "isDefault">) => void;
+  onSave: (fields: AddressInput) => Promise<AddressResult>;
   onCancel: () => void;
 }) {
   const t = useT();
+  const [problem, setProblem] = useState<string | null>(null);
   const [address, setAddress] = useState(() => {
     if (!initial) return { ...EMPTY_ADDRESS, title: "" };
     const { fullName, phone, city, district, line, title } = initial;
@@ -127,10 +124,11 @@ function AddressForm({
   const [error, setError] = useState(false);
   const set = (key: keyof typeof address, value: string) => setAddress((a) => ({ ...a, [key]: value }));
 
-  const save = (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!addressComplete(address)) return setError(true);
-    onSave({ ...address, title: address.title.trim() || t.checkout.shippingAddress });
+    const result = await onSave({ ...address, title: address.title.trim() || t.checkout.shippingAddress });
+    setProblem(result.ok ? null : (result.error ?? null));
   };
 
   return (
@@ -147,6 +145,7 @@ function AddressForm({
         </FormRow>
       </div>
       {error && !addressComplete(address) && <Alert tone="danger">{t.checkout.required}</Alert>}
+      {problem && <Alert tone="danger">{problem}</Alert>}
       <div className="flex flex-wrap gap-3">
         <Button type="submit">{t.common.save}</Button>
         <Button type="button" variant="outline" onClick={onCancel}>

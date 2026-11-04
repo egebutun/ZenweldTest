@@ -82,7 +82,8 @@ tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
 - **Tarayıcıda tutulanlar (Demo notu):** Sepet, favoriler, teklif listesi,
   çerez seçimi, karşılama penceresinin görülmesi ve oturum ziyaretçinin
   tarayıcısında tutulur. Bütün site verisi de (ürünler, siparişler, üyeler…)
-  şimdilik tarayıcıdadır.
+  şimdilik tarayıcıdadır. Veritabanı modunda oturum, giriş yapmış üyenin
+  adresleri ve favorileri sunucudadır (bkz. [Hesabım](#14-hesabım)).
 
 ---
 
@@ -743,7 +744,8 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
   - Zorunlu: Ad Soyad, Telefon, İl, İlçe, Açık adres.
   - İsteğe bağlı: Adres başlığı ("Ev, İş, Atölye…").
 - **"Bu adresi adreslerime kaydet":** İşaretli gelir. Sipariş tamamlanınca adres
-  Adreslerim'e eklenir; başlık boşsa "Teslimat Adresi" olur.
+  Adreslerim'e eklenir; başlık boşsa "Teslimat Adresi" olur. Üyenin 20
+  kayıtlı adresi varsa adres kaydedilmez; sipariş yine tamamlanır.
 
 ### 2. Fatura Bilgileri
 
@@ -970,7 +972,9 @@ Yap** da aynı işi yapar.
   açık kalır.
 - **Demo modunda** şifreler tarayıcıda karşılaştırılır; bu gerçek bir
   güvenlik değildir.
-- Adresler, siparişler, teklifler ve favoriler Aşama 5'e kadar iki modda da
+- Veritabanı modunda giriş yapmış üyenin adresleri ve favorileri de
+  sunucudadır (Aşama 5.1); başka cihazda giriş yapınca aynısı görünür.
+  Siparişler ve teklifler Aşama 5'in sonraki adımlarına kadar iki modda da
   tarayıcıdadır.
 
 ---
@@ -1084,8 +1088,16 @@ kartlar ilgili sayfaya gider.
 - **Liste:** Favorilere eklenen ürünlerin kartları. Yayından kaldırılan ürün
   görünmez.
 - **Boşsa:** "Henüz favori ürününüz yok."
-- **Demo notu:** Favoriler üyeye değil tarayıcıya bağlıdır; giriş yapmadan da
-  çalışır.
+- **Nerede tutulur** (KARARLAR K-96):
+  - Giriş yapmadan eklenen favoriler tarayıcıda durur.
+  - Veritabanı modunda giriş yapmış üyenin favorileri hesabındadır; her
+    cihazda aynı liste görünür. Üye giriş yapınca tarayıcıdaki favoriler
+    hesaba eklenir ve tarayıcıdan silinir.
+  - Çıkış yapınca kalpler boş görünür; favoriler hesapta kalır, tekrar
+    girişte geri gelir.
+  - Demo modunda favoriler üyeye değil tarayıcıya bağlıdır.
+- **Sınır:** En fazla 500 favori. Dolunca kalbe basıldığında "En fazla 500
+  favori ekleyebilirsiniz." uyarısı çıkar.
 
 ### Garantilerim
 
@@ -1103,6 +1115,13 @@ kartlar ilgili sayfaya gider.
   - Düğmeler: **Düzenle**, **Varsayılan yap**, **Sil**. Silmeden önce
     "“<başlık>” adresi silinsin mi?" diye sorulur.
 - **Yeni Adres Ekle:** Ödeme sayfasındaki adres alanları ve başlık.
+- **Varsayılan:** İlk eklenen adres varsayılan olur. Varsayılan adres
+  silinirse kalan adreslerden ilk eklenen varsayılan olur. Ödeme sayfasında
+  varsayılan adres seçili gelir.
+- **Sınır:** En fazla 20 adres. Fazlasında form "En fazla 20 adres
+  kaydedebilirsiniz." der.
+- **Nerede tutulur:** Veritabanı modunda üyenin hesabında (her cihazda aynı);
+  demo modunda tarayıcıda.
 - **Boşsa:** "Kayıtlı adres yok" (altındaki açıklama yer tutucu).
 
 ---

@@ -515,7 +515,9 @@ yalnızca e-postadadır. Üye başına en fazla bir geçerli bağlantı durur.
 
 ### `favourites` — favoriler (yeni)
 
-Bugün tarayıcıda (`zenweld.favourites.v1`).
+Veritabanı modunda giriş yapmış üyenin favorileri burada (Aşama 5.1,
+KARARLAR K-96); giriş yapmamış ziyaretçinin ve demo modunun favorileri
+tarayıcıda (`zenweld.favourites.v1`).
 
 | Kolon | Tür | Kural |
 |---|---|---|
@@ -1205,7 +1207,8 @@ bir betik değiştirilmez; şema değişince yeni betik üretilir.
 | `next_record_number(önek)` | Kayıt numarasını tek işlemde artırıp döndürür (`next_record_number('TKL-2026-')` → 50) |
 
 **Kayıt katmanının sağlayacakları** (veritabanında değil; site ve panel
-bağlanırken): üyenin tam bir varsayılan adresi olması, son aktif
+bağlanırken): üyenin tam bir varsayılan adresi olması (Aşama 5.1:
+`packages/auth/src/server/account-data.ts`), son aktif
 yöneticinin silinememesi, anasayfa yorum şeridinde en fazla 10 yorum, eski
 link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 ürünün her seçeneğinden tam bir değer alması.
@@ -1392,6 +1395,39 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   `tests/e2e-db/panel.spec.ts`
   (oturumsuz panelin gönderilmemesi, 8 saatlik oturum, üyenin panele
   girememesi, çıkış, askı, süre dolması, deneme sınırı).
+
+**Üyenin adresleri ve favorileri (Aşama 5.1, KARARLAR K-96;
+`packages/auth/src/server/account-data.ts`):**
+
+- Veritabanı modunda giriş yapmış üye adreslerini ve favorilerini
+  `/api/uyelik/[islem]` ucundan okur ve değiştirir; üye oturum çerezinden
+  bulunur, istekte üye kimliği gönderilmez.
+  - Okuma (GET): `adresler`, `favoriler`.
+  - Değiştirme (POST): `adres-kaydet` (kimlik varsa düzenleme),
+    `adres-sil`, `adres-varsayilan`, `favori-ekle` (`{ ids }`),
+    `favori-cikar` (`{ id }`). Her yanıt listenin son halini döndürür.
+- **Adres:** Yalnızca üyenin kendi adresi değişir; başkasınınki "Adres
+  bulunamadı." İlk adres varsayılan olur; varsayılan silinince kalan ilk
+  eklenen varsayılan olur; varsayılan yapılınca diğerleri kalkar. Liste
+  varsayılan önce, sonra eklenme sırasıyla gelir. En fazla 20 adres.
+- Ekleme, silme, varsayılan değişikliği ve favori ekleme tek işlemdedir ve
+  önce üyenin `users` satırını kilitler: aynı üyeden aynı anda gelen iki
+  istek (ör. iki sekme) sırayla çalışır; iki varsayılan adres oluşmaz,
+  sınır aşılmaz.
+- **Favori:** Aynı ürün iki kez eklenmez; olmayan ürün atlanır. Girişte
+  tarayıcıdaki liste tek istekle eklenir (sığan kadarı); tek ürün
+  eklenirken sınır doluysa hata döner. En fazla 500 favori. Ürün ya da üye
+  silinince favori de silinir.
+- Tarayıcı tarafı: `apps/zenweld-web/src/lib/addresses.ts` (Adreslerim ve
+  ödeme) ve `apps/zenweld-web/src/lib/favourites.tsx`; demo modunda ikisi
+  de tarayıcıdaki veriyi kullanır.
+- Test: `tests/db/hesap-verisi.test.ts` (varsayılan kuralları, yalnızca
+  sahibin değiştirmesi, zorunlu alanlar, 20 adres, aynı anda gelen
+  istekler; favori ekleme, tekrar,
+  çıkarma, ürün silinince gitmesi, 500 sınırı ve girişteki birleştirme);
+  `tests/e2e-db/hesap-verisi.spec.ts` (tarayıcıda: adres ekleme, varsayılan,
+  silme, başka cihaz; misafir favorilerinin girişte hesaba geçmesi, başka
+  cihaz, çıkışta boş kalpler).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

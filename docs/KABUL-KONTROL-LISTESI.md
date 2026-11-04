@@ -438,6 +438,16 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       sayfasında "Şifreniz değiştirildi…" yazar, diğer cihazdaki oturum
       kapanır. Aynı bağlantı ikinci kez ve 1 saatten sonra "Bağlantı geçersiz
       ya da süresi dolmuş." der; `/sifre-sifirla` bağlantısız açılınca da.
+- [ ] Adresler ve favoriler (veritabanı modu, Aşama 5.1, K-96): Adreslerim'de
+      eklenen adres `addresses`'ta görünür; varsayılan değiştirilince ve
+      varsayılan silinince kalan ilk adres varsayılan olur. Başka tarayıcıda
+      aynı üyeyle girilince aynı adresler görünür; ödeme sayfasında
+      varsayılan adres seçili gelir. 21. adres "En fazla 20 adres
+      kaydedebilirsiniz." der. Giriş yapmadan iki ürünün kalbine basılır;
+      giriş yapınca ikisi `favourites`'a yazılır ve Favorilerim'de görünür.
+      Başka tarayıcıda biri çıkarılınca ilk tarayıcıda sayfa yenilenince o da
+      gider. Çıkış yapınca kalpler boş görünür; tekrar girişte favoriler
+      geri gelir.
 - [ ] Veritabanı modunda panel (Aşama 4.3): oturumsuz `/yonetim/urunler`
       giriş ekranına (`?next=%2Fyonetim%2Furunler`) gider; yönetici girişinden
       sonra Ürünler açılır. `zw_panel` çerezi HttpOnly'dir; `sessions`'ta

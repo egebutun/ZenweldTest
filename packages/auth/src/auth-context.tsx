@@ -45,6 +45,8 @@ export type ProfilePatch = Partial<
 
 interface AuthContextValue {
   user: User | null;
+  /** Uyelik sunucudaysa uclarin adresi (veritabani modu); demo modunda null. */
+  api: string | null;
   /** Oturum okundu mu (ilk cizimde false) */
   ready: boolean;
   login: (email: string, password: string) => Promise<AuthResult>;
@@ -163,6 +165,7 @@ function ServerAuth({ children, api }: { children: ReactNode; api: string }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
+      api,
       ready,
       login: (email, password) => signIn("giris", { email, password }),
       register: (input) => signIn("kayit", input),
@@ -344,6 +347,7 @@ function BrowserAuth({
   const value = useMemo(
     () => ({
       user,
+      api: null,
       ready,
       login,
       logout,

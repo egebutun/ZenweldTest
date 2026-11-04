@@ -1051,6 +1051,18 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Neden:** Bağlantı ele geçse de kısa süre ve tek kullanım zararı
   sınırlar; sık istek kutuyu doldurmasın.
 
+### K-96 · Favoriler ve adresler üyenin hesabında
+- **Tarih:** 2026-11-04
+- **Karar:** Veritabanı modunda (Aşama 5.1):
+  - Giriş yapmış üyenin adresleri ve favorileri hesabında tutulur; her
+    cihazda aynı liste görünür.
+  - Giriş yapmadan eklenen favoriler tarayıcıda durur. Üye giriş yapınca
+    bunlar hesaptaki favorilere eklenir ve tarayıcıdan silinir.
+  - Çıkışta favoriler hesapta kalır; sitede kalpler boş görünür.
+  - Üye başına en fazla **20 adres** ve **500 favori**.
+- **Neden:** Üye favorisini telefonda da bilgisayarda da görsün; sınırlar
+  tek bir hesabın sınırsız kayıtla veritabanını şişirmesini önler.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

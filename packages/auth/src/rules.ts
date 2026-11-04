@@ -21,6 +21,9 @@ export function passwordProblem(password: string): string | null {
 
 export const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+/** Uye basina en fazla adres ve favori (KARARLAR K-96). */
+export const ACCOUNT_LIMITS = { addresses: 20, favourites: 500 };
+
 /* ------------------------- Yanlis sifre siniri ------------------------- */
 
 /** Bir hesaba 15 dakikada 10 yanlis denemeden sonra 15 dakika giris yok (K-94). */

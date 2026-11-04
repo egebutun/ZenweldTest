@@ -82,6 +82,14 @@ export async function sapStockRead(
   return { status: response.status(), body: (await response.json()) as Record<string, unknown> };
 }
 
+/** Yeni bireysel uye (sunucuda kayit; oturum istegin baglamina acilir). */
+export async function registerMember(request: APIRequestContext, email: string, password: string): Promise<void> {
+  const answer = await request.post("/api/uyelik/kayit", {
+    data: { role: "individual", email, password, firstName: "Deneme", lastName: "Üye", phone: "05551112233" },
+  });
+  expect(answer.status()).toBe(200);
+}
+
 /** Bireysel demo uyesiyle giris (hesap README'deki tablodan). */
 export async function memberLogin(page: Page): Promise<void> {
   const { email, password } = demoAccount("Bireysel");

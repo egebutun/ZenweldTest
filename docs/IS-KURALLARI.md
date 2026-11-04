@@ -696,7 +696,8 @@ Kod: `packages/store/src/repo/reviews.ts`.
   - **Örnek:** 09:00'da istenen bağlantı 10:00'a kadar geçerli; 09:10'daki
     ikinci istek bağlantı üretmez, 09:15'teki üretir ve 09:00'daki
     bağlantıyı geçersiz kılar.
-- **Üye silinince:** Kayıtlı adresleri de silinir; siparişleri, teklifleri,
+- **Üye silinince:** Kayıtlı adresleri (veritabanı modunda favorileri de)
+  silinir; siparişleri, teklifleri,
   servis talepleri, iade talepleri, garanti kayıtları ve yorumları kalır.
   - Yönetici panelden siler ya da üye kendi hesabını Hesabım › Profil ›
     **Hesabımı Sil**'den siler (şifresiyle onaylar); sonuç aynıdır.
@@ -705,7 +706,23 @@ Kod: `packages/store/src/repo/reviews.ts`.
 - **Sipariş:** Yalnızca üye verebilir. Teklif, servis talebi, garanti kaydı
   ve yorum için üyelik gerekmez.
 - **Adres:** Üyenin ilk adresi varsayılandır; varsayılan silinince kalan ilk
-  adres varsayılan olur.
+  eklenen adres varsayılan olur. Bir adres yalnızca sahibince değiştirilir ya
+  da silinir.
+  - Zorunlu alanlar: başlık, ad soyad, telefon, il, ilçe, açık adres.
+  - Üye başına en fazla **20 adres** (K-96): "En fazla 20 adres
+    kaydedebilirsiniz." Ödemede "adreslerime kaydet" işaretliyken sınır
+    doluysa adres kaydedilmez; sipariş yine tamamlanır.
+- **Favoriler** (K-96):
+  - Giriş yapmamış ziyaretçinin favorileri tarayıcıdadır.
+  - Veritabanı modunda giriş yapmış üyenin favorileri hesabındadır. Girişte
+    tarayıcıdaki favoriler hesaba eklenir (zaten olanlar ve artık olmayan
+    ürünler atlanır) ve tarayıcıdan silinir. Çıkışta favoriler hesapta
+    kalır; kalpler boş görünür.
+  - Üye başına en fazla **500 favori**: "En fazla 500 favori
+    ekleyebilirsiniz." Girişteki eklemede yalnızca sığan kadarı eklenir.
+  - Silinen ürün favorilerden de çıkar; yayından kalkan ürün görünmez.
+  - **Örnek:** Hesabında 499 favori olan üye, tarayıcıda 3 favoriyle giriş
+    yapar: 1'i hesaba eklenir, 2'si eklenmez; tarayıcıdaki liste boşalır.
 - **Nerede çalışır:** Veritabanı modunda sitenin üyeliği sunucudadır (Aşama
   4.2): şifre güçlü özetle (argon2id) saklanır, oturum sunucuda tutulur.
   Panelin girişi de sunucudadır (Aşama 4.3): panel oturumu girişten 8 saat
@@ -714,8 +731,10 @@ Kod: `packages/store/src/repo/reviews.ts`.
 - **Demo notu:** Demo modunda şifreler tarayıcıda basit bir özetle
   karşılaştırılır; deneme sınırı yoktur.
 
-Kod: `packages/auth/src/auth-context.tsx`, `packages/store/src/repo/users.ts`;
-sunucu: `packages/auth/src/rules.ts`, `packages/auth/src/server/`.
+Kod: `packages/auth/src/auth-context.tsx`, `packages/store/src/repo/users.ts`,
+`apps/zenweld-web/src/lib/addresses.ts`, `apps/zenweld-web/src/lib/favourites.tsx`;
+sunucu: `packages/auth/src/rules.ts`, `packages/auth/src/server/` (adres ve
+favoriler: `account-data.ts`).
 
 ---
 

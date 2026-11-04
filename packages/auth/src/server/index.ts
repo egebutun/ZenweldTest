@@ -7,3 +7,4 @@ export * from "./accounts";
 export * from "./password";
 export * from "./session";
 export * from "./password-reset";
+export * from "./account-data";

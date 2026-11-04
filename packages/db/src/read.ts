@@ -447,6 +447,21 @@ export function userRecord(u: typeof s.users.$inferSelect): ZenweldDatabase["use
   };
 }
 
+/** Adres satiri -> sitenin adres kaydi. */
+export function addressRecord(a: typeof s.addresses.$inferSelect): ZenweldDatabase["addresses"][number] {
+  return {
+    id: a.id,
+    userId: a.userId,
+    title: a.title,
+    fullName: a.fullName,
+    phone: a.phone,
+    city: a.city,
+    district: a.district,
+    line: a.line,
+    isDefault: a.isDefault,
+  };
+}
+
 export async function readUsers(db: ReadDb): Promise<Pick<ZenweldDatabase, "users" | "addresses">> {
   const [users, addresses] = await serial(
     () => db.select().from(s.users).orderBy(asc(s.users.createdAt), asc(s.users.id)),
@@ -454,17 +469,7 @@ export async function readUsers(db: ReadDb): Promise<Pick<ZenweldDatabase, "user
   );
   return {
     users: users.map(userRecord),
-    addresses: addresses.map((a) => ({
-      id: a.id,
-      userId: a.userId,
-      title: a.title,
-      fullName: a.fullName,
-      phone: a.phone,
-      city: a.city,
-      district: a.district,
-      line: a.line,
-      isDefault: a.isDefault,
-    })),
+    addresses: addresses.map(addressRecord),
   };
 }
 

@@ -410,8 +410,11 @@ npm run start --workspace apps/zenweld-web
     değiştirme, hesap silme ve şifre sıfırlama (e-posta Resend kurulunca
     gider) veritabanından yapılır; oturum güvenli bir
     çerezde durur. Demo hesaplarıyla (`db:seed`) girilir; ilk girişte
-    şifreleri güçlü özete çevrilir. Siparişler, teklifler, adresler,
-    favoriler ve formlar bu aşamada tarayıcıda kalır.
+    şifreleri güçlü özete çevrilir.
+  - **Adresler ve favoriler sunucuda (Aşama 5.1):** giriş yapmış üyenin
+    adresleri ve favorileri veritabanındadır; başka tarayıcıda da aynısı
+    görünür. Giriş yapmadan eklenen favoriler girişte hesaba eklenir.
+    Siparişler, teklifler ve formlar şimdilik tarayıcıda kalır.
   - **Panel girişi sunucuda (Aşama 4.3):** `/yonetim` yönetici oturumu
     olmadan açılmaz; oturum 8 saat sürer. Bilgisayarda `db:seed`'in demo
     yöneticisiyle, canlıda `npm run yonetici:olustur` ile açılan hesapla

@@ -50,7 +50,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler; 5.3 teklif, servis, garanti, iade ve yorum formları; 5.4 panel veritabanından okur; 5.5 panel yazar, değişiklik kaydı ve sayfa yenileme; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
 | 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
@@ -679,8 +679,10 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      - Birden fazla sunucu çalışacaksa önbellek ortak bir yerde (ör. Redis)
        tutulmalı; yoksa yenileme yalnızca isteği alan sunucuda olur. Tek
        sunucuda gerekmez (K-92).
-   - Aşama 4 (üyelik ve oturum sunucuda) bitti. Sonraki aşamalar: 5 panel
-     ve site kayıtları veritabanına; 6 dosya deposu; canlıya hazırlık.
+   - Aşama 4 (üyelik ve oturum sunucuda) bitti. Aşama 5.1 (üyenin
+     adresleri ve favorileri veritabanında, K-96) bitti. Sonraki aşamalar:
+     5'in kalanı (siparişler, formlar, panel); 6 dosya deposu; canlıya
+     hazırlık.
    - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları
      (bayilik, iletişim, ürün destek, Welders Club), e-posta alıcıları (tür
      başına), gönderilen e-postalar ve değişiklik kaydı (KARARLAR K-81).
@@ -773,9 +775,7 @@ hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
    rolüyle korunmalı. Ara dönem: Panel › Üyeler listesi tarayıcıdaki örnek üyeleri
    gösterir; veritabanındaki üyeler Aşama 5'te panele gelir. `npm run db:seed` örnek hesapları eski demo özetiyle yazar;
    ilk girişte güçlü özete çevrilir.
-2. **Favoriler üyeye bağlanmalı:** Bugün tarayıcıda (`zenweld.favourites.v1`);
-   üye başka cihazda giriş yapınca favorilerini görmüyor.
-3. **Hesap silinince kalan veriler:** "Hesap silme — açık konular" bölümü.
+2. **Hesap silinince kalan veriler:** "Hesap silme — açık konular" bölümü.
 
 ## Hesap silme — açık konular (KVKK ve yasal saklama)
 

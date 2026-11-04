@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, CreditCard, Landmark, User as UserIcon } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
@@ -13,8 +13,6 @@ import {
   type PaymentMethod,
 } from "@zenweld/data";
 import {
-  addAddress,
-  addressesForUser,
   getShopSettings,
   placeOrder,
   useDatabase,
@@ -25,6 +23,7 @@ import { formatPrice } from "@zenweld/utils";
 import Link from "next/link";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";
+import { useAddresses } from "@/lib/addresses";
 import { AddressFields, EMPTY_ADDRESS, addressComplete } from "@/components/shop/AddressFields";
 import { BankAccounts } from "@/components/shop/BankAccounts";
 import { CardPayment, EMPTY_CARD, type CardDraft } from "@/components/shop/CardPayment";
@@ -71,7 +70,7 @@ export default function CheckoutPage() {
   const shop = getShopSettings(db);
   const docTitle = useDocumentTitle();
 
-  const saved = useMemo(() => (user ? addressesForUser(user.id, db) : []), [user, db]);
+  const { addresses: saved, ready: addressesReady, save: saveAddress } = useAddresses();
   const [addressId, setAddressId] = useState<string | null>(null);
   const [newAddress, setNewAddress] = useState<OrderAddress & { title: string }>({
     ...EMPTY_ADDRESS,
@@ -102,7 +101,7 @@ export default function CheckoutPage() {
   const [placed, setPlaced] = useState(false);
   const bot = useBotTrap();
 
-  if (!ready || !cart.ready || placed) {
+  if (!ready || !cart.ready || !addressesReady || placed) {
     return <div className="zw-container py-20 text-center text-zw-grey-500">{t.common.loading}</div>;
   }
 
@@ -295,7 +294,7 @@ export default function CheckoutPage() {
       }, bot.website);
       if (!selectedSaved && saveNew) {
         const { title, ...address } = newAddress;
-        addAddress({ ...address, userId: user.id, title: title.trim() || t.checkout.shippingAddress });
+        void saveAddress({ ...address, title: title.trim() || t.checkout.shippingAddress });
       }
       setPlaced(true);
       cart.clear();

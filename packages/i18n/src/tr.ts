@@ -422,6 +422,12 @@ export const tr = {
     deleteAccountPassword: "Onay için şifreniz",
     deleteAccountConfirm: "Hesabınız kalıcı olarak silinsin mi? Bu işlem geri alınamaz.",
     accountDeleted: "Hesabınız silindi.",
+    /** Adres ve favori hatalari; tarayicida ve sunucuda ayni (KARARLAR K-96) */
+    errors: {
+      addressLimit: "En fazla {max} adres kaydedebilirsiniz.",
+      favouriteLimit: "En fazla {max} favori ekleyebilirsiniz.",
+      addressNotFound: "Adres bulunamadı.",
+    },
   },
   warranty: {
     serialNumber: "Seri Numarası",
