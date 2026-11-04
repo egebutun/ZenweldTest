@@ -21,6 +21,7 @@
     "db:reset": "tsx packages/db/scripts/reset.ts",
     "db:seed": "tsx packages/db/scripts/seed.ts",
     "db:yukle": "tsx packages/db/scripts/load.ts",
+    "yonetici:olustur": "tsx packages/auth/scripts/create-admin.ts",
     "test:db": "vitest run --config vitest.db.config.mts",
     "db:studio": "npm run studio --workspace=@zenweld/db",
     "site:yenile": "node scripts/site-yenile.mjs",

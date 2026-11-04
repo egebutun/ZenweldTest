@@ -73,6 +73,7 @@ npm run db:migrate  # veritabanı tablolarını kurar / günceller
 npm run db:reset    # bilgisayardaki veritabanını silip tabloları baştan kurar
 npm run db:seed     # sitenin örnek verisini boş veritabanına yükler
 npm run db:yukle    # bugünkü veriyi canlı ya da deneme veritabanına yükler (aşağıda)
+npm run yonetici:olustur # veritabanında yönetici hesabı açar / şifresini değiştirir (aşağıda)
 npm run db:generate # şema değişince yeni geçiş betiği üretir
 npm run db:studio   # tabloları tarayıcıda gösterir
 npm run site:yenile # veritabanındaki değişikliği sitede o anda gösterir (aşağıda)
@@ -458,6 +459,11 @@ npm run start --workspace apps/zenweld-web
   - Bilgisayar dışındaki bir veritabanına yüklemeden önce veritabanının
     adı yazılarak onay verilir.
   - Ayrıntılar: docs/VERITABANI.md › 14.
+- **Yönetici hesabı (veritabanında):** Canlıya hiç hesap yüklenmediği için
+  ilk yönetici `npm run yonetici:olustur` ile açılır: e-posta, ad, soyad,
+  telefon ve şifre sorar (şifre ekranda görünmez, en az 8 karakter). Aynı
+  komut var olan yöneticinin şifresini değiştirir. Panel girişi
+  veritabanına Aşama 4.3'te bağlanır.
 - Geçiş betikleri `packages/db/migrations/`'dadır ve sırayla, bir kez
   çalışır; aynı betikler sunucuda da çalıştırılır. Çalışmış bir betik
   değiştirilmez; şema değişince `npm run db:generate` yeni betik üretir.

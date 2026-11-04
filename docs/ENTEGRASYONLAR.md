@@ -311,6 +311,7 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 | ESLint (eslint-config-next) | Kod denetimi; yalnızca geliştirirken ve derlemeden önce çalışır (`npm run build` önce bunu çalıştırır), siteye girmez |
 | Vitest | İş kuralları testleri; yalnızca geliştirirken çalışır, siteye girmez |
 | Playwright | Tarayıcı testleri; yalnızca geliştirirken çalışır, siteye girmez |
+| @node-rs/argon2 | Şifre özeti (argon2id); yalnızca sunucuda (`packages/auth/src/server`) |
 | Drizzle ORM, pg | Veritabanı tabloları ve bağlantısı (`packages/db`); `npm run db:*` komutları, veritabanı testleri ve veritabanı modundaki site (`DATA_SOURCE=database`) kullanır |
 | drizzle-kit, tsx | Geçiş betiklerini üretme, tablo görüntüleyici (`npm run db:studio`) ve komutları çalıştırma; yalnızca geliştirirken çalışır, siteye girmez |
 

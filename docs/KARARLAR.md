@@ -1019,6 +1019,25 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   STOKTA YOK yapmasın. Bayi dosyalarında aynı durum uyarı veriyor; otomatik
   işte uyarıyı görecek kimse olmadığı için okuma reddedilir.
 
+### K-94 · Üyelik: oturum süresi, şifre, giriş mesajı ve deneme sınırı
+- **Tarih:** 2026-11-04
+- **Karar:** Üyelik ve oturum sunucuya taşınırken (Aşama 4):
+  - **Oturum süresi:** Sitede 30 gün; her ziyarette uzar. Panelde girişten
+    8 saat sonra biter; uzamaz.
+  - **Şifre:** Yeni şifre en az 8 karakter (bugün 6). Var olan şifreler
+    etkilenmez.
+  - **Giriş hata mesajı:** Tek mesaj: "E-posta ya da şifre hatalı." Bugünkü
+    "hesap bulunamadı" / "şifre hatalı" ayrımı bir e-postanın üye olup
+    olmadığını ele veriyordu.
+  - **Yanlış şifre sınırı:** Bir hesaba 15 dakikada 10 yanlış denemeden
+    sonra o hesaba 15 dakika giriş yapılamaz: "Çok fazla deneme yapıldı. 15
+    dakika sonra tekrar deneyin."
+- **Neden:** Güncel güvenlik önerileri; müşteri sık sık giriş yapmak zorunda
+  kalmasın, panel ise iş günü sonunda kapansın.
+- **Uygulanışı:** Oturum süreleri ve şifre özeti Aşama 4.1'de
+  (`packages/auth/src/server`); sitedeki kayıt, giriş ve şifre ekranları
+  4.2'de bu kurallara geçer.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

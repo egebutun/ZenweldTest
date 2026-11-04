@@ -44,7 +44,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
+| 1 | **Aşama 4 — Üyelik ve oturum sunucuda** (KARARLAR K-94): 4.1 şifre özeti (argon2id), oturumlar ve `npm run yonetici:olustur` (bitti); 4.2 site üyeliği sunucuda (kayıt, giriş, çıkış, profil, şifre değiştirme, hesap silme; tek giriş hata mesajı, deneme sınırı, en az 8 karakter); 4.3 panel girişi ve `/yonetim`'in sunucuda korunması; 4.4 şifre sıfırlama (e-posta Resend kurulunca gider); 4.5 tarayıcı testleri | — |
 | 2 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | Aşama 4 |
 | 3 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 4 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
@@ -760,11 +760,12 @@ hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
 
 1. **Kimlik doğrulama ve yetki sunucuda yapılmalı.** Bugün şifre tarayıcıda
    basit bir özetle karşılaştırılıyor (`packages/auth/src/hash.ts`) ve
-   oturum tarayıcıda tutuluyor. Şifreler güçlü bir özetle (bcrypt, argon2)
-   saklanmalı; oturum sunucuda tutulmalı (ör. httpOnly çerez); yönetim
-   paneli sayfaları ve panel işlemleri sunucuda yönetici rolüyle korunmalı.
-   `npm run db:seed` örnek üyeleri bugünkü basit özetle yazar; giriş sunucuya
-   taşınınca güçlü özetle yazacak şekilde değiştirilmeli.
+   oturum tarayıcıda tutuluyor. Sunucu tarafı hazır (Aşama 4.1): şifre
+   argon2id ile özetlenir, oturum veritabanında (`sessions`) ve yalnızca
+   sunucunun okuyabildiği çerezde tutulur. Kalan: sitenin (4.2) ve panelin
+   (4.3) bunlara bağlanması; panel işlemleri sunucuda yönetici rolüyle
+   korunmalı. `npm run db:seed` örnek hesapları eski demo özetiyle yazar;
+   ilk girişte güçlü özete çevrilir.
 2. **Şifre sıfırlama:** "Şifremi unuttum" bugün yalnızca mesaj gösteriyor,
    e-posta gitmiyor. Tek kullanımlık ve süreli bir bağlantı e-postayla
    gönderilmeli.

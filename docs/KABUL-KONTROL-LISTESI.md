@@ -81,6 +81,12 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       `npm run db:yukle canli eksikler` ona dokunmaz, `npm run db:yukle canli`
       eski fiyata döndürür. Adres `localhost` değilse komut veritabanının
       adını sorar; yanlış yazılırsa hiçbir şey yüklemez.
+- [ ] Yönetici hesabı (`npm run yonetici:olustur`): boş bir veritabanında
+      e-posta, ad, soyad, telefon ve iki kez şifre sorar; şifre ekranda
+      görünmez; 8 karakterden kısa şifre ve eşleşmeyen tekrar kabul
+      edilmez. `db:studio`'da `users`'ta rolü `admin`, şifre özeti
+      `$argon2id$` ile başlar. Aynı e-postayla tekrar çalışınca şifre
+      değiştirmeyi sorar; bir üyenin e-postasıyla hesap açmaz.
 - [ ] SAP stok okuma (deneme dosyası; README › SAP stok okuma): site
       veritabanı modunda, `CRON_SECRET` ve `SAP_STOK_DOSYASI` tanımlıyken
       `npm run sap:stok` "50 kalem" okur. Dosyada stokta olan bir ürünün

@@ -79,6 +79,8 @@ ilgili belge **aynı commit'te** güncellenir:
   - `npm run db:yukle <canli|deneme> [eksikler]`: bugünkü veriyi canlı ya da
     deneme veritabanına yükler (KARARLAR K-91; satış hareketleri hiç
     yüklenmez, hiçbir kayıt silinmez).
+  - `npm run yonetici:olustur`: veritabanında yönetici hesabı açar ya da
+    yöneticinin şifresini değiştirir (şifre ekranda görünmez).
   - `npm run site:yenile` / `npm run sap:stok`: çalışan siteyi beklemeden
     yeniler / SAP depo stoğunu bir kez okutur (`REVALIDATE_SECRET` /
     `CRON_SECRET`).

@@ -403,7 +403,7 @@ KARARLAR K-82):
 | `role` | rol | `individual` (Bireysel), `business` (Kurumsal), `admin` (Yönetici) |
 | `status` | durum | `active` (Aktif), `suspended` (Askıda). Yeni üye Aktif başlar; onay durumu yoktur |
 | `email` | metin | Küçük harfle saklanır; **benzersiz** (büyük/küçük harf duyarsız) |
-| `passwordHash` | metin | **Demo notu:** Basit bir demo özeti; backend'de güçlü bir şifre özeti (ör. bcrypt, argon2) kullanılmalı |
+| `passwordHash` | metin | **Demo notu:** Tarayıcıda basit bir demo özeti. Veritabanında argon2id ([VERITABANI.md](VERITABANI.md) › 14 › Şifre ve oturum) |
 | `firstName`, `lastName`, `phone` | metin | |
 | `companyName`, `taxOffice`, `taxNumber`, `sector` | metin? | Kurumsal üyede |
 | `city` | metin? | |

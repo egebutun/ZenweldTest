@@ -462,13 +462,13 @@ başarılı okumanın zamanını gösterir.
 | `role` | text | zorunlu; `individual`, `business`, `admin` | Bireysel, kurumsal, yönetici |
 | `status` | text | zorunlu; `active`, `suspended` | |
 | `email` | text | zorunlu; benzersiz (harf duyarsız) | |
-| `password_hash` | text | zorunlu | Güçlü özet (argon2id). Bugünkü demo özetleri taşınmaz; demo hesaplar yeniden özetlenir |
+| `password_hash` | text | zorunlu | Güçlü özet (argon2id). Eski demo özeti (`zw1$…`, yalnızca bilgisayardaki ve denemedeki örnek hesaplar) ilk girişte argon2id'ye çevrilir ([14](#14-kod-betikler-ve-komutlar) › Şifre ve oturum) |
 | `first_name`, `last_name`, `phone` | text | zorunlu | |
 | `company_name`, `tax_office`, `tax_number`, `sector`, `city` | text | | Kurumsal bilgiler |
 | `newsletter` | boolean | zorunlu | Haber ve kampanya e-postası izni |
 | `created_at`, `updated_at` | timestamptz | zorunlu (`updated_at` yeni) | |
 | `last_login_at` | timestamptz | | |
-| `password_changed_at` | timestamptz | (yeni) | Şifre değişince diğer oturumlar kapanır |
+| `password_changed_at` | timestamptz | (yeni) | Son şifre değişikliği. Şifre değişince üyenin diğer oturumları silinir |
 
 Silme: adresleri, oturumları ve favorileri silinir; sipariş, teklif, servis,
 iade, garanti ve yorumlardaki bağ boşalır. Son aktif yönetici silinemez.
@@ -485,7 +485,9 @@ iade, garanti ve yorumlardaki bağ boşalır. Son aktif yönetici silinemez.
 
 ### `sessions` — oturumlar (yeni)
 
-Bugün oturum tarayıcıda tutuluyor; sunucuya taşınır.
+Bugün sitede oturum tarayıcıda tutuluyor; sunucudaki oturum kodu hazır
+(Aşama 4.1; [14](#14-kod-betikler-ve-komutlar) › Şifre ve oturum), site ve
+panel 4.2–4.3'te bağlanır.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -1173,6 +1175,8 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
 | `src/load.ts` | Bugünkü veriyi canlı ya da deneme veritabanına yükleme (`npm run db:yukle`; aşağıda) |
 | `src/sap-stock.ts` | SAP depo stoğu okuma işi ve deneme kaynağı (aşağıda) |
+| `packages/auth/src/server/` | Şifre özeti ve oturumlar (aşağıda; yalnızca sunucu, `@zenweld/auth/server`) |
+| `packages/auth/scripts/create-admin.ts` | Yönetici hesabı açma (`npm run yonetici:olustur`) |
 | `deneme/sap-stok.csv` | SAP yerine okunan örnek stok dosyası (50 kalem, 3'ü stoksuz) |
 | `src/read.ts` | Okuma katmanı: tablolardaki kayıtları sitenin kullandığı kayıt yapısına çevirir (aşağıda) |
 
@@ -1211,6 +1215,7 @@ link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 | `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
 | `npm run test:e2e:db` | Sitenin veritabanı modunda tarayıcı testleri (`tests/e2e-db`, `scripts/e2e-db.mts`): test veritabanını baştan kurup örnek veriyi yükler, siteyi `.next-db`'ye derler, testleri çalıştırır |
 | `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
+| `npm run yonetici:olustur` | Panel için yönetici hesabı açar ya da var olan yöneticinin şifresini değiştirir (aşağıda) |
 | `npm run sap:stok [zorla]` | SAP depo stoğunu beklemeden bir kez okutur (sitenin `/api/sap/stok` ucunu çağırır; aşağıda). `zorla`: yarım okuma korumasına takılan okumayı uygular |
 
 Testler tablo listesinin ve kolonların bu dosyayla aynı olduğunu da
@@ -1319,6 +1324,33 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   hatada son stoğun kalması, kilit, yarıda kalan okuma, yarım okuma
   koruması, deneme dosyası); `tests/e2e-db` (uç: anahtar, stok 0 gelince
   sayfanın hemen STOKTA YOK olması, hatalı ve yarım okuma, zorla).
+
+**Şifre ve oturum (`packages/auth/src/server`; KARARLAR K-94):**
+
+- **Şifre özeti:** argon2id (`@node-rs/argon2`; 19 MB bellek, 2 tur, 1 iş
+  parçacığı). Özet tuzu ve ayarları içinde taşır. Eski demo özeti
+  (`zw1$…`) de doğrulanır; doğruysa yeni özet döner ve kaydedilir (ilk
+  girişte güçlü özete geçilir). Yeni şifre en az 8 karakter
+  (`packages/auth/src/rules.ts`).
+- **Oturum:** 32 rastgele baytlık anahtar tarayıcıya yalnızca sunucunun
+  okuyabildiği çerezle verilir; `sessions.id` anahtarın sha256 özetidir
+  (veritabanı okunsa da oturum çalınmaz). Site oturumu (`site`) yalnızca
+  bireysel ve kurumsal üyeye, panel oturumu (`admin`) yalnızca yöneticiye
+  açılır; askıdaki ya da rolü değişen üyenin oturumu geçersizdir.
+- **Süre:** Site 30 gün; kullanıldıkça uzar (en fazla saatte bir yazılır).
+  Panel girişten 8 saat sonra biter, uzamaz.
+- **Kapatma:** Çıkışta oturum silinir; şifre değişince üyenin diğer
+  oturumları silinir; yeni girişte üyenin süresi dolmuş oturumları
+  temizlenir.
+- **`npm run yonetici:olustur`:** `DATABASE_URL`'deki veritabanında e-posta,
+  ad, soyad, telefon ve şifre (ekrana yazılmaz, iki kez) sorup yönetici
+  hesabı açar. Canlıya hiç hesap yüklenmediği için (K-91) ilk yönetici
+  bununla açılır. E-posta bir yöneticiye aitse şifresini değiştirir ve açık
+  oturumlarını kapatır; bir üyeye aitse hesap açmaz. Terminal dışından
+  çalışmaz.
+- Test: `tests/db/oturum.test.ts` (özet, eski özetin çevrilmesi, oturumun
+  türü ve rolü, süreler, askı, çıkış ve diğer oturumların kapanması);
+  `tests/unit/uyelik.test.ts` (şifre kuralı).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

@@ -686,8 +686,16 @@ Kod: `packages/store/src/repo/reviews.ts`.
   adres varsayılan olur.
 - **Demo notu:** Şifreler tarayıcıda basit bir özetle karşılaştırılır; gerçek
   sistemde kimlik doğrulama ve şifre özeti sunucuda olmalı.
+- **Sunucuya geçiş (Aşama 4, KARARLAR K-94):** Sunucuda şifre güçlü özetle
+  (argon2id) saklanır; oturum sitede 30 gün (kullanıldıkça uzar), panelde
+  girişten 8 saat sürer; şifre değişince üyenin diğer oturumları kapanır.
+  Kayıt, giriş ve şifre ekranları 4.2'de şu kurallara geçecek: yeni şifre
+  en az 8 karakter; giriş hatasında tek mesaj "E-posta ya da şifre
+  hatalı."; bir hesaba 15 dakikada 10 yanlış denemeden sonra 15 dakika
+  giriş yapılamaz. Bugün sitede hâlâ yukarıdaki demo kuralları geçerlidir.
 
-Kod: `packages/auth/src/auth-context.tsx`, `packages/store/src/repo/users.ts`.
+Kod: `packages/auth/src/auth-context.tsx`, `packages/store/src/repo/users.ts`;
+sunucu: `packages/auth/src/rules.ts`, `packages/auth/src/server/`.
 
 ---
 
