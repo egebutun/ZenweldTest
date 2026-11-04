@@ -23,7 +23,8 @@
     "db:yukle": "tsx packages/db/scripts/load.ts",
     "test:db": "vitest run --config vitest.db.config.mts",
     "db:studio": "npm run studio --workspace=@zenweld/db",
-    "site:yenile": "node scripts/site-yenile.mjs"
+    "site:yenile": "node scripts/site-yenile.mjs",
+    "sap:stok": "node scripts/sap-stok.mjs"
   },
   "engines": {
     "node": ">=20.9"

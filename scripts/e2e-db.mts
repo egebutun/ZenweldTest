@@ -1,6 +1,8 @@
 import { spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
@@ -43,7 +45,8 @@ try {
   await pool.end();
 }
 
-// Testler yenileme ucunu kullanir; her calistirmada yeni bir anahtar.
+// Testler yenileme ve SAP okuma uclarini kullanir; her calistirmada yeni
+// anahtarlar. SAP stogu testin yazdigi deneme dosyasindan okunur.
 const env = {
   ...process.env,
   DATA_SOURCE: "database",
@@ -51,6 +54,8 @@ const env = {
   TEST_DATABASE_URL: url,
   NEXT_DIST_DIR: ".next-db",
   REVALIDATE_SECRET: randomUUID(),
+  CRON_SECRET: randomUUID(),
+  SAP_STOK_DOSYASI: join(tmpdir(), `zenweld-e2e-sap-stok-${process.pid}.csv`),
 };
 
 console.log("2/3 Site veritabanı moduyla derleniyor (.next-db)…");
@@ -67,6 +72,7 @@ const run = spawnSync("npx", ["playwright", "test", "-c", "playwright.db.config.
   env,
   stdio: "inherit",
 });
+rmSync(env.SAP_STOK_DOSYASI, { force: true });
 process.exit(run.status ?? 1);
 
 function fail(message: string): never {

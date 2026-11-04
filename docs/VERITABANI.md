@@ -432,7 +432,8 @@ Zenweld depo stoğu](IS-KURALLARI.md#20-zenweld-depo-stoğu).
 | `sync_run_id` | bigint | → `sap_sync_runs` (boşalır) | |
 
 Her başarılı okumada tablo tek işlemde yenilenir: SAP görünümünde artık
-olmayan kalem silinir.
+olmayan kalem silinir. Okuma işi: [14](#14-kod-betikler-ve-komutlar) ›
+SAP stok okuma.
 
 `sap_sync_runs`:
 
@@ -443,7 +444,7 @@ olmayan kalem silinir.
 | `started_at` | timestamptz | zorunlu | |
 | `finished_at` | timestamptz | | |
 | `status` | text | zorunlu; `running`, `success`, `failed` | |
-| `rows_read` | int | | Görünümden okunan satır |
+| `rows_read` | int | | Okunup yazılan kalem sayısı (aynı kalemin satırları birleşmiş) |
 | `error` | text | | Başarısızsa hata |
 
 Okuma başarısız olursa son başarılı stok kullanılmaya devam eder; panel son
@@ -1171,6 +1172,8 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
 | `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
 | `src/load.ts` | Bugünkü veriyi canlı ya da deneme veritabanına yükleme (`npm run db:yukle`; aşağıda) |
+| `src/sap-stock.ts` | SAP depo stoğu okuma işi ve deneme kaynağı (aşağıda) |
+| `deneme/sap-stok.csv` | SAP yerine okunan örnek stok dosyası (50 kalem, 3'ü stoksuz) |
 | `src/read.ts` | Okuma katmanı: tablolardaki kayıtları sitenin kullandığı kayıt yapısına çevirir (aşağıda) |
 
 **Geçiş betikleri:** Sırayla ve bir kez çalışır; hangilerinin çalıştığı
@@ -1208,6 +1211,7 @@ link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 | `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
 | `npm run test:e2e:db` | Sitenin veritabanı modunda tarayıcı testleri (`tests/e2e-db`, `scripts/e2e-db.mts`): test veritabanını baştan kurup örnek veriyi yükler, siteyi `.next-db`'ye derler, testleri çalıştırır |
 | `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
+| `npm run sap:stok` | SAP depo stoğunu beklemeden bir kez okutur (sitenin `/api/sap/stok` ucunu çağırır; aşağıda) |
 
 Testler tablo listesinin ve kolonların bu dosyayla aynı olduğunu da
 dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer.
@@ -1280,6 +1284,38 @@ kurulmamışsa komut bunu söyler. Bağlantı `DATABASE_URL`'dir.
   hariç) birebir aynı; deneme yüklemesi; tekrar çalıştırınca değişiklik
   olmaması; güncelleme ve ekleme, silmeme; `eksikler`; stoğun üzerine
   yazılmaması; çakışmada anlaşılır hata.
+
+**SAP stok okuma (`src/sap-stock.ts`; KARARLAR K-82, K-84):** Zenweld depo
+stoğunu kaynaktan okuyup `warehouse_stock`'a yazar. Kurallar (kodun
+sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
+[IS-KURALLARI.md › 20](IS-KURALLARI.md#20-zenweld-depo-stoğu).
+
+- Her çalışmada `sap_sync_runs`'a bir satır yazılır (`running`). Okuma
+  başarılıysa `success` ve kalem sayısı; değilse `failed` ve hata metni.
+  30 dakikadan uzun `running` kalan okuma bir sonraki çalışmada
+  "Yarıda kaldı" diye kapatılır.
+- Başarılı okuma `warehouse_stock`'u tek işlemde yeniler: okumada olmayan
+  kalem silinir, olan eklenir ya da güncellenir; bütün satırların
+  `synced_at`'i ve `sync_run_id`'si bu okumadır. Başarısız okumada tabloya
+  dokunulmaz (son iyi stok kalır).
+- Aynı anda iki okuma uygulanmaz: yazma, veritabanı kilidi
+  (`pg_try_advisory_xact_lock(82084)`) alınarak yapılır; kilit başkasındaysa
+  okuma "Başka bir stok okuması sürüyor" hatasıyla biter.
+- **Kaynak:** Bugün deneme dosyası (`SAP_STOK_DOSYASI`; başlık satırı
+  `kod;ad;miktar`, ayraç noktalı virgül, virgül ya da sekme; Excel'in CSV'si
+  okunur). SAP bağlantı bilgileri gelince SAP'tan okuyan kaynak eklenir;
+  okuma kuralları ve yazma değişmez. Kaynak tanımlı değilse iş çalışmaz.
+- **Çalıştırma:** Sitenin `/api/sap/stok` ucu (GET ya da POST; yalnızca
+  `CRON_SECRET` anahtarıyla, veritabanı modunda). Zamanlayıcı 15 dakikada
+  bir çağırır ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9 › Zamanlanmış
+  işler); `npm run sap:stok` elle bir kez çağırır. Stok değiştiyse
+  (eklenen, çıkan ya da miktarı değişen kalem) depo stoğunu kullanan
+  sayfalar o anda yenilenir (`refreshSite(["depo-stogu"])`); değişmediyse
+  yenilenmez.
+- Test: `tests/db/sap-stok.test.ts` (okuma kaydı, tek işlemde yenileme,
+  hatada son stoğun kalması, kilit, yarıda kalan okuma, deneme dosyası);
+  `tests/e2e-db` (uç: anahtar, stok 0 gelince sayfanın hemen STOKTA YOK
+  olması, hatalı okuma).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

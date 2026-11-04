@@ -10,6 +10,7 @@ import {
   memberLogin,
   offerOnPage,
   refreshSite,
+  sapStockRead,
   sql,
   test,
 } from "./yardimci";
@@ -18,9 +19,10 @@ import {
  * VERITABANI MODU (DATA_SOURCE=database; KARARLAR K-88, Asama 3.7)
  *
  * Site test veritabanindan okurken: butun sayfalar acilir, fiyat ve stok
- * veritabaniyla ayni, degisiklik yenilemeden sonra hemen gorunur, agir veri
- * yalnizca gereken sayfaya gider, uye kartla satin alabilir. Veriyi
- * degistiren testler sonunda eski haline dondurur.
+ * veritabaniyla ayni, degisiklik yenilemeden sonra hemen gorunur, SAP stok
+ * okumasi sayfaya hemen yansir, agir veri yalnizca gereken sayfaya gider, uye
+ * kartla satin alabilir. Veriyi degistiren testler sonunda eski haline
+ * dondurur.
  */
 test.describe.configure({ mode: "serial" });
 test.afterAll(closeDatabase);
@@ -93,6 +95,44 @@ test("sayfada görünen fiyat ve stok; depo stoğu 0 olunca STOKTA YOK", async (
     await sql("UPDATE warehouse_stock SET quantity = $2 WHERE sap_item_code = $1", [code, quantity]);
     await refreshSite(request, ["depo-stogu"]);
   }
+});
+
+test("SAP stok okuması: stok 0 gelince sayfa hemen STOKTA YOK; hatalı okumada son stok kalır", async ({ page, request }) => {
+  const { product } = await plainProductInStock();
+  const code = sapItemCode(product.sku);
+  const before = await sql<{ code: string; name: string | null; quantity: number }>(
+    "SELECT sap_item_code AS code, item_name AS name, quantity::float AS quantity FROM warehouse_stock ORDER BY 1",
+  );
+  const lastRun = async () =>
+    (await sql<{ status: string; error: string | null }>("SELECT status, error FROM sap_sync_runs ORDER BY id DESC LIMIT 1"))[0];
+  try {
+    // Anahtarsiz okuma yapilamaz.
+    expect((await request.get("/api/sap/stok", { headers: { authorization: "Bearer yanlis" } })).status()).toBe(401);
+
+    const read = await sapStockRead(request, before.map((r) => (r.code === code ? { ...r, quantity: 0 } : r)));
+    expect(read).toMatchObject({ status: 200, body: { ok: true, kalem: before.length, degisen: 1, yenilendi: true } });
+    await page.goto(`/urun/${product.slug}`);
+    await expect(page.getByRole("button", { name: /stokta yok/i }).first()).toBeDisabled();
+    expect((await offerOnPage(request, `/urun/${product.slug}`)).availability).toBe(OUT);
+
+    // Ayni okuma tekrar: degisiklik yok, sayfalar yenilenmez.
+    expect((await sapStockRead(request, before.map((r) => (r.code === code ? { ...r, quantity: 0 } : r)))).body).toMatchObject({
+      degisen: 0,
+      yenilendi: false,
+    });
+
+    // Hatali okuma: son iyi stok kalir, hata kaydedilir.
+    const bad = await sapStockRead(request, "kod;ad;miktar\n;;5\n");
+    expect(bad).toMatchObject({ status: 502, body: { ok: false, error: "1. satırda kalem kodu boş." } });
+    expect(await lastRun()).toEqual({ status: "failed", error: "1. satırda kalem kodu boş." });
+    const [row] = await sql<{ quantity: number }>("SELECT quantity::float AS quantity FROM warehouse_stock WHERE sap_item_code = $1", [code]);
+    expect(row.quantity).toBe(0);
+  } finally {
+    expect((await sapStockRead(request, before)).status).toBe(200);
+    expect(await lastRun()).toEqual({ status: "success", error: null });
+  }
+  await page.goto(`/urun/${product.slug}`);
+  await expect(page.getByRole("button", { name: "Sepete Ekle" }).first()).toBeEnabled();
 });
 
 test("veritabanındaki değişiklik yenilemeden sonra hemen görünür", async ({ page, request }) => {

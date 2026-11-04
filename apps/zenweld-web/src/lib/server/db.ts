@@ -32,7 +32,7 @@ export function usesDatabase(): boolean {
 
 /** Tek baglanti havuzu; gelistirme sunucusu dosyalari yeniden yuklese de korunur. */
 const globalDb = globalThis as unknown as { zenweldDb?: Db };
-function database(): Db {
+export function database(): Db {
   globalDb.zenweldDb ??= createDb().db;
   return globalDb.zenweldDb;
 }

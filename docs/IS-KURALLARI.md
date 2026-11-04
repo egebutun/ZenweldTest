@@ -817,7 +817,27 @@ Sahibinin kararı (KARARLAR K-82, K-84). Kod: `packages/data/src/warehouse.ts`.
 "kullanılabilir stok" görünümü SAP kalem kodu başına miktar verir; sunucu
 bunu 15 dakikada bir okuyup kendi veritabanına yazar (`warehouse_stock`).
 Sayfa açılırken SAP'a gidilmez. Panelden değiştirilmez. Bugün demo
-verisinde örnek stok vardır (Demo notu).
+verisinde örnek stok vardır (Demo notu); SAP bağlanana kadar okuma işi bir
+deneme dosyasını okur ([VERITABANI.md](VERITABANI.md) › 14 › SAP stok
+okuma).
+
+**SAP okuması** (`readSapStock`, `diffWarehouseStock`):
+
+- Her okuma SAP'taki kullanılabilir stoğun **tam listesidir**: okumada
+  olmayan kalem stoktan çıkar (o kalemin ürünü STOKTA YOK olur).
+- Kalem kodu boşlukları atılıp büyük harfe çevrilir.
+- Aynı kalem birden fazla satırda gelirse (ör. depo başına) miktarlar
+  toplanır. Toplam eksiyse (siparişe ayrılan eldekini aşmış) 0 sayılır.
+- Miktar ondalıklı olabilir (kg ile satılan kalemler); en fazla 3 basamak.
+  "12", "12,5", "1.250" (bin iki yüz elli) gibi yazımlar okunur.
+- Okuma bütün olarak kabul ya da reddedilir. Hiç satır gelmezse, bir
+  satırın kodu boşsa ya da miktarı okunamıyorsa okuma geçersizdir ve
+  **son iyi stok olduğu gibi kalır**; hata okuma kaydına yazılır. SAP'a
+  ulaşılamazsa da aynısı olur.
+  - **Örnek:** `;;5` satırı → "1. satırda kalem kodu boş."; `ZW1;;yok` →
+    "ZW1: miktar okunamadı (yok)."
+- Okumadan sonra yeni gelen, çıkan ya da miktarı değişen kalem varsa
+  sayfalar o anda yenilenir; yoksa yenilenmez.
 
 **Ürünün SAP kalemi:**
 

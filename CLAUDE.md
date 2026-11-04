@@ -79,6 +79,9 @@ ilgili belge **aynı commit'te** güncellenir:
   - `npm run db:yukle <canli|deneme> [eksikler]`: bugünkü veriyi canlı ya da
     deneme veritabanına yükler (KARARLAR K-91; satış hareketleri hiç
     yüklenmez, hiçbir kayıt silinmez).
+  - `npm run site:yenile` / `npm run sap:stok`: çalışan siteyi beklemeden
+    yeniler / SAP depo stoğunu bir kez okutur (`REVALIDATE_SECRET` /
+    `CRON_SECRET`).
 - **Testler:** `tests/unit`, `docs/IS-KURALLARI.md`'deki kuralları ve
   örnekleri dener; `tests/e2e` sitenin ve panelin tarayıcıda çalıştığını
   dener (sayfa taraması, ödeme, seçenekler, filtreler, teklif, belgeler, garanti, hesap, iade, depo stoğu, kupon). Bir kural ya da

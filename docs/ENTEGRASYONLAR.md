@@ -343,15 +343,34 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `NEXT_PUBLIC_MAIN_SITE_URL` | Yönetici (isteğe bağlı) | Panel ileride ayrı bir adrese (ör. `admin.zenweld.com`) taşınırsa ana sitenin adresi; paneldeki "Sayfayı gör" bağlantıları bunu kullanır. Bugün gerekmez |
 | `DATABASE_URL` | Yönetici (gizli) | Veritabanı (PostgreSQL) bağlantı adresi. `npm run db:*` komutları ([VERITABANI.md](VERITABANI.md)) ve `DATA_SOURCE=database` ise site kullanır |
 | `DATA_SOURCE` | Yönetici | Sitenin veri kaynağı (KARARLAR K-88). Boşsa site bugünkü gibi tarayıcıdaki veriyle çalışır. `database` ise ürünler, kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları (her sayfada) ile bayiler, bayi ve satıcı stokları ve yorumlar (yalnızca ürün sayfası, Bayi Bul ve anasayfa) ve içerik (blog, haber, etkinlik, SSS, yasal metinler, Hakkımızda, satış temsilcileri, belgeler, Sayfa SEO) veritabanından okunur; değişiklik en geç bir dakikada sitede görünür. Derlemede de okunur: değiştirince yeniden derlenir, derleme sırasında veritabanına erişilebilmelidir |
-| `REVALIDATE_SECRET` | Yönetici (gizli) | Siteyi beklemeden yenileme anahtarı (Aşama 3.6). Tanımlıysa `/api/yenile` ucu açılır; `npm run site:yenile` aynı anahtarla siteyi o anda yeniler. Boşsa uç kapalıdır. Panel ve SAP stok okuma işi ileride sitenin içinden yeniler, bu anahtara ihtiyaç duymaz |
+| `REVALIDATE_SECRET` | Yönetici (gizli) | Siteyi beklemeden yenileme anahtarı (Aşama 3.6). Tanımlıysa `/api/yenile` ucu açılır; `npm run site:yenile` aynı anahtarla siteyi o anda yeniler. Boşsa uç kapalıdır. SAP stok okuma işi (ve ileride panel) siteyi kendi içinden yeniler, bu anahtara ihtiyaç duymaz |
+| `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma ucu (`/api/sap/stok`) açılır; zamanlayıcı ve `npm run sap:stok` bu anahtarla çağırır. Vercel'in zamanlanmış işleri bu adı kendiliğinden kullanır. Boşsa uç kapalıdır |
+| `SAP_STOK_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar depo stoğunun okunacağı deneme dosyası (CSV; örnek `packages/db/deneme/sap-stok.csv`). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir. Boşsa ve SAP bağlantısı da yoksa okuma işi çalışmaz |
 | `NEXT_DIST_DIR` | Otomatik (test) | Derleme klasörü; boşsa `.next`. Yalnızca veritabanı modunun testleri (`npm run test:e2e:db`) `.next-db` kullanır, demo derlemesi bozulmaz |
-| `SITE_URL` | Geliştirici | Yalnızca `npm run site:yenile`: yenilenecek sitenin adresi; boşsa `NEXT_PUBLIC_SITE_URL`, o da boşsa `http://localhost:3000` |
+| `SITE_URL` | Geliştirici | Yalnızca `npm run site:yenile` ve `npm run sap:stok`: sitenin adresi; boşsa `NEXT_PUBLIC_SITE_URL`, o da boşsa `http://localhost:3000` |
 | `TEST_DATABASE_URL` | Geliştirici | Yalnızca veritabanı testleri (`npm run test:db`); her çalıştırmada silinip baştan kurulur, `DATABASE_URL` ile aynı olamaz |
 | `NEXT_PUBLIC_BUILD_TIME` | Otomatik (derleme) | Derleme anı; sunucu çıktısı ile tarayıcının ilk çiziminin aynı anı kullanması için |
 | `VERCEL_ENV`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_URL` | Otomatik (Vercel) | Site adresi tanımlı değilse yedek; önizleme sürümleri her zaman aramaya kapalı |
 
 **Site adresi sırası:** `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik
 değişkenleri → `http://localhost:3000`.
+
+**Zamanlanmış işler:** Bugün tek iş var: SAP depo stoğu okuma, 15 dakikada
+bir (KARARLAR K-84). İş sitenin `/api/sap/stok` ucudur
+(`Authorization: Bearer <CRON_SECRET>`; ayrıntı [VERITABANI.md](VERITABANI.md)
+› 14 › SAP stok okuma). Zamanlayıcı sunucu kararına göre kurulur:
+
+- **Vercel:** Proje köküne `vercel.json`:
+  `{"crons": [{"path": "/api/sap/stok", "schedule": "*/15 * * * *"}]}`.
+  Vercel `CRON_SECRET`'i kendiliğinden gönderir. Sık çalışan zamanlanmış
+  iş Vercel planına bağlıdır; plan kontrol edilmeli. SAP'a Vercel'den
+  ulaşılabilmesi gerekir (Service Layer'ın internete güvenli açılması).
+- **Kendi sunucumuz:** Sunucunun zamanlayıcısına (cron) bir satır:
+  `*/15 * * * * curl -fsS -X POST -H "Authorization: Bearer <CRON_SECRET>" https://zenweld.com/api/sap/stok`.
+  Sunucu şirket ağına (VPN) bağlıysa SAP internete açılmadan okunur.
+
+Uç başarılı okumada 200, okunamayan stokta 502, kaynak tanımlı değilse
+503 döner; zamanlayıcının kaydında başarısız görünür.
 
 **Arama motorlarına açıklık:** Site yalnızca `zenweld.com` ve
 `www.zenweld.com` adreslerinde aramaya açıktır. Gerçek alan adı farklıysa
@@ -398,7 +417,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | Konu | Bugün | Gereken |
 |---|---|---|
 | **Veritabanı ve sunucu API'si** | Veri tarayıcıda; PostgreSQL tabloları hazır, site ayarla katalogu tablolardan okuyabiliyor (K-88) | Siteyi ve paneli veritabanına bağlama ([VERITABANI.md](VERITABANI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
-| **SAP Business One (depo stoğu)** | Yok | SAP ekibinin hazırladığı "kullanılabilir stok" görünümü (`AVAILABLE_STOCK`, ad kesinleşmedi) sunucuda 15 dakikada bir okunup `warehouse_stock`'a yazılır (KARARLAR K-82, K-84). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı) ve görünümün kolonları SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur |
+| **SAP Business One (depo stoğu)** | Okuma işi hazır, SAP yerine deneme dosyasını okuyor (`/api/sap/stok`, `SAP_STOK_DOSYASI`; [9](#9-barındırma-ve-ortam-değişkenleri) › Zamanlanmış işler) | SAP ekibinin hazırladığı "kullanılabilir stok" görünümünü (`AVAILABLE_STOCK`, ad kesinleşmedi) okuyan bağlantı parçası (KARARLAR K-82, K-84). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı) ve görünümün kolonları SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması |
 | **SAP Business One (satış siparişi)** | Yok | Site siparişleri SAP'a satış siparişi olarak kaydedilecek (KARARLAR K-84); SAP'ın sipariş API'si (ör. `SALES_ORDER`) ve bağlantı bilgileri SAP ekibinden gelecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Zenweld depo stoğu (SAP)) |
 | **Dosya deposu** | Görseller veritabanında, belgeler tarayıcıda | Nesne deposu |
 | **Ödeme kuruluşu** | Demo | Bkz. [3](#3-kartla-ödeme) |

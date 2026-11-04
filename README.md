@@ -76,6 +76,7 @@ npm run db:yukle    # bugünkü veriyi canlı ya da deneme veritabanına yükler
 npm run db:generate # şema değişince yeni geçiş betiği üretir
 npm run db:studio   # tabloları tarayıcıda gösterir
 npm run site:yenile # veritabanındaki değişikliği sitede o anda gösterir (aşağıda)
+npm run sap:stok    # SAP depo stoğunu beklemeden bir kez okutur (aşağıda)
 ```
 
 ---
@@ -417,6 +418,15 @@ npm run start --workspace apps/zenweld-web
     dener: bütün sayfalar, fiyat ve stok, değişikliğin hemen görünmesi,
     ağır verinin yalnızca gereken sayfaya gitmesi, kartla satın alma. Demo
     derlemesi (`.next`) etkilenmez. `test:db` ile aynı anda çalıştırılmaz.
+  - **SAP stok okuma (deneme dosyasıyla):** SAP bağlanana kadar depo
+    stoğu bir CSV dosyasından okunur. `.env.local`'a
+    `CRON_SECRET=<uzun bir değer>` ve
+    `SAP_STOK_DOSYASI=../../packages/db/deneme/sap-stok.csv` yazıp siteyi
+    başlatın; `npm run sap:stok` dosyayı okutur ve kaç kalemin değiştiğini
+    yazar. Dosyada bir kalemin miktarını 0 yapıp komutu tekrar çalıştırın:
+    o ürün sayfada hemen STOKTA YOK olur. Dosyada olmayan kalem stoktan
+    çıkar; hatalı dosyada son stok kalır. Sunucuda bu iş 15 dakikada bir
+    zamanlayıcıyla çalışır (docs/ENTEGRASYONLAR.md › 9 › Zamanlanmış işler).
   - **Sayfa boyutu ve hız ölçümü:** site açıkken
     `node scripts/sayfa-olcumu.mjs http://localhost:3000` (birden fazla
     adres yan yana ölçülür). Sonuçlar: docs/YAPILACAKLAR.md › Ölçüm.

@@ -1,4 +1,4 @@
-import { createHash, timingSafeEqual } from "node:crypto";
+import { checkBearer } from "./bearer";
 import { CACHE_KINDS, type CacheKind } from "./tags";
 
 /**
@@ -16,8 +16,6 @@ export type RefreshRequest =
   | { ok: true; kinds: CacheKind[] }
   | { ok: false; status: 400 | 401 | 404; error: string };
 
-const digest = (text: string) => createHash("sha256").update(text).digest();
-
 export function parseRefreshRequest({
   secret,
   authorization,
@@ -27,11 +25,8 @@ export function parseRefreshRequest({
   authorization: string | null;
   body: unknown;
 }): RefreshRequest {
-  if (!secret) return { ok: false, status: 404, error: "kapali" };
-  const token = authorization?.startsWith("Bearer ") ? authorization.slice("Bearer ".length) : "";
-  if (!token || !timingSafeEqual(digest(token), digest(secret))) {
-    return { ok: false, status: 401, error: "yetkisiz" };
-  }
+  const allowed = checkBearer(secret, authorization);
+  if (!allowed.ok) return allowed;
   const requested = body && typeof body === "object" && "kayitlar" in body ? (body as { kayitlar: unknown }).kayitlar : undefined;
   if (requested === undefined || (Array.isArray(requested) && requested.length === 0)) {
     return { ok: true, kinds: [...CACHE_KINDS] };

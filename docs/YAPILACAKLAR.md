@@ -33,17 +33,21 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
    veri canlı ya da deneme veritabanına yüklenir; satış hareketleri hiç,
    örnek yorum, kupon ve bayi stokları yalnızca denemeye. Tekrar
    çalıştırılabilir, hiçbir kaydı silmez, stoğun üzerine yazmaz.
-5. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
+5. SAP stok okuma işi (deneme dosyasıyla): `/api/sap/stok` ucu 15 dakikada
+   bir zamanlayıcıyla çağrılır; okuma kaydı, tek işlemde yenileme, hatada
+   son iyi stoğun korunması, stok değişince sayfaların o anda yenilenmesi
+   (`npm run sap:stok` elle okutur). SAP yerine bugün CSV dosyası okunur.
+6. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
    tarayıcı testleri.
 
 ### Kalan kod işleri (önerilen sırayla)
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **SAP stok okuma işi:** 15 dakikada bir okuma, tek işlemde yenileme, okuma kaydı, hata olursa son iyi stoğun korunması, sayfaların yenilenmesi; SAP yerine deneme kaynağıyla kurulup test edilir | SAP bağlantı bilgileri (yalnızca bağlantı parçası için) |
-| 2 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
-| 3 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | Aşama 4 |
-| 4 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
+| 1 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
+| 2 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | Aşama 4 |
+| 3 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
+| 4 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; sunucu kararı |
 | 5 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
 | 6 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
 | 7 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
@@ -111,7 +115,7 @@ canlı sunucuda ayrıca ölçülmeli.
 
 Ayrıntı: aşağıdaki [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) bölümü.
 
-- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur; okuma işi (1. madde) SAP bilgileri gelmeden kurulabilir.
+- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur. Okuma işi hazır ve bugün deneme dosyasını okuyor; SAP bilgileri gelince yalnızca bağlantı parçası yazılır (4. madde).
 - **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (5. madde).
 
 ## Karar bekleyen frontend işleri (özet)
@@ -692,13 +696,13 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
 - **Okuma yolu (iki seçenek):**
   - **Service Layer (önerilen):** SAP B1'in resmi web servisi (HTTPS, kullanıcı adı ve şifre). Siparişleri SAP'a yazmak için de bu kullanılacağı için tek bağlantı iki işi görür.
   - **Salt okunur veritabanı kullanıcısı:** Görünüme doğrudan bağlanılır. Daha basit; ama sunucudan SAP veritabanına ağ erişimi (VPN ya da güvenlik duvarı izni) gerekir.
-- **SAP bilgileri gelmeden kurulabilecekler:**
-  - 15 dakikada bir çalışan okuma işi; yeri sunucu kararına bağlı (Vercel'in zamanlanmış işleri ya da sunucunun kendisi).
-  - Stok tablosunun tek işlemde yenilenmesi; her okumanın `sap_sync_runs`'a yazılması.
+- **Kuruldu (2026-11-04), SAP yerine deneme dosyasıyla:**
+  - Okuma işi: sitenin `/api/sap/stok` ucu; zamanlayıcı 15 dakikada bir çağırır (yeri sunucu kararına bağlı: Vercel'in zamanlanmış işleri ya da sunucunun kendi zamanlayıcısı; [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9).
+  - Stok tablosunun tek işlemde yenilenmesi; her okumanın `sap_sync_runs`'a yazılması; aynı anda tek okuma.
   - Hata olursa son iyi stoğun korunması.
-  - Okuma sonrası değişen sayfaların yenilenmesi.
+  - Stok değişince sayfaların o anda yenilenmesi.
 
-  Bunlar SAP yerine bir deneme kaynağıyla (örnek dosya) kurulup test edilir; bilgiler gelince yalnızca SAP'a bağlanan küçük parça yazılır.
+  Ayrıntı: [VERITABANI.md](VERITABANI.md) › 14 › SAP stok okuma. Bilgiler gelince yalnızca SAP'a bağlanan küçük parça yazılır (yukarıdaki yol haritasında 4. madde).
 - **Sipariş:** Service Layer üzerinden satış siparişi oluşturulur (müşteri kartı; satırlarda kalem kodu, adet, fiyat, depo). Karar gerekiyor: her web müşterisi SAP'ta ayrı cari mi, yoksa tek bir "web satış" carisi mi?
 - **SAP ekibine sorulacaklar:**
   - B1 sürümü ve veritabanı türü (HANA / SQL Server).
@@ -712,13 +716,13 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
    kolonları (kalem kodu, kullanılabilir miktar, kalem adı), bağlanma yolu
    (SAP Business One Service Layer ya da veritabanına salt okunur
    kullanıcı) ve bağlantı bilgileri (yalnızca sunucuda ortam değişkeni).
-2. Sunucuda zamanlanmış okuma, 15 dakikada bir (K-84); her okuma
-   `sap_sync_runs`'a yazılır, başarılı okuma `warehouse_stock`'u tek işlemde
-   yeniler. Başarısız okumada son başarılı stok kalır; panelde son okuma
-   zamanı ve hata görünür.
-3. Stok değişen ürünlerin sayfaları önbellekten yenilenir (KARARLAR K-83):
-   okuma işi bitince `refreshSite(["depo-stogu"])` çağrılır (Aşama 3.6'da
-   hazır).
+2. Zamanlayıcının seçilen sunucuda kurulması ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)
+   › 9 › Zamanlanmış işler). Panelde son okuma zamanı ve hatası (panel
+   veritabanından okumaya geçince, Aşama 5).
+3. İsteğe bağlı koruma (sahibine sorulacak): yeni okuma öncekinin yarısından
+   az kalem getirirse (yarım okuma olabilir) uygulanmasın. Bayi dosyalarında
+   bu durum uyarı veriyor; otomatik işte uyarıyı görecek kimse olmadığı için
+   okuma reddedilir ve hata kaydedilir.
 4. Ödeme anında stok son kez kontrol edilir; stok bitmişse sipariş
    alınmaz.
 5. Site siparişleri SAP'a satış siparişi olarak kaydedilecek (K-84). SAP

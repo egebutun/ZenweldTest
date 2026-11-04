@@ -81,6 +81,15 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       `npm run db:yukle canli eksikler` ona dokunmaz, `npm run db:yukle canli`
       eski fiyata döndürür. Adres `localhost` değilse komut veritabanının
       adını sorar; yanlış yazılırsa hiçbir şey yüklemez.
+- [ ] SAP stok okuma (deneme dosyası; README › SAP stok okuma): site
+      veritabanı modunda, `CRON_SECRET` ve `SAP_STOK_DOSYASI` tanımlıyken
+      `npm run sap:stok` "50 kalem" okur. Dosyada stokta olan bir ürünün
+      miktarı 0 yapılıp komut tekrar çalışınca "1 değişti" der ve ürün
+      sayfası hemen STOKTA YOK olur; aynı komut değişiklik yokken "Değişiklik
+      yok" der. Dosyada bir satırın kodu silinince komut "Stok okunamadı,
+      son stok korundu" der, sayfa değişmez; `db:studio`'da `sap_sync_runs`'ta
+      okumalar `success` / `failed` ve hata metniyle görünür. Anahtarsız ya
+      da yanlış anahtarla `/api/sap/stok` çalışmaz.
 - [ ] Veritabanı testleri (`npm run test:db`) geçer. Şunları dener: tablo
       listesi ve kolonlar [VERITABANI.md](VERITABANI.md) ile aynı; ürün ve
       varyant kodları tek havuzda; Türkçe harf duyarsız adlar; üye e-postası;

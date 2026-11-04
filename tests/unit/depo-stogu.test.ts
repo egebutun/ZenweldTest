@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { isInWarehouse, productSapCodes, sapItemCode, warehouseQuantity, warehouseStockMap } from "@zenweld/data";
+import {
+  diffWarehouseStock,
+  isInWarehouse,
+  productSapCodes,
+  readSapStock,
+  sapItemCode,
+  warehouseQuantity,
+  warehouseStockMap,
+} from "@zenweld/data";
 import { product } from "./ornek";
 
 /* docs/IS-KURALLARI.md › 20. Zenweld depo stoğu (KARARLAR K-82) */
@@ -53,5 +61,45 @@ describe("depo stoğu", () => {
       options: { optionIds: ["sogutma"], variants: [variant("su", "ZW30100000028")] },
     });
     expect(isInWarehouse(none, stock)).toBe(false);
+  });
+});
+
+describe("SAP okuması (IS-KURALLARI › 20 › SAP okuması)", () => {
+  it("kodlar sadeleşir; aynı kalemin satırları toplanır; toplam eksiyse 0; ondalık 3 basamak", () => {
+    expect(
+      readSapStock([
+        { code: "zw 30100000001", name: "Ultimate 255", quantity: "4" },
+        { code: "ZW30100000001", quantity: 2 },
+        { code: "ZW30100000027", quantity: "3" },
+        { code: "ZW30100000027", quantity: "-5" },
+        { code: "ZW40100000001", name: " Tel ", quantity: "12,3456" },
+      ]),
+    ).toEqual([
+      { sapItemCode: "ZW30100000001", itemName: "Ultimate 255", quantity: 6 },
+      { sapItemCode: "ZW30100000027", quantity: 0 },
+      { sapItemCode: "ZW40100000001", itemName: "Tel", quantity: 12.346 },
+    ]);
+  });
+
+  it("boş okuma, kodu boş ya da miktarı okunamayan satır okumanın tamamını geçersiz kılar", () => {
+    expect(() => readSapStock([])).toThrow("SAP'tan hiç kalem gelmedi.");
+    expect(() => readSapStock([{ code: "A", quantity: 1 }, { code: " ", quantity: 1 }])).toThrow("2. satırda kalem kodu boş.");
+    expect(() => readSapStock([{ code: "A", quantity: "yok" }])).toThrow("A: miktar okunamadı (yok).");
+    expect(() => readSapStock([{ code: "A", quantity: "" }])).toThrow("A: miktar okunamadı (boş).");
+  });
+
+  it("iki okuma arasındaki fark: yeni gelen, okumadan çıkan, miktarı değişen", () => {
+    const before = [
+      { sapItemCode: "A", quantity: 1 },
+      { sapItemCode: "B", quantity: 2 },
+      { sapItemCode: "C", quantity: 3 },
+    ];
+    const after = [
+      { sapItemCode: "A", quantity: 1 },
+      { sapItemCode: "B", quantity: 0 },
+      { sapItemCode: "D", quantity: 5 },
+    ];
+    expect(diffWarehouseStock(before, after)).toEqual({ added: ["D"], removed: ["C"], changed: ["B"] });
+    expect(diffWarehouseStock(after, after)).toEqual({ added: [], removed: [], changed: [] });
   });
 });

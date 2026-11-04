@@ -1,3 +1,4 @@
+import { writeFile } from "node:fs/promises";
 import type { APIRequestContext, Page } from "@playwright/test";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
@@ -61,6 +62,20 @@ export async function refreshSite(request: APIRequestContext, kinds?: string[]):
     data: kinds ? { kayitlar: kinds } : {},
   });
   expect(response.status()).toBe(200);
+}
+
+/**
+ * SAP stok okumasi (deneme kaynagi): satirlar deneme dosyasina yazilir, sonra
+ * okuma ucu cagrilir (anahtari ve dosyanin yolunu scripts/e2e-db.mts verir).
+ */
+export async function sapStockRead(
+  request: APIRequestContext,
+  lines: { code: string; name?: string | null; quantity: number | string }[] | string,
+) {
+  const csv = typeof lines === "string" ? lines : ["kod;ad;miktar", ...lines.map((l) => `${l.code};${l.name ?? ""};${l.quantity}`)].join("\n");
+  await writeFile(process.env.SAP_STOK_DOSYASI!, csv);
+  const response = await request.get("/api/sap/stok", { headers: { authorization: `Bearer ${process.env.CRON_SECRET}` } });
+  return { status: response.status(), body: (await response.json()) as Record<string, unknown> };
 }
 
 /** Bireysel demo uyesiyle giris (hesap README'deki tablodan). */
