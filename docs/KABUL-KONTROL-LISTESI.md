@@ -490,7 +490,9 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Zenweld deposunda stoğu olmayan ürünün sayfa kaynağındaki ürün
       bilgisinde `OutOfStock`, stoktaki üründe `InStock` yazar.
 - [ ] Demo adresinde ve yerel bilgisayarda her sayfada "noindex" vardır;
-      `robots.txt` site haritasını bildirmez.
+      `robots.txt` site haritasını bildirmez. Tarayıcı testi bunu bilgisayarda
+      her çalıştırmada dener (`tests/e2e/tarama.spec.ts`); canlı demo
+      adresinde sayfa kaynağında `noindex` aranarak elle bakılır.
 - [ ] `robots.txt` yalnızca `/api/` kapatır.
 - [ ] `/sitemap.xml`: aramaya açık sabit sayfalar, bölüm/grup/kategori,
       yayındaki ürünler (seçeneksiz tek adres), blog, haber ve etkinlikler

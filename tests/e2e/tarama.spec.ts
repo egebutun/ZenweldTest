@@ -93,6 +93,23 @@ test.describe("ziyaretçi", () => {
     await scan(page, problems, OUTSIDE_SITEMAP);
   });
 
+  test("demo adresinde ve bilgisayarda arama motorlarına kapalı", async ({ request }) => {
+    // Site yalnizca zenweld.com'da aramaya acilir (lib/seo.ts › isNoIndex);
+    // testler localhost'ta calistigi icin her sayfa noindex tasimali.
+    const xml = await (await request.get("/sitemap.xml")).text();
+    const sitemap = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname);
+    const paths = [...new Set(["/", ...sitemap, ...OUTSIDE_SITEMAP, ...ACCOUNT, "/yonetim/giris"])];
+    expect(paths.length).toBeGreaterThan(100);
+    for (const path of paths) {
+      const html = await (await request.get(path)).text();
+      expect.soft(html, `${path}: noindex etiketi`).toMatch(/<meta name="robots" content="noindex, nofollow/);
+    }
+    const robots = await (await request.get("/robots.txt")).text();
+    expect(robots, "robots.txt site haritasını bildirmez").not.toMatch(/sitemap:/i);
+    // Tarama engellenmez: Google sayfayi okuyup noindex etiketini gorebilsin.
+    expect(robots, "robots.txt bütün siteyi kapatmaz").not.toMatch(/^Disallow: \/\s*$/m);
+  });
+
   test("güvenlik başlıkları", async ({ request }) => {
     for (const path of ["/", "/yonetim/giris"]) {
       const headers = (await request.get(path)).headers();
