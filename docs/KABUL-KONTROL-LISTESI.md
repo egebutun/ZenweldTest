@@ -79,7 +79,8 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       temizlik; kupon kodu, sınırları ve kullanımı; kişiye özel kupon
       e-postaları; kargo gönderisi; SAP depo stoğu; form kayıtlarının sabit
       değerleri; örnek verinin tablolara hatasız yüklenmesi, satır sayıları
-      ve başlıca bağlar.
+      ve başlıca bağlar; tablolardan geri okunan verinin örnek veriyle
+      birebir aynı olması (okuma katmanı).
 
 ---
 

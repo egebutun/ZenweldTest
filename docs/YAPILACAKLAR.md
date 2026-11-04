@@ -491,8 +491,13 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      yedek ve en az 30 gün geriye dönüş; KVKK'ya uygun bölge (bkz. Canlı
      sunucu); görseller ve belgeler için dosya deposu (S3 ya da Cloud
      Storage).
-   - Sonraki aşamalar: veri erişimi (sunucu), üyelik ve oturum, siteyi ve
-     paneli veritabanına bağlama, dosya deposu, canlıya hazırlık.
+   - Aşama 3 (sürüyor): site veriyi veritabanından okur. 3.0 Next.js 16
+     (bitti, K-87) → 3.1 okuma katmanı (bitti, `packages/db/src/read.ts`)
+     → 3.2 veri kaynağı ayarı (K-88) → 3.3 katalog sunucudan → 3.4 ürün
+     sayfası ve Bayi Bul verisi sayfa başına → 3.5 içerik sayfaları → 3.6
+     önbellek (60 sn) → 3.7 veritabanı modunda tarayıcı testleri ve ölçüm.
+   - Sonraki aşamalar: 4 üyelik ve oturum sunucuda; 5 panel ve site
+     kayıtları veritabanına; 6 dosya deposu; canlıya hazırlık.
    - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları
      (bayilik, iletişim, ürün destek, Welders Club), e-posta alıcıları (tür
      başına), gönderilen e-postalar ve değişiklik kaydı (KARARLAR K-81).

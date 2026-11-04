@@ -1168,6 +1168,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
 | `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
+| `src/read.ts` | Okuma katmanı: tablolardaki kayıtları sitenin kullandığı kayıt yapısına çevirir (aşağıda) |
 
 **Geçiş betikleri:** Sırayla ve bir kez çalışır; hangilerinin çalıştığı
 veritabanında tutulur (`drizzle.__drizzle_migrations`). Aynı betikler
@@ -1231,3 +1232,26 @@ yazıldığı tablo tablo ekrana basılır.
   tablolardaki satır sayılarının veriyle aynı olduğunu ve başlıca bağları
   (ürün → kategori → grup, varyant değerleri, sipariş ve kargo, kupon
   kapsamı, depo stoğu) dener.
+
+**Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
+kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
+veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını
+(`packages/data`, `packages/store`) değiştirmeden veritabanındaki veriyle
+çalışır.
+
+- Her kayıt türü ayrı fonksiyonla okunur: katalog (gruplar, kategoriler,
+  seçenekler, ürünler), bayiler, satıcılar, stok, depo stoğu, ayarlar,
+  üyeler, teklifler, siparişler, iadeler, kuponlar, servis/garanti/yorum,
+  içerik, kayıt numaraları. Site sayfaları yalnızca gerekenleri okur;
+  `readDatabase` hepsini birleştirir (panel ve test için).
+- Boş kolon alana yazılmaz; tarih-saatler ISO metin (UTC) olarak döner.
+- Silinmiş ürüne ya da üyeye bağlı kopya kayıtlarda (sipariş ve teklif
+  satırı, yorum, servis, garanti) kimlik boş metin (`""`) olur; ad ve kod
+  kopyası durur.
+- Kayıt verisinin bilerek farklı tutulduğu iki yer: eski blog yazısında
+  "yayında" alanı yoksa yayında sayılır; kupon kullanımının kimliği
+  veritabanında sıra numarasıdır.
+- Sorgular sırayla çalışır (işlem içinde tek bağlantı kullanılır).
+- Test (`tests/db/okuma.test.ts`): örnek veri yazılıp geri okununca, kayıt
+  türü başına birebir aynı çıkar (gidiş-dönüş); katalog ve mağaza ayarları
+  tek başına da okunur.
