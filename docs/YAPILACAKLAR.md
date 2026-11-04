@@ -24,9 +24,11 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
    kayıt numarası) tek yerde ve testli. Sunucu da aynı kodu kullanacak.
 2. Veritabanı: 64 tablo, kurulum betikleri, örnek veri yükleme, testler
    ([VERITABANI.md](VERITABANI.md)).
-3. Okuma (Aşama 3.0–3.6): katalog, depo stoğu, mağaza ayarları, bayi ve
+3. Okuma (Aşama 3, bitti): katalog, depo stoğu, mağaza ayarları, bayi ve
    satıcı stoğu, yorumlar ve içerik veritabanından okunuyor; bir kayıt
-   değişince etkilenen sayfalar o anda yenilenebiliyor (3.6).
+   değişince etkilenen sayfalar o anda yenilenebiliyor; veritabanı modunun
+   kendi tarayıcı testleri var (`npm run test:e2e:db`) ve sayfa boyutu ile
+   hız ölçüldü (aşağıda "Ölçüm").
 4. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
    tarayıcı testleri.
 
@@ -34,16 +36,15 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **3.7** Veritabanı modunda tarayıcı testleri, sayfa boyutu ve hız ölçümü | — |
-| 2 | **Canlı veri yükleme komutu:** gerçek veri (katalog, kategoriler, seçenekler, onaylı içerik ve ayarlar) örnek veriden ayrılır; komut tekrar çalıştırılabilir, var olanı günceller, yeniyi ekler, hiçbir şeyi silmez, üye ve siparişe dokunmaz. Sahibin verdiği veri önce deneme veritabanına, açılışta canlıya yüklenir | Hangi verilerin gerçek olduğu (sahibi) |
-| 3 | **SAP stok okuma işi:** 15 dakikada bir okuma, tek işlemde yenileme, okuma kaydı, hata olursa son iyi stoğun korunması, sayfaların yenilenmesi; SAP yerine deneme kaynağıyla kurulup test edilir | SAP bağlantı bilgileri (yalnızca bağlantı parçası için) |
-| 4 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
-| 5 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş | Aşama 4 |
-| 6 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
-| 7 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
-| 8 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
-| 9 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
-| 10 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
+| 1 | **Canlı veri yükleme komutu:** bugünkü katalog, içerik, ayarlar ve bayi ağı verisinin tamamı yüklenir (K-90); örnek satış hareketleri (üye, sipariş, teklif, servis, garanti) yüklenmez. Komut tekrar çalıştırılabilir, var olanı günceller, yeniyi ekler, hiçbir şeyi silmez, üye ve siparişe dokunmaz. Önce deneme veritabanına, açılışta canlıya | — |
+| 2 | **SAP stok okuma işi:** 15 dakikada bir okuma, tek işlemde yenileme, okuma kaydı, hata olursa son iyi stoğun korunması, sayfaların yenilenmesi; SAP yerine deneme kaynağıyla kurulup test edilir | SAP bağlantı bilgileri (yalnızca bağlantı parçası için) |
+| 3 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
+| 4 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş | Aşama 4 |
+| 5 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
+| 6 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
+| 7 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
+| 8 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
+| 9 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
 
 ### Kodla çözülmeyen, şimdiden başlatılması gerekenler
 
@@ -66,16 +67,48 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
   gerekmez; Türkçe harf karşılaştırması için ICU desteği açık olmalıdır.
 - **Veri:** `npm run db:seed` bugün gerçek ürünlerle birlikte örnek üye,
   sipariş ve stok hareketlerini de yüklediği için yalnızca bilgisayarda
-  çalışır. Canlı için yukarıdaki 2. madde (canlı veri yükleme komutu)
+  çalışır. Canlı için yukarıdaki 1. madde (canlı veri yükleme komutu)
   gerekir. Panel veritabanına yazmaya başlayınca (Aşama 5) veri doğrudan
   panelden girilir.
+
+### Ölçüm (Aşama 3.7, 2026-11-04)
+
+`node scripts/sayfa-olcumu.mjs <adres…>`. Koşullar Google'ın mobil
+ölçümündeki gibi: yavaş 4G (1,6 Mbit/sn) ve 4 kat yavaşlatılmış işlemci;
+her sayfa boş önbellekle 3 kez, ortanca değer. Boyutlar sıkıştırılmış
+(ağdan inen) boyuttur. Ölçüm bilgisayarda yapıldı; sunucunun yanıt süresi
+canlı sunucuda ayrıca ölçülmeli.
+
+| Sayfa | Mod | Sayfanın kendisi | JavaScript | Toplam | En büyük içerik (LCP) |
+|---|---|---|---|---|---|
+| Anasayfa | Demo | 20 KB | 298 KB | 641 KB | 3,0 sn |
+| Anasayfa | Veritabanı | 46 KB | 256 KB | 627 KB | 2,9 sn |
+| Kategori (Kaynak Makineleri) | Demo | 9 KB | 275 KB | 385 KB | 1,6 sn |
+| Kategori (Kaynak Makineleri) | Veritabanı | 31 KB | 275 KB | 429 KB | 1,5 sn |
+| Ürün | Demo | 13 KB | 289 KB | 455 KB | 0,8 sn |
+| Ürün | Veritabanı | 38 KB | 289 KB | 501 KB | 0,8 sn |
+| Sepet | Demo | 8 KB | 306 KB | 488 KB | 2,4 sn |
+| Sepet | Veritabanı | 30 KB | 306 KB | 525 KB | 2,4 sn |
+
+- Veritabanı modunda her sayfa ~22–26 KB daha büyük: katalog sayfanın
+  içinde geliyor (3.3'te planlandığı gibi; sayfa geçişlerinde tekrar
+  inmez). Toplam indirme ve açılış süresi iki modda neredeyse aynı.
+- Her sayfada ~300 KB JavaScript iniyor. Bunun ~47 KB'ı tarayıcıya giden
+  örnek veri (ürünler, örnek üye ve siparişler dahil); tarayıcı veri
+  tutmayı bıraktığında (Aşama 5) çıkar. Gerçek üye ve sipariş verisi
+  hiçbir zaman tarayıcı paketine girmemeli. Gerisi sitenin kendisi
+  (Next.js ve React, harita, arama, simgeler).
+- Anasayfa ve sepette en büyük içeriğin geç görünmesinin başlıca nedeni
+  görseller ve JavaScript; görsel küçültme (A5) ve canlı sunucuda
+  sıkıştırma/önbellek ayarları canlıdan önce ele alınmalı. Canlı sunucuda
+  aynı ölçüm tekrarlanır.
 
 ### SAP (özet)
 
 Ayrıntı: aşağıdaki [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) bölümü.
 
-- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur; okuma işi (3. madde) SAP bilgileri gelmeden kurulabilir.
-- **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (7. madde).
+- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur; okuma işi (2. madde) SAP bilgileri gelmeden kurulabilir.
+- **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (6. madde).
 
 ## Karar bekleyen frontend işleri (özet)
 
@@ -590,9 +623,10 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      önbellek (bitti: `lib/server/refresh.ts` › `refreshSite`, kayıt türüne
      göre etkilenen sayfaları o anda yeniler; `/api/yenile` ve
      `npm run site:yenile`; veritabanına ulaşılamazsa anlaşılır hata, site
-     son hazırlanmış sayfaları göstermeye devam eder) → 3.7 veritabanı modunda tarayıcı
-     testleri ve ölçüm.
-   - Veritabanı modunun bugünkü sınırları (3.4–3.7 ve Aşama 5'te kalkar):
+     son hazırlanmış sayfaları göstermeye devam eder) → 3.7 veritabanı
+     modunda tarayıcı testleri ve ölçüm (bitti: `npm run test:e2e:db`,
+     `scripts/sayfa-olcumu.mjs`; sonuçlar yukarıda "Ölçüm"). Aşama 3 bitti.
+   - Veritabanı modunun bugünkü sınırları (Aşama 5'te kalkar):
      - Panel henüz tarayıcıya yazıyor: paneldeki ürün, kategori, seçenek,
        mağaza ayarı, bayi, satıcı, stok, yorum ve içerik değişiklikleri bu
        modda siteye yansımaz.

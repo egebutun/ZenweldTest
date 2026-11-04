@@ -55,6 +55,9 @@ const securityHeaders = [
 
 const nextConfig = {
   reactStrictMode: true,
+  // Derleme klasoru. Veritabani modunun tarayici testleri (npm run
+  // test:e2e:db) ayri klasore derler; demo derlemesi (.next) bozulmaz.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   env: {
     // Kampanya tarihleri icin: sunucu ciktisi ile tarayicinin ilk cizimi
     // ayni ana gore hesaplansin (bkz. packages/store/src/hooks.ts useNow).

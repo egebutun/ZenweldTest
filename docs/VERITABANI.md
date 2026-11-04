@@ -1204,6 +1204,7 @@ link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 | `npm run db:seed` | Sitenin örnek verisini boş veritabanına yükler (aşağıda); yalnızca `localhost` adresinde çalışır |
 | `npm run db:generate` | Şema değişince yeni geçiş betiği üretir |
 | `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
+| `npm run test:e2e:db` | Sitenin veritabanı modunda tarayıcı testleri (`tests/e2e-db`, `scripts/e2e-db.mts`): test veritabanını baştan kurup örnek veriyi yükler, siteyi `.next-db`'ye derler, testleri çalıştırır |
 | `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
 
 Testler tablo listesinin ve kolonların bu dosyayla aynı olduğunu da

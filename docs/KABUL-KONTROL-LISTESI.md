@@ -773,6 +773,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       kapalıdır (tarayıcı testi de dener).
 - [ ] Aynı modda veritabanı kapanırsa yayındaki sayfalar son hazırlanmış
       haliyle açılmaya devam eder; veritabanı açılınca güncel veri gelir.
+- [ ] `npm run test:e2e:db` geçer: veritabanı modunda bütün sayfalar
+      hatasız açılır; bütün ürünlerin fiyatı ve stok durumu veritabanıyla
+      aynıdır; değişiklik yenilemeden sonra hemen görünür; bayi stoğu,
+      satıcı fiyatı ve yasal metin gövdesi yalnızca gereken sayfadadır; üye
+      kartla satın alabilir. (Yukarıdaki veritabanı modu maddelerinin
+      çoğunu bu test dener.)
 - [ ] **Canlıya çıkmadan:** örnek satış hareketleri
       (`sample-activity.seed.ts`) kaldırılmış, gerçek kargo/POS/IBAN değerleri
       ve gerçek yasal metinler girilmiş, e-posta anahtarı tanımlanmıştır

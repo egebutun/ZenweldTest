@@ -958,6 +958,18 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   ürettiği dosya her geliştirici bilgisayarında değişiklik olarak
   görünmesin.
 
+### K-90 · Bugünkü veri, yüklenecek veri sayılır; gerçekler zamanla gelir
+- **Tarih:** 2026-11-04
+- **Karar:** Verilerin gerçek olup olmadığına bakılmadan sistemin tamamı
+  kurulur. Sitede bugün bulunan katalog, içerik, ayarlar, bayi ağı ve
+  benzeri veriler sahibinin şimdilik verdiği veri sayılır; gerçek değerleri
+  sahibi zamanla tek tek verir. Sitedeki sabit yazılar
+  (`packages/i18n/src/tr.ts`) da değişebilir.
+- **Sonuç:** Canlı veri yükleme komutu (YAPILACAKLAR › Canlıya giden yol)
+  bugünkü verinin tamamını yükleyecek şekilde kurulur; örnek satış
+  hareketleri (panel grafikleri için üretilen üye, sipariş, teklif, servis
+  ve garanti kayıtları) yüklenmez.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

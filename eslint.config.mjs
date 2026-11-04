@@ -10,7 +10,7 @@ import nextTypescript from "eslint-config-next/typescript";
  */
 const config = [
   {
-    ignores: ["**/node_modules/**", "**/.next/**", "**/next-env.d.ts"],
+    ignores: ["**/node_modules/**", "**/.next/**", "**/.next-db/**", "**/next-env.d.ts"],
   },
   ...nextVitals,
   ...nextTypescript,

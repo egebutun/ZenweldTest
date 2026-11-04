@@ -68,6 +68,10 @@ ilgili belge **aynı commit'te** güncellenir:
   - `npm run test:e2e`: tarayıcı testleri (`tests/e2e`); önce `npm run build`.
   - `npm run test:db`: veritabanı testleri (`tests/db`); çalışan PostgreSQL ve
     `TEST_DATABASE_URL` gerekir (README › Veritabanı).
+  - `npm run test:e2e:db`: sitenin veritabanı modunda tarayıcı testleri
+    (`tests/e2e-db`); test veritabanını kurar, siteyi `.next-db`'ye derler,
+    testleri çalıştırır. `test:db` gibi PostgreSQL ve `TEST_DATABASE_URL`
+    gerekir.
   - `npm run db:migrate` / `db:reset` / `db:seed` / `db:generate` / `db:studio`:
     tabloları kurar / bilgisayardaki veritabanını sıfırlar / örnek veriyi
     boş veritabanına yükler / şema değişince yeni geçiş betiği üretir /
@@ -77,7 +81,8 @@ ilgili belge **aynı commit'te** güncellenir:
   dener (sayfa taraması, ödeme, seçenekler, filtreler, teklif, belgeler, garanti, hesap, iade, depo stoğu, kupon). Bir kural ya da
   ekran değişince ilgili test de aynı commit'te güncellenir.
 - **Doğrulama:** Her değişiklikten sonra typecheck, lint, test ve build
-  çalıştırılır; davranış değiştiyse tarayıcı testleri de.
+  çalıştırılır; davranış değiştiyse tarayıcı testleri de. Veritabanından
+  okuma ya da yazma değiştiyse `test:db` ve `test:e2e:db` de.
   Davranış değiştiyse kontrol listesindeki ilgili maddeler denenir.
 
 ## Güvenlik

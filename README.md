@@ -68,6 +68,7 @@ npm run lint        # kod denetimi (ESLint)
 npm test            # iş kuralları testleri (fiyat, kampanya, taksit, stok, garanti…)
 npm run test:e2e    # tarayıcı testleri (önce npm run build; sunucuyu kendisi açar)
 npm run test:db     # veritabanı testleri (çalışan PostgreSQL gerekir; aşağıda)
+npm run test:e2e:db # sitenin veritabanı modunda tarayıcı testleri (aşağıda)
 npm run db:migrate  # veritabanı tablolarını kurar / günceller
 npm run db:reset    # bilgisayardaki veritabanını silip tabloları baştan kurar
 npm run db:seed     # sitenin örnek verisini boş veritabanına yükler
@@ -409,6 +410,15 @@ npm run start --workspace apps/zenweld-web
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
     Derleme sırasında veritabanı çalışıyor olmalı.
   - Ayar yoksa site bugünkü gibi çalışır.
+  - **Veritabanı modunun testleri:** `npm run test:e2e:db` test veritabanını
+    (`TEST_DATABASE_URL`) sıfırlayıp örnek veriyi yükler, siteyi veritabanı
+    moduyla ayrı bir klasöre (`.next-db`) derler ve 3100 portunda açıp
+    dener: bütün sayfalar, fiyat ve stok, değişikliğin hemen görünmesi,
+    ağır verinin yalnızca gereken sayfaya gitmesi, kartla satın alma. Demo
+    derlemesi (`.next`) etkilenmez. `test:db` ile aynı anda çalıştırılmaz.
+  - **Sayfa boyutu ve hız ölçümü:** site açıkken
+    `node scripts/sayfa-olcumu.mjs http://localhost:3000` (birden fazla
+    adres yan yana ölçülür). Sonuçlar: docs/YAPILACAKLAR.md › Ölçüm.
 
 - **Hedef sürüm PostgreSQL 18**; kodun ve betiklerin 16 ve 17'de de
   çalışması beklenir ama testler 18'de yapılır (KARARLAR K-81).

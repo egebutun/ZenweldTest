@@ -15,6 +15,7 @@
     "typecheck": "npm run typecheck --workspaces --if-present && tsc --noEmit -p tests",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:e2e:db": "tsx scripts/e2e-db.mts",
     "db:generate": "npm run generate --workspace=@zenweld/db",
     "db:migrate": "tsx packages/db/scripts/migrate.ts",
     "db:reset": "tsx packages/db/scripts/reset.ts",
