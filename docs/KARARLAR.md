@@ -970,6 +970,30 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   hareketleri (panel grafikleri için üretilen üye, sipariş, teklif, servis
   ve garanti kayıtları) yüklenmez.
 
+### K-91 · Canlıya ve denemeye ne yüklenir
+- **Tarih:** 2026-11-04
+- **Karar:** Veri yükleme komutu (`npm run db:yukle`) iki hedefle
+  çalışır:
+  - **Canlı:** katalog, içerik, mağaza ayarları, bayiler, satıcılar ve depo
+    stoğu.
+  - **Deneme:** bunlara ek olarak örnek yorumlar, kuponlar ve bayi stok
+    listeleri (site dolu görünsün, her şey denenebilsin).
+  - **Hiçbir yere:** demo hesaplar ve örnek üyeler, siparişler, teklifler,
+    iadeler, servis talepleri, garantiler.
+  - Komut hiçbir kaydı silmez ve tekrar çalıştırılabilir. Varsayılanı
+    farklı olan kaydı günceller; `eksikler` ile yalnızca olmayanı ekler.
+    Panel veritabanına yazmaya başlayınca (Aşama 5) yalnızca `eksikler`
+    kullanılır. Depo ve bayi stoğunun üzerine hiç yazmaz.
+- **Neden:**
+  - Demo hesapların şifreleri README'de (GitHub'da) yazılı; canlıda panele
+    herkes girebilirdi.
+  - Örnek satış kayıtları panel rakamlarını bozar, ileride SAP'a gerçek
+    sipariş olarak gidebilir, uydurma garanti seri numaraları sorguda
+    "kayıtlı" görünür.
+  - Örnek yorumlar gerçek müşteri yorumu değildir; canlıda yayınlamak
+    yanıltıcıdır. Örnek kuponlar canlıda gerçekten indirim verir. Örnek bayi
+    stokları uydurmadır; gerçek listeler bayilerden dosyayla gelir.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

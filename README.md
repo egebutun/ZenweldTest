@@ -72,6 +72,7 @@ npm run test:e2e:db # sitenin veritabanı modunda tarayıcı testleri (aşağıd
 npm run db:migrate  # veritabanı tablolarını kurar / günceller
 npm run db:reset    # bilgisayardaki veritabanını silip tabloları baştan kurar
 npm run db:seed     # sitenin örnek verisini boş veritabanına yükler
+npm run db:yukle    # bugünkü veriyi canlı ya da deneme veritabanına yükler (aşağıda)
 npm run db:generate # şema değişince yeni geçiş betiği üretir
 npm run db:studio   # tabloları tarayıcıda gösterir
 npm run site:yenile # veritabanındaki değişikliği sitede o anda gösterir (aşağıda)
@@ -248,7 +249,7 @@ ZenweldTest/
 │   ├── db/                         Sunucu veritabanı (PostgreSQL): şema, geçiş betikleri, komutlar
 │   │   ├── src/schema/             Tablolar (docs/VERITABANI.md ile aynı)
 │   │   ├── migrations/             Geçiş betikleri (0000 üretilen, 0001 elle yazılan kurallar)
-│   │   └── scripts/                npm run db:migrate / db:reset / db:seed
+│   │   └── scripts/                npm run db:migrate / db:reset / db:seed / db:yukle
 │   │
 │   ├── store/                      Backend yerine geçen veri katmanı
 │   │   └── src/
@@ -432,6 +433,21 @@ npm run start --workspace apps/zenweld-web
   bayiler, üyeler, siparişler, kuponlar…) boş veritabanına yükler; yalnızca
   bilgisayarda çalışır. Baştan yüklemek için: `npm run db:reset` sonra
   `npm run db:seed`.
+- **Canlı ve deneme veritabanına veri yükleme (KARARLAR K-91):**
+  `DATABASE_URL` o veritabanını gösterirken, önce `npm run db:migrate`,
+  sonra:
+  - `npm run db:yukle canli`: katalog, içerik, mağaza ayarları, bayiler,
+    satıcılar ve depo stoğu.
+  - `npm run db:yukle deneme`: bunlara ek olarak örnek yorumlar, kuponlar
+    ve bayi stok listeleri.
+  - Sona `eksikler` eklenirse (`npm run db:yukle canli eksikler`) yalnızca
+    veritabanında olmayan kayıtlar eklenir; var olana dokunulmaz.
+  - Üyeler, siparişler, teklifler, iadeler, servis talepleri ve garantiler
+    hiç yüklenmez; hiçbir kayıt silinmez; tekrar çalıştırılabilir. Ne
+    yapıldığı tablo tablo ekrana basılır.
+  - Bilgisayar dışındaki bir veritabanına yüklemeden önce veritabanının
+    adı yazılarak onay verilir.
+  - Ayrıntılar: docs/VERITABANI.md › 14.
 - Geçiş betikleri `packages/db/migrations/`'dadır ve sırayla, bir kez
   çalışır; aynı betikler sunucuda da çalıştırılır. Çalışmış bir betik
   değiştirilmez; şema değişince `npm run db:generate` yeni betik üretir.

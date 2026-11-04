@@ -29,22 +29,25 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
    değişince etkilenen sayfalar o anda yenilenebiliyor; veritabanı modunun
    kendi tarayıcı testleri var (`npm run test:e2e:db`) ve sayfa boyutu ile
    hız ölçüldü (aşağıda "Ölçüm").
-4. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
+4. Veri yükleme (`npm run db:yukle canli|deneme`, KARARLAR K-91): bugünkü
+   veri canlı ya da deneme veritabanına yüklenir; satış hareketleri hiç,
+   örnek yorum, kupon ve bayi stokları yalnızca denemeye. Tekrar
+   çalıştırılabilir, hiçbir kaydı silmez, stoğun üzerine yazmaz.
+5. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
    tarayıcı testleri.
 
 ### Kalan kod işleri (önerilen sırayla)
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Canlı veri yükleme komutu:** bugünkü katalog, içerik, ayarlar ve bayi ağı verisinin tamamı yüklenir (K-90); örnek satış hareketleri (üye, sipariş, teklif, servis, garanti) yüklenmez. Komut tekrar çalıştırılabilir, var olanı günceller, yeniyi ekler, hiçbir şeyi silmez, üye ve siparişe dokunmaz. Önce deneme veritabanına, açılışta canlıya | — |
-| 2 | **SAP stok okuma işi:** 15 dakikada bir okuma, tek işlemde yenileme, okuma kaydı, hata olursa son iyi stoğun korunması, sayfaların yenilenmesi; SAP yerine deneme kaynağıyla kurulup test edilir | SAP bağlantı bilgileri (yalnızca bağlantı parçası için) |
-| 3 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
-| 4 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş | Aşama 4 |
-| 5 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
-| 6 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
-| 7 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
-| 8 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
-| 9 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
+| 1 | **SAP stok okuma işi:** 15 dakikada bir okuma, tek işlemde yenileme, okuma kaydı, hata olursa son iyi stoğun korunması, sayfaların yenilenmesi; SAP yerine deneme kaynağıyla kurulup test edilir | SAP bağlantı bilgileri (yalnızca bağlantı parçası için) |
+| 2 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
+| 3 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | Aşama 4 |
+| 4 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
+| 5 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
+| 6 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
+| 7 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
+| 8 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
 
 ### Kodla çözülmeyen, şimdiden başlatılması gerekenler
 
@@ -65,11 +68,12 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
   bütün tabloları kurar; aynı betikler her yayına almada çalıştırılabilir
   (çalışmış betik bir daha çalışmaz). Yönetilen PostgreSQL'de özel yetki
   gerekmez; Türkçe harf karşılaştırması için ICU desteği açık olmalıdır.
-- **Veri:** `npm run db:seed` bugün gerçek ürünlerle birlikte örnek üye,
-  sipariş ve stok hareketlerini de yüklediği için yalnızca bilgisayarda
-  çalışır. Canlı için yukarıdaki 1. madde (canlı veri yükleme komutu)
-  gerekir. Panel veritabanına yazmaya başlayınca (Aşama 5) veri doğrudan
-  panelden girilir.
+- **Veri:** Tablolar kurulduktan sonra `npm run db:yukle canli` (deneme
+  veritabanı için `deneme`) bugünkü veriyi yükler (KARARLAR K-91); komut
+  onay için veritabanının adını sorar. `npm run db:seed` örnek üye ve
+  siparişleri de yüklediği için yalnızca bilgisayarda çalışır. Panel
+  veritabanına yazmaya başlayınca (Aşama 5) veri doğrudan panelden girilir;
+  komut o zaman yalnızca `eksikler` ile kullanılır.
 
 ### Ölçüm (Aşama 3.7, 2026-11-04)
 
@@ -107,8 +111,8 @@ canlı sunucuda ayrıca ölçülmeli.
 
 Ayrıntı: aşağıdaki [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) bölümü.
 
-- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur; okuma işi (2. madde) SAP bilgileri gelmeden kurulabilir.
-- **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (6. madde).
+- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur; okuma işi (1. madde) SAP bilgileri gelmeden kurulabilir.
+- **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (5. madde).
 
 ## Karar bekleyen frontend işleri (özet)
 
@@ -597,10 +601,10 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      PostgreSQL, komutlar ve veritabanı testleri (`packages/db`) → örnek
      veriyi yükleme (`npm run db:seed`; yalnızca bilgisayarda, boş
      veritabanına). Site bu sırada tarayıcıda çalışmaya devam eder.
-   - Canlı için ilk yükleme ayrıca hazırlanacak: katalog, kategoriler,
-     seçenekler, yasal metinler ve ayarlar yüklenir; örnek üye, sipariş,
-     teklif, servis, garanti ve stok hareketleri yüklenmez. Bayiler,
-     satıcılar, POS ve IBAN bilgileri gerçekleriyle girilir.
+   - Canlı için ilk yükleme: `npm run db:yukle canli` (KARARLAR K-91);
+     örnek üye, sipariş, teklif, servis, garanti, yorum, kupon ve bayi stok
+     listeleri yüklenmez. Bayiler, satıcılar, POS ve IBAN bilgileri açılıştan
+     önce gerçekleriyle değiştirilir.
    - Canlıda her gün `SELECT purge_audit_log();` çalıştırılmalı (2 yıldan
      eski değişiklik kayıtları; sunucudaki zamanlanmış iş ya da `pg_cron`).
    - BT ekibinden istenecekler: PostgreSQL 18 (olmazsa en az 16), yönetilen servis

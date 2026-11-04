@@ -71,6 +71,16 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       tablo satır sayılarını yazar (ör. products 40, orders 133); ikinci
       çalıştırmada "Veritabanında kayıt var…" deyip durur. `npm run
       db:studio`'da ürünler, siparişler ve kuponlar görünür.
+- [ ] Veri yükleme (KARARLAR K-91): yalnızca `npm run db:migrate`
+      çalışmış bir veritabanında `npm run db:yukle canli` katalog, içerik,
+      ayarlar, bayiler ve depo stoğunu yükler ve tablo tablo eklenenleri
+      yazar; `users`, `orders`, `reviews`, `coupons` ve `dealer_stock` boş
+      kalır. Aynı komut ikinci kez çalışınca her satır "değişmeyen"dir.
+      `npm run db:yukle deneme` ayrıca yorum, kupon ve bayi stoklarını
+      ekler. `db:studio`'da bir ürünün fiyatı değiştirilince
+      `npm run db:yukle canli eksikler` ona dokunmaz, `npm run db:yukle canli`
+      eski fiyata döndürür. Adres `localhost` değilse komut veritabanının
+      adını sorar; yanlış yazılırsa hiçbir şey yüklemez.
 - [ ] Veritabanı testleri (`npm run test:db`) geçer. Şunları dener: tablo
       listesi ve kolonlar [VERITABANI.md](VERITABANI.md) ile aynı; ürün ve
       varyant kodları tek havuzda; Türkçe harf duyarsız adlar; üye e-postası;

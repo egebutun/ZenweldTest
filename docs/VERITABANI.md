@@ -1170,6 +1170,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
 | `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
+| `src/load.ts` | Bugünkü veriyi canlı ya da deneme veritabanına yükleme (`npm run db:yukle`; aşağıda) |
 | `src/read.ts` | Okuma katmanı: tablolardaki kayıtları sitenin kullandığı kayıt yapısına çevirir (aşağıda) |
 
 **Geçiş betikleri:** Sırayla ve bir kez çalışır; hangilerinin çalıştığı
@@ -1202,6 +1203,7 @@ link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 | `npm run db:migrate` | Henüz çalışmamış betikleri çalıştırır |
 | `npm run db:reset` | Bilgisayardaki veritabanını silip tabloları baştan kurar; yalnızca `localhost` adresinde çalışır |
 | `npm run db:seed` | Sitenin örnek verisini boş veritabanına yükler (aşağıda); yalnızca `localhost` adresinde çalışır |
+| `npm run db:yukle <canli\|deneme> [eksikler]` | Bugünkü veriyi canlı ya da deneme veritabanına yükler (aşağıda); bilgisayar dışındaki veritabanında onay ister |
 | `npm run db:generate` | Şema değişince yeni geçiş betiği üretir |
 | `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
 | `npm run test:e2e:db` | Sitenin veritabanı modunda tarayıcı testleri (`tests/e2e-db`, `scripts/e2e-db.mts`): test veritabanını baştan kurup örnek veriyi yükler, siteyi `.next-db`'ye derler, testleri çalıştırır |
@@ -1219,7 +1221,7 @@ yazıldığı tablo tablo ekrana basılır.
 - Yalnızca **boş** veritabanına yüklenir (`products` boş değilse durur:
   önce `npm run db:reset`) ve yalnızca bilgisayarda (`localhost`) çalışır.
   Örnek üye ve siparişler içerdiği için canlı ya da deneme sunucusuna
-  yüklenmez (YAPILACAKLAR › Veritabanı).
+  yüklenmez; onlar için `npm run db:yukle` (aşağıda).
 - Tek işlemde yazılır; bir satır kurala takılırsa hiçbir şey yazılmaz.
 - Eşleme "Bugünkü veriden farklar" tablosuna göredir. Ayrıca:
   - Silinmiş bir ürüne ya da üyeye bağlı kopya kayıtlarda (teklif ve
@@ -1235,6 +1237,49 @@ yazıldığı tablo tablo ekrana basılır.
   tablolardaki satır sayılarının veriyle aynı olduğunu ve başlıca bağları
   (ürün → kategori → grup, varyant değerleri, sipariş ve kargo, kupon
   kapsamı, depo stoğu) dener.
+
+**Veri yükleme (`npm run db:yukle`, `src/load.ts`; KARARLAR K-90, K-91):**
+Sitenin bugünkü verisi (`packages/data` › `createSeedDatabase`) canlı ya da
+deneme veritabanına yazılır. Tablolar önce `npm run db:migrate` ile kurulur;
+kurulmamışsa komut bunu söyler. Bağlantı `DATABASE_URL`'dir.
+
+| Kayıtlar | `canli` | `deneme` |
+|---|---|---|
+| Katalog (gruplar, kategoriler, seçenekler, filtreler, ürünler, eski linkler), içerik (blog, haber, etkinlik, SSS, yasal metinler, Hakkımızda, Sayfa SEO, belge sayfaları, satış temsilcileri), mağaza ayarları (POS, havale hesapları, kargo firmaları, ayarlar), bayiler, satıcılar, Zenweld depo stoğu | Yüklenir | Yüklenir |
+| Örnek yorumlar, kuponlar (kapsam ve kişiye özel e-postalarıyla), bayi ve satıcı stok listeleri ve yükleme geçmişi | — | Yüklenir |
+| Demo hesaplar ve örnek üyeler, adresler, teklifler, siparişler, iadeler, kupon kullanımları, servis talepleri, garantiler, kayıt numarası sayaçları | — | — |
+
+- **Eşleme:** `db:seed` ile aynı (`seedTables`). Yorumlar üyeye bağlanmaz
+  (üyeler yüklenmez). Depo stoğu bir SAP okuması sayılmaz:
+  `sap_sync_runs`'a satır yazılmaz, `sync_run_id` boş kalır.
+- **Tekrar çalıştırılabilir:** Kayıt birincil anahtarıyla eşleşir. Olmayan
+  eklenir; olan veriden farklıysa güncellenir, aynıysa yazılmaz. Veride
+  bulunmayan bir "son değişiklik" kolonu (`updated_at`) güncellenen satırda
+  o anın zamanını alır.
+- **Hiçbir kayıt silinmez:** Veriden çıkarılmış ya da veritabanına başka
+  yoldan eklenmiş kayıt (üye, sipariş, panelden eklenen içerik) olduğu gibi
+  kalır. Ürün başka kategoriye taşınırsa eski kategorinin filtre değerlerini
+  veritabanının kendi kuralı siler (`products_category_moved`).
+- **`eksikler`:** Yalnızca olmayan kayıt eklenir; kimliği ya da benzersiz bir
+  alanı (kod, ad, link) var olan satır atlanır. Panel veritabanına yazmaya
+  başlayınca (Aşama 5) paneldeki değişikliklerin üzerine yazılmasın diye bu
+  kullanılır.
+- **Stok üzerine yazılmaz:** Depo stoğu, bayi ve satıcı stokları, yükleme
+  geçmişi ve kod eşlemeleri her iki şekilde de yalnızca eksikse eklenir;
+  depo stoğunu SAP okuma işi, bayi stoğunu bayinin dosyası günceller.
+- **Tek işlem:** Bir satır kurala takılırsa (ör. aynı ürün kodu
+  veritabanında başka bir üründe) hiçbir şey yazılmaz; hata ekrana basılır.
+- **Onay:** Adres `localhost` değilse veritabanının adı yazılarak onay
+  verilir; terminal dışından (otomatik) çalıştırılırsa durur.
+- Ne yapıldığı tablo tablo basılır (eklenen, güncellenen, değişmeyen).
+  Deneme verisindeki kuponların tarihleri yükleme anına göre verildiği
+  için her yüklemede güncellenir. Site değişikliği en geç bir dakikada
+  gösterir; hemen görmek için `npm run site:yenile`.
+- Test (`tests/db/yukleme.test.ts`): canlı yüklemede veritabanı okununca
+  bugünkü veriyle (satış hareketleri, örnek yorum, kupon ve bayi stoğu
+  hariç) birebir aynı; deneme yüklemesi; tekrar çalıştırınca değişiklik
+  olmaması; güncelleme ve ekleme, silmeme; `eksikler`; stoğun üzerine
+  yazılmaması; çakışmada anlaşılır hata.
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

@@ -7,7 +7,7 @@ import { seedDatabase } from "../src/seed";
 /**
  * npm run db:seed — sitenin ornek verisini (packages/data) bilgisayardaki
  * bos veritabanina yukler. Ornek uyeler ve siparisler de yuklendigi icin
- * canli ya da deneme sunucusunda calistirilmaz (YAPILACAKLAR › Veritabani).
+ * canli ya da deneme sunucusunda calistirilmaz; onlar icin: npm run db:yukle.
  */
 const url = process.env.DATABASE_URL ?? "";
 if (!/@(localhost|127\.0\.0\.1)(:\d+)?\//.test(url)) {
