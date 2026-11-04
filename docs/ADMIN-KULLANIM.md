@@ -1869,7 +1869,8 @@ yazıların punto ve renklerini buradan ayarlayın."
 | Şifremi Unuttum | — (hiçbir yere gitmez) | — |
 
 - Bu formların hepsi ayrıca `info@zenweld.com`'a e-posta gönderir (bülten ve
-  şifre hariç).
+  şifre hariç). **Bugün:** E-posta servisi (Resend) kurulu olmadığı için
+  hiçbir e-posta gitmez ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 2).
   - E-postada **Yanıtla** denince yanıt doğrudan formu dolduran kişiye gider.
   - Sipariş e-postasına T.C. kimlik no ve kart bilgisi yazılmaz.
   - Yalnızca e-postayla giden formlarda e-posta gönderilemezse ziyaretçiye hata

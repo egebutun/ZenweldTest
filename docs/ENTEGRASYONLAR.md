@@ -56,6 +56,13 @@ veritabanında, tarayıcıda ya da depoda (GitHub) **asla** durmaz.
 (`info@zenweld.com`) e-posta gider. Formlar ve içerikleri:
 [IS-KURALLARI.md › Form e-postaları](IS-KURALLARI.md#18-form-e-postaları).
 
+**Bugün:** Kurulu değil; `RESEND_API_KEY` hiçbir yerde tanımlı olmadığı
+için **hiçbir e-posta gitmiyor**. Demo adresinde form yine "gönderildi"
+der. E-postanın gelmesi için: Resend hesabı açılır, `zenweld.com` alan
+adına Resend'in verdiği DNS kayıtları eklenir (gönderici adresinin
+doğrulanması), anahtar ve gönderici adresi sunucuya ortam değişkeni
+olarak girilir.
+
 **Nasıl çalışır:**
 
 - E-posta yalnızca **sunucudan** gönderilir; tarayıcı servise doğrudan

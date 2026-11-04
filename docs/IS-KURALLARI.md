@@ -713,7 +713,8 @@ servis talebi ve iade talebi aynı yeri kullanır).
 ## 18. Form e-postaları
 
 Sitedeki formlar `info@zenweld.com` adresine e-posta gönderir. Servisin
-kurulumu ve demo davranışı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md).
+kurulumu ve demo davranışı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md). Bugün
+servis kurulu olmadığı için hiçbir e-posta gitmez.
 
 **Genel kurallar:**
 

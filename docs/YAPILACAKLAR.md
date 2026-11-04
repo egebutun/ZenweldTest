@@ -3,6 +3,80 @@
 Kararlaştırılıp ileri bir tarihe bırakılan işler. Bir iş yapıldığında
 buradan silinir.
 
+## Canlıya giden yol
+
+Son güncelleme: 2026-11-04. Her adım bitince bu bölüm güncellenir.
+
+**Hedef:** Site ve panel sunucuda çalışır; bütün veri sunucudaki
+PostgreSQL'de durur; stok SAP'tan okunur, siparişler SAP'a satış siparişi
+olarak yazılır; site hızlı ve hatasız çalışır.
+
+**Bugün:** Sitenin ortak bir veri merkezi yok; her ziyaretçinin tarayıcısı
+verinin kendi kopyasını tutuyor. Panelde yapılan değişiklik yalnızca o
+tarayıcıda görünür; sipariş müşterinin tarayıcısına yazılır. Geçiş bir
+ayarla, parça parça yapılıyor (`DATA_SOURCE=database`, KARARLAR K-88):
+biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gibi
+çalışır.
+
+### Yapılanlar
+
+1. Site ve panel ekranları; iş kuralları (fiyat, KDV, taksit, kupon, stok,
+   kayıt numarası) tek yerde ve testli. Sunucu da aynı kodu kullanacak.
+2. Veritabanı: 64 tablo, kurulum betikleri, örnek veri yükleme, testler
+   ([VERITABANI.md](VERITABANI.md)).
+3. Okuma (Aşama 3.0–3.5): katalog, depo stoğu, mağaza ayarları, bayi ve
+   satıcı stoğu, yorumlar ve içerik veritabanından okunuyor.
+4. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
+   tarayıcı testleri.
+
+### Kalan kod işleri (önerilen sırayla)
+
+| # | İş | Bağlı olduğu |
+|---|---|---|
+| 1 | **3.6 Önbellek:** değişiklik olunca etkilenen sayfaların anında yenilenmesi (panel ve SAP işi bunu kullanacak) | — |
+| 2 | **3.7** Veritabanı modunda tarayıcı testleri, sayfa boyutu ve hız ölçümü | — |
+| 3 | **Canlı veri yükleme komutu:** gerçek veri (katalog, kategoriler, seçenekler, onaylı içerik ve ayarlar) örnek veriden ayrılır; komut tekrar çalıştırılabilir, var olanı günceller, yeniyi ekler, hiçbir şeyi silmez, üye ve siparişe dokunmaz. Sahibin verdiği veri önce deneme veritabanına, açılışta canlıya yüklenir | Hangi verilerin gerçek olduğu (sahibi) |
+| 4 | **SAP stok okuma işi:** 15 dakikada bir okuma, tek işlemde yenileme, okuma kaydı, hata olursa son iyi stoğun korunması, sayfaların yenilenmesi; SAP yerine deneme kaynağıyla kurulup test edilir | SAP bağlantı bilgileri (yalnızca bağlantı parçası için) |
+| 5 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
+| 6 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş | 4 |
+| 7 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
+| 8 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | 6; SAP sipariş API'si |
+| 9 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
+| 10 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
+| 11 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
+
+### Kodla çözülmeyen, şimdiden başlatılması gerekenler
+
+- **BT:**
+  - Sunucunun yeri (Vercel ya da Türkiye'de bir sunucu; KVKK ile birlikte).
+  - Yönetilen PostgreSQL 18 (canlı ve deneme), yedekleme.
+  - Derleme sunucusunun veritabanına erişimi.
+  - Birden fazla sunucu çalışacaksa ortak önbellek (ör. Redis). Vercel bunu kendisi sağlar.
+- **SAP ekibi:** Aşağıdaki "SAP" bölümündeki sorular.
+- **Ödeme kuruluşu:** Seçim ve anlaşma (iyzico, PayTR ya da banka sanal POS'u).
+- **E-posta:** Resend hesabı ve `zenweld.com` alan adına Resend'in verdiği DNS kayıtlarının eklenmesi. Bugün hiçbir e-posta gitmiyor ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 2).
+- **Hukuk:** Sözleşme metinleri, KVKK, kurumsal alıcıda cayma, ETBİS kaydı, MERSİS numarası; e-Arşiv / e-Fatura entegratörü.
+- **İçerik:** Gerçek ürün bilgileri ve fotoğraflar, fiyatlar, kargo ücretleri, IBAN'lar.
+
+### Veriyi canlıya taşıma
+
+- **Tablolar otomatik kurulur:** `npm run db:migrate` boş bir veritabanında
+  bütün tabloları kurar; aynı betikler her yayına almada çalıştırılabilir
+  (çalışmış betik bir daha çalışmaz). Yönetilen PostgreSQL'de özel yetki
+  gerekmez; Türkçe harf karşılaştırması için ICU desteği açık olmalıdır.
+- **Veri:** `npm run db:seed` bugün gerçek ürünlerle birlikte örnek üye,
+  sipariş ve stok hareketlerini de yüklediği için yalnızca bilgisayarda
+  çalışır. Canlı için yukarıdaki 3. madde (canlı veri yükleme komutu)
+  gerekir. Panel veritabanına yazmaya başlayınca (Aşama 5) veri doğrudan
+  panelden girilir.
+
+### SAP (özet)
+
+Ayrıntı: aşağıdaki [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) bölümü.
+
+- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur; okuma işi (4. madde) SAP bilgileri gelmeden kurulabilir.
+- **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (8. madde).
+
 ## Karar bekleyen frontend işleri (özet)
 
 Backend gerektirmeyen ama bir karara ya da bilgiye bağlı olduğu için
@@ -442,7 +516,8 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
 5. **e-Arşiv / e-Fatura** entegrasyonu (muhasebe yazılımı veya entegratör).
 6. **Müşteriye e-posta bildirimleri**: sipariş onayı + sözleşme kopyası
    (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi. (Zenweld'e
-   "yeni sipariş" e-postası bugün de gidiyor.)
+   "yeni sipariş" e-postasının kodu hazır; Resend kurulmadığı için bugün
+   hiçbir e-posta gitmiyor, 7. madde.)
 7. **Form e-postaları için Resend kurulumu**: Vercel'de `RESEND_API_KEY` ve
    doğrulanmış gönderici adresi `SUPPORT_FROM` tanımlanmalı. Tanımlı değilse
    canlıda yalnızca e-postayla giden formlar (iletişim, bayilik, Welders Club)
@@ -559,6 +634,28 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
 Sahibinin kararı (KARARLAR K-82, K-84): Zenweld deposunun stoğu SAP'tan
 okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
 (`warehouse_stock`, `sap_sync_runs`; [VERITABANI.md](VERITABANI.md)).
+
+**SAP Business One'da stok nasıl okunur:**
+
+- **Stok nerede durur:** SAP B1 stoğu kendi veritabanında (SAP HANA ya da SQL Server) kalem ve depo başına tutar. Kullanılabilir stok = depodaki − siparişe ayrılmış. SAP ekibinin hazırlayacağı görünüm (`AVAILABLE_STOCK`) bu hesabı yapıp kalem kodu ve miktarı verir.
+- **Okuma yolu (iki seçenek):**
+  - **Service Layer (önerilen):** SAP B1'in resmi web servisi (HTTPS, kullanıcı adı ve şifre). Siparişleri SAP'a yazmak için de bu kullanılacağı için tek bağlantı iki işi görür.
+  - **Salt okunur veritabanı kullanıcısı:** Görünüme doğrudan bağlanılır. Daha basit; ama sunucudan SAP veritabanına ağ erişimi (VPN ya da güvenlik duvarı izni) gerekir.
+- **SAP bilgileri gelmeden kurulabilecekler:**
+  - 15 dakikada bir çalışan okuma işi; yeri sunucu kararına bağlı (Vercel'in zamanlanmış işleri ya da sunucunun kendisi).
+  - Stok tablosunun tek işlemde yenilenmesi; her okumanın `sap_sync_runs`'a yazılması.
+  - Hata olursa son iyi stoğun korunması.
+  - Okuma sonrası değişen sayfaların yenilenmesi.
+
+  Bunlar SAP yerine bir deneme kaynağıyla (örnek dosya) kurulup test edilir; bilgiler gelince yalnızca SAP'a bağlanan küçük parça yazılır.
+- **Sipariş:** Service Layer üzerinden satış siparişi oluşturulur (müşteri kartı; satırlarda kalem kodu, adet, fiyat, depo). Karar gerekiyor: her web müşterisi SAP'ta ayrı cari mi, yoksa tek bir "web satış" carisi mi?
+- **SAP ekibine sorulacaklar:**
+  - B1 sürümü ve veritabanı türü (HANA / SQL Server).
+  - Service Layer açık mı?
+  - Sitenin stoğu hangi depo(lar)dan gelecek?
+  - Ürün kodlarımız SAP kalem koduyla aynı mı? (K-72)
+  - Görünümün kesin adı ve kolonları.
+  - Test şirketi ve ağ erişimi.
 
 1. SAP ekibinden: görünümün kesin adı (bugün `AVAILABLE_STOCK` deniyor) ve
    kolonları (kalem kodu, kullanılabilir miktar, kalem adı), bağlanma yolu
