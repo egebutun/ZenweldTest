@@ -20,7 +20,8 @@
     "db:reset": "tsx packages/db/scripts/reset.ts",
     "db:seed": "tsx packages/db/scripts/seed.ts",
     "test:db": "vitest run --config vitest.db.config.mts",
-    "db:studio": "npm run studio --workspace=@zenweld/db"
+    "db:studio": "npm run studio --workspace=@zenweld/db",
+    "site:yenile": "node scripts/site-yenile.mjs"
   },
   "engines": {
     "node": ">=20.9"

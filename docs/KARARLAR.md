@@ -943,6 +943,10 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   önbellek iki katmanlıdır (okunan veri ve sayfa,
   her biri 30 saniye), toplam en fazla bir dakika. Ayrıntı ve bugünkü
   sınırlar: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Veritabanı.
+- **Uygulama (3.6, 2026-11-04):** Kayıt değişince etkilenen sayfaları o
+  anda yenileyen altyapı hazır (`refreshSite`; bugün `npm run
+  site:yenile` ile kullanılır). Panel veritabanına yazınca her kayıt bunu
+  çağıracak; 60 saniyelik süre o zaman yedek olarak kalır.
 
 ### K-89 · `next dev`'in yazdığı AGENTS.md depoya girmez
 - **Tarih:** 2026-11-04

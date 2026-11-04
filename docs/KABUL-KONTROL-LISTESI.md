@@ -766,6 +766,13 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       başlığında ve site haritasında (yeni blog yazısı) görünür. Yasal
       metnin ve blog yazısının gövdesi yalnızca kendi sayfasının kaynağında
       yer alır.
+- [ ] Aynı modda `REVALIDATE_SECRET` tanımlıyken: `db:studio`'da yapılan
+      değişiklikten sonra `npm run site:yenile` çalıştırılınca sayfa bir
+      sonraki açılışta yenidir (beklemeden). Anahtarsız ya da yanlış
+      anahtarla yenileme isteği reddedilir; anahtar tanımlı değilse uç
+      kapalıdır (tarayıcı testi de dener).
+- [ ] Aynı modda veritabanı kapanırsa yayındaki sayfalar son hazırlanmış
+      haliyle açılmaya devam eder; veritabanı açılınca güncel veri gelir.
 - [ ] **Canlıya çıkmadan:** örnek satış hareketleri
       (`sample-activity.seed.ts`) kaldırılmış, gerçek kargo/POS/IBAN değerleri
       ve gerçek yasal metinler girilmiş, e-posta anahtarı tanımlanmıştır

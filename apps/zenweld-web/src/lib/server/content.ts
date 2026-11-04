@@ -3,6 +3,7 @@ import { readContent, type Content } from "@zenweld/db";
 import type { ServerData } from "@zenweld/store";
 import { CONTRACT_PAGE_IDS } from "@/lib/legal-documents";
 import { buildTime, cached, usesDatabase } from "./db";
+import { CACHE_TAGS } from "./tags";
 
 /**
  * SITENIN ICERIGI — SUNUCU (KARARLAR K-88, Asama 3.5)
@@ -22,9 +23,7 @@ import { buildTime, cached, usesDatabase } from "./db";
  * Yayindan kaldirilmis kayitlar ve pasif temsilciler tarayiciya gitmez.
  */
 
-export const CONTENT_TAG = "icerik";
-
-const cachedContent = cached("icerik", CONTENT_TAG, readContent);
+const cachedContent = cached("icerik", CACHE_TAGS.icerik, readContent);
 
 let demo: Content | undefined;
 

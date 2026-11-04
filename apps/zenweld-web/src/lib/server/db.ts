@@ -44,10 +44,27 @@ function database(): Db {
  * bolunur (docs/YAPILACAKLAR.md › Veritabani).
  */
 export const cached = <A extends unknown[], T>(name: string, tag: string, read: (db: Db, ...args: A) => Promise<T>) =>
-  unstable_cache((...args: A) => read(database(), ...args), [name], {
+  unstable_cache((...args: A) => readOrExplain(name, () => read(database(), ...args)), [name], {
     revalidate: REVALIDATE_SECONDS,
     tags: [tag],
   });
+
+/**
+ * Okuma hatasini anlasilir hale getirir (derleme ve sunucu kaydinda gorunur).
+ * Sitede yayindaki bir sayfa yenilenirken veritabanina ulasilamazsa Next
+ * sayfanin son hazirlanmis halini gostermeye devam eder.
+ */
+async function readOrExplain<T>(name: string, read: () => Promise<T>): Promise<T> {
+  try {
+    return await read();
+  } catch (error) {
+    throw new Error(
+      `Veritabanından okunamadı (${name}). DATA_SOURCE=database iken veritabanı çalışıyor ve ` +
+        `DATABASE_URL doğru olmalı; derleme sırasında da. Ayrıntı: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error },
+    );
+  }
+}
 
 /** Derleme ani (next.config.mjs); demo verisi ve tarayicinin ilk cizimi buna gore. */
 export function buildTime(): number {

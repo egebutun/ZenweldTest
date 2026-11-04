@@ -1278,6 +1278,15 @@ veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını
   sözleşmeleri yalnızca kendi sayfasına. Yayından kaldırılan kayıtlar ve
   pasif temsilciler tarayıcıya gitmez. Sabit sayfaların başlığı
   `lib/server/page-metadata.ts` ile `page_seo`'dan okunur.
+- **Yenileme:** Okunan her veri bir önbellek etiketiyle saklanır
+  (`lib/server/tags.ts`: katalog, depo-stogu, stok, bayiler, yorumlar,
+  icerik). Bir kayıt değişince `lib/server/refresh.ts` › `refreshSite`
+  ilgili etiketi geçersiz kılar; o veriyi kullanan sayfalar bir sonraki
+  ziyarette veritabanından yeniden hazırlanır. Bugün `/api/yenile` ucu ve
+  `npm run site:yenile` kullanır (`REVALIDATE_SECRET`); ileride panel
+  kaydı ve SAP stok okuma işi. Veritabanına ulaşılamazsa hata mesajı
+  hangi okumanın başarısız olduğunu söyler; yayındaki sayfalar son
+  hazırlanmış haliyle gösterilmeye devam eder.
 - Test (`tests/db/okuma.test.ts`): örnek veri yazılıp geri okununca, kayıt
   türü başına birebir aynı çıkar (gidiş-dönüş); katalog ve mağaza ayarları
   tek başına da okunur; ürün stoğu yalnızca o ürünün stoktaki satırlarını,

@@ -122,6 +122,15 @@ test.describe("ziyaretçi", () => {
     }
     expect((await request.get("/yonetim/giris")).headers()["x-robots-tag"]).toContain("noindex");
   });
+
+  test("siteyi yenileme ucu anahtarsız ya da yanlış anahtarla çalışmaz", async ({ request }) => {
+    // Anahtar tanimli degilse uc kapali (404), tanimliysa yetkisiz (401).
+    const attempts: Record<string, string>[] = [{}, { authorization: "Bearer yanlis-anahtar" }];
+    for (const headers of attempts) {
+      const response = await request.post("/api/yenile", { headers, data: {} });
+      expect([401, 404]).toContain(response.status());
+    }
+  });
 });
 
 test.describe("üye", () => {

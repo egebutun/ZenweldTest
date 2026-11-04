@@ -11,6 +11,7 @@ import {
 import type { CatalogData, ServerData } from "@zenweld/store";
 import { getLayoutContent } from "./content";
 import { buildTime, cached, usesDatabase } from "./db";
+import { CACHE_TAGS } from "./tags";
 
 /**
  * SITENIN KATALOGU — SUNUCU (KARARLAR K-88)
@@ -25,18 +26,15 @@ import { buildTime, cached, usesDatabase } from "./db";
  * lib/server/content.ts.
  */
 
-export const CATALOG_TAG = "katalog";
-/** Onbellek etiketleri: panel veritabanina yazinca ilgili kayit aninda yenilenecek. */
-export const STOCK_TAG = "stok";
-export const DEALERS_TAG = "bayiler";
-export const REVIEWS_TAG = "yorumlar";
+const { katalog: CATALOG_TAG, "depo-stogu": WAREHOUSE_TAG, stok: STOCK_TAG, bayiler: DEALERS_TAG, yorumlar: REVIEWS_TAG } =
+  CACHE_TAGS;
 
 /*
  * Katalog, depo stogu ve ayarlar ayri kayitlar olarak saklanir (bugun
  * katalogun tamami ~110 KB; 2 MB sinirina ~1.000 urunde yaklasilir).
  */
 const cachedCatalog = cached("urunler", CATALOG_TAG, readCatalog);
-const cachedWarehouseStock = cached("depo-stogu", CATALOG_TAG, readWarehouseStock);
+const cachedWarehouseStock = cached("depo-stogu", WAREHOUSE_TAG, readWarehouseStock);
 const cachedSettings = cached("ayarlar", CATALOG_TAG, readSettings);
 
 /**

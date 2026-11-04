@@ -73,6 +73,7 @@ npm run db:reset    # bilgisayardaki veritabanını silip tabloları baştan kur
 npm run db:seed     # sitenin örnek verisini boş veritabanına yükler
 npm run db:generate # şema değişince yeni geçiş betiği üretir
 npm run db:studio   # tabloları tarayıcıda gösterir
+npm run site:yenile # veritabanındaki değişikliği sitede o anda gösterir (aşağıda)
 ```
 
 ---
@@ -396,6 +397,11 @@ npm run start --workspace apps/zenweld-web
   - `db:studio`'da bir ürünün fiyatını değiştirin: en geç bir dakika sonra
     sayfa açılınca yeni fiyat görünür (gerekirse sayfayı bir kez daha
     yenileyin; sayfa arka planda yeniden hazırlanır).
+  - Beklemeden görmek için: `.env.local`'a `REVALIDATE_SECRET=<uzun bir
+    değer>` yazıp siteyi başlatın; değişiklikten sonra
+    `npm run site:yenile` çalıştırın, sayfa bir sonraki açılışta yenidir.
+    Yalnızca bir türü yenilemek için: `npm run site:yenile -- katalog`
+    (türler: katalog, depo-stogu, stok, bayiler, yorumlar, icerik).
   - Üyeler, siparişler, teklifler ve formlar bu aşamada tarayıcıda kalır.
     Panelde bu modda okunan verilerde (ürün, kategori, seçenek, mağaza
     ayarı, bayi, stok, yorum, içerik) yapılan değişiklikler siteye yansımaz

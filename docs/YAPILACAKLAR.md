@@ -24,8 +24,9 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
    kayıt numarası) tek yerde ve testli. Sunucu da aynı kodu kullanacak.
 2. Veritabanı: 64 tablo, kurulum betikleri, örnek veri yükleme, testler
    ([VERITABANI.md](VERITABANI.md)).
-3. Okuma (Aşama 3.0–3.5): katalog, depo stoğu, mağaza ayarları, bayi ve
-   satıcı stoğu, yorumlar ve içerik veritabanından okunuyor.
+3. Okuma (Aşama 3.0–3.6): katalog, depo stoğu, mağaza ayarları, bayi ve
+   satıcı stoğu, yorumlar ve içerik veritabanından okunuyor; bir kayıt
+   değişince etkilenen sayfalar o anda yenilenebiliyor (3.6).
 4. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
    tarayıcı testleri.
 
@@ -33,17 +34,16 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **3.6 Önbellek:** değişiklik olunca etkilenen sayfaların anında yenilenmesi (panel ve SAP işi bunu kullanacak) | — |
-| 2 | **3.7** Veritabanı modunda tarayıcı testleri, sayfa boyutu ve hız ölçümü | — |
-| 3 | **Canlı veri yükleme komutu:** gerçek veri (katalog, kategoriler, seçenekler, onaylı içerik ve ayarlar) örnek veriden ayrılır; komut tekrar çalıştırılabilir, var olanı günceller, yeniyi ekler, hiçbir şeyi silmez, üye ve siparişe dokunmaz. Sahibin verdiği veri önce deneme veritabanına, açılışta canlıya yüklenir | Hangi verilerin gerçek olduğu (sahibi) |
-| 4 | **SAP stok okuma işi:** 15 dakikada bir okuma, tek işlemde yenileme, okuma kaydı, hata olursa son iyi stoğun korunması, sayfaların yenilenmesi; SAP yerine deneme kaynağıyla kurulup test edilir | SAP bağlantı bilgileri (yalnızca bağlantı parçası için) |
-| 5 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
-| 6 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş | 4 |
-| 7 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
-| 8 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | 6; SAP sipariş API'si |
-| 9 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
-| 10 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
-| 11 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
+| 1 | **3.7** Veritabanı modunda tarayıcı testleri, sayfa boyutu ve hız ölçümü | — |
+| 2 | **Canlı veri yükleme komutu:** gerçek veri (katalog, kategoriler, seçenekler, onaylı içerik ve ayarlar) örnek veriden ayrılır; komut tekrar çalıştırılabilir, var olanı günceller, yeniyi ekler, hiçbir şeyi silmez, üye ve siparişe dokunmaz. Sahibin verdiği veri önce deneme veritabanına, açılışta canlıya yüklenir | Hangi verilerin gerçek olduğu (sahibi) |
+| 3 | **SAP stok okuma işi:** 15 dakikada bir okuma, tek işlemde yenileme, okuma kaydı, hata olursa son iyi stoğun korunması, sayfaların yenilenmesi; SAP yerine deneme kaynağıyla kurulup test edilir | SAP bağlantı bilgileri (yalnızca bağlantı parçası için) |
+| 4 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
+| 5 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş | Aşama 4 |
+| 6 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
+| 7 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
+| 8 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
+| 9 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
+| 10 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
 
 ### Kodla çözülmeyen, şimdiden başlatılması gerekenler
 
@@ -66,7 +66,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
   gerekmez; Türkçe harf karşılaştırması için ICU desteği açık olmalıdır.
 - **Veri:** `npm run db:seed` bugün gerçek ürünlerle birlikte örnek üye,
   sipariş ve stok hareketlerini de yüklediği için yalnızca bilgisayarda
-  çalışır. Canlı için yukarıdaki 3. madde (canlı veri yükleme komutu)
+  çalışır. Canlı için yukarıdaki 2. madde (canlı veri yükleme komutu)
   gerekir. Panel veritabanına yazmaya başlayınca (Aşama 5) veri doğrudan
   panelden girilir.
 
@@ -74,8 +74,8 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 Ayrıntı: aşağıdaki [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) bölümü.
 
-- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur; okuma işi (4. madde) SAP bilgileri gelmeden kurulabilir.
-- **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (8. madde).
+- **Stok okuma:** SAP'ın stok görünümü (`AVAILABLE_STOCK`) 15 dakikada bir okunur; okuma işi (3. madde) SAP bilgileri gelmeden kurulabilir.
+- **Sipariş:** Site siparişleri SAP'a satış siparişi olarak yazılır (7. madde).
 
 ## Karar bekleyen frontend işleri (özet)
 
@@ -587,7 +587,10 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      (bitti, `apps/zenweld-web/src/lib/server/content.ts`: blog, haber,
      etkinlik, SSS, yasal metinler, Hakkımızda, satış temsilcileri, belge
      sayfaları, Sayfa SEO; uzun metinler yalnızca kendi sayfasına) → 3.6
-     önbellek ayarları → 3.7 veritabanı modunda tarayıcı
+     önbellek (bitti: `lib/server/refresh.ts` › `refreshSite`, kayıt türüne
+     göre etkilenen sayfaları o anda yeniler; `/api/yenile` ve
+     `npm run site:yenile`; veritabanına ulaşılamazsa anlaşılır hata, site
+     son hazırlanmış sayfaları göstermeye devam eder) → 3.7 veritabanı modunda tarayıcı
      testleri ve ölçüm.
    - Veritabanı modunun bugünkü sınırları (3.4–3.7 ve Aşama 5'te kalkar):
      - Panel henüz tarayıcıya yazıyor: paneldeki ürün, kategori, seçenek,
@@ -608,11 +611,21 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
        ürünler parça parça (ör. bölüm başına) önbelleğe alınmalı.
      - Derleme sırasında veritabanına erişilmelidir (sayfalar derlemede
        hazırlanır); canlıda derleme sunucusunun veritabanı erişimi olmalı.
+       Bu bilerek böyle bırakıldı (3.6): derlemeyi veritabanından bağımsız
+       yapmak, sayfaları önceden hazırlamak yerine her ziyarette yeniden
+       üretmek demek; site yavaşlar. Vercel'de ve kendi sunucuda derleme
+       veritabanına zaten erişir.
      - Veritabanında değişiklik, sayfa açılınca en geç bir dakikada görünür;
        sayfa uzun süre açılmamışsa ilk açılışta bir kez eski hali gelir ve
        arka planda yenilenir (Next'in "önce eskiyi göster, arkada yenile"
-       davranışı). Panel veritabanına yazınca kayıt anında yenileme
-       yapılacak (önbellek etiketi `katalog`).
+       davranışı). Beklemeden görmek için `npm run site:yenile` (README ›
+       Veritabanı). Panel veritabanına yazınca (Aşama 5) her kayıt
+       `refreshSite`'ı çağıracak; değişiklik o anda görünür ve süreye bağlı
+       yenileme yalnızca yedek kalır (süresi o zaman sahibine sorulur,
+       K-88).
+     - Birden fazla sunucu çalışacaksa önbellek ortak bir yerde (ör. Redis)
+       tutulmalı; yoksa yenileme yalnızca isteği alan sunucuda olur. Vercel
+       bunu kendisi sağlar.
    - Sonraki aşamalar: 4 üyelik ve oturum sunucuda; 5 panel ve site
      kayıtları veritabanına; 6 dosya deposu; canlıya hazırlık.
    - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları
@@ -665,7 +678,9 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
    `sap_sync_runs`'a yazılır, başarılı okuma `warehouse_stock`'u tek işlemde
    yeniler. Başarısız okumada son başarılı stok kalır; panelde son okuma
    zamanı ve hata görünür.
-3. Stok değişen ürünlerin sayfaları önbellekten yenilenir (KARARLAR K-83).
+3. Stok değişen ürünlerin sayfaları önbellekten yenilenir (KARARLAR K-83):
+   okuma işi bitince `refreshSite(["depo-stogu"])` çağrılır (Aşama 3.6'da
+   hazır).
 4. Ödeme anında stok son kez kontrol edilir; stok bitmişse sipariş
    alınmaz.
 5. Site siparişleri SAP'a satış siparişi olarak kaydedilecek (K-84). SAP
