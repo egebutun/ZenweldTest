@@ -10,10 +10,9 @@ import {
   type ReturnRequest,
   type User,
 } from "@zenweld/data";
-import { createReturnRequest } from "@zenweld/store";
 import { Alert, Badge, Button, FormRow, Select, Textarea } from "@zenweld/ui";
 import { formatDate, formatDateTime } from "@zenweld/utils";
-import { notifyZenweld } from "@/lib/notify";
+import type { ReturnInput } from "@/lib/member-orders";
 import { useT } from "@/lib/i18n-client";
 
 const STATUS_TONE: Record<ReturnRequest["status"], "amber" | "grey" | "green" | "red"> = {
@@ -30,7 +29,18 @@ const STATUS_TONE: Record<ReturnRequest["status"], "amber" | "grey" | "green" | 
  * teslimden itibaren 14 gun, acik talep yok) yeni talep formu. Kurallar:
  * packages/data/src/returns.ts.
  */
-export function ReturnRequestBox({ order, user, requests }: { order: Order; user: User; requests: ReturnRequest[] }) {
+export function ReturnRequestBox({
+  order,
+  user,
+  requests,
+  onSubmit,
+}: {
+  order: Order;
+  user: User;
+  requests: ReturnRequest[];
+  /** Talebi kaydeder (lib/member-orders.ts: veritabani modunda sunucu) */
+  onSubmit: (input: ReturnInput) => Promise<{ ok: true; code: string } | { ok: false; error: string }>;
+}) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [quantities, setQuantities] = useState<number[]>(() => order.items.map(() => 0));
@@ -38,59 +48,27 @@ export function ReturnRequestBox({ order, user, requests }: { order: Order; user
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
 
   const allowed = canRequestReturn(order, user.role, requests);
   if (!allowed && requests.length === 0 && !created) return null;
   const left = returnableQuantities(order, requests);
   const deadline = returnDeadline(order);
 
-  const submit = () => {
-    const items = order.items
-      .map((item, line) => ({ ...item, line, quantity: quantities[line] }))
-      .filter((item) => item.quantity > 0)
-      .map(({ line, productId, productName, sku, variantLabel, quantity }) => ({
-        line,
-        productId,
-        productName,
-        sku,
-        variantLabel,
-        quantity,
-      }));
+  const submit = async () => {
+    const items = quantities.flatMap((quantity, line) => (quantity > 0 ? [{ line, quantity }] : []));
     if (items.length === 0) {
       setError(t.returns.noItems);
       return;
     }
-    const record = createReturnRequest({
-      orderId: order.id,
-      orderCode: order.code,
-      userId: user.id,
-      customerName: order.customerName,
-      email: order.email,
-      phone: order.phone,
-      items,
-      reason,
-      note: note.trim() || undefined,
-    });
-    if (!record) {
-      setError(t.returns.failed);
+    setSending(true);
+    const result = await onSubmit({ order, items, reason, note: note.trim() || undefined });
+    setSending(false);
+    if (!result.ok) {
+      setError(result.error);
       return;
     }
-    // Talep panelde Iade Talepleri'nde; info@zenweld.com'a da haber verilir.
-    void notifyZenweld(
-      "iade",
-      {
-        code: record.code,
-        order: order.code,
-        customer: order.customerName,
-        email: order.email,
-        phone: order.phone,
-        items: items.map((i) => `${i.quantity} × ${i.productName}${i.variantLabel ? ` (${i.variantLabel})` : ""} — ${i.sku}`),
-        reason: t.returns.reasons[reason],
-        note: record.note,
-      },
-      "",
-    );
-    setCreated(record.code);
+    setCreated(result.code);
     setOpen(false);
     setError(null);
   };
@@ -185,7 +163,7 @@ export function ReturnRequestBox({ order, user, requests }: { order: Order; user
             <Textarea id="return-note" value={note} onChange={(e) => setNote(e.target.value)} />
           </FormRow>
           <div className="flex gap-3">
-            <Button type="button" onClick={submit}>
+            <Button type="button" onClick={() => void submit()} disabled={sending}>
               {t.returns.submit}
             </Button>
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>

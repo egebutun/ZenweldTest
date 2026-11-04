@@ -1,4 +1,4 @@
-import { findVariant, type Product, type ProductOptionsView, type SpecRow, type VariantView } from "@zenweld/data";
+import { findVariant, variantPriceExVat, type Product, type ProductOptionsView, type SpecRow, type VariantView } from "@zenweld/data";
 
 /**
  * URUN SECENEKLERI (VARYANTLAR)
@@ -22,10 +22,8 @@ export function activeVariant(view: ProductOptionsView | undefined, variantId?: 
 export function resolveVariant(product: Product, view: ProductOptionsView | undefined, variantId?: string) {
   const variant = activeVariant(view, variantId);
 
-  // Varyantin NORMAL fiyati. Kampanya varsa ayni indirim ORANI bu fiyata
-  // gosterimde uygulanir (salePriceExVat), boylece 3 m ve 5 m torcta
-  // indirim yuzdesi ayni kalir.
-  const priceExVat = product.priceExVat + (variant?.priceDeltaExVat ?? 0);
+  // Varyantin NORMAL fiyati (sepetle ayni kural: packages/data/src/cart.ts).
+  const priceExVat = variantPriceExVat(product, variant);
 
   const sku = variant?.sku || product.sku;
 

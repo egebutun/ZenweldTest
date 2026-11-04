@@ -1,3 +1,4 @@
+import { turkeyDayEnd } from "./orders";
 import type { Order, ReturnRequest, UserRole } from "./types";
 
 /**
@@ -18,12 +19,11 @@ export function deliveredAt(order: Order): string | undefined {
   return order.shipment?.deliveredAt ?? order.history.findLast((e) => e.status === "delivered")?.at;
 }
 
-/** Son talep ani: teslim gunu + 14 gun, o gunun sonu (yerel saat). */
+/** Son talep ani: teslim gunu + 14 gun, o gunun sonu (Turkiye saati). */
 export function returnDeadline(order: Order): Date | undefined {
   const at = deliveredAt(order);
   if (!at) return undefined;
-  const d = new Date(at);
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + RETURN_WINDOW_DAYS, 23, 59, 59, 999);
+  return turkeyDayEnd(new Date(at), RETURN_WINDOW_DAYS);
 }
 
 /** Satir satir iade edilebilecek adet: siparis adedi - reddedilmemis taleplerdeki adet. */

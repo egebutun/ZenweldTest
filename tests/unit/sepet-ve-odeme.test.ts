@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { cardInstallments, cartTotals, installmentQuote, posCommission, posForCard } from "@zenweld/data";
+import { cardInstallments, cartTotals, installmentQuote, posCommission, posForCard, priceCartLines } from "@zenweld/data";
 import { cardBrand, isValidCardNumber, isValidExpiry } from "@/lib/payment";
-import { pos, shop, withLuhn } from "./ornek";
+import { hoseLength, options, pos, product, shop, withLuhn } from "./ornek";
 
 /* docs/IS-KURALLARI.md › 4. Sepet ve kargo */
 describe("Sepet ve kargo", () => {
@@ -149,5 +149,49 @@ describe("Sunulan taksitler ve vade farkı", () => {
     expect(posCommission(bonus, 1)).toBe(1.8);
     expect(posCommission(bonus, 6)).toBe(5.2);
     expect(posCommission(bonus, 9)).toBeUndefined();
+  });
+});
+
+/* docs/IS-KURALLARI.md › 4. Sepet ve kargo (sepet ve sunucu ayni hesap; Asama 5.2) */
+describe("Sepet satırlarının fiyatı", () => {
+  const at = new Date("2026-11-02T12:00:00Z");
+  const torch = product({
+    id: "torc",
+    sku: "ZW-TORC",
+    options: options([hoseLength.id], [[["v3"], "ZW-TORC-3M"], [["v5"], "ZW-TORC-5M", { priceDeltaExVat: 500 }]]),
+    discount: { percent: 10 },
+  });
+  const catalog = {
+    products: [torch, product({ id: "pasif", sku: "ZW-PASIF", active: false })],
+    optionDefinitions: [hoseLength],
+    categories: [],
+    warehouseStock: [{ sapItemCode: "ZW-TORC", quantity: 3, syncedAt: at.toISOString() }],
+  };
+
+  it("seçeneğin fiyat farkı ve kampanya uygulanır; KDV dahil fiyat tam liraya yuvarlanır; adet 1–99", () => {
+    const [line] = priceCartLines([{ productId: "torc", variantId: "v5", quantity: 120 }], catalog, at);
+    // (1.000 + 500) × %90 = 1.350 + %20 KDV = 1.620
+    expect(line).toMatchObject({
+      sku: "ZW-TORC-5M",
+      variantLabel: "Hortum Uzunluğu: 5 m",
+      quantity: 99,
+      unitExVat: 1350,
+      unitIncVat: 1620,
+      totalIncVat: 1620 * 99,
+      inStock: true,
+    });
+  });
+
+  it("yayında olmayan ürün ve artık olmayan seçenek düşer; stokta olmayan işaretlenir", () => {
+    const lines = priceCartLines(
+      [
+        { productId: "pasif", quantity: 1 },
+        { productId: "torc", variantId: "v4", quantity: 1 },
+        { productId: "torc", variantId: "v3", quantity: 1 },
+      ],
+      { ...catalog, warehouseStock: [] },
+      at,
+    );
+    expect(lines.map((l) => [l.sku, l.inStock])).toEqual([["ZW-TORC-3M", false]]);
   });
 });

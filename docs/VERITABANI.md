@@ -655,7 +655,9 @@ Anahtar: (`order_id`, `seq`).
 
 ### `payment_transactions` — banka POS işlemleri (yeni)
 
-Banka POS'u bağlanınca kesinleşecek; bugün ödeme demo.
+Banka POS'u bağlanınca kesinleşecek; bugün ödeme demo. Veritabanı modunda
+verilen siparişte de (Aşama 5.2) bu tabloya henüz satır yazılmaz; kartlı
+ödeme gerçek POS bağlanana kadar temsilidir (KARARLAR K-97).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -1099,7 +1101,10 @@ duruyor). Aranır: türe, bağlı kayda ve tarihe göre.
 
 Numara tek bir işlemde artırılıp okunur; aynı anda gelen iki kayıt aynı
 numarayı alamaz. Silinen kaydın numarası yeniden verilmez
-(IS-KURALLARI › Kayıt numaraları).
+(IS-KURALLARI › Kayıt numaraları). Sipariş ve iade talebi numarasını veren
+sunucu (Aşama 5.2) sayaç yoksa ya da tablodaki en büyük numaranın
+gerisindeyse o numaradan devam eder (örnek veriyle yüklenen siparişlerde
+sayaç boştur).
 
 ### `audit_log` — panel değişiklik kaydı (yeni)
 
@@ -1184,6 +1189,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
 | `src/load.ts` | Bugünkü veriyi canlı ya da deneme veritabanına yükleme (`npm run db:yukle`; aşağıda) |
 | `src/sap-stock.ts` | SAP depo stoğu okuma işi ve deneme kaynağı (aşağıda) |
+| `src/orders.ts` | Siparişler sunucuda: kupon denetimi, sipariş, süresi dolan havale, iade talebi (aşağıda) |
 | `packages/auth/src/server/` | Şifre özeti ve oturumlar (aşağıda; yalnızca sunucu, `@zenweld/auth/server`) |
 | `packages/auth/scripts/create-admin.ts` | Yönetici hesabı açma (`npm run yonetici:olustur`) |
 | `deneme/sap-stok.csv` | SAP yerine okunan örnek stok dosyası (50 kalem, 3'ü stoksuz) |
@@ -1428,6 +1434,55 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   `tests/e2e-db/hesap-verisi.spec.ts` (tarayıcıda: adres ekleme, varsayılan,
   silme, başka cihaz; misafir favorilerinin girişte hesaba geçmesi, başka
   cihaz, çıkışta boş kalpler).
+
+**Siparişler (Aşama 5.2, KARARLAR K-97; `src/orders.ts`):**
+
+- Veritabanı modunda site siparişi `apps/zenweld-web/src/app/api/siparis/[islem]/route.ts`
+  ucundan verir ve okur; üye oturum çerezinden bulunur.
+  - `POST /api/siparis/kupon` `{code, lines}`: sepete yazılan kuponun
+    sonucu (`checkCartCoupon`). Ziyaretçi de çağırır; fiyatlar sayfanın
+    önbellekteki katalogundan, kupon ve kullanımları veritabanından okunur.
+    Tarayıcıya kuponun kendisi değil, yalnızca sonucu (`CouponView`) gider.
+  - `POST /api/siparis/ver`: sipariş (`placeOrder`). Tarayıcı ürün, seçenek,
+    adet, kupon kodu, adres, fatura, ödeme yöntemi, taksit sayısı, kartın
+    ilk 6 ve son 4 hanesi ve gördüğü tutarı (`expectedTotal`) gönderir.
+  - `GET /api/siparis/liste`: üyenin siparişleri ve iade talepleri
+    (`memberOrders`); önce süresi dolan havaleler iptal edilir
+    (`cancelExpiredTransfers`).
+  - `POST /api/siparis/iade`: iade talebi (`createReturnRequest`).
+- **Hesap:** Fiyat, kupon, kargo ve vade farkı sepetle aynı kurallardan
+  (`packages/data` › `cart.ts`, `checkout.ts`, `coupon.ts`), veritabanındaki
+  güncel katalog, depo stoğu ve mağaza ayarlarıyla (`readPricingData`;
+  önbelleksiz) yeniden hesaplanır. Tutar `expectedTotal`'la tutmazsa,
+  ürün satıştan kalktıysa, stoğu bittiyse ya da kupon uygulanamıyorsa
+  sipariş yazılmaz.
+- **Yazılanlar (tek işlem):** `orders`, `order_items` (seçenek kimliği
+  `variant_id` dahil), `order_status_history` (ilk durum), kupon varsa
+  `coupon_redemptions`; numara `record_counters` üzerinden
+  (`nextRecordCode`). Kartlı siparişte `paid_at` sipariş anıdır (temsili
+  ödeme); havalede `due_at` = sipariş anı + mağaza ayarındaki gün.
+- **Kilitler:** Kuponlu siparişte kupon satırı (`coupons`, FOR UPDATE)
+  kilitlenir; aynı kuponla aynı anda gelen siparişler sırayla sayılır, sınır
+  aşılmaz. İade talebinde sipariş satırı kilitlenir. Havale iptalinde
+  süresi dolan siparişler kilitlenir.
+- **Havale süresi:** Son ödeme gününün sonu Türkiye saatine göredir
+  (`packages/data/src/orders.ts`). Süresi dolan sipariş `cancelled` olur,
+  geçmişe "Ödeme süresi doldu" notuyla yazılır, `coupon_redemptions.released_at`
+  dolar.
+- **Okuma:** `readOrders`, `readReturnRequests` ve `readCoupons` isteğe bağlı
+  bir koşulla yalnızca ilgili kayıtları okur (ör. bir üyenin siparişleri,
+  bir kuponun kullanımları).
+- Bildirim e-postası (`info@zenweld.com`) kayıttan sonra sunucudan gider
+  (`apps/zenweld-web/src/lib/server/notify.ts`); yanıt onu beklemez.
+- Panelin Siparişler ve İade Talepleri ekranları Aşama 5.4'e kadar
+  tarayıcıdaki veriyi gösterir.
+- Test: `tests/db/siparis.test.ts` (kartlı sipariş ve tutarlar, numaranın
+  en büyük numaradan devam etmesi, fiyat değişince, stoksuz, satıştan kalkan
+  ürün, eksik ve hatalı bilgi, taksit, POS yokluğu; havale ve süre dolunca
+  iptal, kupon hakkının geri verilmesi; sepet kuponu ve kişiye özel kupon;
+  iade talebi kuralları; aynı anda gelen siparişlerde kupon sınırı);
+  `tests/e2e-db/siparis.spec.ts` (tarayıcıda: sepette kupon, kartla sipariş,
+  başka cihaz, iade talebi; fiyat değişince; havale süresi dolunca iptal).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

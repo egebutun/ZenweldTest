@@ -3,6 +3,7 @@ import {
   cartTotals,
   couponStatus,
   couponUsageCount,
+  couponView,
   evaluateCoupon,
   installmentQuote,
   normalizeCouponCode,
@@ -226,5 +227,20 @@ describe("Kuponlu sepet toplamları", () => {
       fee: 232,
       grandTotal: 5382,
     });
+  });
+});
+
+/* Veritabani modunda tarayiciya giden kupon sonucu (Asama 5.2) */
+describe("Kupon sonucunun tarayıcıya giden hali", () => {
+  it("kuponun kendisi (kişiye özel kuponun e-postaları) gitmez; yalnızca indirim ya da neden", () => {
+    const personal = coupon({ audience: "customers", customerEmails: ["gizli@ornek.com"], discountType: "amount", discountValue: 100 });
+    const ok = couponView(evaluateCoupon(personal, [{ productId: "a", totalIncVat: 1000 }], { redemptions: [], at: NOW }));
+    expect(ok).toEqual({ ok: true, couponId: "k1", code: "INDIRIM10", discount: 100, lineDiscounts: [100], personal: true });
+    expect(JSON.stringify(ok)).not.toContain("gizli@ornek.com");
+
+    const low = couponView(
+      evaluateCoupon(coupon({ minCartTotal: 5000 }), [{ productId: "a", totalIncVat: 1000 }], { redemptions: [], at: NOW }),
+    );
+    expect(low).toEqual({ ok: false, problem: "minTotal", minCartTotal: 5000 });
   });
 });

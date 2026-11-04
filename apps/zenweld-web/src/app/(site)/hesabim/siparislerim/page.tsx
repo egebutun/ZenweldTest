@@ -1,25 +1,22 @@
 "use client";
 
-import { useEffect } from "react";
 import { Package, Truck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { cancelExpiredTransfers, ordersForUser, useDatabase } from "@zenweld/store";
 import { Button, EmptyState } from "@zenweld/ui";
 import { formatDate, formatPrice } from "@zenweld/utils";
 import Link from "next/link";
 import { OrderStatusBadge } from "@/components/shop/OrderParts";
 import { useT } from "@/lib/i18n-client";
+import { useMemberOrders } from "@/lib/member-orders";
 
 export default function MyOrdersPage() {
   const t = useT();
   const { user } = useAuth();
-  const db = useDatabase();
-
-  // Odeme suresi dolan havale siparisleri burada iptal edilir (sunucu yok).
-  useEffect(() => cancelExpiredTransfers(), []);
+  // Odeme suresi dolan havale siparisleri okunurken iptal edilir.
+  const { orders, ready } = useMemberOrders();
 
   if (!user) return null;
-  const orders = ordersForUser(user.id, db);
+  if (!ready) return <div className="py-10 text-center text-zw-grey-500">{t.common.loading}</div>;
 
   if (orders.length === 0) {
     return (

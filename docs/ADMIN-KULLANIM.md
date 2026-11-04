@@ -89,7 +89,10 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
   - İlk yönetici hesabı `npm run yonetici:olustur` ile açılır (README).
   - Panelde yapılan işlemler (ürün, sipariş, üye…) Aşama 5'e kadar
     tarayıcıda kalır; Üyeler listesi veritabanındaki üyeleri henüz
-    göstermez.
+    göstermez. Sitede verilen siparişler ve iade talepleri veritabanına
+    yazılır (Aşama 5.2), ama Siparişler ve İade Talepleri ekranları
+    bunları 5.4'te gösterir; o zamana kadar tarayıcıdaki örnek kayıtları
+    gösterir.
 
 **Giriş ekranı:**
 

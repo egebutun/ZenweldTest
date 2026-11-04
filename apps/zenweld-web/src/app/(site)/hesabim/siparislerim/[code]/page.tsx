@@ -1,11 +1,11 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { CheckCircle2, Truck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import type { Order, OrderAddress } from "@zenweld/data";
-import { cancelExpiredTransfers, getShopSettings, ordersForUser, returnRequestsForOrder, useDatabase } from "@zenweld/store";
+import { getShopSettings, useDatabase } from "@zenweld/store";
 import { Alert, EmptyState, Modal } from "@zenweld/ui";
 import { formatDate, formatDateTime, formatPrice } from "@zenweld/utils";
 import Link from "next/link";
@@ -20,6 +20,7 @@ import {
 import { OrderStatusBadge, OrderTimeline } from "@/components/shop/OrderParts";
 import { ReturnRequestBox } from "@/components/shop/ReturnRequestBox";
 import { useT } from "@/lib/i18n-client";
+import { useMemberOrders } from "@/lib/member-orders";
 
 const addressLines = (a: OrderAddress) => [a.fullName, a.phone, a.line, `${a.district} / ${a.city}`];
 
@@ -31,12 +32,12 @@ function OrderDetail() {
   const isNew = useSearchParams().get("yeni") === "1";
   const [doc, setDoc] = useState<LegalDocumentKind | null>(null);
   const docTitle = useDocumentTitle();
-
-  useEffect(() => cancelExpiredTransfers(), []);
+  const { orders, returnsFor, requestReturn, ready } = useMemberOrders();
 
   if (!user) return null;
+  if (!ready) return <div className="py-10 text-center text-zw-grey-500">{t.common.loading}</div>;
   // Musteri yalnizca kendi siparisini gorebilir.
-  const order = ordersForUser(user.id, db).find((o) => o.code === decodeURIComponent(params.code));
+  const order = orders.find((o) => o.code === decodeURIComponent(params.code));
   if (!order) {
     return <EmptyState title={t.orders.notFound} />;
   }
@@ -140,7 +141,7 @@ function OrderDetail() {
         </dl>
       </Box>
 
-      <ReturnRequestBox order={order} user={user} requests={returnRequestsForOrder(order.id, db)} />
+      <ReturnRequestBox order={order} user={user} requests={returnsFor(order.id)} onSubmit={requestReturn} />
 
       <div className="grid gap-6 md:grid-cols-3">
         <Box title={t.orders.payment}>

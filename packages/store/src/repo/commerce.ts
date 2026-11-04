@@ -1,6 +1,6 @@
 "use client";
 
-import type { Order, OrderStatus, Quote, ZenweldDatabase } from "@zenweld/data";
+import { isTransferExpired, PAYMENT_EXPIRED_NOTE, type Order, type OrderStatus, type Quote, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nextCode, nowIso } from "./shared";
 import { addRedemption, releaseRedemption } from "./coupons";
@@ -157,19 +157,8 @@ export function saveOrderAdminNote(id: string, adminNote: string): boolean {
   });
 }
 
-/** Suresi dolan havale siparisine yazilan iptal notu. */
-export const PAYMENT_EXPIRED_NOTE = "Ödeme süresi doldu";
-
-/**
- * Havale/EFT odeme suresi doldu mu? Musteriye son odeme GUNU gosterildigi
- * icin sure o gunun sonunda (23:59) dolar, siparis saatinde degil.
- */
-export function isTransferExpired(order: Order, now: Date = new Date()): boolean {
-  if (order.status !== "awaiting_payment" || !order.payment.dueAt) return false;
-  const end = new Date(order.payment.dueAt);
-  end.setHours(23, 59, 59, 999);
-  return now.getTime() > end.getTime();
-}
+// Kural packages/data/src/orders.ts'te (sunucu da kullanir).
+export { isTransferExpired, PAYMENT_EXPIRED_NOTE };
 
 /**
  * Odeme suresi dolan havale/EFT siparislerini iptal eder.

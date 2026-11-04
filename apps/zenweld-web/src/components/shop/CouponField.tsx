@@ -51,16 +51,16 @@ export function CouponField() {
           </button>
         </div>
         {!result.ok && <p className="mt-1 text-xs font-semibold text-zw-red-700">{couponProblemText(result, t)}</p>}
-        {result.ok && !user && result.coupon.audience === "customers" && (
+        {result.ok && !user && result.personal && (
           <p className="mt-1 text-xs text-zw-grey-600">{t.cart.couponPersonal}</p>
         )}
       </div>
     );
   }
 
-  const apply = () => {
+  const apply = async () => {
     if (!code.trim()) return;
-    const result = cart.applyCoupon(code);
+    const result = await cart.applyCoupon(code);
     setError(result.ok ? null : couponProblemText(result, t));
     if (result.ok) setCode("");
   };
@@ -74,7 +74,7 @@ export function CouponField() {
         className="flex gap-2"
         onSubmit={(e) => {
           e.preventDefault();
-          apply();
+          void apply();
         }}
       >
         <Input

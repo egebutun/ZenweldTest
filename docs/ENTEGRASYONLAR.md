@@ -74,6 +74,10 @@ olarak girilir.
   bağlanmaz. Formlar sitenin kendi uçlarına gönderir:
   - `POST /api/bildirim` — iletişim, teklif, servis, garanti, yorum, üye,
     sipariş, iade talebi, Welders Club (`type` alanıyla).
+  - Veritabanı modunda sipariş ve iade talebinin bildirimini, kaydı yapan
+    sunucu kendisi gönderir (`/api/siparis`, Aşama 5.2); tarayıcı
+    `/api/bildirim`'e bu türleri göndermez. Şablonlar tek yerde:
+    `apps/zenweld-web/src/lib/server/notify.ts`.
   - `POST /api/bayilik` — bayilik başvurusu.
   - `POST /api/destek` — ürün sayfasındaki destek sorusu.
 - Sunucu e-postayı Resend'in API'sine (`https://api.resend.com/emails`)
@@ -124,8 +128,11 @@ olarak girilir.
     sunucuda.
   - Kayıt tutan formlar önce sunucuda veritabanına yazılmalı, e-posta bu
     kayıttan gönderilmeli; sipariş e-postası ödeme kuruluşunun onayından sonra
-    gitmeli. Bugün tarayıcı kaydı kendisi oluşturup e-posta ucuna haber
-    veriyor.
+    gitmeli. Veritabanı modunda sipariş ve iade talebi böyle (Aşama 5.2);
+    diğer kayıtlı formlarda tarayıcı kaydı kendisi oluşturup e-posta ucuna
+    haber veriyor (Aşama 5.3).
+  - Sepet kuponunu deneyen uç (`/api/siparis/kupon`) da istek sınırına
+    alınmalı (kod denemesini zorlaştırmak için).
 
 Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
 `apps/zenweld-web/src/app/api/`, `apps/zenweld-web/src/lib/notify.ts`,
@@ -138,7 +145,9 @@ Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
 **Bugün (Demo):**
 
 - Ödeme sayfasında kart bilgisi yalnızca **biçim** olarak kontrol edilir
-  (Luhn, son kullanma, CVC); hiçbir yere gönderilmez.
+  (Luhn, son kullanma, CVC); hiçbir yere gönderilmez. Veritabanı modunda
+  sunucuya yalnızca kartın ilk 6 ve son 4 hanesi gider (kart programı ve
+  taksit sunucuda bulunur; Aşama 5.2).
 - Kartın programı (Bonus, World …) kartın ilk 6 hanesinden sabit bir kuralla
   seçilir.
 - 1,5 saniyelik "3D Secure doğrulanıyor…" beklemesinden sonra ödeme alınmış
@@ -156,16 +165,18 @@ Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
    3D Secure sayfası kullanılmalı.
 3. **Kart programı ve taksitler:** Kartın programı kuruluşun kart (BIN)
    sorgusundan alınmalı; demodaki sabit kural kaldırılmalı
-   (`apps/zenweld-web/src/lib/payment.ts` › `cardProgram`).
+   (`packages/data/src/payment.ts` › `cardProgram`).
 4. **POS eşleştirmesi:** Paneldeki her POS gerçek bir sanal POS'a
    bağlanmalı. Mağaza no panelde kalabilir; **API anahtarı, şifre ve
    benzeri gizli bilgiler yalnızca sunucuda** ortam değişkeni olarak durmalı
    (ör. POS kimliğine göre adlandırılmış değişkenler). Bugün böyle bir
    değişken yoktur.
-5. **Tutarlar sunucuda yeniden hesaplanmalı:** Tarayıcıdan gelen tutara
-   güvenilmez; ürün fiyatı, kampanya, kargo ve vade farkı sunucuda
-   [IS-KURALLARI.md](IS-KURALLARI.md)'deki kurallarla hesaplanmalı. Sipariş
-   numarası sunucuda verilmeli.
+5. **Tutarlar sunucuda yeniden hesaplanır:** Veritabanı modunda yapıldı
+   (Aşama 5.2): ürün fiyatı, kampanya, kupon, kargo ve vade farkı sunucuda
+   [IS-KURALLARI.md](IS-KURALLARI.md)'deki kurallarla hesaplanır, sipariş
+   numarasını sunucu verir (`packages/db/src/orders.ts`). Ödeme kuruluşu
+   bağlanınca çekilecek tutar bu hesaptan alınmalı; işlemler
+   `payment_transactions`'a yazılmalı.
 6. **Ödeme sonucu:** Kuruluşun dönüş (callback) adresi siparişi
    kesinleştirmeli; başarısız ödemede sipariş oluşmamalı.
 7. **İade ve iptal:** Bugün panel iade yapmaz ("İadeyi ödeme kuruluşu /
@@ -190,8 +201,9 @@ Kod: `apps/zenweld-web/src/app/(site)/odeme/page.tsx`,
 - Banka entegrasyonu yoktur. Müşteri siparişten sonra Mağaza Ayarları'ndaki
   hesaplardan birine ödeme yapar ve açıklamaya sipariş numarasını yazar.
 - Ödeme hesaba geçince panelde **Ödeme Alındı** denir.
-- Süresi dolan siparişi iptal eden işlem bugün sayfa açılınca çalışır;
-  canlıda **günlük zamanlanmış görev** olmalı
+- Süresi dolan siparişi iptal eden işlem bugün sayfa açılınca çalışır
+  (veritabanı modunda üyenin siparişleri sunucudan okunurken; Aşama 5.2);
+  canlıda ayrıca **günlük zamanlanmış görev** olmalı
   ([IS-KURALLARI.md › Havale](IS-KURALLARI.md#6-havale--eft)).
 - İstenirse ileride bankanın hesap hareketleri servisiyle otomatik eşleştirme
   yapılabilir (sipariş numarası açıklamadan okunarak).
@@ -419,7 +431,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 
 | Konu | Bugün | Gereken |
 |---|---|---|
-| **Veritabanı ve sunucu API'si** | Veri tarayıcıda; PostgreSQL tabloları hazır, site ayarla katalogu tablolardan okuyabiliyor (K-88) | Siteyi ve paneli veritabanına bağlama ([VERITABANI.md](VERITABANI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
+| **Veritabanı ve sunucu API'si** | Veri tarayıcıda; PostgreSQL tabloları hazır. Veritabanı modunda (K-88) katalog, içerik ve stok tablolardan okunuyor; üyelik, adresler, favoriler, siparişler ve iade talepleri sunucuda (Aşama 4, 5.1, 5.2) | Siteyi ve paneli veritabanına bağlama ([VERITABANI.md](VERITABANI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
 | **SAP Business One (depo stoğu)** | Okuma işi hazır, SAP yerine deneme dosyasını okuyor (`/api/sap/stok`, `SAP_STOK_DOSYASI`; [9](#9-barındırma-ve-ortam-değişkenleri) › Zamanlanmış işler) | SAP ekibinin hazırladığı "kullanılabilir stok" görünümünü (`AVAILABLE_STOCK`, ad kesinleşmedi) okuyan bağlantı parçası (KARARLAR K-82, K-84). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı) ve görünümün kolonları SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması |
 | **SAP Business One (satış siparişi)** | Yok | Site siparişleri SAP'a satış siparişi olarak kaydedilecek (KARARLAR K-84); SAP'ın sipariş API'si (ör. `SALES_ORDER`) ve bağlantı bilgileri SAP ekibinden gelecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Zenweld depo stoğu (SAP)) |
 | **Dosya deposu** | Görseller veritabanında, belgeler tarayıcıda | Nesne deposu |

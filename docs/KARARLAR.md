@@ -1063,6 +1063,24 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Neden:** Üye favorisini telefonda da bilgisayarda da görsün; sınırlar
   tek bir hesabın sınırsız kayıtla veritabanını şişirmesini önler.
 
+### K-97 · Siparişler sunucuda: fiyat değişirse, kart ödemesi, iade, havale süresi
+- **Tarih:** 2026-11-04
+- **Karar:** Veritabanı modunda siparişler sunucuya taşınırken (Aşama 5.2):
+  - **Fiyat değişirse:** Sunucu tutarı yeniden hesaplar. Müşterinin ödeme
+    sayfasında gördüğü tutar tutmazsa sipariş alınmaz; "Fiyatlar
+    güncellendi" denir ve yeni tutar gösterilir.
+  - **Kartlı ödeme:** Gerçek POS bağlanana kadar bugünkü gibi temsilidir;
+    sipariş ödenmiş sayılır ve "Hazırlanıyor" olarak kaydedilir. Canlıya
+    gerçek ödeme bağlanmadan çıkılmaz ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›
+    yol haritası 5).
+  - **İade talebi** sipariş detayında olduğu için siparişlerle aynı adımda
+    sunucuya taşınır.
+  - **Süresi dolan havale:** Siparişler okunurken sunucuda iptal edilir ve
+    kupon hakkı geri verilir; canlıda bunu ayrıca günlük zamanlanmış bir iş
+    yapar.
+- **Neden:** Müşteri onaylamadığı bir tutarı ödemesin; ödeme kuruluşu henüz
+  seçilmedi; tarayıcıdaki iade formu sunucudaki siparişi bulamazdı.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

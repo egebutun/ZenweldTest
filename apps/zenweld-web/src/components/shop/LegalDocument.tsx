@@ -1,13 +1,14 @@
 "use client";
 
 import type { ReactNode } from "react";
-import type { Order, OrderPayment } from "@zenweld/data";
+import type { Order } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
 import { findLegalPage, useDatabase } from "@zenweld/store";
 import { RichText } from "@zenweld/ui";
 import { formatDate, formatPrice } from "@zenweld/utils";
 import { CONTACT, OFFICES } from "@/lib/contact";
 import { DOC_ID, type LegalDocumentKind } from "@/lib/legal-documents";
+import { paymentSummary } from "@/lib/order-text";
 import { addressComplete } from "./AddressFields";
 
 /**
@@ -39,24 +40,7 @@ export interface LegalContext {
   date: string;
 }
 
-/**
- * Odeme satiri ("Visa •••• 1111 · 3 taksit"). Odeme sayfasinda onaylanan
- * sozlesme ile siparisten acilan kopya ayni metni gostersin diye tek yerde.
- */
-export function paymentSummary(payment: OrderPayment, t: Dictionary): string {
-  if (payment.method === "transfer") return t.orders.transfer;
-  const card = payment.cardLast4
-    ? t.orders.cardPayment
-        .replace("{brand}", payment.cardBrand ?? "")
-        .replace("{last4}", payment.cardLast4)
-        .trim()
-    : t.checkout.card;
-  const plan =
-    (payment.installments ?? 1) > 1
-      ? t.orders.installments.replace("{count}", String(payment.installments))
-      : t.orders.singlePayment;
-  return `${card} · ${plan}`;
-}
+export { paymentSummary };
 
 /** Sozlesmeye giren siparis bilgileri (odeme sayfasindaki taslak ya da kayitli siparis). */
 export type LegalOrder = Pick<

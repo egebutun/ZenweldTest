@@ -11,7 +11,7 @@ import { createReturnRequest, mutate, saveReturnRequest } from "@zenweld/store";
 
 /* docs/IS-KURALLARI.md › İade (cayma) talebi, KARARLAR K-65 */
 
-const delivered = new Date(2026, 2, 10, 15, 0); // 10.03.2026 15:00
+const delivered = new Date("2026-03-10T15:00:00+03:00"); // 10.03.2026 15:00 (Türkiye saati)
 
 function order(overrides: Partial<Order> = {}): Order {
   return {
@@ -42,23 +42,25 @@ const request = (overrides: Partial<ReturnRequest> = {}): ReturnRequest =>
   }) as ReturnRequest;
 
 describe("İade süresi", () => {
-  it("son gün: teslim günü + 14 gün, o günün sonu", () => {
-    expect(returnDeadline(order())).toEqual(new Date(2026, 2, 24, 23, 59, 59, 999));
+  it("son gün: teslim günü + 14 gün, o günün sonu (Türkiye saati)", () => {
+    expect(returnDeadline(order())).toEqual(new Date("2026-03-24T23:59:59.999+03:00"));
   });
 
   it("14. günün sonuna kadar talep açılır, ertesi gün açılmaz", () => {
-    expect(canRequestReturn(order(), "individual", [], new Date(2026, 2, 24, 23, 59))).toBe(true);
-    expect(canRequestReturn(order(), "individual", [], new Date(2026, 2, 25, 0, 0, 1))).toBe(false);
+    expect(canRequestReturn(order(), "individual", [], new Date("2026-03-24T23:59:00+03:00"))).toBe(true);
+    expect(canRequestReturn(order(), "individual", [], new Date("2026-03-25T00:00:01+03:00"))).toBe(false);
+    // Sunucu UTC'de calisir: 24.03 21:00 UTC, Turkiye'de 25.03 00:00'dir.
+    expect(canRequestReturn(order(), "individual", [], new Date("2026-03-24T21:00:01Z"))).toBe(false);
   });
 
   it("teslim tarihi kargo kaydında yoksa durum geçmişinden okunur", () => {
     const noShipment = order({ shipment: undefined });
-    expect(returnDeadline(noShipment)).toEqual(new Date(2026, 2, 24, 23, 59, 59, 999));
+    expect(returnDeadline(noShipment)).toEqual(new Date("2026-03-24T23:59:59.999+03:00"));
   });
 });
 
 describe("Kim, hangi siparişte talep açabilir", () => {
-  const during = new Date(2026, 2, 12);
+  const during = new Date("2026-03-12T12:00:00+03:00");
 
   it("yalnızca bireysel üye; kurumsal üyede yok", () => {
     expect(canRequestReturn(order(), "individual", [], during)).toBe(true);

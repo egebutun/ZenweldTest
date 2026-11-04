@@ -83,7 +83,8 @@ tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
   çerez seçimi, karşılama penceresinin görülmesi ve oturum ziyaretçinin
   tarayıcısında tutulur. Bütün site verisi de (ürünler, siparişler, üyeler…)
   şimdilik tarayıcıdadır. Veritabanı modunda oturum, giriş yapmış üyenin
-  adresleri ve favorileri sunucudadır (bkz. [Hesabım](#14-hesabım)).
+  adresleri, favorileri ve siparişleri sunucudadır (bkz.
+  [Hesabım](#14-hesabım)).
 
 ---
 
@@ -702,6 +703,9 @@ Adres: `/sepet`. Sepet için giriş gerekmez; ödeme adımında istenir.
       yeniden uygulanır.
     - Kupon kodu sepetle birlikte tarayıcıda saklanır; sipariş verilince
       silinir. Hesap kuralları: [IS-KURALLARI.md](IS-KURALLARI.md#21-kuponlar).
+    - Veritabanı modunda kupon sunucuda denetlenir (Aşama 5.2); sepet
+      değişince (adet, satır) sonuç sunucudan yeniden alınır. Kuponların
+      kendisi tarayıcıya gelmez.
   - Tutarlar: Ara Toplam (KDV dahil), kupon (varsa), "KDV (fiyatlara dahil)"
     (kupondan sonraki tutarın KDV'si), Kargo ("Ücretsiz" ya da ücret), Toplam.
   - Kargo durumu: Kargo bedavaya kalan tutar varsa "<tutar> daha ekleyin, kargo
@@ -735,6 +739,18 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
   dolmuş ya da kişiye özel kupon üyenin e-postasına tanımlı değil) indirim
   düşülmez ve sipariş verilmez; düğmeye basınca "Kupon
   uygulanamıyor: <neden> Kuponu kaldırarak devam edebilirsiniz." çıkar.
+- **Veritabanı modu** (Aşama 5.2, KARARLAR K-97): sipariş sunucuda
+  kaydedilir. Sunucu tutarı, stoğu ve kuponu güncel verilerle yeniden
+  hesaplar; tarayıcıya kartın yalnızca ilk 6 ve son 4 hanesi gider. Düğmeye
+  basınca sunucunun verebileceği ek mesajlar:
+  - Müşterinin gördüğü tutar tutmazsa (ör. fiyat bu arada değişti):
+    "Fiyatlar güncellendi; ödenecek tutar artık <tutar>. Sepetinizi kontrol
+    edip yeniden deneyin." Sipariş alınmaz, müşteri ödeme sayfasında kalır.
+  - "Sepetinizdeki bazı ürünler değişti ya da artık satışta değil. Sepetinizi
+    kontrol edin."
+  - "Seçtiğiniz taksit artık sunulmuyor. Taksit seçiminizi kontrol edin."
+  - Sunucuya ulaşılamazsa: "Sipariş oluşturulamadı. Bağlantınızı kontrol edip
+    tekrar deneyin."
 
 ### 1. Teslimat Adresi
 
@@ -834,14 +850,16 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
   düşen payı da saklanır; kupon kullanılmış sayılır.
 - **E-posta:** `info@zenweld.com`'a "Yeni sipariş" e-postası gider (kupon
   varsa "Kupon" satırıyla). T.C. kimlik numarası ve kart bilgisi e-postaya
-  yazılmaz.
+  yazılmaz. Veritabanı modunda e-postayı sipariş kaydedildikten sonra sunucu
+  gönderir; müşteri e-postayı beklemez.
 - **Sonrası:** Sepet boşalır ve müşteri sipariş detayına gider; bkz.
   [Siparişlerim](#siparişlerim-ve-sipariş-detayı).
 
 **Demo notu:**
 
 - Kartla ödemede 1,5 saniyelik "3D Secure doğrulanıyor…" beklemesinden sonra
-  ödeme onaylanmış sayılır; para çekilmez.
+  ödeme onaylanmış sayılır; para çekilmez. Veritabanı modunda da gerçek POS
+  bağlanana kadar böyledir (K-97).
 - Kart programı, kartın ilk 6 hanesinden sabit bir kuralla seçilir. Gerçekte
   ödeme kuruluşunun BIN sorgusundan gelecektir.
 - Siparişte karttan yalnızca marka, program, son 4 hane, taksit sayısı, banka
@@ -972,9 +990,9 @@ Yap** da aynı işi yapar.
   açık kalır.
 - **Demo modunda** şifreler tarayıcıda karşılaştırılır; bu gerçek bir
   güvenlik değildir.
-- Veritabanı modunda giriş yapmış üyenin adresleri ve favorileri de
-  sunucudadır (Aşama 5.1); başka cihazda giriş yapınca aynısı görünür.
-  Siparişler ve teklifler Aşama 5'in sonraki adımlarına kadar iki modda da
+- Veritabanı modunda giriş yapmış üyenin adresleri, favorileri (Aşama 5.1),
+  siparişleri ve iade talepleri (Aşama 5.2) de sunucudadır; başka cihazda
+  giriş yapınca aynısı görünür. Teklifler Aşama 5.3'e kadar iki modda da
   tarayıcıdadır.
 
 ---
@@ -994,7 +1012,8 @@ Adres: `/hesabim/...`.
 ### Genel Bakış
 
 Tekliflerim, Siparişlerim, Favorilerim ve Garantilerim için sayı kartları;
-kartlar ilgili sayfaya gider.
+kartlar ilgili sayfaya gider. Veritabanı modunda sipariş sayısı sunucudan gelir; gelene
+kadar "…" yazar.
 
 ### Profil
 
@@ -1079,9 +1098,13 @@ kartlar ilgili sayfaya gider.
   - Gönderince: "İade talebiniz alındı. Talep numaranız <IAD-…>. Talebiniz
     incelendikten sonra sizinle iletişime geçilecek; onaylanırsa ödeme iadesi
     ayrıca yapılır." Talep info@zenweld.com'a e-postayla da gider.
-- **Demo notu:** Ödeme süresi dolan havale siparişleri, Siparişlerim ya da
-  sipariş detayı açıldığında iptal edilir (sunucu olmadığı için). Gerçek
-  sistemde bu iş sunucuda zamanlanmış olarak yapılmalıdır.
+- **Süresi dolan havale:** Ödeme süresi dolan havale siparişleri,
+  Hesabım, Siparişlerim ya da sipariş detayı açıldığında iptal edilir.
+  Veritabanı modunda bunu sunucu yapar ve kupon hakkını geri verir (K-97);
+  canlıda ayrıca günlük zamanlanmış bir iş yapmalıdır.
+- **Nerede tutulur:** Veritabanı modunda siparişler ve iade talepleri
+  sunucudadır (Aşama 5.2); üye başka cihazda giriş yapınca da görür. Demo
+  modunda tarayıcıdadır.
 
 ### Favorilerim
 

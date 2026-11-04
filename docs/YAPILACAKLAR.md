@@ -50,7 +50,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler; 5.3 teklif, servis, garanti, iade ve yorum formları; 5.4 panel veritabanından okur; 5.5 panel yazar, değişiklik kaydı ve sayfa yenileme; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları; 5.4 panel veritabanından okur; 5.5 panel yazar, değişiklik kaydı ve sayfa yenileme; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
 | 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
@@ -548,7 +548,8 @@ yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
 
 ## Online satış — canlıya çıkmadan önce
 
-Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı için:
+Sitedeki sepet, ödeme ve sipariş akışı demo modunda tarayıcıda; veritabanı
+modunda sipariş sunucuda kaydediliyor (Aşama 5.2), ödeme temsili. Canlı için:
 
 1. **Ödeme kuruluşu** (iyzico, PayTR veya bankanın sanal POS'u): 3D Secure,
    kartın BIN'ine göre gerçek taksit oranları, iade/iptal. Kart bilgisi hiçbir
@@ -558,8 +559,10 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
    saklanmalı, panelde/tarayıcıda tutulmamalı. Kuruluşun ödeme/3D Secure
    sayfasının adresi sitenin güvenlik politikasına (CSP) eklenmeli
    (`frame-src` ya da `form-action`).
-2. **Fiyat ve tutarlar sunucuda yeniden hesaplanmalı**; tarayıcıdan gelen
-   tutara güvenilmez. Sipariş numarası sunucuda üretilmeli.
+2. **Fiyat ve tutarlar sunucuda yeniden hesaplanır** (veritabanı modunda
+   yapıldı, Aşama 5.2): tarayıcıdan gelen tutara güvenilmez, sipariş
+   numarasını sunucu verir. Ödeme kuruluşu bağlanınca çekilecek tutar bu
+   hesaptan alınmalı.
 3. **Hukuk metinleri**: Ön Bilgilendirme Formu, Mesafeli Satış Sözleşmesi,
    İade/Cayma koşulları — şu anki metinler taslak, hukuk danışmanı yazmalı.
    Kurumsal (ticari) alıcılara cayma hakkının uygulanıp uygulanmayacağı netleşmeli.
@@ -575,7 +578,9 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
    canlıda yalnızca e-postayla giden formlar (iletişim, bayilik, Welders Club)
    ziyaretçiye hata gösterir.
 8. **Zamanlanmış iş**: süresi dolan havale siparişlerini iptal eden günlük iş
-   (demoda sipariş sayfaları açılınca yapılıyor).
+   (bugün sipariş sayfaları açılınca yapılıyor; veritabanı modunda üyenin
+   siparişleri okunurken sunucuda, `packages/db/src/orders.ts` ›
+   `cancelExpiredTransfers`; günlük iş aynı fonksiyonu çağırabilir).
 9. **Kargo entegrasyonu** (isteğe bağlı): takip numarasından takip bağlantısı,
    kargo etiketinin panelden oluşturulması.
 10. **Gerçek kargo ücreti, vade farkı oranları ve IBAN'lar** Mağaza Ayarları'na
@@ -594,8 +599,9 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
    öğrenilmeli ("Online satış" 3'teki açık soruyla aynı konu). Uygulanacaksa
    `packages/data/src/returns.ts` › `canRequestReturn` içindeki rol kontrolü
    kaldırılır.
-2. **Sunucu:** Talep sunucuda açılmalı; süre, adet ve siparişin sahibi
-   sunucuda denetlenmeli. Bugün tarayıcıda.
+2. **Sunucu:** Veritabanı modunda yapıldı (Aşama 5.2, K-97): talep
+   sunucuda açılıyor; süre, adet ve siparişin sahibi sunucuda denetleniyor.
+   Panelde talebin durumunu değiştirmek 5.5'te sunucuya geçer.
 3. **Ürünün geri gönderilmesi:** Müşteriye kargo kodu ya da gönderim adresi
    verilmesi, ürün depoya ulaşınca kontrol edilmesi süreci tanımlanmalı.
 4. **Para iadesi:** Ödeme kuruluşunun iade işlemi bağlanırsa onaylanan
@@ -680,9 +686,15 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
        tutulmalı; yoksa yenileme yalnızca isteği alan sunucuda olur. Tek
        sunucuda gerekmez (K-92).
    - Aşama 4 (üyelik ve oturum sunucuda) bitti. Aşama 5.1 (üyenin
-     adresleri ve favorileri veritabanında, K-96) bitti. Sonraki aşamalar:
-     5'in kalanı (siparişler, formlar, panel); 6 dosya deposu; canlıya
-     hazırlık.
+     adresleri ve favorileri veritabanında, K-96) ve 5.2 (siparişler ve iade
+     talepleri sunucuda; tutar, stok ve kupon sunucuda yeniden hesaplanıyor,
+     K-97) bitti. Sonraki aşamalar: 5'in kalanı (formlar, panel); 6 dosya
+     deposu; canlıya hazırlık.
+   - 5.2'den kalanlar: panelin Siparişler ve İade Talepleri ekranları
+     veritabanındaki kayıtları 5.4'te gösterir, 5.5'te yazar (ödeme alındı,
+     kargo, teslim, iptal, iade durumu). Kartlı ödeme gerçek POS bağlanana
+     kadar temsili; `payment_transactions`'a o zaman yazılır (yol haritası
+     5).
    - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları
      (bayilik, iletişim, ürün destek, Welders Club), e-posta alıcıları (tür
      başına), gönderilen e-postalar ve değişiklik kaydı (KARARLAR K-81).

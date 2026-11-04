@@ -55,6 +55,16 @@ export async function offerOnPage(request: APIRequestContext, path: string) {
   return { price: data?.offers?.price, availability: data?.offers?.availability };
 }
 
+/** Seceneksiz, stokta bir urun ve musterinin odeyecegi fiyat (satin alma testleri). */
+export async function plainProductInStock() {
+  const { products, warehouseStock } = await catalog();
+  const product = products.find(
+    (p) => p.active && !(p.options?.variants.length ?? 0) && expectedOffer(p, warehouseStock).inStock,
+  );
+  if (!product) throw new Error("Test için seçeneksiz, stokta bir ürün yok.");
+  return { product, offer: expectedOffer(product, warehouseStock) };
+}
+
 /** Siteyi beklemeden yeniler (Asama 3.6; anahtari scripts/e2e-db.mts verir). */
 export async function refreshSite(request: APIRequestContext, kinds?: string[]): Promise<void> {
   const response = await request.post("/api/yenile", {

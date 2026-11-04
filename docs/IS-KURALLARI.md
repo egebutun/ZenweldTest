@@ -228,8 +228,28 @@ Kod: `apps/zenweld-web/src/lib/variants.ts`, `packages/data/src/variants.ts`.
 Aynı hesap sepet sayfası, ödeme sayfası ve sipariş kaydında kullanılır;
 müşterinin gördüğü tutar ile kaydedilen tutar hep aynıdır.
 
-Kod: `packages/data/src/checkout.ts` › `cartTotals`,
-`apps/zenweld-web/src/lib/cart.tsx`.
+**Sipariş anında sunucuda yeniden hesap** (veritabanı modu, Aşama 5.2,
+KARARLAR K-97):
+
+- Tarayıcı yalnızca sepetteki ürün, seçenek ve adedi, kupon kodunu, adres
+  ve fatura bilgisini, ödeme yöntemini ve taksit sayısını gönderir. Satır
+  fiyatları, kupon, kargo, vade farkı ve toplam sunucuda, veritabanındaki
+  güncel ürün, ayar ve POS bilgisiyle aynı kurallardan yeniden hesaplanır.
+- Müşterinin ödeme sayfasında gördüğü tutar sunucunun hesabıyla tutmazsa
+  sipariş alınmaz: "Fiyatlar güncellendi; ödenecek tutar artık <tutar>.
+  Sepetinizi kontrol edip yeniden deneyin."
+  - **Örnek:** Müşteri sayfayı 2.650 ₺ ile açtı; bu arada ürünün fiyatı
+    arttı. "Öde"ye basınca sipariş alınmaz ve yeni tutar söylenir.
+- Sepetteki bir ürün satıştan kalktıysa ya da seçeneği silindiyse:
+  "Sepetinizdeki bazı ürünler değişti ya da artık satışta değil." Stoğu
+  bittiyse stokta olmayan ürün mesajı ([20](#20-zenweld-depo-stoğu)).
+- Sayfadaki fiyatlar önbellekten gelir (en geç 30+30 sn eski olabilir,
+  K-88); sunucu siparişte her zaman güncel fiyatı kullanır.
+
+Kod: `packages/data/src/cart.ts` (`priceCartLines`),
+`packages/data/src/checkout.ts` › `cartTotals`,
+`apps/zenweld-web/src/lib/cart.tsx`; sunucu: `packages/db/src/orders.ts`
+(`placeOrder`).
 
 ---
 
@@ -289,13 +309,20 @@ Kod: `packages/data/src/checkout.ts` › `cartTotals`,
 
 **Saklanan kart bilgisi:** Yalnızca marka, program, son 4 hane, taksit
 sayısı, POS adı ve komisyon oranı. Tam kart numarası, son kullanma ve CVC
-**hiçbir yerde saklanmaz**, e-postaya yazılmaz.
+**hiçbir yerde saklanmaz**, e-postaya yazılmaz. Veritabanı modunda sunucuya
+kartın yalnızca **ilk 6 ve son 4 hanesi** gider; program, marka, POS ve
+taksit sunucuda yeniden bulunur. Seçilen taksit artık sunulmuyorsa sipariş
+alınmaz: "Seçtiğiniz taksit artık sunulmuyor."
 
-**Demo notu:** Kartla ödemede 1,5 saniyelik "3D Secure doğrulanıyor…"
-beklemesinden sonra ödeme onaylanmış sayılır; para çekilmez.
+**Temsili ödeme (K-97):** Kartla ödemede 1,5 saniyelik "3D Secure
+doğrulanıyor…" beklemesinden sonra ödeme onaylanmış sayılır; para çekilmez.
+Veritabanı modunda da gerçek POS bağlanana kadar böyledir: sipariş
+"Hazırlanıyor" ve ödeme anıyla kaydedilir. Canlıya gerçek ödeme
+bağlanmadan çıkılmaz.
 
 Kod: `packages/data/src/checkout.ts` (`posForCard`, `cardInstallments`,
-`installmentQuote`), `apps/zenweld-web/src/lib/payment.ts`.
+`installmentQuote`), `packages/data/src/payment.ts` (`cardBrand`,
+`cardProgram`), `apps/zenweld-web/src/lib/payment.ts`.
 
 ---
 
@@ -304,7 +331,8 @@ Kod: `packages/data/src/checkout.ts` (`posForCard`, `cardInstallments`,
 - Havaleyle verilen sipariş **Ödeme Bekleniyor** durumunda açılır.
 - **Son ödeme** = sipariş anı + Mağaza Ayarları'ndaki gün sayısı (örnek
   değer 3 gün).
-- Süre son ödeme **gününün sonunda** (23:59:59) dolar.
+- Süre son ödeme **gününün sonunda** (Türkiye saatiyle 23:59:59) dolar.
+  Sunucu UTC'de çalışsa da gün sonu Türkiye saatine göredir.
   - **Örnek:** Pazartesi 15:00'te verilen siparişte, süre 3 gün ise son
     ödeme Perşembe'dir; sipariş Perşembe 23:59'a kadar onaylanabilir.
 - Süresi dolan sipariş "Ödeme süresi doldu" notuyla **İptal** edilir ve
@@ -312,12 +340,16 @@ Kod: `packages/data/src/checkout.ts` (`posForCard`, `cardInstallments`,
 - Ödeme hesaba geçince panelde **Ödeme Alındı** denir; sipariş
   Hazırlanıyor'a geçer ve ödeme tarihi yazılır.
 - Müşteri ödeme açıklamasına sipariş numarasını yazar.
-- **Demo notu:** Süre kontrolü sipariş sayfaları (müşterinin Siparişlerim
-  sayfası ve panel) açılınca yapılır. Gerçek sistemde her gün çalışan
-  zamanlanmış bir görev yapmalıdır.
+- **Süre kontrolü:** Demo modunda sipariş sayfaları (müşterinin
+  Siparişlerim sayfası ve panel) açılınca yapılır. Veritabanı modunda üyenin
+  siparişleri sunucudan okunurken sunucu yapar ve kupon hakkını geri verir
+  (K-97); canlıda ayrıca her gün çalışan zamanlanmış bir iş yapmalıdır
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
 
-Kod: `packages/store/src/repo/commerce.ts` (`isTransferExpired`,
-`cancelExpiredTransfers`, `markOrderPaid`).
+Kod: `packages/data/src/orders.ts` (`isTransferExpired`),
+`packages/store/src/repo/commerce.ts` (`cancelExpiredTransfers`,
+`markOrderPaid`); sunucu: `packages/db/src/orders.ts`
+(`cancelExpiredTransfers`).
 
 ---
 
@@ -347,14 +379,20 @@ Siparişi yalnızca **üye** verir.
 - Sipariş kaydı ürün adı, kodu, seçenek adı, birim fiyat ve KDV oranını
   sipariş anındaki haliyle saklar ([VERI-MODELI.md](VERI-MODELI.md)).
 - Durum değişince müşteriye e-posta **gitmez**.
+- **Nerede çalışır:** Veritabanı modunda sipariş sunucuda kaydedilir ve
+  üyenin siparişleri sunucudan okunur (Aşama 5.2, K-97); başka üyenin
+  siparişi görünmez. Panelin Siparişler ekranı 5.4'e kadar tarayıcıdaki
+  veriyi gösterir; veritabanındaki siparişler o zamana kadar bildirim
+  e-postasında ve `npm run db:studio`'da görülür.
 
-Kod: `packages/store/src/repo/commerce.ts`.
+Kod: `packages/store/src/repo/commerce.ts`; sunucu: `packages/db/src/orders.ts`.
 
 **İade (cayma) talebi:**
 
 - Yalnızca **bireysel üye**, yalnızca **Teslim Edildi** durumundaki siparişi
   için açar; kurumsal üyede yoktur ([KARARLAR.md](KARARLAR.md) K-65).
-- **Süre:** Teslim gününden itibaren **14 gün**; son gün 23:59'a kadar.
+- **Süre:** Teslim gününden itibaren **14 gün**; son gün 23:59'a kadar
+  (Türkiye saati).
   Teslim anı kargo kaydındaki teslim tarihidir (yoksa durum geçmişindeki
   Teslim Edildi anı).
   - **Örnek:** 10 Mart 15:00'te teslim edilen siparişte son gün 24 Mart;
@@ -373,8 +411,13 @@ Kod: `packages/store/src/repo/commerce.ts`.
 - Para iadesi panelden yapılmaz; banka ya da ödeme kuruluşu üzerinden
   ayrıca yapılır (K-27).
 - Numara `IAD-<yıl>-<4 hane>` ([17](#17-kayıt-numaraları)).
+- Veritabanı modunda talep sunucuda açılır (K-97): siparişin sahibi, süre,
+  açık talep ve adetler sunucuda denetlenir; sipariş satırı kilitlenir, aynı
+  anda iki talep açılamaz. Kurala uymayan talep: "Talep oluşturulamadı.
+  Sayfayı yenileyip tekrar deneyin."
 
-Kod: `packages/data/src/returns.ts`, `packages/store/src/repo/returns.ts`.
+Kod: `packages/data/src/returns.ts`, `packages/store/src/repo/returns.ts`;
+sunucu: `packages/db/src/orders.ts` (`createReturnRequest`).
 
 ---
 
@@ -751,9 +794,18 @@ favoriler: `account-data.ts`).
   her yıl 1'den başlar.
 - Silinen kaydın numarası yeniden verilmez; **en son kayıt silinse de**
   numarası bir sonraki kayda verilmez ([KARARLAR.md](KARARLAR.md) K-64).
+- Yıl, Türkiye saatine göredir.
+- Veritabanı modunda sipariş ve iade talebi numarasını sunucu verir (Aşama
+  5.2): önek başına sayaç (`record_counters`) tek işlemde bir artar; aynı
+  anda gelen iki kayıt aynı numarayı alamaz. Sayaç yoksa ya da tablodaki en
+  büyük numaranın gerisindeyse (ör. örnek veriyle yüklenmiş siparişler) o
+  numaradan devam eder.
+  - **Örnek:** Tabloda SIP-2026-00133 varken sayaç boşsa yeni sipariş
+    SIP-2026-00134 olur.
 
 Kod: `packages/store/src/repo/shared.ts` › `nextCode` (sipariş, teklif,
-servis talebi ve iade talebi aynı yeri kullanır).
+servis talebi ve iade talebi aynı yeri kullanır); sunucu:
+`packages/db/src/orders.ts` › `nextRecordCode`.
 
 ---
 
@@ -940,7 +992,14 @@ okuma).
 
 Sahibinin kararları (KARARLAR K-85, K-86). Kod: `packages/data/src/coupon.ts`,
 `packages/data/src/checkout.ts` › `cartTotals`,
-`packages/store/src/repo/coupons.ts`.
+`packages/store/src/repo/coupons.ts`; sunucu: `packages/db/src/orders.ts`.
+
+**Veritabanı modunda** (Aşama 5.2): kupon sepette ve ödemede sunucuda
+değerlendirilir (`/api/siparis/kupon`); kuponlar ve kullanımları tarayıcıya
+gelmez, tarayıcıya yalnızca sonuç (indirim ya da neden) gider. Sipariş
+anında kupon yeniden denetlenir ve kupon kaydı kilitlenir: aynı kuponla aynı
+anda verilen iki sipariş toplam ya da kişi başı sınırı aşamaz; ikincisi
+"Kupon uygulanamıyor: <neden>" ile alınmaz.
 
 **Kupon kaydı** (Panel › Satış › Kuponlar):
 

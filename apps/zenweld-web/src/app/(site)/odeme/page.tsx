@@ -23,6 +23,7 @@ import { formatPrice } from "@zenweld/utils";
 import Link from "next/link";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";
+import { accountRequest } from "@/lib/account-api";
 import { useAddresses } from "@/lib/addresses";
 import { AddressFields, EMPTY_ADDRESS, addressComplete } from "@/components/shop/AddressFields";
 import { BankAccounts } from "@/components/shop/BankAccounts";
@@ -31,7 +32,6 @@ import {
   useDocumentTitle,
   LegalDocument,
   orderLegalContext,
-  paymentSummary,
   type LegalDocumentKind,
 } from "@/components/shop/LegalDocument";
 import { OrderSummary } from "@/components/shop/OrderSummary";
@@ -39,6 +39,7 @@ import { useCart } from "@/lib/cart";
 import { couponProblemText } from "@/lib/coupon";
 import { useT } from "@/lib/i18n-client";
 import { notifyZenweld } from "@/lib/notify";
+import { orderNotice } from "@/lib/order-text";
 import {
   cardBrand,
   cardProgram,
@@ -66,7 +67,9 @@ export default function CheckoutPage() {
   const router = useRouter();
   const db = useDatabase();
   const cart = useCart();
-  const { user, ready } = useAuth();
+  const { user, ready, api } = useAuth();
+  // Veritabani modu: siparisi sunucu kaydeder (Asama 5.2, KARARLAR K-97).
+  const server = api !== null;
   const shop = getShopSettings(db);
   const docTitle = useDocumentTitle();
 
@@ -204,7 +207,7 @@ export default function CheckoutPage() {
       ...(applied?.lineDiscounts[i] ? { couponDiscount: applied.lineDiscounts[i] } : {}),
     })),
     subtotal: totals.subtotal,
-    coupon: applied ? { couponId: applied.coupon.id, code: applied.coupon.code, discount: applied.discount } : undefined,
+    coupon: applied ? { couponId: applied.couponId, code: applied.code, discount: applied.discount } : undefined,
     vat: totals.vat,
     shipping: totals.shipping,
     installmentFee: quote.fee,
@@ -255,10 +258,56 @@ export default function CheckoutPage() {
     return null;
   };
 
+  const saveNewAddress = () => {
+    if (!selectedSaved && saveNew) {
+      const { title, ...address } = newAddress;
+      void saveAddress({ ...address, title: title.trim() || t.checkout.shippingAddress });
+    }
+  };
+
+  /**
+   * Veritabani modu: tarayici yalnizca sepet satirlarini, kupon kodunu,
+   * adres ve fatura bilgisini, odeme yontemini ve kartin ilk 6 ve son 4
+   * hanesini gonderir; tutari sunucu yeniden hesaplar. Musterinin gordugu
+   * tutar (expectedTotal) tutmazsa siparis alinmaz ve yeni tutar soylenir.
+   */
+  const submitToServer = async () => {
+    setProcessing(true);
+    // Kartta 3D Secure onayi taklit edilir (gercek POS baglanana kadar; K-97).
+    if (method === "card") await new Promise((resolve) => setTimeout(resolve, DEMO_3DS_MS));
+    const digits = digitsOnly(card.number);
+    const answer = await accountRequest<{ code: string }>("/api/siparis", "ver", {
+      lines: cart.lines.map((l) => ({ productId: l.product.id, variantId: l.variantId, quantity: l.quantity })),
+      couponCode: cart.coupon?.code,
+      shippingAddress: shipping,
+      invoice: draft.invoice,
+      termsAccepted: consent,
+      payment:
+        method === "card"
+          ? { method, cardBin: digits.slice(0, 6), cardLast4: digits.slice(-4), installments: option.count }
+          : { method },
+      customerNote: note.trim() || undefined,
+      expectedTotal: quote.grandTotal,
+    });
+    if (!answer.ok) {
+      setProcessing(false);
+      setError(answer.error === t.auth.errors.unreachable ? t.checkout.failed : answer.error);
+      return;
+    }
+    saveNewAddress();
+    setPlaced(true);
+    cart.clear();
+    router.push(`/hesabim/siparislerim/${answer.code}?yeni=1`);
+  };
+
   const submit = () => {
     const problem = validate();
     setError(problem);
     if (problem) return;
+    if (server) {
+      void submitToServer();
+      return;
+    }
 
     const now = new Date();
     const order = () =>
@@ -275,27 +324,8 @@ export default function CheckoutPage() {
       const record = order();
       // Siparis panelde Siparisler'de; info@zenweld.com'a da haber verilir.
       // T.C. kimlik no ve kart bilgisi e-postaya yazilmaz.
-      const a = record.shippingAddress;
-      const inv = record.invoice;
-      void notifyZenweld("siparis", {
-        code: record.code,
-        customer: record.customerName,
-        email: record.email,
-        phone: record.phone,
-        items: record.items.map(
-          (i) => `${i.quantity} × ${i.productName}${i.variantLabel ? ` (${i.variantLabel})` : ""} — ${formatPrice(i.unitPrice * i.quantity)}`,
-        ),
-        coupon: record.coupon ? `${record.coupon.code} (−${formatPrice(record.coupon.discount)})` : undefined,
-        total: formatPrice(record.total),
-        payment: paymentSummary(record.payment, t),
-        shipping: `${a.fullName}, ${a.line}, ${a.district} / ${a.city}`,
-        invoice: inv.type === "corporate" ? `${inv.companyName} — ${inv.taxOffice} / ${inv.taxNumber}` : `Bireysel: ${inv.fullName}`,
-        note: record.customerNote,
-      }, bot.website);
-      if (!selectedSaved && saveNew) {
-        const { title, ...address } = newAddress;
-        void saveAddress({ ...address, title: title.trim() || t.checkout.shippingAddress });
-      }
+      void notifyZenweld("siparis", orderNotice(record, t), bot.website);
+      saveNewAddress();
       setPlaced(true);
       cart.clear();
       router.push(`/hesabim/siparislerim/${record.code}?yeni=1`);
@@ -468,7 +498,7 @@ export default function CheckoutPage() {
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <OrderSummary totals={totals} couponCode={applied?.coupon.code} installmentFee={quote.fee}>
+          <OrderSummary totals={totals} couponCode={applied?.code} installmentFee={quote.fee}>
             <ul className="mb-5 space-y-2 border-b border-zw-grey-200 pb-4 text-xs text-zw-grey-700">
               {cart.lines.map((l) => (
                 <li key={l.key} className="flex justify-between gap-3">
@@ -508,7 +538,7 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            <Button size="lg" fullWidth className="mt-4" onClick={submit} disabled={processing}>
+            <Button size="lg" fullWidth className="mt-4" onClick={submit} disabled={processing || cart.couponPending}>
               {processing
                 ? t.checkout.processing
                 : method === "card"

@@ -5,18 +5,24 @@ import { addMonthsToDate } from "@zenweld/utils";
 
 /* docs/IS-KURALLARI.md › 6. Havale / EFT */
 describe("Havale / EFT ödeme süresi", () => {
-  // Pazartesi 16.03.2026 15:00'te verilen siparis, sure 3 gun: son odeme Persembe.
+  // Pazartesi 16.03.2026 15:00'te verilen siparis, sure 3 gun: son odeme Persembe
+  // (saatler Turkiye saati).
   const order = (overrides: Partial<Order> = {}) =>
     ({
       status: "awaiting_payment",
-      payment: { method: "transfer", dueAt: new Date(2026, 2, 19, 15, 0).toISOString() },
+      payment: { method: "transfer", dueAt: new Date("2026-03-19T15:00:00+03:00").toISOString() },
       ...overrides,
     }) as Order;
 
   it("süre son ödeme gününün sonunda dolar (Perşembe 23:59'a kadar onaylanabilir)", () => {
-    expect(isTransferExpired(order(), new Date(2026, 2, 19, 15, 1))).toBe(false);
-    expect(isTransferExpired(order(), new Date(2026, 2, 19, 23, 59, 59))).toBe(false);
-    expect(isTransferExpired(order(), new Date(2026, 2, 20, 0, 0, 1))).toBe(true);
+    expect(isTransferExpired(order(), new Date("2026-03-19T15:01:00+03:00"))).toBe(false);
+    expect(isTransferExpired(order(), new Date("2026-03-19T23:59:59+03:00"))).toBe(false);
+    expect(isTransferExpired(order(), new Date("2026-03-20T00:00:01+03:00"))).toBe(true);
+  });
+
+  it("gün sonu Türkiye saatine göredir (sunucu UTC'de çalışır)", () => {
+    expect(isTransferExpired(order(), new Date("2026-03-19T20:59:59Z"))).toBe(false);
+    expect(isTransferExpired(order(), new Date("2026-03-19T21:00:01Z"))).toBe(true);
   });
 
   it("yalnızca ödeme bekleyen sipariş için geçerlidir", () => {

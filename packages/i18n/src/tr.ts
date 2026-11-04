@@ -638,6 +638,11 @@ export const tr = {
     invalidExpiry: "Son kullanma tarihi geçersiz.",
     invalidCvc: "CVC geçersiz.",
     consentRequired: "Devam etmek için Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi'ni onaylayın.",
+    // Veritabani modunda siparisi sunucu yeniden hesaplar (Asama 5.2, KARARLAR K-97).
+    cartChanged: "Sepetinizdeki bazı ürünler değişti ya da artık satışta değil. Sepetinizi kontrol edin.",
+    priceChanged: "Fiyatlar güncellendi; ödenecek tutar artık {amount}. Sepetinizi kontrol edip yeniden deneyin.",
+    invalidInstallment: "Seçtiğiniz taksit artık sunulmuyor. Taksit seçiminizi kontrol edin.",
+    failed: "Sipariş oluşturulamadı. Bağlantınızı kontrol edip tekrar deneyin.",
   },
   orders: {
     status: {

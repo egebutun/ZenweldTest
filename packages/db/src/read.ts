@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, isNotNull, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gt, inArray, isNotNull, type SQL } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import {
   DB_VERSION,
@@ -510,13 +510,24 @@ export async function readQuotes(db: ReadDb): Promise<Quote[]> {
   }));
 }
 
-export async function readOrders(db: ReadDb): Promise<Order[]> {
-  const [orders, items, history, shipments, redemptions] = await serial(
-    () => db.select().from(s.orders).orderBy(desc(s.orders.createdAt)),
-    () => db.select().from(s.orderItems).orderBy(asc(s.orderItems.line)),
-    () => db.select().from(s.orderStatusHistory).orderBy(asc(s.orderStatusHistory.seq)),
-    () => db.select().from(s.shipments).orderBy(asc(s.shipments.shippedAt)),
-    () => db.select({ orderId: s.couponRedemptions.orderId, couponId: s.couponRedemptions.couponId }).from(s.couponRedemptions),
+/**
+ * Siparisler, yeniden eskiye. where verilirse yalnizca o siparisler ve
+ * onlarin satirlari (or. bir uyenin siparisleri; Asama 5.2).
+ */
+export async function readOrders(db: ReadDb, where?: SQL): Promise<Order[]> {
+  const orders = await db.select().from(s.orders).where(where).orderBy(desc(s.orders.createdAt), desc(s.orders.code));
+  if (where && orders.length === 0) return [];
+  const ids = orders.map((o) => o.id);
+  const own = <T>(column: T) => (where ? inArray(column as never, ids) : undefined);
+  const [items, history, shipments, redemptions] = await serial(
+    () => db.select().from(s.orderItems).where(own(s.orderItems.orderId)).orderBy(asc(s.orderItems.line)),
+    () => db.select().from(s.orderStatusHistory).where(own(s.orderStatusHistory.orderId)).orderBy(asc(s.orderStatusHistory.seq)),
+    () => db.select().from(s.shipments).where(own(s.shipments.orderId)).orderBy(asc(s.shipments.shippedAt)),
+    () =>
+      db
+        .select({ orderId: s.couponRedemptions.orderId, couponId: s.couponRedemptions.couponId })
+        .from(s.couponRedemptions)
+        .where(own(s.couponRedemptions.orderId)),
   );
   const itemsByOrder = groupBy(items, (i) => i.orderId);
   const historyByOrder = groupBy(history, (h) => h.orderId);
@@ -588,11 +599,16 @@ export async function readOrders(db: ReadDb): Promise<Order[]> {
   });
 }
 
-export async function readReturnRequests(db: ReadDb): Promise<ReturnRequest[]> {
-  const [requests, items] = await serial(
-    () => db.select().from(s.returnRequests).orderBy(desc(s.returnRequests.createdAt)),
-    () => db.select().from(s.returnRequestItems).orderBy(asc(s.returnRequestItems.orderLine)),
-  );
+/** Iade talepleri, yeniden eskiye; where verilirse yalnizca o talepler. */
+export async function readReturnRequests(db: ReadDb, where?: SQL): Promise<ReturnRequest[]> {
+  const requests = await db.select().from(s.returnRequests).where(where).orderBy(desc(s.returnRequests.createdAt));
+  if (where && requests.length === 0) return [];
+  const ids = requests.map((r) => r.id);
+  const items = await db
+    .select()
+    .from(s.returnRequestItems)
+    .where(where ? inArray(s.returnRequestItems.returnRequestId, ids) : undefined)
+    .orderBy(asc(s.returnRequestItems.orderLine));
   const itemsByRequest = groupBy(items, (i) => i.returnRequestId);
   return requests.map((r) => ({
     id: r.id,
@@ -622,12 +638,20 @@ export async function readReturnRequests(db: ReadDb): Promise<ReturnRequest[]> {
 
 /* ------------------------------ Kuponlar ------------------------------ */
 
-export async function readCoupons(db: ReadDb): Promise<{ coupons: Coupon[]; couponRedemptions: CouponRedemption[] }> {
-  const [coupons, targets, customers, redemptions] = await serial(
-    () => db.select().from(s.coupons).orderBy(desc(s.coupons.createdAt)),
-    () => db.select().from(s.couponTargets).orderBy(asc(s.couponTargets.id)),
-    () => db.select().from(s.couponCustomers).orderBy(asc(s.couponCustomers.id)),
-    () => db.select().from(s.couponRedemptions).orderBy(asc(s.couponRedemptions.createdAt)),
+/** Kuponlar ve kullanimlari; where verilirse yalnizca o kuponlar (or. koda gore; Asama 5.2). */
+export async function readCoupons(
+  db: ReadDb,
+  where?: SQL,
+): Promise<{ coupons: Coupon[]; couponRedemptions: CouponRedemption[] }> {
+  const coupons = await db.select().from(s.coupons).where(where).orderBy(desc(s.coupons.createdAt));
+  if (where && coupons.length === 0) return { coupons: [], couponRedemptions: [] };
+  const ids = coupons.map((c) => c.id);
+  const own = <T>(column: T) => (where ? inArray(column as never, ids) : undefined);
+  const [targets, customers, redemptions] = await serial(
+    () => db.select().from(s.couponTargets).where(own(s.couponTargets.couponId)).orderBy(asc(s.couponTargets.id)),
+    () => db.select().from(s.couponCustomers).where(own(s.couponCustomers.couponId)).orderBy(asc(s.couponCustomers.id)),
+    () =>
+      db.select().from(s.couponRedemptions).where(own(s.couponRedemptions.couponId)).orderBy(asc(s.couponRedemptions.createdAt)),
   );
   const targetsByCoupon = groupBy(targets, (t) => t.couponId);
   const customersByCoupon = groupBy(customers, (c) => c.couponId);

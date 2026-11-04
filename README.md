@@ -414,7 +414,12 @@ npm run start --workspace apps/zenweld-web
   - **Adresler ve favoriler sunucuda (Aşama 5.1):** giriş yapmış üyenin
     adresleri ve favorileri veritabanındadır; başka tarayıcıda da aynısı
     görünür. Giriş yapmadan eklenen favoriler girişte hesaba eklenir.
-    Siparişler, teklifler ve formlar şimdilik tarayıcıda kalır.
+  - **Siparişler sunucuda (Aşama 5.2):** sipariş veritabanına yazılır;
+    tutar, stok ve kupon sunucuda yeniden hesaplanır (fiyat bu arada
+    değiştiyse sipariş alınmaz). Kartlı ödeme gerçek POS bağlanana kadar
+    temsilidir. Siparişlerim ve iade talepleri de sunucudadır. Panelin
+    Siparişler ekranı ise 5.4'e kadar tarayıcıdaki örnek siparişleri
+    gösterir. Teklifler ve formlar şimdilik tarayıcıda kalır.
   - **Panel girişi sunucuda (Aşama 4.3):** `/yonetim` yönetici oturumu
     olmadan açılmaz; oturum 8 saat sürer. Bilgisayarda `db:seed`'in demo
     yöneticisiyle, canlıda `npm run yonetici:olustur` ile açılan hesapla
@@ -546,8 +551,8 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
    PostgreSQL'dir (KARARLAR K-81; tablolar `packages/db`,
    [docs/VERITABANI.md](docs/VERITABANI.md)). Veritabanı modunda katalog,
    stok, içerik ve ayarlar veritabanından okunur (Aşama 3); üyelik, adresler
-   ve favoriler veritabanına yazılır (Aşama 4, 5.1). Siparişler, formlar ve
-   panel Aşama 5'te bağlanır
+   ve favoriler, siparişler ve iade talepleri veritabanına yazılır (Aşama 4,
+   5.1, 5.2). Formlar ve panel Aşama 5'te bağlanır
    ([docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Veritabanı).
 3. **Ürün içeriği ve fiyatlar girilmeli.** Ekipmanlar'daki ürünlerin adı, kodu,
    alt grubu, garantisi ve seçenekleri gerçektir; Force serisi 9 ürün dışında

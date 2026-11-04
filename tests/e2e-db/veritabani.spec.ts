@@ -9,6 +9,7 @@ import {
   expectedOffer,
   memberLogin,
   offerOnPage,
+  plainProductInStock,
   refreshSite,
   sapStockRead,
   sql,
@@ -31,14 +32,6 @@ const ONLINE = "https://schema.org/InStock";
 const OUT = "https://schema.org/OutOfStock";
 
 /** Seceneksiz ve depoda stogu olan bir urun (fiyat ve odeme testleri icin). */
-async function plainProductInStock() {
-  const { products, warehouseStock } = await catalog();
-  const product = products.find(
-    (p) => p.active && !(p.options?.variants.length ?? 0) && expectedOffer(p, warehouseStock).inStock,
-  );
-  if (!product) throw new Error("Test için seçeneksiz, stokta bir ürün yok.");
-  return { product, offer: expectedOffer(product, warehouseStock) };
-}
 
 test("bütün sayfalar hatasız açılır", async ({ page, problems, request }) => {
   test.setTimeout(10 * 60_000);

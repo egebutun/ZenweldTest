@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@zenweld/data": "*",
+    "@zenweld/i18n": "*",
+    "@zenweld/utils": "*",
     "drizzle-orm": "^0.45.4",
     "pg": "^8.23.1"
   }

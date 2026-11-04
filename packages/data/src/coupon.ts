@@ -204,3 +204,41 @@ function spread(discount: number, lines: CouponCartLine[], eligible: boolean[], 
     return share / 100;
   });
 }
+
+/**
+ * Kupon sonucunun musteriye gosterilen hali (sepet ve odeme). Kuponun
+ * tamami (kisiye ozel kuponda tanimli e-postalar dahil) tarayiciya
+ * gonderilmez; veritabani modunda kupon sunucuda degerlendirilir ve bu
+ * hali doner (Asama 5.2).
+ */
+export type CouponView =
+  | {
+      ok: true;
+      couponId: string;
+      code: string;
+      discount: number;
+      lineDiscounts: number[];
+      /** Kisiye ozel kupon: e-postasi odeme adiminda uyeye gore denetlenir */
+      personal: boolean;
+    }
+  | { ok: false; problem: CouponProblem; startsAt?: string; minCartTotal?: number };
+
+export function couponView(result: CouponResult): CouponView {
+  if (result.ok) {
+    const { coupon, discount, lineDiscounts } = result;
+    return {
+      ok: true,
+      couponId: coupon.id,
+      code: coupon.code,
+      discount,
+      lineDiscounts,
+      personal: coupon.audience === "customers",
+    };
+  }
+  return {
+    ok: false,
+    problem: result.problem,
+    ...(result.problem === "scheduled" && result.coupon?.startsAt ? { startsAt: result.coupon.startsAt } : {}),
+    ...(result.problem === "minTotal" && result.coupon?.minCartTotal ? { minCartTotal: result.coupon.minCartTotal } : {}),
+  };
+}

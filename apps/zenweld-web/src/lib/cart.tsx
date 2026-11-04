@@ -11,18 +11,24 @@ import {
 } from "react";
 import { useAuth } from "@zenweld/auth";
 import {
+  cartLineKey as lineKey,
   cartTotals,
-  findVariant,
+  clampQuantity,
+  couponCartLines,
+  couponView,
+  MAX_LINE_QUANTITY,
   normalizeCouponCode,
+  priceCartLines,
   productOptionsView,
-  salePriceExVat,
+  type CartStoredLine,
   type CartTotals,
-  type CouponResult,
-  type Product,
+  type CouponView,
+  type PricedCartLine,
 } from "@zenweld/data";
 import { checkCoupon, getShopSettings, isProductInStock, useDatabase, useNow } from "@zenweld/store";
-import { priceWithVat } from "@zenweld/utils";
-import { activeVariant, resolveVariant } from "./variants";
+import { activeVariant } from "./variants";
+
+export { MAX_LINE_QUANTITY };
 
 /**
  * ALISVERIS SEPETI
@@ -41,41 +47,21 @@ import { activeVariant, resolveVariant } from "./variants";
  * Kupon: sepete bir kupon kodu yazilabilir (KARARLAR K-85). Kod tarayicida
  * saklanir; indirim her seferinde guncel sepete gore yeniden hesaplanir.
  * Sonradan uygulanamaz hale gelen kupon (sure doldu, sepet degisti)
- * isaretlenir ve kaldirilana kadar odemeye gecilemez.
+ * isaretlenir ve kaldirilana kadar odemeye gecilemez. Veritabani modunda
+ * kupon sunucuda degerlendirilir (/api/siparis/kupon; Asama 5.2): kuponlar
+ * ve kullanimlari tarayiciya gelmez.
+ *
+ * Fiyat hesabi: packages/data/src/cart.ts (siparisi kaydeden sunucu da ayni
+ * fonksiyonu kullanir).
  */
 
-interface StoredLine {
-  productId: string;
-  /** Secenekli urunde varyantin kimligi */
-  variantId?: string;
-  quantity: number;
-}
-
-export interface CartLine {
-  /** urun + varyant; ayni urunun farkli varyantlari ayri satirdir */
-  key: string;
-  product: Product;
-  variantId?: string;
-  /** "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m" */
-  variantLabel?: string;
-  sku: string;
-  /** Varyantin fotografi, yoksa urunun ilk fotografi */
-  image?: string;
-  quantity: number;
-  unitExVat: number;
-  unitIncVat: number;
-  totalExVat: number;
-  totalIncVat: number;
-  /** Zenweld deposunda var mi; yoksa odemeye gecilemez */
-  inStock: boolean;
-  /** Urunun kategorisinin kimligi (kuponun kapsami icin) */
-  categoryId?: string;
-}
+type StoredLine = CartStoredLine;
+export type CartLine = PricedCartLine;
 
 /** Sepete yazilmis kupon ve guncel sepete gore sonucu. */
 export interface CartCoupon {
   code: string;
-  result: CouponResult;
+  result: CouponView;
 }
 
 interface CartValue {
@@ -89,8 +75,10 @@ interface CartValue {
   hasOutOfStock: boolean;
   /** Sepete yazilmis kupon; uygulanamiyorsa result.ok false (odemeye gecilemez) */
   coupon: CartCoupon | null;
+  /** Veritabani modunda kupon sunucuda yeniden degerlendiriliyor (sonuc henuz guncel degil) */
+  couponPending: boolean;
   /** Kodu dener; uygulanabiliyorsa sepete yazar. Sonucu dondurur. */
-  applyCoupon: (code: string) => CouponResult;
+  applyCoupon: (code: string) => Promise<CouponView>;
   removeCoupon: () => void;
   /** Secenekli urunde varyant verilmezse ilk varyant eklenir. Stokta olmayan eklenmez. */
   add: (productId: string, variantId?: string, quantity?: number) => void;
@@ -101,9 +89,6 @@ interface CartValue {
 
 const STORAGE_KEY = "zenweld.cart.v1";
 const COUPON_KEY = "zenweld.cart.coupon.v1";
-export const MAX_LINE_QUANTITY = 99;
-
-const lineKey = (productId: string, variantId?: string) => `${productId}|${variantId ?? ""}`;
 
 /**
  * Varyant kimligi. Eski sepet satiri secimi "secenek -> deger" olarak
@@ -117,10 +102,6 @@ function storedVariantId(line: { variantId?: unknown; selection?: unknown }): st
   }
   return undefined;
 }
-
-/** Adet her zaman 1-99 arasinda tam sayi; 0, eksi veya kesirli adet sepete girmez. */
-const clampQuantity = (quantity: number) =>
-  Math.max(1, Math.min(MAX_LINE_QUANTITY, Math.floor(Number(quantity)) || 1));
 
 /** Depodaki sepet: bicimi bozuk satirlar atilir, adetler duzeltilir. */
 function parseStored(raw: string | null): StoredLine[] {
@@ -147,7 +128,9 @@ const CartContext = createContext<CartValue | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const db = useDatabase();
   const now = useNow();
-  const { user } = useAuth();
+  const { user, api } = useAuth();
+  // Veritabani modu: kupon sunucuda degerlendirilir.
+  const server = api !== null;
   const [stored, setStored] = useState<StoredLine[]>([]);
   const [couponCode, setCouponCode] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -182,38 +165,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const lines = useMemo<CartLine[]>(
-    () =>
-      stored.flatMap((s) => {
-        const product = db.products.find((p) => p.id === s.productId && p.active);
-        if (!product) return [];
-        const view = productOptionsView(product, db.optionDefinitions);
-        // Secilen varyant artik yoksa (urunden kaldirildi) satir gosterilmez;
-        // yoksa sessizce baska bir varyant satilirdi.
-        if (view && !findVariant(view, s.variantId)) return [];
-        const variant = resolveVariant(product, view, s.variantId);
-        const unitExVat = salePriceExVat({ ...product, priceExVat: variant.priceExVat }, now);
-        const unitIncVat = priceWithVat(unitExVat, product.vatRate);
-        return [
-          {
-            key: lineKey(s.productId, s.variantId),
-            product,
-            variantId: s.variantId,
-            variantLabel: variant.variant?.fullLabel,
-            sku: variant.sku,
-            image: variant.image ?? product.images[0]?.url,
-            quantity: s.quantity,
-            unitExVat,
-            unitIncVat,
-            totalExVat: unitExVat * s.quantity,
-            totalIncVat: unitIncVat * s.quantity,
-            inStock: isProductInStock(product, s.variantId, db),
-            categoryId: db.categories.find((c) => c.slug === product.categorySlug)?.id,
-          },
-        ];
-      }),
-    [stored, db, now],
-  );
+  const lines = useMemo<CartLine[]>(() => priceCartLines(stored, db, now), [stored, db, now]);
 
   const add = useCallback<CartValue["add"]>(
     (productId, variantId, quantity = 1) => {
@@ -270,34 +222,77 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Kupon her seferinde guncel sepet, uye ve ana gore yeniden hesaplanir.
   const evaluate = useCallback(
     (code: string) =>
-      checkCoupon(
-        code,
-        lines.map((l) => ({ productId: l.product.id, categoryId: l.categoryId, totalIncVat: l.totalIncVat })),
-        { userId: user?.id, userEmail: user?.email, at: now },
-        db,
-      ),
+      couponView(checkCoupon(code, couponCartLines(lines), { userId: user?.id, userEmail: user?.email, at: now }, db)),
     [lines, user, now, db],
   );
 
-  const coupon = useMemo<CartCoupon | null>(
-    () => (couponCode ? { code: couponCode, result: evaluate(couponCode) } : null),
-    [couponCode, evaluate],
+  // Veritabani modu: sonucun hangi sepet, kod ve uye icin oldugu (key) da saklanir.
+  const requestKey = useCallback(
+    (code: string) => JSON.stringify([code, user?.id ?? null, lines.map((l) => [l.key, l.quantity])]),
+    [lines, user],
+  );
+  const [remote, setRemote] = useState<{ key: string; code: string; result: CouponView } | null>(null);
+  const askServer = useCallback(
+    async (code: string): Promise<CouponView> => {
+      try {
+        const response = await fetch("/api/siparis/kupon", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code,
+            lines: lines.map((l) => ({ productId: l.product.id, variantId: l.variantId, quantity: l.quantity })),
+          }),
+        });
+        const answer = (await response.json()) as { ok?: boolean; result?: CouponView };
+        if (answer.ok && answer.result) return answer.result;
+      } catch {
+        /* asagida */
+      }
+      return { ok: false, problem: "invalid" };
+    },
+    [lines],
   );
 
+  useEffect(() => {
+    if (!server || !couponCode) return;
+    const key = requestKey(couponCode);
+    if (remote?.key === key) return;
+    let active = true;
+    void askServer(couponCode).then((result) => {
+      if (active) setRemote({ key, code: couponCode, result });
+    });
+    return () => {
+      active = false;
+    };
+  }, [server, couponCode, requestKey, remote?.key, askServer]);
+
+  const couponPending = server && couponCode !== null && remote?.key !== requestKey(couponCode);
+  const coupon = useMemo<CartCoupon | null>(() => {
+    if (!couponCode) return null;
+    if (!server) return { code: couponCode, result: evaluate(couponCode) };
+    // Sunucunun yaniti gelene kadar ayni kodun son sonucu gosterilir.
+    return remote?.code === couponCode ? { code: couponCode, result: remote.result } : null;
+  }, [couponCode, server, evaluate, remote]);
+
   const applyCoupon = useCallback<CartValue["applyCoupon"]>(
-    (code) => {
-      const result = evaluate(code);
-      if (result.ok) storeCoupon(normalizeCouponCode(code));
+    async (code) => {
+      const normalized = normalizeCouponCode(code);
+      const result = server ? await askServer(normalized) : evaluate(normalized);
+      if (result.ok) {
+        if (server) setRemote({ key: requestKey(normalized), code: normalized, result });
+        storeCoupon(normalized);
+      }
       return result;
     },
-    [evaluate, storeCoupon],
+    [server, askServer, evaluate, requestKey, storeCoupon],
   );
 
   const removeCoupon = useCallback(() => storeCoupon(null), [storeCoupon]);
 
   const value = useMemo<CartValue>(
     () => ({
-      ready,
+      // Veritabani modunda sepete yazili kuponun ilk sonucu gelene kadar hazir degil.
+      ready: ready && (!server || !couponCode || remote?.code === couponCode),
       lines,
       count: lines.reduce((sum, l) => sum + l.quantity, 0),
       totals: cartTotals(
@@ -306,6 +301,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       ),
       hasOutOfStock: lines.some((l) => !l.inStock),
       coupon,
+      couponPending,
       applyCoupon,
       removeCoupon,
       add,
@@ -313,7 +309,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       remove,
       clear,
     }),
-    [ready, lines, db, coupon, applyCoupon, removeCoupon, add, setQuantity, remove, clear],
+    [ready, server, couponCode, remote, lines, db, coupon, couponPending, applyCoupon, removeCoupon, add, setQuantity, remove, clear],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

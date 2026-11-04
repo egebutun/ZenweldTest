@@ -448,6 +448,17 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       Başka tarayıcıda biri çıkarılınca ilk tarayıcıda sayfa yenilenince o da
       gider. Çıkış yapınca kalpler boş görünür; tekrar girişte favoriler
       geri gelir.
+- [ ] Siparişler (veritabanı modu, Aşama 5.2, K-97): sepette veritabanına
+      eklenen bir kuponun kodu uygulanır, olmayan kod "Bu kupon kodu geçerli
+      değil." der. Kartla verilen sipariş `orders`'ta "preparing" durumunda,
+      sunucunun hesapladığı tutarla görünür; `card_last4` son 4 hanedir, kart
+      numarasının tamamı hiçbir yerde yoktur. Sipariş başka tarayıcıda aynı
+      üyeyle Siparişlerim'de görünür. Ödeme sayfası açıkken ürünün fiyatı
+      veritabanında değiştirilip "Öde"ye basılınca sipariş alınmaz ve
+      "Fiyatlar güncellendi; ödenecek tutar artık <tutar>." çıkar. Havale
+      siparişinin `due_at`'i geçmişe çekilince Siparişlerim açılırken sipariş
+      "İptal Edildi" olur ve geçmişte "Ödeme süresi doldu" yazar. Teslim
+      edilmiş siparişte açılan iade talebi `return_requests`'te görünür.
 - [ ] Veritabanı modunda panel (Aşama 4.3): oturumsuz `/yonetim/urunler`
       giriş ekranına (`?next=%2Fyonetim%2Furunler`) gider; yönetici girişinden
       sonra Ürünler açılır. `zw_panel` çerezi HttpOnly'dir; `sessions`'ta
