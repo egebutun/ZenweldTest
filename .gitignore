@@ -13,6 +13,9 @@ npm-debug.log*
 coverage/
 *.tsbuildinfo
 
+# next dev'in kendiliginden yazdigi yapay zeka notu (KARARLAR K-89)
+apps/zenweld-web/AGENTS.md
+
 # Tarayici testleri
 tests/e2e/.oturum/
 test-results/

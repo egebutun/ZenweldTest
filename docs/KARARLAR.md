@@ -940,6 +940,17 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   veritabanından okunur; önbellek iki katmanlıdır (okunan veri ve sayfa,
   her biri 30 saniye), toplam en fazla bir dakika. Ayrıntı ve bugünkü
   sınırlar: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Veritabanı.
+
+### K-89 · `next dev`'in yazdığı AGENTS.md depoya girmez
+- **Tarih:** 2026-11-04
+- **Karar:** Next.js 16'nın geliştirme sunucusu (`npm run dev:web`) her
+  çalıştığında `apps/zenweld-web/AGENTS.md` dosyasını kendiliğinden yazar
+  (yapay zekâ araçlarına Next.js notu). Bu dosya Git'te görmezden gelinir
+  (`.gitignore`); depoya eklenmez.
+- **Neden:** Projenin çalışma kuralları `CLAUDE.md` ve `docs/`'ta; aracın
+  ürettiği dosya her geliştirici bilgisayarında değişiklik olarak
+  görünmesin.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**
