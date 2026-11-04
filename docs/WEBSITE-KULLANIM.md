@@ -484,7 +484,9 @@ Yalnızca ürün sayfalarında, sağ altta bir düğme olarak durur.
   hazırlanır.
 - **Yapısal veri:** Google'a ürün bilgileri bildirilir: marka (ürünün Marka
   alanı, boşsa Zenweld), KDV dahil kampanyalı fiyat ve kampanya bitişi,
-  "stokta", "yeni ürün", teknik özellikler, konum satırı.
+  stok durumu (Zenweld deposunda stok varsa "stokta", yoksa "stokta yok";
+  seçenekli üründe herhangi bir seçeneğin stoğu yeterli), "yeni ürün",
+  teknik özellikler, konum satırı.
 - **Asıl adres (canonical):** `/urun/<link>`; seçenek linkleri ayrı sayfa
   sayılmaz.
 
@@ -1506,7 +1508,9 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 - **Demo notu:** Panelde yapılan değişiklikleri (yeni ürün, değişen başlık,
   yeni link) sunucu bugün göremez:
   - Site haritası ve arama motorunun gördüğü başlıklar koddaki örnek veriden
-    üretilir.
+    üretilir. Veri kaynağı veritabanıysa (`DATA_SOURCE=database`, KARARLAR
+    K-88) ürün, grup ve kategorilerinki tablolardan gelir; veritabanındaki
+    değişiklik en geç bir dakikada görünür.
   - Eski linkler tarayıcıda yönlenir; arama motoru için kalıcı (301)
     yönlendirme backend ile yapılacak.
   - Ayrıntı: [YAPILACAKLAR.md](YAPILACAKLAR.md).

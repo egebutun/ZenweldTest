@@ -219,6 +219,17 @@ Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
   geliştiricinin bilgisayarında çalışır, siteye ve sunucuya girmez,
   dışarıdan veri almaz. Düzeltilmiş sürümleri çıkınca `npm update` ile
   alınır.
+- **Yeni önbellek (Cache Components) açılmadı:** Next 16'nın yeni önbellek
+  yöntemi denendi (2026-11-04). Açılınca Next, gezinirken önceki sayfaları
+  silmeyip gizli tutar: formdan çıkıp linkle geri dönünce eski yazılanlar,
+  açık menüler ve pencereler olduğu gibi kalır; bu, demo modunda da siteyi
+  ve paneli değiştirir. Ayrıca adreste kimlik olan bazı sayfalar ayrıca
+  işaretlenmeli, e-posta rotalarındaki `runtime` ayarı kaldırılmalı ve
+  tarayıcı testlerinin bir kısmı gizli sayfaları da gördüğü için
+  güncellenmelidir. Bugün klasik önbellek (sayfanın belirli aralıkla
+  yeniden hazırlanması) kullanılıyor; Next 16 bunu destekliyor. Yeni
+  yönteme geçmek, sahibin kararıyla ayrı bir iş olarak yapılır (formların
+  geri dönüşte sıfırlanması bileşen bileşen ele alınır).
 - **Kapatılan kural:** 16 ile gelen `react-hooks/set-state-in-effect`
   kuralı kapalı (eslint.config.mjs). Şu bileşenler tarayıcı deposunu sayfa
   açıldıktan sonra okuyup durumu efektte yazar: sepet, favoriler, teklif
@@ -493,9 +504,27 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      Storage).
    - Aşama 3 (sürüyor): site veriyi veritabanından okur. 3.0 Next.js 16
      (bitti, K-87) → 3.1 okuma katmanı (bitti, `packages/db/src/read.ts`)
-     → 3.2 veri kaynağı ayarı (K-88) → 3.3 katalog sunucudan → 3.4 ürün
-     sayfası ve Bayi Bul verisi sayfa başına → 3.5 içerik sayfaları → 3.6
-     önbellek (60 sn) → 3.7 veritabanı modunda tarayıcı testleri ve ölçüm.
+     → 3.2 veri kaynağı ayarı (bitti, `DATA_SOURCE=database`, K-88) → 3.3
+     katalog sunucudan (bitti, `apps/zenweld-web/src/lib/server/catalog.ts`)
+     → 3.4 ürün sayfası ve Bayi Bul verisi sayfa başına → 3.5 içerik
+     sayfaları → 3.6 önbellek ayarları → 3.7 veritabanı modunda tarayıcı
+     testleri ve ölçüm.
+   - Veritabanı modunun bugünkü sınırları (3.4–3.7 ve Aşama 5'te kalkar):
+     - Panel henüz tarayıcıya yazıyor: paneldeki ürün, kategori, seçenek ve
+       mağaza ayarı değişiklikleri bu modda siteye yansımaz.
+     - Her sayfa katalogun tamamını (bugün ~110 KB) tarayıcıya gönderir;
+       3.4'te her sayfa yalnızca gerekenini alacak.
+     - Next'in önbelleği tek kayıtta en fazla 2 MB tutar; katalogun tamamı
+       ~1.000 üründe bu sınıra yaklaşır (aşılırsa önbelleğe alınmaz, her
+       sayfa yenilemesinde veritabanı okunur). 3.4'teki sayfa başına okuma
+       bu sınırı kaldırır.
+     - Derleme sırasında veritabanına erişilmelidir (sayfalar derlemede
+       hazırlanır); canlıda derleme sunucusunun veritabanı erişimi olmalı.
+     - Veritabanında değişiklik, sayfa açılınca en geç bir dakikada görünür;
+       sayfa uzun süre açılmamışsa ilk açılışta bir kez eski hali gelir ve
+       arka planda yenilenir (Next'in "önce eskiyi göster, arkada yenile"
+       davranışı). Panel veritabanına yazınca kayıt anında yenileme
+       yapılacak (önbellek etiketi `katalog`).
    - Sonraki aşamalar: 4 üyelik ve oturum sunucuda; 5 panel ve site
      kayıtları veritabanına; 6 dosya deposu; canlıya hazırlık.
    - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları
@@ -700,13 +729,16 @@ yapılıyor (`lib/page-seo-client.ts`).
    tarayıcıda açılıyor).
 4. Kayıt kaydedilince o sayfa ve site haritası yenilenmeli. Site
    haritası veritabanından üretilmeli: panelde eklenen ürünler ve blog yazıları
-   girmeli, linki değişen üründe yalnızca yeni link yer almalı.
+   girmeli, linki değişen üründe yalnızca yeni link yer almalı. Veritabanı
+   modunda (K-88) ürünler, gruplar ve kategoriler bugün de tablolardan
+   gelir (en geç bir dakika gecikmeyle); blog, haber ve etkinlikler 3.5'te.
 5. **Kampanya başlangıç ve bitişinde ürün sayfası yenilenmeli.** Google'a
    giden fiyat (yapısal veri) sayfa üretilirken yazılır. Kampanya belirlenen
    saatte kendiliğinden başlayıp bittiği için o anda kimse kayıt yapmaz;
    sayfa ya kampanyanın başlangıç/bitiş saatinde zamanlanmış bir işle ya da
    saatte bir yenilenmeli. Yoksa Google bir sonraki yenilemeye kadar eski
-   fiyatı görür.
+   fiyatı görür. Veritabanı modunda (K-88) sayfalar 30 saniyede bir yeniden
+   hazırlandığı için bu gecikme bir dakikayı geçmez.
 
 ## Belgeler (MSDS, Kaynak Rehberi, Parti Sertifikaları) — backend
 

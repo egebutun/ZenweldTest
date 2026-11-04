@@ -62,6 +62,7 @@ const nextConfig = {
   },
   transpilePackages: [
     "@zenweld/data",
+    "@zenweld/db",
     "@zenweld/store",
     "@zenweld/auth",
     "@zenweld/ui",

@@ -934,6 +934,12 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     bir değişiklik en geç bir dakikada sitede görünür.
 - **Neden:** Geçiş boyunca demo çalışmaya devam etsin; geliştirici
   bilgisayarında panel ile site birbirinden kopmasın.
+- **Uygulama (2026-11-04):** Ayar `DATA_SOURCE=database`
+  ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › ortam değişkenleri). Bu modda
+  ürünler, kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları
+  veritabanından okunur; önbellek iki katmanlıdır (okunan veri ve sayfa,
+  her biri 30 saniye), toplam en fazla bir dakika. Ayrıntı ve bugünkü
+  sınırlar: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Veritabanı.
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

@@ -4,10 +4,12 @@ Bu dosya sitenin ve panelin sunucu veritabanını tablo tablo anlatır: her
 tablonun kolonları, türleri, hangi kolonun zorunlu ya da benzersiz olduğu,
 tabloların birbirine nasıl bağlandığı ve bir kayıt silinince ne olduğu.
 
-**Durum (2026-11-02):** Liste sahibince onaylandı (KARARLAR K-81). Tablolar
+**Durum (2026-11-04):** Liste sahibince onaylandı (KARARLAR K-81). Tablolar
 kodda (`packages/db/src/schema/`) ve geçiş betiklerinde hazır; bilgisayardaki
-PostgreSQL'de kuruluyor ve testleri geçiyor. **Site ve panel henüz
-veritabanını kullanmıyor**; verileri tarayıcıda tutmaya devam ediyor.
+PostgreSQL'de kuruluyor ve testleri geçiyor. Site ayarla
+(`DATA_SOURCE=database`, K-88) katalogu (ürünler, kategoriler, seçenekler,
+depo stoğu, mağaza ayarları) tablolardan okuyabiliyor; panel ve diğer
+kayıtlar henüz tarayıcıda.
 Tabloların asıl tanımı koddadır; bu dosya her şema değişikliğinde aynı
 commit'te güncellenir. Kod ve komutlar: [14](#14-kod-betikler-ve-komutlar).
 
@@ -1252,6 +1254,13 @@ veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını
   "yayında" alanı yoksa yayında sayılır; kupon kullanımının kimliği
   veritabanında sıra numarasıdır.
 - Sorgular sırayla çalışır (işlem içinde tek bağlantı kullanılır).
+- **Sitede kullanımı:** `apps/zenweld-web/src/lib/server/catalog.ts`.
+  Veritabanı modunda (`DATA_SOURCE=database`, KARARLAR K-88) katalog, depo
+  stoğu ve mağaza ayarları buradan okunur; 30 saniye önbellekte tutulur ve
+  sayfalar 30 saniyede bir yeniden hazırlanır (değişiklik en geç bir
+  dakikada görünür). Sayfanın başlığı, yapısal verisi, site haritası ve
+  derlemede hazırlanan sayfa listesi de bu katalogdan üretilir. Tek
+  önbellek kaydı en fazla 2 MB tutar; bugün katalogun tamamı ~110 KB.
 - Test (`tests/db/okuma.test.ts`): örnek veri yazılıp geri okununca, kayıt
   türü başına birebir aynı çıkar (gidiş-dönüş); katalog ve mağaza ayarları
   tek başına da okunur.

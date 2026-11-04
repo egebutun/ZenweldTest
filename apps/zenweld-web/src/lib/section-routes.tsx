@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { categories, categoryGroups, type TopLevelSection } from "@zenweld/data";
+import type { TopLevelSection } from "@zenweld/data";
 import { SectionHub } from "@/components/product/CatalogHub";
 import { CategoryPage, GroupPage } from "@/components/product/CatalogPage";
 import { JsonLd } from "@/components/common/JsonLd";
@@ -22,6 +22,7 @@ import {
   type PageSeo,
 } from "@/lib/seo";
 import { pageMetadataFor } from "@/lib/page-meta";
+import { getServerCatalog } from "@/lib/server/catalog";
 
 /**
  * URUN BOLUMU, GRUP VE KATEGORI SAYFALARI — ORTAK KOD
@@ -32,6 +33,9 @@ import { pageMetadataFor } from "@/lib/page-meta";
  *   const route = sectionRoute("ekipmanlar");    // /ekipmanlar (grup kartlari)
  *   const route = groupRoute("ekipmanlar");      // /ekipmanlar/[grup] (kategori kartlari)
  *   const route = categoryRoute("ekipmanlar");   // /ekipmanlar/[grup]/[kategori] (urunler)
+ *
+ * Gruplar ve kategoriler sunucunun katalogundan okunur: veri kaynagi
+ * veritabaniysa tablolardan, degilse koddaki ornek veriden.
  */
 
 type GroupParams = { params: Promise<{ grup: string }> };
@@ -71,24 +75,28 @@ export function sectionRoute(section: TopLevelSection) {
 /** /<bolum>/[grup] sayfasi: grubun kategorileri resimli kartlar halinde. */
 export function groupRoute(section: TopLevelSection) {
   return {
-    generateStaticParams() {
+    async generateStaticParams() {
+      const { categoryGroups } = await getServerCatalog();
       return categoryGroups.filter((g) => g.section === section).map((g) => ({ grup: g.slug }));
     },
 
     async generateMetadata({ params }: GroupParams): Promise<Metadata> {
-      const group = findGroup(section, (await params).grup);
+      const { categories, categoryGroups } = await getServerCatalog();
+      const group = findGroup(section, (await params).grup, categoryGroups);
       if (!group) return { title: "Kategori" };
-      return metadata(groupHref(group), groupSeo(group, groupDescription(group)));
+      return metadata(groupHref(group), groupSeo(group, groupDescription(group, categories)));
     },
 
     async Page({ params }: GroupParams) {
       const slug = (await params).grup;
-      // Sunucu koddaki veriyi bilir; panelde eklenen/degisen gruplari ve
-      // eski adres yonlendirmesini tarayicidaki sayfa cozer (GroupPage).
-      const group = findGroup(section, slug);
+      const { categories, categoryGroups } = await getServerCatalog();
+      // Demo modunda panelde eklenen/degisen gruplari ve eski adres
+      // yonlendirmesini tarayicidaki sayfa cozer (GroupPage).
+      const group = findGroup(section, slug, categoryGroups);
+      const trail = group && catalogTrail(section, { groupSlug: group.slug }, { categories, groups: categoryGroups });
       return (
         <>
-          {group && <JsonLd data={trailJsonLd(catalogTrail(section, { groupSlug: group.slug }))} />}
+          {trail && <JsonLd data={trailJsonLd(trail)} />}
           <GroupPage section={section} groupSlug={slug} />
         </>
       );
@@ -100,29 +108,40 @@ export function groupRoute(section: TopLevelSection) {
 export function categoryRoute(section: TopLevelSection) {
   // Kategori yalnizca kendi grubunun adresinde acilir; baska grubun
   // altindan yazilan adres 404 doner (ayni sayfanin tek adresi olur).
-  const findCategory = (groupSlug: string, slug: string) =>
-    categories.find((c) => c.section === section && c.group === groupSlug && c.slug === slug);
+  const findCategory = async (groupSlug: string, slug: string) => {
+    const catalog = await getServerCatalog();
+    const category = catalog.categories.find(
+      (c) => c.section === section && c.group === groupSlug && c.slug === slug,
+    );
+    return { catalog, category };
+  };
 
   return {
-    generateStaticParams() {
-      return categories
-        .filter((c) => c.section === section)
-        .map((c) => ({ grup: c.group, kategori: c.slug }));
+    async generateStaticParams() {
+      const { categories } = await getServerCatalog();
+      return categories.filter((c) => c.section === section).map((c) => ({ grup: c.group, kategori: c.slug }));
     },
 
     async generateMetadata({ params }: CategoryParams): Promise<Metadata> {
       const { grup, kategori } = await params;
-      const category = findCategory(grup, kategori);
+      const { category } = await findCategory(grup, kategori);
       if (!category) return { title: "Kategori" };
       return metadata(categoryHref(category), categorySeo(category));
     },
 
     async Page({ params }: CategoryParams) {
       const { grup, kategori } = await params;
-      const category = findCategory(grup, kategori);
+      const { catalog, category } = await findCategory(grup, kategori);
+      const trail =
+        category &&
+        catalogTrail(
+          section,
+          { categorySlug: category.slug },
+          { categories: catalog.categories, groups: catalog.categoryGroups },
+        );
       return (
         <>
-          {category && <JsonLd data={trailJsonLd(catalogTrail(section, { categorySlug: category.slug }))} />}
+          {trail && <JsonLd data={trailJsonLd(trail)} />}
           <CategoryPage section={section} groupSlug={grup} categorySlug={kategori} />
         </>
       );

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { categories, productBrand, products } from "@zenweld/data";
+import { isInWarehouse, productBrand, warehouseStockMap } from "@zenweld/data";
 import { JsonLd } from "@/components/common/JsonLd";
 import { catalogTrail } from "@/lib/catalog";
+import { getServerCatalog } from "@/lib/server/catalog";
 import {
   SITE_NAME,
   absoluteUrl,
@@ -17,13 +18,20 @@ import { ProductPageClient } from "./ProductPageClient";
  * Urun sayfasi — sunucu bileseni.
  *
  * Sayfa basligi, aciklamasi, sosyal medya onizlemesi ve yapisal veri burada
- * uretilir; etkilesimli kisim ProductPageClient bileseninde calisir.
+ * uretilir; etkilesimli kisim ProductPageClient bileseninde calisir. Urunler
+ * sunucunun katalogundan okunur: veri kaynagi veritabaniysa tablolardan,
+ * degilse koddaki ornek veriden (lib/server/catalog.ts).
  */
 
-export function generateStaticParams() {
-  return products
-    .filter((product) => product.active)
-    .map((product) => ({ slug: product.slug }));
+async function findActiveProduct(slug: string) {
+  const catalog = await getServerCatalog();
+  const product = catalog.products.find((p) => p.active && p.slug === slug);
+  return { catalog, product };
+}
+
+export async function generateStaticParams() {
+  const { products } = await getServerCatalog();
+  return products.filter((product) => product.active).map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({
@@ -32,7 +40,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = products.find((p) => p.active && p.slug === slug);
+  const { product } = await findActiveProduct(slug);
 
   if (!product) {
     return { title: "Ürün bulunamadı" };
@@ -78,23 +86,31 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = products.find((p) => p.active && p.slug === slug);
+  const { catalog, product } = await findActiveProduct(slug);
 
-  // Yonetim panelinden eklenen urunler yalnizca tarayicida bulunur; onlar icin
-  // yapisal veri uretmeden istemci bilesenini calistiriyoruz.
+  // Demo modunda panelden eklenen urunler yalnizca tarayicida bulunur; onlar
+  // icin yapisal veri uretmeden istemci bilesenini calistiriyoruz.
   if (!product) {
     return <ProductPageClient slug={slug} />;
   }
 
-  const category = categories.find((c) => c.slug === product.categorySlug);
+  const category = catalog.categories.find((c) => c.slug === product.categorySlug);
+  const jsonLd = productJsonLd(product, category, {
+    now: new Date(),
+    inStock: isInWarehouse(product, warehouseStockMap(catalog.warehouseStock)),
+  });
 
   return (
     <>
-      <JsonLd data={productJsonLd(product, category)} />
+      <JsonLd data={jsonLd} />
       <JsonLd
         data={breadcrumbJsonLd([
           { name: SITE_NAME, path: "/" },
-          ...catalogTrail(product.section, { categorySlug: product.categorySlug }).map((c) => ({
+          ...catalogTrail(
+            product.section,
+            { categorySlug: product.categorySlug },
+            { categories: catalog.categories, groups: catalog.categoryGroups },
+          ).map((c) => ({
             name: c.label,
             path: c.href,
           })),

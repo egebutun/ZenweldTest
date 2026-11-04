@@ -44,7 +44,7 @@ veritabanında, tarayıcıda ya da depoda (GitHub) **asla** durmaz.
 | Ofis haritası ve yol tarifi | **Bağlı** (Google Haritalar gömme ve bağlantı; anahtar gerekmez) | — |
 | Telefon, WhatsApp, e-posta | **Bağlı** (bağlantılar) | — |
 | Sosyal medya | **Bağlı** (bağlantılar ve paylaşım önizlemesi) | — |
-| Veritabanı | Tarayıcı deposu (demo). PostgreSQL tabloları hazırlanıyor; site henüz kullanmıyor | Sunucu veritabanı PostgreSQL ([VERITABANI.md](VERITABANI.md)); sunucuyu BT ekibi sağlar |
+| Veritabanı | Tarayıcı deposu (demo). PostgreSQL tabloları hazır; site ayarla (`DATA_SOURCE=database`) katalogu tablolardan okuyabiliyor, panel henüz tarayıcıda | Sunucu veritabanı PostgreSQL ([VERITABANI.md](VERITABANI.md)); sunucuyu BT ekibi sağlar |
 | Dosya deposu | Tarayıcı (demo) | Nesne deposu (görseller ve belgeler) |
 | Bülten, şifre sıfırlama, müşteriye e-posta, analitik, e-Fatura, kargo | Yok | Bkz. [10](#10-henüz-bağlanmayanlar) |
 
@@ -304,7 +304,7 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 | ESLint (eslint-config-next) | Kod denetimi; yalnızca geliştirirken ve derlemeden önce çalışır (`npm run build` önce bunu çalıştırır), siteye girmez |
 | Vitest | İş kuralları testleri; yalnızca geliştirirken çalışır, siteye girmez |
 | Playwright | Tarayıcı testleri; yalnızca geliştirirken çalışır, siteye girmez |
-| Drizzle ORM, pg | Veritabanı tabloları ve bağlantısı (`packages/db`); bugün yalnızca `npm run db:*` komutları ve veritabanı testleri kullanır |
+| Drizzle ORM, pg | Veritabanı tabloları ve bağlantısı (`packages/db`); `npm run db:*` komutları, veritabanı testleri ve veritabanı modundaki site (`DATA_SOURCE=database`) kullanır |
 | drizzle-kit, tsx | Geçiş betiklerini üretme, tablo görüntüleyici (`npm run db:studio`) ve komutları çalıştırma; yalnızca geliştirirken çalışır, siteye girmez |
 
 Sürümler: `apps/zenweld-web/package.json`, kök `package.json`.
@@ -334,7 +334,8 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `SUPPORT_EMAIL` | Yönetici | Form e-postalarının alıcısı; varsayılan `info@zenweld.com` |
 | `SUPPORT_FROM` | Yönetici | Doğrulanmış gönderici adresi |
 | `NEXT_PUBLIC_MAIN_SITE_URL` | Yönetici (isteğe bağlı) | Panel ileride ayrı bir adrese (ör. `admin.zenweld.com`) taşınırsa ana sitenin adresi; paneldeki "Sayfayı gör" bağlantıları bunu kullanır. Bugün gerekmez |
-| `DATABASE_URL` | Yönetici (gizli) | Veritabanı (PostgreSQL) bağlantı adresi. Bugün site kullanmıyor; yalnızca `npm run db:*` komutları ([VERITABANI.md](VERITABANI.md)) |
+| `DATABASE_URL` | Yönetici (gizli) | Veritabanı (PostgreSQL) bağlantı adresi. `npm run db:*` komutları ([VERITABANI.md](VERITABANI.md)) ve `DATA_SOURCE=database` ise site kullanır |
+| `DATA_SOURCE` | Yönetici | Sitenin veri kaynağı (KARARLAR K-88). Boşsa site bugünkü gibi tarayıcıdaki veriyle çalışır. `database` ise ürünler, kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları veritabanından okunur; değişiklik en geç bir dakikada sitede görünür. Derlemede de okunur: değiştirince yeniden derlenir, derleme sırasında veritabanına erişilebilmelidir |
 | `TEST_DATABASE_URL` | Geliştirici | Yalnızca veritabanı testleri (`npm run test:db`); her çalıştırmada silinip baştan kurulur, `DATABASE_URL` ile aynı olamaz |
 | `NEXT_PUBLIC_BUILD_TIME` | Otomatik (derleme) | Derleme anı; sunucu çıktısı ile tarayıcının ilk çiziminin aynı anı kullanması için |
 | `VERCEL_ENV`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_URL` | Otomatik (Vercel) | Site adresi tanımlı değilse yedek; önizleme sürümleri her zaman aramaya kapalı |
@@ -386,7 +387,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 
 | Konu | Bugün | Gereken |
 |---|---|---|
-| **Veritabanı ve sunucu API'si** | Bütün veri tarayıcıda; PostgreSQL tabloları hazır | Siteyi ve paneli veritabanına bağlama ([VERITABANI.md](VERITABANI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
+| **Veritabanı ve sunucu API'si** | Veri tarayıcıda; PostgreSQL tabloları hazır, site ayarla katalogu tablolardan okuyabiliyor (K-88) | Siteyi ve paneli veritabanına bağlama ([VERITABANI.md](VERITABANI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
 | **SAP Business One (depo stoğu)** | Yok | SAP ekibinin hazırladığı "kullanılabilir stok" görünümü (`AVAILABLE_STOCK`, ad kesinleşmedi) sunucuda 15 dakikada bir okunup `warehouse_stock`'a yazılır (KARARLAR K-82, K-84). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı) ve görünümün kolonları SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur |
 | **SAP Business One (satış siparişi)** | Yok | Site siparişleri SAP'a satış siparişi olarak kaydedilecek (KARARLAR K-84); SAP'ın sipariş API'si (ör. `SALES_ORDER`) ve bağlantı bilgileri SAP ekibinden gelecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Zenweld depo stoğu (SAP)) |
 | **Dosya deposu** | Görseller veritabanında, belgeler tarayıcıda | Nesne deposu |

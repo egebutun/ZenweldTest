@@ -487,6 +487,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       ZENWELD" (kategori eklenmez).
 - [ ] Panelde ürüne Marka yazılınca (ör. Jasic) sayfa kaynağındaki ürün
       bilgisinde (`"brand"` ve `product:brand`) o marka, boşsa Zenweld yazar.
+- [ ] Zenweld deposunda stoğu olmayan ürünün sayfa kaynağındaki ürün
+      bilgisinde `OutOfStock`, stoktaki üründe `InStock` yazar.
 - [ ] Demo adresinde ve yerel bilgisayarda her sayfada "noindex" vardır;
       `robots.txt` site haritasını bildirmez.
 - [ ] `robots.txt` yalnızca `/api/` kapatır.
@@ -740,6 +742,14 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       silmez; diğer sekme güncel veriyi görür.
 - [ ] Örnek veri değiştirildiğinde `DB_VERSION` artırılmışsa tarayıcıdaki
       veri örnek veriyle yeniden kurulur.
+- [ ] `DATA_SOURCE` boşken site bugünkü gibi çalışır: panelde değiştirilen
+      ürün fiyatı sitede görünür.
+- [ ] `DATA_SOURCE=database` ile derlenip açılan sitede (README ›
+      Veritabanı) ürünler, kategoriler, seçenekler, depo stoğu ve mağaza
+      ayarları veritabanından gelir: `db:studio`'da bir ürünün fiyatı
+      değiştirilince en geç bir dakika sonra ürün sayfasında, menüde ve
+      sepette yeni fiyat görünür; depo stoğu 0 yapılan ürün STOKTA YOK
+      olur ve sepete eklenmez.
 - [ ] **Canlıya çıkmadan:** örnek satış hareketleri
       (`sample-activity.seed.ts`) kaldırılmış, gerçek kargo/POS/IBAN değerleri
       ve gerçek yasal metinler girilmiş, e-posta anahtarı tanımlanmıştır

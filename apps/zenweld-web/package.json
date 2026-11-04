@@ -14,6 +14,7 @@
     "@fontsource/barlow-condensed": "^5.1.0",
     "@zenweld/auth": "*",
     "@zenweld/data": "*",
+    "@zenweld/db": "*",
     "@zenweld/i18n": "*",
     "@zenweld/store": "*",
     "@zenweld/ui": "*",

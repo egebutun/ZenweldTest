@@ -845,6 +845,9 @@ verisinde örnek stok vardır (Demo notu).
 **Sepet ve sipariş:**
 
 - Stokta olmayan ürün ya da seçenek sepete eklenmez.
+- Arama motorlarına giden ürün bilgisinde (yapısal veri) stok durumu aynı
+  kurala göre bildirilir: ürün stoktaysa "stokta", değilse "stokta yok".
+  Kod: `apps/zenweld-web/src/lib/seo.ts` › `productJsonLd`.
 - Sepete eklendikten sonra stoğu biten satırla ödemeye geçilmez ve sipariş
   verilmez; satır sepetten çıkarılınca ya da stok gelince devam edilir.
 - Stok, sepetteki adetle karşılaştırılmaz: stok 0'dan büyükse istenen adet

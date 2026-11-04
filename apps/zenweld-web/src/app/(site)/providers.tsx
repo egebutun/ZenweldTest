@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import type { UserRole } from "@zenweld/data";
 import { AuthProvider } from "@zenweld/auth";
+import { CatalogProvider, type CatalogData } from "@zenweld/store";
 import { CartProvider } from "@/lib/cart";
 import { FavouritesProvider } from "@/lib/favourites";
 import { QuoteListProvider } from "@/lib/quote-list";
@@ -13,14 +14,20 @@ import { QuoteListProvider } from "@/lib/quote-list";
  */
 const SITE_ROLES: UserRole[] = ["individual", "business"];
 
-export function Providers({ children }: { children: ReactNode }) {
+/**
+ * catalog: veri kaynagi veritabaniysa sunucuda okunan katalog (KARARLAR
+ * K-88); demo modunda null, site tarayicidaki veriyle calisir.
+ */
+export function Providers({ catalog, children }: { catalog: CatalogData | null; children: ReactNode }) {
   return (
-    <AuthProvider roles={SITE_ROLES}>
-      <CartProvider>
-        <FavouritesProvider>
-          <QuoteListProvider>{children}</QuoteListProvider>
-        </FavouritesProvider>
-      </CartProvider>
-    </AuthProvider>
+    <CatalogProvider catalog={catalog}>
+      <AuthProvider roles={SITE_ROLES}>
+        <CartProvider>
+          <FavouritesProvider>
+            <QuoteListProvider>{children}</QuoteListProvider>
+          </FavouritesProvider>
+        </CartProvider>
+      </AuthProvider>
+    </CatalogProvider>
   );
 }

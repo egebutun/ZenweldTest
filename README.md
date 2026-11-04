@@ -352,8 +352,9 @@ Sunucu veritabanının (PostgreSQL) tabloları ve kolonları:
 ### Veritabanı (PostgreSQL) — hazırlanıyor
 
 Sunucu veritabanının tabloları `packages/db`'de hazırlanıyor (KARARLAR
-K-81). **Site henüz veritabanını kullanmıyor**; yukarıdaki tarayıcı verisiyle
-çalışır. Tabloları bilgisayarda kurmak ve denemek için:
+K-81). Site varsayılan olarak yukarıdaki tarayıcı verisiyle çalışır; ayarla
+katalogu veritabanından okuyabilir (5. adım). Tabloları bilgisayarda kurmak
+ve denemek için:
 
 ```bash
 # 1. PostgreSQL 18'i başlatın. Docker ile:
@@ -376,7 +377,27 @@ npm run test:db
 
 # 4. Tablolara bakmak için (tarayıcıda açılır)
 npm run db:studio
+
+# 5. Siteyi veritabanıyla açmak için apps/zenweld-web/.env.local'a ekleyin:
+#    DATA_SOURCE=database
+#    sonra derleyip başlatın (ya da npm run dev:web)
+npm run build
+npm run start --workspace apps/zenweld-web
 ```
+
+- **Veritabanı modu (`DATA_SOURCE=database`, KARARLAR K-88):** Ürünler,
+  kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları tablolardan
+  okunur; menü, sepet, arama ve Teklif Al da bunları kullanır.
+  - `db:studio`'da bir ürünün fiyatını değiştirin: en geç bir dakika sonra
+    sayfa açılınca yeni fiyat görünür (gerekirse sayfayı bir kez daha
+    yenileyin; sayfa arka planda yeniden hazırlanır).
+  - Üyeler, siparişler, teklifler, formlar ve içerik (blog, haber) bu
+    aşamada tarayıcıda kalır. Paneldeki ürün, kategori, seçenek ve mağaza
+    ayarı değişiklikleri bu modda siteye yansımaz (panel henüz veritabanına
+    yazmıyor).
+  - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
+    Derleme sırasında veritabanı çalışıyor olmalı.
+  - Ayar yoksa site bugünkü gibi çalışır.
 
 - **Hedef sürüm PostgreSQL 18**; kodun ve betiklerin 16 ve 17'de de
   çalışması beklenir ama testler 18'de yapılır (KARARLAR K-81).

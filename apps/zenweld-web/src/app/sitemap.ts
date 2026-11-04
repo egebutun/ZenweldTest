@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
-import { blogPosts, categories, categoryGroups, events, news, products } from "@zenweld/data";
+import { blogPosts, events, news } from "@zenweld/data";
 import { categoryHref, groupHref } from "@/lib/catalog";
 import { INDEXABLE_PAGES } from "@/lib/page-meta";
 import { getSiteUrl } from "@/lib/seo";
+import { getServerCatalog } from "@/lib/server/catalog";
 
 /**
  * /sitemap.xml
@@ -18,11 +19,15 @@ import { getSiteUrl } from "@/lib/seo";
  * guvenmemeyi ogrenir. Oncelik (priority) ve siklik (changefreq) alanlarini
  * Google kullanmadigi icin yazilmaz.
  *
- * Liste koddaki veriden uretilir; panelde eklenen urun ve yazilar backend
- * kurulunca veritabanindan okunacak (bkz. docs/YAPILACAKLAR.md).
+ * Urunler, gruplar ve kategoriler sunucunun katalogundan gelir: veri
+ * kaynagi veritabaniysa tablolardan (en fazla 60 saniye eski), degilse
+ * koddaki ornek veriden. Blog, haber ve etkinlikler simdilik koddaki
+ * veriden uretilir; veritabanindan okunmalari sonraki adimda
+ * (docs/YAPILACAKLAR.md › Asama 3).
  */
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { categories, categoryGroups, products } = await getServerCatalog();
   const base = getSiteUrl();
   const entry = (path: string, lastModified?: string): MetadataRoute.Sitemap[number] => ({
     url: `${base}${path}`,

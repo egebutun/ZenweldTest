@@ -77,14 +77,21 @@ export const SITE_DESCRIPTION =
 /* Yapisal veri (JSON-LD)                                              */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Urunun arama motoru icin yapisal verisi.
+ *
+ * - now: fiyat ve kampanya hesabinin ani (sayfanin hazirlandigi an).
+ * - inStock: Zenweld deposunda stok var mi (K-82); yoksa "stokta yok"
+ *   bildirilir, sitede de urun sepete eklenmez.
+ */
 export function productJsonLd(
   product: Product,
-  category?: Category,
+  category: Category | undefined,
+  { now, inStock }: { now: Date; inStock: boolean },
 ): Record<string, unknown> {
   // Google'a musterinin odedigi fiyat bildirilir. Kampanyanin bitis tarihi
   // varsa priceValidUntil ile birlikte verilir; tarih gecince arama
   // sonucunda eski indirimli fiyat gosterilmez.
-  const now = new Date();
   const priceIncVat = Math.round(salePriceExVat(product, now) * (1 + product.vatRate / 100));
   const endsAt = isDiscountActive(product, now) ? product.discount?.endsAt : undefined;
 
@@ -104,8 +111,7 @@ export function productJsonLd(
       priceCurrency: "TRY",
       price: priceIncVat,
       ...(endsAt ? { priceValidUntil: endsAt.slice(0, 10) } : {}),
-      // Zenweld deposunda her urun her zaman bulunur.
-      availability: "https://schema.org/InStock",
+      availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
       seller: { "@type": "Organization", name: SITE_NAME },
     },
