@@ -43,6 +43,13 @@
       "when": 1793625093824,
       "tag": "0005_kisiye-ozel-kupon",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793798083901,
+      "tag": "0006_giris-deneme-siniri",
+      "breakpoints": true
     }
   ]
 }

@@ -15,6 +15,7 @@
     "@node-rs/argon2": "2.2.2",
     "@zenweld/data": "*",
     "@zenweld/db": "*",
+    "@zenweld/i18n": "*",
     "@zenweld/store": "*"
   }
 }

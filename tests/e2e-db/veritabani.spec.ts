@@ -235,6 +235,8 @@ test("üye ürünü veritabanındaki fiyatla kartla satın alır", async ({ page
   await expect(main).toContainText(formatPrice(offer.price));
 
   await page.goto("/odeme");
+  // Uye sunucudan okunduktan sonra form acilir.
+  await expect(page.locator("input[autocomplete=cc-name]")).toBeVisible();
   const tc = page.locator("input[maxlength='11']").first();
   if (await tc.count()) await tc.fill("10000000146");
   await page.fill("input[autocomplete=cc-name]", "Deneme Kişi");

@@ -353,7 +353,23 @@ export const tr = {
     hasAccount: "Zaten hesabınız var mı?",
     forgotPassword: "Şifremi unuttum",
     passwordMismatch: "Şifreler eşleşmiyor.",
+    passwordHint: "En az 8 karakter",
     logoutSuccess: "Çıkış yaptınız.",
+    /** Uyelik hatalari; tarayicida ve sunucuda ayni (KARARLAR K-94) */
+    errors: {
+      invalidLogin: "E-posta ya da şifre hatalı.",
+      tooManyAttempts: "Çok fazla deneme yapıldı. 15 dakika sonra tekrar deneyin.",
+      suspended: "Hesabınız askıya alınmış. Lütfen bizimle iletişime geçin.",
+      emailTaken: "Bu e-posta adresi zaten kayıtlı.",
+      invalidEmail: "Geçerli bir e-posta adresi girin.",
+      missingFields: "Zorunlu alanları doldurun.",
+      passwordTooShort: "Şifre en az {min} karakter olmalıdır.",
+      sessionEnded: "Oturumunuz kapanmış. Lütfen yeniden giriş yapın.",
+      wrongCurrentPassword: "Mevcut şifre hatalı.",
+      wrongPassword: "Şifre hatalı.",
+      failed: "İşlem yapılamadı. Lütfen tekrar deneyin.",
+      unreachable: "Sunucuya ulaşılamadı. Lütfen tekrar deneyin.",
+    },
   },
   account: {
     title: "Hesabım",
@@ -384,6 +400,7 @@ export const tr = {
     newPassword: "Yeni Şifre",
     newPasswordAgain: "Yeni Şifre (Tekrar)",
     passwordChanged: "Şifreniz değiştirildi.",
+    profileSaved: "Profiliniz güncellendi.",
     deleteAccount: "Hesabımı Sil",
     deleteAccountText:
       "Hesabınız ve kayıtlı adresleriniz kalıcı olarak silinir; bu işlem geri alınamaz. Siparişleriniz, teklifleriniz, servis ve iade talepleriniz, garanti kayıtlarınız ve yorumlarınız silinmez.",

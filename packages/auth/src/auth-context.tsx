@@ -12,12 +12,10 @@ import {
 import type { User, UserRole } from "@zenweld/data";
 import { addUser, deleteUser, findUserById, getSnapshot, saveUser, useDatabase } from "@zenweld/store";
 import { demoHash, verifyPassword } from "./hash";
+import { AUTH_ERRORS, passwordProblem } from "./rules";
 
-/** Ana site (musteri) oturumu. */
+/** Ana site (musteri) oturumu, demo modunda tarayicida. */
 const SESSION_KEY = "zenweld.session.v1";
-
-/** Uye olurken ve sifre degistirirken en kisa sifre. */
-const MIN_PASSWORD_LENGTH = 6;
 
 export interface RegisterInput {
   role: Exclude<UserRole, "admin">;
@@ -40,22 +38,27 @@ export interface AuthResult {
   user?: User;
 }
 
+/** Profilde degisebilen alanlar (e-posta degismez). */
+export type ProfilePatch = Partial<
+  Pick<User, "firstName" | "lastName" | "phone" | "city" | "companyName" | "taxOffice" | "taxNumber">
+>;
+
 interface AuthContextValue {
   user: User | null;
-  /** Oturum localStorage'dan okundu mu (ilk render'da false) */
+  /** Oturum okundu mu (ilk cizimde false) */
   ready: boolean;
-  login: (email: string, password: string) => AuthResult;
-  logout: () => void;
-  register: (input: RegisterInput) => AuthResult;
-  updateProfile: (patch: Partial<User>) => void;
+  login: (email: string, password: string) => Promise<AuthResult>;
+  logout: () => Promise<void>;
+  register: (input: RegisterInput) => Promise<AuthResult>;
+  updateProfile: (patch: ProfilePatch) => Promise<AuthResult>;
   /** Giris yapmis kisinin sifresi: mevcut sifre dogru olmali. */
-  changePassword: (current: string, next: string) => AuthResult;
+  changePassword: (current: string, next: string) => Promise<AuthResult>;
   /**
    * Giris yapmis kisi kendi hesabini siler (sifresiyle onaylar) ve oturum
    * kapanir. Panelden silmeyle ayni: hesap ve adresler silinir; siparis,
    * teklif, servis ve iade talebi, garanti ve yorumlar kalir.
    */
-  deleteAccount: (password: string) => AuthResult;
+  deleteAccount: (password: string) => Promise<AuthResult>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -63,15 +66,18 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 /**
  * OTURUM SAGLAYICI
  *
- * Ana site ile yonetim paneli (ana site /yonetim) ayni tarayici deposunu
- * paylasir, ama oturumlari AYRIDIR:
+ * server: uyelik sunucuda (veritabani modu, Asama 4.2): islemler
+ * /api/uyelik uclarina gider, oturum yalnizca sunucunun okuyabildigi
+ * cerezdedir. Yoksa demo: uyeler ve oturum tarayicidadir.
+ *
+ * Demo modunda ana site ile yonetim paneli ayni tarayici deposunu paylasir,
+ * ama oturumlari AYRIDIR:
  *
  *   - sessionKey: her uygulama oturumu kendi anahtarinda tutar; panelden
  *     cikis yapmak ana sitedeki oturumu etkilemez, tersi de oyle.
  *   - roles: uygulamaya giris yapabilecek roller. Ana site yonetici
  *     hesaplarini kabul etmez; panel yalnizca yonetici hesaplarini kabul
- *     eder. Izinsiz rol, "hesap bulunamadi" ile ayni mesaji alir — boylece
- *     ana sitenin giris formu yonetici e-postalarini ele vermez.
+ *     eder. Izinsiz rol, yanlis sifreyle ayni mesaji alir.
  *
  *   ana site           roles: bireysel, kurumsal
  *   yonetim paneli     roles: yonetici
@@ -80,10 +86,110 @@ export function AuthProvider({
   children,
   sessionKey = SESSION_KEY,
   roles,
+  server = false,
 }: {
   children: ReactNode;
   sessionKey?: string;
-  /** Bos birakilirsa tum roller giris yapabilir. */
+  /** Bos birakilirsa tum roller giris yapabilir (yalnizca demo modu). */
+  roles?: UserRole[];
+  server?: boolean;
+}) {
+  return server ? (
+    <ServerAuth>{children}</ServerAuth>
+  ) : (
+    <BrowserAuth sessionKey={sessionKey} roles={roles}>
+      {children}
+    </BrowserAuth>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Sunucu (veritabani modu)                                            */
+/* ------------------------------------------------------------------ */
+
+interface ApiAnswer {
+  ok: boolean;
+  user?: User | null;
+  error?: string;
+}
+
+async function call(action: string, body?: unknown): Promise<ApiAnswer> {
+  try {
+    const response = await fetch(`/api/uyelik/${action}`, {
+      method: body === undefined ? "GET" : "POST",
+      headers: body === undefined ? undefined : { "content-type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+      cache: "no-store",
+    });
+    const answer = (await response.json().catch(() => ({}))) as ApiAnswer;
+    return response.ok ? { ...answer, ok: true } : { ok: false, error: answer.error ?? AUTH_ERRORS.failed };
+  } catch {
+    return { ok: false, error: AUTH_ERRORS.unreachable };
+  }
+}
+
+function ServerAuth({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void call("ben").then((answer) => {
+      if (!active) return;
+      setUser(answer.ok ? (answer.user ?? null) : null);
+      setReady(true);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const signIn = useCallback(async (action: string, body: unknown): Promise<AuthResult> => {
+    const answer = await call(action, body);
+    if (!answer.ok || !answer.user) return { ok: false, error: answer.error ?? AUTH_ERRORS.failed };
+    setUser(answer.user);
+    return { ok: true, user: answer.user };
+  }, []);
+
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      user,
+      ready,
+      login: (email, password) => signIn("giris", { email, password }),
+      register: (input) => signIn("kayit", input),
+      updateProfile: (patch) => signIn("profil", patch),
+      logout: async () => {
+        await call("cikis", {});
+        setUser(null);
+      },
+      changePassword: async (current, next) => {
+        const answer = await call("sifre", { current, next });
+        return answer.ok ? { ok: true } : { ok: false, error: answer.error };
+      },
+      deleteAccount: async (password) => {
+        const answer = await call("hesap-sil", { password });
+        if (!answer.ok) return { ok: false, error: answer.error };
+        setUser(null);
+        return { ok: true };
+      },
+    }),
+    [user, ready, signIn],
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tarayici (demo modu)                                                */
+/* ------------------------------------------------------------------ */
+
+function BrowserAuth({
+  children,
+  sessionKey,
+  roles,
+}: {
+  children: ReactNode;
+  sessionKey: string;
   roles?: UserRole[];
 }) {
   const db = useDatabase();
@@ -95,17 +201,6 @@ export function AuthProvider({
   const allowed = useCallback(
     (u: User) => !rolesKey || rolesKey.split("|").includes(u.role),
     [rolesKey],
-  );
-
-  /** Bu uygulamaya giris yapabilecek hesaplar arasinda e-posta arar. */
-  const findHere = useCallback(
-    (email: string) => {
-      const wanted = email.toLowerCase().trim();
-      return getSnapshot().users.find(
-        (u) => u.email.toLowerCase() === wanted && allowed(u),
-      );
-    },
-    [allowed],
   );
 
   useEffect(() => {
@@ -124,104 +219,100 @@ export function AuthProvider({
     return found && allowed(found) && found.status !== "suspended" ? found : null;
   }, [userId, db, allowed]);
 
-  const login = useCallback<AuthContextValue["login"]>((email, password) => {
-    const found = findHere(email);
-    if (!found) {
-      return { ok: false, error: "Bu e-posta ile kayıtlı bir hesap bulunamadı." };
-    }
-    if (!verifyPassword(password, found.passwordHash)) {
-      return { ok: false, error: "Şifre hatalı." };
-    }
-    if (found.status === "suspended") {
-      return { ok: false, error: "Hesabınız askıya alınmış. Lütfen bizimle iletişime geçin." };
-    }
-    saveUser({ ...found, lastLoginAt: new Date().toISOString() });
-    try {
-      window.localStorage.setItem(sessionKey, found.id);
-    } catch {
-      /* yok say */
-    }
-    setUserId(found.id);
-    return { ok: true, user: found };
-  }, [findHere, sessionKey]);
+  const remember = useCallback(
+    (id: string | null) => {
+      try {
+        if (id) window.localStorage.setItem(sessionKey, id);
+        else window.localStorage.removeItem(sessionKey);
+      } catch {
+        /* yok say */
+      }
+      setUserId(id);
+    },
+    [sessionKey],
+  );
 
-  const logout = useCallback(() => {
-    try {
-      window.localStorage.removeItem(sessionKey);
-    } catch {
-      /* yok say */
-    }
-    setUserId(null);
-  }, [sessionKey]);
+  const login = useCallback<AuthContextValue["login"]>(
+    async (email, password) => {
+      const wanted = email.toLowerCase().trim();
+      const found = getSnapshot().users.find((u) => u.email.toLowerCase() === wanted && allowed(u));
+      // Hesap yoksa da sifre yanlissa da ayni mesaj (K-94).
+      if (!found || !verifyPassword(password, found.passwordHash)) {
+        return { ok: false, error: AUTH_ERRORS.invalidLogin };
+      }
+      if (found.status === "suspended") return { ok: false, error: AUTH_ERRORS.suspended };
+      saveUser({ ...found, lastLoginAt: new Date().toISOString() });
+      remember(found.id);
+      return { ok: true, user: found };
+    },
+    [allowed, remember],
+  );
 
-  const register = useCallback<AuthContextValue["register"]>((input) => {
-    const wanted = input.email.toLowerCase().trim();
-    const taken = getSnapshot().users.some((u) => u.email.toLowerCase() === wanted);
-    if (taken) {
-      return { ok: false, error: "Bu e-posta adresi zaten kayıtlı." };
-    }
-    if (input.password.length < MIN_PASSWORD_LENGTH) {
-      return { ok: false, error: `Şifre en az ${MIN_PASSWORD_LENGTH} karakter olmalıdır.` };
-    }
-    const newUser: User = {
-      id: `u-${Date.now().toString(36)}`,
-      role: input.role,
-      status: "active",
-      email: input.email.trim().toLowerCase(),
-      passwordHash: demoHash(input.password),
-      firstName: input.firstName,
-      lastName: input.lastName,
-      phone: input.phone,
-      city: input.city,
-      companyName: input.companyName,
-      taxOffice: input.taxOffice,
-      taxNumber: input.taxNumber,
-      sector: input.sector,
-      createdAt: new Date().toISOString(),
-      newsletter: input.newsletter ?? false,
-    };
-    addUser(newUser);
-    try {
-      window.localStorage.setItem(sessionKey, newUser.id);
-    } catch {
-      /* yok say */
-    }
-    setUserId(newUser.id);
-    return { ok: true, user: newUser };
-  }, [sessionKey]);
+  const logout = useCallback(async () => remember(null), [remember]);
+
+  const register = useCallback<AuthContextValue["register"]>(
+    async (input) => {
+      const wanted = input.email.toLowerCase().trim();
+      if (getSnapshot().users.some((u) => u.email.toLowerCase() === wanted)) {
+        return { ok: false, error: AUTH_ERRORS.emailTaken };
+      }
+      const problem = passwordProblem(input.password);
+      if (problem) return { ok: false, error: problem };
+      const newUser: User = {
+        id: `u-${Date.now().toString(36)}`,
+        role: input.role,
+        status: "active",
+        email: wanted,
+        passwordHash: demoHash(input.password),
+        firstName: input.firstName,
+        lastName: input.lastName,
+        phone: input.phone,
+        city: input.city,
+        companyName: input.companyName,
+        taxOffice: input.taxOffice,
+        taxNumber: input.taxNumber,
+        sector: input.sector,
+        createdAt: new Date().toISOString(),
+        newsletter: input.newsletter ?? false,
+      };
+      addUser(newUser);
+      remember(newUser.id);
+      return { ok: true, user: newUser };
+    },
+    [remember],
+  );
 
   const updateProfile = useCallback<AuthContextValue["updateProfile"]>(
-    (patch) => {
-      if (!user) return;
-      saveUser({ ...user, ...patch });
+    async (patch) => {
+      if (!user) return { ok: false, error: AUTH_ERRORS.sessionEnded };
+      const updated = { ...user, ...patch };
+      saveUser(updated);
+      return { ok: true, user: updated };
     },
     [user],
   );
 
   const changePassword = useCallback<AuthContextValue["changePassword"]>(
-    (current, next) => {
-      if (!user) return { ok: false, error: "Oturumunuz kapanmış. Lütfen yeniden giriş yapın." };
-      if (!verifyPassword(current, user.passwordHash)) return { ok: false, error: "Mevcut şifre hatalı." };
-      if (next.length < MIN_PASSWORD_LENGTH) {
-        return { ok: false, error: `Şifre en az ${MIN_PASSWORD_LENGTH} karakter olmalıdır.` };
-      }
-      if (!saveUser({ ...user, passwordHash: demoHash(next) })) {
-        return { ok: false, error: "Şifre kaydedilemedi. Lütfen tekrar deneyin." };
-      }
+    async (current, next) => {
+      if (!user) return { ok: false, error: AUTH_ERRORS.sessionEnded };
+      if (!verifyPassword(current, user.passwordHash)) return { ok: false, error: AUTH_ERRORS.wrongCurrentPassword };
+      const problem = passwordProblem(next);
+      if (problem) return { ok: false, error: problem };
+      if (!saveUser({ ...user, passwordHash: demoHash(next) })) return { ok: false, error: AUTH_ERRORS.failed };
       return { ok: true, user };
     },
     [user],
   );
 
   const deleteAccount = useCallback<AuthContextValue["deleteAccount"]>(
-    (password) => {
-      if (!user) return { ok: false, error: "Oturumunuz kapanmış. Lütfen yeniden giriş yapın." };
-      if (!verifyPassword(password, user.passwordHash)) return { ok: false, error: "Şifre hatalı." };
-      if (!deleteUser(user.id)) return { ok: false, error: "Hesap silinemedi. Lütfen tekrar deneyin." };
-      logout();
+    async (password) => {
+      if (!user) return { ok: false, error: AUTH_ERRORS.sessionEnded };
+      if (!verifyPassword(password, user.passwordHash)) return { ok: false, error: AUTH_ERRORS.wrongPassword };
+      if (!deleteUser(user.id)) return { ok: false, error: AUTH_ERRORS.failed };
+      remember(null);
       return { ok: true };
     },
-    [user, logout],
+    [user, remember],
   );
 
   const value = useMemo(

@@ -396,8 +396,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Kayıt olan üye **hemen** giriş yapmış olur ve Hesabım'a gider; panel
       onayı gerekmez; "Onay Bekliyor" yazısı hiçbir yerde yoktur.
 - [ ] Aynı e-postayla ikinci kayıt: "Bu e-posta adresi zaten kayıtlı."
-- [ ] Yönetici hesabıyla sitede giriş: "Bu e-posta ile kayıtlı bir hesap
-      bulunamadı."
+- [ ] Yönetici hesabıyla sitede giriş: "E-posta ya da şifre hatalı." (olmayan
+      hesapla ve yanlış şifreyle de aynı mesaj).
 - [ ] Panelde askıya alınan üye giriş yapamaz; açık oturumu kapanır.
 - [ ] `/giris?next=https://baska-site` girişten sonra dış siteye gitmez.
 - [ ] Hesabım menüsü: Genel Bakış, Profil, Tekliflerim, Siparişlerim,
@@ -408,12 +408,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       form üyenin adı ve e-postasıyla dolu gelir.
 - [ ] Adreslerim'de yeni adres eklenir; ilk adres varsayılan olur.
 - [ ] Profil › Şifre Değiştir: yanlış mevcut şifre "Mevcut şifre hatalı.",
-      tekrar farklıysa "Şifreler eşleşmiyor.", 6 karakterden kısa yeni şifre
+      tekrar farklıysa "Şifreler eşleşmiyor.", 8 karakterden kısa yeni şifre
       reddedilir; başarılıysa "Şifreniz değiştirildi." Çıkış yapınca eski
-      şifreyle giriş "Şifre hatalı." der, yenisiyle girilir.
+      şifreyle giriş "E-posta ya da şifre hatalı." der, yenisiyle girilir.
 - [ ] Profil › Hesabımı Sil: yanlış şifreyle silinmez; doğru şifre ve onayla
       silinir, Giriş sayfasında "Hesabınız silindi." yazar; aynı e-postayla
-      giriş "hesap bulunamadı" der. Üyenin siparişleri panelde durur.
+      giriş "E-posta ya da şifre hatalı." der. Üyenin siparişleri panelde durur.
 - [ ] Bireysel üyede teslim edilen siparişin detayında **İade Talebi
       Oluştur** teslim gününden itibaren 14 gün görünür, sonra görünmez;
       kurumsal üyede hiç görünmez.
@@ -421,6 +421,15 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       Gönderilen talep `IAD-<yıl>-<4 hane>` numarası ve "Yeni" durumuyla
       görünür; açık talep varken düğme görünmez.
 - [ ] Site ve panel oturumu ayrıdır; birinden çıkış diğerini etkilemez.
+- [ ] Veritabanı modunda üyelik (Aşama 4.2): üye olunca `db:studio`'da
+      `users`'ta görünür, şifre özeti `$argon2id$` ile başlar. Tarayıcının
+      geliştirici araçlarında `zw_oturum` çerezi HttpOnly'dir; sayfa
+      yenilense de oturum açık kalır. Çıkışta `sessions`'taki satır silinir.
+      Bir hesaba 10 kez yanlış şifre girilince "Çok fazla deneme yapıldı. 15
+      dakika sonra tekrar deneyin." çıkar, doğru şifreyle de girilmez. İki
+      tarayıcıda aynı üyeyle girilip birinde şifre değiştirilince diğerinde
+      Hesabım "Giriş Yap" kutusunu gösterir. Demo üyesinin (`bireysel@demo.com`)
+      eski şifresi ilk girişte güçlü özete çevrilir.
 
 ---
 

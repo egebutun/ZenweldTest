@@ -9,7 +9,7 @@ import { useT } from "@/lib/i18n-client";
 export default function ProfilePage() {
   const t = useT();
   const { user, updateProfile } = useAuth();
-  const [saved, setSaved] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [form, setForm] = useState({
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
@@ -27,15 +27,15 @@ export default function ProfilePage() {
   return (
     <div className="max-w-xl space-y-12">
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          updateProfile(form);
-          setSaved(true);
-          setTimeout(() => setSaved(false), 2500);
+          const result = await updateProfile(form);
+          setMessage(result.ok ? { ok: true, text: t.account.profileSaved } : { ok: false, text: result.error ?? "" });
+          if (result.ok) setTimeout(() => setMessage(null), 2500);
         }}
         className="space-y-4"
       >
-        {saved && <Alert tone="success">Profiliniz güncellendi.</Alert>}
+        {message && <Alert tone={message.ok ? "success" : "danger"}>{message.text}</Alert>}
 
         <div className="grid gap-4 sm:grid-cols-2">
           <FormRow label={t.auth.firstName}>
@@ -98,13 +98,13 @@ function ChangePassword() {
 
   return (
     <form
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
         if (form.next !== form.again) {
           setMessage({ ok: false, text: t.auth.passwordMismatch });
           return;
         }
-        const result = changePassword(form.current, form.next);
+        const result = await changePassword(form.current, form.next);
         setMessage(result.ok ? { ok: true, text: t.account.passwordChanged } : { ok: false, text: result.error ?? "" });
         if (result.ok) setForm({ current: "", next: "", again: "" });
       }}
@@ -123,7 +123,7 @@ function ChangePassword() {
         />
       </FormRow>
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormRow label={t.account.newPassword} required hint="En az 6 karakter" htmlFor="new-password">
+        <FormRow label={t.account.newPassword} required hint={t.auth.passwordHint} htmlFor="new-password">
           <Input
             id="new-password"
             type="password"
@@ -161,10 +161,10 @@ function DeleteAccount() {
 
   return (
     <form
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
         if (!confirm(t.account.deleteAccountConfirm)) return;
-        const result = deleteAccount(password);
+        const result = await deleteAccount(password);
         if (!result.ok) {
           setError(result.error ?? "");
           return;

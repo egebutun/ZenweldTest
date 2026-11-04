@@ -877,18 +877,22 @@ ve Mesafeli Sözleşmeler Yönetmeliği gereği ödeme öncesi onaylanır).
   yapmak sitedeki oturumu etkilemez, tersi de öyle.
 - **Kimler giriş yapabilir:** Site yalnızca **Bireysel** ve **Kurumsal**
   hesapları kabul eder.
-  - Yönetici hesabıyla sitede giriş denenirse "hesap bulunamadı" mesajı çıkar.
-    Böylece yönetici e-postaları ele verilmez.
+  - Yönetici hesabıyla sitede giriş denenirse yanlış şifreyle aynı mesaj
+    çıkar ("E-posta ya da şifre hatalı."). Böylece yönetici e-postaları ele
+    verilmez.
 - **Askıya alma:** Panelde askıya alınan hesabın açık oturumu hemen kapanır.
 
 ### Giriş (`/giris`)
 
 - **Form:** E-posta ve Şifre; **Şifremi unuttum**, "Hesabınız yok mu?
   **Üye Ol**".
-- **Hata mesajları:**
-  - "Bu e-posta ile kayıtlı bir hesap bulunamadı."
-  - "Şifre hatalı."
+- **Hata mesajları** (KARARLAR K-94):
+  - "E-posta ya da şifre hatalı.": hesap yoksa da şifre yanlışsa da aynı
+    mesaj; bir e-postanın üye olup olmadığı belli olmaz.
   - "Hesabınız askıya alınmış. Lütfen bizimle iletişime geçin."
+  - "Çok fazla deneme yapıldı. 15 dakika sonra tekrar deneyin.": bir hesaba
+    15 dakikada 10 yanlış şifre girilince o hesaba 15 dakika giriş
+    yapılamaz (doğru şifreyle de). Yalnızca veritabanı modunda.
 - E-posta büyük/küçük harf duyarsızdır.
 - Hesabını silen üye buraya gelir (`/giris?hesap=silindi`); formun üstünde
   "Hesabınız silindi." yazar.
@@ -904,7 +908,7 @@ ve Mesafeli Sözleşmeler Yönetmeliği gereği ödeme öncesi onaylanır).
 - **Bayiler için not:** "Zenweld Bayisi Olmak İster misiniz? Bayilik
   Başvurusu →" yazar. Bayiler sitede hesap açmaz.
 - **Alanlar:**
-  - Zorunlu: Ad, Soyad, E-posta, Telefon, Şifre (en az 6 karakter), Şifre
+  - Zorunlu: Ad, Soyad, E-posta, Telefon, Şifre (en az 8 karakter), Şifre
     (Tekrar).
   - İsteğe bağlı: Şehir.
   - Yalnızca kurumsalda: Firma Ünvanı (zorunlu), Vergi Dairesi, Vergi No,
@@ -917,7 +921,7 @@ ve Mesafeli Sözleşmeler Yönetmeliği gereği ödeme öncesi onaylanır).
 - KVKK notu ve bot tuzağı vardır.
 - **Hata mesajları:** "Şifreler eşleşmiyor.", "Üye olmak için Kullanım
   Koşulları'nı kabul etmelisiniz.", "Bu e-posta adresi zaten kayıtlı.", "Şifre
-  en az 6 karakter olmalıdır."
+  en az 8 karakter olmalıdır."
 - **Kayıt sonrası:**
   - Hesap hemen aktif olur ve oturum açılır; üye Hesabım'a gider. Panelden
     onay gerekmez; üye siteyi hemen kullanabilir.
@@ -934,8 +938,17 @@ yazar. **Demo notu:** Bugün gerçekte e-posta gönderilmez.
 Oturumu kapatır ve kısa bir süre sonra anasayfaya gider. Üst menüdeki **Çıkış
 Yap** da aynı işi yapar.
 
-**Demo notu:** Şifreler tarayıcıda karşılaştırılır; bu gerçek bir güvenlik
-değildir. Gerçek sistemde kimlik doğrulama sunucuda yapılmalıdır.
+**Üyelik nerede çalışır:**
+
+- **Veritabanı modunda** (`DATA_SOURCE=database`, Aşama 4.2): kayıt, giriş,
+  çıkış, profil, şifre değiştirme ve hesap silme sunucudan yapılır. Şifre
+  güçlü özetle saklanır; oturum yalnızca sunucunun okuyabildiği bir çerezde
+  durur ve 30 gün sürer (site kullanıldıkça uzar). Sayfa yenilense de oturum
+  açık kalır.
+- **Demo modunda** şifreler tarayıcıda karşılaştırılır; bu gerçek bir
+  güvenlik değildir.
+- Adresler, siparişler, teklifler ve favoriler Aşama 5'e kadar iki modda da
+  tarayıcıdadır.
 
 ---
 
@@ -963,11 +976,12 @@ kartlar ilgili sayfaya gider.
   - E-posta: Değiştirilemez.
   - Yalnızca kurumsalda: Firma Ünvanı, Vergi Dairesi, Vergi No.
 - **Kaydet:** "Profiliniz güncellendi." yazar.
-- **Şifre Değiştir:** Mevcut Şifre, Yeni Şifre (en az 6 karakter), Yeni Şifre
+- **Şifre Değiştir:** Mevcut Şifre, Yeni Şifre (en az 8 karakter), Yeni Şifre
   (Tekrar).
   - Başarılıysa "Şifreniz değiştirildi." yazar ve alanlar boşalır; oturum
-    açık kalır.
-  - Hatalar: "Mevcut şifre hatalı.", "Şifreler eşleşmiyor.", "Şifre en az 6
+    açık kalır. Veritabanı modunda üyenin diğer cihazlardaki oturumları
+    kapanır.
+  - Hatalar: "Mevcut şifre hatalı.", "Şifreler eşleşmiyor.", "Şifre en az 8
     karakter olmalıdır."
 - **Hesabımı Sil:** Açıklama: hesap ve kayıtlı adresler kalıcı olarak
   silinir, işlem geri alınamaz; siparişler, teklifler, servis ve iade
@@ -976,7 +990,7 @@ kartlar ilgili sayfaya gider.
     sorulur.
   - Şifre yanlışsa "Şifre hatalı." yazar, hesap silinmez.
   - Silinince oturum kapanır, Giriş sayfası açılır ve "Hesabınız silindi."
-    yazar. Aynı e-postayla giriş "hesap bulunamadı" der; aynı e-postayla
+    yazar. Aynı e-postayla giriş "E-posta ya da şifre hatalı." der; aynı e-postayla
     yeniden üye olunabilir.
   - Sitede KVKK başvurusu (verilerini öğrenme, düzeltme, itiraz) için ayrı bir
     form yoktur; ileride düşünülecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›

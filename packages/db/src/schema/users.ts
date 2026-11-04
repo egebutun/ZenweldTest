@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, index, inet, pgTable, primaryKey, text, uniqueIndex } from "drizzle-orm/pg-core";
+import { boolean, check, index, inet, integer, pgTable, primaryKey, text, uniqueIndex } from "drizzle-orm/pg-core";
 import { oneOf, timestamps, tstz } from "./columns";
 import { products } from "./catalog";
 
@@ -29,6 +29,12 @@ export const users = pgTable(
     lastLoginAt: tstz("last_login_at"),
     /** Sifre degisince diger oturumlar kapanir */
     passwordChangedAt: tstz("password_changed_at"),
+    /** Yanlis sifre sayaci (KARARLAR K-94): son 15 dakikadaki yanlis deneme */
+    failedLoginCount: integer("failed_login_count").notNull().default(0),
+    /** Sayilan ilk yanlis denemenin ani */
+    failedLoginSince: tstz("failed_login_since"),
+    /** Bu ana kadar giris yapilamaz */
+    loginLockedUntil: tstz("login_locked_until"),
   },
   (t) => [
     uniqueIndex("users_email").on(sql`lower(${t.email})`),

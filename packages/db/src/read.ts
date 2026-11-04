@@ -425,30 +425,35 @@ export async function readSettings(db: ReadDb): Promise<SiteSettings> {
 
 /* ------------------------------ Uyeler ------------------------------ */
 
+/** Uye satiri -> sitenin uye kaydi (sifre ozetiyle; tarayiciya gonderilecekse ozet bosaltilir). */
+export function userRecord(u: typeof s.users.$inferSelect): ZenweldDatabase["users"][number] {
+  return {
+    id: u.id,
+    role: u.role as ZenweldDatabase["users"][number]["role"],
+    status: u.status as ZenweldDatabase["users"][number]["status"],
+    email: u.email,
+    passwordHash: u.passwordHash,
+    firstName: u.firstName,
+    lastName: u.lastName,
+    phone: u.phone,
+    companyName: opt(u.companyName),
+    taxOffice: opt(u.taxOffice),
+    taxNumber: opt(u.taxNumber),
+    sector: opt(u.sector),
+    city: opt(u.city),
+    createdAt: iso(u.createdAt),
+    lastLoginAt: isoOpt(u.lastLoginAt),
+    newsletter: u.newsletter,
+  };
+}
+
 export async function readUsers(db: ReadDb): Promise<Pick<ZenweldDatabase, "users" | "addresses">> {
   const [users, addresses] = await serial(
     () => db.select().from(s.users).orderBy(asc(s.users.createdAt), asc(s.users.id)),
     () => db.select().from(s.addresses).orderBy(asc(s.addresses.userId), desc(s.addresses.isDefault), asc(s.addresses.id)),
   );
   return {
-    users: users.map((u) => ({
-      id: u.id,
-      role: u.role as ZenweldDatabase["users"][number]["role"],
-      status: u.status as ZenweldDatabase["users"][number]["status"],
-      email: u.email,
-      passwordHash: u.passwordHash,
-      firstName: u.firstName,
-      lastName: u.lastName,
-      phone: u.phone,
-      companyName: opt(u.companyName),
-      taxOffice: opt(u.taxOffice),
-      taxNumber: opt(u.taxNumber),
-      sector: opt(u.sector),
-      city: opt(u.city),
-      createdAt: iso(u.createdAt),
-      lastLoginAt: isoOpt(u.lastLoginAt),
-      newsletter: u.newsletter,
-    })),
+    users: users.map(userRecord),
     addresses: addresses.map((a) => ({
       id: a.id,
       userId: a.userId,

@@ -3,7 +3,8 @@ import { expect, test } from "./yardimci";
 
 /**
  * HESABIM › PROFIL: SIFRE DEGISTIRME VE HESABI SILME
- * (docs/IS-KURALLARI.md › 16, WEBSITE-KULLANIM › Hesabım)
+ * (docs/IS-KURALLARI.md › 16, WEBSITE-KULLANIM › Hesabım; KARARLAR K-94:
+ * en az 8 karakter, giriste tek hata mesaji)
  *
  * Demo hesaplar degismesin diye test kendi uyesini olusturur.
  */
@@ -45,14 +46,14 @@ test("üye şifresini değiştirir ve hesabını siler", async ({ page, problems
   await change("ilksifre1", "yenisifre2", "baska");
   await expect(main).toContainText("Şifreler eşleşmiyor.");
   await change("ilksifre1", "kisa");
-  await expect(main).toContainText("Şifre en az 6 karakter olmalıdır.");
+  await expect(main).toContainText("Şifre en az 8 karakter olmalıdır.");
   await change("ilksifre1", "yenisifre2");
   await expect(main).toContainText("Şifreniz değiştirildi.");
 
   // Eski sifreyle girilemez, yenisiyle girilir.
   await page.goto("/cikis");
   await login(page, email, "ilksifre1");
-  await expect(main).toContainText("Şifre hatalı.");
+  await expect(main).toContainText("E-posta ya da şifre hatalı.");
   await login(page, email, "yenisifre2");
   await expect(page).toHaveURL(/\/hesabim/);
 
@@ -67,6 +68,6 @@ test("üye şifresini değiştirir ve hesabını siler", async ({ page, problems
   await expect(main).toContainText("Hesabınız silindi.");
 
   await login(page, email, "yenisifre2");
-  await expect(main).toContainText("Bu e-posta ile kayıtlı bir hesap bulunamadı.");
+  await expect(main).toContainText("E-posta ya da şifre hatalı.");
   expect(problems).toEqual([]);
 });

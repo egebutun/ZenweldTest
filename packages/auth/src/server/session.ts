@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { and, eq, gt, lt, ne } from "drizzle-orm";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
+import type { PgDatabase } from "drizzle-orm/pg-core";
 import { schema } from "@zenweld/db";
 
 /**
@@ -18,7 +19,9 @@ import { schema } from "@zenweld/db";
  *   degisince diger oturumlar deleteUserSessions ile kapatilir.
  */
 
-type Database = NodePgDatabase<typeof schema>;
+/** Baglanti ya da islem (transaction). */
+export type AuthDb = PgDatabase<NodePgQueryResultHKT, typeof schema>;
+type Database = AuthDb;
 export type SessionScope = "site" | "admin";
 
 const HOUR = 3_600_000;

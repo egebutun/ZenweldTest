@@ -195,9 +195,9 @@ export function Header() {
                         {t.account.myOrders}
                       </Link>
                       <button
-                        onClick={() => {
-                          logout();
+                        onClick={async () => {
                           setAccountOpen(false);
+                          await logout();
                           router.push("/");
                         }}
                         className="flex w-full items-center gap-2 border-t border-zw-grey-100 px-4 py-2 text-left text-sm text-zw-grey-700 hover:bg-zw-grey-50"

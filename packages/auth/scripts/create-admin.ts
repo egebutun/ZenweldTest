@@ -1,4 +1,3 @@
-import { randomBytes } from "node:crypto";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { stdin, stdout } from "node:process";
@@ -6,7 +5,7 @@ import { createInterface } from "node:readline/promises";
 import { eq, sql } from "drizzle-orm";
 import { createDb, schema } from "@zenweld/db";
 import { passwordProblem } from "../src/rules";
-import { deleteUserSessions, hashPassword } from "../src/server";
+import { deleteUserSessions, hashPassword, newUserId } from "../src/server";
 
 /**
  * npm run yonetici:olustur — DATABASE_URL'deki veritabaninda panel icin
@@ -122,7 +121,7 @@ async function main() {
     if (!firstName || !lastName || !phone) fail("Ad, soyad ve telefon zorunludur.");
     const passwordHash = await hashPassword(await askNewPassword());
     await db.insert(schema.users).values({
-      id: `u-${randomBytes(6).toString("hex")}`,
+      id: newUserId(),
       role: "admin",
       status: "active",
       email,

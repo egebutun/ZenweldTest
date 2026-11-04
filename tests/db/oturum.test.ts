@@ -3,19 +3,25 @@ import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { PoolClient } from "pg";
 import { demoHash } from "../../packages/auth/src/hash";
 import {
+  AUTH_ERRORS,
+  changePassword,
   checkPassword,
   createSession,
+  deleteAccount,
   deleteSession,
   deleteUserSessions,
   hashPassword,
+  login,
   readSession,
+  register,
+  updateProfile,
 } from "../../packages/auth/src/server";
 import * as schema from "../../packages/db/src/schema";
 import { closePool, inTransaction, user } from "./ortak";
 
 /*
- * Sifre ozeti ve oturumlar (packages/auth/src/server; KARARLAR K-94,
- * docs/VERITABANI.md › 14 › Sifre ve oturum). Her test kendi isleminde
+ * Sifre ozeti, oturumlar ve uyelik islemleri (packages/auth/src/server;
+ * KARARLAR K-94, docs/VERITABANI.md › 14 › Sifre ve oturum). Her test kendi isleminde
  * calisir ve sonunda geri alinir.
  */
 
@@ -121,6 +127,97 @@ describe("oturumlar", () => {
       // 31 gun sonra yeni giris: suresi dolan oturum silinir.
       await createSession(db, "u-uye", "site", {}, later(31 * DAY));
       expect((await client.query("SELECT count(*)::int AS n FROM sessions WHERE user_id = 'u-uye'")).rows[0].n).toBe(1);
+    });
+  });
+});
+
+describe("üyelik işlemleri (site)", () => {
+  const member = { role: "individual", email: "Yeni@Ornek.com", password: "uzun-sifre-1", firstName: "Ad", lastName: "Soyad", phone: "05550000000" };
+
+  it("kayıt: güçlü özetle, hemen aktif, oturum açık; aynı e-posta ve eksik alan reddedilir", async () => {
+    await withUsers(async (db, client) => {
+      const result = await register(db, member, {}, start);
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.user).toMatchObject({ email: "yeni@ornek.com", role: "individual", status: "active", passwordHash: "" });
+      expect((await readSession(db, result.session.token, "site", start))?.user.id).toBe(result.user.id);
+      const [row] = (await client.query("SELECT password_hash FROM users WHERE id = $1", [result.user.id])).rows;
+      expect(row.password_hash).toMatch(/^\$argon2id\$/);
+
+      expect(await register(db, { ...member, email: "YENI@ornek.com" }, {}, start)).toMatchObject({ ok: false, status: 409, error: AUTH_ERRORS.emailTaken });
+      expect(await register(db, { ...member, email: "x@y.com", password: "kisa" }, {}, start)).toMatchObject({ ok: false, error: "Şifre en az 8 karakter olmalıdır." });
+      expect(await register(db, { ...member, email: "x@y.com", phone: " " }, {}, start)).toMatchObject({ ok: false, error: AUTH_ERRORS.missingFields });
+      expect(await register(db, { ...member, email: "x@y.com", role: "business" }, {}, start)).toMatchObject({ ok: false, error: AUTH_ERRORS.missingFields });
+      expect(await register(db, { ...member, email: "x@y.com", role: "admin" }, {}, start)).toMatchObject({ ok: false, status: 400 });
+      expect(await register(db, { ...member, email: "gecersiz" }, {}, start)).toMatchObject({ ok: false, error: AUTH_ERRORS.invalidEmail });
+    });
+  });
+
+  it("giriş: hesap yoksa, yöneticiyse ya da şifre yanlışsa aynı mesaj; doğruysa oturum açılır", async () => {
+    await withUsers(async (db, client) => {
+      await client.query("UPDATE users SET password_hash = $1", [await hashPassword("dogru-sifre")]);
+      const login1 = (email: string, password: string) => login(db, { email, password }, "site", {}, start);
+      for (const attempt of [login1("yok@ornek.com", "dogru-sifre"), login1("yonetici@ornek.com", "dogru-sifre"), login1("uye@ornek.com", "yanlis")]) {
+        expect(await attempt).toEqual({ ok: false, status: 401, error: AUTH_ERRORS.invalidLogin });
+      }
+      const ok = await login1(" UYE@ornek.com ", "dogru-sifre");
+      expect(ok.ok && ok.user.id).toBe("u-uye");
+      const [row] = (await client.query("SELECT failed_login_count, last_login_at FROM users WHERE id = 'u-uye'")).rows;
+      expect(row.failed_login_count).toBe(0);
+      expect(row.last_login_at).toEqual(start);
+
+      // Panelde yonetici girer, uye giremez.
+      expect((await login(db, { email: "yonetici@ornek.com", password: "dogru-sifre" }, "admin", {}, start)).ok).toBe(true);
+      expect((await login(db, { email: "uye@ornek.com", password: "dogru-sifre" }, "admin", {}, start)).ok).toBe(false);
+
+      await client.query("UPDATE users SET status = 'suspended' WHERE id = 'u-uye'");
+      expect(await login1("uye@ornek.com", "dogru-sifre")).toEqual({ ok: false, status: 403, error: AUTH_ERRORS.suspended });
+    });
+  });
+
+  it("10 yanlış denemede 15 dakika giriş yapılamaz (doğru şifreyle de); süre dolunca girilir", async () => {
+    await withUsers(async (db, client) => {
+      await client.query("UPDATE users SET password_hash = $1 WHERE id = 'u-uye'", [await hashPassword("dogru-sifre")]);
+      const attempt = (password: string, minute: number) =>
+        login(db, { email: "uye@ornek.com", password }, "site", {}, new Date(start.getTime() + minute * 60_000));
+      for (let i = 0; i < 9; i++) expect((await attempt("yanlis", i)).ok).toBe(false);
+      expect(await attempt("yanlis", 9)).toMatchObject({ status: 429, error: AUTH_ERRORS.tooManyAttempts });
+      expect(await attempt("dogru-sifre", 10)).toMatchObject({ status: 429, error: AUTH_ERRORS.tooManyAttempts });
+      expect((await attempt("dogru-sifre", 25)).ok).toBe(true);
+    });
+  });
+
+  it("eski demo özetiyle girişte şifre güçlü özete çevrilir", async () => {
+    await withUsers(async (db, client) => {
+      await client.query("UPDATE users SET password_hash = $1 WHERE id = 'u-uye'", [demoHash("eski-sifre")]);
+      expect((await login(db, { email: "uye@ornek.com", password: "eski-sifre" }, "site", {}, start)).ok).toBe(true);
+      const [row] = (await client.query("SELECT password_hash FROM users WHERE id = 'u-uye'")).rows;
+      expect(row.password_hash).toMatch(/^\$argon2id\$/);
+      expect((await login(db, { email: "uye@ornek.com", password: "eski-sifre" }, "site", {}, start)).ok).toBe(true);
+    });
+  });
+
+  it("profil, şifre değiştirme (diğer oturumlar kapanır) ve hesap silme", async () => {
+    await withUsers(async (db, client) => {
+      await client.query("UPDATE users SET password_hash = $1 WHERE id = 'u-uye'", [await hashPassword("dogru-sifre")]);
+      const updated = await updateProfile(db, "u-uye", { firstName: " Yeni ", lastName: "Ad", phone: "0555", city: "", email: "baska@ornek.com" });
+      expect(updated.ok && updated.user).toMatchObject({ firstName: "Yeni", email: "uye@ornek.com" });
+      expect(updated.ok && updated.user.city).toBeUndefined();
+      expect(await updateProfile(db, "u-uye", { firstName: "", lastName: "Ad", phone: "0555" })).toMatchObject({ error: AUTH_ERRORS.missingFields });
+
+      const here = await createSession(db, "u-uye", "site", {}, start);
+      const other = await createSession(db, "u-uye", "site", {}, start);
+      const current = (await readSession(db, here.token, "site", start))!;
+      expect(await changePassword(db, "u-uye", current.sessionId, { current: "yanlis", next: "yeni-sifre-1" })).toMatchObject({ error: AUTH_ERRORS.wrongCurrentPassword });
+      expect(await changePassword(db, "u-uye", current.sessionId, { current: "dogru-sifre", next: "kisa" })).toMatchObject({ error: "Şifre en az 8 karakter olmalıdır." });
+      expect(await changePassword(db, "u-uye", current.sessionId, { current: "dogru-sifre", next: "yeni-sifre-1" })).toEqual({ ok: true });
+      expect(await readSession(db, other.token, "site", start)).toBeNull();
+      expect(await readSession(db, here.token, "site", start)).not.toBeNull();
+
+      expect(await deleteAccount(db, "u-uye", { password: "dogru-sifre" })).toMatchObject({ error: AUTH_ERRORS.wrongPassword });
+      expect(await deleteAccount(db, "u-uye", { password: "yeni-sifre-1" })).toEqual({ ok: true });
+      expect((await client.query("SELECT count(*)::int AS n FROM users WHERE id = 'u-uye'")).rows[0].n).toBe(0);
+      expect(await readSession(db, here.token, "site", start)).toBeNull();
     });
   });
 });

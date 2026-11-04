@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, Store, User as UserIcon } from "lucide-react";
-import { useAuth, type RegisterInput } from "@zenweld/auth";
+import { PASSWORD_MIN_LENGTH, useAuth, type RegisterInput } from "@zenweld/auth";
 import { Alert, Button, Checkbox, FormRow, Input } from "@zenweld/ui";
 import Link from "next/link";
 import { KvkkNotice, LegalLink } from "@/components/legal/LegalLink";
@@ -53,7 +53,7 @@ export default function RegisterPage() {
     },
   ];
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -85,7 +85,7 @@ export default function RegisterPage() {
         : {}),
     };
 
-    const result = register(input);
+    const result = await register(input);
     if (!result.ok) {
       setError(result.error ?? "Kayıt oluşturulamadı.");
       return;
@@ -215,11 +215,11 @@ export default function RegisterPage() {
           </FormRow>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormRow label={t.auth.password} required hint="En az 6 karakter">
+            <FormRow label={t.auth.password} required hint={t.auth.passwordHint}>
               <Input
                 type="password"
                 required
-                minLength={6}
+                minLength={PASSWORD_MIN_LENGTH}
                 value={form.password}
                 onChange={(e) => set("password", e.target.value)}
               />

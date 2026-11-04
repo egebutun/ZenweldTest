@@ -11,8 +11,10 @@ export default function LogoutPage() {
   const t = useT();
 
   useEffect(() => {
-    logout();
-    const id = setTimeout(() => router.push("/"), 1200);
+    let id: ReturnType<typeof setTimeout> | undefined;
+    void logout().then(() => {
+      id = setTimeout(() => router.push("/"), 1200);
+    });
     return () => clearTimeout(id);
   }, [logout, router]);
 

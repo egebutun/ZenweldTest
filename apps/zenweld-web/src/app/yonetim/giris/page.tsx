@@ -32,9 +32,9 @@ function LoginForm() {
     if (ready && user) router.replace(target);
   }, [ready, user, router, target]);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = login(email, password);
+    const result = await login(email, password);
     if (!result.ok) {
       setError(result.error ?? "Giriş yapılamadı.");
       return;

@@ -469,6 +469,9 @@ başarılı okumanın zamanını gösterir.
 | `created_at`, `updated_at` | timestamptz | zorunlu (`updated_at` yeni) | |
 | `last_login_at` | timestamptz | | |
 | `password_changed_at` | timestamptz | (yeni) | Son şifre değişikliği. Şifre değişince üyenin diğer oturumları silinir |
+| `failed_login_count` | int | zorunlu; varsayılan 0 (yeni) | Yanlış şifre sayacı (KARARLAR K-94) |
+| `failed_login_since` | timestamptz | (yeni) | Sayılan ilk yanlış denemenin anı; 15 dakikalık pencere buradan başlar |
+| `login_locked_until` | timestamptz | (yeni) | Bu ana kadar giriş yapılamaz (10 yanlış denemeden sonra 15 dakika) |
 
 Silme: adresleri, oturumları ve favorileri silinir; sipariş, teklif, servis,
 iade, garanti ve yorumlardaki bağ boşalır. Son aktif yönetici silinemez.
@@ -1170,6 +1173,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `migrations/0002_kaldirilanlar.sql`, `0003_stok-kargo-kupon-formlar.sql` | 2026-11-02 eklemeleri: `form_submissions` ve siparişteki kargo kolonları kaldırıldı; SAP depo stoğu, kargo, kupon ve form tabloları eklendi. Kaldırma ve ekleme ayrı betiktedir (betik üretici, aynı betikte "ad mı değişti" diye sorar) |
 | `migrations/0004_kupon-satir-payi.sql` | Sipariş satırına kupon payı (`order_items.coupon_discount`) |
 | `migrations/0005_kisiye-ozel-kupon.sql` | Kişiye özel kupon: `coupons.audience` ve `coupon_customers` |
+| `migrations/0006_giris-deneme-siniri.sql` | Yanlış şifre sınırı: `users.failed_login_count`, `failed_login_since`, `login_locked_until` (K-94) |
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
 | `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
@@ -1342,6 +1346,16 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
 - **Kapatma:** Çıkışta oturum silinir; şifre değişince üyenin diğer
   oturumları silinir; yeni girişte üyenin süresi dolmuş oturumları
   temizlenir.
+- **Site üyeliği (Aşama 4.2):** Veritabanı modunda sitenin kayıt, giriş,
+  çıkış, profil, şifre değiştirme ve hesap silme işlemleri
+  `apps/zenweld-web/src/app/api/uyelik/[islem]/route.ts` ucundan,
+  `packages/auth/src/server/accounts.ts` kurallarıyla yapılır; tarayıcı
+  tarafı `AuthProvider`'ın sunucu modudur. Oturum çerezi `zw_oturum`:
+  HttpOnly, SameSite=Lax, gerçek alan adında Secure; sayfa her açılışta
+  `/api/uyelik/ben` ile üyeyi okur. Başka siteden gelen istek (Origin
+  farklı) reddedilir. Girişte üye satırı kilitlenir: aynı anda gelen yanlış
+  denemeler de doğru sayılır (`failed_login_*`, `login_locked_until`).
+  Tarayıcıya giden üye kaydında şifre özeti boştur.
 - **`npm run yonetici:olustur`:** `DATABASE_URL`'deki veritabanında e-posta,
   ad, soyad, telefon ve şifre (ekrana yazılmaz, iki kez) sorup yönetici
   hesabı açar. Canlıya hiç hesap yüklenmediği için (K-91) ilk yönetici
@@ -1349,8 +1363,12 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   oturumlarını kapatır; bir üyeye aitse hesap açmaz. Terminal dışından
   çalışmaz.
 - Test: `tests/db/oturum.test.ts` (özet, eski özetin çevrilmesi, oturumun
-  türü ve rolü, süreler, askı, çıkış ve diğer oturumların kapanması);
-  `tests/unit/uyelik.test.ts` (şifre kuralı).
+  türü ve rolü, süreler, askı, çıkış ve diğer oturumların kapanması; kayıt,
+  giriş, deneme sınırı, profil, şifre değiştirme, hesap silme);
+  `tests/unit/uyelik.test.ts` (şifre kuralı, deneme sınırı);
+  `tests/e2e-db/uyelik.spec.ts` (tarayıcıda: kayıt, çerez, çıkış, giriş,
+  tek mesaj, deneme sınırı, diğer cihazın oturumu, profil, hesap silme,
+  eski özetin çevrilmesi, başka siteden istek).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

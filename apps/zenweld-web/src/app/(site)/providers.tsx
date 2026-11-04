@@ -16,12 +16,13 @@ const SITE_ROLES: UserRole[] = ["individual", "business"];
 
 /**
  * data: veri kaynagi veritabaniysa sunucuda okunan katalog (KARARLAR
- * K-88); demo modunda null, site tarayicidaki veriyle calisir.
+ * K-88); demo modunda null, site tarayicidaki veriyle calisir. Veritabani
+ * modunda uyelik de sunucudadir (Asama 4.2).
  */
 export function Providers({ data, children }: { data: ServerData | null; children: ReactNode }) {
   return (
     <ServerDataProvider data={data}>
-      <AuthProvider roles={SITE_ROLES}>
+      <AuthProvider roles={SITE_ROLES} server={data !== null}>
         <CartProvider>
           <FavouritesProvider>
             <QuoteListProvider>{children}</QuoteListProvider>

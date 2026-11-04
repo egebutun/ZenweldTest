@@ -34,10 +34,10 @@ function LoginInner() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const result = login(email, password);
+    const result = await login(email, password);
     setBusy(false);
     if (!result.ok) {
       setError(result.error ?? "Giriş yapılamadı.");

@@ -83,8 +83,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 - Alanlar: E-posta, Şifre. Düğme: **Giriş Yap**.
 - Altta "Bu sayfa yalnızca Zenweld çalışanları içindir." yazar.
 - Hata mesajları sitedeki girişle aynıdır:
-  - "Bu e-posta ile kayıtlı bir hesap bulunamadı."
-  - "Şifre hatalı."
+  - "E-posta ya da şifre hatalı." (hesap yoksa, yönetici değilse ya da şifre
+    yanlışsa aynı mesaj; KARARLAR K-94)
   - "Hesabınız askıya alınmış. Lütfen bizimle iletişime geçin."
 
 **Üst çubuk:**

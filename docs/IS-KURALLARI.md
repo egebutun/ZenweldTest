@@ -661,19 +661,31 @@ Kod: `packages/store/src/repo/reviews.ts`.
   - Bireysel ve kurumsal üye sitede aynı işlemleri yapar; kurumsal üyede
     kayıtta firma bilgisi istenir, ödemede fatura türü kurumsal gelir, Teklif
     Al'da firma ünvanı zorunludur.
-  - Yönetici yalnızca panele girer; sitede giriş yapamaz ("hesap bulunamadı"
-    denir, yönetici e-postaları ele verilmez).
+  - Yönetici yalnızca panele girer; sitede giriş yapamaz (yanlış şifreyle
+    aynı mesaj, yönetici e-postaları ele verilmez).
   - Bayiler sitenin üyesi değildir (karar, [KARARLAR.md](KARARLAR.md)).
-- **Kayıt:** E-posta benzersizdir (büyük/küçük harf duyarsız), şifre en az 6
-  karakter. Yeni üye **hemen aktiftir**; panelden onay gerekmez (karar).
+- **Kayıt:** E-posta benzersizdir (büyük/küçük harf duyarsız), şifre en az 8
+  karakter (KARARLAR K-94; var olan şifreler etkilenmez). Yeni üye **hemen
+  aktiftir**; panelden onay gerekmez (karar).
+- **Giriş (K-94):** Hesap yoksa, bu bölüme ait değilse ya da şifre yanlışsa
+  tek mesaj: "E-posta ya da şifre hatalı." Veritabanı modunda bir hesaba 15
+  dakikada 10 yanlış şifre girilirse o hesaba 15 dakika giriş yapılamaz
+  (doğru şifreyle de): "Çok fazla deneme yapıldı. 15 dakika sonra tekrar
+  deneyin." 15 dakikalık pencere ilk yanlış denemeyle başlar; doğru girişte
+  sayaç sıfırlanır.
+  - **Örnek:** 09:00–09:09 arası 9 yanlış, 09:10'da 10. yanlış → 09:25'e
+    kadar giriş yok. 09:00–09:08 arası 9 yanlış, 09:15'te yanlış → sayaç
+    baştan (1).
 - **Oturumlar:** Site ve panelin oturumu ayrıdır; birinden çıkmak diğerini
-  etkilemez.
+  etkilemez. Veritabanı modunda site oturumu 30 gün sürer ve kullanıldıkça
+  uzar (K-94).
 - **Askıya alma:** Askıdaki üye giriş yapamaz ("Hesabınız askıya alınmış.
   Lütfen bizimle iletişime geçin."); açık oturumu hemen kapanır.
 - **Son yönetici:** Son aktif yöneticinin rolü düşürülemez, askıya alınamaz
   ve silinemez. Yönetici kendi rolünü değiştiremez ve kendini askıya alamaz.
 - **Şifre değiştirme (Hesabım › Profil):** Mevcut şifre doğru olmalı; yeni
-  şifre en az 6 karakter ve tekrarıyla aynı olmalı. Oturum açık kalır.
+  şifre en az 8 karakter ve tekrarıyla aynı olmalı. Oturum açık kalır;
+  veritabanı modunda üyenin diğer oturumları kapanır.
 - **Üye silinince:** Kayıtlı adresleri de silinir; siparişleri, teklifleri,
   servis talepleri, iade talepleri, garanti kayıtları ve yorumları kalır.
   - Yönetici panelden siler ya da üye kendi hesabını Hesabım › Profil ›
@@ -684,15 +696,12 @@ Kod: `packages/store/src/repo/reviews.ts`.
   ve yorum için üyelik gerekmez.
 - **Adres:** Üyenin ilk adresi varsayılandır; varsayılan silinince kalan ilk
   adres varsayılan olur.
-- **Demo notu:** Şifreler tarayıcıda basit bir özetle karşılaştırılır; gerçek
-  sistemde kimlik doğrulama ve şifre özeti sunucuda olmalı.
-- **Sunucuya geçiş (Aşama 4, KARARLAR K-94):** Sunucuda şifre güçlü özetle
-  (argon2id) saklanır; oturum sitede 30 gün (kullanıldıkça uzar), panelde
-  girişten 8 saat sürer; şifre değişince üyenin diğer oturumları kapanır.
-  Kayıt, giriş ve şifre ekranları 4.2'de şu kurallara geçecek: yeni şifre
-  en az 8 karakter; giriş hatasında tek mesaj "E-posta ya da şifre
-  hatalı."; bir hesaba 15 dakikada 10 yanlış denemeden sonra 15 dakika
-  giriş yapılamaz. Bugün sitede hâlâ yukarıdaki demo kuralları geçerlidir.
+- **Nerede çalışır:** Veritabanı modunda sitenin üyeliği sunucudadır (Aşama
+  4.2): şifre güçlü özetle (argon2id) saklanır, oturum sunucuda tutulur.
+  Panelin girişi Aşama 4.3'e kadar tarayıcıdadır; panelde oturum girişten 8
+  saat sürecek (K-94).
+- **Demo notu:** Demo modunda şifreler tarayıcıda basit bir özetle
+  karşılaştırılır; deneme sınırı yoktur.
 
 Kod: `packages/auth/src/auth-context.tsx`, `packages/store/src/repo/users.ts`;
 sunucu: `packages/auth/src/rules.ts`, `packages/auth/src/server/`.

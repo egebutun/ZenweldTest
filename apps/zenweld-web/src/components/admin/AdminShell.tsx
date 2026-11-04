@@ -254,9 +254,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             </span>
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 leaving.current = true;
-                logout();
+                await logout();
                 router.replace("/yonetim/giris");
               }}
               className="flex items-center gap-1.5 rounded-[4px] bg-white/10 px-3 py-1.5 font-semibold hover:bg-white/20"
