@@ -5,6 +5,7 @@ import "@fontsource/barlow-condensed/600.css";
 import "@fontsource/barlow-condensed/700.css";
 import "../globals.css";
 
+import { usesDatabase } from "@/lib/server/db";
 import { Providers } from "./providers";
 
 /**
@@ -26,7 +27,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="tr">
       <body className="min-h-screen bg-zw-grey-50 text-zw-ink antialiased">
-        <Providers>{children}</Providers>
+        {/* Veritabani modunda panel girisi sunucuda (Asama 4.3). */}
+        <Providers sessionApi={usesDatabase() ? "/api/yonetim/oturum" : undefined}>{children}</Providers>
       </body>
     </html>
   );

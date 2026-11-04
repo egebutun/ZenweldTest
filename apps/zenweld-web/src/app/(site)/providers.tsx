@@ -22,7 +22,7 @@ const SITE_ROLES: UserRole[] = ["individual", "business"];
 export function Providers({ data, children }: { data: ServerData | null; children: ReactNode }) {
   return (
     <ServerDataProvider data={data}>
-      <AuthProvider roles={SITE_ROLES} server={data !== null}>
+      <AuthProvider roles={SITE_ROLES} api={data !== null ? "/api/uyelik" : undefined}>
         <CartProvider>
           <FavouritesProvider>
             <QuoteListProvider>{children}</QuoteListProvider>

@@ -77,6 +77,19 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
   başlayan adreslere dönülür.
 - Zaten giriş yapılmışsa giriş ekranı doğrudan panele geçer.
 - Yöneticinin hesabı askıya alınırsa açık oturumu hemen kapanır.
+- **Veritabanı modunda** (`DATA_SOURCE=database`, Aşama 4.3):
+  - Giriş sunucuda yapılır. Oturum yalnızca sunucunun okuyabildiği bir
+    çerezde durur ve girişten **8 saat** sonra biter; uzamaz (KARARLAR
+    K-94).
+  - Geçerli yönetici oturumu yoksa panel sayfaları sunucuda gönderilmez;
+    giriş ekranına yönlendirilir.
+  - Bir hesaba 15 dakikada 10 yanlış şifre girilirse o hesaba 15 dakika
+    giriş yapılamaz: "Çok fazla deneme yapıldı. 15 dakika sonra tekrar
+    deneyin."
+  - İlk yönetici hesabı `npm run yonetici:olustur` ile açılır (README).
+  - Panelde yapılan işlemler (ürün, sipariş, üye…) Aşama 5'e kadar
+    tarayıcıda kalır; Üyeler listesi veritabanındaki üyeleri henüz
+    göstermez.
 
 **Giriş ekranı:**
 

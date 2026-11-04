@@ -44,7 +44,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 4 — Üyelik ve oturum sunucuda** (KARARLAR K-94): 4.1 şifre özeti (argon2id), oturumlar ve `npm run yonetici:olustur` (bitti); 4.2 site üyeliği sunucuda: kayıt, giriş, çıkış, profil, şifre değiştirme, hesap silme; tek giriş hata mesajı, deneme sınırı, en az 8 karakter (bitti); 4.3 panel girişi ve `/yonetim`'in sunucuda korunması; 4.4 şifre sıfırlama (e-posta Resend kurulunca gider); 4.5 tarayıcı testleri | — |
+| 1 | **Aşama 4 — Üyelik ve oturum sunucuda** (KARARLAR K-94): 4.1 şifre özeti (argon2id), oturumlar ve `npm run yonetici:olustur` (bitti); 4.2 site üyeliği sunucuda: kayıt, giriş, çıkış, profil, şifre değiştirme, hesap silme; tek giriş hata mesajı, deneme sınırı, en az 8 karakter (bitti); 4.3 panel girişi ve `/yonetim`'in sunucuda korunması (bitti); 4.4 şifre sıfırlama (e-posta Resend kurulunca gider); 4.5 tarayıcı testleri | — |
 | 2 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | Aşama 4 |
 | 3 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 4 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
@@ -762,9 +762,10 @@ hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
    basit bir özetle karşılaştırılıyor (`packages/auth/src/hash.ts`) ve
    oturum tarayıcıda tutuluyor. Veritabanı modunda site üyeliği sunucuda
    (Aşama 4.1–4.2): şifre argon2id ile özetlenir, oturum veritabanında
-   (`sessions`) ve yalnızca sunucunun okuyabildiği çerezde tutulur. Kalan:
-   panelin (4.3) bağlanması; panel işlemleri sunucuda yönetici rolüyle
-   korunmalı. Ara dönem: Panel › Üyeler listesi tarayıcıdaki örnek üyeleri
+   (`sessions`) ve yalnızca sunucunun okuyabildiği çerezde tutulur. Panel
+   girişi de sunucuda (4.3) ve panel sayfaları yönetici oturumu olmadan
+   gönderilmiyor. Kalan: panel işlemleri (Aşama 5) sunucuda yönetici
+   rolüyle korunmalı. Ara dönem: Panel › Üyeler listesi tarayıcıdaki örnek üyeleri
    gösterir; veritabanındaki üyeler Aşama 5'te panele gelir. `npm run db:seed` örnek hesapları eski demo özetiyle yazar;
    ilk girişte güçlü özete çevrilir.
 2. **Şifre sıfırlama:** "Şifremi unuttum" bugün yalnızca mesaj gösteriyor,

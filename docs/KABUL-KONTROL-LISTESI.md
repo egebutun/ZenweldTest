@@ -430,6 +430,13 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       tarayıcıda aynı üyeyle girilip birinde şifre değiştirilince diğerinde
       Hesabım "Giriş Yap" kutusunu gösterir. Demo üyesinin (`bireysel@demo.com`)
       eski şifresi ilk girişte güçlü özete çevrilir.
+- [ ] Veritabanı modunda panel (Aşama 4.3): oturumsuz `/yonetim/urunler`
+      giriş ekranına (`?next=%2Fyonetim%2Furunler`) gider; yönetici girişinden
+      sonra Ürünler açılır. `zw_panel` çerezi HttpOnly'dir; `sessions`'ta
+      `admin` satırının bitişi girişten 8 saat sonradır. Sitede giriş yapmış
+      üye `/yonetim`'i açınca giriş ekranını görür; üyenin bilgileriyle
+      panele girilmez. Çıkış ya da yöneticinin askıya alınması oturumu
+      kapatır.
 
 ---
 

@@ -410,8 +410,11 @@ npm run start --workspace apps/zenweld-web
     değiştirme ve hesap silme veritabanından yapılır; oturum güvenli bir
     çerezde durur. Demo hesaplarıyla (`db:seed`) girilir; ilk girişte
     şifreleri güçlü özete çevrilir. Siparişler, teklifler, adresler,
-    favoriler ve formlar bu aşamada tarayıcıda kalır. Panel girişi Aşama
-    4.3'e kadar tarayıcıdadır.
+    favoriler ve formlar bu aşamada tarayıcıda kalır.
+  - **Panel girişi sunucuda (Aşama 4.3):** `/yonetim` yönetici oturumu
+    olmadan açılmaz; oturum 8 saat sürer. Bilgisayarda `db:seed`'in demo
+    yöneticisiyle, canlıda `npm run yonetici:olustur` ile açılan hesapla
+    girilir.
     Panelde bu modda okunan verilerde (ürün, kategori, seçenek, mağaza
     ayarı, bayi, stok, yorum, içerik) yapılan değişiklikler siteye yansımaz
     (panel henüz veritabanına yazmıyor); değişiklik `db:studio`'dan yapılır.
@@ -467,8 +470,8 @@ npm run start --workspace apps/zenweld-web
 - **Yönetici hesabı (veritabanında):** Canlıya hiç hesap yüklenmediği için
   ilk yönetici `npm run yonetici:olustur` ile açılır: e-posta, ad, soyad,
   telefon ve şifre sorar (şifre ekranda görünmez, en az 8 karakter). Aynı
-  komut var olan yöneticinin şifresini değiştirir. Panel girişi
-  veritabanına Aşama 4.3'te bağlanır.
+  komut var olan yöneticinin şifresini değiştirir. Veritabanı modunda panel
+  bu hesaplarla açılır.
 - Geçiş betikleri `packages/db/migrations/`'dadır ve sırayla, bir kez
   çalışır; aynı betikler sunucuda da çalıştırılır. Çalışmış bir betik
   değiştirilmez; şema değişince `npm run db:generate` yeni betik üretir.

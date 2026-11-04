@@ -698,8 +698,9 @@ Kod: `packages/store/src/repo/reviews.ts`.
   adres varsayılan olur.
 - **Nerede çalışır:** Veritabanı modunda sitenin üyeliği sunucudadır (Aşama
   4.2): şifre güçlü özetle (argon2id) saklanır, oturum sunucuda tutulur.
-  Panelin girişi Aşama 4.3'e kadar tarayıcıdadır; panelde oturum girişten 8
-  saat sürecek (K-94).
+  Panelin girişi de sunucudadır (Aşama 4.3): panel oturumu girişten 8 saat
+  sonra biter, uzamaz (K-94); geçerli yönetici oturumu olmadan panel
+  sayfaları gönderilmez.
 - **Demo notu:** Demo modunda şifreler tarayıcıda basit bir özetle
   karşılaştırılır; deneme sınırı yoktur.
 

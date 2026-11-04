@@ -101,8 +101,10 @@ ilgili belge **aynı commit'te** güncellenir:
 - Ekran görüntülerindeki gerçek üye işyeri (mağaza) numaraları kullanılmaz.
 - Demo hesapların giriş bilgileri ve test kartı **yalnızca README'de** yazar;
   başka dosyaya eklenmez.
-- Panel ve üyelik girişi gerçek güvenlik sağlamaz. Canlıya çıkmadan
-  `docs/YAPILACAKLAR.md`'deki backend maddeleri yapılmalıdır.
+- Demo modunda panel ve üyelik girişi gerçek güvenlik sağlamaz. Veritabanı
+  modunda giriş ve oturum sunucudadır (Aşama 4), ama panel işlemleri Aşama
+  5'e kadar tarayıcıdadır. Canlıya çıkmadan `docs/YAPILACAKLAR.md`'deki
+  backend maddeleri yapılmalıdır.
 
 ## Git
 

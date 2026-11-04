@@ -12,8 +12,9 @@ import { Alert, Button, FormRow, Input, ZenweldLogo } from "@zenweld/ui";
  * Ana sitenin musteri girisinden tamamen ayri. Yalnizca yonetici
  * hesaplari kabul edilir; ana sitede bu hesaplarla giris yapilamaz.
  *
- * !! DEMO !! Kimlik dogrulama tarayicida yapiliyor; gercek guvenlik
- * degildir. Canliya cikmadan once sunucu tarafi giris sarttir.
+ * Veritabani modunda giris sunucuda yapilir (Asama 4.3; oturum 8 saat,
+ * yanlis sifre siniri). Demo modunda kimlik dogrulama tarayicidadir; gercek
+ * guvenlik degildir.
  */
 function LoginForm() {
   const { user, ready, login } = useAuth();

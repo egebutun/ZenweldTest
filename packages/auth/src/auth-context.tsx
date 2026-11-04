@@ -66,9 +66,10 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 /**
  * OTURUM SAGLAYICI
  *
- * server: uyelik sunucuda (veritabani modu, Asama 4.2): islemler
- * /api/uyelik uclarina gider, oturum yalnizca sunucunun okuyabildigi
- * cerezdedir. Yoksa demo: uyeler ve oturum tarayicidadir.
+ * api: uyelik sunucuda (veritabani modu, Asama 4.2–4.3): islemler bu
+ * adresteki uclara gider (site /api/uyelik, panel /api/yonetim/oturum),
+ * oturum yalnizca sunucunun okuyabildigi cerezdedir. Yoksa demo: uyeler ve
+ * oturum tarayicidadir.
  *
  * Demo modunda ana site ile yonetim paneli ayni tarayici deposunu paylasir,
  * ama oturumlari AYRIDIR:
@@ -86,16 +87,17 @@ export function AuthProvider({
   children,
   sessionKey = SESSION_KEY,
   roles,
-  server = false,
+  api,
 }: {
   children: ReactNode;
   sessionKey?: string;
   /** Bos birakilirsa tum roller giris yapabilir (yalnizca demo modu). */
   roles?: UserRole[];
-  server?: boolean;
+  /** Sunucudaki uyelik uclarinin adresi; verilmezse demo modu. */
+  api?: string;
 }) {
-  return server ? (
-    <ServerAuth>{children}</ServerAuth>
+  return api ? (
+    <ServerAuth api={api}>{children}</ServerAuth>
   ) : (
     <BrowserAuth sessionKey={sessionKey} roles={roles}>
       {children}
@@ -113,9 +115,9 @@ interface ApiAnswer {
   error?: string;
 }
 
-async function call(action: string, body?: unknown): Promise<ApiAnswer> {
+async function call(api: string, action: string, body?: unknown): Promise<ApiAnswer> {
   try {
-    const response = await fetch(`/api/uyelik/${action}`, {
+    const response = await fetch(`${api}/${action}`, {
       method: body === undefined ? "GET" : "POST",
       headers: body === undefined ? undefined : { "content-type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
@@ -128,13 +130,13 @@ async function call(action: string, body?: unknown): Promise<ApiAnswer> {
   }
 }
 
-function ServerAuth({ children }: { children: ReactNode }) {
+function ServerAuth({ children, api }: { children: ReactNode; api: string }) {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let active = true;
-    void call("ben").then((answer) => {
+    void call(api, "ben").then((answer) => {
       if (!active) return;
       setUser(answer.ok ? (answer.user ?? null) : null);
       setReady(true);
@@ -142,14 +144,17 @@ function ServerAuth({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [api]);
 
-  const signIn = useCallback(async (action: string, body: unknown): Promise<AuthResult> => {
-    const answer = await call(action, body);
-    if (!answer.ok || !answer.user) return { ok: false, error: answer.error ?? AUTH_ERRORS.failed };
-    setUser(answer.user);
-    return { ok: true, user: answer.user };
-  }, []);
+  const signIn = useCallback(
+    async (action: string, body: unknown): Promise<AuthResult> => {
+      const answer = await call(api, action, body);
+      if (!answer.ok || !answer.user) return { ok: false, error: answer.error ?? AUTH_ERRORS.failed };
+      setUser(answer.user);
+      return { ok: true, user: answer.user };
+    },
+    [api],
+  );
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -159,21 +164,21 @@ function ServerAuth({ children }: { children: ReactNode }) {
       register: (input) => signIn("kayit", input),
       updateProfile: (patch) => signIn("profil", patch),
       logout: async () => {
-        await call("cikis", {});
+        await call(api, "cikis", {});
         setUser(null);
       },
       changePassword: async (current, next) => {
-        const answer = await call("sifre", { current, next });
+        const answer = await call(api, "sifre", { current, next });
         return answer.ok ? { ok: true } : { ok: false, error: answer.error };
       },
       deleteAccount: async (password) => {
-        const answer = await call("hesap-sil", { password });
+        const answer = await call(api, "hesap-sil", { password });
         if (!answer.ok) return { ok: false, error: answer.error };
         setUser(null);
         return { ok: true };
       },
     }),
-    [user, ready, signIn],
+    [api, user, ready, signIn],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

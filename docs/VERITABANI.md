@@ -488,9 +488,8 @@ iade, garanti ve yorumlardaki bağ boşalır. Son aktif yönetici silinemez.
 
 ### `sessions` — oturumlar (yeni)
 
-Bugün sitede oturum tarayıcıda tutuluyor; sunucudaki oturum kodu hazır
-(Aşama 4.1; [14](#14-kod-betikler-ve-komutlar) › Şifre ve oturum), site ve
-panel 4.2–4.3'te bağlanır.
+Demo modunda oturum tarayıcıda; veritabanı modunda site ve panel oturumu
+burada ([14](#14-kod-betikler-ve-komutlar) › Şifre ve oturum).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -1356,6 +1355,13 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   farklı) reddedilir. Girişte üye satırı kilitlenir: aynı anda gelen yanlış
   denemeler de doğru sayılır (`failed_login_*`, `login_locked_until`).
   Tarayıcıya giden üye kaydında şifre özeti boştur.
+- **Panel girişi (Aşama 4.3):** Veritabanı modunda panelin girişi ve çıkışı
+  `apps/zenweld-web/src/app/api/yonetim/oturum/[islem]/route.ts` ucundan
+  (`ben`, `giris`, `cikis`); oturum çerezi `zw_panel` (sitenin çerezinden
+  ayrı). Panel düzeni (`app/yonetim/(panel)/layout.tsx`) her istekte
+  oturumu sunucuda okur; geçerli yönetici oturumu yoksa sayfa gönderilmez,
+  giriş ekranına yönlendirilir. Çerez ve istek denetimi iki uçta ortak:
+  `lib/server/session-cookie.ts`.
 - **`npm run yonetici:olustur`:** `DATABASE_URL`'deki veritabanında e-posta,
   ad, soyad, telefon ve şifre (ekrana yazılmaz, iki kez) sorup yönetici
   hesabı açar. Canlıya hiç hesap yüklenmediği için (K-91) ilk yönetici
@@ -1368,7 +1374,9 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   `tests/unit/uyelik.test.ts` (şifre kuralı, deneme sınırı);
   `tests/e2e-db/uyelik.spec.ts` (tarayıcıda: kayıt, çerez, çıkış, giriş,
   tek mesaj, deneme sınırı, diğer cihazın oturumu, profil, hesap silme,
-  eski özetin çevrilmesi, başka siteden istek).
+  eski özetin çevrilmesi, başka siteden istek); `tests/e2e-db/panel.spec.ts`
+  (oturumsuz panelin gönderilmemesi, 8 saatlik oturum, üyenin panele
+  girememesi, çıkış, askı, süre dolması, deneme sınırı).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
