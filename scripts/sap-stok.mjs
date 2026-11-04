@@ -2,11 +2,12 @@ import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 /**
- * npm run sap:stok
+ * npm run sap:stok [zorla]
  *
  * SAP depo stogunu beklemeden bir kez okutur (zamanlanmis isin yaptigini
  * elle yapar): sitenin /api/sap/stok ucunu cagirir. Site veritabani
- * modunda calisiyor olmali.
+ * modunda calisiyor olmali. "zorla": yarim okuma korumasina takilan
+ * okumayi uygular (KARARLAR K-93; okumanin dogru oldugundan eminseniz).
  *
  * Ayarlar apps/zenweld-web/.env.local'dan okunur: CRON_SECRET (sitenin
  * calistigi sunucudakiyle ayni) ve SITE_URL (bossa NEXT_PUBLIC_SITE_URL,
@@ -22,8 +23,18 @@ if (!secret) {
   process.exit(1);
 }
 
+const args = process.argv.slice(2);
+if (args.some((a) => a !== "zorla")) {
+  console.error("Kullanım: npm run sap:stok [zorla]");
+  process.exit(1);
+}
+
 try {
-  const response = await fetch(`${site}/api/sap/stok`, { method: "POST", headers: { authorization: `Bearer ${secret}` } });
+  const response = await fetch(`${site}/api/sap/stok`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${secret}`, "content-type": "application/json" },
+    body: JSON.stringify(args.includes("zorla") ? { zorla: true } : {}),
+  });
   const result = await response.json().catch(() => ({}));
   if (!response.ok) {
     const reasons = {

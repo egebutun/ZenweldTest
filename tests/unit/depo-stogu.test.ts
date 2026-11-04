@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   diffWarehouseStock,
   isInWarehouse,
+  looksLikePartialSapRead,
   productSapCodes,
   readSapStock,
   sapItemCode,
@@ -101,5 +102,17 @@ describe("SAP okuması (IS-KURALLARI › 20 › SAP okuması)", () => {
     ];
     expect(diffWarehouseStock(before, after)).toEqual({ added: ["D"], removed: ["C"], changed: ["B"] });
     expect(diffWarehouseStock(after, after)).toEqual({ added: [], removed: [], changed: [] });
+  });
+
+  it("yarım okuma: önceki okumada en az 10 kalem stoktayken stoktaki kalem yarının altına düşerse (K-93)", () => {
+    const rows = (inStock: number, out = 0) => [
+      ...Array.from({ length: inStock }, () => ({ quantity: 3 })),
+      ...Array.from({ length: out }, () => ({ quantity: 0 })),
+    ];
+    expect(looksLikePartialSapRead(rows(20), rows(9, 11))).toEqual({ before: 20, after: 9 });
+    expect(looksLikePartialSapRead(rows(20), rows(10))).toBeNull();
+    // Az kalemli stokta (ilk okuma, deneme) koruma calismaz.
+    expect(looksLikePartialSapRead(rows(9), rows(1))).toBeNull();
+    expect(looksLikePartialSapRead([], rows(50))).toBeNull();
   });
 });

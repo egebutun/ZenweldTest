@@ -541,7 +541,7 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
    oranları, IBAN'lar (Mağaza Ayarları'ndaki değerler örnektir).
 7. **Ödeme kuruluşu bağlanmalı** (iyzico, PayTR ya da bankanın sanal POS'u);
    POS anahtarları yalnızca sunucuda tutulur.
-8. **E-posta servisi tanımlanmalı:** Vercel'de `RESEND_API_KEY` ve
+8. **E-posta servisi tanımlanmalı:** sunucuda `RESEND_API_KEY` ve
    `SUPPORT_FROM` (bkz. *Form e-postaları*).
 
 Tam liste ve backend notları: [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md).
@@ -577,9 +577,9 @@ Sitede aşağıdakiler hazırdır:
 
 ### Site adresi
 
-Adres sırasıyla `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik değişkeni →
-`localhost` olarak çözülür. Vercel'de alan adını projeye bağlamanız yeterlidir;
-başka bir sunucuda `NEXT_PUBLIC_SITE_URL` tanımlanır. Bu adres aynı zamanda
+Adres sırasıyla `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik değişkeni (yalnızca
+demo) → `localhost` olarak çözülür. Canlı site kendi sunucumuzda çalışır
+(KARARLAR K-92); orada `NEXT_PUBLIC_SITE_URL` tanımlanır. Bu adres aynı zamanda
 sitenin aramaya açılıp açılmayacağını belirler (aşağıya bakın).
 
 ### Form e-postaları
@@ -587,7 +587,7 @@ sitenin aramaya açılıp açılmayacağını belirler (aşağıya bakın).
 Sitedeki formlar (iletişim, bayilik, teklif, servis, garanti, yorum, üyelik,
 sipariş, iade talebi, Welders Club, ürün destek sorusu) **info@zenweld.com**'a Resend
 üzerinden e-posta gönderir (`apps/zenweld-web/src/lib/server/mail.ts`,
-`app/api/bildirim`). Vercel'de tanımlanacak değişkenler:
+`app/api/bildirim`). Sunucuda tanımlanacak değişkenler:
 
 | Değişken | Açıklama |
 |---|---|

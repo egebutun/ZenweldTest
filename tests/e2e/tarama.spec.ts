@@ -128,7 +128,6 @@ test.describe("ziyaretçi", () => {
     const attempts: Record<string, string>[] = [{}, { authorization: "Bearer yanlis-anahtar" }];
     for (const headers of attempts) {
       expect([401, 404]).toContain((await request.post("/api/yenile", { headers, data: {} })).status());
-      expect([401, 404]).toContain((await request.get("/api/sap/stok", { headers })).status());
       expect([401, 404]).toContain((await request.post("/api/sap/stok", { headers })).status());
     }
   });

@@ -109,3 +109,18 @@ export function diffWarehouseStock(
     changed: next.filter((r) => before.has(r.sapItemCode) && before.get(r.sapItemCode) !== r.quantity).map((r) => r.sapItemCode),
   };
 }
+
+/**
+ * Yarim okuma korumasi (KARARLAR K-93): onceki okumada en az 10 kalem
+ * stoktayken yeni okumada stoktaki kalem sayisi bunun yarisinin altina
+ * duserse okuma yarim (ya da hatali) sayilir ve uygulanmaz. Dogruysa elle
+ * zorla uygulanir. Bayi dosyalarindaki looksTruncated'in SAP karsiligi.
+ */
+export function looksLikePartialSapRead(
+  current: readonly Pick<WarehouseStockRow, "quantity">[],
+  next: readonly Pick<WarehouseStockRow, "quantity">[],
+): { before: number; after: number } | null {
+  const before = current.filter((r) => r.quantity > 0).length;
+  const after = next.filter((r) => r.quantity > 0).length;
+  return before >= 10 && after < before / 2 ? { before, after } : null;
+}

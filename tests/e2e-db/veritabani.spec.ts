@@ -97,7 +97,10 @@ test("sayfada görünen fiyat ve stok; depo stoğu 0 olunca STOKTA YOK", async (
   }
 });
 
-test("SAP stok okuması: stok 0 gelince sayfa hemen STOKTA YOK; hatalı okumada son stok kalır", async ({ page, request }) => {
+test("SAP stok okuması: stok 0 gelince sayfa hemen STOKTA YOK; hatalı ya da yarım okumada son stok kalır", async ({
+  page,
+  request,
+}) => {
   const { product } = await plainProductInStock();
   const code = sapItemCode(product.sku);
   const before = await sql<{ code: string; name: string | null; quantity: number }>(
@@ -107,7 +110,7 @@ test("SAP stok okuması: stok 0 gelince sayfa hemen STOKTA YOK; hatalı okumada 
     (await sql<{ status: string; error: string | null }>("SELECT status, error FROM sap_sync_runs ORDER BY id DESC LIMIT 1"))[0];
   try {
     // Anahtarsiz okuma yapilamaz.
-    expect((await request.get("/api/sap/stok", { headers: { authorization: "Bearer yanlis" } })).status()).toBe(401);
+    expect((await request.post("/api/sap/stok", { headers: { authorization: "Bearer yanlis" } })).status()).toBe(401);
 
     const read = await sapStockRead(request, before.map((r) => (r.code === code ? { ...r, quantity: 0 } : r)));
     expect(read).toMatchObject({ status: 200, body: { ok: true, kalem: before.length, degisen: 1, yenilendi: true } });
@@ -127,6 +130,12 @@ test("SAP stok okuması: stok 0 gelince sayfa hemen STOKTA YOK; hatalı okumada 
     expect(await lastRun()).toEqual({ status: "failed", error: "1. satırda kalem kodu boş." });
     const [row] = await sql<{ quantity: number }>("SELECT quantity::float AS quantity FROM warehouse_stock WHERE sap_item_code = $1", [code]);
     expect(row.quantity).toBe(0);
+
+    // Yarim okuma (K-93): uygulanmaz; zorla uygulanir.
+    const few = before.filter((r) => r.quantity > 0).slice(0, 5);
+    expect((await sapStockRead(request, few)).body).toMatchObject({ ok: false, error: expect.stringMatching(/^Yarım okuma olabilir/) });
+    expect((await sql("SELECT 1 FROM warehouse_stock")).length).toBe(before.length);
+    expect(await sapStockRead(request, few, { force: true })).toMatchObject({ status: 200, body: { ok: true, kalem: 5 } });
   } finally {
     expect((await sapStockRead(request, before)).status).toBe(200);
     expect(await lastRun()).toEqual({ status: "success", error: null });

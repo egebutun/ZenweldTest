@@ -128,6 +128,28 @@ describe("SAP stok okuma işi", () => {
   });
 });
 
+describe("yarım okuma koruması (K-93)", () => {
+  const many = (count: number, quantity = 5) => Array.from({ length: count }, (_, i) => ({ code: `ZW${i + 1}`, quantity }));
+
+  it("stoktaki kalem yarının altına düşerse okuma uygulanmaz; zorla uygulanır", async () => {
+    await syncWarehouseStock(db, source(many(20)));
+    const partial = await syncWarehouseStock(db, source(many(9)));
+    expect(partial).toMatchObject({
+      status: "failed",
+      error:
+        "Yarım okuma olabilir: önceki okumada 20 kalem stoktaydı, bu okumada 9. Okuma uygulanmadı; " +
+        "doğruysa elle zorla uygulanır (npm run sap:stok zorla).",
+    });
+    expect(await stock()).toHaveLength(20);
+
+    // Hepsi 0 gelirse de ayni (gorunum bozulmus olabilir).
+    expect(await syncWarehouseStock(db, source(many(20, 0)))).toMatchObject({ status: "failed" });
+
+    expect(await syncWarehouseStock(db, source(many(9)), { force: true })).toMatchObject({ status: "success", removed: expect.any(Array) });
+    expect(await stock()).toHaveLength(9);
+  });
+});
+
 describe("deneme dosyası", () => {
   it("başlıklı CSV: noktalı virgül, virgül ya da sekme; tırnak; Excel'in BOM'u", () => {
     expect(parseStockCsv('﻿Kod;Kalem Adı;Miktar\r\nZW1;"Makine; 220V";4\r\n\r\nZW2;;1,5\r\n')).toEqual([

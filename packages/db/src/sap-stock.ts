@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { and, eq, inArray, lt, sql } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { diffWarehouseStock, readSapStock, type SapStockLine } from "@zenweld/data";
+import { diffWarehouseStock, looksLikePartialSapRead, readSapStock, type SapStockLine } from "@zenweld/data";
 import * as s from "./schema";
 
 /**
@@ -16,7 +16,9 @@ import * as s from "./schema";
  *    kaydedilir ve warehouse_stock'a dokunulmaz: son iyi stok kalir.
  * 3. Gecerli okuma warehouse_stock'u tek islemde yeniler: okumada olmayan
  *    kalem silinir, olan eklenir ya da guncellenir. Ayni anda iki okuma
- *    calisirsa ikincisi uygulanmaz (veritabani kilidi).
+ *    calisirsa ikincisi uygulanmaz (veritabani kilidi). Stoktaki kalem
+ *    sayisi oncekinin yarisinin altina duserse okuma yarim sayilir ve
+ *    uygulanmaz (K-93); dogruysa force ile uygulanir.
  * 4. Okuma "success" olur; donen fark (eklenen, cikan, degisen kalem)
  *    sayfalarin yenilenip yenilenmeyecegini belirler.
  *
@@ -41,7 +43,11 @@ const LOCK_KEY = 82084;
 const ABANDONED_MINUTES = 30;
 const BATCH = 500;
 
-export async function syncWarehouseStock(db: Database, source: StockSource): Promise<StockSyncResult> {
+export async function syncWarehouseStock(
+  db: Database,
+  source: StockSource,
+  options: { force?: boolean } = {},
+): Promise<StockSyncResult> {
   await db
     .update(s.sapSyncRuns)
     .set({ status: "failed", finishedAt: new Date(), error: "Yarıda kaldı (okuma tamamlanamadı)." })
@@ -67,6 +73,13 @@ export async function syncWarehouseStock(db: Database, source: StockSource): Pro
       const current = await tx
         .select({ sapItemCode: s.warehouseStock.sapItemCode, quantity: s.warehouseStock.quantity })
         .from(s.warehouseStock);
+      const partial = options.force ? null : looksLikePartialSapRead(current, rows);
+      if (partial) {
+        throw new Error(
+          `Yarım okuma olabilir: önceki okumada ${partial.before} kalem stoktaydı, bu okumada ${partial.after}. ` +
+            "Okuma uygulanmadı; doğruysa elle zorla uygulanır (npm run sap:stok zorla).",
+        );
+      }
       const diff = diffWarehouseStock(current, rows);
       for (let i = 0; i < diff.removed.length; i += BATCH) {
         await tx.delete(s.warehouseStock).where(inArray(s.warehouseStock.sapItemCode, diff.removed.slice(i, i + BATCH)));

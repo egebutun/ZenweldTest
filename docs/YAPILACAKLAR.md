@@ -47,7 +47,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 | 1 | **Aşama 4 — Üyelik ve oturum sunucuda:** güçlü şifre saklama, güvenli oturum çerezi, panelin sunucuda korunması, şifre sıfırlama e-postası | — |
 | 2 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar; tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | Aşama 4 |
 | 3 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
-| 4 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; sunucu kararı |
+| 4 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 5 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
 | 6 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
 | 7 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
@@ -56,10 +56,12 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 ### Kodla çözülmeyen, şimdiden başlatılması gerekenler
 
 - **BT:**
-  - Sunucunun yeri (Vercel ya da Türkiye'de bir sunucu; KVKK ile birlikte).
+  - Canlı sunucu: kendi sunucumuz ve alan adımız (KARARLAR K-92). Yeri
+    (KVKK ile birlikte), kurulumu (HTTPS, zamanlayıcı, yedek, izleme) ve
+    deneme ortamı.
   - Yönetilen PostgreSQL 18 (canlı ve deneme), yedekleme.
-  - Derleme sunucusunun veritabanına erişimi.
-  - Birden fazla sunucu çalışacaksa ortak önbellek (ör. Redis). Vercel bunu kendisi sağlar.
+  - Derleme sırasında veritabanına erişim.
+  - Birden fazla sunucu çalışacaksa ortak önbellek (ör. Redis); tek sunucuda gerekmez.
 - **SAP ekibi:** Aşağıdaki "SAP" bölümündeki sorular.
 - **Ödeme kuruluşu:** Seçim ve anlaşma (iyzico, PayTR ya da banka sanal POS'u).
 - **E-posta:** Resend hesabı ve `zenweld.com` alan adına Resend'in verdiği DNS kayıtlarının eklenmesi. Bugün hiçbir e-posta gitmiyor ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 2).
@@ -298,30 +300,34 @@ Seçenekler (KARARLAR K-70).
      eşleştirilir. Bir SAP kodunun birden çok kombinasyona (ör. Hava · 4 m ve
      Hava · 8 m) sayılması istenirse eşleştirme buna göre genişletilmeli.
 
-## Canlı sunucu (hosting) kararı ve Vercel temizliği
+## Canlı sunucu (hosting) ve Vercel temizliği
 
-Demo şu an Vercel'de yayında; derleme sunucusu ABD'de (Washington, D.C.).
-Canlıya çıkmadan önce sitenin nerede barındırılacağına BT ekibiyle
-birlikte karar verilmeli.
+Sahibinin kararı (KARARLAR K-92, 2026-11-04): canlı site Vercel'de değil,
+kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
+(derleme sunucusu ABD'de, Washington, D.C.) ve öyle kalır.
 
-- **KVKK:** Şu an müşteri verisi sunucuda tutulmuyor (her şey ziyaretçinin
-  tarayıcısında). Backend geldiğinde Türk kullanıcıların kişisel verisinin
-  yurt dışında tutulması KVKK kapsamında değerlendirilmeli; hukuk/BT ile
-  konuşulmalı. Bu karar sunucu yerini belirleyebilir.
-- **Vercel'de kalınırsa:** Kod olduğu gibi kalır. Gerçek alan adı
-  bağlanır, `NEXT_PUBLIC_SITE_URL` = `https://zenweld.com` tanımlanır.
-  Site bu alan adında kendiliğinden arama motorlarına açılır; alan adı
-  `zenweld.com` değilse `src/lib/seo.ts` içindeki `INDEXABLE_HOSTS` güncellenmeli.
-- **Başka sunucuya geçilirse** (kendi sunucu, Türk barındırma firması,
-  Azure, AWS…): Vercel'e özel parçalar kaldırılır (yaklaşık 10 dakika):
+- **Sunucunun yeri ve KVKK:** Backend geldiğinde müşteri verisi sunucuda
+  tutulacak. Türk kullanıcıların kişisel verisinin yurt dışında tutulması
+  KVKK kapsamında değerlendirilmeli; sunucunun yeri hukuk/BT ile belirlenir.
+- **Kurulum:** Site standart bir Node.js uygulamasıdır (`npm run build` +
+  `npm start`, Node.js 22). Önünde HTTPS sağlayan bir web sunucusu (ör.
+  nginx), zamanlayıcı (SAP stok okuma, [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)
+  › 9), yedek ve izleme. `NEXT_PUBLIC_SITE_URL` = `https://zenweld.com`
+  tanımlanır; site bu alan adında kendiliğinden arama motorlarına açılır.
+  Alan adı `zenweld.com` değilse `src/lib/seo.ts` içindeki
+  `INDEXABLE_HOSTS` güncellenmeli.
+- **Görseller:** Next'in görsel küçültmesi sunucuda çalışır (`sharp`);
+  sunucuda kurulu olmalı.
+- **Önbellek:** Tek sunucuda Next'in kendi önbelleği (diskte) yeterli.
+  Birden fazla sunucu çalışırsa önbellek ortak bir yerde (ör. Redis)
+  tutulmalı.
+- **Demo Vercel'den kalkınca** Vercel'e özel parçalar kaldırılır (yaklaşık
+  10 dakika):
   - `apps/zenweld-web/vercel.json`
   - `apps/zenweld-web/src/lib/seo.ts` dosyasındaki `getSiteUrl()` içinde
-    `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` yedeği
-  - README ve kod yorumlarındaki Vercel anlatımları
-  - Yeni sunucuda `NEXT_PUBLIC_SITE_URL` tanımlanır.
-
-Proje standart bir Next.js projesidir; Vercel'e bağımlı değildir ve her
-Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
+    `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` yedeği ve önizleme
+    sürümlerinin aramaya kapatılması (`VERCEL_ENV`)
+  - README, `.env.example` ve kod yorumlarındaki Vercel anlatımları
 
 ## Next.js 16
 
@@ -559,7 +565,7 @@ Sitedeki sepet, ödeme ve sipariş akışı şu an demo (tarayıcıda). Canlı i
    (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi. (Zenweld'e
    "yeni sipariş" e-postasının kodu hazır; Resend kurulmadığı için bugün
    hiçbir e-posta gitmiyor, 7. madde.)
-7. **Form e-postaları için Resend kurulumu**: Vercel'de `RESEND_API_KEY` ve
+7. **Form e-postaları için Resend kurulumu**: sunucuda `RESEND_API_KEY` ve
    doğrulanmış gönderici adresi `SUPPORT_FROM` tanımlanmalı. Tanımlı değilse
    canlıda yalnızca e-postayla giden formlar (iletişim, bayilik, Welders Club)
    ziyaretçiye hata gösterir.
@@ -655,8 +661,8 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
        hazırlanır); canlıda derleme sunucusunun veritabanı erişimi olmalı.
        Bu bilerek böyle bırakıldı (3.6): derlemeyi veritabanından bağımsız
        yapmak, sayfaları önceden hazırlamak yerine her ziyarette yeniden
-       üretmek demek; site yavaşlar. Vercel'de ve kendi sunucuda derleme
-       veritabanına zaten erişir.
+       üretmek demek; site yavaşlar. Kendi sunucumuzda (K-92) derleme
+       veritabanına erişebilir.
      - Veritabanında değişiklik, sayfa açılınca en geç bir dakikada görünür;
        sayfa uzun süre açılmamışsa ilk açılışta bir kez eski hali gelir ve
        arka planda yenilenir (Next'in "önce eskiyi göster, arkada yenile"
@@ -666,8 +672,8 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
        yenileme yalnızca yedek kalır (süresi o zaman sahibine sorulur,
        K-88).
      - Birden fazla sunucu çalışacaksa önbellek ortak bir yerde (ör. Redis)
-       tutulmalı; yoksa yenileme yalnızca isteği alan sunucuda olur. Vercel
-       bunu kendisi sağlar.
+       tutulmalı; yoksa yenileme yalnızca isteği alan sunucuda olur. Tek
+       sunucuda gerekmez (K-92).
    - Sonraki aşamalar: 4 üyelik ve oturum sunucuda; 5 panel ve site
      kayıtları veritabanına; 6 dosya deposu; canlıya hazırlık.
    - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları
@@ -697,7 +703,7 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
   - **Service Layer (önerilen):** SAP B1'in resmi web servisi (HTTPS, kullanıcı adı ve şifre). Siparişleri SAP'a yazmak için de bu kullanılacağı için tek bağlantı iki işi görür.
   - **Salt okunur veritabanı kullanıcısı:** Görünüme doğrudan bağlanılır. Daha basit; ama sunucudan SAP veritabanına ağ erişimi (VPN ya da güvenlik duvarı izni) gerekir.
 - **Kuruldu (2026-11-04), SAP yerine deneme dosyasıyla:**
-  - Okuma işi: sitenin `/api/sap/stok` ucu; zamanlayıcı 15 dakikada bir çağırır (yeri sunucu kararına bağlı: Vercel'in zamanlanmış işleri ya da sunucunun kendi zamanlayıcısı; [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9).
+  - Okuma işi: sitenin `/api/sap/stok` ucu; zamanlayıcı 15 dakikada bir çağırır (canlı sunucunun zamanlayıcısı, KARARLAR K-92; [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9). Yarım okuma koruması (K-93).
   - Stok tablosunun tek işlemde yenilenmesi; her okumanın `sap_sync_runs`'a yazılması; aynı anda tek okuma.
   - Hata olursa son iyi stoğun korunması.
   - Stok değişince sayfaların o anda yenilenmesi.
@@ -716,16 +722,12 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
    kolonları (kalem kodu, kullanılabilir miktar, kalem adı), bağlanma yolu
    (SAP Business One Service Layer ya da veritabanına salt okunur
    kullanıcı) ve bağlantı bilgileri (yalnızca sunucuda ortam değişkeni).
-2. Zamanlayıcının seçilen sunucuda kurulması ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)
+2. Zamanlayıcının canlı sunucuda kurulması ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)
    › 9 › Zamanlanmış işler). Panelde son okuma zamanı ve hatası (panel
    veritabanından okumaya geçince, Aşama 5).
-3. İsteğe bağlı koruma (sahibine sorulacak): yeni okuma öncekinin yarısından
-   az kalem getirirse (yarım okuma olabilir) uygulanmasın. Bayi dosyalarında
-   bu durum uyarı veriyor; otomatik işte uyarıyı görecek kimse olmadığı için
-   okuma reddedilir ve hata kaydedilir.
-4. Ödeme anında stok son kez kontrol edilir; stok bitmişse sipariş
+3. Ödeme anında stok son kez kontrol edilir; stok bitmişse sipariş
    alınmaz.
-5. Site siparişleri SAP'a satış siparişi olarak kaydedilecek (K-84). SAP
+4. Site siparişleri SAP'a satış siparişi olarak kaydedilecek (K-84). SAP
    ekibinden sipariş API'sinin (ör. `SALES_ORDER`) bilgileri gelince:
    siparişe SAP belge numarası, aktarım durumu ve hata kolonları; aktarımın
    ne zaman yapılacağı (öneri: ödeme kesinleşince); başarısız aktarımın
@@ -925,9 +927,10 @@ formda botlar için görünmez bir tuzak alanı var
 (`components/common/BotTrap.tsx`). Canlıdan önce:
 
 1. **İstek sınırı:** aynı IP adresinden dakikada birkaç form gönderilebilmeli;
-   aşınca "çok fazla deneme" yanıtı. Vercel'de her istek ayrı bir sunucuda
-   çalıştığı için sayaç bellekte tutulamaz: Upstash Redis / Vercel KV gibi
-   bir depo ya da Vercel Firewall kuralı kullanılmalı.
+   aşınca "çok fazla deneme" yanıtı. Canlı kendi sunucumuzda (K-92): sınır
+   sunucunun önündeki web sunucusunda (ör. nginx) ya da uygulamada
+   tutulabilir; birden fazla sunucu çalışırsa sayaç ortak bir yerde (ör.
+   Redis) tutulmalı.
 2. **Bot koruması:** Cloudflare Turnstile veya görünmez reCAPTCHA; doğrulama
    sunucuda yapılmalı. Tuzak alanı yalnızca formu dolduran basit botları
    durdurur, uca doğrudan istek atan betikleri durdurmaz.

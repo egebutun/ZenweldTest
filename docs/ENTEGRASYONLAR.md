@@ -320,17 +320,18 @@ Sürümler: `apps/zenweld-web/package.json`, kök `package.json`.
 
 ## 9. Barındırma ve ortam değişkenleri
 
-**Bugün:** Demo Vercel'de yayında. Proje standart bir Next.js projesidir;
-her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
+**Bugün:** Demo Vercel'de yayında. **Canlı:** kendi sunucumuz ve kendi alan
+adımız (KARARLAR K-92). Proje standart bir Next.js projesidir; her Node.js
+sunucusunda `npm run build` + `npm start` ile çalışır.
 
 - Node.js: 22 (`.nvmrc`); en az 20 (`package.json` › `engines`).
-- Barındırma kararı (KVKK ve sunucu yeri) ve Vercel dışına geçişte
-  kaldırılacak parçalar: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Canlı sunucu.
+- Sunucunun yeri (KVKK), kurulumu ve demo Vercel'den kalkınca kaldırılacak
+  parçalar: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Canlı sunucu.
 
 **Ortam değişkenleri:** Örnek dosya `apps/zenweld-web/.env.example`'dır.
 Bilgisayarda aynı klasöre `.env.local` adıyla kopyalanıp doldurulur
-(`.env.local` GitHub'a gönderilmez); Vercel'de Project Settings ›
-Environment Variables'a girilir. **Kural:** Koda yeni bir değişken
+(`.env.local` GitHub'a gönderilmez); sunucuda ortam değişkeni olarak
+tanımlanır (demoda Vercel › Project Settings › Environment Variables). **Kural:** Koda yeni bir değişken
 eklendiğinde ya da biri kaldırıldığında bu tablo ve `.env.example` birlikte
 güncellenir (`.env.example`'a gerçek değer yazılmaz).
 
@@ -344,33 +345,29 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `DATABASE_URL` | Yönetici (gizli) | Veritabanı (PostgreSQL) bağlantı adresi. `npm run db:*` komutları ([VERITABANI.md](VERITABANI.md)) ve `DATA_SOURCE=database` ise site kullanır |
 | `DATA_SOURCE` | Yönetici | Sitenin veri kaynağı (KARARLAR K-88). Boşsa site bugünkü gibi tarayıcıdaki veriyle çalışır. `database` ise ürünler, kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları (her sayfada) ile bayiler, bayi ve satıcı stokları ve yorumlar (yalnızca ürün sayfası, Bayi Bul ve anasayfa) ve içerik (blog, haber, etkinlik, SSS, yasal metinler, Hakkımızda, satış temsilcileri, belgeler, Sayfa SEO) veritabanından okunur; değişiklik en geç bir dakikada sitede görünür. Derlemede de okunur: değiştirince yeniden derlenir, derleme sırasında veritabanına erişilebilmelidir |
 | `REVALIDATE_SECRET` | Yönetici (gizli) | Siteyi beklemeden yenileme anahtarı (Aşama 3.6). Tanımlıysa `/api/yenile` ucu açılır; `npm run site:yenile` aynı anahtarla siteyi o anda yeniler. Boşsa uç kapalıdır. SAP stok okuma işi (ve ileride panel) siteyi kendi içinden yeniler, bu anahtara ihtiyaç duymaz |
-| `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma ucu (`/api/sap/stok`) açılır; zamanlayıcı ve `npm run sap:stok` bu anahtarla çağırır. Vercel'in zamanlanmış işleri bu adı kendiliğinden kullanır. Boşsa uç kapalıdır |
+| `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma ucu (`/api/sap/stok`) açılır; zamanlayıcı ve `npm run sap:stok` bu anahtarla çağırır. Boşsa uç kapalıdır |
 | `SAP_STOK_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar depo stoğunun okunacağı deneme dosyası (CSV; örnek `packages/db/deneme/sap-stok.csv`). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir. Boşsa ve SAP bağlantısı da yoksa okuma işi çalışmaz |
 | `NEXT_DIST_DIR` | Otomatik (test) | Derleme klasörü; boşsa `.next`. Yalnızca veritabanı modunun testleri (`npm run test:e2e:db`) `.next-db` kullanır, demo derlemesi bozulmaz |
 | `SITE_URL` | Geliştirici | Yalnızca `npm run site:yenile` ve `npm run sap:stok`: sitenin adresi; boşsa `NEXT_PUBLIC_SITE_URL`, o da boşsa `http://localhost:3000` |
 | `TEST_DATABASE_URL` | Geliştirici | Yalnızca veritabanı testleri (`npm run test:db`); her çalıştırmada silinip baştan kurulur, `DATABASE_URL` ile aynı olamaz |
 | `NEXT_PUBLIC_BUILD_TIME` | Otomatik (derleme) | Derleme anı; sunucu çıktısı ile tarayıcının ilk çiziminin aynı anı kullanması için |
-| `VERCEL_ENV`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_URL` | Otomatik (Vercel) | Site adresi tanımlı değilse yedek; önizleme sürümleri her zaman aramaya kapalı |
+| `VERCEL_ENV`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_URL` | Otomatik (yalnızca demo, Vercel) | Site adresi tanımlı değilse yedek; önizleme sürümleri her zaman aramaya kapalı. Canlıda yoktur (K-92) |
 
 **Site adresi sırası:** `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik
 değişkenleri → `http://localhost:3000`.
 
 **Zamanlanmış işler:** Bugün tek iş var: SAP depo stoğu okuma, 15 dakikada
-bir (KARARLAR K-84). İş sitenin `/api/sap/stok` ucudur
-(`Authorization: Bearer <CRON_SECRET>`; ayrıntı [VERITABANI.md](VERITABANI.md)
-› 14 › SAP stok okuma). Zamanlayıcı sunucu kararına göre kurulur:
+bir (KARARLAR K-84). İş sitenin `/api/sap/stok` ucudur (POST,
+`Authorization: Bearer <CRON_SECRET>`; ayrıntı [VERITABANI.md](VERITABANI.md)
+› 14 › SAP stok okuma). Canlı sunucunun zamanlayıcısına (cron) bir satır
+eklenir (K-92):
 
-- **Vercel:** Proje köküne `vercel.json`:
-  `{"crons": [{"path": "/api/sap/stok", "schedule": "*/15 * * * *"}]}`.
-  Vercel `CRON_SECRET`'i kendiliğinden gönderir. Sık çalışan zamanlanmış
-  iş Vercel planına bağlıdır; plan kontrol edilmeli. SAP'a Vercel'den
-  ulaşılabilmesi gerekir (Service Layer'ın internete güvenli açılması).
-- **Kendi sunucumuz:** Sunucunun zamanlayıcısına (cron) bir satır:
-  `*/15 * * * * curl -fsS -X POST -H "Authorization: Bearer <CRON_SECRET>" https://zenweld.com/api/sap/stok`.
-  Sunucu şirket ağına (VPN) bağlıysa SAP internete açılmadan okunur.
+`*/15 * * * * curl -fsS -X POST -H "Authorization: Bearer <CRON_SECRET>" https://zenweld.com/api/sap/stok`
 
-Uç başarılı okumada 200, okunamayan stokta 502, kaynak tanımlı değilse
-503 döner; zamanlayıcının kaydında başarısız görünür.
+Sunucu şirket ağına (VPN) bağlıysa SAP internete açılmadan okunur. Uç
+başarılı okumada 200, okunamayan ya da yarım okumada 502 (son stok kalır),
+kaynak tanımlı değilse 503 döner; zamanlayıcının kaydında başarısız
+görünür.
 
 **Arama motorlarına açıklık:** Site yalnızca `zenweld.com` ve
 `www.zenweld.com` adreslerinde aramaya açıktır. Gerçek alan adı farklıysa

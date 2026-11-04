@@ -836,6 +836,15 @@ okuma).
   ulaşılamazsa da aynısı olur.
   - **Örnek:** `;;5` satırı → "1. satırda kalem kodu boş."; `ZW1;;yok` →
     "ZW1: miktar okunamadı (yok)."
+- **Yarım okuma koruması (KARARLAR K-93):** Önceki okumada en az 10 kalem
+  stoktayken yeni okumada stoktaki kalem sayısı bunun yarısının altına
+  düşerse okuma uygulanmaz, son stok kalır (`looksLikePartialSapRead`).
+  Okuma doğruysa elle zorla uygulanır (`npm run sap:stok zorla`).
+  - **Örnek:** Önceki okumada 47 kalem stokta; yeni okumada 20 kalem
+    stokta → uygulanmaz ("Yarım okuma olabilir: … 47 …, bu okumada 20").
+    Yeni okumada 24 kalem stokta → uygulanır.
+  - Önceki okumada 10'dan az kalem stoktaysa (ilk okuma, deneme) koruma
+    çalışmaz.
 - Okumadan sonra yeni gelen, çıkan ya da miktarı değişen kalem varsa
   sayfalar o anda yenilenir; yoksa yenilenmez.
 

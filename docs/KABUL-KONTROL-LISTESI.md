@@ -88,8 +88,10 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       sayfası hemen STOKTA YOK olur; aynı komut değişiklik yokken "Değişiklik
       yok" der. Dosyada bir satırın kodu silinince komut "Stok okunamadı,
       son stok korundu" der, sayfa değişmez; `db:studio`'da `sap_sync_runs`'ta
-      okumalar `success` / `failed` ve hata metniyle görünür. Anahtarsız ya
-      da yanlış anahtarla `/api/sap/stok` çalışmaz.
+      okumalar `success` / `failed` ve hata metniyle görünür. Dosyada
+      yalnızca 5 satır bırakılınca komut "Yarım okuma olabilir" der ve stok
+      değişmez; `npm run sap:stok zorla` ile uygulanır (KARARLAR K-93).
+      Anahtarsız ya da yanlış anahtarla `/api/sap/stok` çalışmaz.
 - [ ] Veritabanı testleri (`npm run test:db`) geçer. Şunları dener: tablo
       listesi ve kolonlar [VERITABANI.md](VERITABANI.md) ile aynı; ürün ve
       varyant kodları tek havuzda; Türkçe harf duyarsız adlar; üye e-postası;

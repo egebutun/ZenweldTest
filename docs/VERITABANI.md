@@ -1211,7 +1211,7 @@ link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 | `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
 | `npm run test:e2e:db` | Sitenin veritabanı modunda tarayıcı testleri (`tests/e2e-db`, `scripts/e2e-db.mts`): test veritabanını baştan kurup örnek veriyi yükler, siteyi `.next-db`'ye derler, testleri çalıştırır |
 | `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
-| `npm run sap:stok` | SAP depo stoğunu beklemeden bir kez okutur (sitenin `/api/sap/stok` ucunu çağırır; aşağıda) |
+| `npm run sap:stok [zorla]` | SAP depo stoğunu beklemeden bir kez okutur (sitenin `/api/sap/stok` ucunu çağırır; aşağıda). `zorla`: yarım okuma korumasına takılan okumayı uygular |
 
 Testler tablo listesinin ve kolonların bu dosyayla aynı olduğunu da
 dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer.
@@ -1301,21 +1301,24 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
 - Aynı anda iki okuma uygulanmaz: yazma, veritabanı kilidi
   (`pg_try_advisory_xact_lock(82084)`) alınarak yapılır; kilit başkasındaysa
   okuma "Başka bir stok okuması sürüyor" hatasıyla biter.
+- Yarım okuma koruması (KARARLAR K-93): stoktaki kalem sayısı öncekinin
+  yarısının altına düşerse okuma `failed` olur ve uygulanmaz; `force`
+  (uçta `{"zorla": true}`, `npm run sap:stok zorla`) ile uygulanır.
 - **Kaynak:** Bugün deneme dosyası (`SAP_STOK_DOSYASI`; başlık satırı
   `kod;ad;miktar`, ayraç noktalı virgül, virgül ya da sekme; Excel'in CSV'si
   okunur). SAP bağlantı bilgileri gelince SAP'tan okuyan kaynak eklenir;
   okuma kuralları ve yazma değişmez. Kaynak tanımlı değilse iş çalışmaz.
-- **Çalıştırma:** Sitenin `/api/sap/stok` ucu (GET ya da POST; yalnızca
-  `CRON_SECRET` anahtarıyla, veritabanı modunda). Zamanlayıcı 15 dakikada
-  bir çağırır ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9 › Zamanlanmış
+- **Çalıştırma:** Sitenin `/api/sap/stok` ucu (POST; yalnızca
+  `CRON_SECRET` anahtarıyla, veritabanı modunda). Sunucunun zamanlayıcısı
+  15 dakikada bir çağırır ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9 › Zamanlanmış
   işler); `npm run sap:stok` elle bir kez çağırır. Stok değiştiyse
   (eklenen, çıkan ya da miktarı değişen kalem) depo stoğunu kullanan
   sayfalar o anda yenilenir (`refreshSite(["depo-stogu"])`); değişmediyse
   yenilenmez.
 - Test: `tests/db/sap-stok.test.ts` (okuma kaydı, tek işlemde yenileme,
-  hatada son stoğun kalması, kilit, yarıda kalan okuma, deneme dosyası);
-  `tests/e2e-db` (uç: anahtar, stok 0 gelince sayfanın hemen STOKTA YOK
-  olması, hatalı okuma).
+  hatada son stoğun kalması, kilit, yarıda kalan okuma, yarım okuma
+  koruması, deneme dosyası); `tests/e2e-db` (uç: anahtar, stok 0 gelince
+  sayfanın hemen STOKTA YOK olması, hatalı ve yarım okuma, zorla).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

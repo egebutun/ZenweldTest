@@ -71,10 +71,14 @@ export async function refreshSite(request: APIRequestContext, kinds?: string[]):
 export async function sapStockRead(
   request: APIRequestContext,
   lines: { code: string; name?: string | null; quantity: number | string }[] | string,
+  options: { force?: boolean } = {},
 ) {
   const csv = typeof lines === "string" ? lines : ["kod;ad;miktar", ...lines.map((l) => `${l.code};${l.name ?? ""};${l.quantity}`)].join("\n");
   await writeFile(process.env.SAP_STOK_DOSYASI!, csv);
-  const response = await request.get("/api/sap/stok", { headers: { authorization: `Bearer ${process.env.CRON_SECRET}` } });
+  const response = await request.post("/api/sap/stok", {
+    headers: { authorization: `Bearer ${process.env.CRON_SECRET}` },
+    data: options.force ? { zorla: true } : {},
+  });
   return { status: response.status(), body: (await response.json()) as Record<string, unknown> };
 }
 

@@ -994,6 +994,31 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     yanıltıcıdır. Örnek kuponlar canlıda gerçekten indirim verir. Örnek bayi
     stokları uydurmadır; gerçek listeler bayilerden dosyayla gelir.
 
+### K-92 · Canlı site kendi sunucumuzda, kendi alan adımızla
+- **Tarih:** 2026-11-04
+- **Karar:** Canlı site Vercel'de yayınlanmaz; kendi sunucumuzda ve kendi
+  alan adımızla çalışır. Bugünkü demo Vercel'de kalır.
+- **Sonuç:**
+  - Site sunucuda standart Node.js uygulaması olarak çalışır
+    (`npm run build` + `npm start`). Sunucunun yeri (KVKK) ve kurulumu
+    (HTTPS, yedek, izleme) BT ile belirlenir.
+  - Zamanlanmış işler (SAP stok okuma) sunucunun kendi zamanlayıcısıyla
+    çalışır.
+  - Tek sunucuda Next'in kendi önbelleği yeterlidir; birden fazla sunucu
+    çalışırsa önbellek ortak bir yerde (ör. Redis) tutulmalıdır.
+  - Vercel'e özel parçalar (`vercel.json`, adresin Vercel değişkenlerinden
+    bulunması) demo Vercel'den kalkınca kaldırılır.
+
+### K-93 · SAP stok okumasında yarım okuma koruması
+- **Tarih:** 2026-11-04
+- **Karar:** Önceki okumada en az 10 kalem stoktayken yeni okumada stoktaki
+  kalem sayısı bunun yarısının altına düşerse okuma uygulanmaz; son stok
+  kalır, hata okuma kaydına yazılır. Okuma doğruysa elle zorla uygulanır
+  (`npm run sap:stok zorla`).
+- **Neden:** Yarım gelen ya da bozuk bir okuma bütün ürünleri bir anda
+  STOKTA YOK yapmasın. Bayi dosyalarında aynı durum uyarı veriyor; otomatik
+  işte uyarıyı görecek kimse olmadığı için okuma reddedilir.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**
