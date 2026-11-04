@@ -13,6 +13,9 @@ import { SITE_DESCRIPTION, SITE_NAME, canonical, socialMetadata } from "@/lib/se
  *
  *   export const generateMetadata = pageMetadataFor("/msds");
  *
+ * (pageMetadataFor: lib/server/page-metadata.ts; paneldeki degeri
+ * veritabanindan okur.)
+ *
  * Aramaya acik sayfalar (noindex olmayanlar) site haritasina girer ve Sayfa
  * SEO ekraninda bu sirayla listelenir. Yeni bir sabit sayfa eklerken buraya
  * bir satir eklemek yeterlidir.
@@ -106,23 +109,22 @@ export function staticPageSeo(path: StaticPagePath, override?: PageSeoFields) {
 }
 
 /**
- * layout/page icin hazir generateMetadata. Panelde degistirilen metin
- * backend kurulunca veritabanindan okunacak (docs/YAPILACAKLAR.md); bugun
- * varsayilan kullanilir.
+ * Sabit sayfanin arama bilgileri (Next metadata). override: panelde Sayfa
+ * SEO'dan girilen deger. Sayfalar bunu dogrudan degil,
+ * lib/server/page-metadata.ts › pageMetadataFor ile kullanir (paneldeki
+ * degeri veritabanindan o okur).
  */
-export function pageMetadataFor(path: StaticPagePath) {
-  return (): Metadata => {
-    const meta: PageMeta = PAGES[path];
-    if (meta.noindex) {
-      return { title: meta.title, description: meta.description, robots: { index: false, follow: false } };
-    }
-    const { title, description } = staticPageSeo(path);
-    return {
-      // Tam baslik: ust sayfanin baslik sablonuna bagli kalmaz.
-      title: { absolute: title },
-      description,
-      alternates: canonical(path),
-      ...socialMetadata({ title, description, path }),
-    };
+export function staticPageMetadata(path: StaticPagePath, override?: PageSeoFields): Metadata {
+  const meta: PageMeta = PAGES[path];
+  if (meta.noindex) {
+    return { title: meta.title, description: meta.description, robots: { index: false, follow: false } };
+  }
+  const { title, description } = staticPageSeo(path, override);
+  return {
+    // Tam baslik: ust sayfanin baslik sablonuna bagli kalmaz.
+    title: { absolute: title },
+    description,
+    alternates: canonical(path),
+    ...socialMetadata({ title, description, path }),
   };
 }

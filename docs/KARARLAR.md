@@ -938,7 +938,8 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › ortam değişkenleri). Bu modda
   ürünler, kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları
   her sayfada; bayiler, bayi ve satıcı stokları ve yorumlar yalnızca gereken
-  sayfada (ürün sayfası, Bayi Bul, anasayfa) veritabanından okunur;
+  sayfada (ürün sayfası, Bayi Bul, anasayfa) veritabanından okunur; içerik
+  de veritabanından gelir (uzun metinler yalnızca kendi sayfasına);
   önbellek iki katmanlıdır (okunan veri ve sayfa,
   her biri 30 saniye), toplam en fazla bir dakika. Ayrıntı ve bugünkü
   sınırlar: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Veritabanı.

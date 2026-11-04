@@ -389,14 +389,17 @@ npm run start --workspace apps/zenweld-web
   kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları tablolardan
   okunur; menü, sepet, arama ve Teklif Al da bunları kullanır. Bayiler, bayi
   ve satıcı stokları ve yorumlar da tablolardan gelir, ama yalnızca gereken
-  sayfaya: ürün sayfası, Bayi Bul ve anasayfa.
+  sayfaya: ürün sayfası, Bayi Bul ve anasayfa. İçerik (blog, haberler,
+  etkinlikler, SSS, yasal metinler, Hakkımızda, satış temsilcileri, belge
+  sayfaları ve Sayfa SEO başlıkları) da tablolardan gelir; yasal metnin ve
+  blog yazısının gövdesi yalnızca kendi sayfasına gider.
   - `db:studio`'da bir ürünün fiyatını değiştirin: en geç bir dakika sonra
     sayfa açılınca yeni fiyat görünür (gerekirse sayfayı bir kez daha
     yenileyin; sayfa arka planda yeniden hazırlanır).
-  - Üyeler, siparişler, teklifler, formlar ve içerik (blog, haber) bu
-    aşamada tarayıcıda kalır. Panelde bu verilerde (ürün, kategori, seçenek,
-    mağaza ayarı, bayi, stok, yorum) yapılan değişiklikler bu modda siteye
-    yansımaz (panel henüz veritabanına yazmıyor).
+  - Üyeler, siparişler, teklifler ve formlar bu aşamada tarayıcıda kalır.
+    Panelde bu modda okunan verilerde (ürün, kategori, seçenek, mağaza
+    ayarı, bayi, stok, yorum, içerik) yapılan değişiklikler siteye yansımaz
+    (panel henüz veritabanına yazmıyor); değişiklik `db:studio`'dan yapılır.
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
     Derleme sırasında veritabanı çalışıyor olmalı.
   - Ayar yoksa site bugünkü gibi çalışır.

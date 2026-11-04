@@ -759,6 +759,13 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       Bul'da, öne çıkan yorumun başlığı değişince anasayfada yeni hali
       görünür. Sayfa kaynağında satıcının fiyatı ve başka ürünlerin bayi
       stoğu yer almaz.
+- [ ] Aynı modda içerik: `db:studio`'da blog yazısının başlığı ve metni,
+      bir yasal metin, bir SSS sorusu, bir haber başlığı, bir satış
+      temsilcisinin adı ve Sayfa SEO'da bir sabit sayfanın başlığı
+      (`page_seo`) değiştirilince en geç bir dakikada sitede, sekme
+      başlığında ve site haritasında (yeni blog yazısı) görünür. Yasal
+      metnin ve blog yazısının gövdesi yalnızca kendi sayfasının kaynağında
+      yer alır.
 - [ ] **Canlıya çıkmadan:** örnek satış hareketleri
       (`sample-activity.seed.ts`) kaldırılmış, gerçek kargo/POS/IBAN değerleri
       ve gerçek yasal metinler girilmiş, e-posta anahtarı tanımlanmıştır

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { legalPages, legalPath, type LegalPageId } from "@zenweld/data";
+import { PageData } from "@/components/common/PageData";
 import { LegalPageView } from "@/components/legal/LegalPageView";
 import { placeholderPageMetadata } from "@/lib/seo";
+import { getLegalPageData, getServerContent } from "@/lib/server/content";
 
 /**
  * YASAL METIN SAYFALARI
@@ -12,22 +14,29 @@ import { placeholderPageMetadata } from "@/lib/seo";
  *   export const generateMetadata = route.generateMetadata;
  *   export default route.Page;
  *
- * Metinler panelden degistigi icin arama basligi baslangic basligindan
- * gelir. Metinler hala taslak oldugundan sayfalar aramaya kapalidir.
+ * Baslik sunucunun iceriginden gelir (veritabani modunda panelde
+ * degistirilen baslik; demo modunda baslangic basligi). Metnin govdesi
+ * veritabani modunda yalnizca bu sayfaya gider. Metinler hala taslak
+ * oldugundan sayfalar aramaya kapalidir.
  */
 export function legalRoute(id: LegalPageId) {
   const seed = legalPages.find((p) => p.id === id)!;
 
-  function generateMetadata(): Metadata {
+  async function generateMetadata(): Promise<Metadata> {
+    const title = (await getServerContent()).legalPages.find((p) => p.id === id)?.title ?? seed.title;
     return placeholderPageMetadata({
       path: legalPath(id),
-      title: seed.title,
-      description: `Zenweld ${seed.title}.`,
+      title,
+      description: `Zenweld ${title}.`,
     });
   }
 
-  function Page() {
-    return <LegalPageView id={id} />;
+  async function Page() {
+    return (
+      <PageData data={await getLegalPageData([id])}>
+        <LegalPageView id={id} />
+      </PageData>
+    );
   }
 
   return { generateMetadata, Page };

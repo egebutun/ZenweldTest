@@ -1,6 +1,6 @@
 import { PageData } from "@/components/common/PageData";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
-import { pageMetadataFor } from "@/lib/page-meta";
+import { pageMetadataFor } from "@/lib/server/page-metadata";
 import { getDealerPageData } from "@/lib/server/catalog";
 
 export const generateMetadata = pageMetadataFor("/yetkili-bayi-ve-servis-agi");

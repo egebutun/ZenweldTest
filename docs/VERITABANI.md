@@ -1269,6 +1269,15 @@ veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını
   başlığı, yapısal verisi, site haritası ve derlemede hazırlanan sayfa
   listesi de katalogdan üretilir. Tek önbellek kaydı en fazla 2 MB tutar;
   bugün katalogun tamamı ~110 KB.
+- İçerik (`readContent`; `apps/zenweld-web/src/lib/server/content.ts`):
+  blog, haber, etkinlik, SSS, yasal metinler, Hakkımızda, satış
+  temsilcileri, belge sayfaları ve `page_seo`. Her sayfada kullanılan
+  kısım (alt bilgideki yasal linkler, aramadaki blog/haber/etkinlik, SSS,
+  sayfa başlıkları) sayfa çerçevesiyle gider; yasal metnin ve blog
+  yazısının gövdesi, Hakkımızda, temsilciler, belgeler ve sipariş
+  sözleşmeleri yalnızca kendi sayfasına. Yayından kaldırılan kayıtlar ve
+  pasif temsilciler tarayıcıya gitmez. Sabit sayfaların başlığı
+  `lib/server/page-metadata.ts` ile `page_seo`'dan okunur.
 - Test (`tests/db/okuma.test.ts`): örnek veri yazılıp geri okununca, kayıt
   türü başına birebir aynı çıkar (gidiş-dönüş); katalog ve mağaza ayarları
   tek başına da okunur; ürün stoğu yalnızca o ürünün stoktaki satırlarını,

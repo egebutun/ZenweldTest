@@ -1,9 +1,10 @@
 import { JsonLd } from "@/components/common/JsonLd";
-import type { Metadata } from "next";
-import { canonical, faqJsonLd, organizationJsonLd } from "@/lib/seo";
+import { faqJsonLd, organizationJsonLd } from "@/lib/seo";
 import { ReviewMarquee } from "@/components/home/ReviewMarquee";
 import { PageData } from "@/components/common/PageData";
 import { getHomePageData } from "@/lib/server/catalog";
+import { getServerContent } from "@/lib/server/content";
+import { pageMetadataFor } from "@/lib/server/page-metadata";
 import {
   BlogTeaser,
   DealerApplyBanner,
@@ -17,19 +18,23 @@ import {
   WhyZenweld,
 } from "@/components/home/HomeSections";
 
-/** Ana sayfanin asil adresi; baslik ve onizleme site duzeninden gelir. */
-export const metadata: Metadata = { alternates: canonical("/") };
+/**
+ * Ana sayfanin basligi, aciklamasi, asil adresi ve onizlemesi; panelde
+ * Sayfa SEO'dan degistirilen deger veritabani modunda buradan gelir.
+ */
+export const generateMetadata = pageMetadataFor("/");
 
 export default async function HomePage() {
   // Veritabani modunda bayi bulucunun bayileri ve one cikan yorumlar
   // sunucudan; demo modunda null.
   const pageData = await getHomePageData();
+  const { faqs } = await getServerContent();
 
   return (
     <PageData data={pageData}>
       <JsonLd data={organizationJsonLd()} />
       {/* Sorular arama sonuclarinda acilir baslik olarak cikabilsin */}
-      <JsonLd data={faqJsonLd()} />
+      <JsonLd data={faqJsonLd(faqs)} />
       <HomeActionStrip />
       <Hero />
       <HotSale />

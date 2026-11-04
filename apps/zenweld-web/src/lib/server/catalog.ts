@@ -1,7 +1,5 @@
-import { unstable_cache } from "next/cache";
 import { createSeedDatabase, type StockRow } from "@zenweld/data";
 import {
-  createDb,
   readCatalog,
   readDealers,
   readProductStock,
@@ -9,36 +7,22 @@ import {
   readRetailers,
   readSettings,
   readWarehouseStock,
-  type Db,
 } from "@zenweld/db";
 import type { CatalogData, ServerData } from "@zenweld/store";
+import { getLayoutContent } from "./content";
+import { buildTime, cached, usesDatabase } from "./db";
 
 /**
  * SITENIN KATALOGU — SUNUCU (KARARLAR K-88)
  *
- * Veri kaynagi ayardan secilir: DATA_SOURCE=database ise urunler,
- * kategoriler, gruplar, secenek tanimlari, Zenweld depo stogu ve magaza
- * ayarlari PostgreSQL'den (DATABASE_URL) okunur; yoksa site bugunku gibi
- * koddaki ornek veri ve tarayicidaki kopyayla calisir. Baglanti adresi
- * tanimli diye kendiliginden veritabanina gecilmez.
+ * Veritabani modunda (lib/server/db.ts) urunler, kategoriler, gruplar,
+ * secenek tanimlari, Zenweld depo stogu ve magaza ayarlari veritabanindan
+ * okunur; demo modunda sunucu koddaki ornek veriyi kullanir.
  *
  * Agir ya da sayfaya ozel veri (bayi ve satici stogu, bayiler, yorumlar)
  * her sayfaya gitmez; yalnizca gereken sayfa kendi verisini alir
- * (asagida "Sayfaya ozel veri").
- *
- * Ayar derlemede de okunur (sayfalar derlemede hazirlanir): degistirince
- * site yeniden derlenir. Veritabani modunda derleme sirasinda veritabanina
- * erisilebilmelidir.
- *
- * Veritabaninda yapilan degisiklik en gec bir dakikada sitede gorunur
- * (KARARLAR K-88). Onbellek iki katmanlidir ve ikisi de 30 saniyedir:
- * okunan veri 30 saniye saklanir, bu veriyi kullanan sayfalar da 30
- * saniyede bir arka planda yeniden hazirlanir (Next sayfanin yenilenme
- * suresini veriden alir). Iki katman ust uste en fazla 60 saniye eder.
- * Panel veritabanina yazmaya baslayinca kayit aninda yenilenecek
- * (etiket: CATALOG_TAG).
- *
- * Bu dosya yalnizca sunucuda calisir (veritabani baglantisi).
+ * (asagida "Sayfaya ozel veri"). Icerik (blog, yasal metinler...):
+ * lib/server/content.ts.
  */
 
 export const CATALOG_TAG = "katalog";
@@ -47,32 +31,10 @@ export const STOCK_TAG = "stok";
 export const DEALERS_TAG = "bayiler";
 export const REVIEWS_TAG = "yorumlar";
 
-/** Her katmanin onbellek suresi (saniye); ikisi toplam 60 saniye. */
-const CATALOG_REVALIDATE = 30;
-
-export function usesDatabase(): boolean {
-  return process.env.DATA_SOURCE === "database";
-}
-
-/** Tek baglanti havuzu; gelistirme sunucusu dosyalari yeniden yuklese de korunur. */
-const globalDb = globalThis as unknown as { zenweldDb?: Db };
-function database(): Db {
-  globalDb.zenweldDb ??= createDb().db;
-  return globalDb.zenweldDb;
-}
-
 /*
- * Katalog, depo stogu ve ayarlar ayri kayitlar olarak saklanir: Next'in
- * onbellegi tek kayitta en fazla 2 MB tutar (bugun katalogun tamami
- * ~110 KB; sinira ~1.000 urunde yaklasilir, docs/YAPILACAKLAR.md).
+ * Katalog, depo stogu ve ayarlar ayri kayitlar olarak saklanir (bugun
+ * katalogun tamami ~110 KB; 2 MB sinirina ~1.000 urunde yaklasilir).
  */
-const cached = <A extends unknown[], T>(name: string, tag: string, read: (db: Db, ...args: A) => Promise<T>) =>
-  // Fonksiyonun aldigi degerler (orn. urun kimligi) onbellek anahtarina girer.
-  unstable_cache((...args: A) => read(database(), ...args), [name], {
-    revalidate: CATALOG_REVALIDATE,
-    tags: [tag],
-  });
-
 const cachedCatalog = cached("urunler", CATALOG_TAG, readCatalog);
 const cachedWarehouseStock = cached("depo-stogu", CATALOG_TAG, readWarehouseStock);
 const cachedSettings = cached("ayarlar", CATALOG_TAG, readSettings);
@@ -92,14 +54,23 @@ export async function getDatabaseCatalog(): Promise<CatalogData | null> {
 
 /**
  * Sayfa cercevesinin (site layout'u) tarayiciya verdigi veri. Veritabani
- * modunda katalog; sayfaya ozel kayit turleri (bayiler, saticilar, stoklar,
- * yorumlar) bos liste: boylece hicbir sayfa bunlari tarayicidaki eski
- * kopyadan okumaz, gereken sayfa kendi verisini ekler. Demo modunda null.
+ * modunda katalog ve her sayfada kullanilan icerik (getLayoutContent);
+ * sayfaya ozel kayit turleri (bayiler, saticilar, stoklar, yorumlar) bos
+ * liste: boylece hicbir sayfa bunlari tarayicidaki eski kopyadan okumaz,
+ * gereken sayfa kendi verisini ekler. Demo modunda null.
  */
 export async function getLayoutData(): Promise<ServerData | null> {
   const catalog = await getDatabaseCatalog();
   if (!catalog) return null;
-  return { ...catalog, dealers: [], retailers: [], dealerStock: [], retailerStock: [], reviews: [] };
+  return {
+    ...catalog,
+    dealers: [],
+    retailers: [],
+    dealerStock: [],
+    retailerStock: [],
+    reviews: [],
+    ...(await getLayoutContent()),
+  };
 }
 
 let demo: CatalogData | undefined;
@@ -107,8 +78,7 @@ let demo: CatalogData | undefined;
 /** Demo modunda sunucunun bildigi katalog: koddaki ornek veri (derleme anina gore). */
 function demoCatalog(): CatalogData {
   if (!demo) {
-    const builtAt = Date.parse(process.env.NEXT_PUBLIC_BUILD_TIME ?? "");
-    const seed = createSeedDatabase(Number.isNaN(builtAt) ? Date.now() : builtAt);
+    const seed = createSeedDatabase(buildTime());
     demo = {
       products: seed.products,
       categories: seed.categories,

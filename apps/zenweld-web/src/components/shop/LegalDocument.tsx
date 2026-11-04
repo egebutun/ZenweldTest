@@ -1,12 +1,13 @@
 "use client";
 
 import type { ReactNode } from "react";
-import type { LegalPageId, Order, OrderPayment } from "@zenweld/data";
+import type { Order, OrderPayment } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
 import { findLegalPage, useDatabase } from "@zenweld/store";
 import { RichText } from "@zenweld/ui";
 import { formatDate, formatPrice } from "@zenweld/utils";
 import { CONTACT, OFFICES } from "@/lib/contact";
+import { DOC_ID, type LegalDocumentKind } from "@/lib/legal-documents";
 import { addressComplete } from "./AddressFields";
 
 /**
@@ -21,13 +22,7 @@ import { addressComplete } from "./AddressFields";
  * cayma hakki ...) yonetim panelindeki "Yasal Metinler"den duzenlenir.
  */
 
-export type LegalDocumentKind = "preInfo" | "contract";
-
-/** Panelde duzenlenen metnin kimligi. */
-const DOC_ID: Record<LegalDocumentKind, LegalPageId> = {
-  preInfo: "on-bilgilendirme-formu",
-  contract: "mesafeli-satis-sozlesmesi",
-};
+export type { LegalDocumentKind } from "@/lib/legal-documents";
 
 export interface LegalContext {
   buyer: { name: string; email: string; phone: string };

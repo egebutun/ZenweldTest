@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { events } from "@zenweld/data";
+import { getServerContent } from "@/lib/server/content";
 import { JsonLd } from "@/components/common/JsonLd";
 import { EventDetail } from "@/components/events/EventDetail";
 import { SITE_NAME, absoluteUrl, canonical, eventSeo, seoMetadata } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return events.filter((e) => e.active).map((e) => ({ slug: e.slug }));
+/** Etkinlikler sunucunun iceriginden: veritabani ya da ornek veri (lib/server/content.ts). */
+async function findEvent(slug: string) {
+  return (await getServerContent()).events.find((e) => e.active && e.slug === slug);
+}
+
+export async function generateStaticParams() {
+  return (await getServerContent()).events.filter((e) => e.active).map((e) => ({ slug: e.slug }));
 }
 
 export async function generateMetadata({
@@ -14,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const event = events.find((e) => e.active && e.slug === slug);
+  const event = await findEvent(slug);
 
   if (!event) return { title: "Etkinlik" };
 
@@ -45,10 +50,10 @@ export default async function EventDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const event = events.find((e) => e.active && e.slug === slug);
+  const event = await findEvent(slug);
 
-  // Tohum verisinde olmayan slug'lar yonetim panelinden eklenmis olabilir;
-  // bu kayitlar yalnizca tarayici deposunda oldugu icin sunucuda bulunamaz.
+  // Demo modunda panelden eklenen etkinlikler yalnizca tarayici deposunda
+  // oldugu icin sunucuda bulunamaz.
   // Sayfayi istemci bilesenine birakiyoruz, gercekten yoksa o notFound() atar.
   if (!event) return <EventDetail slug={slug} />;
 

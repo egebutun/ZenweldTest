@@ -1509,7 +1509,8 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   yeni link) sunucu bugün göremez:
   - Site haritası ve arama motorunun gördüğü başlıklar koddaki örnek veriden
     üretilir. Veri kaynağı veritabanıysa (`DATA_SOURCE=database`, KARARLAR
-    K-88) ürün, grup ve kategorilerinki tablolardan gelir; veritabanındaki
+    K-88) ürün, grup, kategori, blog, haber ve etkinliklerinki ile sabit
+    sayfaların Sayfa SEO başlıkları tablolardan gelir; veritabanındaki
     değişiklik en geç bir dakikada görünür.
   - Eski linkler tarayıcıda yönlenir; arama motoru için kalıcı (301)
     yönlendirme backend ile yapılacak.

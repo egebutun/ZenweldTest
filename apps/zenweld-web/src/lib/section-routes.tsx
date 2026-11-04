@@ -21,7 +21,7 @@ import {
   socialMetadata,
   type PageSeo,
 } from "@/lib/seo";
-import { pageMetadataFor } from "@/lib/page-meta";
+import { pageMetadataFor } from "@/lib/server/page-metadata";
 import { getServerCatalog } from "@/lib/server/catalog";
 
 /**
@@ -58,7 +58,7 @@ const trailJsonLd = (trail: Crumb[]) =>
 /** /<bolum> sayfasi: bolumun gruplari resimli kartlar halinde. */
 export function sectionRoute(section: TopLevelSection) {
   return {
-    generateMetadata(): Metadata {
+    generateMetadata(): Promise<Metadata> {
       return pageMetadataFor(`/${section}`)();
     },
     Page() {

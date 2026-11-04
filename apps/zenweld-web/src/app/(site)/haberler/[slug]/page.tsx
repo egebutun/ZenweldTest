@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { news } from "@zenweld/data";
+import { getServerContent } from "@/lib/server/content";
 import { JsonLd } from "@/components/common/JsonLd";
 import { NewsDetail } from "@/components/events/NewsDetail";
 import { SITE_NAME, absoluteUrl, canonical, newsSeo, seoMetadata } from "@/lib/seo";
 
-export function generateStaticParams() {
-  return news.filter((n) => n.active).map((n) => ({ slug: n.slug }));
+/** Haberler sunucunun iceriginden: veritabani ya da ornek veri (lib/server/content.ts). */
+async function findNews(slug: string) {
+  return (await getServerContent()).news.find((n) => n.active && n.slug === slug);
+}
+
+export async function generateStaticParams() {
+  return (await getServerContent()).news.filter((n) => n.active).map((n) => ({ slug: n.slug }));
 }
 
 export async function generateMetadata({
@@ -14,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const item = news.find((n) => n.active && n.slug === slug);
+  const item = await findNews(slug);
 
   if (!item) return { title: "Haber" };
 
@@ -45,10 +50,10 @@ export default async function NewsDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  // Tohum verisinde olmayan slug'lar yonetim panelinden eklenmis olabilir;
-  // bu kayitlar yalnizca tarayici deposunda tutulur, bulmayi istemciye birakiyoruz.
+  // Demo modunda panelden eklenen haberler yalnizca tarayici deposunda
+  // tutulur; sunucuda bulunamayanlari bulmayi istemciye birakiyoruz.
   const { slug } = await params;
-  const item = news.find((n) => n.active && n.slug === slug);
+  const item = await findNews(slug);
 
   if (!item) return <NewsDetail slug={slug} />;
 

@@ -1,5 +1,5 @@
 import { EventList } from "@/components/events/EventList";
-import { pageMetadataFor } from "@/lib/page-meta";
+import { pageMetadataFor } from "@/lib/server/page-metadata";
 
 export const generateMetadata = pageMetadataFor("/etkinlikler");
 

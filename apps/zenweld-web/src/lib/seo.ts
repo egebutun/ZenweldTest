@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import {
-  faqs,
   isDiscountActive,
   productBrand,
   salePriceExVat,
   type BlogPost,
   type Category,
   type CategoryGroup,
+  type FaqItem,
   type NewsItem,
   type Product,
   type SeoFields,
@@ -283,7 +283,8 @@ export function placeholderPageMetadata(opts: { path: string; title: string; des
  * Anasayfadaki sik sorulan sorular icin FAQPage yapisal verisi.
  * Google bu sorulari arama sonucunda dogrudan gosterebiliyor.
  */
-export function faqJsonLd(): Record<string, unknown> {
+/** Anasayfadaki ilk 8 soru (sitede gorunenlerle ayni). */
+export function faqJsonLd(faqs: FaqItem[]): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",

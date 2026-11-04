@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { blogPosts } from "@zenweld/data";
+import { PageData } from "@/components/common/PageData";
+import { getBlogPostPageData, getServerContent } from "@/lib/server/content";
 import { SITE_NAME, absoluteUrl, blogPostSeo, canonical, seoMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
@@ -8,7 +9,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.active !== false && p.slug === slug);
+  const post = (await getServerContent()).blogPosts.find((p) => p.active !== false && p.slug === slug);
 
   if (!post) return { title: "Yazı" };
 
@@ -37,6 +38,14 @@ export async function generateMetadata({
   };
 }
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return children;
+/** Veritabani modunda yazinin govdesi yalnizca bu sayfaya gider; demo modunda null. */
+export default async function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  return <PageData data={await getBlogPostPageData(slug)}>{children}</PageData>;
 }

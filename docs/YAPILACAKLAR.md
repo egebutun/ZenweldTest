@@ -508,13 +508,18 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      katalog sunucudan (bitti, `apps/zenweld-web/src/lib/server/catalog.ts`)
      → 3.4 ağır veri yalnızca gereken sayfaya (bitti: ürün sayfası o ürünün
      bayi ve satıcı stoğunu, bayileri ve yorumlarını; Bayi Bul bayileri;
-     anasayfa bayileri ve öne çıkan yorumları alır) → 3.5 içerik
-     sayfaları → 3.6 önbellek ayarları → 3.7 veritabanı modunda tarayıcı
+     anasayfa bayileri ve öne çıkan yorumları alır) → 3.5 içerik sayfaları
+     (bitti, `apps/zenweld-web/src/lib/server/content.ts`: blog, haber,
+     etkinlik, SSS, yasal metinler, Hakkımızda, satış temsilcileri, belge
+     sayfaları, Sayfa SEO; uzun metinler yalnızca kendi sayfasına) → 3.6
+     önbellek ayarları → 3.7 veritabanı modunda tarayıcı
      testleri ve ölçüm.
    - Veritabanı modunun bugünkü sınırları (3.4–3.7 ve Aşama 5'te kalkar):
      - Panel henüz tarayıcıya yazıyor: paneldeki ürün, kategori, seçenek,
-       mağaza ayarı, bayi, satıcı, stok ve yorum değişiklikleri bu modda
-       siteye yansımaz. Sitede yazılan yeni yorum da tarayıcıya kaydolur
+       mağaza ayarı, bayi, satıcı, stok, yorum ve içerik değişiklikleri bu
+       modda siteye yansımaz.
+     - Belgelerin (MSDS vb.) listesi tablodan gelir; dosyanın kendisi dosya
+       deposu (Aşama 6) kurulana kadar yalnızca yükleyen tarayıcıda durur. Sitede yazılan yeni yorum da tarayıcıya kaydolur
        (zaten panel onayı bekler).
      - Katalog (bugün ~110 KB, sıkıştırılmış ~17 KB) sayfa çerçevesiyle her
        sayfada gelir (3.3'te planlandığı gibi). Ağır veri (bayi ve satıcı
@@ -713,24 +718,20 @@ ayrıntılar: [STOK.md](STOK.md) › "Backend'e geçiş".
 ## SEO alanları (ürün, blog, haber, etkinlik, sabit sayfalar) ve link yönlendirme — backend
 
 Panelde SEO sekmesi (ürün, blog yazısı, haber, etkinlik, grup, kategori) ve Sayfa SEO ekranı hazır; veri şimdilik
-tarayıcıda. Sunucu bugün bu sayfaların başlığını, açıklamasını ve `keywords`
-etiketini koddaki örnek veriden üretiyor (`generateMetadata`), paneldeki
-değişikliği göremiyor. Eski linkten yeni linke yönlendirme de demoda tarayıcıda
+tarayıcıda. Sunucu bu sayfaların başlığını, açıklamasını ve `keywords`
+etiketini demo modunda koddaki örnek veriden, veritabanı modunda (K-88)
+tablolardan üretiyor (`generateMetadata`); panel henüz veritabanına
+yazmadığı için paneldeki değişikliği iki modda da göremiyor (Aşama 5). Eski linkten yeni linke yönlendirme de demoda tarayıcıda
 yapılıyor (`lib/page-seo-client.ts`).
 
-1. `products`, `blog_posts`, `news`, `events`, `categories`, `category_groups`
-   tablolarına `seo_title`, `seo_description`, `seo_keywords` alanları
-   (kategori ve gruplarda ayrıca `about_text`, gruplarda `description`); eski
-   linkler için tek bir `previous_paths` (tür, kayıt, eski adres) tablosu.
-   Kategori adresi grubun linkine bağlı olduğu için eski adres tam yol olarak
-   tutulur (`/ekipmanlar/kaynak-makineleri/mma-…`).
-2. Sayfaların başlığı, açıklaması ve `keywords` etiketi veritabanından
-   okunmalı (`lib/seo.ts` → `productSeo`, `blogPostSeo`, `newsSeo`, `eventSeo`,
-   `categorySeo`, `groupSeo`).
-   Sabit sayfalar (Sayfa SEO ekranı) için `page_seo` (sayfa adresi, başlık,
-   açıklama) tablosu; `lib/page-meta.ts` → `pageMetadataFor` panelde girilen
-   metni bu tablodan okumalı. Ana sayfanın başlığı site düzeninde
-   (`app/(site)/layout.tsx`).
+1. (Hazır) Tablolar: SEO alanları her kayıtta `seo` alanında; eski linkler
+   `redirects` tablosunda (tür, kayıt, eski adres; kategori için tam yol);
+   sabit sayfalar `page_seo` tablosunda ([VERITABANI.md](VERITABANI.md)).
+2. (Veritabanı modunda yapıldı, K-88) Sayfaların başlığı, açıklaması ve
+   `keywords` etiketi tablolardan okunuyor (`lib/seo.ts` → `productSeo`,
+   `blogPostSeo`, `newsSeo`, `eventSeo`, `categorySeo`, `groupSeo`); sabit
+   sayfalar ve anasayfa `lib/server/page-metadata.ts` → `pageMetadataFor`
+   ile `page_seo` tablosundan.
 3. Eski link sunucuda **301 (kalıcı)** ile yeni linke yönlendirilmeli; Google eski
    sonucu yeni linkle değiştirir. Panelde değiştirilen yeni link sunucuda da
    bulunmalı (bugün yalnızca tarayıcı biliyor; sunucu 404 kodu döndürüyor, sayfa
@@ -738,8 +739,8 @@ yapılıyor (`lib/page-seo-client.ts`).
 4. Kayıt kaydedilince o sayfa ve site haritası yenilenmeli. Site
    haritası veritabanından üretilmeli: panelde eklenen ürünler ve blog yazıları
    girmeli, linki değişen üründe yalnızca yeni link yer almalı. Veritabanı
-   modunda (K-88) ürünler, gruplar ve kategoriler bugün de tablolardan
-   gelir (en geç bir dakika gecikmeyle); blog, haber ve etkinlikler 3.5'te.
+   modunda (K-88) ürünler, gruplar, kategoriler, blog, haber ve etkinlikler
+   bugün de tablolardan gelir (en geç bir dakika gecikmeyle).
 5. **Kampanya başlangıç ve bitişinde ürün sayfası yenilenmeli.** Google'a
    giden fiyat (yapısal veri) sayfa üretilirken yazılır. Kampanya belirlenen
    saatte kendiliğinden başlayıp bittiği için o anda kimse kayıt yapmaz;
