@@ -50,7 +50,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları; 5.4 panel veritabanından okur; 5.5 panel yazar, değişiklik kaydı ve sayfa yenileme; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4 panel veritabanından okur; 5.5 panel yazar, değişiklik kaydı ve sayfa yenileme; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
 | 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
@@ -688,8 +688,14 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
    - Aşama 4 (üyelik ve oturum sunucuda) bitti. Aşama 5.1 (üyenin
      adresleri ve favorileri veritabanında, K-96) ve 5.2 (siparişler ve iade
      talepleri sunucuda; tutar, stok ve kupon sunucuda yeniden hesaplanıyor,
-     K-97) bitti. Sonraki aşamalar: 5'in kalanı (formlar, panel); 6 dosya
-     deposu; canlıya hazırlık.
+     K-97) ve 5.3 (teklif, servis, garanti, yorum ve e-posta formları
+     sunucuda; gönderilen e-postalar `email_log`'da, K-98) bitti. Sonraki
+     aşamalar: 5'in kalanı (panel); 6 dosya deposu; canlıya hazırlık.
+   - 5.3'ten kalanlar: panelin Teklifler, Servis Talepleri, Garantiler,
+     Yorumlar ekranları ve form kayıtları, e-posta alıcıları ile gönderilen
+     e-postalar ekranları 5.4–5.5'te; yorum fotoğraf ve videoları dosya
+     deposu gelince (Aşama 6) depoya taşınır; formların istek sınırı ve bot
+     doğrulaması canlıya hazırlıkta (K-98).
    - 5.2'den kalanlar: panelin Siparişler ve İade Talepleri ekranları
      veritabanındaki kayıtları 5.4'te gösterir, 5.5'te yazar (ödeme alındı,
      kargo, teslim, iptal, iade durumu). Kartlı ödeme gerçek POS bağlanana
@@ -949,10 +955,15 @@ formda botlar için görünmez bir tuzak alanı var
    sunucuda yapılmalı. Tuzak alanı yalnızca formu dolduran basit botları
    durdurur, uca doğrudan istek atan betikleri durdurmaz.
 3. **Kayıt tutan formlar** (teklif, servis talebi, garanti, yorum, üyelik,
-   sipariş) önce sunucuda veritabanına yazılmalı, e-posta bu kayıttan
-   gönderilmeli. Bugün tarayıcı kaydı kendisi oluşturup e-posta ucuna haber
-   veriyor; bu uca sahte bir bildirim (ör. "yeni sipariş") de gönderilebilir.
-   Sipariş e-postası ödeme kuruluşunun onayından sonra gönderilmeli.
+   sipariş, iade): veritabanı modunda sunucuda veritabanına yazılıyor ve
+   e-posta bu kayıttan gidiyor (Aşama 4, 5.2–5.3). Kalan: canlıda
+   `/api/bildirim` yalnızca kaydı olmayan türleri (iletişim, Welders Club)
+   ve üyelik bildirimini kabul etmeli; bugün bu uca sahte bir bildirim (ör.
+   "yeni sipariş") de gönderilebilir. Sipariş e-postası ödeme kuruluşunun
+   onayından sonra gönderilmeli.
+4. Veritabanı modunda formlar veritabanına yazıldığı için 1 ve 2 canlıdan
+   önce şarttır (KARARLAR K-98); kupon deneme ucu (`/api/siparis/kupon`) ve
+   garanti sorgulama (`/api/formlar/garanti`) da istek sınırına alınmalı.
 
 ## Kod incelemesi bulguları
 

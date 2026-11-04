@@ -22,7 +22,7 @@ import {
 import { tr } from "@zenweld/i18n";
 import { getSiteUrl } from "@/lib/seo";
 import { database, usesDatabase } from "@/lib/server/db";
-import { sendCustomerMail } from "@/lib/server/mail";
+import { sendCustomerMail, sourcePath } from "@/lib/server/mail";
 import {
   SESSION_COOKIES,
   clearSessionCookie,
@@ -116,6 +116,7 @@ export async function POST(request: NextRequest, context: Context) {
         to: reset.email,
         subject: tr.auth.reset.mailSubject,
         text: tr.auth.reset.mailBody.replace("{name}", reset.firstName).replace("{link}", link),
+        log: { type: "sifre-sifirlama", sourcePath: sourcePath(request) },
       });
       if (!mail.delivered) console.warn(`Şifre sıfırlama e-postası gönderilemedi (${mail.reason}).`);
     }

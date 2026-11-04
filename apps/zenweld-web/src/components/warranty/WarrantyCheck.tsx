@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { ShieldCheck, ShieldX } from "lucide-react";
+import { useAuth } from "@zenweld/auth";
 import { findProductById, findWarranty, useDatabase } from "@zenweld/store";
 import type { WarrantyRecord } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input } from "@zenweld/ui";
+import { accountRequest } from "@/lib/account-api";
 import { useT } from "@/lib/i18n-client";
 import { formatDate, localDateKey } from "@zenweld/utils";
 
@@ -13,13 +15,19 @@ import { formatDate, localDateKey } from "@zenweld/utils";
  *
  * Garanti sayfasinin iki secenekinden biri (/garanti/sorgulama). Secim
  * kartlari her iki adreste de gorunur; ziyaretci kayit ile sorgulama
- * arasinda kolayca gecer.
+ * arasinda kolayca gecer. Veritabani modunda sorgu sunucuya gider
+ * (/api/formlar/garanti; Asama 5.3) ve yalnizca bu kartta gorunen bilgiler
+ * doner.
  */
+
+type WarrantyResult = Pick<WarrantyRecord, "serialNumber" | "productId" | "ownerName" | "registeredAt" | "expiresAt" | "extended">;
 export function WarrantyCheck({ onRegister }: { onRegister: () => void }) {
   const t = useT();
   const db = useDatabase();
+  const { api } = useAuth();
   const [serial, setSerial] = useState("");
-  const [result, setResult] = useState<WarrantyRecord | null | undefined>(undefined);
+  const [result, setResult] = useState<WarrantyResult | null | undefined>(undefined);
+  const [failed, setFailed] = useState<string | null>(null);
 
   const product = result ? findProductById(result.productId, db) : undefined;
   // Bitis gunu dahil gecerli (panelle ayni kural).
@@ -28,9 +36,16 @@ export function WarrantyCheck({ onRegister }: { onRegister: () => void }) {
   return (
     <div className="max-w-xl">
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          setResult(findWarranty(serial, db) ?? null);
+          setFailed(null);
+          if (api === null) return setResult(findWarranty(serial, db) ?? null);
+          const answer = await accountRequest<{ warranty: WarrantyResult | null }>(
+            "/api/formlar",
+            `garanti?seri=${encodeURIComponent(serial)}`,
+          );
+          if (answer.ok) setResult(answer.warranty);
+          else setFailed(answer.error);
         }}
         className="space-y-4"
       >
@@ -50,6 +65,12 @@ export function WarrantyCheck({ onRegister }: { onRegister: () => void }) {
           {t.warranty.check}
         </Button>
       </form>
+
+      {failed && (
+        <div className="mt-6">
+          <Alert tone="danger">{failed}</Alert>
+        </div>
+      )}
 
       {result === null && (
         <div className="mt-6">

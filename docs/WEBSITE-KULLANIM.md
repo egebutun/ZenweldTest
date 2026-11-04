@@ -78,7 +78,12 @@ tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
     yapılır.
   - Kaydı olmayan formlar (iletişim, bayilik, Welders Club, ürün destek
     sohbeti) e-posta gidemezse ziyaretçiye hata gösterir ve
-    `info@zenweld.com`'a doğrudan yazmasını söyler.
+    `info@zenweld.com`'a doğrudan yazmasını söyler. Veritabanı modunda bu
+    formlar da veritabanına kaydedilir (Aşama 5.3); kayıt yapıldıysa e-posta
+    gitmese de hata gösterilmez.
+  - Veritabanı modunda teklif, servis talebi, garanti kaydı ve
+    değerlendirmeyi sunucu kaydeder ve kuralları yeniden denetler (Aşama
+    5.3); gönderilen her e-posta kayıt altına alınır (`email_log`).
 - **Tarayıcıda tutulanlar (Demo notu):** Sepet, favoriler, teklif listesi,
   çerez seçimi, karşılama penceresinin görülmesi ve oturum ziyaretçinin
   tarayıcısında tutulur. Bütün site verisi de (ürünler, siparişler, üyeler…)
@@ -443,6 +448,8 @@ hiçbiri değilse 404 çıkar.
 - **Demo notu:** Giriş yapmış üyenin değerlendirmesi "Doğrulanmış alıcı"
   sayılır. Gerçek sistemde bu, üyenin o ürünü satın almış olmasıyla
   eşleştirilmelidir.
+- **Veritabanı modunda** değerlendirmeyi sunucu kaydeder (Aşama 5.3); kurala
+  uymayan gönderimde sunucunun mesajı formda görünür.
 - **Seçenekten bağımsız:** Değerlendirmeler ürüne bağlıdır; ürünün bütün
   seçeneklerinde aynı liste görünür.
 
@@ -470,6 +477,7 @@ Yalnızca ürün sayfalarında, sağ altta bir düğme olarak durur.
     gider.
   - Ekranda sabit yanıt çıkar: "Destek ekibimiz size en kısa sürede dönüş
     yapacaktır. İyi günler dileriz."
+  - Veritabanı modunda soru veritabanına da kaydedilir (Aşama 5.3).
   - E-posta gidemezse ayrıca "Mesajınız alındı. Acele bir durumsa
     info@zenweld.com adresine de yazabilirsiniz." yazar.
 - KVKK notu ve bot tuzağı vardır.
@@ -992,8 +1000,8 @@ Yap** da aynı işi yapar.
   güvenlik değildir.
 - Veritabanı modunda giriş yapmış üyenin adresleri, favorileri (Aşama 5.1),
   siparişleri ve iade talepleri (Aşama 5.2) de sunucudadır; başka cihazda
-  giriş yapınca aynısı görünür. Teklifler Aşama 5.3'e kadar iki modda da
-  tarayıcıdadır.
+  giriş yapınca aynısı görünür. Teklifler, garantiler ve formlar da
+  sunucudadır (Aşama 5.3).
 
 ---
 
@@ -1012,8 +1020,8 @@ Adres: `/hesabim/...`.
 ### Genel Bakış
 
 Tekliflerim, Siparişlerim, Favorilerim ve Garantilerim için sayı kartları;
-kartlar ilgili sayfaya gider. Veritabanı modunda sipariş sayısı sunucudan gelir; gelene
-kadar "…" yazar.
+kartlar ilgili sayfaya gider. Veritabanı modunda teklif, sipariş ve garanti
+sayısı sunucudan gelir; gelene kadar "…" yazar.
 
 ### Profil
 
@@ -1049,6 +1057,7 @@ kadar "…" yazar.
 - **Durumlar:** Yeni, İnceleniyor, Teklif Gönderildi, Kazanıldı, Kapandı.
   Panelde durum değişince burada hemen görünür.
 - **Boşsa:** "Henüz teklif talebiniz yok."
+- Veritabanı modunda teklifler sunucudan okunur (Aşama 5.3).
 
 ### Siparişlerim ve sipariş detayı
 
@@ -1130,6 +1139,7 @@ kadar "…" yazar.
   garantide "Uzatılmış garanti" rozeti.
 - **Yeni Garanti Kaydı** düğmesi kayıt formuna gider.
 - **Boşsa:** "Kayıtlı garanti bulunamadı." ve Garanti Kaydı.
+- Veritabanı modunda garantiler sunucudan okunur (Aşama 5.3).
 
 ### Adreslerim
 
@@ -1220,7 +1230,9 @@ gelinir.
 **Gönderince:**
 
 - **Kayıt:** Teklif `TKL-<yıl>-<4 haneli sıra>` numarasıyla **Yeni**
-  durumunda kaydedilir.
+  durumunda kaydedilir. Veritabanı modunda kaydı sunucu yapar (Aşama 5.3);
+  listedeki bir ürün artık yoksa "Teklif listenizdeki bazı ürünler değişti
+  ya da artık listelenmiyor. Listenizi kontrol edin." yazar.
   - Her satırda o anki ürün adı, seçenek adı ve ürün kodunun kopyası
     saklanır.
   - Üye gönderdiyse teklif Hesabım › Tekliflerim'de görünür.
@@ -1246,7 +1258,9 @@ gelinir.
   - Başarı: "Mesajınız alındı. En kısa sürede dönüş yapacağız."
   - Hata: "Mesajınız şu an gönderilemedi. Lütfen tekrar deneyin ya da
     info@zenweld.com adresine e-posta gönderin."
-- **Kayıt:** Kayıt tutulmaz; yalnızca e-posta gider.
+- **Kayıt:** Demo modunda kayıt tutulmaz; yalnızca e-posta gider. Veritabanı
+  modunda mesaj veritabanına da kaydedilir (Aşama 5.3); kayıt yapıldıysa
+  e-posta gitmese de başarı mesajı çıkar.
 - **Ofislerimiz:** İstanbul ve İzmir kartları.
   - Kartta şehir, şirket unvanı, adres, telefonlar (tıklayınca arar) ve
     e-posta yer alır.
@@ -1266,8 +1280,10 @@ gelinir.
   - Zorunlu: Yetkili Kişi, E-posta, Telefon.
   - İsteğe bağlı: Eklemek İstedikleriniz.
 - KVKK notu ve bot tuzağı vardır.
-- **Kayıt:** Kayıt tutulmaz; yalnızca `info@zenweld.com`'a "Bayilik başvurusu
-  — <firma>" e-postası gider.
+- **Kayıt:** Demo modunda kayıt tutulmaz; yalnızca `info@zenweld.com`'a
+  "Bayilik başvurusu — <firma>" e-postası gider. Veritabanı modunda başvuru
+  veritabanına da kaydedilir (Aşama 5.3); kayıt yapıldıysa e-posta gitmese
+  de başarı ekranı çıkar.
 - **Sonuç:**
   - Başarı: Form yerine "Başvurunuz Alındı — İlginiz için teşekkür ederiz.
     Sizlere info@zenweld.com maili üzerinden dönüş sağlıyor olacağız." ve
@@ -1301,6 +1317,8 @@ gelinir.
     kısa sürede sizinle iletişime geçecek." yazar.
   - **Yeni talep oluştur** düğmesi makine, model, şikayet, nedenler ve onayı
     temizler; iletişim bilgileri kalır.
+  - Veritabanı modunda talebi sunucu kaydeder ve kuralları yeniden denetler
+    (Aşama 5.3).
 
 ### Welders Club (`/welders-club`)
 
@@ -1311,8 +1329,10 @@ gelinir.
   - Zorunlu: Ad, E-posta.
   - İsteğe bağlı: Şehir.
   - **Kulübe Katıl** düğmesi; bot tuzağı vardır.
-- **Kayıt:** Kayıt tutulmaz; yalnızca `info@zenweld.com`'a "Welders Club
-  katılım" e-postası gider.
+- **Kayıt:** Demo modunda kayıt tutulmaz; yalnızca `info@zenweld.com`'a
+  "Welders Club katılım" e-postası gider. Veritabanı modunda katılım
+  veritabanına da kaydedilir (Aşama 5.3); kayıt yapıldıysa e-posta gitmese
+  de başarı mesajı çıkar.
 - **Sonuç:**
   - Başarı: "Kulüp üyeliğiniz oluşturuldu!"
   - Hata: "Kaydınız şu an alınamadı. Lütfen tekrar deneyin ya da
@@ -1371,6 +1391,8 @@ gelinir.
   (üyeyse) **Garantilerim** düğmeleri vardır.
 - Kayıt panelde Garantiler'e düşer; `info@zenweld.com`'a "Yeni garanti kaydı"
   e-postası gider.
+- Veritabanı modunda kaydı sunucu yapar ve kuralları yeniden denetler (Aşama
+  5.3); eksik alan varsa "Lütfen zorunlu alanları doldurun." yazar.
 
 **Garanti Sorgulama:**
 
@@ -1383,6 +1405,8 @@ gelinir.
   - Rozetler: Uzatılmış garantide "Uzatılmış garanti".
   - Bitiş günü geçmişse "Süresi Doldu". Bitiş günü dahil garanti geçerli
     sayılır.
+- Veritabanı modunda sorgu sunucuya gider (Aşama 5.3) ve yalnızca bu kartta
+  görünen bilgiler döner; e-posta, telefon ve adres dönmez.
 
 ---
 

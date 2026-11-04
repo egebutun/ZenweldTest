@@ -5,6 +5,9 @@ import { BadgeCheck, ImagePlus, Trash2 } from "lucide-react";
 import { StarRating } from "./StarRating";
 import { Button } from "./Button";
 
+/** Kaydin sonucu: true kaydedildi; false genel hata (errorSave); metin o hata. */
+export type SubmitResult = boolean | string;
+
 /**
  * URUN DEGERLENDIRMELERI
  *
@@ -74,7 +77,7 @@ export function ProductReviews({
     title: string;
     body: string;
     media: ReviewMediaInput[];
-  }) => boolean;
+  }) => SubmitResult | Promise<SubmitResult>;
   /**
    * Dosya secildiginde cagrilir; kucultme/donusturme cagiranda yapilir.
    * Kabul edilmeyen dosya icin fail(mesaj) formda hata gosterir.
@@ -95,6 +98,7 @@ export function ProductReviews({
   const [media, setMedia] = useState<ReviewMediaInput[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
 
   // Turkiye saatiyle: sunucu (UTC) ve tarayici ayni gunu yazar. Bozuk tarih sayfayi dusurmez.
   const fmt = useMemo(() => new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium", timeZone: "Europe/Istanbul" }), []);
@@ -103,7 +107,7 @@ export function ProductReviews({
     return Number.isNaN(d.getTime()) ? "" : fmt.format(d);
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (rating < 1) return setError(texts.errorRating);
@@ -111,9 +115,10 @@ export function ProductReviews({
     if (!body.trim()) return setError(texts.errorBody);
 
     // Kaydedilemezse form acik kalir; ziyaretci daha kucuk dosyayla deneyebilir.
-    if (!onSubmit({ authorName: name.trim(), rating, title: title.trim(), body: body.trim(), media })) {
-      return setError(texts.errorSave);
-    }
+    setSending(true);
+    const result = await onSubmit({ authorName: name.trim(), rating, title: title.trim(), body: body.trim(), media });
+    setSending(false);
+    if (result !== true) return setError(typeof result === "string" ? result : texts.errorSave);
     setSent(true);
     setOpen(false);
     setRating(0);
@@ -149,7 +154,7 @@ export function ProductReviews({
 
       {open && (
         <form
-          onSubmit={submit}
+          onSubmit={(e) => void submit(e)}
           className="mb-6 space-y-4 rounded-[6px] border border-zw-grey-200 bg-white p-5"
         >
           <h3 className="font-display text-lg font-bold uppercase">{texts.formTitle}</h3>
@@ -254,7 +259,9 @@ export function ProductReviews({
           {notice}
 
           <div className="flex gap-3">
-            <Button type="submit">{texts.submit}</Button>
+            <Button type="submit" disabled={sending}>
+              {texts.submit}
+            </Button>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               ✕
             </Button>

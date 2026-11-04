@@ -25,6 +25,8 @@ export interface SendResult {
   ok: boolean;
   delivered: boolean;
   demo: boolean;
+  /** Veritabani modunda form kaydedildi (e-posta gitmese de ulasti; Asama 5.3) */
+  saved: boolean;
 }
 
 /** Form ucuna gonderir; ag ya da sunucu hatasinda ok: false. */
@@ -36,9 +38,14 @@ export async function postForm(url: string, body: unknown): Promise<SendResult> 
       body: JSON.stringify(body),
     });
     const data = (await res.json().catch(() => ({}))) as Partial<SendResult>;
-    return { ok: res.ok && data.ok === true, delivered: data.delivered === true, demo: data.demo === true };
+    return {
+      ok: res.ok && data.ok === true,
+      delivered: data.delivered === true,
+      demo: data.demo === true,
+      saved: data.saved === true,
+    };
   } catch {
-    return { ok: false, delivered: false, demo: false };
+    return { ok: false, delivered: false, demo: false, saved: false };
   }
 }
 
@@ -52,7 +59,8 @@ export function notifyZenweld(
 }
 
 /**
- * Ziyaretci acisindan form ulasti mi: e-posta gitti ya da demo adresinde
- * e-posta servisi tanimli degil (canlida tanimli degilse hata gosterilir).
+ * Ziyaretci acisindan form ulasti mi: e-posta gitti, demo adresinde e-posta
+ * servisi tanimli degil (canlida tanimli degilse hata gosterilir) ya da
+ * veritabani modunda form kaydedildi.
  */
-export const reached = (result: SendResult) => result.ok && (result.delivered || result.demo);
+export const reached = (result: SendResult) => result.ok && (result.delivered || result.demo || result.saved);

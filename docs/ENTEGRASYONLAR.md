@@ -74,10 +74,15 @@ olarak girilir.
   bağlanmaz. Formlar sitenin kendi uçlarına gönderir:
   - `POST /api/bildirim` — iletişim, teklif, servis, garanti, yorum, üye,
     sipariş, iade talebi, Welders Club (`type` alanıyla).
-  - Veritabanı modunda sipariş ve iade talebinin bildirimini, kaydı yapan
-    sunucu kendisi gönderir (`/api/siparis`, Aşama 5.2); tarayıcı
-    `/api/bildirim`'e bu türleri göndermez. Şablonlar tek yerde:
+  - Veritabanı modunda sipariş, iade talebi, teklif, servis talebi, garanti
+    kaydı ve yorumun bildirimini, kaydı yapan sunucu kendisi gönderir
+    (`/api/siparis`, `/api/formlar`; Aşama 5.2–5.3); tarayıcı `/api/bildirim`'e
+    bu türleri göndermez. Şablonlar tek yerde:
     `apps/zenweld-web/src/lib/server/notify.ts`.
+  - **E-posta kaydı** (veritabanı modu, KARARLAR K-81): gönderilen ya da
+    gönderilemeyen her e-posta `email_log` tablosuna yazılır: tür, formun
+    sayfası, bağlı kayıt, alıcı, konu, sonuç ve Resend'in verdiği numara.
+    E-postanın metni saklanmaz.
   - `POST /api/bayilik` — bayilik başvurusu.
   - `POST /api/destek` — ürün sayfasındaki destek sorusu.
 - Sunucu e-postayı Resend'in API'sine (`https://api.resend.com/emails`)
@@ -108,7 +113,8 @@ olarak girilir.
   üyelik, iade talebi) e-postanın sonucunu beklemez; kayıt her durumda
   yapılır.
 - **Yalnızca e-postayla giden formlar** (iletişim, bayilik, Welders Club,
-  ürün destek sorusu):
+  ürün destek sorusu; veritabanı modunda bunlar da kaydedilir ve e-posta
+  gitmese de başarılı görünür, Aşama 5.3):
   - E-posta gittiyse başarılı.
   - Demo adresinde e-posta servisi tanımlı değilse yine başarılı görünür.
   - Canlıda e-posta gitmediyse ziyaretçiye hata gösterilir; tekrar
@@ -128,11 +134,14 @@ olarak girilir.
     sunucuda.
   - Kayıt tutan formlar önce sunucuda veritabanına yazılmalı, e-posta bu
     kayıttan gönderilmeli; sipariş e-postası ödeme kuruluşunun onayından sonra
-    gitmeli. Veritabanı modunda sipariş ve iade talebi böyle (Aşama 5.2);
-    diğer kayıtlı formlarda tarayıcı kaydı kendisi oluşturup e-posta ucuna
-    haber veriyor (Aşama 5.3).
-  - Sepet kuponunu deneyen uç (`/api/siparis/kupon`) da istek sınırına
-    alınmalı (kod denemesini zorlaştırmak için).
+    gitmeli. Veritabanı modunda bütün kayıtlı formlar böyle (Aşama
+    5.2–5.3); demo modunda tarayıcı kaydı kendisi oluşturup e-posta ucuna
+    haber veriyor.
+  - Sepet kuponunu deneyen uç (`/api/siparis/kupon`) ve garanti sorgulama
+    (`/api/formlar/garanti`) da istek sınırına alınmalı (kod ve seri numarası
+    denemesini zorlaştırmak için). Formlar veritabanına yazıldığı için
+    (Aşama 5.3) istek sınırı ve bot koruması canlıdan önce şarttır; o zamana
+    kadar yalnızca görünmez bot tuzağı vardır (KARARLAR K-98).
 
 Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
 `apps/zenweld-web/src/app/api/`, `apps/zenweld-web/src/lib/notify.ts`,

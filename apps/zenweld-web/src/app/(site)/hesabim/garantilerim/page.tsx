@@ -2,19 +2,21 @@
 
 import { Plus, ShieldCheck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { findProductById, useDatabase, warrantiesForEmail } from "@zenweld/store";
+import { findProductById, useDatabase } from "@zenweld/store";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
+import { useMemberRecords } from "@/lib/member-records";
 import { formatDate } from "@zenweld/utils";
 
 export default function MyWarrantiesPage() {
   const t = useT();
   const { user } = useAuth();
   const db = useDatabase();
+  const { warranties: records, ready } = useMemberRecords();
 
   if (!user) return null;
-  const records = warrantiesForEmail(user.email, db);
+  if (!ready) return <div className="py-10 text-center text-zw-grey-500">{t.common.loading}</div>;
 
   if (records.length === 0) {
     return (

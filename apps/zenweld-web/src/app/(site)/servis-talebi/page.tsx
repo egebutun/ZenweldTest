@@ -10,6 +10,8 @@ import Link from "next/link";
 import { PageHero } from "@/components/common/PageShell";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";
+import { accountRequest } from "@/lib/account-api";
+import { serviceNotice } from "@/lib/form-text";
 import { useT } from "@/lib/i18n-client";
 import { notifyZenweld } from "@/lib/notify";
 import { useMemberPrefill } from "@/lib/member-prefill";
@@ -51,7 +53,10 @@ const memberValues = (user: User) => ({
 export default function ServiceRequestPage() {
   const t = useT();
   const db = useDatabase();
-  const { user } = useAuth();
+  const { user, api } = useAuth();
+  // Veritabani modu: talebi sunucu kaydeder (Asama 5.3).
+  const server = api !== null;
+  const [sending, setSending] = useState(false);
 
   const [form, setForm] = useState(() => ({ ...EMPTY, ...(user ? memberValues(user) : {}) }));
   useMemberPrefill(user, memberValues, setForm);
@@ -84,13 +89,28 @@ export default function ServiceRequestPage() {
     [db, form.categorySlug],
   );
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     const required = Object.keys(EMPTY) as (keyof typeof EMPTY)[];
     if (required.some((k) => !form[k].trim())) return setError(t.service.required);
     if (reasons.length === 0) return setError(t.service.reasonRequired);
     if (!consent) return setError(t.service.consentRequired);
+
+    if (server) {
+      setSending(true);
+      const answer = await accountRequest<{ code: string }>("/api/formlar", "servis", {
+        ...form,
+        reasons,
+        consent,
+        website: bot.website,
+      });
+      setSending(false);
+      if (!answer.ok) return setError(answer.error);
+      setCode(answer.code);
+      window.scrollTo({ top: 0 });
+      return;
+    }
 
     const product = models.find((p) => p.id === form.productId);
     const record = createServiceRequest({
@@ -100,20 +120,7 @@ export default function ServiceRequestPage() {
       userId: user?.id,
     });
     // Talep panelde Servis Talepleri'ne duser; info@zenweld.com'a da haber verilir.
-    void notifyZenweld("servis", {
-      code: record.code,
-      productName: record.productName,
-      reasons: record.reasons.map((r) => t.service.reasons[r]),
-      companyName: record.companyName,
-      contactName: record.contactName,
-      email: record.email,
-      phone: record.phone,
-      contactGsm: record.contactGsm,
-      address: record.address,
-      district: record.district,
-      city: record.city,
-      complaint: record.complaint,
-    }, bot.website);
+    void notifyZenweld("servis", serviceNotice(record, t), bot.website);
     setCode(record.code);
     window.scrollTo({ top: 0 });
   };
@@ -163,7 +170,7 @@ export default function ServiceRequestPage() {
           {t.service.warrantyNoteAfter}
         </p>
 
-        <form onSubmit={submit} className="mt-8 space-y-8" noValidate>
+        <form onSubmit={(e) => void submit(e)} className="mt-8 space-y-8" noValidate>
           <section className="grid gap-4 sm:grid-cols-2">
             <FormRow label={t.service.machine} required>
               <Select
@@ -294,7 +301,7 @@ export default function ServiceRequestPage() {
           {bot.field}
           {error && <Alert tone="danger">{error}</Alert>}
 
-          <Button type="submit" size="lg">
+          <Button type="submit" size="lg" disabled={sending}>
             {t.service.submit}
           </Button>
         </form>

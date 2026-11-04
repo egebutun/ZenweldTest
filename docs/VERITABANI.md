@@ -983,8 +983,9 @@ Koddaki: `settings.shop.carriers` (bugün yalnızca adlar).
 
 Sahibinin kararı (K-81): bugün yalnızca info@zenweld.com'a e-posta olarak
 giden formlar veritabanında da saklanır. E-posta yine gider; kayıt, e-posta
-gitmese de alınır; gidip gitmediği `email_log`'dadır. Panel ekranları siteyi
-veritabanına bağlarken eklenecek. Bülten kaydı bunlara girmez; bülten
+gitmese de alınır; gidip gitmediği `email_log`'dadır. Veritabanı modunda
+site bu tablolara yazıyor (Aşama 5.3; aşağıda [14](#14-kod-betikler-ve-komutlar)
+› Formlar). Panel ekranları siteyi veritabanına bağlarken eklenecek. Bülten kaydı bunlara girmez; bülten
 servisi kararını bekliyor (YAPILACAKLAR › Bülten ve İYS).
 
 `dealer_applications` — Bayilik Başvurusu:
@@ -1067,8 +1068,15 @@ e-postaları):
 | `siparis` | Ödeme (sipariş) |
 | `iade` | İade talebi |
 
-Müşteriye gidecek e-postalar (sipariş onayı, şifre sıfırlama…) kurulunca
-türleri bu listeye eklenir.
+**Müşteriye giden e-postalar** yalnızca `email_log`'da tutulur (alıcısı
+müşteridir; `email_recipients`'ta yoktur):
+
+| `type` | Sitedeki özellik |
+|---|---|
+| `sifre-sifirlama` | Şifremi Unuttum (K-95) |
+
+Sipariş onayı gibi yeni müşteri e-postaları kurulunca türleri bu listeye
+eklenir.
 
 ### `email_log` — gönderilen e-postalar (yeni)
 
@@ -1184,12 +1192,15 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `migrations/0004_kupon-satir-payi.sql` | Sipariş satırına kupon payı (`order_items.coupon_discount`) |
 | `migrations/0005_kisiye-ozel-kupon.sql` | Kişiye özel kupon: `coupons.audience` ve `coupon_customers` |
 | `migrations/0006_giris-deneme-siniri.sql` | Yanlış şifre sınırı: `users.failed_login_count`, `failed_login_since`, `login_locked_until` (K-94) |
+| `migrations/0007_e-posta-turu-sifre-sifirlama.sql` | `email_log.type` müşteriye giden şifre sıfırlama e-postasını da kabul eder (`sifre-sifirlama`; Aşama 5.3) |
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
 | `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
 | `src/load.ts` | Bugünkü veriyi canlı ya da deneme veritabanına yükleme (`npm run db:yukle`; aşağıda) |
 | `src/sap-stock.ts` | SAP depo stoğu okuma işi ve deneme kaynağı (aşağıda) |
 | `src/orders.ts` | Siparişler sunucuda: kupon denetimi, sipariş, süresi dolan havale, iade talebi (aşağıda) |
+| `src/forms.ts` | Formlar sunucuda: teklif, servis talebi, garanti kaydı ve sorgulama, ürün yorumu, e-postaya giden formların kaydı, e-posta kaydı (aşağıda) |
+| `src/codes.ts` | Kayıt numarası (`nextRecordCode`; sipariş, iade, teklif, servis) |
 | `packages/auth/src/server/` | Şifre özeti ve oturumlar (aşağıda; yalnızca sunucu, `@zenweld/auth/server`) |
 | `packages/auth/scripts/create-admin.ts` | Yönetici hesabı açma (`npm run yonetici:olustur`) |
 | `deneme/sap-stok.csv` | SAP yerine okunan örnek stok dosyası (50 kalem, 3'ü stoksuz) |
@@ -1469,7 +1480,8 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   (`packages/data/src/orders.ts`). Süresi dolan sipariş `cancelled` olur,
   geçmişe "Ödeme süresi doldu" notuyla yazılır, `coupon_redemptions.released_at`
   dolar.
-- **Okuma:** `readOrders`, `readReturnRequests` ve `readCoupons` isteğe bağlı
+- **Okuma:** `readOrders`, `readReturnRequests`, `readCoupons` (ve Aşama 5.3'te
+  `readQuotes`, `readServiceRequests`, `readWarranties`) isteğe bağlı
   bir koşulla yalnızca ilgili kayıtları okur (ör. bir üyenin siparişleri,
   bir kuponun kullanımları).
 - Bildirim e-postası (`info@zenweld.com`) kayıttan sonra sunucudan gider
@@ -1483,6 +1495,45 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   iade talebi kuralları; aynı anda gelen siparişlerde kupon sınırı);
   `tests/e2e-db/siparis.spec.ts` (tarayıcıda: sepette kupon, kartla sipariş,
   başka cihaz, iade talebi; fiyat değişince; havale süresi dolunca iptal).
+
+**Formlar (Aşama 5.3, KARARLAR K-81; `src/forms.ts`):**
+
+- Veritabanı modunda site formları `apps/zenweld-web/src/app/api/formlar/[tur]/route.ts`
+  ucundan kaydeder ve okur; giriş yapmışsa üye oturum çerezinden bulunur.
+  - `POST /api/formlar/teklif`: `quotes` + `quote_items` (`createQuote`);
+    ürün adı, kodu ve seçenek adı katalogdan; numara `TKL-<yıl>-<4 hane>`.
+  - `POST /api/formlar/servis`: `service_requests` (`createServiceRequest`);
+    model adı katalogdan; numara `SRV-<yıl>-<4 hane>`.
+  - `POST /api/formlar/garanti`: `warranties` (`registerWarranty`); aynı
+    seri numarası (büyük harfe çevrilerek) ikinci kez yazılmaz; bitiş
+    Türkiye gününe göre.
+  - `POST /api/formlar/yorum`: `reviews` (`createReview`); onaysız. Fotoğraf
+    ve videolar dosya deposu gelene kadar (Aşama 6) `media`'da veri olarak
+    (`data:` adresi) durur.
+  - `GET /api/formlar/garanti?seri=…`: garanti sorgulama (`findWarranty`);
+    yalnızca sorgulama kartındaki alanlar döner.
+  - `GET /api/formlar/teklifler`, `GET /api/formlar/garantiler`: üyenin
+    teklifleri (`user_id`) ve garantileri (e-posta).
+- Yalnızca e-postaya giden formlar da kendi tablolarına yazılır:
+  `/api/bayilik` → `dealer_applications`, `/api/destek` → `support_messages`
+  (`urun-destek`; ürün koduna göre `product_id`), `/api/bildirim` iletişim →
+  `support_messages` (`iletisim`), Welders Club → `welders_club_signups`.
+  Yanıtta `saved: true` döner; e-posta gitmese de form ulaşmış sayılır.
+- **E-posta kaydı:** sunucunun gönderdiği her e-posta (`lib/server/mail.ts`)
+  `email_log`'a yazılır (`logEmail`): tür, sayfa (`Referer`'dan, aynı
+  siteden geliyorsa), bağlı kayıt, alıcı, yanıt adresi, konu, sonuç
+  (`sent`; servis hatasında `failed`; anahtar yoksa ya da bot tuzağında
+  `skipped`), servisin verdiği numara ve hata. Metin yazılmaz. Kayıt
+  yazılamazsa e-posta yine gider.
+- Bot tuzağı doluysa kayıt yapılmaz; `email_log`'a `skipped` yazılır.
+- Panelin Teklifler, Servis Talepleri, Garantiler ve Yorumlar ekranları
+  Aşama 5.4'e kadar tarayıcıdaki veriyi gösterir.
+- Test: `tests/db/formlar.test.ts` (teklif kuralları ve katalogdan alınan
+  ürün bilgisi, servis talebi, garanti kaydı, tekrar eden seri no, Türkiye
+  gününe göre bitiş, sorgulama, yorum, e-postaya giden formların kaydı,
+  e-posta kaydı ve türleri); `tests/e2e-db/formlar.spec.ts` (tarayıcıda:
+  ziyaretçi ve üye teklifi, Tekliflerim, servis, garanti, sorgulama,
+  Garantilerim, yorum, iletişim, Welders Club, bot tuzağı).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

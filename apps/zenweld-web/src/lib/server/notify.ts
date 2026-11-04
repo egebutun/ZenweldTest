@@ -1,4 +1,4 @@
-import { readFields, sendMail, type MailResult } from "./mail";
+import { readFields, sendMail, type EmailMeta, type MailResult } from "./mail";
 
 /**
  * FORM BILDIRIMLERININ SABLONLARI — info@zenweld.com
@@ -146,8 +146,15 @@ export type NotificationType = keyof typeof TEMPLATES;
 export const isNotificationType = (type: unknown): type is NotificationType =>
   typeof type === "string" && Object.hasOwn(TEMPLATES, type);
 
-/** Bildirimi gonderir; alanlardan biri gecersizse null (gecersiz istek). */
-export async function sendNotification(type: NotificationType, data: Record<string, unknown>): Promise<MailResult | null> {
+/**
+ * Bildirimi gonderir; alanlardan biri gecersizse null (gecersiz istek).
+ * log: veritabani modunda email_log icin sayfa ve bagli kayit.
+ */
+export async function sendNotification(
+  type: NotificationType,
+  data: Record<string, unknown>,
+  log: Omit<EmailMeta, "type"> = {},
+): Promise<MailResult | null> {
   const template: Template = TEMPLATES[type];
   const keys = [...template.fields.map(([k]) => k), ...(template.note ? [template.note[0]] : [])];
   const values = readFields(data, keys);
@@ -158,5 +165,6 @@ export async function sendNotification(type: NotificationType, data: Record<stri
     rows: template.fields.map(([key, label]) => [label, values[key]]),
     note: template.note && [template.note[1], values[template.note[0]]],
     replyTo: template.replyTo ? values[template.replyTo] : undefined,
+    log: { type, ...log },
   });
 }

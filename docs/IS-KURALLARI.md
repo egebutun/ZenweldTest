@@ -462,8 +462,16 @@ Kapandı.
 **Fiyat:** Teklifte fiyat sistemde hesaplanmaz; satış ekibi teklifi ayrıca
 hazırlayıp e-postayla gönderir.
 
+**Veritabanı modunda** (Aşama 5.3) teklifi sunucu kaydeder ve numarasını
+verir. Kurallar sunucuda yeniden denetlenir; ürün adı, kodu ve seçenek adı
+tarayıcıdan değil katalogdan alınır. Listedeki bir ürün ya da seçenek artık
+yoksa ya da Ekipmanlar dışındaysa teklif alınmaz: "Teklif listenizdeki bazı
+ürünler değişti ya da artık listelenmiyor. Listenizi kontrol edin." Adet
+1–9.999.
+
 Kod: `apps/zenweld-web/src/app/(site)/teklif-al/page.tsx`,
-`packages/store/src/repo/commerce.ts`.
+`packages/store/src/repo/commerce.ts`, `packages/data/src/forms.ts`;
+sunucu: `packages/db/src/forms.ts` (`createQuote`).
 
 ---
 
@@ -475,6 +483,15 @@ Kod: `apps/zenweld-web/src/app/(site)/teklif-al/page.tsx`,
 - Durumlar: Yeni → İşlemde → Tamamlandı; panelde istenen duruma geçilir.
 - Servis talebi müşterinin Hesabım sayfasında görünmez; müşteriye e-posta
   gitmez.
+- Bütün alanlar zorunludur; model, seçilen kategorideki yayındaki bir ürün
+  olmalıdır; açıklama en fazla 400 karakter; gizlilik sözleşmesi onayı
+  zorunludur.
+- Veritabanı modunda talebi sunucu kaydeder, kuralları yeniden denetler ve
+  numarasını (`SRV-…`) verir (Aşama 5.3). Model adı katalogdan alınır.
+
+Kod: `apps/zenweld-web/src/app/(site)/servis-talebi/page.tsx`,
+`packages/store/src/repo/service.ts`; sunucu: `packages/db/src/forms.ts`
+(`createServiceRequest`).
 
 ---
 
@@ -493,7 +510,9 @@ Kod: `apps/zenweld-web/src/app/(site)/teklif-al/page.tsx`,
 - Satın alma tarihi sorulmadığı için garanti **kayıt tarihinden** başlar.
 - Bitiş = kayıt tarihi + ürünün garanti süresi (ay; ürün bulunamazsa 24) +
   uzatma istendiyse 12 ay.
-- Bitiş yalnızca tarihtir (saat yok) ve yerel tarihe göre hesaplanır.
+- Bitiş yalnızca tarihtir (saat yok) ve kayıt gününün **Türkiye saatine**
+  göre tarihinden hesaplanır (sunucu UTC'de çalışsa da gece 00:00–03:00
+  arasındaki kayıtta gün kaymaz).
 - **Bitiş günü dahil** garanti geçerlidir; ertesi gün "Süresi Doldu".
 
 **Örnek:** 15.03.2026'da kayıt, garanti 24 ay, uzatma istendi → bitiş
@@ -511,8 +530,20 @@ Kod: `apps/zenweld-web/src/app/(site)/teklif-al/page.tsx`,
 - Değişiklik müşterinin Garantilerim sayfasına ve garanti sorgulamaya anında
   yansır.
 
-Kod: `packages/store/src/repo/warranties.ts`,
-`packages/utils/src/format.ts` › `addMonthsToDate`.
+**Veritabanı modunda** (Aşama 5.3):
+
+- Kaydı sunucu yapar; posta kodu (5 hane), satıcı VKN (10 ya da 11 hane) ve
+  zorunlu alanlar sunucuda yeniden denetlenir. Aynı seri numarası aynı anda
+  iki kez gelse de veritabanındaki tekillik kuralı ikincisini reddeder.
+- **Garanti sorgulama** sunucuya sorulur ve yalnızca sorgulama kartında
+  görünen bilgiler döner: seri no, model, sahibi, kayıt ve bitiş tarihi,
+  uzatma. E-posta, telefon ve adres dönmez.
+- Garantilerim sunucudan okunur (üyenin e-postasıyla).
+
+Kod: `packages/store/src/repo/warranties.ts`, `packages/data/src/forms.ts`
+(`warrantyExpiryDate`, `normalizeSerial`),
+`packages/utils/src/format.ts` › `addMonthsToDate`; sunucu:
+`packages/db/src/forms.ts` (`registerWarranty`, `findWarranty`).
 
 ---
 
@@ -693,8 +724,13 @@ Kod: `packages/utils/src/images.ts` › `slugify`,
 - Video en fazla 2 MB; fotoğraflar otomatik küçültülür.
 - **Demo notu:** Giriş yapmış üyenin yorumu "Doğrulanmış alıcı" sayılır;
   gerçekte üyenin o ürünü satın almasıyla eşleşmeli.
+- **Veritabanı modunda** (Aşama 5.3) yorumu sunucu kaydeder; ürün yayında
+  olmalı, puan 1–5 tam sayı, ad ve yorum zorunlu, en fazla 10 dosya.
+  Fotoğraf ve videolar dosya deposu kurulana kadar (Aşama 6) yorumun
+  içinde veri olarak saklanır; bir dosya en fazla ~3 MB (2 MB video).
 
-Kod: `packages/store/src/repo/reviews.ts`.
+Kod: `packages/store/src/repo/reviews.ts`; sunucu: `packages/db/src/forms.ts`
+(`createReview`).
 
 ---
 
@@ -795,8 +831,8 @@ favoriler: `account-data.ts`).
 - Silinen kaydın numarası yeniden verilmez; **en son kayıt silinse de**
   numarası bir sonraki kayda verilmez ([KARARLAR.md](KARARLAR.md) K-64).
 - Yıl, Türkiye saatine göredir.
-- Veritabanı modunda sipariş ve iade talebi numarasını sunucu verir (Aşama
-  5.2): önek başına sayaç (`record_counters`) tek işlemde bir artar; aynı
+- Veritabanı modunda sipariş, iade talebi, teklif ve servis talebi
+  numarasını sunucu verir (Aşama 5.2–5.3): önek başına sayaç (`record_counters`) tek işlemde bir artar; aynı
   anda gelen iki kayıt aynı numarayı alamaz. Sayaç yoksa ya da tablodaki en
   büyük numaranın gerisindeyse (ör. örnek veriyle yüklenmiş siparişler) o
   numaradan devam eder.
@@ -805,7 +841,8 @@ favoriler: `account-data.ts`).
 
 Kod: `packages/store/src/repo/shared.ts` › `nextCode` (sipariş, teklif,
 servis talebi ve iade talebi aynı yeri kullanır); sunucu:
-`packages/db/src/orders.ts` › `nextRecordCode`.
+`packages/db/src/codes.ts` › `nextRecordCode` (veritabanı modunda dördü de
+sunucuda; Aşama 5.2–5.3).
 
 ---
 
@@ -829,16 +866,27 @@ servis kurulu olmadığı için hiçbir e-posta gitmez.
   kayıt yapılır.
 - **Yalnızca e-postayla giden formlar** (iletişim, bayilik başvurusu,
   Welders Club, ürün destek sorusu) e-posta gidemezse ziyaretçiye hata
-  gösterir; ziyaretçi tekrar deneyebilir.
+  gösterir; ziyaretçi tekrar deneyebilir. Veritabanı modunda bu formlar da
+  kendi tablolarına kaydedilir (KARARLAR K-81; Aşama 5.3); kayıt yapıldıysa
+  e-posta gitmese de form ulaşmış sayılır ve hata gösterilmez.
+- **Veritabanı modunda** teklif, servis talebi, garanti kaydı, yorum,
+  sipariş ve iade talebinin kaydını ve bildirimini sunucu yapar (Aşama
+  5.2–5.3); bildirim kayıttan sonra gider.
+- **E-posta kaydı** (veritabanı modu, K-81): gönderilen ya da
+  gönderilemeyen her e-posta `email_log`'a yazılır: türü, formun sayfası,
+  bağlı kayıt, alıcı, konu ve sonucu (gitti / hata / gönderilmedi). E-posta
+  servisi tanımlı değilse ya da bot tuzağına takıldıysa "gönderilmedi"
+  yazılır. E-postanın metni saklanmaz. Müşteriye giden şifre sıfırlama
+  e-postası da yazılır (bağlantı yazılmaz).
 - Sipariş e-postasına T.C. kimlik no ve kart bilgisi yazılmaz.
-- Panelden müşteriye hiçbir e-posta gitmez; bülten kaydı ve "Şifremi
-  Unuttum" bugün hiçbir yere gitmez.
+- Panelden müşteriye hiçbir e-posta gitmez; bülten kaydı hiçbir yere
+  gitmez. "Şifremi Unuttum" e-postası veritabanı modunda gider (K-95).
 
 **Formlar:**
 
 | Form | Konu | Alanlar | Panelde kaydı |
 |---|---|---|---|
-| İletişim | "İletişim formu — <konu ya da ad>" | Ad Soyad, E-posta, Telefon, Konu; Mesaj | — |
+| İletişim | "İletişim formu — <konu ya da ad>" | Ad Soyad, E-posta, Telefon, Konu; Mesaj | — (veritabanı modunda `support_messages`) |
 | Teklif Al | "Yeni teklif talebi — <no> — <firma ya da yetkili>" | Teklif no, Firma, Yetkili, E-posta, Telefon, Vergi no, Şehir, Ürünler ("adet × ad (seçenek) · kod"), Ödeme tercihi; Not | Teklifler |
 | Servis Talebi | "Yeni servis talebi — <no> — <makine>" | Talep no, Makine, Talep konusu, Firma / Ad Soyad, Yetkili, E-posta, Telefon, Yetkili GSM, Adres, İlçe, Şehir; Şikayet / açıklama | Servis Talepleri |
 | Garanti Kaydı | "Yeni garanti kaydı — <model> (<seri no>)" | Model, Seri no, Ad Soyad, E-posta, Telefon, Şehir, Posta kodu, Adres, Satıcı VKN, 12 ay uzatma isteği | Garantiler |
@@ -846,16 +894,19 @@ servis kurulu olmadığı için hiçbir e-posta gitmez.
 | Üye Ol | "Yeni üye — <ad> (<tür>)" | Ad Soyad, E-posta, Telefon, Şehir, Üyelik, Firma, Bülten izni | Üyeler |
 | Sipariş | "Yeni sipariş — <no> — <toplam>" | Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — tutar), Kupon (varsa: kod (−indirim)), Toplam, Ödeme, Teslimat adresi, Fatura (kurumsalda firma, vergi dairesi, VKN; bireyselde ad); Müşteri notu | Siparişler |
 | İade talebi | "Yeni iade talebi — <talep no> — <sipariş no>" | Talep no, Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — kod), Neden; Açıklama | İade Talepleri |
-| Welders Club | "Welders Club katılım — <ad>" | Ad, E-posta, Şehir | — |
-| Bayilik Başvurusu | "Bayilik başvurusu — <firma>" | Firma unvanı, Vergi dairesi / no, Şehir, Faaliyet alanı, Sektördeki yıl, Çalıştığı markalar, Showroom var mı, Servis kabiliyeti, Yetkili kişi, E-posta, Telefon, Not. Sunucu firma ve e-posta olmadan kabul etmez | — |
-| Ürün destek sorusu | "Ürün destek talebi — <ürün> (<kod>)" | Ürün, Ürün kodu, Ürün sayfası, Ad Soyad, E-posta, Telefon, Üye mi; Soru. Sunucu soru ve (e-posta ya da telefon) olmadan kabul etmez | — |
+| Welders Club | "Welders Club katılım — <ad>" | Ad, E-posta, Şehir | — (veritabanı modunda `welders_club_signups`) |
+| Bayilik Başvurusu | "Bayilik başvurusu — <firma>" | Firma unvanı, Vergi dairesi / no, Şehir, Faaliyet alanı, Sektördeki yıl, Çalıştığı markalar, Showroom var mı, Servis kabiliyeti, Yetkili kişi, E-posta, Telefon, Not. Sunucu firma ve e-posta olmadan kabul etmez | — (veritabanı modunda `dealer_applications`) |
+| Ürün destek sorusu | "Ürün destek talebi — <ürün> (<kod>)" | Ürün, Ürün kodu, Ürün sayfası, Ad Soyad, E-posta, Telefon, Üye mi; Soru. Sunucu soru ve (e-posta ya da telefon) olmadan kabul etmez | — (veritabanı modunda `support_messages`) |
 
 (";" sonrası, e-postada tablonun altında uzun metin olarak gösterilen alan.)
 
 Kod: `apps/zenweld-web/src/app/api/bildirim/route.ts`,
 `apps/zenweld-web/src/app/api/bayilik/route.ts`,
 `apps/zenweld-web/src/app/api/destek/route.ts`,
-`apps/zenweld-web/src/lib/notify.ts`, `apps/zenweld-web/src/lib/server/mail.ts`.
+`apps/zenweld-web/src/app/api/formlar/[tur]/route.ts`,
+`apps/zenweld-web/src/lib/notify.ts`, `apps/zenweld-web/src/lib/server/mail.ts`,
+`apps/zenweld-web/src/lib/server/notify.ts` (şablonlar),
+`apps/zenweld-web/src/lib/form-text.ts`, `apps/zenweld-web/src/lib/order-text.ts`.
 
 ---
 

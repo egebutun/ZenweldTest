@@ -1,5 +1,7 @@
+import { logEmail } from "@zenweld/db";
 import { escapeHtml } from "@zenweld/utils";
 import { isNoIndex } from "@/lib/seo";
+import { database, usesDatabase } from "./db";
 
 /**
  * E-POSTA GONDERIMI (yalnizca sunucu: /api uclari)
@@ -16,6 +18,10 @@ import { isNoIndex } from "@/lib/seo";
  * Anahtar yoksa e-posta gonderilmez ve istek hata vermez. Demo adresinde
  * (zenweld.com disi) form basarili sayilir; canlida e-posta gitmezse
  * ziyaretciye hata gosterilir (demo: false).
+ *
+ * Veritabani modunda gonderilen (ya da gonderilemeyen) her e-posta
+ * email_log'a yazilir: turu, sayfasi, bagli kayit ve sonucu (KARARLAR K-81;
+ * Asama 5.3). Metni saklanmaz.
  */
 
 export const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "info@zenweld.com";
@@ -79,6 +85,61 @@ export const botResult = (): MailResult => ({ ok: true, delivered: true, demo: i
 
 export const isEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+/** E-postanin kaydi icin: hangi ozellik, hangi sayfa, hangi kayit. */
+export interface EmailMeta {
+  /** E-posta turu (iletisim, teklif, siparis, sifre-sifirlama ...) */
+  type: string;
+  /** Formun gonderildigi sayfa (/teklif-al) */
+  sourcePath?: string;
+  /** Bagli kayit (quotes + teklifin kimligi) */
+  entity?: { type: string; id: string };
+}
+
+/** Istegin geldigi sayfa (ayni siteden geliyorsa; yalnizca yol). */
+export function sourcePath(request: Request): string | undefined {
+  try {
+    const referer = new URL(request.headers.get("referer") ?? "");
+    return referer.host === request.headers.get("host") ? referer.pathname : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/** Veritabani modunda e-postanin kaydi; kayit yazilamazsa e-posta yine gider. */
+async function record(meta: EmailMeta | undefined, to: string, subject: string, replyTo: string | undefined, sent: Sent) {
+  if (!meta || !usesDatabase()) return;
+  try {
+    await logEmail(database(), {
+      type: meta.type,
+      sourcePath: meta.sourcePath,
+      entityType: meta.entity?.type,
+      entityId: meta.entity?.id,
+      recipients: [to],
+      replyTo: replyTo && isEmail(replyTo) ? replyTo : undefined,
+      subject,
+      status: sent.result.delivered ? "sent" : sent.result.reason === "servis-hatasi" || sent.result.reason === "baglanti-hatasi" ? "failed" : "skipped",
+      providerMessageId: sent.providerId,
+      error: sent.error,
+    });
+  } catch (error) {
+    console.warn("E-posta kaydı yazılamadı:", error instanceof Error ? error.message : error);
+  }
+}
+
+/** Bot tuzagina takilan form: e-posta gonderilmez, kaydi "skipped" olarak yazilir. */
+export function recordBot(meta: EmailMeta): Promise<void> {
+  return record(meta, SUPPORT_EMAIL, "(bot tuzağı)", undefined, {
+    result: { ok: true, delivered: false, demo: isNoIndex() },
+    error: "bot tuzağı",
+  });
+}
+
+interface Sent {
+  result: MailResult;
+  providerId?: string;
+  error?: string;
+}
+
 /** E-postayi Resend'e verir; anahtar yoksa gonderilmez. */
 async function deliver(message: {
   to: string;
@@ -86,10 +147,10 @@ async function deliver(message: {
   html?: string;
   text?: string;
   replyTo?: string;
-}): Promise<MailResult> {
+}): Promise<Sent> {
   const demo = isNoIndex();
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return { ok: true, delivered: false, demo, reason: "eposta-yapilandirilmadi" };
+  if (!apiKey) return { result: { ok: true, delivered: false, demo, reason: "eposta-yapilandirilmadi" } };
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -103,9 +164,15 @@ async function deliver(message: {
         text: message.text,
       }),
     });
-    return res.ok ? { ok: true, delivered: true, demo } : { ok: true, delivered: false, demo, reason: "servis-hatasi" };
-  } catch {
-    return { ok: true, delivered: false, demo, reason: "baglanti-hatasi" };
+    const answer = (await res.json().catch(() => ({}))) as { id?: string; message?: string };
+    return res.ok
+      ? { result: { ok: true, delivered: true, demo }, providerId: answer.id }
+      : { result: { ok: true, delivered: false, demo, reason: "servis-hatasi" }, error: `${res.status} ${answer.message ?? ""}`.trim() };
+  } catch (error) {
+    return {
+      result: { ok: true, delivered: false, demo, reason: "baglanti-hatasi" },
+      error: error instanceof Error ? error.message : "bağlantı hatası",
+    };
   }
 }
 
@@ -116,6 +183,7 @@ export async function sendMail({
   rows,
   note,
   replyTo,
+  log,
 }: {
   subject: string;
   title: string;
@@ -124,6 +192,8 @@ export async function sendMail({
   note?: [string, string];
   /** Yanit dogrudan formu doldurana gitsin */
   replyTo?: string;
+  /** Veritabani modunda email_log kaydi */
+  log?: EmailMeta;
 }): Promise<MailResult> {
   const cell = "border:1px solid #e2e5e8;vertical-align:top";
   const html = `
@@ -139,10 +209,24 @@ export async function sendMail({
     </table>
     ${note && note[1] ? `<h3>${escapeHtml(note[0])}</h3><p style="white-space:pre-wrap">${escapeHtml(note[1])}</p>` : ""}
   `;
-  return deliver({ to: SUPPORT_EMAIL, subject, html, replyTo });
+  const sent = await deliver({ to: SUPPORT_EMAIL, subject, html, replyTo });
+  await record(log, SUPPORT_EMAIL, subject, replyTo, sent);
+  return sent.result;
 }
 
 /** Musteriye duz metin e-posta (sifre sifirlama ...). */
-export function sendCustomerMail({ to, subject, text }: { to: string; subject: string; text: string }): Promise<MailResult> {
-  return deliver({ to, subject, text });
+export async function sendCustomerMail({
+  to,
+  subject,
+  text,
+  log,
+}: {
+  to: string;
+  subject: string;
+  text: string;
+  log?: EmailMeta;
+}): Promise<MailResult> {
+  const sent = await deliver({ to, subject, text });
+  await record(log, to, subject, undefined, sent);
+  return sent.result;
 }

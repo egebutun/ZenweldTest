@@ -9,6 +9,8 @@ import { useT } from "@/lib/i18n-client";
 import { optimizeImageFile } from "@zenweld/utils";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";
+import { accountRequest } from "@/lib/account-api";
+import { reviewNotice } from "@/lib/form-text";
 import { notifyZenweld } from "@/lib/notify";
 
 /** Yorum videosu en fazla 2 MB (tarayici deposunun siniri ~5 MB). */
@@ -24,7 +26,7 @@ const MAX_VIDEO_BYTES = 2 * 1024 * 1024;
 export function ProductReviewsSection({ product }: { product: Product }) {
   const t = useT();
   const db = useDatabase();
-  const { user } = useAuth();
+  const { user, api } = useAuth();
   const bot = useBotTrap();
 
   const items = useMemo(() => listProductReviews(product.id, db), [product.id, db]);
@@ -42,7 +44,16 @@ export function ProductReviewsSection({ product }: { product: Product }) {
           <KvkkNotice />
         </>
       }
-      onSubmit={(input) => {
+      onSubmit={async (input) => {
+        // Veritabani modu: yorumu sunucu kaydeder (Asama 5.3); panel onayi bekler.
+        if (api !== null) {
+          const answer = await accountRequest("/api/formlar", "yorum", {
+            ...input,
+            productId: product.id,
+            website: bot.website,
+          });
+          return answer.ok ? true : answer.error;
+        }
         const review = createReview({
           productId: product.id,
           userId: user?.id,
@@ -57,14 +68,7 @@ export function ProductReviewsSection({ product }: { product: Product }) {
         });
         if (!review) return false;
         // Yorum panelde onay bekler; info@zenweld.com'a da haber verilir.
-        void notifyZenweld("yorum", {
-          productName: product.name,
-          authorName: review.authorName,
-          rating: review.rating,
-          title: review.title,
-          body: review.body,
-          media: review.media.length ? `${review.media.length} dosya (panelde görülebilir)` : "Yok",
-        }, bot.website);
+        void notifyZenweld("yorum", reviewNotice(review, product.name), bot.website);
         return true;
       }}
       onPickMedia={(files, add, fail) => {

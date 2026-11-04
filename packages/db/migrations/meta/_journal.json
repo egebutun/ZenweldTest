@@ -50,6 +50,13 @@
       "when": 1793798083901,
       "tag": "0006_giris-deneme-siniri",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793833925429,
+      "tag": "0007_e-posta-turu-sifre-sifirlama",
+      "breakpoints": true
     }
   ]
 }

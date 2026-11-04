@@ -1,13 +1,15 @@
 import { after, type NextRequest } from "next/server";
-import { AUTH_ERRORS, readSession } from "@zenweld/auth/server";
-import { checkCartCoupon, createReturnRequest, memberOrders, placeOrder, readPricingData, type Member, type OrderFailure } from "@zenweld/db";
+import { AUTH_ERRORS } from "@zenweld/auth/server";
+import { checkCartCoupon, createReturnRequest, memberOrders, placeOrder, readPricingData, type OrderFailure } from "@zenweld/db";
 import { tr } from "@zenweld/i18n";
 import { couponProblemText } from "@/lib/coupon";
 import { orderNotice, returnNotice } from "@/lib/order-text";
 import { getDatabaseCatalog } from "@/lib/server/catalog";
 import { database, usesDatabase } from "@/lib/server/db";
+import { sourcePath } from "@/lib/server/mail";
 import { sendNotification } from "@/lib/server/notify";
-import { SESSION_COOKIES, clearSessionCookie, json, notFound, sameOrigin } from "@/lib/server/session-cookie";
+import { siteMember } from "@/lib/server/member";
+import { clearSessionCookie, json, notFound, sameOrigin } from "@/lib/server/session-cookie";
 
 /**
  * SIPARISLER (veritabani modu; Asama 5.2, KARARLAR K-97)
@@ -28,13 +30,6 @@ export const runtime = "nodejs";
 
 type Context = { params: Promise<{ islem: string }> };
 
-async function sessionMember(request: NextRequest): Promise<Member | null> {
-  const token = request.cookies.get(SESSION_COOKIES.site)?.value;
-  const session = await readSession(database(), token, "site");
-  if (!session) return null;
-  const { id, role, email, firstName, lastName, phone } = session.user;
-  return { id, role: role as Member["role"], email, firstName, lastName, phone };
-}
 
 const sessionEnded = (request: NextRequest) =>
   clearSessionCookie(json({ ok: false, error: AUTH_ERRORS.sessionEnded }, 401), request, "site");
@@ -47,7 +42,7 @@ function orderFailure(result: OrderFailure) {
 export async function GET(request: NextRequest, context: Context) {
   const { islem } = await context.params;
   if (!usesDatabase() || islem !== "liste") return notFound();
-  const member = await sessionMember(request);
+  const member = await siteMember(request);
   if (!member) return sessionEnded(request);
   const result = await database().transaction((tx) => memberOrders(tx, member.id, new Date()));
   return json({ ok: true, ...result });
@@ -58,7 +53,7 @@ export async function POST(request: NextRequest, context: Context) {
   if (!usesDatabase() || !["kupon", "ver", "iade"].includes(islem)) return notFound();
   if (!sameOrigin(request)) return json({ ok: false, error: "baska-site" }, 403);
   const body = ((await request.json().catch(() => null)) ?? {}) as Record<string, unknown>;
-  const member = await sessionMember(request);
+  const member = await siteMember(request);
 
   if (islem === "kupon") {
     // Sepetteki fiyatlar sayfanin katalogundan gelir; kupon da ayni katalogla hesaplanir.
@@ -73,12 +68,21 @@ export async function POST(request: NextRequest, context: Context) {
     const pricing = await readPricingData(db);
     const result = await db.transaction((tx) => placeOrder(tx, member, body, new Date(), pricing));
     if (!result.ok) return orderFailure(result);
-    after(() => sendNotification("siparis", orderNotice(result.order, tr)));
+    const { order } = result;
+    after(() =>
+      sendNotification("siparis", orderNotice(order, tr), { sourcePath: sourcePath(request), entity: { type: "orders", id: order.id } }),
+    );
     return json({ ok: true, code: result.order.code });
   }
 
   const result = await db.transaction((tx) => createReturnRequest(tx, member, body, new Date()));
   if (!result.ok) return orderFailure(result);
-  after(() => sendNotification("iade", returnNotice(result.request, tr)));
-  return json({ ok: true, code: result.request.code });
+  const { request: returnRequest } = result;
+  after(() =>
+    sendNotification("iade", returnNotice(returnRequest, tr), {
+      sourcePath: sourcePath(request),
+      entity: { type: "return_requests", id: returnRequest.id },
+    }),
+  );
+  return json({ ok: true, code: returnRequest.code });
 }

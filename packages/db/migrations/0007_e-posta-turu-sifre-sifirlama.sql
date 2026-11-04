@@ -1,0 +1,2 @@
+ALTER TABLE "email_log" DROP CONSTRAINT "email_log_type";--> statement-breakpoint
+ALTER TABLE "email_log" ADD CONSTRAINT "email_log_type" CHECK ("email_log"."type" IN ('iletisim', 'bayilik', 'welders-club', 'urun-destek', 'teklif', 'servis', 'garanti', 'yorum', 'uye', 'siparis', 'iade', 'sifre-sifirlama'));

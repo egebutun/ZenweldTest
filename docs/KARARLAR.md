@@ -1081,6 +1081,18 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Neden:** Müşteri onaylamadığı bir tutarı ödemesin; ödeme kuruluşu henüz
   seçilmedi; tarayıcıdaki iade formu sunucudaki siparişi bulamazdı.
 
+### K-98 · Formlar sunucuda: e-posta formlarının kaydı ve spam koruması
+- **Tarih:** 2026-11-04
+- **Karar:** Veritabanı modunda formlar sunucuya taşınırken (Aşama 5.3):
+  - Yalnızca e-postaya giden formlar (iletişim, bayilik başvurusu, ürün
+    destek sorusu, Welders Club) aynı adımda kendi tablolarına da yazılır
+    ve gönderilen her e-posta `email_log`'a kaydedilir (K-81'in uygulanışı).
+  - Spam koruması olarak şimdilik görünmez bot tuzağı yeterlidir. İstek
+    sınırı ve bot doğrulaması (Turnstile) "canlıya hazırlık" adımında
+    eklenir; canlıdan önce şarttır.
+- **Neden:** Tablolar hazırdı ve formlar zaten bu adımda sunucuya geçiyordu;
+  istek sınırı için paylaşılan sayaç ve sunucu kararı gerekiyor.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

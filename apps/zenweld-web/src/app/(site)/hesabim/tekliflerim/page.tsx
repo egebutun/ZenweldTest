@@ -1,10 +1,10 @@
 "use client";
 
 import { useAuth } from "@zenweld/auth";
-import { quotesForUser, useDatabase } from "@zenweld/store";
 import { Badge, EmptyState } from "@zenweld/ui";
 import { FileText } from "lucide-react";
 import { useT } from "@/lib/i18n-client";
+import { useMemberRecords } from "@/lib/member-records";
 import { formatDate } from "@zenweld/utils";
 
 const STATUS_TONE = {
@@ -26,10 +26,10 @@ const STATUS_LABEL = {
 export default function MyQuotesPage() {
   const t = useT();
   const { user } = useAuth();
-  const db = useDatabase();
+  const { quotes, ready } = useMemberRecords();
 
   if (!user) return null;
-  const quotes = quotesForUser(user.id, db);
+  if (!ready) return <div className="py-10 text-center text-zw-grey-500">{t.common.loading}</div>;
 
   if (quotes.length === 0) {
     return <EmptyState icon={<FileText size={38} />} title={t.account.noQuotes} />;

@@ -419,7 +419,12 @@ npm run start --workspace apps/zenweld-web
     değiştiyse sipariş alınmaz). Kartlı ödeme gerçek POS bağlanana kadar
     temsilidir. Siparişlerim ve iade talepleri de sunucudadır. Panelin
     Siparişler ekranı ise 5.4'e kadar tarayıcıdaki örnek siparişleri
-    gösterir. Teklifler ve formlar şimdilik tarayıcıda kalır.
+    gösterir.
+  - **Formlar sunucuda (Aşama 5.3):** Teklif Al, servis talebi, garanti
+    kaydı ve sorgulama, ürün yorumu, iletişim, bayilik başvurusu, ürün
+    destek sorusu ve Welders Club veritabanına yazılır; gönderilen her
+    e-posta `email_log`'a kaydedilir. Tekliflerim ve Garantilerim
+    sunucudan okunur. Panel bu kayıtları 5.4'te gösterir.
   - **Panel girişi sunucuda (Aşama 4.3):** `/yonetim` yönetici oturumu
     olmadan açılmaz; oturum 8 saat sürer. Bilgisayarda `db:seed`'in demo
     yöneticisiyle, canlıda `npm run yonetici:olustur` ile açılan hesapla
@@ -551,8 +556,8 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
    PostgreSQL'dir (KARARLAR K-81; tablolar `packages/db`,
    [docs/VERITABANI.md](docs/VERITABANI.md)). Veritabanı modunda katalog,
    stok, içerik ve ayarlar veritabanından okunur (Aşama 3); üyelik, adresler
-   ve favoriler, siparişler ve iade talepleri veritabanına yazılır (Aşama 4,
-   5.1, 5.2). Formlar ve panel Aşama 5'te bağlanır
+   ve favoriler, siparişler, iade talepleri ve formlar veritabanına yazılır
+   (Aşama 4, 5.1–5.3). Panel Aşama 5'te bağlanır
    ([docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Veritabanı).
 3. **Ürün içeriği ve fiyatlar girilmeli.** Ekipmanlar'daki ürünlerin adı, kodu,
    alt grubu, garantisi ve seçenekleri gerçektir; Force serisi 9 ürün dışında

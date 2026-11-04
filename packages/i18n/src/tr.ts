@@ -315,6 +315,7 @@ export const tr = {
     emptyList: "Teklif listeniz boş. Yukarıdan model seçip listeye ekleyin.",
     required: "Lütfen firma ve iletişim bilgilerindeki zorunlu alanları doldurun.",
     invalidEmail: "Lütfen geçerli bir e-posta adresi girin.",
+    listChanged: "Teklif listenizdeki bazı ürünler değişti ya da artık listelenmiyor. Listenizi kontrol edin.",
     yourList: "Teklif Listeniz",
     remove: "Çıkar",
     pickTitle: "Ürün Seçin",
@@ -456,6 +457,7 @@ export const tr = {
     invalidPostalCode: "Posta kodu 5 haneli olmalıdır.",
     invalidSellerTaxNumber: "Satıcı VKN 10 haneli (şahıs firmalarında 11 haneli) olmalıdır.",
     duplicateSerial: "Bu seri numarası daha önce kaydedilmiş.",
+    required: "Lütfen zorunlu alanları doldurun.",
   },
   club: {
     title: "Welders Club",

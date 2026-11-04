@@ -7,6 +7,8 @@ import { createQuote, useDatabase } from "@zenweld/store";
 import { productOptionsView, type PaymentPreference, type User } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input, ProductImage, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
+import { accountRequest } from "@/lib/account-api";
+import { quoteNotice } from "@/lib/form-text";
 import { useT } from "@/lib/i18n-client";
 import { notifyZenweld } from "@/lib/notify";
 import { useMemberPrefill } from "@/lib/member-prefill";
@@ -30,8 +32,11 @@ const memberValues = (user: User) => ({
 export default function QuotePage() {
   const t = useT();
   const db = useDatabase();
-  const { user } = useAuth();
+  const { user, api } = useAuth();
+  // Veritabani modu: teklifi sunucu kaydeder (Asama 5.3).
+  const server = api !== null;
   const quoteList = useQuoteList();
+  const [sending, setSending] = useState(false);
 
   const [step, setStep] = useState(1);
   const [code, setCode] = useState<string | null>(null);
@@ -110,7 +115,7 @@ export default function QuotePage() {
     setStep(problem ? 1 : target);
   };
 
-  const submit = () => {
+  const submit = async () => {
     setError(null);
     const problem = contactError();
     if (problem) {
@@ -121,6 +126,24 @@ export default function QuotePage() {
     if (quoteList.items.length === 0) {
       setError(t.quote.emptyList);
       setStep(2);
+      return;
+    }
+
+    if (server) {
+      setSending(true);
+      const answer = await accountRequest<{ code: string }>("/api/formlar", "teklif", {
+        ...form,
+        termDays: form.paymentPreference === "vadeli" ? form.termDays : undefined,
+        items: quoteList.items.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
+        website: bot.website,
+      });
+      setSending(false);
+      if (!answer.ok) {
+        setError(answer.error);
+        return;
+      }
+      quoteList.clear();
+      setCode(answer.code);
       return;
     }
 
@@ -146,23 +169,7 @@ export default function QuotePage() {
     });
 
     // Teklif panelde Teklifler'e duser; info@zenweld.com'a da haber verilir.
-    void notifyZenweld("teklif", {
-      code: quote.code,
-      companyName: quote.companyName,
-      contactName: quote.contactName,
-      email: quote.email,
-      phone: quote.phone,
-      taxNumber: quote.taxNumber,
-      city: quote.city,
-      items: quote.items.map(
-        (i) => `${i.quantity} × ${i.productName}${i.variantLabel ? ` (${i.variantLabel})` : ""} · ${i.sku}`,
-      ),
-      payment:
-        quote.paymentPreference === "vadeli"
-          ? `${t.quote.vadeli} (${quote.termDays} gün)`
-          : t.quote[quote.paymentPreference],
-      message: quote.message,
-    }, bot.website);
+    void notifyZenweld("teklif", quoteNotice(quote, t), bot.website);
 
     quoteList.clear();
     setCode(quote.code);
@@ -442,7 +449,7 @@ export default function QuotePage() {
           {step < STEPS ? (
             <Button onClick={() => goTo(Math.min(STEPS, step + 1))}>{t.common.next}</Button>
           ) : (
-            <Button size="lg" onClick={submit}>
+            <Button size="lg" onClick={() => void submit()} disabled={sending}>
               {t.quote.submit}
             </Button>
           )}

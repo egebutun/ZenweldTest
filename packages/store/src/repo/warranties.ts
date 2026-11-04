@@ -1,15 +1,12 @@
 "use client";
 
-import type { WarrantyRecord, ZenweldDatabase } from "@zenweld/data";
+import { normalizeSerial, warrantyExpiryDate, type WarrantyRecord, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nowIso } from "./shared";
 
 /* ------------------------------------------------------------------ */
 /* Garanti kayitlari                                                   */
 /* ------------------------------------------------------------------ */
-
-/** Seri numarasi bosluksuz ve buyuk harfle saklanir; karsilastirma da boyle yapilir. */
-const normalizeSerial = (serial: string) => serial.trim().toUpperCase();
 
 /**
  * Garanti kaydi. E-posta kucuk harfe cevrilir (Garantilerim uyenin e-postasiyla
@@ -52,11 +49,8 @@ export function warrantyExpiry(
   db: ZenweldDatabase = getSnapshot(),
 ): string {
   const months = db.products.find((p) => p.id === productId)?.warrantyMonths ?? 24;
-  const expires = new Date(startDate);
-  expires.setMonth(expires.getMonth() + months + (extended ? 12 : 0));
-  // Yerel tarih: toISOString() UTC verir, gece 00:00–03:00 kaydinda bir gun erken olurdu.
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${expires.getFullYear()}-${pad(expires.getMonth() + 1)}-${pad(expires.getDate())}`;
+  // Kural packages/data/src/forms.ts'te (Turkiye saatine gore gun; sunucu da kullanir).
+  return warrantyExpiryDate(new Date(startDate), months, extended);
 }
 
 /** Yonetim panelinden garanti kaydini gunceller (musterinin Garantilerim sayfasina yansir). */

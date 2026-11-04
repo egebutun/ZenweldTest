@@ -2,29 +2,29 @@
 
 import { FileText, Heart, Package, ShieldCheck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import { quotesForUser, useDatabase, warrantiesForEmail } from "@zenweld/store";
 import Link from "next/link";
 import { useFavourites } from "@/lib/favourites";
 import { useT } from "@/lib/i18n-client";
 import { useMemberOrders } from "@/lib/member-orders";
+import { useMemberRecords } from "@/lib/member-records";
 
 export default function AccountHome() {
   const t = useT();
   const { user } = useAuth();
-  const db = useDatabase();
   const favourites = useFavourites();
   const { orders, ready } = useMemberOrders();
+  const records = useMemberRecords();
 
   if (!user) return null;
 
-  const quotes = quotesForUser(user.id, db);
-  const warranties = warrantiesForEmail(user.email, db);
+  const quotes = records.ready ? records.quotes.length : "…";
+  const warranties = records.ready ? records.warranties.length : "…";
 
   const cards = [
-    { href: "/hesabim/tekliflerim", label: t.account.myQuotes, value: quotes.length, Icon: FileText, show: user.role !== "admin" },
+    { href: "/hesabim/tekliflerim", label: t.account.myQuotes, value: quotes, Icon: FileText, show: user.role !== "admin" },
     { href: "/hesabim/siparislerim", label: t.account.myOrders, value: ready ? orders.length : "…", Icon: Package, show: user.role !== "admin" },
     { href: "/hesabim/favorilerim", label: t.account.favourites, value: favourites.ids.length, Icon: Heart, show: true },
-    { href: "/hesabim/garantilerim", label: t.account.warranties, value: warranties.length, Icon: ShieldCheck, show: user.role !== "admin" },
+    { href: "/hesabim/garantilerim", label: t.account.warranties, value: warranties, Icon: ShieldCheck, show: user.role !== "admin" },
   ].filter((c) => c.show);
 
   return (

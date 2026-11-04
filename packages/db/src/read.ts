@@ -475,11 +475,15 @@ export async function readUsers(db: ReadDb): Promise<Pick<ZenweldDatabase, "user
 
 /* ------------------------- Teklif, siparis, iade ------------------------- */
 
-export async function readQuotes(db: ReadDb): Promise<Quote[]> {
-  const [quotes, items] = await serial(
-    () => db.select().from(s.quotes).orderBy(desc(s.quotes.createdAt)),
-    () => db.select().from(s.quoteItems).orderBy(asc(s.quoteItems.line)),
-  );
+/** Teklifler, yeniden eskiye; where verilirse yalnizca o teklifler (or. bir uyeninkiler; Asama 5.3). */
+export async function readQuotes(db: ReadDb, where?: SQL): Promise<Quote[]> {
+  const quotes = await db.select().from(s.quotes).where(where).orderBy(desc(s.quotes.createdAt), desc(s.quotes.code));
+  if (where && quotes.length === 0) return [];
+  const items = await db
+    .select()
+    .from(s.quoteItems)
+    .where(where ? inArray(s.quoteItems.quoteId, quotes.map((q) => q.id)) : undefined)
+    .orderBy(asc(s.quoteItems.line));
   const itemsByQuote = groupBy(items, (i) => i.quoteId);
   return quotes.map((q) => ({
     id: q.id,
@@ -697,57 +701,71 @@ export async function readCoupons(
 export async function readSupport(
   db: ReadDb,
 ): Promise<Pick<ZenweldDatabase, "serviceRequests" | "warranties" | "reviews">> {
-  const [services, warranties, reviews, categories] = await serial(
-    () => db.select().from(s.serviceRequests).orderBy(desc(s.serviceRequests.createdAt)),
-    () => db.select().from(s.warranties).orderBy(desc(s.warranties.registeredAt)),
-    () => db.select().from(s.reviews).orderBy(desc(s.reviews.createdAt)),
-    () => db.select({ id: s.categories.id, slug: s.categories.slug }).from(s.categories),
-  );
-  const slugOfCategory = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.slug ?? "") : "");
+  const reviews = await db.select().from(s.reviews).orderBy(desc(s.reviews.createdAt));
   return {
-    serviceRequests: services.map((r) => ({
-      id: r.id,
-      code: r.code,
-      status: r.status as ZenweldDatabase["serviceRequests"][number]["status"],
-      categorySlug: slugOfCategory(r.categoryId),
-      productId: r.productId ?? "",
-      productName: r.productName,
-      reasons: r.reasons as ZenweldDatabase["serviceRequests"][number]["reasons"],
-      complaint: r.complaint,
-      companyName: r.companyName,
-      address: r.address,
-      city: r.city,
-      district: r.district,
-      email: r.email,
-      phone: r.phone,
-      contactName: r.contactName,
-      contactGsm: r.contactGsm,
-      userId: opt(r.userId),
-      adminNote: opt(r.adminNote),
-      createdAt: iso(r.createdAt),
-      updatedAt: iso(r.updatedAt),
-    })),
-    warranties: warranties.map((w) => ({
-      id: w.id,
-      serialNumber: w.serialNumber,
-      categorySlug: slugOfCategory(w.categoryId),
-      productId: w.productId ?? "",
-      ownerName: w.ownerName,
-      email: w.email,
-      phone: w.phone,
-      city: w.city,
-      postalCode: w.postalCode,
-      address: w.address,
-      sellerTaxNumber: w.sellerTaxNumber,
-      registeredAt: iso(w.registeredAt),
-      expiresAt: w.expiresAt,
-      extended: w.extended,
-    })),
+    serviceRequests: await readServiceRequests(db),
+    warranties: await readWarranties(db),
     reviews: reviews.map(reviewRecord),
   };
 }
 
-const reviewRecord = (r: typeof s.reviews.$inferSelect): ProductReview => ({
+/** Servis talepleri, yeniden eskiye; where verilirse yalnizca o talepler (Asama 5.3). */
+export async function readServiceRequests(db: ReadDb, where?: SQL): Promise<ZenweldDatabase["serviceRequests"]> {
+  const [services, categories] = await serial(
+    () => db.select().from(s.serviceRequests).where(where).orderBy(desc(s.serviceRequests.createdAt)),
+    () => db.select({ id: s.categories.id, slug: s.categories.slug }).from(s.categories),
+  );
+  const slugOfCategory = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.slug ?? "") : "");
+  return services.map((r) => ({
+    id: r.id,
+    code: r.code,
+    status: r.status as ZenweldDatabase["serviceRequests"][number]["status"],
+    categorySlug: slugOfCategory(r.categoryId),
+    productId: r.productId ?? "",
+    productName: r.productName,
+    reasons: r.reasons as ZenweldDatabase["serviceRequests"][number]["reasons"],
+    complaint: r.complaint,
+    companyName: r.companyName,
+    address: r.address,
+    city: r.city,
+    district: r.district,
+    email: r.email,
+    phone: r.phone,
+    contactName: r.contactName,
+    contactGsm: r.contactGsm,
+    userId: opt(r.userId),
+    adminNote: opt(r.adminNote),
+    createdAt: iso(r.createdAt),
+    updatedAt: iso(r.updatedAt),
+  }));
+}
+
+/** Garanti kayitlari, yeniden eskiye; where verilirse yalnizca o kayitlar (or. bir e-postanin; Asama 5.3). */
+export async function readWarranties(db: ReadDb, where?: SQL): Promise<ZenweldDatabase["warranties"]> {
+  const [rows, categories] = await serial(
+    () => db.select().from(s.warranties).where(where).orderBy(desc(s.warranties.registeredAt)),
+    () => db.select({ id: s.categories.id, slug: s.categories.slug }).from(s.categories),
+  );
+  const slugOfCategory = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.slug ?? "") : "");
+  return rows.map((w) => ({
+    id: w.id,
+    serialNumber: w.serialNumber,
+    categorySlug: slugOfCategory(w.categoryId),
+    productId: w.productId ?? "",
+    ownerName: w.ownerName,
+    email: w.email,
+    phone: w.phone,
+    city: w.city,
+    postalCode: w.postalCode,
+    address: w.address,
+    sellerTaxNumber: w.sellerTaxNumber,
+    registeredAt: iso(w.registeredAt),
+    expiresAt: w.expiresAt,
+    extended: w.extended,
+  }));
+}
+
+export const reviewRecord = (r: typeof s.reviews.$inferSelect): ProductReview => ({
   id: r.id,
   productId: r.productId ?? "",
   userId: opt(r.userId),

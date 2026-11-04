@@ -110,8 +110,9 @@ export function ProductSupportChat({ product }: { product: Product }) {
           website: bot.website,
         }),
       });
-      const data = (await res.json()) as { ok?: boolean; delivered?: boolean };
-      setDelivered(Boolean(data.delivered));
+      const data = (await res.json()) as { ok?: boolean; delivered?: boolean; saved?: boolean };
+      // Veritabani modunda soru kaydedildiyse e-posta gitmese de ulasti sayilir.
+      setDelivered(Boolean(data.delivered || data.saved));
     } catch {
       setDelivered(false);
     }

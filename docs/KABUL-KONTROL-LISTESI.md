@@ -459,6 +459,17 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       siparişinin `due_at`'i geçmişe çekilince Siparişlerim açılırken sipariş
       "İptal Edildi" olur ve geçmişte "Ödeme süresi doldu" yazar. Teslim
       edilmiş siparişte açılan iade talebi `return_requests`'te görünür.
+- [ ] Formlar (veritabanı modu, Aşama 5.3, K-98): ziyaretçi olarak gönderilen
+      teklif `quotes`'ta `TKL-…` numarasıyla görünür; üyenin teklifi
+      Tekliflerim'de görünür. Servis talebi `service_requests`'te, garanti
+      kaydı `warranties`'te görünür; aynı seri numarası küçük harfle
+      tekrar girilince "Bu seri numarası daha önce kaydedilmiş." der. Garanti
+      sorgulamada seri numarası küçük harf ve boşlukla yazılsa da bulunur;
+      Garantilerim'de görünür. Değerlendirme `reviews`'ta onaysız durur.
+      İletişim formu `support_messages`'ta, Welders Club katılımı
+      `welders_club_signups`'ta, bayilik başvurusu `dealer_applications`'ta
+      görünür. Her form için `email_log`'da bir satır vardır (Resend
+      tanımlı değilse durumu `skipped`).
 - [ ] Veritabanı modunda panel (Aşama 4.3): oturumsuz `/yonetim/urunler`
       giriş ekranına (`?next=%2Fyonetim%2Furunler`) gider; yönetici girişinden
       sonra Ürünler açılır. `zw_panel` çerezi HttpOnly'dir; `sessions`'ta

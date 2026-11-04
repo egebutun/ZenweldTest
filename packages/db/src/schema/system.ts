@@ -23,6 +23,9 @@ export const EMAIL_TYPES = [
   "iade",
 ] as const;
 
+/** Musteriye giden e-postalarin turleri; yalnizca email_log'da (alicisi musteridir). */
+export const CUSTOMER_EMAIL_TYPES = ["sifre-sifirlama"] as const;
+
 /** E-postalarin alicilari, tur basina. Satir yoksa varsayilan adres (SUPPORT_EMAIL). */
 export const emailRecipients = pgTable(
   "email_recipients",
@@ -59,7 +62,7 @@ export const emailLog = pgTable(
   (t) => [
     index("email_log_type").on(t.type, t.createdAt.desc()),
     index("email_log_entity").on(t.entityType, t.entityId),
-    check("email_log_type", oneOf(t.type, EMAIL_TYPES)),
+    check("email_log_type", oneOf(t.type, [...EMAIL_TYPES, ...CUSTOMER_EMAIL_TYPES])),
     check("email_log_status", oneOf(t.status, ["sent", "failed", "skipped"])),
   ],
 );

@@ -13,6 +13,7 @@ export * from "./coupon";
 export * from "./cart";
 export * from "./payment";
 export * from "./orders";
+export * from "./forms";
 export { categories, categoryGroups } from "./seed/categories.seed";
 export { products } from "./seed/products.seed";
 export { dealers } from "./seed/dealers.seed";

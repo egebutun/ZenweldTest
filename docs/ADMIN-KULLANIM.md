@@ -92,7 +92,9 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     göstermez. Sitede verilen siparişler ve iade talepleri veritabanına
     yazılır (Aşama 5.2), ama Siparişler ve İade Talepleri ekranları
     bunları 5.4'te gösterir; o zamana kadar tarayıcıdaki örnek kayıtları
-    gösterir.
+    gösterir. Teklifler, Servis Talepleri, Garantiler ve Yorumlar için de
+    aynısı geçerlidir (sitedeki formlar Aşama 5.3'ten beri veritabanına
+    yazılır).
 
 **Giriş ekranı:**
 

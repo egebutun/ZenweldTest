@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import type { User } from "@zenweld/data";
+import { isValidPostalCode, isValidSellerTaxNumber, type User } from "@zenweld/data";
 import { listProducts, registerWarranty, useDatabase } from "@zenweld/store";
 import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";
+import { accountRequest } from "@/lib/account-api";
+import { warrantyNotice } from "@/lib/form-text";
 import { notifyZenweld } from "@/lib/notify";
 import { useMemberPrefill } from "@/lib/member-prefill";
 
@@ -30,8 +32,11 @@ const memberValues = (u: User) => ({
 export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
   const t = useT();
   const db = useDatabase();
-  const { user } = useAuth();
+  const { user, api } = useAuth();
+  // Veritabani modu: kaydi sunucu yapar (Asama 5.3).
+  const server = api !== null;
   const [done, setDone] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const [form, setForm] = useState({
     ownerName: "",
@@ -87,31 +92,28 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
     );
   }
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!/^\d{5}$/.test(form.postalCode)) return setError(t.warranty.invalidPostalCode);
-    if (!/^\d{10,11}$/.test(form.sellerTaxNumber)) return setError(t.warranty.invalidSellerTaxNumber);
+    if (!isValidPostalCode(form.postalCode)) return setError(t.warranty.invalidPostalCode);
+    if (!isValidSellerTaxNumber(form.sellerTaxNumber)) return setError(t.warranty.invalidSellerTaxNumber);
     setError(null);
+    if (server) {
+      setSending(true);
+      const answer = await accountRequest("/api/formlar", "garanti", { ...form, website: bot.website });
+      setSending(false);
+      if (!answer.ok) return setError(answer.error);
+      setDone(true);
+      return;
+    }
     const saved = registerWarranty(form);
     if (!saved) return setError(t.warranty.duplicateSerial);
     // Kayit panelde Garantiler'e duser; info@zenweld.com'a da haber verilir.
-    void notifyZenweld("garanti", {
-      productName: models.find((p) => p.id === saved.productId)?.name ?? "",
-      serialNumber: saved.serialNumber,
-      ownerName: saved.ownerName,
-      email: saved.email,
-      phone: saved.phone,
-      city: saved.city,
-      postalCode: saved.postalCode,
-      address: saved.address,
-      sellerTaxNumber: saved.sellerTaxNumber,
-      extended: saved.extended ? "Evet" : "Hayır",
-    }, bot.website);
+    void notifyZenweld("garanti", warrantyNotice(saved, models.find((p) => p.id === saved.productId)?.name ?? ""), bot.website);
     setDone(true);
   };
 
   return (
-    <form onSubmit={submit} className="max-w-xl space-y-4">
+    <form onSubmit={(e) => void submit(e)} className="max-w-xl space-y-4">
       <FormRow label={t.warranty.ownerName} required>
         <Input required value={form.ownerName} onChange={(e) => set("ownerName", e.target.value)} />
       </FormRow>
@@ -209,7 +211,7 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
 
       {error && <Alert tone="danger">{error}</Alert>}
 
-      <Button type="submit" size="lg" fullWidth>
+      <Button type="submit" size="lg" fullWidth disabled={sending}>
         {t.warranty.submit}
       </Button>
     </form>
