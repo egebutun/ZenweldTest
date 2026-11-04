@@ -535,13 +535,20 @@ gerekmez.
 
 Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
 
-1. **Kimlik doğrulama sunucuya taşınmalı.** Şu an şifre karşılaştırması tarayıcıda
-   yapılıyor ve `/yonetim` paneli tarayıcı tarafında korunuyor — bu gerçek bir
-   güvenlik değildir. Supabase Auth, Auth0 veya kendi backend'iniz kullanılmalı.
-2. **Veri gerçek bir veritabanına taşınmalı.** Sunucu veritabanı PostgreSQL'dir
-   (KARARLAR K-81); tabloları `packages/db`'de hazırlanıyor
-   ([docs/VERITABANI.md](docs/VERITABANI.md)). Site ve panel aşama aşama
-   bağlanacak ([docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Veritabanı).
+1. **Site veritabanı modunda çalışmalı** (`DATA_SOURCE=database`). Demo
+   modunda şifre tarayıcıda karşılaştırılır ve `/yonetim` paneli tarayıcıda
+   korunur; bu gerçek bir güvenlik değildir. Veritabanı modunda üyelik ve
+   panel girişi sunucudadır (Aşama 4): şifreler argon2id ile özetlenir,
+   oturum yalnızca sunucunun okuyabildiği çerezde durur, yanlış şifre sınırı
+   ve şifre sıfırlama vardır. Kalan: panel işlemlerinin de sunucuda,
+   yönetici yetkisiyle yapılması (Aşama 5).
+2. **Verinin veritabanına taşınması tamamlanmalı.** Sunucu veritabanı
+   PostgreSQL'dir (KARARLAR K-81; tablolar `packages/db`,
+   [docs/VERITABANI.md](docs/VERITABANI.md)). Veritabanı modunda katalog,
+   stok, içerik ve ayarlar veritabanından okunur (Aşama 3); üyelik, adresler
+   ve favoriler veritabanına yazılır (Aşama 4, 5.1). Siparişler, formlar ve
+   panel Aşama 5'te bağlanır
+   ([docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Veritabanı).
 3. **Ürün içeriği ve fiyatlar girilmeli.** Ekipmanlar'daki ürünlerin adı, kodu,
    alt grubu, garantisi ve seçenekleri gerçektir; Force serisi 9 ürün dışında
    açıklama, teknik özellikler ve kutu içeriği örnektir; fotoğraflar örnektir,
