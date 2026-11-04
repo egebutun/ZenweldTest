@@ -8,7 +8,7 @@ import "../globals.css";
 import { SITE_DESCRIPTION, SITE_NAME, getSiteUrl, isNoIndex, socialMetadata } from "@/lib/seo";
 import { HOME_TITLE } from "@/lib/page-meta";
 import { StaticPageSeoTitle } from "@/lib/page-seo-client";
-import { getDatabaseCatalog } from "@/lib/server/catalog";
+import { getLayoutData } from "@/lib/server/catalog";
 import { Providers } from "./providers";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -41,11 +41,11 @@ export function generateMetadata(): Metadata {
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   // Veri kaynagi veritabaniysa katalog sunucuda okunur (en fazla 60 saniye
   // eski) ve butun sayfalara verilir; demo modunda null.
-  const catalog = await getDatabaseCatalog();
+  const data = await getLayoutData();
   return (
     <html lang="tr">
       <body className="min-h-screen bg-white antialiased">
-        <Providers catalog={catalog}>
+        <Providers data={data}>
           <WelcomeGate />
           <StaticPageSeoTitle />
           <Header />

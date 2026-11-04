@@ -506,18 +506,26 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      (bitti, K-87) → 3.1 okuma katmanı (bitti, `packages/db/src/read.ts`)
      → 3.2 veri kaynağı ayarı (bitti, `DATA_SOURCE=database`, K-88) → 3.3
      katalog sunucudan (bitti, `apps/zenweld-web/src/lib/server/catalog.ts`)
-     → 3.4 ürün sayfası ve Bayi Bul verisi sayfa başına → 3.5 içerik
+     → 3.4 ağır veri yalnızca gereken sayfaya (bitti: ürün sayfası o ürünün
+     bayi ve satıcı stoğunu, bayileri ve yorumlarını; Bayi Bul bayileri;
+     anasayfa bayileri ve öne çıkan yorumları alır) → 3.5 içerik
      sayfaları → 3.6 önbellek ayarları → 3.7 veritabanı modunda tarayıcı
      testleri ve ölçüm.
    - Veritabanı modunun bugünkü sınırları (3.4–3.7 ve Aşama 5'te kalkar):
-     - Panel henüz tarayıcıya yazıyor: paneldeki ürün, kategori, seçenek ve
-       mağaza ayarı değişiklikleri bu modda siteye yansımaz.
-     - Her sayfa katalogun tamamını (bugün ~110 KB) tarayıcıya gönderir;
-       3.4'te her sayfa yalnızca gerekenini alacak.
-     - Next'in önbelleği tek kayıtta en fazla 2 MB tutar; katalogun tamamı
-       ~1.000 üründe bu sınıra yaklaşır (aşılırsa önbelleğe alınmaz, her
-       sayfa yenilemesinde veritabanı okunur). 3.4'teki sayfa başına okuma
-       bu sınırı kaldırır.
+     - Panel henüz tarayıcıya yazıyor: paneldeki ürün, kategori, seçenek,
+       mağaza ayarı, bayi, satıcı, stok ve yorum değişiklikleri bu modda
+       siteye yansımaz. Sitede yazılan yeni yorum da tarayıcıya kaydolur
+       (zaten panel onayı bekler).
+     - Katalog (bugün ~110 KB, sıkıştırılmış ~17 KB) sayfa çerçevesiyle her
+       sayfada gelir (3.3'te planlandığı gibi). Ağır veri (bayi ve satıcı
+       stoğu, yorumlar) yalnızca gereken sayfaya gider (3.4); bayi stoğu
+       bugün 2.754 satır (~500 KB), ürün sayfasına yalnızca o ürünün
+       stoktaki satırları gider (ör. 18 satır).
+     - Next'in önbelleği tek kayıtta en fazla 2 MB tutar. Stok ve yorumlar
+       ürün başına okunduğu için bu sınıra takılmaz. Katalogun kendisi
+       ~1.000 üründe sınıra yaklaşır (aşılırsa önbelleğe alınmaz, her sayfa
+       yenilemesinde veritabanı okunur); ürün sayısı bu düzeye gelmeden
+       ürünler parça parça (ör. bölüm başına) önbelleğe alınmalı.
      - Derleme sırasında veritabanına erişilmelidir (sayfalar derlemede
        hazırlanır); canlıda derleme sunucusunun veritabanı erişimi olmalı.
      - Veritabanında değişiklik, sayfa açılınca en geç bir dakikada görünür;

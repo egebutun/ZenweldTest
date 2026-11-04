@@ -387,14 +387,16 @@ npm run start --workspace apps/zenweld-web
 
 - **Veritabanı modu (`DATA_SOURCE=database`, KARARLAR K-88):** Ürünler,
   kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları tablolardan
-  okunur; menü, sepet, arama ve Teklif Al da bunları kullanır.
+  okunur; menü, sepet, arama ve Teklif Al da bunları kullanır. Bayiler, bayi
+  ve satıcı stokları ve yorumlar da tablolardan gelir, ama yalnızca gereken
+  sayfaya: ürün sayfası, Bayi Bul ve anasayfa.
   - `db:studio`'da bir ürünün fiyatını değiştirin: en geç bir dakika sonra
     sayfa açılınca yeni fiyat görünür (gerekirse sayfayı bir kez daha
     yenileyin; sayfa arka planda yeniden hazırlanır).
   - Üyeler, siparişler, teklifler, formlar ve içerik (blog, haber) bu
-    aşamada tarayıcıda kalır. Paneldeki ürün, kategori, seçenek ve mağaza
-    ayarı değişiklikleri bu modda siteye yansımaz (panel henüz veritabanına
-    yazmıyor).
+    aşamada tarayıcıda kalır. Panelde bu verilerde (ürün, kategori, seçenek,
+    mağaza ayarı, bayi, stok, yorum) yapılan değişiklikler bu modda siteye
+    yansımaz (panel henüz veritabanına yazmıyor).
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
     Derleme sırasında veritabanı çalışıyor olmalı.
   - Ayar yoksa site bugünkü gibi çalışır.

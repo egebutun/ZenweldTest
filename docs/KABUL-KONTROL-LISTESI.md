@@ -750,6 +750,13 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       değiştirilince en geç bir dakika sonra ürün sayfasında, menüde ve
       sepette yeni fiyat görünür; depo stoğu 0 yapılan ürün STOKTA YOK
       olur ve sepete eklenmez.
+- [ ] Aynı modda: `db:studio`'da bir ürüne online satıcı stoğu (adet > 0,
+      link, bugünün tarihi) eklenince en geç bir dakikada ürün sayfasında
+      satıcı kartı çıkar; bir bayinin o üründeki stoğu 0 yapılınca
+      "Stoktaki bayileri gör" listesinden düşer; bayinin adı değişince Bayi
+      Bul'da, öne çıkan yorumun başlığı değişince anasayfada yeni hali
+      görünür. Sayfa kaynağında satıcının fiyatı ve başka ürünlerin bayi
+      stoğu yer almaz.
 - [ ] **Canlıya çıkmadan:** örnek satış hareketleri
       (`sample-activity.seed.ts`) kaldırılmış, gerçek kargo/POS/IBAN değerleri
       ve gerçek yasal metinler girilmiş, e-posta anahtarı tanımlanmıştır

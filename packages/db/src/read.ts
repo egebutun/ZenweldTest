@@ -1,4 +1,4 @@
-import { asc, desc } from "drizzle-orm";
+import { and, asc, desc, eq, gt, isNotNull, type SQL } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import {
   DB_VERSION,
@@ -11,6 +11,7 @@ import {
   type OptionDefinition,
   type Order,
   type Product,
+  type ProductReview,
   type ProductFilterValues,
   type ProductVariant,
   type Quote,
@@ -293,6 +294,35 @@ const stockRow = (r: StockColumns): StockRow => ({
   updatedAt: iso(r.updatedAt),
 });
 
+type DealerStockColumns = StockColumns & { dealerId: string };
+type RetailerStockColumns = StockColumns & { retailerId: string };
+const dealerStockRow = (r: DealerStockColumns): DealerStock => ({ dealerId: r.dealerId, ...stockRow(r) });
+const retailerStockRow = (r: RetailerStockColumns): RetailerStock => ({ retailerId: r.retailerId, ...stockRow(r) });
+
+/**
+ * Bir urunun bayi ve online satici stogu; yalnizca adedi 0'dan buyuk
+ * satirlar (sitede gorunebilecekler; urun sayfasi, KARARLAR K-88).
+ * Tazelik (son guncelleme) sitede hesaplanir.
+ */
+export async function readProductStock(
+  db: ReadDb,
+  productId: string,
+): Promise<{ dealerStock: DealerStock[]; retailerStock: RetailerStock[] }> {
+  const [dealer, retailer] = await serial(
+    () => db
+      .select()
+      .from(s.dealerStock)
+      .where(and(eq(s.dealerStock.productId, productId), gt(s.dealerStock.quantity, 0)))
+      .orderBy(asc(s.dealerStock.dealerId), asc(s.dealerStock.variantId)),
+    () => db
+      .select()
+      .from(s.retailerStock)
+      .where(and(eq(s.retailerStock.productId, productId), gt(s.retailerStock.quantity, 0)))
+      .orderBy(asc(s.retailerStock.retailerId), asc(s.retailerStock.variantId)),
+  );
+  return { dealerStock: dealer.map(dealerStockRow), retailerStock: retailer.map(retailerStockRow) };
+}
+
 /** Bayi ve online satici stoklari ile stok islemleri. */
 export async function readStock(db: ReadDb): Promise<{
   dealerStock: DealerStock[];
@@ -310,8 +340,8 @@ export async function readStock(db: ReadDb): Promise<{
     () => db.select().from(s.skuAliases),
   );
   return {
-    dealerStock: dealer.map((r) => ({ dealerId: r.dealerId, ...stockRow(r) })),
-    retailerStock: retailer.map((r) => ({ retailerId: r.retailerId, ...stockRow(r) })),
+    dealerStock: dealer.map(dealerStockRow),
+    retailerStock: retailer.map(retailerStockRow),
     stockImports: imports.map((i) => ({
       id: i.id,
       sourceType: i.sourceType as StockImport["sourceType"],
@@ -679,21 +709,43 @@ export async function readSupport(
       expiresAt: w.expiresAt,
       extended: w.extended,
     })),
-    reviews: reviews.map((r) => ({
-      id: r.id,
-      productId: r.productId ?? "",
-      userId: opt(r.userId),
-      authorName: r.authorName,
-      rating: r.rating,
-      title: opt(r.title),
-      body: r.body,
-      media: r.media,
-      verifiedPurchase: opt(r.verifiedPurchase),
-      approved: r.approved,
-      featured: r.featured,
-      createdAt: iso(r.createdAt),
-    })),
+    reviews: reviews.map(reviewRecord),
   };
+}
+
+const reviewRecord = (r: typeof s.reviews.$inferSelect): ProductReview => ({
+  id: r.id,
+  productId: r.productId ?? "",
+  userId: opt(r.userId),
+  authorName: r.authorName,
+  rating: r.rating,
+  title: opt(r.title),
+  body: r.body,
+  media: r.media,
+  verifiedPurchase: opt(r.verifiedPurchase),
+  approved: r.approved,
+  featured: r.featured,
+  createdAt: iso(r.createdAt),
+});
+
+/**
+ * Sitede yayinda olan (onayli) yorumlar, en yeni once: bir urunun
+ * yorumlari (urun sayfasi) ya da anasayfada one cikarilanlar. Onay
+ * bekleyenler siteye gitmez.
+ */
+export async function readPublishedReviews(
+  db: ReadDb,
+  filter: { productId: string } | { featured: true },
+): Promise<ProductReview[]> {
+  const where: SQL[] = [eq(s.reviews.approved, true), isNotNull(s.reviews.productId)];
+  if ("productId" in filter) where.push(eq(s.reviews.productId, filter.productId));
+  else where.push(eq(s.reviews.featured, true));
+  const rows = await db
+    .select()
+    .from(s.reviews)
+    .where(and(...where))
+    .orderBy(desc(s.reviews.createdAt));
+  return rows.map(reviewRecord);
 }
 
 /* ------------------------------ Icerik ------------------------------ */

@@ -224,7 +224,7 @@ WHERE ds.product_id = $1 AND ds.quantity > 0 AND ds.url IS NOT NULL
 | `PUT / DELETE /api/admin/stock/aliases` | `saveSkuAlias`, `deleteSkuAlias` |
 | `PUT  /api/admin/settings/stock` | `saveStockSettings` |
 | `GET  /api/admin/retailers` (kartta ürün sayısı) | `onlineProductCount` |
-| Ürün sayfası (sunucu bileşeni ya da `GET /api/products/:id/availability`) | `retailersInStockFor`, `dealersWithProduct` |
+| Ürün sayfası (sunucu bileşeni ya da `GET /api/products/:id/availability`) | `retailersInStockFor`, `dealersWithProduct`. Veritabanı modunda (KARARLAR K-88) ürün sayfasının sunucu bileşeni o ürünün stoktaki satırlarını okur (`readProductStock`) ve sayfaya verir; satıcının fiyatı gönderilmez |
 
 Notlar:
 

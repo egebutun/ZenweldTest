@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { isInWarehouse, productBrand, warehouseStockMap } from "@zenweld/data";
 import { JsonLd } from "@/components/common/JsonLd";
 import { catalogTrail } from "@/lib/catalog";
-import { getServerCatalog } from "@/lib/server/catalog";
+import { PageData } from "@/components/common/PageData";
+import { getProductPageData, getServerCatalog } from "@/lib/server/catalog";
 import {
   SITE_NAME,
   absoluteUrl,
@@ -95,6 +96,8 @@ export default async function ProductPage({
   }
 
   const category = catalog.categories.find((c) => c.slug === product.categorySlug);
+  // Yalnizca bu urunun bayi ve satici stogu, bayiler ve yorumlar (veritabani modu).
+  const pageData = await getProductPageData(product.id);
   const jsonLd = productJsonLd(product, category, {
     now: new Date(),
     inStock: isInWarehouse(product, warehouseStockMap(catalog.warehouseStock)),
@@ -117,7 +120,9 @@ export default async function ProductPage({
           { name: product.name, path: `/urun/${product.slug}` },
         ])}
       />
-      <ProductPageClient slug={slug} />
+      <PageData data={pageData}>
+        <ProductPageClient slug={slug} />
+      </PageData>
     </>
   );
 }

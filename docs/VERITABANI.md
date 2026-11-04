@@ -1254,13 +1254,22 @@ veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını
   "yayında" alanı yoksa yayında sayılır; kupon kullanımının kimliği
   veritabanında sıra numarasıdır.
 - Sorgular sırayla çalışır (işlem içinde tek bağlantı kullanılır).
+- Sitenin sayfaya özel okumaları: `readProductStock` (bir ürünün adedi
+  0'dan büyük bayi ve satıcı stok satırları; `dealer_stock_product` ve
+  `retailer_stock_product` dizinlerini kullanır) ve `readPublishedReviews`
+  (onaylı yorumlar: bir ürünün ya da anasayfada öne çıkanlar; onay
+  bekleyen siteye gitmez).
 - **Sitede kullanımı:** `apps/zenweld-web/src/lib/server/catalog.ts`.
   Veritabanı modunda (`DATA_SOURCE=database`, KARARLAR K-88) katalog, depo
-  stoğu ve mağaza ayarları buradan okunur; 30 saniye önbellekte tutulur ve
-  sayfalar 30 saniyede bir yeniden hazırlanır (değişiklik en geç bir
-  dakikada görünür). Sayfanın başlığı, yapısal verisi, site haritası ve
-  derlemede hazırlanan sayfa listesi de bu katalogdan üretilir. Tek
-  önbellek kaydı en fazla 2 MB tutar; bugün katalogun tamamı ~110 KB.
+  stoğu ve mağaza ayarları her sayfaya; bayiler, bayi ve satıcı stoğu ve
+  yorumlar yalnızca gereken sayfaya (ürün sayfası, Bayi Bul, anasayfa)
+  gider. Okunan veri 30 saniye önbellekte tutulur ve sayfalar 30 saniyede
+  bir yeniden hazırlanır (değişiklik en geç bir dakikada görünür). Pasif
+  bayi ve satıcılar ile satıcıların fiyatı tarayıcıya gönderilmez. Sayfanın
+  başlığı, yapısal verisi, site haritası ve derlemede hazırlanan sayfa
+  listesi de katalogdan üretilir. Tek önbellek kaydı en fazla 2 MB tutar;
+  bugün katalogun tamamı ~110 KB.
 - Test (`tests/db/okuma.test.ts`): örnek veri yazılıp geri okununca, kayıt
   türü başına birebir aynı çıkar (gidiş-dönüş); katalog ve mağaza ayarları
-  tek başına da okunur.
+  tek başına da okunur; ürün stoğu yalnızca o ürünün stoktaki satırlarını,
+  yorumlar yalnızca onaylıları döndürür.

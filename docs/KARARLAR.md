@@ -937,7 +937,9 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Uygulama (2026-11-04):** Ayar `DATA_SOURCE=database`
   ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › ortam değişkenleri). Bu modda
   ürünler, kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları
-  veritabanından okunur; önbellek iki katmanlıdır (okunan veri ve sayfa,
+  her sayfada; bayiler, bayi ve satıcı stokları ve yorumlar yalnızca gereken
+  sayfada (ürün sayfası, Bayi Bul, anasayfa) veritabanından okunur;
+  önbellek iki katmanlıdır (okunan veri ve sayfa,
   her biri 30 saniye), toplam en fazla bir dakika. Ayrıntı ve bugünkü
   sınırlar: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Veritabanı.
 
