@@ -517,7 +517,9 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] İletişim, Bayilik Başvurusu, Welders Club ve ürün destek sorusu
       gönderilir; demo adresinde e-posta servisi tanımlı değilse başarılı
       görünür.
-- [ ] E-posta anahtarı tanımlıyken her form `info@zenweld.com`'a
+- [ ] E-posta anahtarı tanımlıyken her form varsayılan adrese
+      (`info@zenweld.com`; veritabanı modunda türün panelde yazılan
+      alıcılarına)
       [IS-KURALLARI.md](IS-KURALLARI.md#18-form-e-postaları)'daki konu ve
       alanlarla e-posta gönderir; **Yanıtla** formu doldurana gider (yorum
       e-postası hariç).
@@ -718,6 +720,26 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Bir taksitin vade farkı değişince ödeme sayfasındaki tutar değişir.
 - [ ] Havale süresi değişince yeni siparişlerin son ödeme tarihi değişir.
 - [ ] POS API anahtarı ya da şifresi için alan yoktur.
+- [ ] Aynı kargo firması iki kez yazılıp kaydedilince bir kez kalır.
+- [ ] Kargo ve Ödeme sekmesinde değişiklik yapıp E-posta Alıcıları
+      sekmesine geçip dönünce değişiklik durur.
+- [ ] E-posta Alıcıları'nda geçersiz adres kaydedilmez ("<tür>: "<adres>"
+      geçerli bir e-posta adresi değil."); büyük harfle yazılan adres küçük
+      harfe döner.
+
+**Veritabanı modunda Mağaza Ayarları (KARARLAR K-99, K-104):**
+
+- [ ] Kargo ücreti değişince sepetteki kargo hemen değişir; işlem kaydına
+      eski ve yeni değer yazılır. Hemen ardından eski değer yazılınca uyarı
+      çıkmaz.
+- [ ] Bir sekmede Mağaza Ayarları açıkken başka sekmede kaydedilirse ilk
+      sekmede kaydedilmez ("Bu kayıt siz açtıktan sonra değişti; sayfayı
+      yenileyin.").
+- [ ] Varsayılan POS başka bir POS'a alınıp kaydedilince `db:studio`'da
+      `payment_pos`'ta yalnızca o POS varsayılandır.
+- [ ] E-posta Alıcıları'nda bir türe adres yazılınca o formun sonraki
+      e-postası `email_log`'da bu adreslerle görünür; boşaltılınca
+      `SUPPORT_EMAIL`'e döner.
 
 ---
 

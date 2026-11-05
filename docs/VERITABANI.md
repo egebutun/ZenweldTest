@@ -127,7 +127,7 @@ tabloya birebir gider. Farklı olanlar:
 | Zenweld deposunda her ürün stokta sayılıyor (K-20) | `warehouse_stock`, `sap_sync_runs` | Depo stoğu SAP'tan okunur (K-82) |
 | Siparişin kargo bilgisi (`shipment`) siparişin içinde; kargo firmaları ayarlarda metin listesi | `shipments`, `carriers` | İade gönderisi de tutulabilsin; takip bağlantısı verilebilsin |
 | Kuponun `productIds`, `categoryIds`, `customerEmails` listeleri | `coupon_targets`, `coupon_customers` | Silinen ürün ve kategori kupondan da çıksın; e-postayla arama yapılabilsin (K-85, K-86) |
-| Bütün form e-postaları tek adrese gidiyor (`SUPPORT_EMAIL`, varsayılan info@zenweld.com) | `email_recipients` | Alıcı ileride forma göre değişebilir (K-81) |
+| Bütün form e-postaları tek adrese gidiyor (`SUPPORT_EMAIL`, varsayılan info@zenweld.com) | `email_recipients` | Alıcı forma göre panelden değişir (K-81, K-104); satırı olmayan tür `SUPPORT_EMAIL`'e gider |
 | Gönderilen e-postaların kaydı yok | `email_log` | Hangi sayfa ve özellik için gönderildiği tutulur (K-81) |
 | Panel değişikliklerinin kaydı yok | `audit_log` | Sahibinin kararı (K-81) |
 
@@ -1052,8 +1052,9 @@ başına tutulur; başlangıçta hepsi info@zenweld.com'dur.
 | `updated_by` | text | → `users` (boşalır) | |
 
 Bir türün satırı yoksa e-posta sunucudaki varsayılan adrese
-(`SUPPORT_EMAIL`, yoksa info@zenweld.com) gider. Alıcıları değiştirecek
-panel ekranı siteyi veritabanına bağlarken eklenecek.
+(`SUPPORT_EMAIL`, yoksa info@zenweld.com) gider. Alıcılar panelde Mağaza
+Ayarları › E-posta Alıcıları sekmesinden değişir (K-104; panel 5.1);
+alıcısı boşaltılan türün satırı silinir.
 
 **E-posta türleri** (bugün Zenweld'e giden e-postalar; IS-KURALLARI › Form
 e-postaları):
@@ -1843,6 +1844,57 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   `tests/e2e-db/panel-stok-dosya.spec.ts` (tarayıcıda: dosya önizleme,
   tanınmayan kodu eşleştirme, uygulama, geri alma ve stoğun ilk haline
   dönmesi; oturumsuz istek).
+
+**Panel › Mağaza Ayarları, adım 5.1 (Aşama 5, 5. alan; KARARLAR K-99, K-104; `src/admin-settings.ts`):**
+
+- **Okuma:** `readShopPanel(db)`: ayarlar (`readSettings`; mağaza ayarının
+  `settings('shop').updated_at`'iyle) ve `email_recipients`. Yönetici
+  oturumu denetlenir.
+- **Yazma:** `POST /api/yonetim/ayarlar/<işlem>`
+  (`apps/zenweld-web/src/app/api/yonetim/ayarlar/[islem]/route.ts`):
+  `magaza` (Kargo ve Ödeme sekmesi), `eposta-alicilari`.
+- **Kargo ve Ödeme:** Tek kayıt gibi kaydedilir; eski ekran denetimi
+  `settings('shop').updated_at`'iyle (her kayıtta güncellenir), aynı anda
+  iki kayıt `pg_advisory_xact_lock('settings:shop')` ile sıraya girer.
+  Kurallar tarayıcıyla ortak (`packages/data` › `settings-rules.ts` ›
+  `parseShopSettings`): tutarlar 0 ya da artı, ödeme süresi en az 1 tam
+  gün, en az bir kargo firması, hesapta banka adı ve IBAN, POS'ta etiket
+  ve ad, bilinen kart programı, taksit 2/3/6/9/12 (firma oranında ayrıca
+  tek çekim), oranlar 0 ya da artı, tek varsayılan POS; her listede en
+  fazla 50 kayıt. Değişmeyen hiçbir şey yazılmaz.
+  - `settings('shop')`: kargo sınırı ve ücreti, taksit alt sınırı, ödeme
+    süresi.
+  - `payment_pos`, `bank_accounts`: kimliğe göre; değişen satır yazılır,
+    listeden çıkan silinir (`orders.pos_id` boşalır, sipariş `pos_name` ve
+    komisyon kopyasını tutar). Varsayılan POS değişirken önce eskisinin
+    işareti kalkar (`payment_pos_one_default`).
+  - `carriers`: ada göre; kalan firmanın kimliği ve `tracking_url`'i
+    korunur, yeni ad eklenir, çıkan silinir (`shipments.carrier_id`
+    boşalır, `carrier_name` kopyası kalır).
+  - `audit_log`: `settings` / `shop`; değişen alanlar (listelerde eski ve
+    yeni liste). Ardından `refreshSite(["katalog"])` (ayarlar katalogla
+    birlikte önbellektedir).
+- **E-posta Alıcıları:** `email_recipients`; tür başına en fazla 10 adres
+  (küçük harf, tekrarsız; `parseRecipients`). Eski ekran denetimi listenin
+  hali üzerinden (`recipientsVersion`: satır sayısı ve en son
+  `updated_at`), sıra `pg_advisory_xact_lock('email_recipients')` ile.
+  Alıcısı boşalan türün satırı silinir. `audit_log`: `email_recipients` /
+  `<tür>`, `{ recipients: [eski, yeni] }`. Önbelleğe girmez.
+- **E-posta gönderimi:** `apps/zenweld-web/src/lib/server/mail.ts` ›
+  `recipientsFor`: veritabanı modunda her e-postada türün satırı okunur
+  (`emailRecipientsFor`); satır yoksa ya da okunamazsa `SUPPORT_EMAIL`.
+  `email_log.recipients` gerçek alıcılardır.
+- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-settings.ts`
+  (`useSettingsActions`).
+- Test: `tests/db/panel-ayarlar.test.ts` (okuma; kaydetme: varsayılan
+  POS'un silinen ve kalan POS'a geçmesi, hesap ekleme/çıkarma, kargo
+  firmalarının ad eşleşmesi ve takip adresinin korunması, işlem kaydı;
+  eski ekran, değişmeyen kayıt, kural ihlalleri; e-posta alıcıları: türlerin
+  şemayla aynı olması, ekleme, değiştirme, boşaltma, e-postada okunma,
+  eski ekran, geçersiz adres ve tür); `tests/unit/magaza-ayarlari.test.ts`
+  (kurallar); `tests/e2e-db/panel-ayarlar.spec.ts` (tarayıcıda: kargo
+  ücretinin sitede hemen geçerli olması ve geri alınması, Welders Club
+  alıcısının e-posta kaydına yazılması, oturumsuz istek).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

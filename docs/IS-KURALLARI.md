@@ -859,9 +859,26 @@ sunucuda; Aşama 5.2–5.3).
 
 ## 18. Form e-postaları
 
-Sitedeki formlar `info@zenweld.com` adresine e-posta gönderir. Servisin
-kurulumu ve demo davranışı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md). Bugün
-servis kurulu olmadığı için hiçbir e-posta gitmez.
+Sitedeki formlar Zenweld'e e-posta gönderir. Servisin kurulumu ve demo
+davranışı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md). Bugün servis kurulu
+olmadığı için hiçbir e-posta gitmez.
+
+**Alıcılar (KARARLAR K-104):**
+
+- Varsayılan alıcı sunucudaki `SUPPORT_EMAIL`'dir (yoksa
+  `info@zenweld.com`).
+- Veritabanı modunda her türün (sipariş, iade talebi, teklif, servis
+  talebi, garanti kaydı, yorum, üyelik, iletişim, ürün destek, bayilik,
+  Welders Club) alıcıları panelde Mağaza Ayarları › E-posta Alıcıları'ndan
+  yazılır: tür başına en fazla 10 adres; adresler küçük harfe çevrilir,
+  aynı adres bir kez alınır. Alıcısı yazılmayan türün e-postası varsayılan
+  adrese gider. Değişiklik bir sonraki e-postada geçerlidir.
+  - **Örnek:** Teklif talebi alıcıları "satis@zenweld.com,
+    bolge@zenweld.com" yazılırsa yeni teklif e-postası iki adrese gider;
+    servis talebi boşsa servis e-postası info@zenweld.com'a gider.
+- Alıcılar okunamazsa (veritabanı hatası) e-posta varsayılan adrese gider.
+- Demo modunda e-postaların hepsi varsayılan adrese gider.
+- Müşteriye giden e-postalar (şifre sıfırlama) bu listeden etkilenmez.
 
 **Genel kurallar:**
 
@@ -1164,8 +1181,8 @@ Veritabanı modunda panel kayıtları sunucuda değiştirir (KARARLAR K-99).
 Bugün Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
 Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
 Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
-Ürünler), Bayi ağı (Bayiler, Online Satıcılar, Satış Temsilcileri) ve Stok
-Matrisi ekranlarında geçerlidir; panelin diğer alanları
+Ürünler), Bayi ağı (Bayiler, Online Satıcılar, Satış Temsilcileri), Stok
+Matrisi ve Mağaza Ayarları ekranlarında geçerlidir; panelin diğer alanları
 veritabanına geçtikçe onlara da uygulanır.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
@@ -1240,6 +1257,15 @@ veritabanına geçtikçe onlara da uygulanır.
     arada başka işlem yapıldıysa geri alınmaz.
   - Geri alma için önceki hal yalnızca son 5 dosya yüklemesinde saklanır;
     daha eski yüklemeler geri alınamaz (KARARLAR K-103).
+- **Mağaza Ayarları:** Kargo ve Ödeme sekmesi tek kayıttır: ekran
+  açıldıktan sonra başka bir yönetici kaydettiyse kaydedilmez. Kurallar
+  demo moduyla aynıdır ve sunucuda da denetlenir: tutarlar 0 ya da artı,
+  ödeme süresi en az 1 tam gün, en az bir kargo firması, her hesapta banka
+  adı ve IBAN, her POS'ta etiket ve ad, en fazla bir varsayılan POS;
+  metinler kırpılır, IBAN büyük harfe çevrilir, aynı kargo firması bir kez
+  alınır. Kayıt sitede (sepet, ödeme) hemen geçerli olur. Listeden çıkan
+  POS ya da kargo firması silinir; eski siparişler onların adını kendi
+  kopyasında tutar. E-posta alıcıları için [18](#18-form-e-postaları).
 - **Görsel yükleme:** Veritabanı modunda dosya deposu kurulana kadar
   (Aşama 6) panelde görsel dosyası yüklenmez, görsel adresi girilir;
   sunucu yüklenmiş dosya (`data:`) içeren kaydı reddeder (KARARLAR K-101).
@@ -1251,8 +1277,9 @@ veritabanına geçtikçe onlara da uygulanır.
 
 Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
 `admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`,
-`admin-stock.ts`, `audit.ts`;
+`admin-stock.ts`, `admin-settings.ts`, `audit.ts`;
 formların ortak kuralları `packages/data/src/catalog-rules.ts`,
-`network-rules.ts`; tarayıcı: `apps/zenweld-web/src/lib/admin-panel.ts`,
-`admin-sales.ts`, `admin-requests.ts`, `admin-catalog.ts`,
-`admin-network.ts`, `admin-stock.ts`.
+`network-rules.ts`, `settings-rules.ts`; tarayıcı:
+`apps/zenweld-web/src/lib/admin-panel.ts`, `admin-sales.ts`,
+`admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`,
+`admin-stock.ts`, `admin-settings.ts`.

@@ -94,7 +94,14 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     - **Talepler:** Teklifler, Servis Talepleri, Garantiler, Yorumlar ile
       Bayilik Başvuruları, Mesajlar ve Welders Club
       ([Veritabanı modunda Talepler ekranları](#veritabanı-modunda-talepler-ekranları)).
-    Diğer ekranlardaki işlemler (ürün, üye, içerik…) henüz tarayıcıda
+    - **Katalog:** Seçenek Tanımları, Kategoriler ve gruplar, Ürünler
+      ([Veritabanı modunda Katalog ekranları](#veritabanı-modunda-katalog-ekranları)).
+    - **Bayi ağı:** Bayiler, Online Satıcılar, Satış Temsilcileri
+      ([Veritabanı modunda Bayiler, Online Satıcılar ve Satış Temsilcileri](#veritabanı-modunda-bayiler-online-satıcılar-ve-satış-temsilcileri))
+      ve Stok Matrisi ([Veritabanı modunda Stok Matrisi](#veritabanı-modunda-stok-matrisi)).
+    - **Ayarlar:** Mağaza Ayarları
+      ([Veritabanı modunda Mağaza Ayarları](#veritabanı-modunda-mağaza-ayarları)).
+    Diğer ekranlardaki işlemler (üye, içerik…) henüz tarayıcıda
     kalır; Üyeler listesi veritabanındaki üyeleri henüz göstermez. Panel
     ana sayfası (özet ve grafikler) en son gelir; o zamana kadar
     tarayıcıdaki örnek veriyi gösterir.
@@ -604,15 +611,24 @@ Veritabanı modunda bu ekran veritabanıyla çalışır: [Veritabanı modunda Ta
 ## 6. Mağaza Ayarları
 
 Adres: `/yonetim/magaza`. Açıklama: "Online satışta kargo ücreti, taksit
-seçenekleri ve havale/EFT hesapları."
+seçenekleri, havale/EFT hesapları ve Zenweld'e giden e-postaların
+alıcıları."
+
+İki sekme: **Kargo ve Ödeme** ve **E-posta Alıcıları** (KARARLAR K-104).
+Sekme değişince kaydedilmemiş değişiklik kaybolmaz.
 
 **Kaydetme:**
 
-- Ekranın tamamı üstteki tek **Kaydet** düğmesiyle saklanır.
+- Her sekme kendi **Kaydet** düğmesiyle (sekmenin üstünde) saklanır.
 - "Kaydedilmemiş değişiklikler var. Saklamak için Kaydet'e basın." /
-  "Mağaza ayarları kaydedildi."
+  "Mağaza ayarları kaydedildi." / "E-posta alıcıları kaydedildi."
 - Ayarlar başka bir sekmede kaydedilirse ekran yenilenir; bu ekranda
   kaydedilmemiş değişiklik varsa korunur.
+- Kaydederken metinler kırpılır, IBAN büyük harfe çevrilir; aynı kargo
+  firması iki kez yazıldıysa (büyük/küçük harf fark etmez) bir kez alınır.
+  Ekran kaydedilen hale geçer.
+
+### Kargo ve Ödeme
 
 **Kargo:**
 
@@ -680,14 +696,58 @@ seçenekleri ve havale/EFT hesapları."
 **Havale / EFT:**
 
 - "Bu hesaplar ödeme sayfasında ve müşterinin sipariş detayında gösterilir."
-- **Ödeme süresi (gün):** En az 1; örnek değer 3. "Dolunca sipariş iptal
-  edilir." Süre son günün 23:59'unda dolar.
+- **Ödeme süresi (gün):** En az 1, tam gün; örnek değer 3. "Dolunca sipariş
+  iptal edilir." Süre son günün 23:59'unda dolar.
 - **Hesaplar:** Banka, Alıcı, IBAN (büyük harfe çevrilir), sil.
 - **Hesap Ekle:** Alıcı adı ilk hesaptan kopyalanır.
 - Hata: "Her banka hesabında banka adı ve IBAN zorunludur."
 
 **Önemli:** Kargo ücreti, banka POS'ları (mağaza no, oranlar) ve IBAN'lar
 örnek veridir; canlıya çıkmadan gerçek değerler girilmelidir.
+
+### E-posta Alıcıları
+
+Sitedeki formlardan ve siparişlerden Zenweld'e giden e-postaların
+alıcıları, türüne göre (KARARLAR K-104).
+
+- Açıklama: "Sitedeki formlardan ve siparişlerden Zenweld'e giden e-postalar
+  buraya yazılan adreslere gider. Birden fazla adres virgülle ayrılır (en
+  fazla 10). Boş bırakılan türün e-postası <varsayılan adres> adresine
+  gider. Müşteriye giden e-postalar (şifre sıfırlama) bu listeden
+  etkilenmez."
+- Varsayılan adres sunucudaki `SUPPORT_EMAIL`'dir (yoksa
+  info@zenweld.com); kutularda soluk olarak görünür.
+- Satırlar: Yeni sipariş, İade talebi, Teklif talebi, Servis talebi,
+  Garanti kaydı, Ürün yorumu, Yeni üye, İletişim formu, Ürün destek sorusu,
+  Bayilik başvurusu, Welders Club katılımı.
+- Adresler virgül, noktalı virgül, boşluk ya da satır sonuyla ayrılabilir;
+  küçük harfe çevrilir, aynı adres bir kez alınır.
+- Hatalar: "<tür>: "<adres>" geçerli bir e-posta adresi değil." /
+  "<tür>: En fazla 10 adres yazılabilir."
+- Demo modunda alıcılar bu tarayıcıda saklanır; e-postaları sunucu
+  gönderdiği için e-postalar varsayılan adrese gider. Veritabanı modunda
+  her e-posta gönderilirken bu liste okunur.
+
+### Veritabanı modunda Mağaza Ayarları
+
+Veritabanı modunda iki sekme de veritabanıyla çalışır (KARARLAR K-99,
+K-104). Her açılışta ve her kayıttan sonra sunucudan okunur; her
+değişiklik işlem kaydına yazılır. Farklar:
+
+- **Kargo ve Ödeme** tek kayıt gibi kaydedilir: ekran açıldıktan sonra
+  başka bir yönetici kaydettiyse kaydedilmez ("Bu kayıt siz açtıktan sonra
+  değişti; sayfayı yenileyin."). Kayıt sitede (sepet, ödeme) hemen
+  geçerli olur.
+- Kurallar sunucuda da denetlenir; ek olarak birden fazla varsayılan POS
+  kaydedilmez: "Yalnızca bir POS varsayılan olabilir."
+- Listeden çıkarılan POS ve kargo firması silinir; eski siparişler POS'un
+  ve kargo firmasının adını kendi kopyalarında tutar. Listede kalan kargo
+  firmasının takip adresi korunur.
+- **E-posta Alıcıları:** Kayıt hemen geçerli olur; sonraki e-posta yeni
+  adreslere gider ve e-posta kaydına (`email_log`) bu adreslerle yazılır.
+  Ekran açıldıktan sonra başka bir yönetici alıcıları kaydettiyse
+  kaydedilmez ("Bu kayıt siz açtıktan sonra değişti; sayfayı
+  yenileyin.").
 
 ---
 

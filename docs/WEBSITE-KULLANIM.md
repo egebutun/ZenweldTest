@@ -72,6 +72,8 @@ tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
   vardır. Formu otomatik dolduran bot bu alanı da doldurur; o zaman sunucu
   e-posta göndermez ama bota başarılı gibi yanıt verir.
 - **Form e-postaları:** Formlar `info@zenweld.com` adresine e-posta gönderir.
+  Veritabanı modunda alıcılar türe göre panelden değişir (Mağaza Ayarları ›
+  E-posta Alıcıları; KARARLAR K-104).
   Hangi formun hangi bilgileri gönderdiği: [IS-KURALLARI.md](IS-KURALLARI.md).
   - Kaydı panelde tutulan formlar (sipariş, teklif, servis talebi, garanti,
     değerlendirme, üyelik) e-postanın sonucunu beklemez; kayıt her durumda

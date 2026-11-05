@@ -50,7 +50,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103), 5) İçerik ve ayarlar, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm), 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
 | 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
@@ -661,12 +661,13 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      - Panelin Satış (Siparişler, İade Talepleri, Kuponlar), Talepler
        (Teklifler, Servis Talepleri, Garantiler, Yorumlar, Bayilik
        Başvuruları, Mesajlar, Welders Club), Katalog (Seçenek Tanımları,
-       Kategoriler ve gruplar, Ürünler) ve Bayiler, Online Satıcılar, Satış
-       Temsilcileri ve Stok Matrisi ekranları veritabanından okur ve yazar
-       (K-99, K-100, K-103). Stok dosyasının kendisi saklanmaz (dosya
+       Kategoriler ve gruplar, Ürünler), Bayiler, Online Satıcılar, Satış
+       Temsilcileri, Stok Matrisi ve Mağaza Ayarları (e-posta alıcıları
+       dahil) ekranları veritabanından okur ve yazar (K-99, K-100, K-103,
+       K-104). Stok dosyasının kendisi saklanmaz (dosya
        deposu Aşama 6). Diğer
-       ekranlar henüz tarayıcıya yazıyor: paneldeki mağaza ayarı ve içerik
-       değişiklikleri bu modda siteye yansımaz; panel ana sayfası (özet ve
+       ekranlar henüz tarayıcıya yazıyor: paneldeki içerik değişiklikleri
+       bu modda siteye yansımaz; panel ana sayfası (özet ve
        grafikler) tarayıcıdaki örnek veriyi gösterir.
      - Panelde katalog görselleri (ürün, kategori ve grup) ve satış
        temsilcisi fotoğrafı için dosya yüklenmez, görsel adresi girilir;
@@ -721,10 +722,15 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      düzeltme ve stok geçerlilik süresi sunucuda. 4.3 bitti: dosya
      yükleme, kod eşleştirme ve son yüklemeyi geri alma sunucuda; sunucu
      dosyayı kendisi yeniden eşleştirir; önceki hal son 5 yüklemede
-     saklanır (K-103). 4. alan bitti. Sonraki: 5. alan (İçerik ve
-     ayarlar), 6. alan, 5.6; 6 dosya deposu; canlıya hazırlık.
-   - 5.3'ten kalanlar: e-posta alıcıları ile gönderilen e-postalar
-     ekranları paneldeki 5. ve 6. alanda (K-99); yorum fotoğraf ve videoları
+     saklanır (K-103). 4. alan bitti. 5. alanın ilk adımı (5.1) bitti:
+     Mağaza Ayarları (Kargo ve Ödeme) sunucuda, sitede hemen geçerli; yeni
+     E-posta Alıcıları sekmesi (tür başına alıcı; yazılmayan tür
+     `SUPPORT_EMAIL`'e, K-104). Sonraki: 5.2 içerik (Haberler, Etkinlikler,
+     Blog, Hakkımızda, SSS), 5.3 Yasal Metinler, Belgeler (dosya yükleme
+     kapalı, K-104), Sayfa SEO, Görünüm; sonra 6. alan, 5.6; 6 dosya
+     deposu; canlıya hazırlık.
+   - 5.3'ten kalanlar: gönderilen e-postalar ekranı paneldeki 6. alanda
+     (K-99; e-posta alıcıları 5.1'de bitti); yorum fotoğraf ve videoları
      dosya deposu gelince (Aşama 6) depoya taşınır (o zamana kadar panelin
      Yorumlar ekranı bütün yorumları dosyalarıyla birlikte okur; yorum
      sayısı artınca ekran yavaşlar, sayfalama gerekir); formların istek
@@ -741,9 +747,10 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      `payment_transactions`'a o zaman yazılır (yol haritası 5). Panel
      siparişleri sayfalamadan, hepsini birden okur; sipariş sayısı binleri
      bulunca liste sayfalanmalı (sunucuda süzme ve arama).
-   - Siteyi ve paneli bağlarken panele eklenecek ekranlar: form kayıtları
-     (bayilik, iletişim, ürün destek, Welders Club), e-posta alıcıları (tür
-     başına), gönderilen e-postalar ve değişiklik kaydı (KARARLAR K-81).
+   - Siteyi ve paneli bağlarken panele eklenecek ekranlar: gönderilen
+     e-postalar ve değişiklik kaydı (KARARLAR K-81). Form kayıtları
+     (bayilik, iletişim, ürün destek, Welders Club) 2. alanda, e-posta
+     alıcıları (tür başına) 5.1'de eklendi.
 2. Okuma ve yazma tek yerde toplanmış (`packages/store/src/database.ts`); bu
    katman ve `packages/store/src/repo/` fonksiyonları sunucu API'sine
    bağlanmalı.

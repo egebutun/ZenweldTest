@@ -789,6 +789,7 @@ Tek bir `settings` kaydı; üç bölüm.
 | `carriers` | metin[] | Kargo firmaları; en az biri | Yurtiçi, Aras, MNG, PTT, Sürat, UPS |
 | `bankAccounts[]` | liste | `{ id, bankName, accountHolder, iban }`; banka adı ve IBAN zorunlu | 2 hesap |
 | `pos[]` | liste | Banka POS'ları; listedeki sıra önemlidir | 9 POS |
+| `updatedAt?` | an | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99) | |
 
 **POS (`pos[]`):**
 
@@ -809,6 +810,26 @@ Tek bir `settings` kaydı; üç bölüm.
   ortam değişkeni olarak durur ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)).
 - Kargo, POS ve IBAN değerleri örnektir; canlıya çıkmadan gerçekleri
   girilmeli.
+- Kayıt kuralları tarayıcı ve sunucuda ortaktır
+  (`packages/data/src/settings-rules.ts` › `parseShopSettings`):
+  tutarlar 0 ya da artı; `transferDueDays` tam sayı, en az 1; her listede
+  en fazla 50 kayıt; aynı kargo firması (büyük/küçük harf fark etmez) bir
+  kez; IBAN büyük harf.
+
+### E-posta alıcıları (`emailRecipients[]`, KARARLAR K-104)
+
+`settings` dışında, veri kaydının kendi alanı. Eski kayıtlarda yoktur;
+yoksa bütün e-postalar varsayılan adrese gider.
+
+| Alan | Tür | Açıklama |
+|---|---|---|
+| `type` | metin | E-posta türü: `siparis`, `iade`, `teklif`, `servis`, `garanti`, `yorum`, `uye`, `iletisim`, `urun-destek`, `bayilik`, `welders-club` (`EMAIL_RECIPIENT_TYPES`) |
+| `recipients` | metin[] | Alıcılar; 1–10 geçerli adres, küçük harf, tekrarsız. Alıcısı boşalan tür listeden çıkar |
+| `updatedAt?` | an | Son değişiklik; yalnızca veritabanı modunda dolu |
+
+Demo modunda bu liste tarayıcıda saklanır ama e-postaları sunucu
+gönderdiği için kullanılmaz; veritabanı modunda tablo `email_recipients`'tır
+([VERITABANI.md](VERITABANI.md)).
 
 ### Stok ayarı (`settings.stock`)
 

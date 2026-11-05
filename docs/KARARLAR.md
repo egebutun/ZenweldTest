@@ -1181,6 +1181,22 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   içermez; tarayıcı deposundaki sınır veritabanında gerekmez. Temsilciler
   bayi ağıyla aynı menüde yönetilir.
 
+### K-104 · E-posta alıcıları Mağaza Ayarları'nda ayrı sekme; belgelerde dosya yükleme kapalı
+- **Tarih:** 2026-11-05
+- **Karar:**
+  - **E-posta alıcıları:** Zenweld'e giden e-postaların (sipariş, iade,
+    teklif, servis, garanti, yorum, üyelik, iletişim, ürün destek,
+    bayilik, Welders Club) alıcıları panelde Mağaza Ayarları'nın ayrı bir
+    sekmesinde (E-posta Alıcıları), form türü başına yazılır. Alıcısı
+    yazılmayan tür varsayılan adrese (`SUPPORT_EMAIL`, yoksa
+    info@zenweld.com) gider. Veritabanı modunda geçerlidir (panel 5.1).
+  - **Belgeler (MSDS vb.):** Veritabanı modunda dosya deposu kurulana kadar
+    (Aşama 6) Belgeler ekranında dosya yüklenmez, yalnızca dosyanın adresi
+    girilir (K-101 ile aynı mantık). Panelin 5.3 adımında uygulanır.
+- **Neden:** Sahibinin kararı. Alıcılar mağazanın işleyişine ait bir
+  ayardır; dosyanın kendisi veritabanına konmaz, depo gelince taşınması
+  gerekmesin.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

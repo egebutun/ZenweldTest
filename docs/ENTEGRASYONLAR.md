@@ -96,7 +96,7 @@ olarak girilir.
 | Değişken | Zorunlu | Açıklama |
 |---|---|---|
 | `RESEND_API_KEY` | Evet | resend.com'dan alınan anahtar. Yoksa e-posta gönderilmez |
-| `SUPPORT_EMAIL` | Hayır | Alıcı; varsayılan `info@zenweld.com` |
+| `SUPPORT_EMAIL` | Hayır | Varsayılan alıcı; yoksa `info@zenweld.com`. Veritabanı modunda panelde (Mağaza Ayarları › E-posta Alıcıları) alıcısı yazılan türün e-postası o adreslere gider; yazılmayan tür buraya (KARARLAR K-104) |
 | `SUPPORT_FROM` | Canlıda evet | Resend'de doğrulanmış gönderici adresi (ör. `Zenweld Web <web@zenweld.com>`). Yoksa Resend'in deneme adresi (`onboarding@resend.dev`) kullanılır; bu adres gerçek kullanım için uygun değildir |
 
 **Uçların yanıtı:** `{ ok, delivered, demo }`
@@ -366,7 +366,7 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 |---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | Yönetici | Sitenin adresi (ör. `https://zenweld.com`). Canonical adresler, site haritası, paylaşım önizlemesi ve **arama motorlarına açıklık** buna göre belirlenir |
 | `RESEND_API_KEY` | Yönetici (gizli) | E-posta servisi anahtarı |
-| `SUPPORT_EMAIL` | Yönetici | Form e-postalarının alıcısı; varsayılan `info@zenweld.com` |
+| `SUPPORT_EMAIL` | Yönetici | Form e-postalarının varsayılan alıcısı; yoksa `info@zenweld.com`. Veritabanı modunda tür başına panelden değişir (K-104) |
 | `SUPPORT_FROM` | Yönetici | Doğrulanmış gönderici adresi |
 | `NEXT_PUBLIC_MAIN_SITE_URL` | Yönetici (isteğe bağlı) | Panel ileride ayrı bir adrese (ör. `admin.zenweld.com`) taşınırsa ana sitenin adresi; paneldeki "Sayfayı gör" bağlantıları bunu kullanır. Bugün gerekmez |
 | `DATABASE_URL` | Yönetici (gizli) | Veritabanı (PostgreSQL) bağlantı adresi. `npm run db:*` komutları ([VERITABANI.md](VERITABANI.md)) ve `DATA_SOURCE=database` ise site kullanır |

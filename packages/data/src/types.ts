@@ -1091,6 +1091,20 @@ export interface ShopSettings {
   transferDueDays: number;
   /** Kargo firmalari (siparise takip no girilirken secilir) */
   carriers: string[];
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
+}
+
+/**
+ * Zenweld'e giden bir e-posta turunun alicilari (Magaza Ayarlari > E-posta
+ * Alicilari; KARARLAR K-104). Satiri olmayan tur varsayilan adrese gider.
+ */
+export interface EmailRecipient {
+  /** E-posta turu (packages/data › settings-rules.ts › EMAIL_RECIPIENT_TYPES) */
+  type: string;
+  recipients: string[];
+  /** Son degisiklik ani; yalnizca veritabani modunda dolu. */
+  updatedAt?: string;
 }
 
 export interface StockSettings {
@@ -1151,5 +1165,7 @@ export interface ZenweldDatabase {
    * (sayfa adresi -> alanlar; Icerik > Sayfa SEO). Eski kayitlarda yok.
    */
   pageSeo?: Record<string, PageSeoFields>;
+  /** E-posta alicilari (tur basina). Eski kayitlarda yok; yoksa hepsi varsayilan adrese gider. */
+  emailRecipients?: EmailRecipient[];
   settings: SiteSettings;
 }

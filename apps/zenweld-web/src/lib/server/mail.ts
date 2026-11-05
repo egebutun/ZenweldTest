@@ -1,4 +1,4 @@
-import { logEmail } from "@zenweld/db";
+import { emailRecipientsFor, logEmail } from "@zenweld/db";
 import { escapeHtml } from "@zenweld/utils";
 import { isNoIndex } from "@/lib/seo";
 import { database, usesDatabase } from "./db";
@@ -12,7 +12,7 @@ import { database, usesDatabase } from "./db";
  * calisir (KARARLAR K-92); asagidakiler o sunucuda ortam degiskeni olarak
  * tanimlanir (ornek: apps/zenweld-web/.env.example; docs/ENTEGRASYONLAR.md):
  *     RESEND_API_KEY   resend.com uzerinden alinan anahtar
- *     SUPPORT_EMAIL    (istege bagli) alici, varsayilan info@zenweld.com
+ *     SUPPORT_EMAIL    (istege bagli) varsayilan alici, varsayilan info@zenweld.com
  *     SUPPORT_FROM     (istege bagli) dogrulanmis gonderici adresi
  *
  * Anahtar yoksa e-posta gonderilmez ve istek hata vermez. Demo adresinde
@@ -22,6 +22,11 @@ import { database, usesDatabase } from "./db";
  * Veritabani modunda gonderilen (ya da gonderilemeyen) her e-posta
  * email_log'a yazilir: turu, sayfasi, bagli kayit ve sonucu (KARARLAR K-81;
  * Asama 5.3). Metni saklanmaz.
+ *
+ * Alicilar: veritabani modunda e-postanin turune gore panelde yazilan
+ * adresler (Mağaza Ayarları > E-posta Alıcıları, email_recipients;
+ * KARARLAR K-104); tur icin adres yazilmamissa ya da demo modunda
+ * SUPPORT_EMAIL.
  */
 
 export const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "info@zenweld.com";
@@ -105,8 +110,23 @@ export function sourcePath(request: Request): string | undefined {
   }
 }
 
+/**
+ * Zenweld'e giden e-postanin alicilari: veritabani modunda turun panelde
+ * yazilan adresleri; yoksa (ya da okunamazsa) SUPPORT_EMAIL.
+ */
+export async function recipientsFor(type: string | undefined): Promise<string[]> {
+  if (!type || !usesDatabase()) return [SUPPORT_EMAIL];
+  try {
+    const list = await emailRecipientsFor(database(), type);
+    return list.length ? list : [SUPPORT_EMAIL];
+  } catch (error) {
+    console.warn("E-posta alıcıları okunamadı; varsayılan adres kullanıldı:", error instanceof Error ? error.message : error);
+    return [SUPPORT_EMAIL];
+  }
+}
+
 /** Veritabani modunda e-postanin kaydi; kayit yazilamazsa e-posta yine gider. */
-async function record(meta: EmailMeta | undefined, to: string, subject: string, replyTo: string | undefined, sent: Sent) {
+async function record(meta: EmailMeta | undefined, to: string[], subject: string, replyTo: string | undefined, sent: Sent) {
   if (!meta || !usesDatabase()) return;
   try {
     await logEmail(database(), {
@@ -114,7 +134,7 @@ async function record(meta: EmailMeta | undefined, to: string, subject: string, 
       sourcePath: meta.sourcePath,
       entityType: meta.entity?.type,
       entityId: meta.entity?.id,
-      recipients: [to],
+      recipients: to,
       replyTo: replyTo && isEmail(replyTo) ? replyTo : undefined,
       subject,
       status: sent.result.delivered ? "sent" : sent.result.reason === "servis-hatasi" || sent.result.reason === "baglanti-hatasi" ? "failed" : "skipped",
@@ -128,7 +148,7 @@ async function record(meta: EmailMeta | undefined, to: string, subject: string, 
 
 /** Bot tuzagina takilan form: e-posta gonderilmez, kaydi "skipped" olarak yazilir. */
 export function recordBot(meta: EmailMeta): Promise<void> {
-  return record(meta, SUPPORT_EMAIL, "(bot tuzağı)", undefined, {
+  return record(meta, [SUPPORT_EMAIL], "(bot tuzağı)", undefined, {
     result: { ok: true, delivered: false, demo: isNoIndex() },
     error: "bot tuzağı",
   });
@@ -142,7 +162,7 @@ interface Sent {
 
 /** E-postayi Resend'e verir; anahtar yoksa gonderilmez. */
 async function deliver(message: {
-  to: string;
+  to: string[];
   subject: string;
   html?: string;
   text?: string;
@@ -157,7 +177,7 @@ async function deliver(message: {
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: process.env.SUPPORT_FROM || "Zenweld Web <onboarding@resend.dev>",
-        to: [message.to],
+        to: message.to,
         reply_to: message.replyTo && isEmail(message.replyTo) ? message.replyTo : undefined,
         subject: message.subject.slice(0, 200),
         html: message.html,
@@ -209,8 +229,9 @@ export async function sendMail({
     </table>
     ${note && note[1] ? `<h3>${escapeHtml(note[0])}</h3><p style="white-space:pre-wrap">${escapeHtml(note[1])}</p>` : ""}
   `;
-  const sent = await deliver({ to: SUPPORT_EMAIL, subject, html, replyTo });
-  await record(log, SUPPORT_EMAIL, subject, replyTo, sent);
+  const to = await recipientsFor(log?.type);
+  const sent = await deliver({ to, subject, html, replyTo });
+  await record(log, to, subject, replyTo, sent);
   return sent.result;
 }
 
@@ -226,7 +247,7 @@ export async function sendCustomerMail({
   text: string;
   log?: EmailMeta;
 }): Promise<MailResult> {
-  const sent = await deliver({ to, subject, text });
-  await record(log, to, subject, undefined, sent);
+  const sent = await deliver({ to: [to], subject, text });
+  await record(log, [to], subject, undefined, sent);
   return sent.result;
 }

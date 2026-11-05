@@ -432,12 +432,13 @@ npm run start --workspace apps/zenweld-web
     Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
     Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
     Ürünler), Bayiler, Online Satıcılar, Satış Temsilcileri ve Stok
-    Matrisi (elle düzeltme, dosya yükleme, kod eşleştirme, geri alma)
-    ekranları veritabanından okur ve yazar; aynı kaydı iki
+    Matrisi (elle düzeltme, dosya yükleme, kod eşleştirme, geri alma) ve
+    Mağaza Ayarları (Kargo ve Ödeme, E-posta Alıcıları) ekranları
+    veritabanından okur ve yazar; aynı kaydı iki
     yönetici düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her
     değişiklik `audit_log`'a yazılır. Bu modda panelde görsel dosyası
     yüklenmez, görsel adresi girilir (dosya deposu gelene kadar; K-101).
-    Panelin diğer ekranlarında (mağaza ayarı, içerik)
+    Panelin diğer ekranlarında (içerik)
     yapılan değişiklikler henüz siteye yansımaz; değişiklik `db:studio`'dan
     yapılır. Panel ana sayfası en son bağlanır.
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
@@ -448,8 +449,8 @@ npm run start --workspace apps/zenweld-web
     moduyla ayrı bir klasöre (`.next-db`) derler ve 3100 portunda açıp
     dener: bütün sayfalar, fiyat ve stok, değişikliğin hemen görünmesi,
     ağır verinin yalnızca gereken sayfaya gitmesi, kartla satın alma,
-    panelin Satış, Talepler, Katalog (seçenek, kategori, grup, ürün) ve bayi
-    ağı (bayi, satıcı, temsilci) ve Stok Matrisi ekranları. Demo
+    panelin Satış, Talepler, Katalog (seçenek, kategori, grup, ürün), bayi
+    ağı (bayi, satıcı, temsilci), Stok Matrisi ve Mağaza Ayarları ekranları. Demo
     derlemesi (`.next`) etkilenmez. `test:db` ile aynı anda çalıştırılmaz.
   - **SAP stok okuma (deneme dosyasıyla):** SAP bağlanana kadar depo
     stoğu bir CSV dosyasından okunur. `.env.local`'a
@@ -639,7 +640,7 @@ sipariş, iade talebi, Welders Club, ürün destek sorusu) **info@zenweld.com**'
 | Değişken | Açıklama |
 |---|---|
 | `RESEND_API_KEY` | resend.com anahtarı; yoksa e-posta gönderilmez |
-| `SUPPORT_EMAIL` | (isteğe bağlı) alıcı, varsayılan info@zenweld.com |
+| `SUPPORT_EMAIL` | (isteğe bağlı) varsayılan alıcı, yoksa info@zenweld.com; veritabanı modunda tür başına panelden değişir |
 | `SUPPORT_FROM` | (isteğe bağlı) doğrulanmış gönderici adresi |
 
 Anahtar yoksa demo adresinde formlar başarılı görünür; canlıda yalnızca
