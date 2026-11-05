@@ -839,9 +839,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Kategorinin linki ya da grubu değişince sitede eski adres yeni adrese
       yönlenir ve yeni ad hemen görünür; grubun linki değişince gruptaki
       kategorilerin eski adresleri de yönlenir.
-- [ ] Kart Görseli alanında **Dosya Yükle** yoktur; "Görsel yükleme dosya
-      deposu kurulunca açılacak; şimdilik görsel adresi girin." yazar;
-      görsel adresi girilip kaydedilince sitede görünür.
+- [ ] Dosya deposu ayarlıyken (`DOSYA_KLASORU`, K-108) Kart Görseli
+      alanında **Dosya Yükle** ile seçilen görsel yüklenir, alana
+      `/dosya/gorsel/…` adresi gelir; kaydedilince sitede görünür. Depo
+      ayarlı değilken **Dosya Yükle** yoktur; "Görsel yükleme dosya deposu
+      kurulunca açılacak; şimdilik görsel adresi girin." yazar; görsel
+      adresi girilip kaydedilince sitede görünür.
 - [ ] Bir sekmede açık kategori formu, başka sekmede aynı kategori
       kaydedilince ilk sekmede kaydedilmez: "Bu kayıt siz açtıktan sonra
       değişti; sayfayı yenileyin." Oklarla sıra değiştirmek açık formu
@@ -854,8 +857,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       `/urun/<link>` adresinde girilen fiyatla görünür. Hemen ardından fiyat
       ve link değiştirilip kaydedilince uyarı çıkmaz; sitede yeni fiyat
       görünür, eski link yeni linke yönlenir.
-- [ ] Ürünün Görseller sekmesinde **Dosya Yükle** yoktur; görsel adresi
-      eklenince sitede görünür.
+- [ ] Ürünün Görseller sekmesinde (depo ayarlıyken) **Dosya Yükle** ile
+      birkaç görsel seçilince seçilme sırasıyla eklenir; ürün kaydedilince
+      sitede görünür, `DOSYA_KLASORU`'nda `gorsel/<yıl>/<ay>/` altında
+      dosyaları vardır. SVG ya da içi görsel olmayan dosya "Bu dosya türü
+      yüklenemez…" der. Depo ayarlı değilken **Dosya Yükle** yoktur; görsel
+      adresi eklenince sitede görünür.
 - [ ] Listede göz ile yayından kaldırılan ürünün sayfası açılmaz
       ("Sayfa bulunamadı"); yayına alınınca açılır. Silinen ürün listeden ve
       siteden gider; geçmiş tekliflerde adı kalır.
@@ -991,15 +998,16 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Görünüm: renk kod kutusuna "#fff" ya da "kırmızı" yazılınca
       kaydedilmez; "Gövde rengi #RRGGBB biçiminde olmalı…" uyarısı çıkar.
 
-**Veritabanı modunda içerik (KARARLAR K-99, K-101, K-104):**
+**Veritabanı modunda içerik (KARARLAR K-99, K-101, K-104, K-108):**
 
 - [ ] Yeni haber (etkinlik, blog yazısı) kaydedilince `db:studio`'da görünür
       ve sitede hemen açılır; işlem kaydına yazılır.
 - [ ] Haberin linki değişince eski adres yeni adrese gider; haber
       silinince `redirects`'teki satırı da silinir.
-- [ ] Görseller sekmesinde **Dosya Yükle** yoktur, "Görsel yükleme dosya
-      deposu kurulunca açılacak…" notu vardır; adres girilerek görsel
-      eklenir.
+- [ ] Görseller sekmesinde (depo ayarlıyken) **Dosya Yükle** görseli
+      yükler; kaydedilen haber sitede görseliyle açılır. Depo ayarlı
+      değilken **Dosya Yükle** yoktur, "Görsel yükleme dosya deposu
+      kurulunca açılacak…" notu vardır; adres girilerek görsel eklenir.
 - [ ] Bir sekmede açık haber başka sekmede kaydedilince ilk sekmede
       kaydedilmez ("Bu kayıt siz açtıktan sonra değişti; sayfayı
       yenileyin.").
@@ -1008,12 +1016,19 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       (uyarı çıkmaz).
 - [ ] Hakkımızda kaydı sitede hemen görünür; hemen ardından ikinci kayıtta
       uyarı çıkmaz.
-- [ ] Belgeler: Belge Ekle penceresinde dosya seçme yoktur; **Dosya adresi**
-      alanı ve "Dosya yükleme dosya deposu kurulunca açılacak…" notu vardır.
-      `https://` ile başlamayan adres kaydedilmez. Adresle eklenen belge
-      sitedeki sayfada hemen görünür, **Görüntüle** o adresi yeni sekmede
-      açar; boyut yazmaz. Yayından kaldırılan belge sitede görünmez;
-      silinen belge `db:studio`'da da yoktur.
+- [ ] Belgeler (depo ayarlıyken, K-108): Belge Ekle penceresinde PDF
+      seçilip kaydedilince belge sitedeki sayfada hemen görünür, listede
+      boyutu yazar; **Görüntüle** dosyayı `/dosya/belge/…` adresinde açar.
+      Adı `.pdf` olup içi PDF olmayan dosya "Bu dosya türü yüklenemez…"
+      der; 25 MB'tan büyük dosya yüklenmez. Yayından kaldırılan belge
+      sitede görünmez; silinen belge `db:studio`'da da yoktur.
+- [ ] Belgeler (depo ayarlı değilken, K-104): Belge Ekle penceresinde dosya
+      seçme yoktur; **Dosya adresi** alanı ve "Dosya yükleme dosya deposu
+      kurulunca açılacak…" notu vardır. `https://` ile başlamayan adres
+      kaydedilmez. Adresle eklenen belge sitedeki sayfada hemen görünür,
+      **Görüntüle** o adresi yeni sekmede açar; boyut yazmaz.
+- [ ] Yükleme ucu (`/api/yonetim/dosya`) panel oturumu olmadan çalışmaz;
+      `/dosya/` altında olmayan ya da geçersiz bir adres "bulunamadı" der.
 - [ ] Belge sayfasının başlığı ve açıklaması sitede hemen değişir.
 - [ ] Yasal metin kaydı sitede hemen görünür; hemen ardından ikinci kayıtta
       uyarı çıkmaz. Bir sekmede açık metin başka sekmede kaydedilince ilk

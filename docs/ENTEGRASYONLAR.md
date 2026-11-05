@@ -45,7 +45,7 @@ veritabanında, tarayıcıda ya da depoda (GitHub) **asla** durmaz.
 | Telefon, WhatsApp, e-posta | **Bağlı** (bağlantılar) | — |
 | Sosyal medya | **Bağlı** (bağlantılar ve paylaşım önizlemesi) | — |
 | Veritabanı | Tarayıcı deposu (demo). PostgreSQL tabloları hazır; site ayarla (`DATA_SOURCE=database`) katalogu tablolardan okuyabiliyor; panelin Satış ve Talepler ekranları veritabanında (K-99), diğer ekranlar henüz tarayıcıda | Sunucu veritabanı PostgreSQL ([VERITABANI.md](VERITABANI.md)); sunucuyu BT ekibi sağlar |
-| Dosya deposu | Tarayıcı (demo) | Nesne deposu (görseller ve belgeler) |
+| Dosya deposu | Tarayıcı (demo). Veritabanı modunda sunucunun diski (`DOSYA_KLASORU`; K-108) | Deponun yeri ve yedeği (BT); istenirse nesne deposu (görseller ve belgeler) |
 | Bülten, şifre sıfırlama, müşteriye e-posta, analitik, e-Fatura, kargo | Yok | Bkz. [10](#10-henüz-bağlanmayanlar) |
 
 ---
@@ -314,20 +314,35 @@ yoksa önizleme boş çıkar.
   Köşeleri renkli (markanın kendi zemini olan) logolara dokunmaz.
   `sharp` bulunamazsa derleme durmaz, adım atlanır.
 
-**Panelden yüklenen görseller (Demo notu):**
+**Panelden yüklenen görseller:**
 
-- Tarayıcıda küçültülür (en fazla 1,5 MB, gerekirse WebP) ve
-  veritabanının içine metin (`data:`) olarak yazılır.
-- Gerçek sistemde bir **nesne deposuna** (ör. S3 uyumlu depo) yüklenmeli;
-  kayıtta yalnızca adres kalmalı.
+- Tarayıcıda küçültülür (en fazla 1,5 MB, gerekirse WebP).
+- **Demo notu:** Veritabanının içine metin (`data:`) olarak yazılır.
+- Veritabanı modunda dosya deposuna yüklenir (aşağıda); kayıtta yalnızca
+  adresi (`/dosya/gorsel/…`) kalır.
 
-**Belgeler (MSDS, Kaynak Rehberi, Parti Sertifikaları) — Demo notu:**
+**Belgeler (MSDS, Kaynak Rehberi, Parti Sertifikaları):**
 
-- Dosyanın kendisi tarayıcının dosya deposunda (IndexedDB,
+- **Demo notu:** Dosyanın kendisi tarayıcının dosya deposunda (IndexedDB,
   `zenweld.files.v1`) durur; yalnızca yükleyen tarayıcıda görünür.
-- Gerçek sistemde nesne deposuna yüklenmeli; yükleme sunucuda tür ve boyut
-  (25 MB) kontrolünden geçmeli ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›
-  Belgeler).
+- Veritabanı modunda dosya deposuna yüklenir; yükleme sunucuda tür (içeriğe
+  bakılarak) ve boyut (25 MB) kontrolünden geçer
+  ([IS-KURALLARI.md](IS-KURALLARI.md#23-yüklenen-dosyalar)).
+
+**Dosya deposu — değiştirilebilir parça (veritabanı modu, KARARLAR K-108):**
+Panelde yüklenen görsel ve belgelerin yazıldığı yer ayrı bir parçadır
+(`packages/db/src/file-storage.ts` › `FileStorage`). Hangisinin
+kullanılacağını sunucunun ayarı seçer (`fileStorageFromEnv`); bugün tek
+depo sunucunun diskidir (`DOSYA_KLASORU`). BT S3 uyumlu bir nesne deposu
+ya da ağ diski seçerse aynı arayüzle onun parçası eklenir; panel, yükleme
+ucu (`/api/yonetim/dosya`) ve sunma adresi (`/dosya/…`) değişmez. Deponun
+anahtar ve şifreleri yalnızca sunucuda ortam değişkeni olur.
+`DOSYA_KLASORU` tanımlı değilse panelde dosya yüklenmez, adres girilir.
+
+- **Yedek:** Disk deposunda dosyalar yalnızca bu klasördedir; veritabanı
+  yedeğine girmez. Klasör sunucunun yedeğine eklenmeli. Birden fazla sunucu
+  çalışacaksa klasör ortak olmalı (ağ diski) ya da nesne deposuna
+  geçilmeli.
 
 **Yorum fotoğraf ve videoları (Demo notu):** Tarayıcı deposunda durur
 (video en fazla 2 MB); gerçek sistemde nesne deposuna taşınmalı.
@@ -392,6 +407,7 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma (`/api/sap/stok`) ve SAP sipariş aktarımı (`/api/sap/siparis`) uçları açılır; zamanlayıcı, `npm run sap:stok` ve `npm run sap:siparis` bu anahtarla çağırır. Boşsa uçlar kapalıdır |
 | `ODEME_SAGLAYICI` | Yönetici | Kartla ödemenin sağlayıcısı (K-108). Boşsa `temsili` (para çekilmez, sipariş ödenmiş sayılır; K-97). Ödeme kuruluşu bağlanınca onun adı yazılır (ör. `iyzico`); bilinmeyen ad yazılırsa sipariş alınmaz ve sunucu hata verir. Kuruluşun anahtarları ayrı değişkenlerde, yalnızca sunucuda durur |
 | `SAP_STOK_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar depo stoğunun okunacağı deneme dosyası (CSV; örnek `packages/db/deneme/sap-stok.csv`). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir. Boşsa ve SAP bağlantısı da yoksa okuma işi çalışmaz |
+| `DOSYA_KLASORU` | Yönetici | Panelde yüklenen görsel ve belgelerin yazıldığı klasör (dosya deposu, K-108). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir; sunucunun yedeğine eklenmeli. Boşsa veritabanı modunda panelde dosya yüklenmez, adres girilir |
 | `SAP_SIPARIS_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar SAP'a aktarılan siparişlerin yazılacağı deneme dosyası (her satıra bir sipariş, JSON; K-108). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir. Boşsa ve SAP bağlantısı da yoksa aktarım işi çalışmaz, siparişler sırada bekler |
 | `NEXT_DIST_DIR` | Otomatik (test) | Derleme klasörü; boşsa `.next`. Yalnızca veritabanı modunun testleri (`npm run test:e2e:db`) `.next-db` kullanır, demo derlemesi bozulmaz |
 | `SITE_URL` | Geliştirici | Yalnızca `npm run site:yenile`, `npm run sap:stok` ve `npm run sap:siparis`: sitenin adresi; boşsa `NEXT_PUBLIC_SITE_URL`, o da boşsa `http://localhost:3000` |
@@ -475,7 +491,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | **Veritabanı ve sunucu API'si** | Veri tarayıcıda; PostgreSQL tabloları hazır. Veritabanı modunda (K-88) katalog, içerik ve stok tablolardan okunuyor; üyelik, adresler, favoriler, siparişler ve iade talepleri sunucuda (Aşama 4, 5.1, 5.2) | Siteyi ve paneli veritabanına bağlama ([VERITABANI.md](VERITABANI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
 | **SAP Business One (depo stoğu)** | Okuma işi hazır, SAP yerine deneme dosyasını okuyor (`/api/sap/stok`, `SAP_STOK_DOSYASI`; [9](#9-barındırma-ve-ortam-değişkenleri) › Zamanlanmış işler) | SAP ekibinin hazırladığı "kullanılabilir stok" görünümünü (`AVAILABLE_STOCK`, ad kesinleşmedi) okuyan bağlantı parçası (KARARLAR K-82, K-84). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı) ve görünümün kolonları SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması |
 | **SAP Business One (satış siparişi)** | Aktarım sırası ve iş hazır, SAP yerine deneme dosyasına yazıyor (`/api/sap/siparis`, `SAP_SIPARIS_DOSYASI`, `sap_order_exports`; K-108). Panelde sipariş detayında SAP Aktarımı kutusu | Siparişi SAP'a satış siparişi olarak yazan aktarıcı parça (KARARLAR K-84; `packages/db/src/sap-orders.ts` › `SapOrderExporter`). SAP'ın sipariş API'si (ör. `SALES_ORDER`), cari, KDV, kargo, kupon ve vade farkının SAP'ta nasıl yazılacağı ve bağlantı bilgileri SAP ekibinden gelecek (CANLIYA-CIKIS-SORULARI › 2); bilgiler yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması. SAP'a geçmiş siparişin iptali ve iadesi ayrıca konuşulur |
-| **Dosya deposu** | Görseller veritabanında, belgeler tarayıcıda. Veritabanı modunda panelde katalog görselleri (ürün, kategori, grup) ve satış temsilcisi fotoğrafı yüklenmez, adres girilir (KARARLAR K-101) | Nesne deposu |
+| **Dosya deposu** | Demo modunda görseller kaydın içinde, belgeler tarayıcıda. Veritabanı modunda dosya deposu parçası hazır (K-108): `DOSYA_KLASORU` ayarlıysa panelde görsel ve belge sunucunun diskine yüklenir, `/dosya/…` adresinden sunulur; ayarlı değilse adres girilir (K-101, K-104) | Deponun yeri ve yedeği BT ile kesinleşir (sunucunun diski ya da S3 uyumlu nesne deposu; CANLIYA-CIKIS-SORULARI › 1). Nesne deposu seçilirse onun parçası eklenir (`packages/db/src/file-storage.ts` › `FileStorage`). Kullanılmayan dosyaların temizliği |
 | **Ödeme kuruluşu** | Demo | Bkz. [3](#3-kartla-ödeme) |
 | **Müşteriye e-posta** | Yok | Sipariş onayı ve sözleşme kopyası (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi |
 | **Şifremi Unuttum** | Veritabanı modunda bağlantı üretiliyor ve Resend'e veriliyor (K-95) | Resend kurulumu (yukarıdaki 2) |

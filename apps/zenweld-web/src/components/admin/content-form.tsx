@@ -7,7 +7,8 @@ import { EMPTY_SLUG_ERROR } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { useWriteFailed } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, ProductImage, Tabs, Textarea } from "@zenweld/ui";
-import { readImageFiles, slugify } from "@zenweld/utils";
+import { slugify } from "@zenweld/utils";
+import { useUploads } from "@/lib/admin-files";
 import { siteUrl } from "@/lib/admin-links";
 import { AdminPageHeader } from "./AdminShell";
 
@@ -253,10 +254,11 @@ export function SingleImageField({
   /** Logolarda cevredeki bos beyaz kenari kirpar. */
   trimEdges?: boolean;
   removeLabel?: string;
-  /** Verilirse dosya yukleme kapalidir ve bu not gosterilir (veritabani modu, dosya deposu gelene kadar). */
+  /** Verilirse dosya yukleme kapalidir ve bu not gosterilir (veritabani modu, dosya deposu ayarli degil; K-108). */
   uploadNote?: string;
 }) {
   const [input, setInput] = useState("");
+  const uploads = useUploads();
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
@@ -300,7 +302,7 @@ export function SingleImageField({
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => {
-                  readImageFiles(e.target.files, onChange, onError, { trimEdges });
+                  uploads.readImages(e.target.files, onChange, onError, { trimEdges });
                   e.target.value = "";
                 }}
               />
@@ -338,10 +340,11 @@ export function GalleryField({
   alt: string;
   placeholder: string;
   description?: string;
-  /** Verilirse dosya yukleme kapalidir (veritabani modu, dosya deposu gelene kadar; KARARLAR K-101). */
+  /** Verilirse dosya yukleme kapalidir (veritabani modu, dosya deposu ayarli degil; KARARLAR K-101, K-108). */
   uploadNote?: string;
 }) {
   const [input, setInput] = useState("");
+  const uploads = useUploads();
 
   return (
     <div>
@@ -379,7 +382,7 @@ export function GalleryField({
               multiple
               className="hidden"
               onChange={(e) => {
-                readImageFiles(e.target.files, (url) => onChange((list) => [...list, url]), onError);
+                uploads.readImages(e.target.files, (url) => onChange((list) => [...list, url]), onError);
                 e.target.value = "";
               }}
             />

@@ -8,8 +8,7 @@ import { closeDatabase, expect, sql, test } from "./yardimci";
  *
  * Bayiler, Online Satıcılar ve Satış Temsilcileri veritabanindan okunur ve
  * yazilir; degisiklik sitede (Bayi Bul, Satış Temsilcilerimiz) hemen
- * gorunur. Temsilci fotografinda dosya yukleme dosya deposu gelene kadar
- * kapalidir (K-101).
+ * gorunur. Temsilci fotografi dosya deposuna yuklenebilir (K-108).
  */
 test.describe.configure({ mode: "serial" });
 test.afterAll(closeDatabase);
@@ -93,14 +92,15 @@ test("online satıcı: eklenir (logo metni addan), silinir", async ({ page }) =>
   await expect.poll(async () => (await sql("SELECT id FROM retailers WHERE id = $1", [id])).length).toBe(0);
 });
 
-test("satış temsilcisi: fotoğraf yükleme kapalı; eklenince sitede görünür, gizlenince gider; silinir", async ({ page, request }) => {
+test("satış temsilcisi: fotoğraf yükleme açık; eklenince sitede görünür, gizlenince gider; silinir", async ({ page, request }) => {
   const repsPage = async () => (await request.get("/satis-temsilcilerimiz")).text();
   await panelLogin(page);
   await page.goto("/yonetim/satis-temsilcileri");
   await page.getByRole("button", { name: "Temsilci ekle" }).click();
   const dialog = page.getByRole("dialog");
-  await expect(dialog.getByText(tr.panel.uploadDisabled)).toBeVisible();
-  await expect(dialog.getByText("Dosya yükle")).toHaveCount(0);
+  // Dosya deposu ayarli (K-108): yukleme acik, "adres girin" notu yok.
+  await expect(dialog.getByText("Dosya yükle")).toBeVisible();
+  await expect(dialog.getByText(tr.panel.uploadDisabled)).toHaveCount(0);
   await field(dialog, "Ad Soyad").fill(REP.name);
   await field(dialog, "Bölge / Görev").fill("Deneme Bölgesi");
   await field(dialog, "Telefon").fill("+90 532 000 00 99");

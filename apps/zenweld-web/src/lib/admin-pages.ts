@@ -25,8 +25,9 @@ export type { PanelAnswer };
  * modunda tarayicidaki veriye yazilir (packages/store › repo/legal.ts,
  * documents.ts, site.ts).
  *
- * Belgeler: veritabani modunda dosya yuklenmez, dosyanin adresi girilir
- * (dosya deposu gelene kadar; KARARLAR K-104).
+ * Belgeler: veritabani modunda dosya once sunucunun deposuna yuklenir
+ * (lib/admin-files.ts) ve kayda adresi yazilir; depo ayarli degilse
+ * dosyanin adresi girilir (KARARLAR K-104, K-108).
  */
 export function usePagesActions() {
   const { server, pending, call } = usePanelCall("icerik");
@@ -74,7 +75,8 @@ export function usePagesActions() {
     /**
      * Belge ekler (stored yoksa) ya da gunceller. Demo modunda dosya
      * tarayiciya yuklenir (file); veritabani modunda dosyanin adresi
-     * gonderilir (address; duzenlemede bossa eski dosya kalir).
+     * gonderilir (address: depoya yuklenen dosyanin ya da elle girilen
+     * adres; duzenlemede bossa eski dosya kalir).
      */
     saveDocument: async (
       section: DocumentSection,

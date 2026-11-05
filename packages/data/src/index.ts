@@ -15,6 +15,7 @@ export * from "./network-rules";
 export * from "./settings-rules";
 export * from "./shipping";
 export * from "./content-rules";
+export * from "./file-rules";
 export * from "./cart";
 export * from "./payment";
 export * from "./orders";

@@ -48,6 +48,7 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 20. [Zenweld depo stoğu](#20-zenweld-depo-stoğu)
 21. [Kuponlar](#21-kuponlar)
 22. [Panelde kayıt düzenleme](#22-panelde-kayıt-düzenleme)
+23. [Yüklenen dosyalar](#23-yüklenen-dosyalar)
 
 ---
 
@@ -1338,17 +1339,21 @@ veritabanına geçtikçe onlara da uygulanır.
   Kayıt sitedeki biçimli metinlerde hemen geçerli olur.
   - **Örnek:** Gövde rengi kutusuna "#fff" yazılırsa kaydedilmez: "Gövde
     rengi #RRGGBB biçiminde olmalı (örnek: #141619)."
-- **Görsel yükleme:** Veritabanı modunda dosya deposu kurulana kadar
-  (Aşama 6) panelde görsel dosyası yüklenmez, görsel adresi girilir;
-  sunucu yüklenmiş dosya (`data:`) içeren kaydı reddeder (KARARLAR K-101).
-  Bugün ürün görsellerinde, kategori/grup kart görsellerinde, satış
-  temsilcisi fotoğrafında, haber, etkinlik ve blog görsellerinde ve
-  Hakkımızda görsellerinde geçerlidir.
-- **Belge dosyası:** Aynı nedenle veritabanı modunda belge dosyası da
-  yüklenmez; dosyanın adresi girilir (KARARLAR K-104). Adres `https://`
-  (ya da sitedeki bir yol için `/`) ile başlar ve boşluk içermez. Dosya
-  adı ve türü adresin son parçasından alınır; boyut bilinmez, gösterilmez.
-  Düzenlemede adres boş bırakılırsa mevcut dosya kalır. Sitede belge o
+- **Görsel yükleme:** Veritabanı modunda dosya deposu ayarlıysa görsel
+  dosyası sunucunun deposuna yüklenir ve kayda sitedeki adresi yazılır
+  ([23](#23-yüklenen-dosyalar), KARARLAR K-108). Depo ayarlı değilse
+  görsel dosyası yüklenmez, görsel adresi girilir (K-101). İki durumda da
+  sunucu tarayıcıda tutulan dosya (`data:`) içeren kaydı reddeder. Ürün
+  görsellerinde, kategori/grup kart görsellerinde, satış temsilcisi
+  fotoğrafında, haber, etkinlik ve blog görsellerinde ve Hakkımızda
+  görsellerinde geçerlidir.
+- **Belge dosyası:** Veritabanı modunda dosya deposu ayarlıysa belge
+  dosyası depoya yüklenir ([23](#23-yüklenen-dosyalar)); dosya adı,
+  türü ve boyutu yüklenen dosyadan alınır. Depo ayarlı değilse dosyanın
+  adresi girilir (KARARLAR K-104): adres `https://` (ya da sitedeki bir
+  yol için `/`) ile başlar ve boşluk içermez; dosya adı ve türü adresin
+  son parçasından alınır; boyut bilinmez, gösterilmez. Düzenlemede dosya
+  seçilmezse (adres boş bırakılırsa) mevcut dosya kalır. Sitede belge o
   adreste yeni sekmede açılır.
   - **Örnek:** `https://dosya.zenweld.com/msds/ER70S-6%20Tel.pdf` → dosya
     adı "ER70S-6 Tel.pdf", türü PDF (sitede **Görüntüle**).
@@ -1364,3 +1369,59 @@ Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
 `apps/zenweld-web/src/lib/admin-panel.ts`, `admin-sales.ts`,
 `admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`,
 `admin-stock.ts`, `admin-settings.ts`, `admin-content.ts`, `admin-pages.ts`.
+
+---
+
+## 23. Yüklenen dosyalar
+
+Veritabanı modunda panelde yüklenen görsel ve belgeler sunucunun **dosya
+deposuna** yazılır (KARARLAR K-108). Depo bugün sunucunun diskidir
+(`DOSYA_KLASORU`); BT başka bir depo seçerse yalnızca depo parçası
+değişir. Depo ayarlı değilse panelde dosya yüklenmez, adres girilir
+([22](#22-panelde-kayıt-düzenleme)). Demo modunda dosyalar tarayıcıda
+tutulur; bu kurallar uygulanmaz.
+
+- **Kim yükler:** Yalnızca geçerli panel oturumu olan yönetici. Her
+  yükleme işlem kaydına yazılır (kim, ne zaman, dosyanın adı ve boyutu).
+- **Türler ve boyut:**
+
+  | Yükleme | Kabul edilen | En fazla |
+  |---|---|---|
+  | Görsel | JPG, PNG, WebP, GIF, AVIF | 5 MB |
+  | Belge | PDF, Word (doc, docx), Excel (xls, xlsx), JPG, PNG, ZIP | 25 MB |
+
+  Görsel önce tarayıcıda küçültülür (demo modundaki gibi), sonra yüklenir.
+- **Tür dosyanın içeriğinden bulunur:** Dosyanın adı ya da tarayıcının
+  bildirdiği tür yetmez. İçeriği kabul edilen türlerden biri olmayan
+  dosya yüklenmez: "Bu dosya türü yüklenemez. Yüklenebilenler: …" SVG ve
+  HTML hiçbir zaman yüklenmez (içlerinde kod çalışabilir).
+  - **Örnek:** Adı `resim.png` olan ama içi HTML olan dosya yüklenmez.
+    Adı `foto.jpg` olan ama içi PNG olan dosya PNG olarak kaydedilir.
+  - Word, Excel ve ZIP aynı kabuktadır; dosyanın adı `.docx`/`.xlsx` ise o
+    tür, değilse ZIP sayılır. Eski Word/Excel (`.doc`/`.xls`) yalnızca adı
+    öyleyse kabul edilir.
+- Boş dosya: "Dosya boş." Sınırı aşan: "Dosya çok büyük; en fazla 5 MB."
+  (belgede 25 MB).
+- **Adres:** Dosya `/dosya/…` adresinden sunulur; her yükleme yeni bir
+  adres alır (eski dosyanın üzerine yazılmaz).
+  - Görsel: `/dosya/gorsel/<yıl>/<ay>/<16 hane>.<tür>`.
+  - Belge: `/dosya/belge/<yıl>/<ay>/<16 hane>/<dosya adı>`; dosya adı
+    sadeleşir (Türkçe harfler, boşluk ve işaretler; en fazla 80 karakter;
+    uzantı gerçek tür).
+  - **Örnek:** "MSDS ER70S-6 (2026).PDF" →
+    `/dosya/belge/2026/11/0123456789abcdef/MSDS-ER70S-6-2026.pdf`.
+- **Sunma:** Görsel, PDF, JPG ve PNG tarayıcıda açılır; Word, Excel ve ZIP
+  indirilir. Adres değişmediği için tarayıcı dosyayı bir yıl saklayabilir.
+  Depoda olmayan ya da biçimi geçersiz adres "bulunamadı" (404) döner;
+  depo klasörünün dışındaki bir dosya okunamaz.
+- **Belge kaydı:** Belgenin dosyası depoya yüklenen dosyaysa sunucu
+  dosyanın depoda olduğunu denetler ve boyutunu depodan okur; dosya
+  yoksa: "Yüklenen dosya bulunamadı; dosyayı yeniden seçin."
+- Kayıttan kaldırılan ya da değiştirilen görselin eski dosyası depoda
+  kalır (temizliği sonraya; [YAPILACAKLAR.md](YAPILACAKLAR.md)).
+
+Kod: `packages/data/src/file-rules.ts` (türler, boyut, adres),
+`packages/db/src/file-storage.ts` (depo), yükleme ucu
+`apps/zenweld-web/src/app/api/yonetim/dosya/route.ts`, sunma
+`apps/zenweld-web/src/app/dosya/[...yol]/route.ts`, panel
+`apps/zenweld-web/src/lib/admin-files.ts`.

@@ -74,7 +74,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 | # | İş | Bağlı olduğu |
 |---|---|---|
 | 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) — bitti; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — bitti, K-105) — bitti, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
-| 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
+| 2 | **Aşama 6 — Dosya deposu:** panelden görsel ve belge yükleme hazır (K-108; sunucunun diski, `DOSYA_KLASORU`). Kalan: deponun yeri ve yedeği, istenirse S3 uyumlu depo parçası, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** aktarım sırası, iş (`/api/sap/siparis`), yeniden deneme ve panel kutusu hazır (K-108; bugün deneme dosyasına yazıyor). Kalan: siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si ve bağlantı bilgileri; cari ve KDV kararları (CANLIYA-CIKIS-SORULARI › 2) |
 | 5 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez. Ödeme sağlayıcısı parçası hazır (`packages/db/src/payment.ts`, K-108): kuruluşun parçası eklenir, 3D Secure için ödeme iki adıma ayrılır, ödeme sayfası kart programını sunucudan alır | Ödeme kuruluşu anlaşması |
@@ -1008,21 +1008,37 @@ Hangi bildirimlerin gönderileceği ve metinleri kararlaştırılmalı.
 
 ## Görseller ve yüklenen dosyalar — backend
 
-Panelden yüklenen görseller (ürün, kategori ve grup kartı, haber, blog,
-etkinlik, Hakkımızda, satış temsilcisi) ve yorumlardaki fotoğraf ve videolar
-bugün veritabanının içine metin olarak (`data:` ile başlayan) yazılıyor.
-Veritabanı modunda panelin katalog ekranlarında (ürün, kategori ve grup
-görselleri) yükleme kapalı, adres giriliyor (KARARLAR K-101).
+Demo modunda panelden yüklenen görseller (ürün, kategori ve grup kartı,
+haber, blog, etkinlik, Hakkımızda, satış temsilcisi) ve yorumlardaki
+fotoğraf ve videolar veritabanının içine metin olarak (`data:` ile
+başlayan) yazılıyor. **Veritabanı modunda (2026-11-05, K-108):** panelde
+yüklenen görseller sunucunun dosya deposuna (`DOSYA_KLASORU`) yazılıyor;
+yükleme sunucuda tür (içeriğe bakılarak) ve boyut kontrolünden geçiyor,
+kayıtta yalnızca adres (`/dosya/…`) kalıyor
+([IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar)). Depo
+ayarlı değilse adres giriliyor (K-101).
 
 **Sahibin kararı (K-102):** Görsellerin hız, görünürlük ve performans için
 iyileştirilmesi ve nasıl tutulacağı sahibi söyleyince ele alınır; dosya
 deposu kurulurken (Aşama 6), gerçek fotoğraflar gelince ve canlıya
 hazırlıkta sahibine hatırlatılır.
 
-1. Dosyalar bir nesne deposuna (S3 uyumlu) yüklenmeli; kayıtta yalnızca
-   adres kalmalı.
-2. Yükleme sunucuda tür ve boyut kontrolünden geçmeli.
+1. (Hazır, veritabanı modu) Dosyalar dosya deposuna yükleniyor; kayıtta
+   yalnızca adres kalıyor. Deponun yeri ve yedeği BT ile kesinleşir
+   (sunucunun diski ya da S3 uyumlu depo; CANLIYA-CIKIS-SORULARI › 1);
+   S3 seçilirse onun parçası eklenir (`packages/db/src/file-storage.ts`).
+2. (Hazır) Yükleme sunucuda tür ve boyut kontrolünden geçiyor.
 3. Belgeler (MSDS, sertifikalar) için ayrı bölüm: "Belgeler — backend".
+4. **Kullanılmayan dosyaların temizliği:** Kayıttan kaldırılan görselin ya
+   da silinen belgenin dosyası depoda kalıyor. Hiçbir kaydın kullanmadığı
+   ve belli bir süreden eski dosyaları bulup silen bir iş (önce yalnızca
+   listeleyen) yazılabilir.
+5. **Yorum fotoğraf ve videoları:** Müşterinin yüklediği dosyalar hâlâ
+   yorumun içinde (`media`, `data:`). Depoya taşımak için herkese açık bir
+   yükleme ucu gerekir (istek sınırı ve bot koruması ile; "Formlar —
+   güvenlik"); sahibiyle konuşulur.
+6. Demo modunda yüklenmiş (`data:`) görseller canlı veriye taşınmaz; canlı
+   yüklemede görseller `/images/…` adresindedir (K-90).
 
 ## Bülten ve İYS
 
@@ -1092,14 +1108,16 @@ yapılıyor (`lib/page-seo-client.ts`).
 
 Panel ve site sayfaları hazır. Demo modunda dosyalar yükleyen tarayıcıda
 (`packages/store/src/files.ts`); veritabanı modunda kayıtlar `documents` ve
-`document_pages` tablolarında, dosya yüklenmez, dosyanın adresi girilir
-(adım 5.3, K-104).
+`document_pages` tablolarında. Dosya deposu ayarlıysa dosya depoya
+yüklenir (K-108); değilse dosyanın adresi girilir (adım 5.3, K-104).
 
 1. (Hazır) `documents` ve `document_pages` tabloları; panel veritabanına
    yazar.
-2. Dosyalar bir dosya sunucusuna (nesne deposu) yüklenmeli; site belgeleri bu
-   adresten açar. Yükleme sunucuda tür ve boyut (25 MB) kontrolünden geçmeli
-   (Aşama 6). O zamana kadar girilen adresler kalır.
+2. (Hazır, 2026-11-05, K-108) Dosyalar dosya deposuna yükleniyor; site
+   belgeleri `/dosya/belge/…` adresinden açıyor. Yükleme sunucuda tür
+   (içeriğe bakılarak) ve boyut (25 MB) kontrolünden geçiyor. Önceden
+   girilen adresler kalıyor. Silinen belgenin dosyası depoda kalıyor
+   (temizlik: "Görseller ve yüklenen dosyalar — backend" 4).
 3. (Hazır) Belge sayfalarının arama motoru başlığı ve açıklaması Sayfa
    SEO'dan değişir (MSDS, Ultimate Kaynak Rehberi, Parti Sertifikaları).
 

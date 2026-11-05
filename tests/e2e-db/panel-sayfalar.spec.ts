@@ -1,4 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
+import { uploadTypeError } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { demoAccount } from "../e2e/yardimci";
 import { closeDatabase, expect, sql, test } from "./yardimci";
@@ -8,13 +9,15 @@ import { closeDatabase, expect, sql, test } from "./yardimci";
  * ADIM 5.3 (Asama 5, 5. alan; KARARLAR K-99, K-104)
  *
  * Bu ekranlar veritabanindan okunur ve yazilir; kayit sitede hemen gorunur.
- * Belgelerde dosya yuklenmez, dosyanin adresi girilir (K-104).
+ * Belgenin dosyasi dosya deposuna yuklenir (DOSYA_KLASORU,
+ * scripts/e2e-db.mts; K-108); depo ayarli degilse adres girilir (K-104).
  */
 test.describe.configure({ mode: "serial" });
 
 const admin = demoAccount("Yönetici");
 const stamp = Date.now();
-const DOC = { title: `Deneme MSDS ${stamp}`, address: `https://dosya.ornek/msds/deneme-${stamp}.pdf` };
+const DOC = { title: `Deneme MSDS ${stamp}`, file: `Deneme MSDS ${stamp}.pdf` };
+const PDF = Buffer.from("%PDF-1.4\n1 0 obj << >> endobj\ntrailer << >>\n%%EOF\n");
 
 async function panelLogin(page: Page) {
   await page.goto("/yonetim/giris");
@@ -81,42 +84,56 @@ test("Sayfa SEO: başlık sayfada görünür; Varsayılana dön ile satır silin
   expect(await (await request.get("/msds")).text()).not.toContain(changed);
 });
 
-test("belgeler: dosya yerine adres girilir; eklenen belge sitede görünür; yayından kaldırılır; silinir", async ({ page, request }) => {
+test("belgeler: dosya depoya yüklenir; eklenen belge sitede görünür ve açılır; yayından kaldırılır; silinir", async ({ page, request }) => {
   await panelLogin(page);
   await page.goto("/yonetim/belgeler");
   await page.getByRole("button", { name: "Belge Ekle" }).click();
   const dialog = page.getByRole("dialog");
-  await expect(dialog.getByText(tr.panel.documentUploadDisabled)).toBeVisible();
-  await expect(dialog.locator("input[type=file]")).toHaveCount(0);
+  await expect(dialog.getByText(tr.panel.documentUploadDisabled)).toHaveCount(0);
 
-  // Adres girilince baslik dosya adindan dolar; adres yanlissa kaydedilmez.
-  await field(dialog, "Dosya adresi").fill(DOC.address);
-  await expect(field(dialog, "Başlık")).toHaveValue(`deneme-${stamp}`);
-  await field(dialog, "Başlık").fill(DOC.title);
-  await field(dialog, "Dosya adresi").fill("dosya.pdf");
+  // Dosya secilmeden kaydedilmez; secilince (baslik bossa) baslik dosya adindan dolar.
+  await field(dialog, "Başlık").fill("Geçici");
   await dialog.getByRole("button", { name: "Kaydet" }).click();
-  await expect(dialog.getByText("Dosya adresi https:// ile başlamalı ve boşluk içermemeli.")).toBeVisible();
-  await field(dialog, "Dosya adresi").fill(DOC.address);
+  await expect(dialog.getByText("Dosya seçin.")).toBeVisible();
+  await field(dialog, "Başlık").fill("");
+  // Kabul edilmeyen dosya: icerigi PDF degil.
+  await dialog.locator("input[type=file]").setInputFiles({ name: "sahte.pdf", mimeType: "application/pdf", buffer: Buffer.from("<html></html>") });
+  await dialog.getByRole("button", { name: "Kaydet" }).click();
+  await expect(dialog.getByText(uploadTypeError("belge"))).toBeVisible();
+  await dialog.locator("input[type=file]").setInputFiles({ name: DOC.file, mimeType: "application/pdf", buffer: PDF });
   await expect(field(dialog, "Başlık")).toHaveValue(DOC.title);
   await dialog.getByRole("button", { name: "Kaydet" }).click();
   await expect(dialog).toHaveCount(0);
 
-  const [doc] = await sql<{ id: string; file_key: string; size_bytes: string }>(
-    "SELECT id, file_key, size_bytes FROM documents WHERE title = $1",
+  const [doc] = await sql<{ id: string; file_key: string; file_name: string; mime_type: string; size_bytes: string }>(
+    "SELECT id, file_key, file_name, mime_type, size_bytes FROM documents WHERE title = $1",
     [DOC.title],
   );
-  expect([doc.file_key, doc.size_bytes]).toEqual([DOC.address, "0"]);
+  const fileName = `Deneme-MSDS-${stamp}.pdf`;
+  expect(doc.file_key).toMatch(new RegExp(`^/dosya/belge/\\d{4}/\\d{2}/[0-9a-f]{16}/${fileName}$`));
+  expect([doc.file_name, doc.mime_type, doc.size_bytes]).toEqual([fileName, "application/pdf", String(PDF.length)]);
   const row = page.locator("tr", { hasText: DOC.title });
-  await expect(row.getByText(`deneme-${stamp}.pdf`)).toBeVisible();
+  await expect(row.getByText(fileName)).toBeVisible();
+  // Yukleme islem kaydinda.
+  const uploads = await sql<{ entity_label: string }>("SELECT entity_label FROM audit_log WHERE entity_type = 'files' AND entity_id = $1", [
+    doc.file_key.slice("/dosya/".length),
+  ]);
+  expect(uploads).toEqual([{ entity_label: DOC.file }]);
 
   const site = await page.context().newPage();
   await site.goto("/msds");
   await expect(site.getByText(DOC.title)).toBeVisible();
-  // Belge adresinde yeni sekmede acilir (ornek adres testte cevaplanir).
-  await page.context().route("https://dosya.ornek/**", (route) => route.fulfill({ contentType: "application/pdf", body: "%PDF-1.4" }));
+  // Belge kendi adresinde yeni sekmede acilir; dosya depodan gelir.
   const [opened] = await Promise.all([site.waitForEvent("popup"), site.locator("li", { hasText: DOC.title }).getByRole("button", { name: "Görüntüle" }).click()]);
-  expect(opened.url()).toBe(DOC.address);
+  expect(new URL(opened.url()).pathname).toBe(doc.file_key);
   await opened.close();
+  const served = await request.get(doc.file_key);
+  expect([served.status(), served.headers()["content-type"], served.headers()["content-disposition"]]).toEqual([
+    200,
+    "application/pdf",
+    `inline; filename="${fileName}"`,
+  ]);
+  expect(Buffer.from(await served.body()).equals(PDF)).toBe(true);
 
   await row.getByTitle("Yayından kaldır").click();
   await expect.poll(async () => (await sql<{ active: boolean }>("SELECT active FROM documents WHERE id = $1", [doc.id]))[0].active).toBe(false);

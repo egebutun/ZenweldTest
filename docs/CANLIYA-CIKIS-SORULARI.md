@@ -55,7 +55,9 @@ oradaki konulardan **şirketten öğrenilecek** olanları toplar.
 
 - [ ] Ürün fotoğrafları ve MSDS gibi belgeler nerede saklanacak: sunucunun
       diskinde mi, ayrı bir dosya deposunda (S3 uyumlu) mı? Yedeği nasıl
-      alınacak? [Karar] [Kod]
+      alınacak? (Sunucunun diskine yazan depo hazır: `DOSYA_KLASORU`; bu
+      klasör yedeğe eklenmeli. S3 uyumlu depo seçilirse onun parçası
+      yazılır.) [Karar] [Kod]
 
 **Zamanlanmış işler ve izleme**
 

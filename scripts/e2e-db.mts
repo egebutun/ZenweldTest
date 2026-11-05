@@ -47,7 +47,8 @@ try {
 
 // Testler yenileme ve SAP uclarini kullanir; her calistirmada yeni
 // anahtarlar. SAP stogu testin yazdigi deneme dosyasindan okunur; SAP'a
-// aktarilan siparisler deneme dosyasina yazilir.
+// aktarilan siparisler deneme dosyasina, panelde yuklenen dosyalar gecici
+// bir klasore (dosya deposu) yazilir.
 const env = {
   ...process.env,
   DATA_SOURCE: "database",
@@ -58,6 +59,7 @@ const env = {
   CRON_SECRET: randomUUID(),
   SAP_STOK_DOSYASI: join(tmpdir(), `zenweld-e2e-sap-stok-${process.pid}.csv`),
   SAP_SIPARIS_DOSYASI: join(tmpdir(), `zenweld-e2e-sap-siparis-${process.pid}.jsonl`),
+  DOSYA_KLASORU: join(tmpdir(), `zenweld-e2e-dosyalar-${process.pid}`),
 };
 
 console.log("2/3 Site veritabanı moduyla derleniyor (.next-db)…");
@@ -76,6 +78,7 @@ const run = spawnSync("npx", ["playwright", "test", "-c", "playwright.db.config.
 });
 rmSync(env.SAP_STOK_DOSYASI, { force: true });
 rmSync(env.SAP_SIPARIS_DOSYASI, { force: true });
+rmSync(env.DOSYA_KLASORU, { recursive: true, force: true });
 process.exit(run.status ?? 1);
 
 function fail(message: string): never {

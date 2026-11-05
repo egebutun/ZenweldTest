@@ -1,7 +1,6 @@
 "use client";
 
 import type { AboutContent, BlogPost, FaqItem, NewsItem, ZenweldEvent } from "@zenweld/data";
-import { tr } from "@zenweld/i18n";
 import {
   createBlogPost,
   createEvent,
@@ -17,6 +16,7 @@ import {
   saveFaq,
   saveNews,
 } from "@zenweld/store";
+import { useUploads } from "./admin-files";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
 
 export type { PanelAnswer };
@@ -30,8 +30,9 @@ export type { PanelAnswer };
  * tarayicidaki veriye yazilir (packages/store › repo/news.ts, events.ts,
  * blog.ts, faqs.ts, site.ts).
  *
- * uploadNote: veritabani modunda gorsel dosyasi yuklenmez, adres girilir
- * (dosya deposu gelene kadar; KARARLAR K-101).
+ * uploadNote: veritabani modunda dosya deposu ayarli degilse gorsel
+ * dosyasi yuklenmez, adres girilir (KARARLAR K-101, K-108;
+ * lib/admin-files.ts).
  */
 
 /** Sunucuya gonderilmeyen alanlar: kimlik ve son degisiklik ani ayrica, eski linkler sunucuda. */
@@ -45,6 +46,7 @@ function fieldsOf<T extends { id: string; updatedAt?: string; previousSlugs?: st
 
 export function useContentActions() {
   const { server, pending, call } = usePanelCall("icerik");
+  const { imageNote } = useUploads();
 
   /** Haber, etkinlik ve blog icin ayni akis. kind: kayit turu (recordRef), area: uc on eki. */
   function article<T extends { id: string; active?: boolean; updatedAt?: string; previousSlugs?: string[] }>(
@@ -81,7 +83,7 @@ export function useContentActions() {
   return {
     server,
     pending,
-    uploadNote: server ? tr.panel.uploadDisabled : undefined,
+    uploadNote: imageNote,
     news: article<NewsItem>("news", "haber", { create: createNews, save: saveNews, remove: deleteNews }),
     events: article<ZenweldEvent>("events", "etkinlik", { create: createEvent, save: saveEvent, remove: deleteEvent }),
     blog: article<BlogPost>("blog_posts", "blog", { create: createBlogPost, save: saveBlogPost, remove: deleteBlogPost }),

@@ -6,6 +6,7 @@ import {
   documentFileFromAddress,
   documentPageError,
   legalDraftError,
+  uploadKeyOf,
   type DocumentSection,
   type ZenweldDatabase,
 } from "@zenweld/data";
@@ -173,21 +174,38 @@ export async function adminSaveDocumentPage(db: AuditDb, actor: Actor, input: In
 
 /* ------------------------------ Belgeler ------------------------------ */
 
-/** Adresi girilen dosya: adres dosya anahtarinda, ad ve tur adresten, boyut bilinmez (0). */
-function fileOf(address: string, title: string) {
-  const { fileName, mimeType, size } = documentFileFromAddress(address, title);
+/**
+ * Belgenin dosyasi: adres dosya anahtarinda, ad ve tur adresten. Boyut
+ * yalnizca depoya yuklenen dosyada bilinir (sunucu depodan okur); adresi
+ * elle girilen dosyada 0.
+ */
+function fileOf(address: string, title: string, size = 0) {
+  const { fileName, mimeType } = documentFileFromAddress(address, title);
   return { fileKey: address, fileName, mimeType, sizeBytes: size };
 }
+
+/** Depodaki dosyanin boyutu (yoksa null); dosya deposu ayarli degilse verilmez. */
+export type StoredFileSize = (key: string) => Promise<number | null>;
+
+export const UPLOADED_FILE_MISSING = "Yüklenen dosya bulunamadı; dosyayı yeniden seçin.";
 
 const DOCUMENT_KEYS = ["title", "productId", "lotNumber", "fileKey", "fileName", "mimeType", "sizeBytes", "active"] as const;
 
 /**
  * Belge ekler ya da gunceller. input: { id?, section, title, productId?,
  * lotNumber?, active, address?, updatedAt? }. Yeni belgede adres zorunlu;
- * duzenlemede adres bos birakilirsa eski dosya kalir. Parti numarasi
- * yalnizca parti sertifikalarinda tutulur. Yeni belge bolumun sonuna eklenir.
+ * duzenlemede adres bos birakilirsa eski dosya kalir. Adres depoya
+ * yuklenen dosyanin adresiyse (/dosya/belge/…; K-108) dosya depoda olmali,
+ * boyutu depodan okunur (storedSize). Parti numarasi yalnizca parti
+ * sertifikalarinda tutulur. Yeni belge bolumun sonuna eklenir.
  */
-export async function adminSaveDocument(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<Saved & { id: string }>> {
+export async function adminSaveDocument(
+  db: AuditDb,
+  actor: Actor,
+  input: Input,
+  at: Date,
+  storedSize?: StoredFileSize,
+): Promise<PanelResult<Saved & { id: string }>> {
   if (typeof input.active !== "boolean") return invalid();
   const title = text(input.title, SHORT);
   if (!title) return fail(400, TITLE_REQUIRED);
@@ -211,6 +229,10 @@ export async function adminSaveDocument(db: AuditDb, actor: Actor, input: Input,
     const error = documentAddressError(address);
     if (error) return fail(400, error);
   }
+  const uploaded = address ? uploadKeyOf(address) : null;
+  const size = uploaded ? await storedSize?.(uploaded) : 0;
+  if (size === undefined) return fail(400, tr.panel.documentUploadDisabled);
+  if (size === null) return fail(400, UPLOADED_FILE_MISSING);
 
   const fields = {
     title,
@@ -218,7 +240,7 @@ export async function adminSaveDocument(db: AuditDb, actor: Actor, input: Input,
     lotNumber: section === "parti-sertifikalari" ? text(input.lotNumber, 100) || null : null,
     active: input.active,
   };
-  const file = address ? fileOf(address, title) : undefined;
+  const file = address ? fileOf(address, title, size) : undefined;
   const next = { ...fields, ...file };
 
   if (row) {
@@ -234,7 +256,7 @@ export async function adminSaveDocument(db: AuditDb, actor: Actor, input: Input,
     id: newId("doc"),
     section,
     ...fields,
-    ...fileOf(address, title),
+    ...fileOf(address, title, size),
     position: (last ?? 0) + 1,
     createdAt: at,
     updatedAt: at,

@@ -1445,9 +1445,11 @@ gelinir.
 - **Boşsa:** "Henüz belge eklenmedi."
 - **Dosya açılamazsa:** "Dosya açılamadı. Lütfen daha sonra tekrar deneyin."
 - **Demo notu:** Yüklenen dosyalar yükleyen tarayıcıda saklanır; başka
-  bilgisayarda açılmaz. Gerçek sistemde dosya depolama servisi gerekir.
-  Veritabanı modunda dosya deposu gelene kadar dosya yüklenmez; panelde
-  dosyanın adresi girilir (KARARLAR K-104).
+  bilgisayarda açılmaz.
+- Veritabanı modunda panelde yüklenen dosya sunucunun dosya deposundadır
+  ve `/dosya/belge/…` adresinde açılır: PDF ve görsel tarayıcıda açılır,
+  Word, Excel ve ZIP iner (KARARLAR K-108). Dosya deposu ayarlı değilse
+  panelde girilen adreste açılır (K-104).
 
 ---
 

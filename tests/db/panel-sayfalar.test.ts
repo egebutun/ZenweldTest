@@ -14,6 +14,7 @@ import {
   adminSetDocumentActive,
   readAppearancePanel,
   readPagesPanel,
+  UPLOADED_FILE_MISSING,
   type Actor,
 } from "../../packages/db/src";
 import * as schema from "../../packages/db/src/schema";
@@ -226,6 +227,33 @@ describe("belgeler", () => {
         ["create", "documents"],
         ["create", "documents"],
       ]);
+    });
+  });
+
+  it("depoya yüklenen dosyanın adresiyle eklenir: boyut depodan okunur; dosya depoda yoksa ya da depo ayarlı değilse kaydedilmez (K-108)", async () => {
+    await withPages(async (db, client) => {
+      const base = { section: "msds", title: "ER70S-6", productId: "", lotNumber: "", active: true };
+      const key = "belge/2026/11/0123456789abcdef/ER70S-6.pdf";
+      const address = `/dosya/${key}`;
+      const asked: string[] = [];
+      const stored = async (k: string) => (asked.push(k), k === key ? 2048 : null);
+
+      expect(await adminSaveDocument(db, admin, { ...base, address }, T1)).toEqual({ ok: false, status: 400, error: tr.panel.documentUploadDisabled });
+      expect(await adminSaveDocument(db, admin, { ...base, address: "/dosya/belge/2026/11/fedcba9876543210/yok.pdf" }, T1, stored)).toEqual({
+        ok: false,
+        status: 400,
+        error: UPLOADED_FILE_MISSING,
+      });
+      const added = await adminSaveDocument(db, admin, { ...base, address }, T1, stored);
+      expect(added).toMatchObject({ ok: true });
+      expect(asked).toEqual(["belge/2026/11/fedcba9876543210/yok.pdf", key]);
+      const [row] = (await client.query("SELECT file_key, file_name, mime_type, size_bytes FROM documents WHERE id = $1", [(added as { id: string }).id])).rows;
+      expect(row).toEqual({ file_key: address, file_name: "ER70S-6.pdf", mime_type: "application/pdf", size_bytes: "2048" });
+
+      // Elle girilen adreste depoya bakilmaz; boyut 0.
+      const manual = await adminSaveDocument(db, admin, { ...base, address: PDF }, T1, stored);
+      const [other] = (await client.query("SELECT size_bytes FROM documents WHERE id = $1", [(manual as { id: string }).id])).rows;
+      expect([other.size_bytes, asked.length]).toEqual(["0", 2]);
     });
   });
 

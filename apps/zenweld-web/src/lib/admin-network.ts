@@ -2,7 +2,7 @@
 
 import { DEALER_STORE_TAKEN, type Dealer, type Retailer, type SalesRep } from "@zenweld/data";
 import { deleteDealer, deleteRetailer, deleteSalesRep, saveDealer, saveRetailer, saveSalesRep } from "@zenweld/store";
-import { tr } from "@zenweld/i18n";
+import { useUploads } from "./admin-files";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
 
 export type { PanelAnswer };
@@ -14,11 +14,13 @@ export type { PanelAnswer };
  * 4. alan, KARARLAR K-99, K-103; ortak akis lib/admin-panel.ts). Demo
  * modunda tarayicidaki veriye yazilir (packages/store).
  *
- * uploadNote: veritabani modunda dosya yukleme kapalidir (dosya deposu
- * gelene kadar, KARARLAR K-101); temsilci fotografi adresle girilir.
+ * uploadNote: veritabani modunda dosya deposu ayarli degilse dosya
+ * yukleme kapalidir (KARARLAR K-101, K-108); temsilci fotografi adresle
+ * girilir.
  */
 export function useNetworkActions() {
   const { server, pending, call } = usePanelCall("bayi-agi");
+  const { imageNote } = useUploads();
   const dealer = (d: Dealer) => recordRef("dealers", d);
   const retailer = (r: Retailer) => recordRef("retailers", r);
   const rep = (r: SalesRep) => recordRef("sales_reps", r);
@@ -26,7 +28,7 @@ export function useNetworkActions() {
   return {
     server,
     pending,
-    uploadNote: server ? tr.panel.uploadDisabled : undefined,
+    uploadNote: imageNote,
 
     /** Bayi: yeni (stored yok) ya da duzenleme. */
     saveDealer: (next: Dealer, stored?: Dealer): Promise<PanelAnswer> => {

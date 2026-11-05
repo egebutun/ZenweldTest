@@ -16,7 +16,7 @@ import {
   saveOptionDefinition,
   saveProduct,
 } from "@zenweld/store";
-import { tr } from "@zenweld/i18n";
+import { useUploads } from "./admin-files";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
 
 export type { PanelAnswer };
@@ -28,11 +28,13 @@ export type { PanelAnswer };
  * 3. alan, KARARLAR K-99; ortak akis lib/admin-panel.ts). Demo modunda
  * tarayicidaki veriye yazilir (packages/store).
  *
- * uploadNote: veritabani modunda dosya yukleme kapalidir (dosya deposu
- * gelene kadar); gorsel alanlari bu notu gosterir.
+ * uploadNote: veritabani modunda dosya deposu ayarli degilse dosya
+ * yukleme kapalidir; gorsel alanlari bu notu gosterir (K-108;
+ * lib/admin-files.ts).
  */
 export function useCatalogActions() {
   const { server, pending, call } = usePanelCall("katalog");
+  const { imageNote } = useUploads();
   const option = (o: OptionDefinition) => recordRef("option_definitions", o);
   const category = (c: Category) => recordRef("categories", c);
   const group = (g: CategoryGroup) => recordRef("category_groups", g);
@@ -41,7 +43,7 @@ export function useCatalogActions() {
   return {
     server,
     pending,
-    uploadNote: server ? tr.panel.uploadDisabled : undefined,
+    uploadNote: imageNote,
 
     /** Yeni (id bos) ya da duzenleme; basarida id doner. */
     saveOptionDefinition: (definition: OptionDefinition): Promise<PanelAnswer> => {

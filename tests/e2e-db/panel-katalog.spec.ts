@@ -8,14 +8,16 @@ import { closeDatabase, expect, offerOnPage, sql, test } from "./yardimci";
  *
  * Seçenek Tanımları, Kategoriler ve gruplar, Ürünler veritabanindan okunur
  * ve yazilir. Kategorinin ya da urunun linki degisince sitede eski adres yeni
- * adrese yonlenir ve degisiklik hemen gorunur. Gorsel yukleme dosya deposu
- * gelene kadar kapalidir.
+ * adrese yonlenir ve degisiklik hemen gorunur. Gorsel dosya deposuna
+ * yuklenir (DOSYA_KLASORU, scripts/e2e-db.mts; KARARLAR K-108).
  */
 test.describe.configure({ mode: "serial" });
 test.afterAll(closeDatabase);
 
 const admin = demoAccount("Yönetici");
 const stamp = Date.now();
+/** 1 x 1 PNG (tarayici kucultmez, oldugu gibi yuklenir). */
+const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "base64");
 const OPTION = `Deneme Seçenek ${stamp}`;
 const GROUP = { id: `g-e2e-${stamp}`, slug: `deneme-grup-${stamp}`, name: `Deneme Grup ${stamp}` };
 const CATEGORY = { id: `c-e2e-${stamp}`, slug: `deneme-kategori-${stamp}`, name: `Deneme Kategori ${stamp}` };
@@ -95,11 +97,12 @@ test("seçenek tanımı: eklenir, hemen ardından adı değişir (kendi kaydı u
   await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
 });
 
-test("kategori: link değişince sitedeki eski adres yeni adrese yönlenir, yeni ad hemen görünür; görsel yükleme kapalı", async ({ page }) => {
+test("kategori: link değişince sitedeki eski adres yeni adrese yönlenir, yeni ad hemen görünür; görsel yükleme açık", async ({ page }) => {
   await panelLogin(page);
   await page.goto(`/yonetim/kategoriler/${CATEGORY.id}`);
-  await expect(page.getByText(tr.panel.uploadDisabled)).toBeVisible();
-  await expect(page.getByText("Dosya Yükle")).toHaveCount(0);
+  // Dosya deposu ayarli: yukleme acik, "adres girin" notu yok.
+  await expect(page.getByText("Dosya Yükle").first()).toBeVisible();
+  await expect(page.getByText(tr.panel.uploadDisabled)).toHaveCount(0);
   await field(page, "Kategori Adı").fill(NEW.name);
   await page.getByRole("button", { name: "SEO", exact: true }).click();
   await field(page, "Kategori Linki").fill(NEW.slug);
@@ -139,7 +142,7 @@ test("grup eklenir ve silinir; kategorisi olan grup silinemez; kategori silinir"
   await expect(page.getByRole("button", { name: `${GROUP.name} sil` })).toBeEnabled();
 });
 
-test("ürün: oluşturulur; fiyatı ve linki değişince sitede hemen görünür, eski link yönlenir; yayından kaldırılır, silinir", async ({
+test("ürün: görseli yüklenerek oluşturulur; fiyatı ve linki değişince sitede hemen görünür, eski link yönlenir; yayından kaldırılır, silinir", async ({
   page,
   request,
 }) => {
@@ -149,14 +152,27 @@ test("ürün: oluşturulur; fiyatı ve linki değişince sitede hemen görünür
   await field(page, "Ürün Kodu (SKU)").fill(PRODUCT.sku);
   await field(page, "Normal fiyat (KDV hariç, ₺)").fill("1000");
   await page.getByRole("button", { name: /^Görseller/ }).click();
-  await expect(page.getByText(tr.panel.uploadDisabled)).toBeVisible();
-  await expect(page.getByText("Dosya Yükle")).toHaveCount(0);
+  await expect(page.getByText(tr.panel.uploadDisabled)).toHaveCount(0);
+  // Gorsel dosya deposuna yuklenir; kayda sitedeki adresi yazilir (K-108).
+  await page.locator("input[type=file]").setInputFiles({ name: "kapak.png", mimeType: "image/png", buffer: PNG });
+  const uploaded = page.locator('img[src^="/dosya/gorsel/"]').first();
+  await expect(uploaded).toBeVisible();
+  const address = (await uploaded.getAttribute("src"))!;
+  expect(address).toMatch(/^\/dosya\/gorsel\/\d{4}\/\d{2}\/[0-9a-f]{16}\.png$/);
   await page.getByRole("button", { name: "Ürünü Oluştur" }).click();
   await expect(page).toHaveURL(/\/yonetim\/urunler\/p-[0-9a-f]+$/);
   await expect(page.getByRole("heading", { name: PRODUCT.name })).toBeVisible();
-  const [{ id, slug }] = await sql<{ id: string; slug: string }>("SELECT id, slug FROM products WHERE sku = $1", [PRODUCT.sku]);
+  const [{ id, slug, images }] = await sql<{ id: string; slug: string; images: { url: string }[] }>(
+    "SELECT id, slug, images FROM products WHERE sku = $1",
+    [PRODUCT.sku],
+  );
   expect(slug).toBe(PRODUCT.slug);
+  expect(images.map((i) => i.url)).toEqual([address]);
   expect((await offerOnPage(request, `/urun/${slug}`)).price).toBe(1200);
+  expect(await (await request.get(`/urun/${slug}`)).text()).toContain(address);
+  const image = await request.get(address);
+  expect([image.status(), image.headers()["content-type"]]).toEqual([200, "image/png"]);
+  expect(Buffer.from(await image.body()).equals(PNG)).toBe(true);
 
   // Hemen ardindan fiyat ve link degisir (kendi kaydi uyari vermez).
   await field(page, "Normal fiyat (KDV hariç, ₺)").fill("2000");

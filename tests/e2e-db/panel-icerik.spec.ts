@@ -41,14 +41,15 @@ test.afterAll(async () => {
   await closeDatabase();
 });
 
-test("haber: eklenir ve sitede görünür; görsel yükleme kapalı; linki değişince eski adres yönlenir; listeden silinir", async ({ page }) => {
+test("haber: eklenir ve sitede görünür; görsel yükleme açık; linki değişince eski adres yönlenir; listeden silinir", async ({ page }) => {
   const body = page.locator("body");
   await panelLogin(page);
   await page.goto("/yonetim/haberler/yeni");
   await field(body, "Haber Başlığı").fill(NEWS.title);
   await page.getByRole("button", { name: "Görseller", exact: true }).click();
-  await expect(page.getByText(tr.panel.uploadDisabled).first()).toBeVisible();
-  await expect(page.getByText("Dosya Yükle")).toHaveCount(0);
+  // Dosya deposu ayarli (K-108): yukleme acik, "adres girin" notu yok.
+  await expect(page.getByText("Dosya Yükle").first()).toBeVisible();
+  await expect(page.getByText(tr.panel.uploadDisabled)).toHaveCount(0);
   await page.getByRole("button", { name: "Haberi Oluştur" }).click();
   await expect(page).toHaveURL(/\/yonetim\/haberler\/n-[0-9a-f]+$/);
   const [{ id }] = await sql<{ id: string }>("SELECT id FROM news WHERE slug = $1", [NEWS.slug]);

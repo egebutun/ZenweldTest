@@ -1259,6 +1259,11 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   3. **Dosya deposu (fotoğraf ve belgeler):** Sunucuda tek bir dosya
      deposu parçası; ilk hali sunucunun diski. BT başka bir depo seçerse o
      eklenir. Yapılınca panelde dosya yükleme açılır.
+- **Uygulanış (2026-11-05):** 1. ödeme sağlayıcısı (`ODEME_SAGLAYICI`),
+  2. SAP sipariş aktarım sırası (`sap_order_exports`, deneme aktarıcısı
+  `SAP_SIPARIS_DOSYASI`), 3. dosya deposu (`DOSYA_KLASORU`) yapıldı.
+  Dosya deposu ayarlıysa veritabanı modunda panelde görsel ve belge
+  yüklenir; ayarlı değilse K-101 ve K-104'teki gibi adres girilir.
 - **Neden:** Sahibinin kararı (2026-11-05): "Bu üç işi şimdi bu sırayla
   yap, sonra panelin 6. alanını bitir." Teknik konularda şirketten gelecek
   cevaplar (CANLIYA-CIKIS-SORULARI.md) yalnızca bağlantı parçasını

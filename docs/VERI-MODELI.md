@@ -114,8 +114,9 @@ bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmışt
 - Görsel alanlarında ya bir adres (`https://…`, `/images/…`) ya da panelden
   yüklenmiş görselin kendisi (`data:` ile başlayan metin) durur.
 - Belgelerin dosyaları ayrı tutulur (bkz. [Belgeler](#belgeler-documents)).
-- Backend'de görseller ve dosyalar bir dosya deposuna yüklenmeli; kayıtta
-  yalnızca adres kalmalı.
+- Veritabanı modunda panelde yüklenen görsel ve belge sunucunun dosya
+  deposuna yazılır; kayıtta yalnızca adresi (`/dosya/…`) kalır (KARARLAR
+  K-108; [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar)).
 
 ---
 
@@ -734,7 +735,7 @@ sunucuda ortaktır: `packages/data/src/content-rules.ts`.
 | `lotNumber` | metin? | Yalnızca parti sertifikalarında |
 | `fileName`, `mimeType` | metin | |
 | `size` | sayı | Bayt; en fazla 25 MB. Adresi girilen belgede bilinmez: 0 |
-| `fileKey` | metin | Dosyanın yeri. **Demo notu:** tarayıcının dosya deposundaki anahtar; backend'de dosya deposundaki yol. Veritabanı modunda dosya deposu gelene kadar panelde girilen dosya adresi (`https://…` ya da `/…`; KARARLAR K-104); dosya adı ve türü bu adresten çıkarılır |
+| `fileKey` | metin | Dosyanın yeri. **Demo notu:** tarayıcının dosya deposundaki anahtar. Veritabanı modunda dosyanın adresi: depoya yüklenen dosyada `/dosya/belge/…` (K-108), dosya deposu ayarlı değilse panelde girilen adres (`https://…` ya da `/…`; K-104); dosya adı ve türü bu adresten çıkarılır |
 | `active` | evet/hayır | |
 | `createdAt`, `updatedAt` | tarih-saat | |
 

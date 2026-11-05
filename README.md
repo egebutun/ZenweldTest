@@ -458,7 +458,8 @@ npm run start --workspace apps/zenweld-web
     ağır verinin yalnızca gereken sayfaya gitmesi, kartla satın alma,
     panelin Satış, Talepler, Katalog (seçenek, kategori, grup, ürün), bayi
     ağı (bayi, satıcı, temsilci), Stok Matrisi, Mağaza Ayarları ve İçerik
-    (haber, SSS, Hakkımızda) ekranları. Demo
+    (haber, SSS, Hakkımızda, belgeler) ekranları, panelden dosya yükleme ve
+    SAP'a sipariş aktarımı. Demo
     derlemesi (`.next`) etkilenmez. `test:db` ile aynı anda çalıştırılmaz.
   - **SAP stok okuma (deneme dosyasıyla):** SAP bağlanana kadar depo
     stoğu bir CSV dosyasından okunur. `.env.local`'a
@@ -478,6 +479,12 @@ npm run start --workspace apps/zenweld-web
     siparişi dosyaya bir satır olarak yazar ve panelde sipariş detayındaki
     SAP Aktarımı kutusu "Aktarıldı" olur. Sunucuda bu iş birkaç dakikada
     bir zamanlayıcıyla çalışır (docs/ENTEGRASYONLAR.md › 9).
+  - **Panelden dosya yükleme (dosya deposu):** Veritabanı modunda panelde
+    görsel ve belge yüklemek için `.env.local`'a
+    `DOSYA_KLASORU=/tmp/zenweld-dosyalar` (depo dışında bir klasör) yazıp
+    siteyi başlatın. Yüklenen dosyalar o klasöre yazılır ve sitede
+    `/dosya/…` adresinden açılır. Tanımlı değilse panelde dosya yerine
+    adres girilir (docs/IS-KURALLARI.md › 23).
   - **Sayfa boyutu ve hız ölçümü:** site açıkken
     `node scripts/sayfa-olcumu.mjs http://localhost:3000` (birden fazla
     adres yan yana ölçülür). Sonuçlar: docs/YAPILACAKLAR.md › Ölçüm.

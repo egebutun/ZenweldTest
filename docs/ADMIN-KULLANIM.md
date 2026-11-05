@@ -208,12 +208,15 @@ dön** panelin ana ekranına götürür.
 - Tek görsel alanlarında (temsilci fotoğrafı, Hakkımızda görselleri)
   yüklenen dosyanın adresi "(yüklenen dosya)" diye görünür ve elle
   değiştirilemez; **Kaldır** ya da yeni dosya ile değişir.
-- **Demo notu:** Yüklenen görsel veritabanının içine yazılır; gerçek
-  sistemde dosya deposuna yüklenecek. Veritabanı modunda katalog
-  görsellerinde (ürün görselleri, kategori ve grup kart görselleri) ve
-  satış temsilcisi fotoğrafında dosya yüklenmez, adres girilir (bkz.
+- **Demo notu:** Yüklenen görsel veritabanının içine yazılır.
+- Veritabanı modunda görsel küçültüldükten sonra sunucunun dosya deposuna
+  yüklenir ve alana sitedeki adresi (`/dosya/gorsel/…`) gelir (KARARLAR
+  K-108; kurallar [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar)).
+  Yüklenemezse nedeni yazar (ör. "Bu dosya türü yüklenemez. Yüklenebilenler:
+  JPG, PNG, WebP, GIF ya da AVIF."; SVG yüklenmez). Dosya deposu ayarlı
+  değilse dosya yüklenmez, adres girilir (bkz.
   [Veritabanı modunda Katalog ekranları](#veritabanı-modunda-katalog-ekranları);
-  KARARLAR K-101).
+  K-101).
 
 **Biçimli metin alanları:**
 
@@ -1344,11 +1347,13 @@ Ekranlar ve kurallar demo moduyla aynıdır; farklar:
   kategori, grup ve ürün sitede (menü, bölüm, grup ve kategori sayfaları,
   ürün sayfası, site haritası) hemen değişir. Linki değişen ürün, kategori
   ya da grubun eski adresi yeni adrese yönlenir.
-- **Görsel yükleme kapalı:** Ürünün Görseller sekmesinde ve Kart Görseli
-  alanında **Dosya Yükle** yoktur; "Görsel yükleme dosya deposu kurulunca
-  açılacak; şimdilik görsel adresi girin." yazar. Görsel adresi girilir;
-  kayıtlı görseller görünmeye devam eder. Yüklenmiş dosya içeren kayıt aynı
-  mesajla reddedilir.
+- **Görsel yükleme:** Ürünün Görseller sekmesinde ve Kart Görseli
+  alanında **Dosya Yükle** seçilen görseli sunucunun dosya deposuna
+  yükler (K-108). Dosya deposu ayarlı değilse **Dosya Yükle** yoktur;
+  "Görsel yükleme dosya deposu kurulunca açılacak; şimdilik görsel adresi
+  girin." yazar ve görsel adresi girilir (K-101). Kayıtlı görseller
+  görünmeye devam eder. Tarayıcıda tutulan dosya (`data:`) içeren kayıt
+  aynı mesajla reddedilir.
 - **Ürünler:**
   - Ürün kodu, kombinasyon kodları ve link sunucuda da denetlenir; iki
     yönetici aynı anda aynı kodu ya da linki girse de iki ürüne verilmez.
@@ -1767,9 +1772,10 @@ Ekranlar ve kurallar demo moduyla aynıdır; farklar:
 - Silinen bayinin bayilik başvurusundaki bağlantısı boşalır; başvuru kalır.
 - Online Satıcılar ekranındaki "N ürün sayfasında" sayısı için yalnızca
   sitede görünebilecek stok satırları okunur (adedi olan, linkli).
-- **Temsilci fotoğrafı:** **Dosya yükle** yoktur; "Görsel yükleme dosya
-  deposu kurulunca açılacak; şimdilik görsel adresi girin." yazar
-  (KARARLAR K-101).
+- **Temsilci fotoğrafı:** **Dosya yükle** fotoğrafı sunucunun dosya
+  deposuna yükler (K-108). Dosya deposu ayarlı değilse **Dosya yükle**
+  yoktur; "Görsel yükleme dosya deposu kurulunca açılacak; şimdilik görsel
+  adresi girin." yazar (KARARLAR K-101).
 - Temsilci sıra okları kaydın içeriğini değiştirmez; açık bir form sıra
   değişti diye eskimez. İstek sürerken düğmeler kapanır.
 - Değişiklik yapmadan kaydedilen form hiçbir şey yazmaz.
@@ -2039,13 +2045,14 @@ kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
 sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 Kayıt sitede (anasayfa dahil) hemen görünür. Farklar:
 
-- **Görsel yükleme kapalı** (dosya deposu gelene kadar, KARARLAR K-101):
-  Haber, etkinlik ve blog formlarının görsel sekmesinde, galeride ve
-  Hakkımızda'nın görsel alanlarında **Dosya Yükle** yoktur; yerine
-  "Görsel yükleme dosya deposu kurulunca açılacak…" notu çıkar, görsel
-  adresi (`/images/…` ya da tam adres) girilir. Kayıtlı görseller
-  görünmeye devam eder. Yüklenmiş dosya içeren kayıt sunucuda da
-  kaydedilmez.
+- **Görsel yükleme** (KARARLAR K-108): Haber, etkinlik ve blog
+  formlarının görsel sekmesinde, galeride ve Hakkımızda'nın görsel
+  alanlarında **Dosya Yükle** görseli sunucunun dosya deposuna yükler;
+  galeride birden çok görsel seçilme sırasıyla eklenir. Dosya deposu
+  ayarlı değilse **Dosya Yükle** yoktur; yerine "Görsel yükleme dosya
+  deposu kurulunca açılacak…" notu çıkar, görsel adresi (`/images/…` ya
+  da tam adres) girilir (K-101). Kayıtlı görseller görünmeye devam eder.
+  Tarayıcıda tutulan dosya içeren kayıt sunucuda kaydedilmez.
 - **Link:** Haber, etkinlik ya da yazının linki değişince eski adres yeni
   adrese yönlenir; aynı link iki kayda verilmez (iki yönetici aynı anda
   kaydetse de). Silinen kaydın eski adres yönlendirmeleri de silinir.
@@ -2055,10 +2062,20 @@ Kayıt sitede (anasayfa dahil) hemen görünür. Farklar:
   pencere yine kaydedilir).
 - **Hakkımızda** tek kayıttır: ekran açıldıktan sonra başka bir yönetici
   kaydettiyse kaydedilmez.
-- **Belgeler — dosya yükleme kapalı** (dosya deposu gelene kadar, KARARLAR
-  K-104): Belge Ekle / Belgeyi Düzenle penceresinde dosya seçme yoktur;
-  yerine **Dosya adresi** alanı ve "Dosya yükleme dosya deposu kurulunca
-  açılacak; şimdilik dosyanın adresini girin." notu çıkar.
+- **Belgeler — dosya yükleme** (KARARLAR K-108): Belge Ekle / Belgeyi
+  Düzenle penceresinde **Dosya** seçilir (PDF, Word, Excel, JPG, PNG veya
+  ZIP · en fazla 25 MB); **Kaydet** önce dosyayı sunucunun dosya deposuna
+  yükler, sonra belgeyi kaydeder. Dosya adı (sadeleşmiş), türü ve boyutu
+  yüklenen dosyadan alınır; listede ve sitede boyut görünür. Sitede
+  **Görüntüle** dosyayı `/dosya/belge/…` adresinde açar (PDF ve görsel
+  tarayıcıda açılır, Word, Excel ve ZIP iner). Hatalar: "Dosya seçin.",
+  "Bu dosya türü yüklenemez. Yüklenebilenler: PDF, Word, Excel, JPG, PNG ya
+  da ZIP." (içeriği türüne uymayan dosya da), "Dosya çok büyük; en fazla
+  25 MB.", "Yüklenen dosya bulunamadı; dosyayı yeniden seçin."
+- **Belgeler — dosya deposu ayarlı değilse** (K-104): pencerede dosya
+  seçme yoktur; yerine **Dosya adresi** alanı ve "Dosya yükleme dosya
+  deposu kurulunca açılacak; şimdilik dosyanın adresini girin." notu
+  çıkar.
   - Adres yeni belgede zorunludur; `https://` (ya da sitedeki bir yol için
     `/`) ile başlamalı ve boşluk içermemelidir: "Dosyanın adresini girin." /
     "Dosya adresi https:// ile başlamalı ve boşluk içermemeli."
@@ -2070,8 +2087,8 @@ Kayıt sitede (anasayfa dahil) hemen görünür. Farklar:
     gösterilmez. Uzantısı olmayan adreste dosya adı başlık olur, sitede
     türü "DOSYA" yazar.
   - **Görüntüle** (panelde ve sitede) belgeyi o adreste yeni sekmede açar.
-  - **Sil**: ""<başlık>" silinsin mi?" (dosya bizde durmadığı için yalnızca
-    kayıt silinir).
+  - **Sil**: ""<başlık>" silinsin mi?" (yalnızca kayıt silinir; depoya
+    yüklenen dosya depoda kalır).
   - Sıra okları kaydı eskitmez; yalnızca belgenin kendi sayfasındaki sırayı
     değiştirir.
   - Sayfa metni (başlık ve açıklama) sayfa başına tek kayıttır.

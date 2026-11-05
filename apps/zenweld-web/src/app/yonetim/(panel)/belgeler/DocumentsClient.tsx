@@ -15,6 +15,7 @@ import { tr } from "@zenweld/i18n";
 import { DOCUMENT_EXTENSIONS, documentPage, documentsOfSection, useDatabase, type DocumentInput } from "@zenweld/store";
 import { Alert, Badge, Button, Checkbox, FormRow, Input, Modal, Select, Textarea } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { useUploads } from "@/lib/admin-files";
 import { usePagesActions, type PanelAnswer } from "@/lib/admin-pages";
 import { formatBytes, openDocument } from "@/lib/documents";
 
@@ -238,7 +239,9 @@ function PageTextForm({ section, href, actions }: { section: DocumentSection; hr
 
 /**
  * Belge ekleme / duzenleme. Duzenlemede dosya secilmezse (adres bos
- * birakilirsa) eski dosya kalir. Veritabani modunda dosya yerine adres girilir.
+ * birakilirsa) eski dosya kalir. Veritabani modunda dosya sunucunun
+ * deposuna yuklenir; depo ayarli degilse dosya yerine adres girilir
+ * (KARARLAR K-104, K-108).
  */
 function DocumentForm({
   section,
@@ -252,6 +255,9 @@ function DocumentForm({
   onClose: () => void;
 }) {
   const db = useDatabase();
+  const uploads = useUploads();
+  // Dosya secilir (demo modu ya da depo ayarli); yoksa adres girilir.
+  const byAddress = actions.server && !uploads.documentFiles;
   const withLot = section === "parti-sertifikalari";
   const [address, setAddress] = useState("");
   const [input, setInput] = useState<DocumentInput>({
@@ -269,23 +275,33 @@ function DocumentForm({
 
   const save = async () => {
     if (!input.title.trim()) return setError(TITLE_REQUIRED);
-    if (actions.server && (!doc || address.trim())) {
+    if (byAddress && (!doc || address.trim())) {
       const problem = documentAddressError(address);
       if (problem) return setError(problem);
     }
-    if (!actions.server && !doc && !file) return setError("Dosya seçin.");
+    if (!byAddress && !doc && !file) return setError("Dosya seçin.");
     setSaving(true);
     setError(null);
-    const answer = await actions.saveDocument(section, input, actions.server ? { address: address.trim() } : { file: file ?? undefined }, doc);
+    const fail = (message: string) => {
+      setError(message);
+      setSaving(false);
+    };
+    let target: { file?: File; address?: string } = { file: file ?? undefined };
+    if (actions.server) {
+      // Dosya once depoya yuklenir; kayda adresi yazilir.
+      const uploaded = !byAddress && file ? await uploads.uploadDocument(file) : null;
+      if (uploaded && !uploaded.ok) return fail(uploaded.error);
+      target = { address: uploaded ? uploaded.address : address.trim() };
+    }
+    const answer = await actions.saveDocument(section, input, target, doc);
     if (answer.ok) return onClose();
-    setError(answer.error);
-    setSaving(false);
+    fail(answer.error);
   };
 
   return (
     <Modal open onClose={onClose} title={doc ? "Belgeyi Düzenle" : "Belge Ekle"}>
       <div className="space-y-4">
-        {actions.server ? (
+        {byAddress ? (
           <FormRow
             label="Dosya adresi"
             required={!doc}

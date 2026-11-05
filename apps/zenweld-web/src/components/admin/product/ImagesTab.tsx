@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { GripVertical, ImagePlus, Trash2, Upload } from "lucide-react";
 import { Alert, Badge, Button, Input, ProductImage } from "@zenweld/ui";
-import { readImageFiles } from "@zenweld/utils";
+import { useUploads } from "@/lib/admin-files";
 import type { ProductTabProps } from "./types";
 
 /**
  * Gorseller sekmesi: URL veya dosya ile ekleme, siralama, silme. Ilk gorsel
  * kapaktir. uploadNote verilirse dosya yukleme kapalidir (veritabani modu,
- * dosya deposu gelene kadar; KARARLAR K-101).
+ * dosya deposu ayarli degil; KARARLAR K-101, K-108).
  */
 export function ImagesTab({
   draft,
@@ -19,10 +19,11 @@ export function ImagesTab({
   uploadNote,
 }: ProductTabProps & { onError: (message: string) => void; uploadNote?: string }) {
   const [imageUrlInput, setImageUrlInput] = useState("");
+  const uploads = useUploads();
 
-  // readImageFiles gorseli tarayicida otomatik kucultup WebP'ye cevirir.
+  // Gorsel tarayicida otomatik kucultulup WebP'ye cevrilir (veritabani modunda sonra sunucuya yuklenir).
   const onFileUpload = (files: FileList | null) => {
-    readImageFiles(
+    uploads.readImages(
       files,
       (url) =>
         setDraft((d) => ({

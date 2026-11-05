@@ -2,13 +2,14 @@
 
 import { ImagePlus, X } from "lucide-react";
 import { ProductImage } from "@zenweld/ui";
-import { readImageFiles } from "@zenweld/utils";
+import { useUploads } from "@/lib/admin-files";
 
 /**
  * Tek gorsel alani: adres yapistirma veya dosya yukleme (yuklenen dosya
- * kucultulup tarayici deposuna yazilir), onizleme ve kaldirma. uploadNote
- * verilirse dosya yukleme kapalidir ve not gosterilir (veritabani modu,
- * dosya deposu gelene kadar; KARARLAR K-101).
+ * kucultulur; demo modunda tarayici deposuna, veritabani modunda sunucunun
+ * dosya deposuna yazilir; lib/admin-files.ts), onizleme ve kaldirma.
+ * uploadNote verilirse dosya yukleme kapalidir ve not gosterilir
+ * (veritabani modu, dosya deposu ayarli degil; KARARLAR K-101, K-108).
  */
 export function ImageField({
   value,
@@ -24,6 +25,7 @@ export function ImageField({
   rounded?: boolean;
   uploadNote?: string;
 }) {
+  const uploads = useUploads();
   const uploaded = value?.startsWith("data:");
   return (
     <div className="flex items-start gap-3">
@@ -59,7 +61,7 @@ export function ImageField({
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => {
-                  readImageFiles(e.target.files, (url) => onChange(url), onError);
+                  uploads.readImages(e.target.files, (url) => onChange(url), onError);
                   e.target.value = "";
                 }}
               />

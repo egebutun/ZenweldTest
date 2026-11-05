@@ -9,7 +9,7 @@ import { defineConfig } from "@playwright/test";
  * (3000) ile karismaz. Testler tests/e2e-db altindadir.
  */
 const PORT = 3100;
-for (const name of ["TEST_DATABASE_URL", "REVALIDATE_SECRET", "CRON_SECRET", "SAP_STOK_DOSYASI", "SAP_SIPARIS_DOSYASI"]) {
+for (const name of ["TEST_DATABASE_URL", "REVALIDATE_SECRET", "CRON_SECRET", "SAP_STOK_DOSYASI", "SAP_SIPARIS_DOSYASI", "DOSYA_KLASORU"]) {
   if (!process.env[name]) throw new Error(`${name} tanımlı değil: bu testler npm run test:e2e:db ile çalıştırılır.`);
 }
 
@@ -41,6 +41,7 @@ export default defineConfig({
       CRON_SECRET: process.env.CRON_SECRET!,
       SAP_STOK_DOSYASI: process.env.SAP_STOK_DOSYASI!,
       SAP_SIPARIS_DOSYASI: process.env.SAP_SIPARIS_DOSYASI!,
+      DOSYA_KLASORU: process.env.DOSYA_KLASORU!,
     },
   },
 });

@@ -25,6 +25,7 @@ import {
 } from "@zenweld/db";
 import { isIndexablePage } from "@/lib/page-meta";
 import { runPanelAction } from "@/lib/server/admin";
+import { fileStorage } from "@/lib/server/files";
 import { refreshSite } from "@/lib/server/refresh";
 
 /**
@@ -49,6 +50,7 @@ import { refreshSite } from "@/lib/server/refresh";
  *   POST /api/yonetim/icerik/sayfa-seo       {path, title, description, updatedAt?}
  *   POST /api/yonetim/icerik/belge-sayfasi   {section, title, subtitle, updatedAt?}
  *   POST /api/yonetim/icerik/belge           {id?, section, title, productId, lotNumber, active, address, updatedAt?}
+ *                                            (address: elle girilen adres ya da /api/yonetim/dosya'nin dondurdugu /dosya/belge/… adresi)
  *   POST /api/yonetim/icerik/belge-yayin     {id, active, updatedAt}
  *   POST /api/yonetim/icerik/belge-sil       {id, updatedAt}
  *   POST /api/yonetim/icerik/belge-sira      {id, direction: -1 | 1}
@@ -78,7 +80,11 @@ const ACTIONS = {
   "sayfa-seo": (db: AuditDb, actor: Actor, input: Record<string, unknown>, at: Date) =>
     adminSavePageSeo(db, actor, input, at, isIndexablePage),
   "belge-sayfasi": adminSaveDocumentPage,
-  belge: adminSaveDocument,
+  // Depoya yuklenen belgenin boyutu depodan okunur (K-108).
+  belge: (db: AuditDb, actor: Actor, input: Record<string, unknown>, at: Date) => {
+    const storage = fileStorage();
+    return adminSaveDocument(db, actor, input, at, storage ? (key) => storage.size(key) : undefined);
+  },
   "belge-yayin": adminSetDocumentActive,
   "belge-sil": adminDeleteDocument,
   "belge-sira": adminMoveDocument,

@@ -90,9 +90,12 @@ farklı). Veritabanında Türkçe küçük harfe çevrilmiş hali üzerinden ben
 dizinle sağlanır (`lower(ad COLLATE "tr-x-icu")`); PostgreSQL'in ICU desteği
 gerekir (AWS ve Google Cloud'un PostgreSQL servislerinde vardır).
 
-**Dosyalar:** Görsel ve belge kolonlarında yalnızca adres ya da dosya
-deposundaki yol durur; dosyanın kendisi veritabanına yazılmaz (bugün panelden
-yüklenen görseller kaydın içinde duruyor; geçişte dosya deposuna taşınacak).
+**Dosyalar:** Görsel ve belge kolonlarında yalnızca adres durur; dosyanın
+kendisi veritabanına yazılmaz. Veritabanı modunda panelde yüklenen dosya
+sunucunun dosya deposuna yazılır ve kolona sitedeki adresi (`/dosya/…`)
+girer ([14](#14-kod-betikler-ve-komutlar) › Dosya deposu; K-108). Demo
+modunda panelden yüklenen görseller kaydın içinde duruyor; yükleme ile
+taşınmaz (canlı veri yüklemesinde örnek görseller `/images/…` adresindedir).
 
 **Gizli bilgiler:** POS API anahtarı ve şifresi ile e-posta servisinin
 anahtarı hiçbir tabloda tutulmaz; yalnızca sunucuda ortam değişkenidir.
@@ -939,7 +942,7 @@ Silme: silinemez.
 | `lot_number` | text | | Parti sertifikalarında |
 | `file_name`, `mime_type` | text | zorunlu | |
 | `size_bytes` | bigint | zorunlu | |
-| `file_key` | text | zorunlu | Dosya deposundaki yol. Dosya deposu gelene kadar (Aşama 6) panelde girilen dosya adresi (`https://…` ya da `/…`; KARARLAR K-104); o zaman `size_bytes` 0'dır |
+| `file_key` | text | zorunlu | Dosyanın adresi: depoya yüklenen dosyada `/dosya/belge/…` (K-108; `size_bytes` depodaki boyut), dosya deposu ayarlı değilse panelde girilen adres (`https://…` ya da `/…`; KARARLAR K-104; `size_bytes` 0) |
 | `active` | boolean | zorunlu | |
 | `position` | int | zorunlu (yeni) | Sitedeki sıra |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
@@ -1163,7 +1166,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `actor_user_id` | text | bağlantısız | İşlemi yapan yönetici; kayıt değiştirilemediği için yönetici silinse de kimlik kalır |
 | `actor_name` | text | zorunlu | Kopya; yönetici silinse de okunur |
 | `action` | text | zorunlu; `create`, `update`, `delete`, `login`, `logout` | Panele giriş ve çıkışlar da yazılır |
-| `entity_type` | text | zorunlu | Tablo adı (`products`, `orders`…); giriş/çıkışta `users` |
+| `entity_type` | text | zorunlu | Tablo adı (`products`, `orders`…); giriş/çıkışta `users`; panelden dosya yüklemede `files` (`entity_id` depodaki anahtar, `entity_label` dosyanın yüklenirkenki adı) |
 | `entity_id` | text | zorunlu | Girişte yöneticinin kendi kimliği |
 | `entity_label` | text | | Okunur ad (ürün adı, sipariş no) |
 | `changes` | jsonb | | Değişen alanlar: `{ alan: [eski, yeni] }`; oluşturmada kaydın ilk hali, silmede son hali |
@@ -1437,6 +1440,37 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   aynı anda iki çalışma, deneme dosyası); `tests/db/siparis.test.ts` ve
   `panel-satis.test.ts` (sıraya girme); `tests/e2e-db/sap-siparis.spec.ts`
   (panel kutusu, uç, yeniden sıraya alma).
+
+**Dosya deposu (`src/file-storage.ts`; KARARLAR K-108):** Panelde
+yüklenen görsel ve belgeler veritabanına değil dosya deposuna yazılır.
+Kurallar (türler, boyut, adres): [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar).
+
+- **Depo parçası:** `FileStorage` (`put`, `get`, `size`). Bugün tek depo
+  sunucunun diskidir (`diskStorage`, `DOSYA_KLASORU`); dosya önce geçici
+  adla yazılıp yerine konur (yarım dosya sunulmaz). Anahtar biçimi
+  denetlenir; klasörün dışına çıkan yol okunmaz, yazılmaz. BT başka bir
+  depo seçerse aynı arayüzle eklenir (`fileStorageFromEnv`).
+- **Yükleme:** `POST /api/yonetim/dosya?tur=gorsel|belge` (çok parçalı
+  form, `dosya`): yalnızca veritabanı modunda ve geçerli panel oturumuyla
+  (401), aynı siteden (403); depo ayarlı değilse 503. Tür dosyanın
+  içeriğinden bulunur; kabul edilmeyen tür 400, büyük dosya 413. Yükleme
+  `audit_log`'a (`files`) yazılır; yanıt `{ ok, address, fileName, size }`.
+  Adres kayda panelin kendi kaydetme isteğinde yazılır.
+- **Sunma:** `GET /dosya/<anahtar>` (`apps/zenweld-web/src/app/dosya/[...yol]/route.ts`):
+  depodaki dosya türüyle gönderilir; bir yıl önbellekte tutulabilir
+  (`immutable`). Geçersiz anahtar, ayarsız depo ya da olmayan dosya 404.
+- **Belge kaydı:** `adminSaveDocument` adres depodaki bir dosyanınsa
+  (`/dosya/belge/…`) boyutu depodan okur (`storedSize`); dosya yoksa ya da
+  depo ayarlı değilse kaydetmez.
+- **Panel:** Panel kabuğu depo ayarlıysa yüklemeyi açar
+  (`components/admin/PanelFeatures.tsx`); görsel tarayıcıda küçültülüp
+  yüklenir (`lib/admin-files.ts`).
+- Kayıttan kaldırılan görselin ya da silinen belgenin dosyası depoda kalır
+  (temizlik sonraya, [YAPILACAKLAR.md](YAPILACAKLAR.md)).
+- Test: `tests/unit/yuklenen-dosyalar.test.ts` (türler, boyut, adres,
+  disk deposu), `tests/db/panel-sayfalar.test.ts` (belgenin depodaki
+  boyutu), `tests/e2e-db/dosya-yukleme.spec.ts` (uç, sunma),
+  `panel-katalog.spec.ts` (ürün görseli), `panel-sayfalar.spec.ts` (belge).
 
 **Şifre ve oturum (`packages/auth/src/server`; KARARLAR K-94):**
 
@@ -1787,9 +1821,10 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
 - **Ürün silme:** Bağlı satırlar tablo kurallarıyla temizlenir
   (`ON DELETE CASCADE` / `SET NULL`, yönlendirme tetikleyicisi). İşlem
   kaydına ürünün son hali yazılır.
-- **Görsel:** Ürün görsellerinde ve kart görselinde yüklenmiş dosya
-  (`data:` adresi) reddedilir; dosya deposu gelene kadar adres girilir
-  (K-101).
+- **Görsel:** Ürün görsellerinde ve kart görselinde tarayıcıda tutulan
+  dosya (`data:` adresi) reddedilir. Dosya deposu ayarlıysa panel görseli
+  önce depoya yükler, kayda `/dosya/gorsel/…` adresi gelir (K-108); değilse
+  adres girilir (K-101).
 - Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-catalog.ts`
   (`useCatalogActions`); demo modunda aynı işlemler tarayıcıdaki veriye
   yazılır.
