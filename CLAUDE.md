@@ -106,9 +106,10 @@ ilgili belge **aynı commit'te** güncellenir:
 - Demo hesapların giriş bilgileri ve test kartı **yalnızca README'de** yazar;
   başka dosyaya eklenmez.
 - Demo modunda panel ve üyelik girişi gerçek güvenlik sağlamaz. Veritabanı
-  modunda giriş ve oturum sunucudadır (Aşama 4), ama panel işlemleri Aşama
-  5'e kadar tarayıcıdadır. Canlıya çıkmadan `docs/YAPILACAKLAR.md`'deki
-  backend maddeleri yapılmalıdır.
+  modunda giriş, oturum ve panelin bütün işlemleri sunucudadır (Aşama 4 ve
+  5): her işlem yönetici oturumuyla denetlenir ve işlem kaydına yazılır.
+  Canlıya çıkmadan `docs/YAPILACAKLAR.md`'deki backend maddeleri
+  yapılmalıdır.
 
 ## Git
 
