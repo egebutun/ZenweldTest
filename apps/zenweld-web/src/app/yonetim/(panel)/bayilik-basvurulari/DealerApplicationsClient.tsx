@@ -3,6 +3,7 @@
 import { Fragment, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { DealerApplicationRecord } from "@zenweld/db";
+import { listDealerApplications, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Select, Textarea } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
@@ -26,7 +27,10 @@ const yesNo = (value?: boolean) => (value === undefined ? "—" : value ? "Evet"
  * basvuru silinmez. Onaylanan basvurunun bayi kaydi Bayiler ekranindan
  * ayrica acilir.
  */
-export function DealerApplicationsClient({ applications }: { applications: DealerApplicationRecord[] }) {
+/** applications: veritabani modunda sunucunun okudugu kayitlar; demo modunda verilmez, tarayicidaki kayitlar gosterilir (KARARLAR K-109). */
+export function DealerApplicationsClient({ applications: fromServer }: { applications?: DealerApplicationRecord[] }) {
+  const db = useDatabase();
+  const applications = fromServer ?? listDealerApplications(db);
   const [open, setOpen] = useState<string | null>(null);
   // Kayittan sonra detay yeniden kurulur (key: updatedAt); "Kaydedildi" bu yuzden burada tutulur.
   const [savedId, setSavedId] = useState<string | null>(null);

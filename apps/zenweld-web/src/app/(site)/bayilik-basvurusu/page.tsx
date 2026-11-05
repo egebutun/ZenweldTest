@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CheckCircle2, Handshake } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import type { User } from "@zenweld/data";
+import { addDealerApplication } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { PageHero } from "@/components/common/PageShell";
@@ -32,7 +33,7 @@ const memberValues = (u: User) => ({
  */
 export default function DealerApplicationPage() {
   const t = useT();
-  const { user } = useAuth();
+  const { api, user } = useAuth();
 
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
@@ -64,12 +65,16 @@ export default function DealerApplicationPage() {
     setError(null);
 
     setSending(true);
-    // Basvurunun kaydi yok, yalnizca e-postayla gider: gitmezse ziyaretci
-    // bilgilendirilir ve tekrar deneyebilir (lib/notify.ts).
+    // Basvuru e-postayla gider (veritabani modunda sunucu kaydeder);
+    // ulasmazsa ziyaretci bilgilendirilir ve tekrar deneyebilir (lib/notify.ts).
     const result = await postForm("/api/bayilik", { ...form, website: bot.website });
     setSending(false);
-    if (reached(result)) setSent(true);
-    else setError(t.dealerApply.sendError);
+    if (!reached(result)) return setError(t.dealerApply.sendError);
+    // Demo modunda basvuru panelde gorunsun diye tarayiciya da kaydedilir (KARARLAR K-109).
+    if (api === null && !bot.website) {
+      addDealerApplication(Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v.trim()])), user?.id);
+    }
+    setSent(true);
   };
 
   return (

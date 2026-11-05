@@ -67,3 +67,34 @@ export const FEATURED_REVIEW_LIMIT = 10;
 export const featuredReviewLimitText = () =>
   `Anasayfada en fazla ${FEATURED_REVIEW_LIMIT} yorum gösterilebilir. Önce birini çıkarın.`;
 
+
+/* ------------------------------------------------------------------ */
+/* Bayilik basvurusu (/api/bayilik alanlari; KARARLAR K-100, K-109)     */
+/* ------------------------------------------------------------------ */
+
+/** Bayilik formundaki "sektordeki yil" secenekleri. */
+export const DEALER_YEARS = ["0-2", "3-5", "6-10", "10+"];
+
+const yesNo = (value: string | undefined) => (value === "evet" ? true : value === "hayir" ? false : undefined);
+
+/**
+ * Bayilik formunun alanlari -> basvuru kaydinin alanlari. Bos alan yok
+ * sayilir; listede olmayan yil secimi alinmaz. Veritabani modunda sunucu,
+ * demo modunda tarayici ayni kurali kullanir.
+ */
+export function dealerApplicationFields(v: Record<string, string | undefined>) {
+  return {
+    companyName: v.company ?? "",
+    taxInfo: v.taxOffice || undefined,
+    city: v.city || undefined,
+    sector: v.sector || undefined,
+    yearsInSector: v.years && DEALER_YEARS.includes(v.years) ? v.years : undefined,
+    brands: v.brands || undefined,
+    hasShowroom: yesNo(v.hasShowroom),
+    hasService: yesNo(v.hasService),
+    contactName: v.contactName || undefined,
+    email: v.email ?? "",
+    phone: v.phone || undefined,
+    message: v.message || undefined,
+  };
+}

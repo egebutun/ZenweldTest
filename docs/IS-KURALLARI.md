@@ -941,7 +941,15 @@ olmadığı için hiçbir e-posta gitmez.
   Welders Club, ürün destek sorusu) e-posta gidemezse ziyaretçiye hata
   gösterir; ziyaretçi tekrar deneyebilir. Veritabanı modunda bu formlar da
   kendi tablolarına kaydedilir (KARARLAR K-81; Aşama 5.3); kayıt yapıldıysa
-  e-posta gitmese de form ulaşmış sayılır ve hata gösterilmez.
+  e-posta gitmese de form ulaşmış sayılır ve hata gösterilmez. Demo
+  modunda form ulaşınca kayıt tarayıcıya da yazılır ve aynı tarayıcıda
+  panelde (Mesajlar, Welders Club, Bayilik Başvuruları) görünür (KARARLAR
+  K-109); bot tuzağına takılan gönderim kaydedilmez.
+- **Bayilik başvurusunun kaydı** (iki modda aynı kural,
+  `packages/data/src/forms.ts` › `dealerApplicationFields`): boş alan
+  kaydedilmez; "Sektördeki yıl" yalnızca 0-2, 3-5, 6-10, 10+ seçeneklerinden
+  biriyse alınır; Showroom ve Servis "evet" / "hayır" ise evet / hayır,
+  seçilmediyse boş kalır.
 - **Veritabanı modunda** teklif, servis talebi, garanti kaydı, yorum,
   sipariş ve iade talebinin kaydını ve bildirimini sunucu yapar (Aşama
   5.2–5.3); bildirim kayıttan sonra gider.
@@ -959,7 +967,7 @@ olmadığı için hiçbir e-posta gitmez.
 
 | Form | Konu | Alanlar | Panelde kaydı |
 |---|---|---|---|
-| İletişim | "İletişim formu — <konu ya da ad>" | Ad Soyad, E-posta, Telefon, Konu; Mesaj | — (veritabanı modunda `support_messages`) |
+| İletişim | "İletişim formu — <konu ya da ad>" | Ad Soyad, E-posta, Telefon, Konu; Mesaj | Mesajlar (demo modunda tarayıcıda; veritabanı modunda `support_messages`) |
 | Teklif Al | "Yeni teklif talebi — <no> — <firma ya da yetkili>" | Teklif no, Firma, Yetkili, E-posta, Telefon, Vergi no, Şehir, Ürünler ("adet × ad (seçenek) · kod"), Ödeme tercihi; Not | Teklifler |
 | Servis Talebi | "Yeni servis talebi — <no> — <makine>" | Talep no, Makine, Talep konusu, Firma / Ad Soyad, Yetkili, E-posta, Telefon, Yetkili GSM, Adres, İlçe, Şehir; Şikayet / açıklama | Servis Talepleri |
 | Garanti Kaydı | "Yeni garanti kaydı — <model> (<seri no>)" | Model, Seri no, Ad Soyad, E-posta, Telefon, Şehir, Posta kodu, Adres, Satıcı VKN, 12 ay uzatma isteği | Garantiler |
@@ -967,9 +975,9 @@ olmadığı için hiçbir e-posta gitmez.
 | Üye Ol | "Yeni üye — <ad> (<tür>)" | Ad Soyad, E-posta, Telefon, Şehir, Üyelik, Firma, Bülten izni | Üyeler |
 | Sipariş | "Yeni sipariş — <no> — <toplam>" | Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — tutar), Kupon (varsa: kod (−indirim)), Toplam, Ödeme, Teslimat adresi, Fatura (kurumsalda firma, vergi dairesi, VKN; bireyselde ad); Müşteri notu | Siparişler |
 | İade talebi | "Yeni iade talebi — <talep no> — <sipariş no>" | Talep no, Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — kod), Neden; Açıklama | İade Talepleri |
-| Welders Club | "Welders Club katılım — <ad>" | Ad, E-posta, Şehir | — (veritabanı modunda `welders_club_signups`) |
-| Bayilik Başvurusu | "Bayilik başvurusu — <firma>" | Firma unvanı, Vergi dairesi / no, Şehir, Faaliyet alanı, Sektördeki yıl, Çalıştığı markalar, Showroom var mı, Servis kabiliyeti, Yetkili kişi, E-posta, Telefon, Not. Sunucu firma ve e-posta olmadan kabul etmez | — (veritabanı modunda `dealer_applications`) |
-| Ürün destek sorusu | "Ürün destek talebi — <ürün> (<kod>)" | Ürün, Ürün kodu, Ürün sayfası, Ad Soyad, E-posta, Telefon, Üye mi; Soru. Sunucu soru ve (e-posta ya da telefon) olmadan kabul etmez | — (veritabanı modunda `support_messages`) |
+| Welders Club | "Welders Club katılım — <ad>" | Ad, E-posta, Şehir | Welders Club (demo modunda tarayıcıda; veritabanı modunda `welders_club_signups`) |
+| Bayilik Başvurusu | "Bayilik başvurusu — <firma>" | Firma unvanı, Vergi dairesi / no, Şehir, Faaliyet alanı, Sektördeki yıl, Çalıştığı markalar, Showroom var mı, Servis kabiliyeti, Yetkili kişi, E-posta, Telefon, Not. Sunucu firma ve e-posta olmadan kabul etmez | Bayilik Başvuruları (demo modunda tarayıcıda; veritabanı modunda `dealer_applications`) |
+| Ürün destek sorusu | "Ürün destek talebi — <ürün> (<kod>)" | Ürün, Ürün kodu, Ürün sayfası, Ad Soyad, E-posta, Telefon, Üye mi; Soru. Sunucu soru ve (e-posta ya da telefon) olmadan kabul etmez | Mesajlar (demo modunda tarayıcıda; veritabanı modunda `support_messages`) |
 
 (";" sonrası, e-postada tablonun altında uzun metin olarak gösterilen alan.)
 

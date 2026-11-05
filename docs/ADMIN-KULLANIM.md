@@ -2383,10 +2383,10 @@ veritabanına bağlandığında burada listelenir." yazar.
 | Garanti Kaydı | Garantiler | — |
 | Ürün değerlendirmesi | Yorumlar | Onay bekliyor |
 | Üye Ol | Üyeler | Aktif |
-| İletişim | Mesajlar (veritabanı modunda) | Yeni |
-| Bayilik Başvurusu | Bayilik Başvuruları (veritabanı modunda) | Yeni |
-| Welders Club | Welders Club (veritabanı modunda) | Aktif |
-| Ürün sayfası destek sorusu | Mesajlar (veritabanı modunda) | Yeni |
+| İletişim | Mesajlar | Yeni |
+| Bayilik Başvurusu | Bayilik Başvuruları | Yeni |
+| Welders Club | Welders Club | Aktif |
+| Ürün sayfası destek sorusu | Mesajlar | Yeni |
 | Bülten kaydı | — (hiçbir yere gitmez) | — |
 | Şifremi Unuttum | — (hiçbir yere gitmez) | — |
 
@@ -2395,11 +2395,13 @@ veritabanına bağlandığında burada listelenir." yazar.
   hiçbir e-posta gitmez ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 2).
   - E-postada **Yanıtla** denince yanıt doğrudan formu dolduran kişiye gider.
   - Sipariş e-postasına T.C. kimlik no ve kart bilgisi yazılmaz.
-  - Demo modunda iletişim, bayilik, Welders Club ve ürün destek formları
-    yalnızca e-postayla gider; bu yüzden Bayilik Başvuruları, Mesajlar ve
-    Welders Club ekranları demo modunda boştur. E-posta gönderilemezse
-    ziyaretçiye hata gösterilir ve tekrar deneyebilir. Veritabanı modunda
-    bu formlar kaydedilir; e-posta gitmese de form ulaşmış sayılır.
+  - İletişim, bayilik, Welders Club ve ürün destek formları e-posta
+    gönderilemezse ziyaretçiye hata gösterir ve tekrar denenebilir. Demo
+    modunda form ulaşınca kayıt tarayıcıya da yazılır; Bayilik
+    Başvuruları, Mesajlar ve Welders Club ekranlarında **aynı tarayıcıda**
+    görünür, durum, not ve pasife alma orada da çalışır (KARARLAR K-109).
+    Veritabanı modunda bu formlar sunucuda kaydedilir; e-posta gitmese de
+    form ulaşmış sayılır.
   - Her formda botlar için görünmez bir tuzak alanı vardır; onu dolduran
     gönderim e-posta olarak gelmez.
   - E-posta için sunucuda e-posta servisinin anahtarı tanımlı olmalıdır (bkz.

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { ExternalLink, Navigation } from "lucide-react";
+import { useAuth } from "@zenweld/auth";
+import { addSupportMessage } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, Textarea } from "@zenweld/ui";
 import { useBotTrap } from "@/components/common/BotTrap";
 import { PageHero } from "@/components/common/PageShell";
@@ -19,6 +21,7 @@ export default function ContactPage() {
   const set = (key: keyof typeof form, value: string) => setForm((f) => ({ ...f, [key]: value }));
   const bot = useBotTrap();
   const company = useCompany();
+  const { api, user } = useAuth();
 
   // Mesaj info@zenweld.com'a e-postayla gider; gitmezse ziyaretciye soylenir.
   const submit = async (e: React.FormEvent) => {
@@ -27,8 +30,21 @@ export default function ContactPage() {
     setError(false);
     const result = await notifyZenweld("iletisim", form, bot.website);
     setSending(false);
-    if (reached(result)) setSent(true);
-    else setError(true);
+    if (!reached(result)) return setError(true);
+    // Demo modunda mesaj panelde (Mesajlar) gorunsun diye tarayiciya da
+    // kaydedilir; veritabani modunda sunucu kaydeder (KARARLAR K-109).
+    if (api === null && !bot.website) {
+      addSupportMessage({
+        type: "iletisim",
+        name: form.name.trim() || undefined,
+        email: form.email.trim() || undefined,
+        subject: form.subject.trim() || undefined,
+        message: form.message.trim(),
+        pageUrl: "/iletisim",
+        userId: user?.id,
+      });
+    }
+    setSent(true);
   };
 
   return (

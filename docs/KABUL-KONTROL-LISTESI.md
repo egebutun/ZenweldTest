@@ -723,7 +723,9 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Sitedeki Bayimiz Olun formu Bayi ve Satış Ağı › Bayilik
       Başvuruları'nda; iletişim formu ve ürün sayfasındaki destek sorusu
       Müşteriler ve Servis › Mesajlar'da; Welders Club katılımı Müşteriler
-      ve Servis › Welders Club'da görünür.
+      ve Servis › Welders Club'da görünür. Demo modunda da (aynı
+      tarayıcıda) görünür; durum, not ve pasife alma çalışır (KARARLAR
+      K-109; tarayıcı testi: `tests/e2e/form-kayitlari.spec.ts`).
 - [ ] Başvurunun ve mesajın durumu ve iç notu kaydedilir; başvuru, mesaj
       ve Welders Club kaydı için silme düğmesi yoktur.
 - [ ] Welders Club'da **Pasife al** satırı soluklaştırır ve "Pasif · <tarih>"

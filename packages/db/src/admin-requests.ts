@@ -9,8 +9,11 @@ import {
   type QuoteStatus,
   type ServiceRequest,
   type ServiceRequestStatus,
+  type DealerApplication,
+  type SupportMessage,
   type User,
   type WarrantyRecord,
+  type WeldersClubSignup,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
@@ -41,60 +44,14 @@ const notFound = tr.panel.recordNotFound;
 
 /* ------------------------------ Kayit turleri ------------------------------ */
 
-/** Bayilik basvurusu (yalnizca veritabaninda; dealer_applications). */
-export interface DealerApplicationRecord {
-  id: string;
-  status: "new" | "reviewing" | "approved" | "rejected";
-  companyName: string;
-  taxInfo?: string;
-  city?: string;
-  sector?: string;
-  yearsInSector?: string;
-  brands?: string;
-  hasShowroom?: boolean;
-  hasService?: boolean;
-  contactName?: string;
-  email: string;
-  phone?: string;
-  message?: string;
-  userId?: string;
-  adminNote?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-/** Iletisim formu ya da urun sayfasindaki destek sorusu (support_messages). */
-export interface SupportMessageRecord {
-  id: string;
-  type: "iletisim" | "urun-destek";
-  status: "new" | "read" | "answered";
-  name?: string;
-  email?: string;
-  phone?: string;
-  subject?: string;
-  message: string;
-  productId?: string;
-  productName?: string;
-  productSku?: string;
-  pageUrl?: string;
-  userId?: string;
-  adminNote?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-/** Welders Club katilimi (welders_club_signups). */
-export interface WeldersClubRecord {
-  id: string;
-  name: string;
-  email: string;
-  city?: string;
-  userId?: string;
-  /** Pasife alindiysa (kulupten ayrildi) o an */
-  leftAt?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+/**
+ * Form kayitlari (dealer_applications, support_messages,
+ * welders_club_signups). Tipler packages/data'dadir; demo modunda ayni
+ * kayitlar tarayicida tutulur (KARARLAR K-109).
+ */
+export type DealerApplicationRecord = DealerApplication;
+export type SupportMessageRecord = SupportMessage;
+export type WeldersClubRecord = WeldersClubSignup;
 
 /* ------------------------------ Okuma ------------------------------ */
 

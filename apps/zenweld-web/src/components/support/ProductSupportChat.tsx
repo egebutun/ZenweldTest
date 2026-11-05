@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { MessageCircle, Send, X } from "lucide-react";
 import type { Product } from "@zenweld/data";
 import { useAuth } from "@zenweld/auth";
+import { addSupportMessage } from "@zenweld/store";
 import { Button, Input, Textarea } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { onOpenSupportChat } from "@/lib/support-chat";
@@ -39,7 +40,7 @@ type Message = { from: "bot" | "user"; text: string };
 
 export function ProductSupportChat({ product }: { product: Product }) {
   const t = useT();
-  const { user } = useAuth();
+  const { api, user } = useAuth();
 
   const [open, setOpen] = useState(false);
   const [question, setQuestion] = useState("");
@@ -93,6 +94,7 @@ export function ProductSupportChat({ product }: { product: Product }) {
     setSending(true);
     setMessages((m) => [...m, { from: "user", text: question.trim() }]);
 
+    const productUrl = typeof window !== "undefined" ? window.location.href : `/urun/${product.slug}`;
     try {
       const res = await fetch("/api/destek", {
         method: "POST",
@@ -100,8 +102,7 @@ export function ProductSupportChat({ product }: { product: Product }) {
         body: JSON.stringify({
           productName: product.name,
           productSku: product.sku,
-          productUrl:
-            typeof window !== "undefined" ? window.location.href : `/urun/${product.slug}`,
+          productUrl,
           message: question.trim(),
           name,
           email,
@@ -113,6 +114,20 @@ export function ProductSupportChat({ product }: { product: Product }) {
       const data = (await res.json()) as { ok?: boolean; delivered?: boolean; saved?: boolean };
       // Veritabani modunda soru kaydedildiyse e-posta gitmese de ulasti sayilir.
       setDelivered(Boolean(data.delivered || data.saved));
+      // Demo modunda soru panelde (Mesajlar) gorunsun diye tarayiciya da kaydedilir (KARARLAR K-109).
+      if (data.ok && api === null && !bot.website) {
+        addSupportMessage({
+          type: "urun-destek",
+          name: name.trim() || undefined,
+          email: email.trim() || undefined,
+          phone: phone.trim() || undefined,
+          message: question.trim(),
+          productName: product.name,
+          productSku: product.sku,
+          pageUrl: productUrl,
+          userId: user?.id,
+        });
+      }
     } catch {
       setDelivered(false);
     }

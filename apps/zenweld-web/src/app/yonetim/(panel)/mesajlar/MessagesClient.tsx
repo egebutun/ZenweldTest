@@ -3,6 +3,7 @@
 import { Fragment, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { SupportMessageRecord } from "@zenweld/db";
+import { listSupportMessages, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Select, Textarea } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
@@ -28,7 +29,10 @@ const TYPE: Record<SupportMessageRecord["type"], string> = {
  * sorular. Durum ve ic not kaydedilir; yanit e-postayla ayrica verilir.
  * Mesaj silinmez.
  */
-export function MessagesClient({ messages }: { messages: SupportMessageRecord[] }) {
+/** messages: veritabani modunda sunucunun okudugu kayitlar; demo modunda verilmez, tarayicidaki kayitlar gosterilir (KARARLAR K-109). */
+export function MessagesClient({ messages: fromServer }: { messages?: SupportMessageRecord[] }) {
+  const db = useDatabase();
+  const messages = fromServer ?? listSupportMessages(db);
   const [type, setType] = useState("");
   const [open, setOpen] = useState<string | null>(null);
   // Kayittan sonra detay yeniden kurulur (key: updatedAt); "Kaydedildi" bu yuzden burada tutulur.

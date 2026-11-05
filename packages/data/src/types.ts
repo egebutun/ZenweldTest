@@ -931,6 +931,65 @@ export interface AboutContent {
   updatedAt: string;
 }
 
+/* ------------------------------------------------------------------ */
+/* Form kayitlari: bayilik basvurusu, mesaj, Welders Club (K-100, K-109) */
+/* ------------------------------------------------------------------ */
+
+/** Bayilik basvurusu (sitedeki Bayimiz Olun formu). */
+export interface DealerApplication {
+  id: string;
+  status: "new" | "reviewing" | "approved" | "rejected";
+  companyName: string;
+  taxInfo?: string;
+  city?: string;
+  sector?: string;
+  yearsInSector?: string;
+  brands?: string;
+  hasShowroom?: boolean;
+  hasService?: boolean;
+  contactName?: string;
+  email: string;
+  phone?: string;
+  message?: string;
+  userId?: string;
+  adminNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Iletisim formu ya da urun sayfasindaki destek sorusu. */
+export interface SupportMessage {
+  id: string;
+  type: "iletisim" | "urun-destek";
+  status: "new" | "read" | "answered";
+  name?: string;
+  email?: string;
+  phone?: string;
+  subject?: string;
+  message: string;
+  productId?: string;
+  productName?: string;
+  productSku?: string;
+  pageUrl?: string;
+  userId?: string;
+  adminNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Welders Club katilimi. */
+export interface WeldersClubSignup {
+  id: string;
+  name: string;
+  email: string;
+  city?: string;
+  userId?: string;
+  /** Pasife alindiysa (kulupten ayrildi) o an */
+  leftAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /** Kesfet > Satis Temsilcilerimiz */
 export interface SalesRep {
   id: string;
@@ -1256,5 +1315,12 @@ export interface ZenweldDatabase {
   pageSeo?: Record<string, PageSeoFields>;
   /** E-posta alicilari (tur basina). Eski kayitlarda yok; yoksa hepsi varsayilan adrese gider. */
   emailRecipients?: EmailRecipient[];
+  /**
+   * Form kayitlari (demo modu; KARARLAR K-109). Veritabani modunda bu
+   * kayitlar yalnizca sunucuda, tablolarda durur. Eski kayitlarda yok.
+   */
+  dealerApplications?: DealerApplication[];
+  supportMessages?: SupportMessage[];
+  weldersClub?: WeldersClubSignup[];
   settings: SiteSettings;
 }

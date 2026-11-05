@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import type { WeldersClubRecord } from "@zenweld/db";
+import { listWeldersClub, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Input } from "@zenweld/ui";
 import { formatDate } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
@@ -14,7 +15,10 @@ import { useRequestActions, type PanelAnswer } from "@/lib/admin-requests";
  * Sitedeki Welders Club formundan katilanlar. Kulupten ayrilmak isteyen
  * pasife alinir; kayit silinmez. Pasif kisi yeniden aktif yapilabilir.
  */
-export function WeldersClubClient({ members }: { members: WeldersClubRecord[] }) {
+/** members: veritabani modunda sunucunun okudugu kayitlar; demo modunda verilmez, tarayicidaki kayitlar gosterilir (KARARLAR K-109). */
+export function WeldersClubClient({ members: fromServer }: { members?: WeldersClubRecord[] }) {
+  const db = useDatabase();
+  const members = fromServer ?? listWeldersClub(db);
   const actions = useRequestActions();
   const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);

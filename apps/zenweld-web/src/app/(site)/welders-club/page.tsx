@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { Award, Check, GraduationCap, Ticket, Zap } from "lucide-react";
+import { useAuth } from "@zenweld/auth";
 import { stockPhotos } from "@zenweld/data";
+import { addWeldersClubSignup } from "@zenweld/store";
 import { Alert, Button, FormRow, Input } from "@zenweld/ui";
 import { useBotTrap } from "@/components/common/BotTrap";
 import { PageHero } from "@/components/common/PageShell";
@@ -17,6 +19,7 @@ export default function WeldersClubPage() {
   const [form, setForm] = useState({ name: "", email: "", city: "" });
   const set = (key: keyof typeof form, value: string) => setForm((f) => ({ ...f, [key]: value }));
   const bot = useBotTrap();
+  const { api, user } = useAuth();
 
   // Katilim info@zenweld.com'a e-postayla gider; gitmezse ziyaretciye soylenir.
   const submit = async (e: React.FormEvent) => {
@@ -25,8 +28,13 @@ export default function WeldersClubPage() {
     setError(false);
     const result = await notifyZenweld("welders-club", form, bot.website);
     setSending(false);
-    if (reached(result)) setJoined(true);
-    else setError(true);
+    if (!reached(result)) return setError(true);
+    // Demo modunda katilim panelde (Welders Club) gorunsun diye tarayiciya da
+    // kaydedilir; veritabani modunda sunucu kaydeder (KARARLAR K-109).
+    if (api === null && !bot.website) {
+      addWeldersClubSignup({ name: form.name.trim(), email: form.email.trim(), city: form.city.trim(), userId: user?.id });
+    }
+    setJoined(true);
   };
 
   const benefits = [

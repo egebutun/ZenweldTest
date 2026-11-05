@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { eq, sql } from "drizzle-orm";
 import {
+  dealerApplicationFields,
   findVariant,
   FORM_CODE_DIGITS,
   isQuotable,
@@ -330,27 +331,25 @@ export async function createReview(
 
 /* ------------------- Yalnizca e-postaya giden formlar ------------------- */
 
-const yesNo = (value: string) => (value === "evet" ? true : value === "hayir" ? false : null);
-const YEARS = ["0-2", "3-5", "6-10", "10+"];
-
-/** Bayilik basvurusu (/api/bayilik alanlariyla). */
+/** Bayilik basvurusu (/api/bayilik alanlariyla; alan kurali packages/data › dealerApplicationFields). */
 export async function saveDealerApplication(db: OrderDb, member: Member | null, v: Record<string, string>, at: Date) {
   const id = newId("bas");
+  const f = dealerApplicationFields(v);
   await db.insert(s.dealerApplications).values({
     id,
     status: "new",
-    companyName: v.company,
-    taxInfo: v.taxOffice || null,
-    city: v.city || null,
-    sector: v.sector || null,
-    yearsInSector: YEARS.includes(v.years) ? v.years : null,
-    brands: v.brands || null,
-    hasShowroom: yesNo(v.hasShowroom),
-    hasService: yesNo(v.hasService),
-    contactName: v.contactName || null,
-    email: v.email,
-    phone: v.phone || null,
-    message: v.message || null,
+    companyName: f.companyName,
+    taxInfo: f.taxInfo ?? null,
+    city: f.city ?? null,
+    sector: f.sector ?? null,
+    yearsInSector: f.yearsInSector ?? null,
+    brands: f.brands ?? null,
+    hasShowroom: f.hasShowroom ?? null,
+    hasService: f.hasService ?? null,
+    contactName: f.contactName ?? null,
+    email: f.email,
+    phone: f.phone ?? null,
+    message: f.message ?? null,
     userId: member?.id ?? null,
     createdAt: at,
     updatedAt: at,

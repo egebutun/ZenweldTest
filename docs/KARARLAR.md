@@ -1269,6 +1269,22 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   cevaplar (CANLIYA-CIKIS-SORULARI.md) yalnızca bağlantı parçasını
   değiştirsin, sitenin geri kalanını değil.
 
+### K-109 · Demo modunda panel ekranları gizlenmez; form kayıtları tarayıcıda tutulur
+- **Tarih:** 2026-11-05
+- **Karar:**
+  - İşlem Kaydı ve E-posta Kaydı demo modunda da Ayarlar menüsündedir.
+    Kayıt yalnızca veritabanı modunda tutulduğu için demoda tablo boştur
+    ve kaydın veritabanına bağlanınca tutulacağını yazar ("demo" kelimesi
+    geçmez; K-02).
+  - İletişim formu, ürün destek sorusu, Welders Club ve bayilik başvurusu
+    demo modunda e-postayla birlikte tarayıcıya da kaydedilir; Mesajlar,
+    Welders Club ve Bayilik Başvuruları ekranlarında aynı tarayıcıda
+    görünür, durum, not ve pasife alma çalışır (K-100'deki silinmeme kuralı
+    aynen geçerli). Veritabanı modunda bu kayıtlar yalnızca sunucudadır.
+- **Neden:** Sahibi yayındaki (demo) sitede bu ekranları göremedi ve
+  yapılan işin görünmesini istedi (2026-11-05, "evet": A1 ve A2 önerileri).
+  Demoda boş ya da gizli ekran, ekranın hiç yapılmadığı izlenimini veriyor.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

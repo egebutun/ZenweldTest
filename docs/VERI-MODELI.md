@@ -18,7 +18,13 @@ karşılığı [VERITABANI.md](VERITABANI.md)'dedir.
 **Bugün nasıl saklanıyor (Demo notu):** Bütün veri tek bir JSON nesnesi
 olarak tarayıcının yerel deposunda durur (`zenweld.db.v1`). Veritabanı
 modunda (`DATA_SOURCE=database`) kayıtlar sunucu veritabanındadır; bu nesne
-tarayıcıda boş başlar ve depoya yazılmaz (Aşama 5.6). Bu nesnenin şekli
+tarayıcıda boş başlar ve depoya yazılmaz (Aşama 5.6). Demo modunda form
+kayıtları (bayilik başvurusu, mesaj, Welders Club katılımı) da bu nesnede
+isteğe bağlı listeler olarak durur: `dealerApplications`, `supportMessages`,
+`weldersClub` (KARARLAR K-109; eski kayıtlarda yok, veri sürümü
+değişmedi). Alanları veritabanındaki tablolarla aynıdır
+(`dealer_applications`, `support_messages`, `welders_club_signups`;
+[VERITABANI.md](VERITABANI.md)). Bu nesnenin şekli
 `packages/data/src/types.ts` içindeki `ZenweldDatabase` tipidir; her dizisi
 bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmıştır
 (`categorySlug`); tablo adları için önerilen ad parantez içindedir

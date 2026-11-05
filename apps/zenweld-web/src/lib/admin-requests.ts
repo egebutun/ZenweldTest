@@ -3,13 +3,15 @@
 import {
   featuredReviewLimitText,
   toggledWarrantyExpiry,
+  type DealerApplication,
   type ProductReview,
   type Quote,
   type ServiceRequest,
   type ServiceRequestStatus,
+  type SupportMessage,
   type WarrantyRecord,
+  type WeldersClubSignup,
 } from "@zenweld/data";
-import type { DealerApplicationRecord, SupportMessageRecord, WeldersClubRecord } from "@zenweld/db";
 import {
   deleteQuote,
   deleteReview,
@@ -18,6 +20,9 @@ import {
   saveReview,
   saveServiceRequest,
   saveWarranty,
+  setDealerApplicationStatus,
+  setSupportMessageStatus,
+  setWeldersClubActive,
   toggleFeaturedReview,
 } from "@zenweld/store";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
@@ -75,11 +80,18 @@ export function useRequestActions() {
     },
     deleteReview: (r: ProductReview) => (server ? call("yorum-sil", review(r)) : (deleteReview(r.id), localAnswer())),
 
-    saveApplication: (a: DealerApplicationRecord, status: DealerApplicationRecord["status"], adminNote: string) =>
-      call("basvuru", { ...recordRef("dealer_applications", a), status, adminNote }, "dealer_applications"),
-    saveMessage: (m: SupportMessageRecord, status: SupportMessageRecord["status"], adminNote: string) =>
-      call("mesaj", { ...recordRef("support_messages", m), status, adminNote }, "support_messages"),
-    setWeldersClubActive: (w: WeldersClubRecord, active: boolean) =>
-      call("welders-club", { ...recordRef("welders_club_signups", w), active }, "welders_club_signups"),
+    // Form kayitlari: demo modunda tarayicida (KARARLAR K-109).
+    saveApplication: (a: DealerApplication, status: DealerApplication["status"], adminNote: string) =>
+      server
+        ? call("basvuru", { ...recordRef("dealer_applications", a), status, adminNote }, "dealer_applications")
+        : localAnswer(setDealerApplicationStatus(a.id, status, adminNote)),
+    saveMessage: (m: SupportMessage, status: SupportMessage["status"], adminNote: string) =>
+      server
+        ? call("mesaj", { ...recordRef("support_messages", m), status, adminNote }, "support_messages")
+        : localAnswer(setSupportMessageStatus(m.id, status, adminNote)),
+    setWeldersClubActive: (w: WeldersClubSignup, active: boolean) =>
+      server
+        ? call("welders-club", { ...recordRef("welders_club_signups", w), active }, "welders_club_signups")
+        : localAnswer(setWeldersClubActive(w.id, active)),
   };
 }
