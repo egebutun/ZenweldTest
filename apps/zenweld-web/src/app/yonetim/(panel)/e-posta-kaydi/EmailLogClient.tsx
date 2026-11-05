@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { tr } from "@zenweld/i18n";
 import type { EmailLogRow, LogPage } from "@zenweld/db";
 import { Badge, Button, Input, Select } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
@@ -21,10 +22,13 @@ export function EmailLogClient({
   page,
   filter,
   paged = false,
+  recorded = true,
 }: {
   page: LogPage<EmailLogRow>;
   filter: Record<string, string | undefined>;
   paged?: boolean;
+  /** Kayit tutuluyor mu (veritabani modu); tutulmuyorsa bos tabloda nedeni yazar. */
+  recorded?: boolean;
 }) {
   const last = page.entries.at(-1);
   return (
@@ -108,7 +112,7 @@ export function EmailLogClient({
             {page.entries.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-zw-grey-500">
-                  Kayıt yok.
+                  {recorded ? "Kayıt yok." : tr.panel.emailLogNotRecorded}
                 </td>
               </tr>
             )}

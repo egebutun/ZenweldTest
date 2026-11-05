@@ -802,6 +802,8 @@ export const tr = {
     reviewNotApproved: "Yalnızca onaylı yorum anasayfada gösterilir.",
     uploadDisabled: "Görsel yükleme dosya deposu kurulunca açılacak; şimdilik görsel adresi girin.",
     documentUploadDisabled: "Dosya yükleme dosya deposu kurulunca açılacak; şimdilik dosyanın adresini girin.",
+    auditLogNotRecorded: "Panelde yapılan işlemler, site veritabanına bağlandığında burada listelenir.",
+    emailLogNotRecorded: "Sitenin gönderdiği e-postalar, site veritabanına bağlandığında burada listelenir.",
     optionsMissing: "Seçilen seçeneklerden bazıları artık yok; sayfayı yenileyip yeniden seçin.",
     categoryMissing: "Seçilen kategori artık yok; sayfayı yenileyip yeniden seçin.",
     storeMissing: "Seçilen online mağaza artık yok; sayfayı yenileyip yeniden seçin.",

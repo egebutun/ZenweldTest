@@ -984,8 +984,9 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 
 **Veritabanı modunda İşlem Kaydı ve E-posta Kaydı (KARARLAR K-81, K-98, K-99):**
 
-- [ ] Ayarlar menüsünde İşlem Kaydı ve E-posta Kaydı vardır (demo modunda
-      yoktur).
+- [ ] Ayarlar menüsünde İşlem Kaydı ve E-posta Kaydı vardır. Demo modunda
+      da menüdedir; ekran açılır, tablo boştur ve kaydın veritabanına
+      bağlanınca tutulacağını yazar.
 - [ ] Panelde bir siparişin iç notu kaydedilince İşlem Kaydı'nda en üstte
       "Değiştirdi · Sipariş · SIP-…" satırı çıkar; "1 alan" açılınca eski
       ve yeni not görünür; sipariş adına tıklanınca sipariş açılır.

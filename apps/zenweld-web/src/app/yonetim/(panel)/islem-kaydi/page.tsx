@@ -7,7 +7,8 @@ import { AuditLogClient } from "./AuditLogClient";
 /**
  * Islem kaydi: panelde yapilan her degisiklik ve panele giris/cikis
  * (audit_log; KARARLAR K-81, K-99). Yalnizca veritabani modunda tutulur;
- * her acilista sunucuda okunur, suzgecler adreste durur.
+ * her acilista sunucuda okunur, suzgecler adreste durur. Demo modunda ekran
+ * bos acilir ve kaydin ne zaman tutulacagini yazar.
  */
 export default async function AuditLogPage({ searchParams }: { searchParams: Promise<LogParams> }) {
   const params = await searchParams;
@@ -19,7 +20,9 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Pro
     bitis: param(params, "bitis"),
     ara: param(params, "ara"),
   };
-  if (!usesDatabase()) return <AuditLogClient page={{ entries: [], more: false }} facets={{ entityTypes: [], actors: [] }} filter={filter} />;
+  if (!usesDatabase()) {
+    return <AuditLogClient page={{ entries: [], more: false }} facets={{ entityTypes: [], actors: [] }} filter={filter} recorded={false} />;
+  }
   if (!(await hasPanelSession())) return null;
   const db = database();
   const page = await readAuditLog(db, {

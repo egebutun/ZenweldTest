@@ -143,7 +143,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 | Bayi ve Satış Ağı | Bayiler · Bayilik Başvuruları · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar · Welders Club |
 | İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
-| Ayarlar | Görünüm · İşlem Kaydı · E-posta Kaydı (son ikisi yalnızca veritabanı modunda) |
+| Ayarlar | Görünüm · İşlem Kaydı · E-posta Kaydı (son ikisi yalnızca veritabanı modunda kayıt tutar) |
 
 **Bulunamayan panel sayfası:** "Sayfa bulunamadı" ve **Panele dön**
 düğmesi.
@@ -2324,9 +2324,11 @@ yazıların punto ve renklerini buradan ayarlayın."
 
 ### İşlem Kaydı (veritabanı modu)
 
-Adres: `/yonetim/islem-kaydi` (Ayarlar › **İşlem Kaydı**; yalnızca
-veritabanı modunda menüde görünür). Açıklama: "Panelde yapılan her
-değişiklik ve panele giriş/çıkış; en yeni önce." (KARARLAR K-81, K-99)
+Adres: `/yonetim/islem-kaydi` (Ayarlar › **İşlem Kaydı**). Açıklama:
+"Panelde yapılan her değişiklik ve panele giriş/çıkış; en yeni önce."
+(KARARLAR K-81, K-99) Kayıt yalnızca veritabanı modunda tutulur; demo
+modunda ekran açılır ama tablo boştur ve "Panelde yapılan işlemler, site
+veritabanına bağlandığında burada listelenir." yazar.
 
 - **Süzgeçler** (**Süz** ile uygulanır; adres çubuğunda kalır, sayfa
   yenilenince ya da adres paylaşılınca aynı liste gelir):
@@ -2349,9 +2351,11 @@ değişiklik ve panele giriş/çıkış; en yeni önce." (KARARLAR K-81, K-99)
 
 ### E-posta Kaydı (veritabanı modu)
 
-Adres: `/yonetim/e-posta-kaydi` (Ayarlar › **E-posta Kaydı**; yalnızca
-veritabanı modunda menüde görünür). Açıklama: "Sitenin gönderdiği
-e-postalar; en yeni önce. E-postanın metni saklanmaz." (KARARLAR K-98)
+Adres: `/yonetim/e-posta-kaydi` (Ayarlar › **E-posta Kaydı**). Açıklama:
+"Sitenin gönderdiği e-postalar; en yeni önce. E-postanın metni saklanmaz."
+(KARARLAR K-98) Kayıt yalnızca veritabanı modunda tutulur; demo modunda
+ekran açılır ama tablo boştur ve "Sitenin gönderdiği e-postalar, site
+veritabanına bağlandığında burada listelenir." yazar.
 
 - **Süzgeçler:** Tür (Yeni sipariş, İade talebi, Teklif talebi … Şifre
   sıfırlama), Durum (Gönderildi / Gönderilemedi / Gönderilmedi), başlangıç

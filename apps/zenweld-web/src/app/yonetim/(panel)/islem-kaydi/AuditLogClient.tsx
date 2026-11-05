@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { tr } from "@zenweld/i18n";
 import type { AuditLogRow, LogPage } from "@zenweld/db";
 import { Button, Input, Select } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
@@ -21,11 +22,14 @@ export function AuditLogClient({
   facets,
   filter,
   paged = false,
+  recorded = true,
 }: {
   page: LogPage<AuditLogRow>;
   facets: { entityTypes: string[]; actors: { id: string; name: string }[] };
   filter: Record<string, string | undefined>;
   paged?: boolean;
+  /** Kayit tutuluyor mu (veritabani modu); tutulmuyorsa bos tabloda nedeni yazar. */
+  recorded?: boolean;
 }) {
   const last = page.entries.at(-1);
   return (
@@ -127,7 +131,7 @@ export function AuditLogClient({
             {page.entries.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-zw-grey-500">
-                  Kayıt yok.
+                  {recorded ? "Kayıt yok." : tr.panel.auditLogNotRecorded}
                 </td>
               </tr>
             )}

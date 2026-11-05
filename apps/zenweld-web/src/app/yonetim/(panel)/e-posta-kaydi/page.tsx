@@ -8,6 +8,7 @@ import { EmailLogClient } from "./EmailLogClient";
  * E-posta kaydi: sitenin gonderdigi (ya da gonderemedigi) e-postalar
  * (email_log; KARARLAR K-98). Metin saklanmaz. Yalnizca veritabani
  * modunda tutulur; her acilista sunucuda okunur, suzgecler adreste durur.
+ * Demo modunda ekran bos acilir ve kaydin ne zaman tutulacagini yazar.
  */
 export default async function EmailLogPage({ searchParams }: { searchParams: Promise<LogParams> }) {
   const params = await searchParams;
@@ -18,7 +19,7 @@ export default async function EmailLogPage({ searchParams }: { searchParams: Pro
     bitis: param(params, "bitis"),
     ara: param(params, "ara"),
   };
-  if (!usesDatabase()) return <EmailLogClient page={{ entries: [], more: false }} filter={filter} />;
+  if (!usesDatabase()) return <EmailLogClient page={{ entries: [], more: false }} filter={filter} recorded={false} />;
   if (!(await hasPanelSession())) return null;
   const page = await readEmailLog(database(), {
     type: filter.tur,
