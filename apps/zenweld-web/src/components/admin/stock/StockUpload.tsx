@@ -3,14 +3,18 @@
 import { useMemo, useState } from "react";
 import { AlertTriangle, Link2 } from "lucide-react";
 import {
+  STOCK_FILE_NO_HEADER,
+  STOCK_FILE_NO_MATCH,
   diffStock,
   looksTruncated,
   matchStockRows,
   readStockSheet,
+  stockVersion,
   type StockChange,
-  type StockImport,
+  type StockImportSummary,
 } from "@zenweld/data";
-import { applyStockImport, saveSkuAlias, stockOfSource, useDatabase, type StockSource } from "@zenweld/store";
+import { stockHistory, stockOfSource, useDatabase, type StockSource } from "@zenweld/store";
+import { useStockActions } from "@/lib/admin-stock";
 import { Alert, Badge, Button, Checkbox, Modal, Select } from "@zenweld/ui";
 import { formatPrice } from "@zenweld/utils";
 import { productChoices, productLabel, splitChoice, useAdminName } from "./shared";
@@ -26,6 +30,8 @@ type View = "changes" | "unmatched" | "invalid";
  * kaynagin stogu dosyadaki listeyle degistirilir (tam liste: dosyada
  * olmayan urun stoktan cikar). Taninmayan kodlar burada urune baglanir;
  * eslestirme kaydedilir, sonraki dosyalarda kendiliginden taninir.
+ * Veritabani modunda "Stoğu Güncelle" okunan tabloyu sunucuya gonderir; sunucu
+ * yeniden eslestirir ve onizleme acildiktan sonra stok degistiyse uygulamaz.
  */
 export function StockUpload({
   source,
@@ -38,14 +44,15 @@ export function StockUpload({
   table: unknown[][];
   fileName: string;
   onClose: () => void;
-  onApplied: (record: StockImport) => void;
+  onApplied: (summary: StockImportSummary) => void;
 }) {
   const db = useDatabase();
   const by = useAdminName();
+  const actions = useStockActions();
   const [view, setView] = useState<View>("changes");
   const [confirmTruncated, setConfirmTruncated] = useState(false);
   const [mapping, setMapping] = useState<Record<string, string>>({});
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
 
   const { withUrl } = source;
   const sheet = useMemo(() => readStockSheet(table, { withUrl }), [table, withUrl]);
@@ -74,13 +81,20 @@ export function StockUpload({
     ...diff.changed.map((c) => ({ ...c, kind: "changed" as const })),
     ...diff.zeroed.map((c) => ({ ...c, kind: "zeroed" as const })),
   ];
-  const canApply = file.incoming.length > 0 && (!truncated || confirmTruncated);
+  const canApply = file.incoming.length > 0 && (!truncated || confirmTruncated) && !actions.pending;
   const { columns } = sheet;
 
-  const apply = () => {
-    const record = applyStockImport({ sourceType: source.type, sourceId: source.id, fileName, file, by });
-    if (record) onApplied(record);
-    else setFailed(true);
+  const apply = async () => {
+    setFailed(null);
+    const version = stockVersion(current, stockHistory(source.type, source.id, db));
+    const answer = await actions.applyStockImport({ source, fileName, table, file, version, confirmTruncated, by });
+    if (answer.ok && answer.summary) onApplied(answer.summary);
+    else if (!answer.ok) setFailed(answer.error);
+  };
+  const link = async (code: string) => {
+    setFailed(null);
+    const answer = await actions.saveSkuAlias(source, code, splitChoice(mapping[code]));
+    if (!answer.ok) setFailed(answer.error);
   };
 
   return (
@@ -119,18 +133,9 @@ export function StockUpload({
           <Stat label="Değişmeyen" value={diff.unchanged} />
         </div>
 
-        {failed && (
-          <Alert tone="danger">Stok güncellenemedi: tarayıcı deposu dolu. Değişiklik uygulanmadı.</Alert>
-        )}
-        {!columns && (
-          <Alert tone="danger">
-            Dosyada başlık satırı bulunamadı; uygulanamaz. İlk satırlardan birinde &quot;Kod&quot; (veya SKU) ve
-            &quot;Adet&quot; başlıkları olmalı. Şablon İndir ile alınan dosyadaki başlık satırını silmeyin.
-          </Alert>
-        )}
-        {columns && file.incoming.length === 0 && (
-          <Alert tone="danger">Dosyada eşleşen ürün yok; uygulanamaz. Sütun başlıklarını ve kodları kontrol edin.</Alert>
-        )}
+        {failed && <Alert tone="danger">{failed}</Alert>}
+        {!columns && <Alert tone="danger">{STOCK_FILE_NO_HEADER}</Alert>}
+        {columns && file.incoming.length === 0 && <Alert tone="danger">{STOCK_FILE_NO_MATCH}</Alert>}
         {truncated && (
           <div className="rounded-[4px] border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
             <div className="flex items-start gap-2">
@@ -276,8 +281,8 @@ export function StockUpload({
                           size="sm"
                           variant="outline"
                           leftIcon={<Link2 size={14} />}
-                          disabled={!mapping[r.code]}
-                          onClick={() => saveSkuAlias({ sourceId: source.id, code: r.code, ...splitChoice(mapping[r.code]) })}
+                          disabled={!mapping[r.code] || actions.pending}
+                          onClick={() => void link(r.code)}
                         >
                           Eşleştir
                         </Button>
@@ -333,7 +338,7 @@ export function StockUpload({
         )}
 
         <div className="flex flex-wrap gap-3 border-t border-zw-grey-200 pt-4">
-          <Button onClick={apply} disabled={!canApply}>
+          <Button onClick={() => void apply()} disabled={!canApply}>
             Stoğu Güncelle
           </Button>
           <Button variant="outline" onClick={onClose}>

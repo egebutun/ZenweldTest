@@ -1764,7 +1764,7 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   ve silme; temsilci fotoğrafında kapalı yükleme, sitede görünme ve
   gizlenme, silme; oturumsuz istek).
 
-**Panel › Stok Matrisi, adım 4.2 (Aşama 5, 4. alan; KARARLAR K-99, K-103; `src/admin-stock.ts`):**
+**Panel › Stok Matrisi, adım 4.2 ve 4.3 (Aşama 5, 4. alan; KARARLAR K-99, K-103; `src/admin-stock.ts`):**
 
 - **Okuma:** `readStockPanel(db, görünüm)` — sayfanın sunucu bileşeni
   adresten görünümü seçer (`?kaynak=dealer:<id>`, `?sekme=urun`, liste);
@@ -1772,17 +1772,20 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   (stok ayarının `updated_at`'iyle), ürünler ve seçenek tanımları; ayrıca:
   - liste: kaynak başına `count(*)`, adedi 0'dan büyük satır sayısı ve
     `max(updated_at)` (satırların kendisi gönderilmez);
-  - kaynak sayfası: o kaynağın satırları, `stock_imports` kayıtları (geri
-    alma kopyası `previous` gönderilmez, yalnızca var olduğu) ve
+  - kaynak sayfası: o kaynağın satırları, son 30 `stock_imports` kaydı
+    (geri alma kopyası `previous` gönderilmez, yalnızca var olduğu) ve
     `sku_aliases`'ı;
   - Ürün Bazında: aktif bayilerin ve bir bayiye bağlı olmayan aktif
     satıcıların adedi 0'dan büyük satırları.
 - **Yazma:** `POST /api/yonetim/stok/<işlem>`
   (`apps/zenweld-web/src/app/api/yonetim/stok/[islem]/route.ts`): `satir`
-  (elle düzeltme ya da satır ekleme), `satir-sil`, `ayar`. Kurallar Satış
-  ile aynı: oturum, satır kilidi (FOR UPDATE), `updated_at` denetimi,
-  `audit_log` (`entity_type` = `dealer_stock` / `retailer_stock`,
-  `entity_id` = `<kaynak>/<ürün>|<seçenek>`; ayarda `settings` / `stock`).
+  (elle düzeltme ya da satır ekleme), `satir-sil`, `ayar`, `dosya` (dosya
+  uygulama), `geri-al` (son yüklemeyi geri alma), `eslestir` (kod
+  eşleştirme). Kurallar Satış ile aynı: oturum, satır kilidi (FOR UPDATE),
+  `updated_at` denetimi, `audit_log` (`entity_type` = `dealer_stock` /
+  `retailer_stock`, `entity_id` = `<kaynak>/<ürün>|<seçenek>`; ayarda
+  `settings` / `stock`; dosya ve geri almada `stock_imports` / kayıt no;
+  eşleştirmede `sku_aliases` / `<kaynak>/<kod>`).
   Başarılı işlemden sonra `refreshSite(["stok"])`; ayarda
   `refreshSite(["katalog", "stok"])`.
 - **Elle düzeltme:** Demo ile aynı (`packages/store` › `setStockLevel`,
@@ -1793,16 +1796,53 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   yazılmaz. Bir bayiye bağlı online satıcı ayrı kaynak değildir; satırı
   bayinin listesindedir.
 - **Ayar:** `settings` (`stock`) → `{ staleDays }`, 0–365.
-- Dosya yükleme, kod eşleştirme ve geri alma adım 4.3'te sunucuya geçer.
+- **Dosya (`dosya`):** Dosyayı tarayıcı okur (CSV/XLSX) ve önizler; sunucuya
+  okunan tablo gider (satır × hücre; en fazla 20.000 satır, satırda 100
+  hücre, hücre metin/sayı/boş). Sunucu tabloyu aynı kurallarla
+  (`packages/data` › `readStockSheet`, `matchStockRows`, `diffStock`,
+  `looksTruncated`) veritabanındaki ürün ve seçenek kodları ve kaynağın
+  `sku_aliases`'ıyla yeniden eşleştirir. Dosyanın kendisi saklanmaz (dosya
+  deposu Aşama 6).
+  - Kaynak başına kilit (`pg_advisory_xact_lock`, `stock:<tür>:<id>`): aynı
+    kaynağa iki dosya aynı anda uygulanmaz.
+  - Eski ekran denetimi kaynak başınadır: tarayıcı önizlemenin dayandığı
+    stoğun anahtarını gönderir (`stockVersion`: son `stock_imports` kaydı,
+    satır sayısı, en yeni satırın `updated_at`'i); sunucu aynı anahtarı
+    tablodan hesaplar, farklıysa 409.
+  - Başlık yok, eşleşen ürün yok ya da `looksTruncated` ve onay yoksa 400
+    (ekrandaki metinlerle).
+  - Uygulama: `stock_imports`'a `file` kaydı (dosya adı, özet, yönetici
+    adı, `previous` = önceki satırlar), kaynağın satırları silinip
+    dosyadakiler yazılır (`import_id` = kayıt). Ardından son 5 dosya
+    yüklemesi dışındakilerin `previous`'ı boşaltılır; kayıtlar silinmez
+    (K-103).
+- **Geri alma (`geri-al`):** Yalnızca kaynağın en son kaydı olan, geri
+  alınmamış, `previous`'ı saklı `file` kaydı; değilse 409. Satırlar
+  `previous`'tan ilk `updated_at`'leriyle geri yazılır (`import_id` boş),
+  kayda `reverted_at` yazılır, `revert` kaydı ("<dosya> yüklemesi geri
+  alındı") eklenir.
+- **Kod eşleştirme (`eslestir`):** Kod boşluksuz ve büyük harfe çevrilir;
+  ürün ve seçenek var olmalı (yoksa 404). `sku_aliases`'a yazılır ya da
+  güncellenir; değişmediyse yazılmaz. Stok satırlarına dokunmaz.
 - Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-stock.ts`
   (`useStockActions`).
 - Test: `tests/db/panel-stok.test.ts` (görünümlerin okuduğu satırlar ve
   özet sayılar, geri alma kopyasının gönderilmemesi; satır ekleme,
   düzeltme, eski ekran, değişmeyen kayıt, geçersiz değer, bayiye bağlı
-  satıcı, olmayan seçenek, geçmiş notları; satır silme; stok ayarı);
+  satıcı, olmayan seçenek, geçmiş notları; satır silme; stok ayarı; dosya:
+  sunucunun kendi eşleştirmesi, tam liste, önceki halin kaydı, işlem
+  kaydı, aynı önizlemeyle ikinci uygulama, başlıksız, eşleşmeyen, eski
+  ekran, geçersiz kaynak ve tablo, 20.000 satır sınırı, çok kısa dosya
+  onaysız ve onaylı, son 5 kopya; geri alma: yalnızca son yükleme, ilk
+  satır anları, geri alma kaydı, ikinci kez geri alma, kopyası olmayan ve
+  bulunmayan kayıt; kod eşleştirme: biçim, değişmeyen, güncelleme,
+  olmayan ürün/seçenek, sonraki dosyada tanınma);
   `tests/e2e-db/panel-stok.spec.ts` (tarayıcıda: listede özet sayılar,
   adet düzeltme ve hemen ardından geri alma, satır ekleme ve silme, stok
-  geçerlilik süresi, Ürün Bazında, oturumsuz istek).
+  geçerlilik süresi, Ürün Bazında, oturumsuz istek);
+  `tests/e2e-db/panel-stok-dosya.spec.ts` (tarayıcıda: dosya önizleme,
+  tanınmayan kodu eşleştirme, uygulama, geri alma ve stoğun ilk haline
+  dönmesi; oturumsuz istek).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

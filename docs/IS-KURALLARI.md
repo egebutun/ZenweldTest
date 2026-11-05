@@ -1165,7 +1165,7 @@ Bugün Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
 Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
 Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
 Ürünler), Bayi ağı (Bayiler, Online Satıcılar, Satış Temsilcileri) ve Stok
-Matrisi'nde elle düzeltme ekranlarında geçerlidir; panelin diğer alanları
+Matrisi ekranlarında geçerlidir; panelin diğer alanları
 veritabanına geçtikçe onlara da uygulanır.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
@@ -1227,6 +1227,19 @@ veritabanına geçtikçe onlara da uygulanır.
   satır eklenirken o ürün bu arada listeye girmişse eklenmez. Her düzeltme
   stok geçmişine "Elle" kaydı ve işlem kaydına yazılır; geçmiş kayıtları
   silinmez (KARARLAR K-103).
+- **Stok Matrisi (dosya ve geri alma):** Dosya kuralları
+  ([11](#11-bayi-ve-online-satıcı-stoğu)) demo moduyla aynıdır ve sunucuda yeniden
+  denetlenir: tarayıcının okuduğu tablo sunucuda aynı kurallarla
+  veritabanındaki ürün kodları ve kod eşleştirmeleriyle yeniden eşleşir.
+  - "Aynı kaydı iki kişi düzenlerse" kuralı kaynak başınadır: önizleme
+    açıldıktan sonra kaynağın stoğu değiştiyse (dosya, elle düzeltme,
+    geri alma) dosya uygulanmaz. Aynı kaynağa iki dosya aynı anda gelirse
+    biri uygulanır, diğeri uyarıyı alır.
+  - Dosya en fazla 20.000 satır olabilir.
+  - Yalnızca kaynağın en son işlemi olan dosya yüklemesi geri alınır; bu
+    arada başka işlem yapıldıysa geri alınmaz.
+  - Geri alma için önceki hal yalnızca son 5 dosya yüklemesinde saklanır;
+    daha eski yüklemeler geri alınamaz (KARARLAR K-103).
 - **Görsel yükleme:** Veritabanı modunda dosya deposu kurulana kadar
   (Aşama 6) panelde görsel dosyası yüklenmez, görsel adresi girilir;
   sunucu yüklenmiş dosya (`data:`) içeren kaydı reddeder (KARARLAR K-101).

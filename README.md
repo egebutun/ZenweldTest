@@ -432,8 +432,8 @@ npm run start --workspace apps/zenweld-web
     Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
     Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
     Ürünler), Bayiler, Online Satıcılar, Satış Temsilcileri ve Stok
-    Matrisi (elle düzeltme; dosya yükleme sonraki adımda) ekranları
-    veritabanından okur ve yazar; aynı kaydı iki
+    Matrisi (elle düzeltme, dosya yükleme, kod eşleştirme, geri alma)
+    ekranları veritabanından okur ve yazar; aynı kaydı iki
     yönetici düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her
     değişiklik `audit_log`'a yazılır. Bu modda panelde görsel dosyası
     yüklenmez, görsel adresi girilir (dosya deposu gelene kadar; K-101).

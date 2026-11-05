@@ -1378,7 +1378,8 @@ Başlık: "Stok dosyası: <dosya>".
   Dosyayı düzelttirip yeniden yükleyebilir ya da kodları yukarıdan
   eşleştirebilirsiniz."
 - **Stoğu Güncelle** / **Vazgeç**. Depo doluysa: "Stok güncellenemedi:
-  tarayıcı deposu dolu. Değişiklik uygulanmadı."
+  tarayıcı deposu dolu. Değişiklik uygulanmadı." (demo modu; veritabanı
+  modundaki hatalar [aşağıda](#veritabanı-modunda-stok-matrisi)).
 
 ### Ürün Bazında
 
@@ -1425,9 +1426,27 @@ her değişiklik işlem kaydına yazılır. Farklar:
   hemen değişir.
 - **Satır ekle** ile listede zaten olan ürün seçilirse o satır düzeltilir.
 - **Stok geçerlilik süresi** sunucuya yazılır; sitede hemen geçerli olur.
-- **Dosya Yükle** ve **Bu yüklemeyi geri al** bu modda şimdilik kapalıdır
-  (pasif; üzerine gelince "Veritabanı modunda dosya yükleme ve geri alma
-  bir sonraki adımda açılacak."). Bir sonraki adımda (4.3) açılacak.
+- **Dosya Yükle:** Dosyayı tarayıcı okur ve önizleme penceresi demo
+  moduyla aynıdır. **Stoğu Güncelle** okunan tabloyu sunucuya gönderir;
+  sunucu kodları veritabanındaki ürünler ve kod eşleştirmeleriyle yeniden
+  eşleştirip uygular. Geçmişe "Dosya" kaydı yöneticinin adıyla düşer;
+  ürün sayfalarındaki stoktaki bayiler ve online satıcı kartları hemen
+  değişir. Dosyanın kendisi saklanmaz (dosya deposu Aşama 6'da). Pencere
+  açıkken:
+  - Kaynağın stoğu bu arada değiştiyse (başka yönetici dosya yükledi,
+    satır düzeltti ya da geri aldı) uygulanmaz: "Bu kayıt siz açtıktan
+    sonra değişti; sayfayı yenileyin."
+  - Başlık yoksa, eşleşen ürün yoksa ya da dosya çok kısaysa ve "Dosyanın
+    tam liste olduğunu kontrol ettim" işaretli değilse sunucu da uygulamaz
+    (yukarıdaki metinlerle).
+  - 20.000 satırdan uzun dosya: "Dosya çok uzun: en fazla 20.000 satır
+    uygulanabilir."
+- **Eşleştir** (Tanınmayan kodlar) sunucuya yazılır; dosya yeniden eşleşir.
+- **Bu yüklemeyi geri al:** Sunucuda yapılır; geçmişe "Geri alma" kaydı
+  düşer. Bu arada kaynağa başka işlem yapıldıysa geri alınmaz ("Bu kayıt
+  siz açtıktan sonra değişti; sayfayı yenileyin."). Önceki hal yalnızca
+  son 5 dosya yüklemesinde saklanır; geçmişin bütün kayıtları kalır,
+  ekranda son 30'u görünür (KARARLAR K-103).
 
 ---
 

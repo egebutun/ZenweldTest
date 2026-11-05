@@ -217,11 +217,11 @@ WHERE ds.product_id = $1 AND ds.quantity > 0 AND ds.url IS NOT NULL
 |---|---|
 | `GET  /api/admin/stock/sources` | `listStockSources`, `sourceStatus` (`:type` = `dealer` → `dealer_stock`, `retailer` → `retailer_stock`). **Yapıldı:** Stok Matrisi sayfasının sunucu bileşeni kaynak başına özeti okur (`readStockPanel`) |
 | `GET  /api/admin/stock/:type/:id` | `stockOfSource`, `stockHistory`. **Yapıldı:** kaynak sayfası yalnızca o kaynağın satırlarını ve geçmişini okur |
-| `POST /api/admin/stock/:type/:id/preview` (dosya) | `readStockSheet` → `matchStockRows` → `diffStock`; **yazmaz** |
-| `POST /api/admin/stock/:type/:id/imports` (dosya + `confirmTruncated`) | `applyStockImport` |
-| `POST /api/admin/stock/imports/:importId/revert` | `revertStockImport` |
+| `POST /api/admin/stock/:type/:id/preview` (dosya) | `readStockSheet` → `matchStockRows` → `diffStock`; **yazmaz**. **Yapıldı (başka biçimde):** önizlemeyi tarayıcı yapar, ayrı uç yok |
+| `POST /api/admin/stock/:type/:id/imports` (dosya + `confirmTruncated`) | `applyStockImport`. **Yapıldı** (veritabanı modu, panel 4.3): `POST /api/yonetim/stok/dosya` (okunan tablo + `confirmTruncated` + önizlemenin dayandığı stoğun anahtarı) |
+| `POST /api/admin/stock/imports/:importId/revert` | `revertStockImport`. **Yapıldı:** `POST /api/yonetim/stok/geri-al` |
 | `PATCH / DELETE /api/admin/stock/:type/:id/levels/:productId[/:variantId]` | `setStockLevel`, `deleteStockLevel`. **Yapıldı** (veritabanı modu, panel 4.2): `POST /api/yonetim/stok/satir` ve `satir-sil` |
-| `PUT / DELETE /api/admin/stock/aliases` | `saveSkuAlias`, `deleteSkuAlias` |
+| `PUT / DELETE /api/admin/stock/aliases` | `saveSkuAlias`, `deleteSkuAlias`. **Yapıldı** (kaydetme): `POST /api/yonetim/stok/eslestir`; silme ekranı bugün yok |
 | `PUT  /api/admin/settings/stock` | `saveStockSettings`. **Yapıldı:** `POST /api/yonetim/stok/ayar` |
 | `GET  /api/admin/retailers` (kartta ürün sayısı) | `onlineProductCount` |
 | Ürün sayfası (sunucu bileşeni ya da `GET /api/products/:id/availability`) | `retailersInStockFor`, `dealersWithProduct`. Veritabanı modunda (KARARLAR K-88) ürün sayfasının sunucu bileşeni o ürünün stoktaki satırlarını okur (`readProductStock`) ve sayfaya verir; satıcının fiyatı gönderilmez |
@@ -231,13 +231,23 @@ Notlar:
 - **İşlem bütünlüğü:** bir dosyanın uygulanması tek veritabanı işleminde (transaction)
   yapılır: kaynağın satırları silinir, yeni satırlar ve içe aktarma kaydı yazılır.
   Aynı kaynağa iki yükleme aynı anda gelmesin diye kaynak bazında kilit alınır.
-- **Doğrulama sunucuda:** önizleme ile uygulama arasında dosya değişmiş olabilir;
-  uygulama ucu dosyayı yeniden okur ve aynı fonksiyonlardan geçirir.
-- **Excel sunucuda:** aynı kütüphanenin Node sürümü (`read-excel-file/node`, 8.0.3) ya
-  da eşdeğeri kullanılır. Makro çalıştırılmaz; yalnızca `.csv` / `.xlsx`, en fazla 5 MB.
+- **Doğrulama sunucuda (yapıldı, panel 4.3):** Dosyayı tarayıcı okur
+  (`apps/zenweld-web/src/lib/stock-file.ts`; yalnızca `.csv` / `.xlsx` /
+  `.txt`, en fazla 5 MB, makro çalıştırılmaz) ve sunucuya okunan tabloyu
+  gönderir (en fazla 20.000 satır). Uygulama ucu tabloyu aynı
+  fonksiyonlardan (`readStockSheet`, `matchStockRows`, `diffStock`,
+  `looksTruncated`) veritabanındaki kodlarla yeniden geçirir; önizleme
+  açıldıktan sonra kaynağın stoğu değiştiyse uygulamaz (`stockVersion`).
+  Excel sunucuda okunmaz. Yüklenen dosyanın kendisi saklanmaz; dosya
+  deposu (Aşama 6) gelince saklanması ayrıca kararlaştırılır.
+- **Geçmiş ve geri alma kopyası (KARARLAR K-103):** veritabanında bütün
+  `stock_imports` kayıtları kalır; önceki hal (`previous`) yalnızca son 5
+  dosya yüklemesinde tutulur; ekranda son 30 kayıt görünür.
 - **Önbellek ve hız:** stok günde bir değiştiği için ürün sayfaları önbellekte tutulur.
-  - Bir yükleme uygulandığında yalnızca etkilenen ürünlerin sayfaları yenilenir
-    (`diffStock` sonucundaki ürünler; Next.js'te `revalidateTag` / `revalidatePath`).
+  - Bugün (veritabanı modu) dosya uygulama, geri alma ve elle düzeltmeden sonra
+    `refreshSite(["stok"])` bütün ürün sayfalarının stok verisini yeniler. Yük
+    artarsa yalnızca etkilenen ürünlere (`diffStock` sonucundaki ürünler)
+    daraltılabilir.
   - "Geçerlilik süresi" zamana bağlı olduğu için sayfalar ayrıca günde en az bir kez
     yenilenmelidir.
   - Sorgu indeksli ve küçüktür; performans sorunu beklenmez.

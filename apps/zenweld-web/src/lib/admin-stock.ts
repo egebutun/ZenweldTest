@@ -1,7 +1,16 @@
 "use client";
 
-import type { StockRow, StockSettings } from "@zenweld/data";
-import { deleteStockLevel, saveStockSettings, setStockLevel, type StockSource } from "@zenweld/store";
+import type { MatchedStockFile, StockImport, StockImportSummary, StockRow, StockSettings } from "@zenweld/data";
+import { tr } from "@zenweld/i18n";
+import {
+  applyStockImport,
+  deleteStockLevel,
+  revertStockImport,
+  saveSkuAlias,
+  saveStockSettings,
+  setStockLevel,
+  type StockSource,
+} from "@zenweld/store";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
 
 export type { PanelAnswer };
@@ -20,13 +29,14 @@ type Patch = Partial<Pick<StockRow, "quantity" | "price" | "url">>;
 
 /**
  * PANEL › STOK MATRISI ISLEMLERI: elle duzeltme, satir ekleme ve silme,
- * "kac gunden eski stok gosterilmez" ayari.
+ * "kac gunden eski stok gosterilmez" ayari, dosya yukleme, kod eslestirme
+ * ve son yuklemenin geri alinmasi.
  *
  * Veritabani modunda islem sunucuya gider (/api/yonetim/stok; Asama 5,
  * 4. alan, KARARLAR K-99, K-103; ortak akis lib/admin-panel.ts). Demo
  * modunda tarayicidaki veriye yazilir (packages/store › repo/stock.ts).
- * Dosya yukleme, kod eslestirme ve geri alma veritabani modunda adim 4.3'te
- * gelir.
+ * Dosyayi her iki modda tarayici okur ve onizler; veritabani modunda okunan
+ * tablo sunucuya gider, sunucu yeniden eslestirip uygular.
  */
 export function useStockActions() {
   const { server, pending, call } = usePanelCall("stok");
@@ -72,6 +82,44 @@ export function useStockActions() {
         return call("ayar", { staleDays, ...(ref.updatedAt && { updatedAt: ref.updatedAt }), id: "stock" }, "settings");
       }
       saveStockSettings({ staleDays });
+      return localAnswer();
+    },
+
+    /**
+     * Dosyayi uygular. table: dosyadan okunan tablo (sunucuya gider); file:
+     * onizlemedeki eslesmis hali (demo modunda uygulanir); version: onizlemenin
+     * dayandigi stok (packages/data › stockVersion).
+     */
+    applyStockImport: (args: {
+      source: StockSource;
+      fileName: string;
+      table: unknown[][];
+      file: MatchedStockFile;
+      version: string;
+      confirmTruncated: boolean;
+      by?: string;
+    }): Promise<PanelAnswer & { summary?: StockImportSummary }> => {
+      if (server) {
+        return call("dosya", {
+          sourceType: args.source.type,
+          sourceId: args.source.id,
+          fileName: args.fileName,
+          table: args.table,
+          version: args.version,
+          confirmTruncated: args.confirmTruncated,
+        });
+      }
+      const record = applyStockImport({ sourceType: args.source.type, sourceId: args.source.id, fileName: args.fileName, file: args.file, by: args.by });
+      return Promise.resolve(
+        record ? { ok: true, summary: record.summary } : { ok: false, error: "Stok güncellenemedi: tarayıcı deposu dolu. Değişiklik uygulanmadı." },
+      );
+    },
+    revertStockImport: (record: StockImport, by?: string): Promise<PanelAnswer> =>
+      server ? call("geri-al", { id: record.id }) : Promise.resolve(revertStockImport(record.id, by) ? { ok: true } : { ok: false, error: tr.panel.failed }),
+    /** Bayinin kendi kodunu bizim urunumuze baglar; sonraki dosyalarda kendiliginden taninir. */
+    saveSkuAlias: (source: StockSource, code: string, { productId, variantId }: { productId: string; variantId?: string }): Promise<PanelAnswer> => {
+      if (server) return call("eslestir", { sourceType: source.type, sourceId: source.id, code, productId, variantId: variantId ?? "" });
+      saveSkuAlias({ sourceId: source.id, code, productId, variantId });
       return localAnswer();
     },
   };

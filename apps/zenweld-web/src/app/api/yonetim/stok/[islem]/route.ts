@@ -1,5 +1,12 @@
 import type { NextRequest } from "next/server";
-import { adminDeleteStockLevel, adminSaveStockSettings, adminSetStockLevel } from "@zenweld/db";
+import {
+  adminApplyStockImport,
+  adminDeleteStockLevel,
+  adminRevertStockImport,
+  adminSaveSkuAlias,
+  adminSaveStockSettings,
+  adminSetStockLevel,
+} from "@zenweld/db";
 import { runPanelAction } from "@/lib/server/admin";
 import { refreshSite } from "@/lib/server/refresh";
 
@@ -10,6 +17,10 @@ import { refreshSite } from "@/lib/server/refresh";
  *        {sourceType, sourceId, productId, variantId, label, patch: {quantity?, price?, url?}, updatedAt?}
  *   POST /api/yonetim/stok/satir-sil  {sourceType, sourceId, productId, variantId, label, updatedAt}
  *   POST /api/yonetim/stok/ayar       {staleDays, updatedAt?}
+ *   POST /api/yonetim/stok/dosya      {sourceType, sourceId, fileName, table, version, confirmTruncated}
+ *        (table: tarayicinin okudugu satir x hucre tablosu; sunucu yeniden eslestirir)
+ *   POST /api/yonetim/stok/geri-al    {id}  son dosya yuklemesini geri alir
+ *   POST /api/yonetim/stok/eslestir   {sourceType, sourceId, code, productId, variantId}
  *
  * Kurallar: packages/db/src/admin-stock.ts. Basarili islemden sonra urun
  * sayfalarindaki stoktaki bayiler ve online satici kartlari hemen yenilenir;
@@ -22,6 +33,9 @@ const ACTIONS = {
   satir: adminSetStockLevel,
   "satir-sil": adminDeleteStockLevel,
   ayar: adminSaveStockSettings,
+  dosya: adminApplyStockImport,
+  "geri-al": adminRevertStockImport,
+  eslestir: adminSaveSkuAlias,
 };
 
 type Context = { params: Promise<{ islem: string }> };

@@ -3,12 +3,11 @@
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Download, Plus, Search, Trash2, Undo2, Upload } from "lucide-react";
-import { stockTemplateRows, type StockImport, type StockRow } from "@zenweld/data";
+import { stockTemplateRows, type StockImportSummary, type StockRow } from "@zenweld/data";
 import {
   downloadCsvRows,
   getStockSettings,
   revertableImport,
-  revertStockImport,
   sourceStatus,
   stockHistory,
   stockOfSource,
@@ -24,13 +23,10 @@ import { useStockActions, type PanelAnswer } from "@/lib/admin-stock";
 import { StockUpload } from "./StockUpload";
 import { FreshnessBadge, SOURCE_TYPE_LABEL, ageText, productChoices, productLabel, splitChoice, useAdminName } from "./shared";
 
-/** Veritabani modunda dosya yukleme ve geri alma adim 4.3'te gelir; o zamana kadar kapali. */
-const SOON = "Veritabanı modunda dosya yükleme ve geri alma bir sonraki adımda açılacak.";
-
 /**
  * Stok Matrisi > bir bayinin/saticinin stok listesi, dosya yukleme ve
- * gecmis. Veritabani modunda elle duzeltme sunucuya yazilir
- * (lib/admin-stock.ts).
+ * gecmis. Veritabani modunda elle duzeltme, dosya yukleme ve geri alma
+ * sunucuya yazilir (lib/admin-stock.ts).
  */
 export function StockSourceDetail({ source }: { source: StockSource }) {
   const db = useDatabase();
@@ -73,9 +69,8 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
     }
   };
 
-  const onApplied = (record: StockImport) => {
+  const onApplied = (s: StockImportSummary) => {
     setUpload(null);
-    const s = record.summary;
     setMessage({
       tone: "success",
       text: `Stok güncellendi: ${s.matched} ürün işlendi · ${s.added} stoğa girdi · ${s.changed} değişti · ${s.zeroed} stoktan çıktı${
@@ -104,12 +99,7 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
             <Button variant="outline" leftIcon={<Download size={16} />} onClick={downloadTemplate}>
               Şablon İndir
             </Button>
-            <Button
-              leftIcon={<Upload size={16} />}
-              onClick={() => fileInput.current?.click()}
-              disabled={actions.server}
-              title={actions.server ? SOON : undefined}
-            >
+            <Button leftIcon={<Upload size={16} />} onClick={() => fileInput.current?.click()}>
               Dosya Yükle (CSV / XLSX)
             </Button>
             <input
@@ -240,13 +230,11 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
                 {revertable?.id === h.id && (
                   <button
                     type="button"
-                    disabled={actions.server}
-                    title={actions.server ? SOON : undefined}
-                    onClick={() => {
-                      if (window.confirm(`"${h.fileName}" yüklemesi geri alınsın mı? Stok bu yüklemeden önceki haline döner.`)) {
-                        if (revertStockImport(h.id, by)) {
-                          setMessage({ tone: "success", text: "Yükleme geri alındı; stok önceki haline döndü." });
-                        }
+                    disabled={actions.pending}
+                    onClick={async () => {
+                      if (!window.confirm(`"${h.fileName}" yüklemesi geri alınsın mı? Stok bu yüklemeden önceki haline döner.`)) return;
+                      if (report(await actions.revertStockImport(h, by))) {
+                        setMessage({ tone: "success", text: "Yükleme geri alındı; stok önceki haline döndü." });
                       }
                     }}
                     className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-zw-red-600 hover:underline disabled:cursor-not-allowed disabled:opacity-40 disabled:no-underline"

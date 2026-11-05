@@ -1,9 +1,13 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { PoolClient } from "pg";
+import { STOCK_FILE_NO_HEADER, STOCK_FILE_NO_MATCH, STOCK_FILE_TRUNCATED } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import {
+  adminApplyStockImport,
   adminDeleteStockLevel,
+  adminRevertStockImport,
+  adminSaveSkuAlias,
   adminSaveStockSettings,
   adminSetStockLevel,
   readStockPanel,
@@ -13,11 +17,12 @@ import * as schema from "../../packages/db/src/schema";
 import { category, closePool, group, inTransaction, optionDefinition, product, variant } from "./ortak";
 
 /*
- * PANEL › STOK MATRISI SUNUCUDA, ADIM 4.2 (packages/db/src/admin-stock.ts;
+ * PANEL › STOK MATRISI SUNUCUDA, ADIM 4.2 VE 4.3 (packages/db/src/admin-stock.ts;
  * Asama 5, 4. alan, KARARLAR K-99, K-103): her gorunum yalnizca gereken
- * stogu okur; elle duzeltme (adet, fiyat, link, satir ekleme ve silme) ve
- * "kac gunden eski stok gosterilmez" ayari sunucuda, stok gecmisine ve
- * audit_log'a yazilir; ekran acildiktan sonra degismis satir kaydedilmez.
+ * stogu okur; elle duzeltme (adet, fiyat, link, satir ekleme ve silme),
+ * "kac gunden eski stok gosterilmez" ayari, dosya yukleme, son yuklemenin
+ * geri alinmasi ve kod eslestirme sunucuda, stok gecmisine ve audit_log'a
+ * yazilir; ekran acildiktan sonra degismis stok kaydedilmez.
  * Her test kendi isleminde calisir ve geri alinir.
  */
 
@@ -192,6 +197,187 @@ describe("stok ayarı", () => {
       const panel = await readStockPanel(db, { tab: "kaynaklar" });
       expect(panel.data.settings?.stock).toEqual({ staleDays: 0, updatedAt: T2.toISOString() });
       expect((await audit(client)).map((r) => r.changes)).toEqual([{ staleDays: [null, 5] }, { staleDays: [5, 0] }]);
+    });
+  });
+});
+
+/** Onizlemenin dayandigi stok: si-1 son kayit, 2 satir, en yeni satir T1 (packages/data › stockVersion). */
+const VERSION = `si-1|2|${T1.toISOString()}`;
+const file = (table: unknown[][], extra: Record<string, unknown> = {}) => ({ ...d1, fileName: "yeni.xlsx", table, version: VERSION, ...extra });
+
+const stockRows = async (client: PoolClient, dealer = "d1") =>
+  (
+    await client.query(
+      "SELECT product_id, variant_id, sku, quantity, (import_id IS NOT NULL) AS from_file, updated_at FROM dealer_stock WHERE dealer_id = $1 ORDER BY product_id, variant_id",
+      [dealer],
+    )
+  ).rows;
+
+const imports = async (client: PoolClient) =>
+  (
+    await client.query(
+      "SELECT id, kind, file_name, note, created_by, rows, matched, unmatched, invalid, added, changed, zeroed, previous, reverted_at FROM stock_imports WHERE source_id = 'd1' ORDER BY created_at, id",
+    )
+  ).rows;
+
+describe("dosya yükleme", () => {
+  it("dosya tam liste olarak uygulanır: sunucu kodları kendisi eşleştirir (büyük/küçük harf, bayinin kodu), dosyada olmayan çıkar; önceki hal kayda yazılır", async () => {
+    await withStock(async (db, client) => {
+      const table = [
+        ["Bayi stok listesi"],
+        ["Kod", "Ürün", "Adet"],
+        [" zw-p1 ", "Ürün p1", 5],
+        ["BAYI-P2", "Ürün p2", "3"],
+        ["BILINMEYEN", "?", 1],
+        ["ZW-P1-3", "Ürün p1 3 m", "beş"],
+        [null, null, null],
+      ];
+      const result = await adminApplyStockImport(db, admin, file(table), T2);
+      const summary = { rows: 4, matched: 2, unmatched: 1, invalid: 1, added: 2, changed: 0, zeroed: 1 };
+      expect(result).toMatchObject({ ok: true, updatedAt: T2.toISOString(), summary });
+      // 3 m satiri dosyada yok: listeden cikar (tam liste).
+      expect(await stockRows(client)).toEqual([
+        { product_id: "p1", variant_id: "", sku: "zw-p1", quantity: 5, from_file: true, updated_at: T2 },
+        { product_id: "p2", variant_id: "", sku: "BAYI-P2", quantity: 3, from_file: true, updated_at: T2 },
+      ]);
+      const [, record] = await imports(client);
+      expect(record).toMatchObject({ kind: "file", file_name: "yeni.xlsx", created_by: "Stok Yöneticisi", ...summary, reverted_at: null });
+      expect(record.previous).toEqual([
+        { productId: "p1", variantId: "3-m", sku: "ZW-P1-3", quantity: 4, updatedAt: T0.toISOString() },
+        { productId: "p2", sku: "ZW-P2", quantity: 0, updatedAt: T1.toISOString() },
+      ]);
+      expect(await audit(client)).toEqual([
+        {
+          action: "create",
+          entity_type: "stock_imports",
+          entity_id: record.id,
+          entity_label: "Bayi Bir: yeni.xlsx",
+          changes: { kind: "file", fileName: "yeni.xlsx", ...summary },
+        },
+      ]);
+      // Ayni onizlemeyle ikinci kez uygulanmaz: stok bu arada degisti.
+      expect(await adminApplyStockImport(db, admin, file(table), T2)).toEqual(stale);
+    });
+  });
+
+  it("uygulanamayan dosya: başlık yok, eşleşen ürün yok, ekran eski, kaynak geçersiz; hiçbir şey yazılmaz", async () => {
+    await withStock(async (db, client) => {
+      expect(await adminApplyStockImport(db, admin, file([["ZW-P1", 5]]), T2)).toEqual({ ok: false, status: 400, error: STOCK_FILE_NO_HEADER });
+      expect(await adminApplyStockImport(db, admin, file([["Kod", "Adet"], ["YOK", 5]]), T2)).toEqual({ ok: false, status: 400, error: STOCK_FILE_NO_MATCH });
+      // Onizleme acildiktan sonra elle duzeltme yapildi.
+      await adminSetStockLevel(db, admin, { ...d1, productId: "p2", variantId: "", label: "Ürün p2", patch: { quantity: 1 }, updatedAt: T1.toISOString() }, T2);
+      expect(await adminApplyStockImport(db, admin, file([["Kod", "Adet"], ["ZW-P1", 5]]), T2)).toEqual(stale);
+      // Bayiye bagli magaza ayri kaynak degil; tablo hucre degil.
+      expect(await adminApplyStockImport(db, admin, file([["Kod", "Adet"]], { sourceType: "retailer", sourceId: "r1" }), T2)).toMatchObject({ status: 400 });
+      expect(await adminApplyStockImport(db, admin, file([["Kod", "Adet"], [{ x: 1 }, 5]]), T2)).toMatchObject({ status: 400 });
+      expect(await adminApplyStockImport(db, admin, file(Array.from({ length: 20_001 }, () => ["ZW-P1", 1])), T2)).toEqual({
+        ok: false,
+        status: 400,
+        error: "Dosya çok uzun: en fazla 20.000 satır uygulanabilir.",
+      });
+      expect((await imports(client)).filter((i) => i.kind === "file")).toHaveLength(1);
+    });
+  });
+
+  it("öncekinden çok kısa dosya onaysız uygulanmaz, onayla uygulanır", async () => {
+    await withStock(async (db, client) => {
+      const ids = Array.from({ length: 10 }, (_, i) => `q${i}`);
+      for (const id of ids) {
+        await product(client, id, `ZW-${id}`);
+        await client.query("INSERT INTO dealer_stock (dealer_id, product_id, sku, quantity, updated_at) VALUES ('d1', $1, $2, 2, $3)", [id, `ZW-${id}`, T0]);
+      }
+      const version = `si-1|12|${T1.toISOString()}`;
+      const short = file([["Kod", "Adet"], ["ZW-P1", 5]], { version });
+      expect(await adminApplyStockImport(db, admin, short, T2)).toEqual({ ok: false, status: 400, error: STOCK_FILE_TRUNCATED });
+      expect(await adminApplyStockImport(db, admin, { ...short, confirmTruncated: true }, T2)).toMatchObject({ ok: true, summary: { matched: 1, zeroed: 11 } });
+      expect((await stockRows(client)).map((r) => r.product_id)).toEqual(["p1"]);
+    });
+  });
+
+  it("geçmişin bütün kayıtları kalır; önceki hal yalnızca son 5 dosya yüklemesinde saklanır", async () => {
+    await withStock(async (db, client) => {
+      let version = VERSION;
+      for (let n = 1; n <= 6; n++) {
+        const at = new Date(T2.getTime() + n * 60_000);
+        const result = await adminApplyStockImport(db, admin, file([["Kod", "Adet"], ["ZW-P1", n]], { fileName: `${n}.csv`, version }), at);
+        if (!result.ok) throw new Error(result.error);
+        version = `${result.id}|1|${at.toISOString()}`;
+      }
+      const files = (await imports(client)).filter((i) => i.kind === "file");
+      expect(files.map((i) => [i.file_name, i.previous !== null])).toEqual([
+        ["bir.csv", false],
+        ["1.csv", false],
+        ["2.csv", true],
+        ["3.csv", true],
+        ["4.csv", true],
+        ["5.csv", true],
+        ["6.csv", true],
+      ]);
+    });
+  });
+});
+
+describe("son yüklemeyi geri alma", () => {
+  it("son dosya yüklemesi geri alınır: stok önceki haline döner, geçmişe geri alma kaydı düşer; ikinci kez geri alınmaz", async () => {
+    await withStock(async (db, client) => {
+      const applied = await adminApplyStockImport(db, admin, file([["Kod", "Adet"], ["ZW-P1", 5]]), T2);
+      if (!applied.ok) throw new Error(applied.error);
+      // Onceki yukleme artik son islem degil.
+      expect(await adminRevertStockImport(db, admin, { id: "si-1" }, T2)).toEqual(stale);
+
+      const T3 = new Date(T2.getTime() + 60_000);
+      expect(await adminRevertStockImport(db, admin, { id: applied.id }, T3)).toMatchObject({
+        ok: true,
+        summary: { rows: 2, matched: 2, added: 1, changed: 0, zeroed: 1 },
+      });
+      // Satirlar ilk anlariyla geri gelir.
+      expect(await stockRows(client)).toEqual([
+        { product_id: "p1", variant_id: "3-m", sku: "ZW-P1-3", quantity: 4, from_file: false, updated_at: T0 },
+        { product_id: "p2", variant_id: "", sku: "ZW-P2", quantity: 0, from_file: false, updated_at: T1 },
+      ]);
+      const history = await imports(client);
+      expect(history.map((i) => [i.kind, i.reverted_at])).toEqual([
+        ["file", null],
+        ["file", T3],
+        ["revert", null],
+      ]);
+      expect(history[2]).toMatchObject({ note: "yeni.xlsx yüklemesi geri alındı", created_by: "Stok Yöneticisi" });
+      expect((await audit(client)).map((r) => [r.action, r.entity_id])).toEqual([
+        ["create", applied.id],
+        ["update", applied.id],
+      ]);
+      expect(await adminRevertStockImport(db, admin, { id: applied.id }, T3)).toEqual(stale);
+    });
+  });
+
+  it("önceki hali saklanmamış ya da bulunmayan yükleme geri alınmaz", async () => {
+    await withStock(async (db) => {
+      expect(await adminRevertStockImport(db, admin, { id: "si-2" }, T2)).toEqual(stale);
+      expect(await adminRevertStockImport(db, admin, { id: "si-yok" }, T2)).toMatchObject({ status: 404 });
+    });
+  });
+});
+
+describe("kod eşleştirme", () => {
+  it("bayinin kodu ürüne ya da seçeneğe bağlanır (boşluksuz, büyük harf); değişmediyse yazılmaz; sonraki dosyada tanınır", async () => {
+    await withStock(async (db, client) => {
+      const alias = { ...d1, code: " b 99 ", productId: "p1", variantId: "3-m" };
+      expect(await adminSaveSkuAlias(db, admin, alias, T2)).toEqual({ ok: true });
+      expect(await adminSaveSkuAlias(db, admin, alias, T2)).toEqual({ ok: true });
+      expect(await adminSaveSkuAlias(db, admin, { ...alias, productId: "p2", variantId: "" }, T2)).toEqual({ ok: true });
+      expect(await adminSaveSkuAlias(db, admin, { ...alias, productId: "yok" }, T2)).toMatchObject({ status: 404 });
+      expect(await adminSaveSkuAlias(db, admin, { ...alias, variantId: "9-m" }, T2)).toMatchObject({ status: 404 });
+      expect(await adminSaveSkuAlias(db, admin, { ...alias, sourceType: "retailer", sourceId: "r1" }, T2)).toMatchObject({ status: 400 });
+      expect((await client.query("SELECT product_id, variant_id FROM sku_aliases WHERE source_id = 'd1' AND code = 'B99'")).rows).toEqual([
+        { product_id: "p2", variant_id: "" },
+      ]);
+      expect((await audit(client)).map((r) => [r.action, r.entity_id, r.changes])).toEqual([
+        ["create", "d1/B99", { productId: "p1", variantId: "3-m" }],
+        ["update", "d1/B99", { productId: ["p1", "p2"], variantId: ["3-m", null] }],
+      ]);
+
+      await adminApplyStockImport(db, admin, file([["Kod", "Adet"], ["b99", 6]]), T2);
+      expect((await stockRows(client)).map((r) => [r.product_id, r.quantity])).toEqual([["p2", 6]]);
     });
   });
 });

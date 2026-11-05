@@ -1,4 +1,4 @@
-import type { OptionDefinition, Product, SkuAlias, StockImportSummary, StockRow, StockSourceType } from "./types";
+import type { OptionDefinition, Product, SkuAlias, StockImport, StockImportSummary, StockRow, StockSourceType } from "./types";
 import { productOptionsView } from "./variants";
 
 /**
@@ -351,6 +351,26 @@ export function summarizeImport(file: MatchedStockFile, diff: StockDiff): StockI
 export function looksTruncated(current: StockRow[], incoming: StockRow[]): boolean {
   const prev = current.filter((l) => l.quantity > 0).length;
   return prev >= 10 && incoming.length < prev / 2;
+}
+
+/** Uygulanamayan dosya: baslik satiri yok. */
+export const STOCK_FILE_NO_HEADER =
+  'Dosyada başlık satırı bulunamadı; uygulanamaz. İlk satırlardan birinde "Kod" (veya SKU) ve "Adet" başlıkları olmalı. Şablon İndir ile alınan dosyadaki başlık satırını silmeyin.';
+/** Uygulanamayan dosya: eslesen urun yok. */
+export const STOCK_FILE_NO_MATCH = "Dosyada eşleşen ürün yok; uygulanamaz. Sütun başlıklarını ve kodları kontrol edin.";
+/** Yarim gonderilmis olabilecek dosya onaysiz uygulanmaz (looksTruncated). */
+export const STOCK_FILE_TRUNCATED =
+  'Bu dosya öncekinden çok daha kısa; yarım gönderilmiş olabilir. "Dosyanın tam liste olduğunu kontrol ettim" işaretlenmeden uygulanmaz.';
+
+/**
+ * Kaynagin stok listesinin o anki hali (onizleme ile uygulama arasinda
+ * degisti mi): son islem kaydi, satir sayisi ve en son guncellenen satir.
+ * Panel ekrani ve sunucu ayni fonksiyonla hesaplar.
+ */
+export function stockVersion(rows: Pick<StockRow, "updatedAt">[], history: Pick<StockImport, "id" | "createdAt">[]): string {
+  const last = [...history].sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id))[0];
+  const latest = rows.map((r) => r.updatedAt).sort().pop() ?? "";
+  return `${last?.id ?? ""}|${rows.length}|${latest}`;
 }
 
 /* ------------------------------------------------------------------ */

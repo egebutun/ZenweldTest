@@ -863,6 +863,18 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       yazar.
 - [ ] Stok geçerlilik süresi değişince ürün sayfalarındaki stoktaki
       bayiler hemen değişir.
+- [ ] Dosya yüklenip **Stoğu Güncelle** denince satırlar `db:studio`'da
+      dosyadaki listeyle değişir; ürün sayfasındaki stoktaki bayiler hemen
+      değişir; geçmişte "Dosya" kaydı yöneticinin adıyla görünür.
+- [ ] Önizleme açıkken başka sekmede aynı kaynağın bir satırı düzeltilirse
+      **Stoğu Güncelle** uygulanmaz ("Bu kayıt siz açtıktan sonra değişti;
+      sayfayı yenileyin.").
+- [ ] Tanınmayan kod **Eşleştir** ile bağlanınca `sku_aliases`'ta görünür
+      ve pencerede tanınmış olur.
+- [ ] **Bu yüklemeyi geri al** ile stok `db:studio`'da yüklemeden önceki
+      haline döner; geçmişte "Geri alma" kaydı düşer, düğme kaybolur.
+- [ ] Altıncı dosya yüklemesinden sonra en eski yüklemenin `previous`
+      kolonu boşalır; geçmiş kayıtları silinmez.
 
 ---
 
