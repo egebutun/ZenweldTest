@@ -227,6 +227,7 @@ export function SingleImageField({
   alternates,
   trimEdges,
   removeLabel = "Görseli kaldır",
+  uploadNote,
 }: {
   value: string;
   onChange: (url: string) => void;
@@ -240,6 +241,8 @@ export function SingleImageField({
   /** Logolarda cevredeki bos beyaz kenari kirpar. */
   trimEdges?: boolean;
   removeLabel?: string;
+  /** Verilirse dosya yukleme kapalidir ve bu not gosterilir (veritabani modu, dosya deposu gelene kadar). */
+  uploadNote?: string;
 }) {
   const [input, setInput] = useState("");
 
@@ -276,20 +279,23 @@ export function SingleImageField({
           >
             URL Kullan
           </Button>
-          <label className={UPLOAD_LABEL}>
-            <Upload size={16} />
-            Dosya Yükle
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                readImageFiles(e.target.files, onChange, onError, { trimEdges });
-                e.target.value = "";
-              }}
-            />
-          </label>
+          {!uploadNote && (
+            <label className={UPLOAD_LABEL}>
+              <Upload size={16} />
+              Dosya Yükle
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  readImageFiles(e.target.files, onChange, onError, { trimEdges });
+                  e.target.value = "";
+                }}
+              />
+            </label>
+          )}
         </div>
+        {uploadNote && <p className="text-xs text-zw-grey-500">{uploadNote}</p>}
         {value && (
           <button
             type="button"

@@ -10,6 +10,7 @@ export * from "./filters";
 export * from "./returns";
 export * from "./warehouse";
 export * from "./coupon";
+export * from "./catalog-rules";
 export * from "./cart";
 export * from "./payment";
 export * from "./orders";

@@ -1130,6 +1130,19 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   veri içeren kayıtların ne kadar saklanacağı henüz belli değil; yanlışlıkla
   silinmesin.
 
+### K-101 · Veritabanı modunda panelde görsel yükleme, dosya deposu gelene kadar kapalı
+- **Tarih:** 2026-11-05
+- **Karar:** Veritabanı modunda panelin görsel alanlarında dosya yükleme,
+  dosya deposu kurulana kadar (Aşama 6) kapalıdır. Görsel adresi (tam
+  adres ya da sitedeki `/images/…` yolu) girilir; kayıtlı görseller
+  görünmeye devam eder. Sunucu yüklenmiş dosya (`data:` adresi) içeren
+  kaydı reddeder. Panelin 3. alanında (Katalog) geçerlidir: bugün kategori
+  ve grup kart görselleri (adım 3.1), sonra ürün görselleri (adım 3.2).
+  Demo modunda yükleme değişmez.
+- **Neden:** Yüklenen dosya kaydın içine yazılırsa veritabanı ve site
+  sayfaları büyür; dosya deposu gelince bu görseller yeniden taşınmak
+  zorunda kalır.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

@@ -1,22 +1,16 @@
-"use client";
+import { readCatalogPanel } from "@zenweld/db";
+import { PageData } from "@/components/common/PageData";
+import { hasPanelSession } from "@/lib/server/admin";
+import { database, usesDatabase } from "@/lib/server/db";
+import { NewCategoryClient } from "./NewCategoryClient";
 
-import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { CategoryForm } from "@/components/admin/CategoryForms";
-
-/** /yonetim/kategoriler/yeni?grup=<grup id>: grup secili gelir. */
-export default function NewCategoryPage() {
+/** Yeni kategori. Veritabani modunda katalog her acilista ve her kayittan sonra onbelleksiz okunur (KARARLAR K-99). */
+export default async function NewCategoryPage() {
+  if (!usesDatabase()) return <NewCategoryClient />;
+  if (!(await hasPanelSession())) return null;
   return (
-    <>
-      <AdminPageHeader title="Yeni Kategori" description="Kategori, seçtiğiniz grubun altında menüye ve grup sayfasına eklenir." />
-      <Suspense>
-        <NewCategoryForm />
-      </Suspense>
-    </>
+    <PageData data={await readCatalogPanel(database())}>
+      <NewCategoryClient />
+    </PageData>
   );
-}
-
-function NewCategoryForm() {
-  return <CategoryForm groupId={useSearchParams().get("grup") ?? undefined} />;
 }

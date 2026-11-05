@@ -24,6 +24,8 @@ export interface OptionDefinition {
   /** Orn. "Soğutma", "Torç Uzunluğu" */
   name: string;
   values: OptionValue[];
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 export interface OptionValue {
@@ -64,6 +66,8 @@ export interface Category {
   seo?: SeoFields;
   /** Eski adresleri (tam yol): link, grup veya grubun linki degisince yeni adrese yonlenir */
   previousPaths?: string[];
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 /** Kategori filtresi: ad ve sirali degerler. Degeri olmayan filtre sitede gorunmez. */
@@ -97,6 +101,8 @@ export interface CategoryGroup {
   seo?: SeoFields;
   /** Eski adresleri (tam yol): link degisince yeni adrese yonlenir */
   previousPaths?: string[];
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 /* ------------------------------------------------------------------ */

@@ -257,23 +257,3 @@ export function CategoryFiltersPanel({
     </div>
   );
 }
-
-/** Kayit oncesi kontrol: bos ya da tekrar eden filtre adi, bos ya da tekrar eden deger. */
-export function filtersError(filters: CategoryFilter[]): string | null {
-  const names = new Set<string>();
-  for (const f of filters) {
-    const name = f.name.trim();
-    if (!name) return "Adı boş bir filtre var.";
-    const key = name.toLocaleLowerCase("tr");
-    if (names.has(key)) return `"${name}" filtresi iki kez yazılmış.`;
-    names.add(key);
-    const labels = new Set<string>();
-    for (const v of f.values) {
-      const label = v.label.trim();
-      if (!label) return `"${name}" filtresinde boş değer var.`;
-      if (labels.has(label.toLocaleLowerCase("tr"))) return `"${name}" filtresinde "${label}" iki kez yazılmış.`;
-      labels.add(label.toLocaleLowerCase("tr"));
-    }
-  }
-  return null;
-}

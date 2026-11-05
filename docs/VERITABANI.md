@@ -1639,6 +1639,62 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   başvurusu ve ürün sorusunun panelde görünmesi, Welders Club, oturumsuz
   istek).
 
+**Panel › Katalog, adım 3.1 (Aşama 5, 3. alan; KARARLAR K-99, K-101; `src/admin-catalog.ts`):**
+
+- **Okuma:** `readCatalogPanel` katalogu önbelleksiz okur (panel her zaman
+  güncel kaydı görür): gruplar, kategoriler ve seçenek tanımları son
+  değişiklik anıyla, ürünler. Seçenek Tanımları ve Kategoriler sayfaları
+  (liste, kategori ve grup formları) bunu kendi sunucu bileşeninde okur;
+  yönetici oturumu denetlenir.
+- **Yazma:** `POST /api/yonetim/katalog/<işlem>`
+  (`apps/zenweld-web/src/app/api/yonetim/katalog/[islem]/route.ts`):
+  `secenek` (oluşturma ve düzenleme), `secenek-sil`, `kategori` (oluşturma
+  ve düzenleme), `kategori-sil`, `kategori-sira`, `grup` (oluşturma ve
+  düzenleme), `grup-sil`, `grup-sira`. Kurallar Satış ile aynı: oturum,
+  kilit, `updated_at` denetimi, `audit_log`. Başarılı her işlemden sonra
+  `refreshSite(["katalog"])` çağrılır; site hemen yenilenir.
+- **Kurallar demo moduyla aynı** (`packages/data` › `catalog-rules.ts`,
+  `filters.ts`): tanım adı tekil, değer adları tanımda tekil; üründe
+  kullanılan değer (`product_variant_values`) kaldırılamaz, tanım
+  (`product_options`) silinemez. Kategori linki sitede, grup linki
+  bölümünde tekil; ürünü olan kategori ve kategorisi olan grup silinemez.
+  Tekillik denetimi gerektiren kayıtlar (tanım, kategori, grup) sırayla
+  yapılır (`pg_advisory_xact_lock`). Ad ya da değerler yer değiştirirken
+  tekil indekse takılmamak için önce geçici adlar yazılır.
+- **Link değişince:** Kayıtlar kimlikle bağlı olduğu için yalnızca
+  `redirects`'e eski adres yazılır; kategori grubu değişince de. Grubun
+  linki değişince gruptaki her kategorinin eski adresi de yazılır. Yeni
+  adres başka bir kaydın eski adresiyse o satır silinir. Silinen kategori
+  ve grubun satırları da silinir.
+- **Filtreler:** Kayıtlı halle yeni hal karşılaştırılır; yalnızca
+  kaldırılan filtre ve değerler silinir (`product_filter_values` bağlantı
+  kuralıyla ürünlerden de kalkar), diğerleri güncellenir. Değeri kalkan
+  ürünlerin `updated_at`'i değişir. Eşleme tablosundan gelen ürünler
+  kilitlenir ve her birinin `updated_at`'i denetlenir; değişen ürünün
+  değerleri yazılır, işlem kaydına ayrı satır düşer. Değerlerin sırası
+  karşılaştırmada önemsizdir.
+- **Seçenek tanımı silinince** onu listeleyen kategorilerin `updated_at`'i
+  değişir (açık kategori formu silinen tanımı geri yazamaz).
+- **Sıra okları** `position`'ı 1, 2, 3… yapar; `updated_at` değişmez (sıra
+  kaydın içeriği sayılmaz). Değişen her satır işlem kaydına yazılır.
+- **Görsel:** Kart görselinde yüklenmiş dosya (`data:` adresi) reddedilir;
+  dosya deposu gelene kadar adres girilir (K-101).
+- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-catalog.ts`
+  (`useCatalogActions`); demo modunda aynı işlemler tarayıcıdaki veriye
+  yazılır.
+- Test: `tests/db/panel-katalog.test.ts` (tanım oluşturma, ad tekrarı,
+  kullanılan değer, adların yer değiştirmesi, eski ekran; kullanılan tanımın
+  silinmemesi, silinen tanımın kategorilerden kalkması; yeni kategori, link
+  tekrarı, yüklenmiş görsel, olmayan grup ve tanım; link ve grup
+  değişince yönlendirme, kaldırılan filtre değeri, eşleme tablosu ve eski
+  ürün; değişmeyen ürünün kayıt anının korunması; silme engelleri, sıra;
+  grup linki değişince kategorilerin yönlendirmesi, bölümün değişmemesi,
+  grup silme ve sıra); `tests/e2e-db/panel-katalog.spec.ts` (tarayıcıda:
+  seçenek tanımı ekleme, hemen ardından düzenleme ve silme; kategori linki
+  değişince sitede eski adresin yönlenmesi ve yeni adın görünmesi, kapalı
+  görsel yükleme; grup ekleme ve silme, silme engeli, kategori silme;
+  oturumsuz istek).
+
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
 veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını

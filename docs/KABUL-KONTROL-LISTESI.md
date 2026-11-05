@@ -781,6 +781,29 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       `?secenek=` bağlantısı çalışmaya devam eder.
 - [ ] Aynı adla ikinci tanım, tanım içinde aynı değer iki kez kaydedilemez.
 
+**Veritabanı modunda Seçenek Tanımları, Kategoriler ve gruplar (KARARLAR K-99, K-101):**
+
+- [ ] Yeni seçenek tanımı, kategori ya da grup kaydedilince başka
+      tarayıcıda açılan panelde de görünür; kategori ve grup sitenin
+      menüsünde ve bölüm sayfasında hemen görünür.
+- [ ] Kategorinin linki ya da grubu değişince sitede eski adres yeni adrese
+      yönlenir ve yeni ad hemen görünür; grubun linki değişince gruptaki
+      kategorilerin eski adresleri de yönlenir.
+- [ ] Kart Görseli alanında **Dosya Yükle** yoktur; "Görsel yükleme dosya
+      deposu kurulunca açılacak; şimdilik görsel adresi girin." yazar;
+      görsel adresi girilip kaydedilince sitede görünür.
+- [ ] Bir sekmede açık kategori formu, başka sekmede aynı kategori
+      kaydedilince ilk sekmede kaydedilmez: "Bu kayıt siz açtıktan sonra
+      değişti; sayfayı yenileyin." Oklarla sıra değiştirmek açık formu
+      eskitmez.
+- [ ] Filtreler sekmesindeki tabloda değer işaretlenmiş bir ürün, bu arada
+      ürün formundan kaydedilmişse kategori kaydedilmez (aynı uyarı).
+- [ ] Yeni tanım hemen ardından düzenlenince "kayıt değişti" uyarısı
+      çıkmaz.
+- [ ] `npm run db:studio` › `audit_log`: tanım, kategori ve grup
+      değişiklikleri ile tablodan değişen ürünlerin filtre değerleri
+      yazılmıştır; `redirects`'te eski adresler vardır.
+
 ---
 
 ## 18. Panel: stok

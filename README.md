@@ -428,13 +428,15 @@ npm run start --workspace apps/zenweld-web
     yöneticisiyle, canlıda `npm run yonetici:olustur` ile açılan hesapla
     girilir. Giriş ve çıkış `audit_log`'a yazılır.
   - **Panel veritabanına alan alan geçiyor (Aşama 5, KARARLAR K-99):**
-    Satış (Siparişler, İade Talepleri, Kuponlar) ve Talepler (Teklifler,
+    Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
     Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
-    Welders Club) ekranları veritabanından okur ve yazar; aynı kaydı iki
+    Welders Club) ve Katalog'dan Seçenek Tanımları ile Kategoriler ve
+    gruplar ekranları veritabanından okur ve yazar; aynı kaydı iki
     yönetici düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her
-    değişiklik `audit_log`'a yazılır. Panelin diğer ekranlarında (ürün,
-    kategori, seçenek, mağaza ayarı, bayi, stok, içerik) yapılan
-    değişiklikler henüz siteye yansımaz; değişiklik `db:studio`'dan
+    değişiklik `audit_log`'a yazılır. Bu modda panelde görsel dosyası
+    yüklenmez, görsel adresi girilir (dosya deposu gelene kadar; K-101).
+    Panelin diğer ekranlarında (ürün, mağaza ayarı, bayi, stok, içerik)
+    yapılan değişiklikler henüz siteye yansımaz; değişiklik `db:studio`'dan
     yapılır. Panel ana sayfası en son bağlanır.
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
     Derleme sırasında veritabanı çalışıyor olmalı.
@@ -444,7 +446,7 @@ npm run start --workspace apps/zenweld-web
     moduyla ayrı bir klasöre (`.next-db`) derler ve 3100 portunda açıp
     dener: bütün sayfalar, fiyat ve stok, değişikliğin hemen görünmesi,
     ağır verinin yalnızca gereken sayfaya gitmesi, kartla satın alma,
-    panelin Satış ve Talepler ekranları. Demo
+    panelin Satış, Talepler ve Katalog (seçenek, kategori, grup) ekranları. Demo
     derlemesi (`.next`) etkilenmez. `test:db` ile aynı anda çalıştırılmaz.
   - **SAP stok okuma (deneme dosyasıyla):** SAP bağlanana kadar depo
     stoğu bir CSV dosyasından okunur. `.env.local`'a

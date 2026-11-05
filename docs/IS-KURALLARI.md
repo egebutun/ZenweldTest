@@ -1161,9 +1161,10 @@ yeniden hesaplar; kullanım sınırı aynı anda gelen siparişlerde aşılmayac
 ## 22. Panelde kayıt düzenleme
 
 Veritabanı modunda panel kayıtları sunucuda değiştirir (KARARLAR K-99).
-Bugün Satış (Siparişler, İade Talepleri, Kuponlar) ve Talepler (Teklifler,
+Bugün Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
 Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
-Welders Club) ekranlarında geçerlidir; panelin diğer alanları veritabanına
+Welders Club) ve Katalog'un ilk kısmı (Seçenek Tanımları, Kategoriler ve
+gruplar) ekranlarında geçerlidir; panelin diğer alanları veritabanına
 geçtikçe onlara da uygulanır.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
@@ -1195,10 +1196,30 @@ geçtikçe onlara da uygulanır.
 - **Anasayfa yorum sınırı:** En fazla 10 yorum ([15](#15-ürün-yorumları));
   iki yönetici aynı anda işaretlese de sınır aşılmaz. Onaylanan ya da
   kaldırılan yorum sitede hemen değişir.
+- **Katalog:** Link ve yönlendirme ([13](#13-linkler-yönlendirme-ve-arama-motorları)),
+  filtre ([19](#19-kategori-filtreleri)) ve seçenek ([3](#3-seçenekli-ürün))
+  kuralları demo moduyla aynıdır ve sunucuda da denetlenir. Ek olarak:
+  - Kategorinin eşleme tablosunda değiştirilen ürünler de "aynı kaydı iki
+    kişi düzenlerse" kuralına girer: ürün form açıldıktan sonra
+    değişmişse kategori kaydedilmez.
+  - Kategoriden kaldırılan filtre ya da değer ürünlerden kalkınca o
+    ürünler, silinen seçenek tanımını listeleyen kategoriler değişmiş
+    sayılır (açık form eski hali geri yazamaz).
+  - Sıra değişikliği (oklar) kaydı eskitmez.
+  - Aynı link iki yönetici aynı anda kaydetse de iki kayda verilmez.
+  - Değişmeyen ürün değişmiş sayılmaz (ürünün filtre değerlerinin sırası
+    önemli değildir).
+  - Silinen kategori ya da grubun eski adres yönlendirmeleri de silinir.
+- **Görsel yükleme:** Veritabanı modunda dosya deposu kurulana kadar
+  (Aşama 6) panelde görsel dosyası yüklenmez, görsel adresi girilir;
+  sunucu yüklenmiş dosya (`data:`) içeren kaydı reddeder (KARARLAR K-101).
+  Bugün kategori ve grup kart görsellerinde geçerlidir.
 - Panel işlemleri yalnızca geçerli yönetici oturumuyla yapılır
   ([16](#16-üyelik-ve-oturum)); oturum bitmişse: "Panel oturumunuz kapanmış.
   Lütfen yeniden giriş yapın."
 
 Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
-`admin-requests.ts`, `audit.ts`; tarayıcı: `apps/zenweld-web/src/lib/admin-panel.ts`,
-`admin-sales.ts`, `admin-requests.ts`.
+`admin-requests.ts`, `admin-catalog.ts`, `audit.ts`; katalog formlarının
+ortak kuralları `packages/data/src/catalog-rules.ts`; tarayıcı:
+`apps/zenweld-web/src/lib/admin-panel.ts`, `admin-sales.ts`,
+`admin-requests.ts`, `admin-catalog.ts`.

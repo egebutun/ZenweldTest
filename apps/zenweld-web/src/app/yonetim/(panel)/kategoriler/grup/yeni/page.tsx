@@ -1,25 +1,16 @@
-"use client";
+import { readCatalogPanel } from "@zenweld/db";
+import { PageData } from "@/components/common/PageData";
+import { hasPanelSession } from "@/lib/server/admin";
+import { database, usesDatabase } from "@/lib/server/db";
+import { NewGroupClient } from "./NewGroupClient";
 
-import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import type { TopLevelSection } from "@zenweld/data";
-import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { GroupForm } from "@/components/admin/CategoryForms";
-import { SECTION_TITLES } from "@/lib/catalog";
-
-/** /yonetim/kategoriler/grup/yeni?bolum=ekipmanlar: bolum secili gelir. */
-export default function NewGroupPage() {
+/** Yeni grup. Veritabani modunda katalog her acilista ve her kayittan sonra onbelleksiz okunur (KARARLAR K-99). */
+export default async function NewGroupPage() {
+  if (!usesDatabase()) return <NewGroupClient />;
+  if (!(await hasPanelSession())) return null;
   return (
-    <>
-      <AdminPageHeader title="Yeni Grup" description="Grup, menüde bölümün altında sol kolona ve bölüm sayfasına eklenir." />
-      <Suspense>
-        <NewGroupForm />
-      </Suspense>
-    </>
+    <PageData data={await readCatalogPanel(database())}>
+      <NewGroupClient />
+    </PageData>
   );
-}
-
-function NewGroupForm() {
-  const section = useSearchParams().get("bolum");
-  return <GroupForm section={section && section in SECTION_TITLES ? (section as TopLevelSection) : undefined} />;
 }

@@ -1,27 +1,17 @@
-"use client";
+import { readCatalogPanel } from "@zenweld/db";
+import { PageData } from "@/components/common/PageData";
+import { hasPanelSession } from "@/lib/server/admin";
+import { database, usesDatabase } from "@/lib/server/db";
+import { EditCategoryClient } from "./EditCategoryClient";
 
-import { use } from "react";
-import { findCategoryById, useDatabase } from "@zenweld/store";
-import { Alert } from "@zenweld/ui";
-import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { CategoryForm, SiteLink } from "@/components/admin/CategoryForms";
-import { categoryHref } from "@/lib/catalog";
-
-export default function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const db = useDatabase();
-  const category = findCategoryById(id, db);
-
-  if (!category) return <Alert tone="danger">Kategori bulunamadı.</Alert>;
-
+/** Kategori duzenleme. Veritabani modunda katalog her acilista ve her kayittan sonra onbelleksiz okunur (KARARLAR K-99). */
+export default async function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!usesDatabase()) return <EditCategoryClient id={id} />;
+  if (!(await hasPanelSession())) return null;
   return (
-    <>
-      <AdminPageHeader
-        title={category.name}
-        description={categoryHref(category)}
-        action={<SiteLink href={categoryHref(category)} />}
-      />
-      <CategoryForm key={category.id} category={category} />
-    </>
+    <PageData data={await readCatalogPanel(database())}>
+      <EditCategoryClient id={id} />
+    </PageData>
   );
 }

@@ -2,18 +2,19 @@
 
 import { useState } from "react";
 import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
-import type { OptionDefinition, OptionValue } from "@zenweld/data";
-import { listOptionDefinitions, productsUsingOption, saveOptionDefinition, useDatabase } from "@zenweld/store";
+import { optionDefinitionError, optionValueInUseText, type OptionDefinition, type OptionValue } from "@zenweld/data";
+import { listOptionDefinitions, productsUsingOption, useDatabase } from "@zenweld/store";
 import { Button, FormRow, Input, Modal } from "@zenweld/ui";
 import { slugify } from "@zenweld/utils";
+import { useCatalogActions } from "@/lib/admin-catalog";
 
 /**
  * SECENEK TANIMI PENCERESI (yeni / duzenle)
  *
  * Ad (orn. "Torç Uzunluğu") ve sirali degerler (3 m, 4 m ...). Seçenek
  * Tanımları ekraninda ve kategorinin Seçenekler sekmesinde (yeni tanim)
- * kullanilir. Kaydedince tanim hemen yazilir; onSaved kaydi alir. Urunde
- * kullanilan deger silinemez.
+ * kullanilir. Kaydedince tanim hemen yazilir (veritabani modunda sunucuya);
+ * onSaved kaydi alir. Urunde kullanilan deger silinemez.
  */
 export function OptionDefinitionModal({
   initial,
@@ -26,19 +27,21 @@ export function OptionDefinitionModal({
   onSaved?: (definition: OptionDefinition) => void;
 }) {
   const db = useDatabase();
+  const actions = useCatalogActions();
   const [draft, setDraft] = useState<OptionDefinition>(initial ?? { id: "", name: "", values: [] });
   const [error, setError] = useState<string | null>(null);
 
-  const save = () => {
-    const problem = definitionError(draft, listOptionDefinitions(db));
+  const save = async () => {
+    const problem = optionDefinitionError(draft, listOptionDefinitions(db));
     if (problem) return setError(problem);
-    const saved = saveOptionDefinition({
+    const definition = {
       ...draft,
       name: draft.name.trim(),
       values: draft.values.map((v) => ({ ...v, label: v.label.trim() })),
-    });
-    if (!saved) return setError("Kaydedilemedi: tarayıcı deposu dolu.");
-    onSaved?.(saved);
+    };
+    const answer = await actions.saveOptionDefinition(definition);
+    if (!answer.ok) return setError(answer.error);
+    onSaved?.({ ...definition, id: answer.id ?? definition.id });
     onClose();
   };
 
@@ -57,12 +60,14 @@ export function OptionDefinitionModal({
           onChange={(values) => setDraft({ ...draft, values })}
           canRemove={(value) => {
             const count = draft.id ? productsUsingOption(draft.id, value.id, db).length : 0;
-            return count ? `"${value.label}" ${count} üründe kullanılıyor; önce ürünün Seçenekler sekmesinden kaldırın.` : true;
+            return count ? optionValueInUseText(value.label, count) : true;
           }}
         />
         {error && <p className="text-sm font-semibold text-zw-red-600">{error}</p>}
         <div className="flex gap-3 pt-2">
-          <Button onClick={save}>Kaydet</Button>
+          <Button onClick={() => void save()} disabled={actions.pending}>
+            Kaydet
+          </Button>
           <Button variant="outline" onClick={onClose}>
             Vazgeç
           </Button>
@@ -180,23 +185,4 @@ export function ValueListEditor({
       {error && <p className="mt-1 text-xs font-semibold text-zw-red-600">{error}</p>}
     </div>
   );
-}
-
-/** Kayit oncesi kontrol: bos ad, baska tanimda ayni ad, degersiz tanim, tekrar eden deger. */
-function definitionError(draft: OptionDefinition, all: OptionDefinition[]): string | null {
-  const name = draft.name.trim();
-  if (!name) return "Seçenek adı zorunludur.";
-  const key = name.toLocaleLowerCase("tr");
-  if (all.some((o) => o.id !== draft.id && o.name.trim().toLocaleLowerCase("tr") === key)) {
-    return `"${name}" adında bir seçenek zaten var.`;
-  }
-  if (draft.values.length === 0) return "En az bir değer ekleyin.";
-  const labels = new Set<string>();
-  for (const v of draft.values) {
-    const label = v.label.trim();
-    if (!label) return "Boş değer var.";
-    if (labels.has(label.toLocaleLowerCase("tr"))) return `"${label}" iki kez yazılmış.`;
-    labels.add(label.toLocaleLowerCase("tr"));
-  }
-  return null;
 }

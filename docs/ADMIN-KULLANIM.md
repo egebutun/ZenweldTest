@@ -198,7 +198,10 @@ dön** panelin ana ekranına götürür.
   yüklenen dosyanın adresi "(yüklenen dosya)" diye görünür ve elle
   değiştirilemez; **Kaldır** ya da yeni dosya ile değişir.
 - **Demo notu:** Yüklenen görsel veritabanının içine yazılır; gerçek
-  sistemde dosya deposuna yüklenecek.
+  sistemde dosya deposuna yüklenecek. Veritabanı modunda kategori ve grup
+  kart görsellerinde dosya yüklenmez, adres girilir (bkz.
+  [Veritabanı modunda Katalog ekranları](#veritabanı-modunda-katalog-ekranları);
+  KARARLAR K-101).
 
 **Biçimli metin alanları:**
 
@@ -1175,6 +1178,42 @@ değişir.
   - ""<değer>" iki kez yazılmış."
   - "Kaydedilemedi: tarayıcı deposu dolu."
 - Ad ve değer karşılaştırmaları Türkçe büyük/küçük harfe duyarsızdır.
+
+### Veritabanı modunda Katalog ekranları
+
+Veritabanı modunda Seçenek Tanımları ile Kategoriler ve gruplar (liste,
+kategori formu, grup formu) veritabanıyla çalışır (KARARLAR K-99, K-101).
+Ürünler ekranı sonraki adımda gelir. Kurallar
+[Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
+ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
+kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
+sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
+Ekranlar ve kurallar demo moduyla aynıdır; farklar:
+
+- Kaydedilen, silinen ya da sırası değişen seçenek, kategori ve grup sitede
+  (menü, bölüm, grup ve kategori sayfaları, ürün sayfası) hemen değişir.
+  Linki değişen kategori ya da grubun eski adresi yeni adrese yönlenir.
+- **Görsel yükleme kapalı:** Kart Görseli alanında **Dosya Yükle** yoktur;
+  altında "Görsel yükleme dosya deposu kurulunca açılacak; şimdilik görsel
+  adresi girin." yazar. Görsel adresi girilir; kayıtlı görseller görünmeye
+  devam eder. Yüklenmiş dosya içeren kayıt aynı mesajla reddedilir.
+- **Filtreler sekmesindeki eşleme tablosu:** Tabloda değiştirilen bir ürün,
+  form açıldıktan sonra başka yerde değişmişse kategori kaydedilmez ("Bu
+  kayıt siz açtıktan sonra değişti; sayfayı yenileyin."). Silinen filtre ya
+  da değer ürünlerden kalkınca o ürünler de değişmiş sayılır.
+- Seçenek tanımı silinince onu listeleyen kategoriler de değişmiş sayılır;
+  açık kategori formu silinen tanımı geri yazamaz.
+- Kategorinin Seçenekler sekmesinde işaretli bir tanım bu arada silinmişse:
+  "Seçilen seçeneklerden bazıları artık yok; sayfayı yenileyip yeniden
+  seçin." (Seçenekler sekmesi açılır).
+- Sıra okları kaydın içeriğini değiştirmez; açık bir form sıra değişti diye
+  eskimez. İstek sürerken oklar, Sil ve Kaydet düğmeleri kapanır.
+- Link tekilliği, silme engelleri (ürünü olan kategori, kategorisi olan
+  grup, üründe kullanılan tanım ya da değer) ve formdaki diğer kurallar
+  sunucuda da denetlenir; mesajlar aynıdır.
+- Eşleme tablosundan değişen her ürün için işlem kaydına ayrı bir satır
+  (ürünün filtre değerleri) yazılır.
+- "Kaydedilemedi: tarayıcı deposu dolu." veritabanı modunda çıkmaz.
 
 ---
 

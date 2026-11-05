@@ -167,10 +167,11 @@ Menüde bölümün altında sol kolondaki gruplar (ör. Kaynak Makineleri).
 | `order` | sayı | Bölüm içindeki sıra |
 | `description` | metin? | Kısa açıklama; boşsa kategori adlarından üretilir |
 | `aboutText` | metin? | Sayfa altındaki tanıtım metni (biçimli) |
-| `image` | metin? | Kart görseli |
+| `image` | metin? | Kart görseli. Veritabanı modunda yüklenmiş dosya (`data:`) kabul edilmez, adres girilir (KARARLAR K-101) |
 | `seo` | SEO? | Bkz. [SEO alanları](#seo-alanları) |
 | `previousPaths` | metin[]? | Eski tam yollar |
 | `code` | metin? | Kategori tablosundaki numara (ör. "1.2"); bkz. [16](#16-kullanılmayan-alanlar) |
+| `updatedAt` | tarih-saat? | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99) |
 
 ### Kategoriler (`categories`)
 
@@ -184,12 +185,13 @@ Menüde bölümün altında sol kolondaki gruplar (ör. Kaynak Makineleri).
 | `order` | sayı | Grup içindeki sıra |
 | `description` | metin | Kısa açıklama |
 | `aboutText` | metin? | Tanıtım metni (biçimli) |
-| `image` | metin? | Kart görseli; yoksa kategorinin ilk ürününün fotoğrafı |
+| `image` | metin? | Kart görseli; yoksa kategorinin ilk ürününün fotoğrafı. Veritabanı modunda yüklenmiş dosya kabul edilmez (K-101) |
 | `optionIds` | metin[]? | Bu kategoride ürüne seçenek eklenirken listelenen tanımlar |
 | `filters[]` | liste? | Kategori sayfasındaki filtreler, sırasıyla (bkz. aşağıda) |
 | `seo` | SEO? | |
 | `previousPaths` | metin[]? | Eski tam yollar |
 | `code`, `icon` | metin? | Kullanılmıyor (bkz. [16](#16-kullanılmayan-alanlar)) |
+| `updatedAt` | tarih-saat? | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99) |
 
 ### Seçenek tanımları (`option_definitions`, `option_values`)
 
@@ -200,6 +202,7 @@ Menüde bölümün altında sol kolondaki gruplar (ör. Kaynak Makineleri).
 | `values[]` | liste | Sıralı değerler |
 | `values[].id` | metin | Değerin ilk adından üretilir (`4-m`) ve **hiç değişmez**; aynısı varsa sonuna `-2`, `-3` eklenir |
 | `values[].label` | metin | Ör. "4 m". Tanım içinde benzersiz; ad düzeltilebilir |
+| `updatedAt` | tarih-saat? | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99) |
 
 **Filtreler (`filters` → `category_filters`, `category_filter_values`):**
 

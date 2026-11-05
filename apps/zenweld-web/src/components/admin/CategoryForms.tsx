@@ -2,14 +2,17 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { byProductOrder, type Category, type CategoryGroup, type TopLevelSection } from "@zenweld/data";
 import {
-  createCategory,
-  createGroup,
-  saveCategory,
-  saveGroup,
-  useDatabase,
-} from "@zenweld/store";
+  byProductOrder,
+  categoryFiltersError,
+  categorySlugTakenText,
+  groupSlugTakenText,
+  type Category,
+  type CategoryGroup,
+  type TopLevelSection,
+} from "@zenweld/data";
+import { tr } from "@zenweld/i18n";
+import { useDatabase } from "@zenweld/store";
 import { FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import { slugify } from "@zenweld/utils";
 import { SECTION_TITLES, categoryHref, groupDescription, groupHref, sectionGroups } from "@/lib/catalog";
@@ -26,8 +29,9 @@ import {
 } from "./content-form";
 import { SeoPanel } from "./SeoPanel";
 import { CategoryOptionsPanel } from "./CategoryOptions";
-import { CategoryFiltersPanel, filtersError, type FilterMapping } from "./CategoryFilters";
+import { CategoryFiltersPanel, type FilterMapping } from "./CategoryFilters";
 import { siteUrl } from "@/lib/admin-links";
+import { useCatalogActions } from "@/lib/admin-catalog";
 
 /**
  * KATEGORI VE GRUP FORMLARI (Urunler > Kategoriler)
@@ -36,6 +40,8 @@ import { siteUrl } from "@/lib/admin-links";
  * Tanitim Metni (sayfanin altindaki "... Hakkinda" yazisi), yalnizca
  * kategoride Seçenekler (urune secenek eklerken listelenen ortak tanimlar) ve
  * Filtreler (kategori sayfasindaki filtreler ve urunlerin degerleri), SEO.
+ * Veritabani modunda kayit sunucuya gider (lib/admin-catalog.ts); sunucu ayni
+ * kurallari yeniden dener.
  */
 
 const SECTIONS = Object.keys(SECTION_TITLES) as TopLevelSection[];
@@ -45,6 +51,10 @@ const TABS = [
   { id: "tanitim", label: "Tanıtım Metni" },
   { id: "seo", label: "SEO" },
 ];
+
+/** Sunucunun reddettigi kaydin hangi sekmede duzeltilecegi. */
+const errorTab = (error: string) =>
+  error.includes("linki") ? "seo" : error === tr.panel.optionsMissing ? "secenekler" : "temel";
 
 const ABOUT_INTRO =
   "Tanıtım metni sayfanın altında \"… Hakkında\" başlığıyla görünür; boş bırakılırsa gösterilmez.";
@@ -56,6 +66,7 @@ const ABOUT_INTRO =
 export function CategoryForm({ category, groupId }: { category?: Category; groupId?: string }) {
   const db = useDatabase();
   const router = useRouter();
+  const actions = useCatalogActions();
   const isNew = !category;
   const startGroup = db.categoryGroups.find((g) => g.id === groupId) ?? db.categoryGroups[0];
   const form = useContentForm<Category>(
@@ -79,7 +90,7 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
     [db, stored],
   );
 
-  const submit = () => {
+  const submit = async () => {
     form.setError(null);
     if (!draft.name.trim()) return form.fail("Kategori adı zorunludur.");
     if (!currentGroup) return form.fail("Bir grup seçin.");
@@ -88,11 +99,11 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
     if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
     // Urunler kategoriye yalnizca link (slug) ile baglidir; link tekil olmali.
     const clash = findSlugClash(db.categories, draft.id, slug);
-    if (clash) return form.fail(`"${slug}" linki "${clash.name}" kategorisinde kullanılıyor.`, "seo");
+    if (clash) return form.fail(categorySlugTakenText(slug, clash.name), "seo");
 
     // Form acikken silinmis tanim kayda geri yazilmasin.
     const optionIds = (draft.optionIds ?? []).filter((id) => db.optionDefinitions.some((o) => o.id === id));
-    const filterProblem = filtersError(draft.filters ?? []);
+    const filterProblem = categoryFiltersError(draft.filters ?? []);
     if (filterProblem) return form.fail(filterProblem, "filtreler");
     const filters = (draft.filters ?? []).map((f) => ({
       ...f,
@@ -106,10 +117,11 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
       optionIds: optionIds.length ? optionIds : undefined,
       filters: filters.length ? filters : undefined,
     };
-    if (isNew) {
-      router.push(`/yonetim/kategoriler/${createCategory(next).id}`);
+    const answer = await actions.saveCategory(next, currentGroup.id, stored, mapping, products);
+    if (!answer.ok) return form.fail(answer.error, errorTab(answer.error));
+    if (isNew && answer.id) {
+      router.push(`/yonetim/kategoriler/${answer.id}`);
     } else {
-      saveCategory(next, mapping);
       setMapping({});
       form.flashSaved();
     }
@@ -118,7 +130,8 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
   return (
     <ContentFormShell
       form={form}
-      onSubmit={submit}
+      onSubmit={() => void submit()}
+      pending={actions.pending}
       savedText="Kategori kaydedildi."
       submitLabel={isNew ? "Kategoriyi Oluştur" : "Değişiklikleri Kaydet"}
       tabs={[
@@ -180,6 +193,7 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
             onError={form.setError}
             alt={draft.name}
             fallback="Görsel yoksa kategorideki ilk ürünün fotoğrafı kullanılır."
+            uploadNote={actions.uploadNote}
           />
         </FormPanel>
       )}
@@ -236,6 +250,7 @@ export function CategoryForm({ category, groupId }: { category?: Category; group
 export function GroupForm({ group, section }: { group?: CategoryGroup; section?: TopLevelSection }) {
   const db = useDatabase();
   const router = useRouter();
+  const actions = useCatalogActions();
   const isNew = !group;
   const form = useContentForm<CategoryGroup>(
     group ?? { id: "", slug: "", section: section ?? "ekipmanlar", name: "", order: 0 },
@@ -245,7 +260,7 @@ export function GroupForm({ group, section }: { group?: CategoryGroup; section?:
   // Kayitli grubun kategorileri (yeni grupta yok); otomatik aciklama bunlardan.
   const autoDescription = groupDescription({ ...draft, slug: stored?.slug ?? draft.slug, description: undefined }, db.categories);
 
-  const submit = () => {
+  const submit = async () => {
     form.setError(null);
     if (!draft.name.trim()) return form.fail("Grup adı zorunludur.");
 
@@ -253,7 +268,7 @@ export function GroupForm({ group, section }: { group?: CategoryGroup; section?:
     if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
     // Grup linki yalnizca kendi bolumunde tekil olmali.
     const clash = findSlugClash(db.categoryGroups.filter((g) => g.section === draft.section), draft.id, slug);
-    if (clash) return form.fail(`"${slug}" linki bu bölümde "${clash.name}" grubunda kullanılıyor.`, "seo");
+    if (clash) return form.fail(groupSlugTakenText(slug, clash.name), "seo");
 
     const next: CategoryGroup = {
       ...draft,
@@ -261,18 +276,17 @@ export function GroupForm({ group, section }: { group?: CategoryGroup; section?:
       name: draft.name.trim(),
       description: draft.description?.trim() || undefined,
     };
-    if (isNew) {
-      router.push(`/yonetim/kategoriler/grup/${createGroup(next).id}`);
-    } else {
-      saveGroup(next);
-      form.flashSaved();
-    }
+    const answer = await actions.saveGroup(next, stored);
+    if (!answer.ok) return form.fail(answer.error, errorTab(answer.error));
+    if (isNew && answer.id) router.push(`/yonetim/kategoriler/grup/${answer.id}`);
+    else form.flashSaved();
   };
 
   return (
     <ContentFormShell
       form={form}
-      onSubmit={submit}
+      onSubmit={() => void submit()}
+      pending={actions.pending}
       savedText="Grup kaydedildi."
       submitLabel={isNew ? "Grubu Oluştur" : "Değişiklikleri Kaydet"}
       tabs={TABS}
@@ -324,6 +338,7 @@ export function GroupForm({ group, section }: { group?: CategoryGroup; section?:
             onError={form.setError}
             alt={draft.name}
             fallback="Görsel yoksa gruptaki ilk ürünün fotoğrafı kullanılır."
+            uploadNote={actions.uploadNote}
           />
         </FormPanel>
       )}
@@ -363,12 +378,14 @@ function CardImageField({
   onError,
   alt,
   fallback,
+  uploadNote,
 }: {
   value: string;
   onChange: (url: string) => void;
   onError: (message: string) => void;
   alt: string;
   fallback: string;
+  uploadNote?: string;
 }) {
   return (
     <div>
@@ -381,6 +398,7 @@ function CardImageField({
         placeholder="/images/categories/kategori.svg veya https://…"
         previewClassName="flex h-28 w-40 items-center justify-center bg-white p-2"
         imageClassName="max-h-full max-w-full object-contain"
+        uploadNote={uploadNote}
       />
       <p className="mt-1 text-xs text-zw-grey-500">{fallback}</p>
     </div>

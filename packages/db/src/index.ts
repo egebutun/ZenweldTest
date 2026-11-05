@@ -8,4 +8,5 @@ export * from "./codes";
 export * from "./audit";
 export * from "./admin-sales";
 export * from "./admin-requests";
+export * from "./admin-catalog";
 export type { PanelFailure, PanelResult, Saved } from "./panel";

@@ -794,6 +794,8 @@ export const tr = {
     recordNotFound: "Kayıt bulunamadı; sayfayı yenileyin.",
     invalidDate: "Geçerli bir tarih girin.",
     reviewNotApproved: "Yalnızca onaylı yorum anasayfada gösterilir.",
+    uploadDisabled: "Görsel yükleme dosya deposu kurulunca açılacak; şimdilik görsel adresi girin.",
+    optionsMissing: "Seçilen seçeneklerden bazıları artık yok; sayfayı yenileyip yeniden seçin.",
   },
   errorPage: {
     title: "Bir sorun oluştu",

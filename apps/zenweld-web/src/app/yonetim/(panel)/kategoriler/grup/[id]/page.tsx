@@ -1,23 +1,17 @@
-"use client";
+import { readCatalogPanel } from "@zenweld/db";
+import { PageData } from "@/components/common/PageData";
+import { hasPanelSession } from "@/lib/server/admin";
+import { database, usesDatabase } from "@/lib/server/db";
+import { EditGroupClient } from "./EditGroupClient";
 
-import { use } from "react";
-import { findGroupById, useDatabase } from "@zenweld/store";
-import { Alert } from "@zenweld/ui";
-import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { GroupForm, SiteLink } from "@/components/admin/CategoryForms";
-import { groupHref } from "@/lib/catalog";
-
-export default function EditGroupPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const db = useDatabase();
-  const group = findGroupById(id, db);
-
-  if (!group) return <Alert tone="danger">Grup bulunamadı.</Alert>;
-
+/** Grup duzenleme. Veritabani modunda katalog her acilista ve her kayittan sonra onbelleksiz okunur (KARARLAR K-99). */
+export default async function EditGroupPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!usesDatabase()) return <EditGroupClient id={id} />;
+  if (!(await hasPanelSession())) return null;
   return (
-    <>
-      <AdminPageHeader title={group.name} description={groupHref(group)} action={<SiteLink href={groupHref(group)} />} />
-      <GroupForm key={group.id} group={group} />
-    </>
+    <PageData data={await readCatalogPanel(database())}>
+      <EditGroupClient id={id} />
+    </PageData>
   );
 }
