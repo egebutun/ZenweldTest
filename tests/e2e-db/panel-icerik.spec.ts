@@ -114,8 +114,11 @@ test("Hakkımızda: alt başlık kaydedilir ve sitede görünür; hemen ardında
   expect(await (await request.get("/hakkimizda")).text()).toContain(changed);
 
   await subtitle.fill(original);
+  // Ilk kaydin mesaji ekranda durur; ikinci kaydin sunucu yaniti beklenir.
+  const second = page.waitForResponse((r) => r.url().endsWith("/api/yonetim/icerik/hakkimizda"));
   // Kaydet ustte ve altta var.
   await page.getByRole("button", { name: "Kaydet", exact: true }).first().click();
+  expect((await (await second).json()).ok).toBe(true);
   await expect(page.getByText("Kaydedildi. Hakkımızda sayfası güncellendi.")).toBeVisible();
   await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
   expect((await sql<{ hero_subtitle: string }>("SELECT hero_subtitle FROM about_page WHERE id = 1"))[0].hero_subtitle).toBe(original);

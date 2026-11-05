@@ -62,6 +62,9 @@ const nextConfig = {
     // Kampanya tarihleri icin: sunucu ciktisi ile tarayicinin ilk cizimi
     // ayni ana gore hesaplansin (bkz. packages/store/src/hooks.ts useNow).
     NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
+    // Veri kaynagi tarayici paketine de derlemede yazilir: veritabani
+    // modunda ornek veri pakete girmez (bkz. packages/store/src/database.ts).
+    NEXT_PUBLIC_DATA_SOURCE: process.env.DATA_SOURCE === "database" ? "database" : "demo",
   },
   transpilePackages: [
     "@zenweld/data",

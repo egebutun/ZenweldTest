@@ -1,6 +1,5 @@
 "use client";
 
-import { about as defaultAbout } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { PageHero } from "@/components/common/PageShell";
 import { ProductImage, RichText } from "@zenweld/ui";
@@ -14,7 +13,7 @@ import { ProductImage, RichText } from "@zenweld/ui";
  */
 export default function AboutPage() {
   const db = useDatabase();
-  const about = db.about ?? defaultAbout;
+  const about = db.about;
 
   return (
     <>

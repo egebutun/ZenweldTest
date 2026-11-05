@@ -5,21 +5,24 @@ import { createDb } from "../src/client";
 import { loadData, type LoadMode, type LoadTarget } from "../src/load";
 
 /**
- * npm run db:yukle <canli|deneme> [eksikler] — sitenin bugunku verisini
+ * npm run db:yukle <canli|deneme> [guncelle] — sitenin bugunku verisini
  * DATABASE_URL'deki veritabanina yukler (src/load.ts; KARARLAR K-91).
+ * Varsayilan yalnizca eksik kayitlari eklemektir: panel veritabanina
+ * yazdigi icin (Asama 5) panelde yapilan degisikliklerin uzerine yazilmaz.
  * Bilgisayar disindaki bir veritabanina yuklemeden once veritabaninin adi
  * yazilarak onay verilir.
  */
-const USAGE = `Kullanım: npm run db:yukle <canli|deneme> [eksikler]
+const USAGE = `Kullanım: npm run db:yukle <canli|deneme> [guncelle]
   canli     katalog, içerik, mağaza ayarları, bayiler, satıcılar, depo stoğu
   deneme    bunlara ek olarak örnek yorumlar, kuponlar ve bayi stok listeleri
-  eksikler  yalnızca veritabanında olmayan kayıtları ekler, var olana dokunmaz
-            (verilmezse farklı olan kayıtlar da güncellenir)`;
+  guncelle  veritabanında olup farklı olan kayıtları da bugünkü veriyle
+            değiştirir: panelde yapılan değişiklikler kaybolur
+            (verilmezse yalnızca olmayan kayıtlar eklenir, var olana dokunulmaz)`;
 
 const args = process.argv.slice(2);
 const target = args[0] as LoadTarget;
-const mode: LoadMode = args.includes("eksikler") ? "eksikler" : "tam";
-if (!["canli", "deneme"].includes(target) || args.slice(1).some((a) => a !== "eksikler")) {
+const mode: LoadMode = args.includes("guncelle") ? "tam" : "eksikler";
+if (!["canli", "deneme"].includes(target) || args.slice(1).some((a) => a !== "guncelle")) {
   console.error(USAGE);
   process.exit(1);
 }
@@ -36,7 +39,7 @@ const local = ["localhost", "127.0.0.1", "[::1]"].includes(hostname);
 console.log(`Veritabanı: ${name} (${hostname})`);
 console.log(
   `Yüklenecek: ${target === "canli" ? "canlı" : "deneme"} verisi · ${
-    mode === "tam" ? "farklı olan kayıtlar güncellenir" : "yalnızca eksik kayıtlar eklenir"
+    mode === "tam" ? "farklı olan kayıtlar güncellenir (panelde yapılan değişiklikler kaybolur)" : "yalnızca eksik kayıtlar eklenir"
   }`,
 );
 console.log(

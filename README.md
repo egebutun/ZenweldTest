@@ -347,6 +347,9 @@ Backend olmadığı için:
 3. Değişiklikler **yalnızca o tarayıcıda** görünür. Başka bilgisayarda görünmez.
 4. Panelden yüklenen belge dosyaları (MSDS, sertifikalar…) tarayıcının ayrı
    dosya deposunda (IndexedDB) durur.
+5. Veritabanı modunda (`DATA_SOURCE=database`, aşağıda) bunlar olmaz:
+   kayıtlar sunucudadır; tarayıcıya örnek veri gönderilmez, `localStorage`'a
+   veri yazılmaz (Aşama 5.6).
 
 Backend gelene kadar panelde yapılan değişiklikler yalnızca o tarayıcıda kalır;
 kalıcı veri için başlangıç (seed) dosyaları güncellenir.
@@ -509,8 +512,11 @@ npm run start --workspace apps/zenweld-web
     satıcılar ve depo stoğu.
   - `npm run db:yukle deneme`: bunlara ek olarak örnek yorumlar, kuponlar
     ve bayi stok listeleri.
-  - Sona `eksikler` eklenirse (`npm run db:yukle canli eksikler`) yalnızca
-    veritabanında olmayan kayıtlar eklenir; var olana dokunulmaz.
+  - Varsayılan olarak yalnızca veritabanında olmayan kayıtlar eklenir; var
+    olana (panelde değiştirilen kayıt dahil) dokunulmaz.
+  - Sona `guncelle` eklenirse (`npm run db:yukle canli guncelle`) veriden
+    farklı olan kayıtlar da bugünkü veriyle değiştirilir; panelde yapılan
+    değişiklikler kaybolur.
   - Üyeler, siparişler, teklifler, iadeler, servis talepleri ve garantiler
     hiç yüklenmez; hiçbir kayıt silinmez; tekrar çalıştırılabilir. Ne
     yapıldığı tablo tablo ekrana basılır.

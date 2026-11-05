@@ -16,7 +16,9 @@ karşılığı [VERITABANI.md](VERITABANI.md)'dedir.
 - Backend'e geçişte yapılacaklar: [YAPILACAKLAR.md](YAPILACAKLAR.md)
 
 **Bugün nasıl saklanıyor (Demo notu):** Bütün veri tek bir JSON nesnesi
-olarak tarayıcının yerel deposunda durur (`zenweld.db.v1`). Bu nesnenin şekli
+olarak tarayıcının yerel deposunda durur (`zenweld.db.v1`). Veritabanı
+modunda (`DATA_SOURCE=database`) kayıtlar sunucu veritabanındadır; bu nesne
+tarayıcıda boş başlar ve depoya yazılmaz (Aşama 5.6). Bu nesnenin şekli
 `packages/data/src/types.ts` içindeki `ZenweldDatabase` tipidir; her dizisi
 bir tabloya karşılık gelir. Alan adları aşağıda koddaki gibi yazılmıştır
 (`categorySlug`); tablo adları için önerilen ad parantez içindedir
@@ -962,7 +964,7 @@ sunucuya taşınmalı (veritabanı, oturum).
 
 | Anahtar | Yer | İçerik | Backend'de |
 |---|---|---|---|
-| `zenweld.db.v1` | localStorage | Bütün veritabanı (`ZenweldDatabase`, `version` alanıyla) | Veritabanı |
+| `zenweld.db.v1` | localStorage | Bütün veritabanı (`ZenweldDatabase`, `version` alanıyla) | Veritabanı; veritabanı modunda yazılmaz, demodan kalan silinir (Aşama 5.6) |
 | `zenweld.session.v1` | localStorage | Site oturumu: üyenin kimliği | Sunucu oturumu |
 | `zenweld.admin.session.v1` | localStorage | Panel oturumu: yöneticinin kimliği | Sunucu oturumu |
 | `zenweld.cart.v1` | localStorage | Sepet: `[{ productId, variantId?, quantity }]` (eski `selection` biçimli satırlar tek seçenekte okunur) | Tarayıcıda kalabilir; fiyat her açılışta üründen hesaplanır |

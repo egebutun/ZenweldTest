@@ -76,9 +76,10 @@ ilgili belge **aynı commit'te** güncellenir:
     tabloları kurar / bilgisayardaki veritabanını sıfırlar / örnek veriyi
     boş veritabanına yükler / şema değişince yeni geçiş betiği üretir /
     tabloları tarayıcıda gösterir. Hedef sürüm PostgreSQL 18.
-  - `npm run db:yukle <canli|deneme> [eksikler]`: bugünkü veriyi canlı ya da
-    deneme veritabanına yükler (KARARLAR K-91; satış hareketleri hiç
-    yüklenmez, hiçbir kayıt silinmez).
+  - `npm run db:yukle <canli|deneme> [guncelle]`: bugünkü veriyi canlı ya da
+    deneme veritabanına yükler (KARARLAR K-91; varsayılan yalnızca eksik
+    kayıtları ekler, `guncelle` paneldeki değişikliklerin üzerine yazar;
+    satış hareketleri hiç yüklenmez, hiçbir kayıt silinmez).
   - `npm run yonetici:olustur`: veritabanında yönetici hesabı açar ya da
     yöneticinin şifresini değiştirir (şifre ekranda görünmez).
   - `npm run site:yenile` / `npm run sap:stok` / `npm run sap:siparis`:

@@ -4,12 +4,13 @@ Bu dosya sitenin ve panelin sunucu veritabanını tablo tablo anlatır: her
 tablonun kolonları, türleri, hangi kolonun zorunlu ya da benzersiz olduğu,
 tabloların birbirine nasıl bağlandığı ve bir kayıt silinince ne olduğu.
 
-**Durum (2026-11-04):** Liste sahibince onaylandı (KARARLAR K-81). Tablolar
+**Durum (2026-11-05):** Liste sahibince onaylandı (KARARLAR K-81). Tablolar
 kodda (`packages/db/src/schema/`) ve geçiş betiklerinde hazır; bilgisayardaki
 PostgreSQL'de kuruluyor ve testleri geçiyor. Site ayarla
-(`DATA_SOURCE=database`, K-88) katalogu (ürünler, kategoriler, seçenekler,
-depo stoğu, mağaza ayarları) tablolardan okuyabiliyor; panel ve diğer
-kayıtlar henüz tarayıcıda.
+(`DATA_SOURCE=database`, K-88) bütün kayıtları tablolardan okur ve yazar:
+site, üyelik, formlar ve panelin bütün ekranları (Aşama 3–5). Bu modda
+tarayıcıya örnek veri gönderilmez ve tarayıcı deposuna veri yazılmaz
+(Aşama 5.6).
 Tabloların asıl tanımı koddadır; bu dosya her şema değişikliğinde aynı
 commit'te güncellenir. Kod ve komutlar: [14](#14-kod-betikler-ve-komutlar).
 
@@ -1279,7 +1280,7 @@ link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 | `npm run db:migrate` | Henüz çalışmamış betikleri çalıştırır |
 | `npm run db:reset` | Bilgisayardaki veritabanını silip tabloları baştan kurar; yalnızca `localhost` adresinde çalışır |
 | `npm run db:seed` | Sitenin örnek verisini boş veritabanına yükler (aşağıda); yalnızca `localhost` adresinde çalışır |
-| `npm run db:yukle <canli\|deneme> [eksikler]` | Bugünkü veriyi canlı ya da deneme veritabanına yükler (aşağıda); bilgisayar dışındaki veritabanında onay ister |
+| `npm run db:yukle <canli\|deneme> [guncelle]` | Bugünkü veriyi canlı ya da deneme veritabanına yükler; varsayılan yalnızca eksik kayıtları ekler (aşağıda); bilgisayar dışındaki veritabanında onay ister |
 | `npm run db:generate` | Şema değişince yeni geçiş betiği üretir |
 | `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
 | `npm run test:e2e:db` | Sitenin veritabanı modunda tarayıcı testleri (`tests/e2e-db`, `scripts/e2e-db.mts`): test veritabanını baştan kurup örnek veriyi yükler, siteyi `.next-db`'ye derler, testleri çalıştırır |
@@ -1331,18 +1332,20 @@ kurulmamışsa komut bunu söyler. Bağlantı `DATABASE_URL`'dir.
 - **Eşleme:** `db:seed` ile aynı (`seedTables`). Yorumlar üyeye bağlanmaz
   (üyeler yüklenmez). Depo stoğu bir SAP okuması sayılmaz:
   `sap_sync_runs`'a satır yazılmaz, `sync_run_id` boş kalır.
-- **Tekrar çalıştırılabilir:** Kayıt birincil anahtarıyla eşleşir. Olmayan
-  eklenir; olan veriden farklıysa güncellenir, aynıysa yazılmaz. Veride
-  bulunmayan bir "son değişiklik" kolonu (`updated_at`) güncellenen satırda
-  o anın zamanını alır.
+- **Tekrar çalıştırılabilir:** Kayıt birincil anahtarıyla eşleşir.
+  Varsayılan olarak yalnızca olmayan kayıt eklenir; kimliği ya da benzersiz
+  bir alanı (kod, ad, link) var olan satır atlanır ("zaten var"). Panel
+  veritabanına yazdığı için (Aşama 5) paneldeki değişikliklerin üzerine
+  yazılmasın diye varsayılan budur (Aşama 5.6).
 - **Hiçbir kayıt silinmez:** Veriden çıkarılmış ya da veritabanına başka
   yoldan eklenmiş kayıt (üye, sipariş, panelden eklenen içerik) olduğu gibi
   kalır. Ürün başka kategoriye taşınırsa eski kategorinin filtre değerlerini
   veritabanının kendi kuralı siler (`products_category_moved`).
-- **`eksikler`:** Yalnızca olmayan kayıt eklenir; kimliği ya da benzersiz bir
-  alanı (kod, ad, link) var olan satır atlanır. Panel veritabanına yazmaya
-  başlayınca (Aşama 5) paneldeki değişikliklerin üzerine yazılmasın diye bu
-  kullanılır.
+- **`guncelle`:** Olan kayıt veriden farklıysa güncellenir, aynıysa
+  yazılmaz ("değişmeyen"). Panelde yapılan değişiklikler kaybolur; komut
+  bunu ekrana yazar. Veride bulunmayan bir "son değişiklik" kolonu
+  (`updated_at`) güncellenen satırda o anın zamanını alır. Eski yazım
+  `eksikler` artık kabul edilmez (varsayılan zaten odur).
 - **Stok üzerine yazılmaz:** Depo stoğu, bayi ve satıcı stokları, yükleme
   geçmişi ve kod eşlemeleri her iki şekilde de yalnızca eksikse eklenir;
   depo stoğunu SAP okuma işi, bayi stoğunu bayinin dosyası günceller.
@@ -2234,6 +2237,14 @@ veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını
   başlığı, yapısal verisi, site haritası ve derlemede hazırlanan sayfa
   listesi de katalogdan üretilir. Tek önbellek kaydı en fazla 2 MB tutar;
   bugün katalogun tamamı ~110 KB.
+- **Tarayıcıdaki kopya (Aşama 5.6):** Veritabanı modunda tarayıcının veri
+  kopyası (`packages/store/src/database.ts`) boş başlar; bütün kayıtlar
+  sunucudan gelir. Kopya tarayıcı deposuna (`zenweld.db.v1`) yazılmaz,
+  aynı adreste daha önce çalışmış demodan kalan kopya silinir. Ayar
+  derlemede tarayıcı paketine de yazılır (`NEXT_PUBLIC_DATA_SOURCE`,
+  `next.config.mjs`); örnek veri (`packages/data/src/seed/`) pakete girmez.
+  `@zenweld/data` paketi yan etkisiz işaretlidir (`"sideEffects": false`):
+  kullanılmayan örnek veri dosyaları derlemede atılır.
 - İçerik (`readContent`; `apps/zenweld-web/src/lib/server/content.ts`):
   blog, haber, etkinlik, SSS, yasal metinler, Hakkımızda, satış
   temsilcileri, belge sayfaları ve `page_seo`. Her sayfada kullanılan

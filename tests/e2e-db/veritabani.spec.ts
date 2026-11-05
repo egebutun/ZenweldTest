@@ -1,5 +1,6 @@
 import { sapItemCode } from "@zenweld/data";
 import { formatPrice } from "@zenweld/utils";
+import { demoAccount } from "../e2e/yardimci";
 import { withLuhn } from "../unit/ornek";
 import {
   catalog,
@@ -21,9 +22,9 @@ import {
  *
  * Site test veritabanindan okurken: butun sayfalar acilir, fiyat ve stok
  * veritabaniyla ayni, degisiklik yenilemeden sonra hemen gorunur, SAP stok
- * okumasi sayfaya hemen yansir, agir veri yalnizca gereken sayfaya gider, uye
- * kartla satin alabilir. Veriyi degistiren testler sonunda eski haline
- * dondurur.
+ * okumasi sayfaya hemen yansir, agir veri yalnizca gereken sayfaya gider,
+ * ornek veri tarayiciya gonderilmez (Asama 5.6), uye kartla satin alabilir.
+ * Veriyi degistiren testler sonunda eski haline dondurur.
  */
 test.describe.configure({ mode: "serial" });
 test.afterAll(closeDatabase);
@@ -213,6 +214,44 @@ test("ağır ve sayfaya özel veri yalnızca gereken sayfaya gider", async ({ re
   } finally {
     await sql("UPDATE legal_pages SET body = replace(body, $1, '') WHERE id = 'kvkk'", [` ${marker}`]);
     await refreshSite(request, ["icerik"]);
+  }
+});
+
+test("örnek veri tarayıcıya gönderilmez; tarayıcı deposuna veri yazılmaz (Aşama 5.6)", async ({ page }) => {
+  // Sitenin ve panelin yukledigi JavaScript dosyalari toplanir.
+  const scripts = new Set<string>();
+  page.on("response", (r) => {
+    if (/\/_next\/static\/.+\.js$/.test(new URL(r.url()).pathname)) scripts.add(r.url());
+  });
+  const stored = () => page.evaluate(() => localStorage.getItem("zenweld.db.v1"));
+
+  // Ayni adreste daha once calismis demo sitesinden kalan veri silinir.
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("zenweld.db.v1", JSON.stringify({ version: 0 })));
+  const { products } = await catalog();
+  for (const path of ["/", `/urun/${products[0].slug}`, "/sepet", "/hakkimizda", "/satis-temsilcilerimiz"]) {
+    await page.goto(path);
+    await expect.poll(stored).toBeNull();
+  }
+  await memberLogin(page);
+  await page.goto("/hesabim/siparislerim");
+  const admin = demoAccount("Yönetici");
+  await page.goto("/yonetim/giris");
+  await page.fill("#admin-email", admin.email);
+  await page.fill("#admin-password", admin.password);
+  await page.locator("form button[type=submit]").click();
+  await expect(page.getByRole("button", { name: "Çıkış" })).toBeVisible();
+  for (const path of ["/yonetim/belgeler", "/yonetim/hakkimizda", "/yonetim/uyeler"]) await page.goto(path);
+  expect(await stored()).toBeNull();
+
+  // Ornek veriden isaretler: demo hesap, ornek teklif, urun ve temsilci adlari.
+  // Bunlar sayfaya sunucudan veri olarak gelir; JavaScript dosyalarinda gecmez.
+  const [rep] = await sql<{ name: string }>("SELECT name FROM sales_reps ORDER BY name LIMIT 1");
+  const markers = [demoAccount("Bireysel").email, "TKL-2026-0001", products[0].name, rep.name];
+  expect(scripts.size).toBeGreaterThan(0);
+  for (const url of scripts) {
+    const body = await (await page.request.get(url)).text();
+    for (const marker of markers) expect(body.includes(marker), `${url} › ${marker}`).toBe(false);
   }
 });
 

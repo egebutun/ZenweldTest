@@ -54,7 +54,10 @@ test("yasal metin: başlık kaydedilir ve sitede görünür; hemen ardından esk
   expect(await (await request.get("/yasal/kvkk")).text()).toContain(changed);
 
   await title.fill(original);
+  // Ilk kaydin mesaji ekranda durur; ikinci kaydin sunucu yaniti beklenir.
+  const second = page.waitForResponse((r) => r.url().endsWith("/api/yonetim/icerik/yasal-metin"));
   await page.getByRole("button", { name: "Değişiklikleri Kaydet" }).click();
+  expect((await (await second).json()).ok).toBe(true);
   await expect(page.getByText("Metin kaydedildi.")).toBeVisible();
   await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
   expect((await sql<{ title: string }>("SELECT title FROM legal_pages WHERE id = 'kvkk'"))[0].title).toBe(original);
@@ -148,6 +151,21 @@ test("belgeler: dosya depoya yüklenir; eklenen belge sitede görünür ve açı
   const audit = await sql<{ action: string }>("SELECT action FROM audit_log WHERE entity_type = 'documents' AND entity_id = $1 ORDER BY id", [doc.id]);
   expect(audit.map((a) => a.action)).toEqual(["create", "update", "delete"]);
   await site.close();
+});
+
+test("belgeler: ürün seçimi veritabanındaki ürünlerden gelir", async ({ page }) => {
+  // Urunun adi yalnizca veritabaninda degisir; Belge Ekle penceresi yeni adi gosterir.
+  const [product] = await sql<{ id: string; name: string; sku: string }>("SELECT id, name, sku FROM products ORDER BY name LIMIT 1");
+  const name = `Belge Ürünü ${stamp}`;
+  await sql("UPDATE products SET name = $2 WHERE id = $1", [product.id, name]);
+  try {
+    await panelLogin(page);
+    await page.goto("/yonetim/belgeler");
+    await page.getByRole("button", { name: "Belge Ekle" }).click();
+    await expect(field(page.getByRole("dialog"), "Ürün").locator(`option[value="${product.id}"]`)).toHaveText(`${name} · ${product.sku}`);
+  } finally {
+    await sql("UPDATE products SET name = $2 WHERE id = $1", [product.id, product.name]);
+  }
 });
 
 test("belge sayfası: açıklama kaydedilir ve sitede görünür; eski haline döner", async ({ page, request }) => {

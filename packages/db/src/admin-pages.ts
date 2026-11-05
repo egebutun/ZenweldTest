@@ -13,7 +13,7 @@ import {
 import { tr } from "@zenweld/i18n";
 import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
 import { checkRow, direction, fail, isFailure, newId, reorder, saved, text, unchanged, type PanelResult, type Saved } from "./panel";
-import { readContent } from "./read";
+import { readCatalog, readContent } from "./read";
 import * as s from "./schema";
 
 /**
@@ -58,9 +58,10 @@ const sectionOf = (value: unknown): DocumentSection | null =>
 
 /**
  * Yasal Metinler, Belgeler ve Sayfa SEO ekranlarinin verisi, son degisiklik
- * anlariyla (yasal metinlerde ve belgelerde zaten var).
+ * anlariyla (yasal metinlerde ve belgelerde zaten var). products: Belgeler
+ * ekraninin urun secimi icin urunler de okunur (belge urune baglanir).
  */
-export async function readPagesPanel(db: AuditDb): Promise<Partial<ZenweldDatabase>> {
+export async function readPagesPanel(db: AuditDb, options: { products?: boolean } = {}): Promise<Partial<ZenweldDatabase>> {
   const content = await readContent(db);
   const pageStamps = new Map(
     (await db.select({ section: s.documentPages.section, updatedAt: s.documentPages.updatedAt }).from(s.documentPages)).map(
@@ -77,6 +78,7 @@ export async function readPagesPanel(db: AuditDb): Promise<Partial<ZenweldDataba
     pageSeo: Object.fromEntries(
       Object.entries(content.pageSeo ?? {}).map(([path, fields]) => [path, { ...fields, updatedAt: seoStamps.get(path) }]),
     ),
+    ...(options.products ? { products: (await readCatalog(db)).products } : {}),
   };
 }
 

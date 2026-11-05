@@ -75,11 +75,13 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       çalışmış bir veritabanında `npm run db:yukle canli` katalog, içerik,
       ayarlar, bayiler ve depo stoğunu yükler ve tablo tablo eklenenleri
       yazar; `users`, `orders`, `reviews`, `coupons` ve `dealer_stock` boş
-      kalır. Aynı komut ikinci kez çalışınca her satır "değişmeyen"dir.
+      kalır. Aynı komut ikinci kez çalışınca her satır "zaten var"dır.
       `npm run db:yukle deneme` ayrıca yorum, kupon ve bayi stoklarını
       ekler. `db:studio`'da bir ürünün fiyatı değiştirilince
-      `npm run db:yukle canli eksikler` ona dokunmaz, `npm run db:yukle canli`
-      eski fiyata döndürür. Adres `localhost` değilse komut veritabanının
+      `npm run db:yukle canli` ona dokunmaz, `npm run db:yukle canli
+      guncelle` eski fiyata döndürür (ekrana "panelde yapılan değişiklikler
+      kaybolur" yazar). `npm run db:yukle canli eksikler` kullanım
+      bilgisini gösterip durur. Adres `localhost` değilse komut veritabanının
       adını sorar; yanlış yazılırsa hiçbir şey yüklemez.
 - [ ] Yönetici hesabı (`npm run yonetici:olustur`): boş bir veritabanında
       e-posta, ad, soyad, telefon ve iki kez şifre sorar; şifre ekranda
@@ -1121,6 +1123,13 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       kapalıdır (tarayıcı testi de dener).
 - [ ] Aynı modda veritabanı kapanırsa yayındaki sayfalar son hazırlanmış
       haliyle açılmaya devam eder; veritabanı açılınca güncel veri gelir.
+- [ ] Aynı modda tarayıcıda örnek veri yok (Aşama 5.6): sitede ve panelde
+      gezildikten sonra tarayıcının geliştirici araçlarında (Application ›
+      Local Storage) `zenweld.db.v1` yoktur; demodan kalmışsa ilk açılışta
+      silinir. Sitenin JavaScript dosyalarında demo hesaplar, örnek
+      teklifler, ürün ve temsilci adları geçmez (tarayıcı testi de dener).
+      Panelde Belgeler › Belge Ekle'nin Ürün listesi veritabanındaki
+      ürünlerdir: `db:studio`'da adı değiştirilen ürün yeni adıyla görünür.
 - [ ] `npm run test:e2e:db` geçer: veritabanı modunda bütün sayfalar
       hatasız açılır; bütün ürünlerin fiyatı ve stok durumu veritabanıyla
       aynıdır; değişiklik yenilemeden sonra hemen görünür; bayi stoğu,

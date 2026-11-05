@@ -1,21 +1,31 @@
 "use client";
 
-import { createSeedDatabase, DB_VERSION, type ZenweldDatabase } from "@zenweld/data";
+import { createEmptyDatabase, createSeedDatabase, DB_VERSION, type ZenweldDatabase } from "@zenweld/data";
 
 /**
- * Backend yerine gecen veri katmani.
+ * TARAYICIDAKI VERI KOPYASI
  *
- * Tum veri tarayicinin localStorage'inda tutulur. Sunucu tarafinda (SSR)
- * her zaman seed veritabani dondurulur, boylece hydration tutarli kalir.
+ * Demo modunda backend yerine gecer: tum veri tarayicinin localStorage'inda
+ * tutulur. Sunucu tarafinda (SSR) her zaman seed veritabani dondurulur,
+ * boylece hydration tutarli kalir.
  *
- * ILERIDE: adapter'i Supabase/Firebase ile degistirmek icin yalnizca
- * read()/write() fonksiyonlarini degistirmek yeterlidir.
+ * Veri kaynagi veritabaniysa (DATA_SOURCE=database) butun kayitlar
+ * sunucudan gelir (ServerDataProvider, uyelik ve form uclari). Kopya bos
+ * baslar, tarayici deposuna yazilmaz ve ornek veri tarayici paketine girmez
+ * (Asama 5.6): ayar derlemede next.config'te NEXT_PUBLIC_DATA_SOURCE olarak
+ * pakete yazilir; derleyici ornek veriyi kullanan dali paketten atar.
  *
  * !! ONEMLI !! Tohum verisi veya sema her degistiginde DB_VERSION
  * artirilmalidir; kayitli surum tuttugu surece tohum hic kurulmaz.
  */
 
 const STORAGE_KEY = "zenweld.db.v1";
+
+/** Veri kaynagi veritabani mi (derlemede belirlenir). */
+const SERVER_DATA = process.env.NEXT_PUBLIC_DATA_SOURCE === "database";
+
+/** Baslangic verisi: demo modunda ornek veri, veritabani modunda bos. */
+const initialDatabase = (now?: number): ZenweldDatabase => (SERVER_DATA ? createEmptyDatabase() : createSeedDatabase(now));
 
 /**
  * Derleme ani. next.config icinde NEXT_PUBLIC_BUILD_TIME olarak tanimlanir
@@ -40,7 +50,16 @@ function isBrowser(): boolean {
 }
 
 function loadFromStorage(): ZenweldDatabase {
-  if (!isBrowser()) return createSeedDatabase(BUILD_TIME.getTime());
+  if (!isBrowser()) return initialDatabase(BUILD_TIME.getTime());
+  if (SERVER_DATA) {
+    // Ayni adreste daha once calismis demo sitesinden kalan veri silinir.
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* depo kapali olabilir */
+    }
+    return initialDatabase();
+  }
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -54,7 +73,7 @@ function loadFromStorage(): ZenweldDatabase {
     /* bozuk kayit — tohumla bastan kur */
   }
 
-  const seed = createSeedDatabase();
+  const seed = initialDatabase();
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
   } catch {
@@ -69,10 +88,10 @@ export function getSnapshot(): ZenweldDatabase {
   return memoryDb;
 }
 
-/** Sunucu anlik goruntusu — her zaman seed. */
+/** Sunucu anlik goruntusu — demo modunda her zaman seed, veritabani modunda bos. */
 export function getServerSnapshot(): ZenweldDatabase {
   // Sunucuda ve tarayicinin ilk ciziminde ayni tohum: tarihler derleme anina gore.
-  if (!serverSnapshot) serverSnapshot = createSeedDatabase(BUILD_TIME.getTime());
+  if (!serverSnapshot) serverSnapshot = initialDatabase(BUILD_TIME.getTime());
   return serverSnapshot;
 }
 
@@ -81,7 +100,7 @@ export function getServerSnapshot(): ZenweldDatabase {
  * sekmenin bellekteki kopyasina alinir; yoksa bu sekmenin bir sonraki kaydi
  * butun veritabanini kendi eski kopyasiyla yazip o degisikligi silerdi.
  */
-if (isBrowser()) {
+if (isBrowser() && !SERVER_DATA) {
   window.addEventListener("storage", (event) => {
     if (event.key !== STORAGE_KEY && event.key !== null) return;
     memoryDb = null; // bir sonraki okuma depodan yapilir
@@ -131,7 +150,8 @@ export function mutate(updater: (db: ZenweldDatabase) => ZenweldDatabase | void)
   const current = getSnapshot();
   const draft = structuredClone(current);
   const result = updater(draft) ?? draft;
-  if (isBrowser()) {
+  // Veritabani modunda kayitlar sunucuya yazilir; bu kopya depoya yazilmaz.
+  if (isBrowser() && !SERVER_DATA) {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
     } catch (err) {

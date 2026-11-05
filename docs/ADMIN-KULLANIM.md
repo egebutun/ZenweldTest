@@ -2170,6 +2170,8 @@ sayfaları. Yüklenen belgeler sitede bu listedeki sırayla görünür."
 - **Başlık** (zorunlu): Elle yazılmadıkça seçilen dosyanın adıyla
   (uzantısız) dolar.
 - **Ürün:** "İsteğe bağlı. Ziyaretçi ürün adı veya koduyla arayabilir."
+  Liste ürün adına göre sıralıdır ("ad · kod"); veritabanı modunda
+  veritabanındaki ürünlerdir (panelden eklenen ürün de listede).
 - **Parti / Lot No** (yalnızca Parti Sertifikaları): "İsteğe bağlı.
   Ziyaretçi parti numarasıyla arayabilir."
 - **Yayında (sitede görünür).**

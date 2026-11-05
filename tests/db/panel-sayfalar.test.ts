@@ -70,9 +70,12 @@ const audit = async (client: PoolClient) =>
   (await client.query("SELECT action, entity_type, entity_id, changes FROM audit_log WHERE actor_user_id = $1 ORDER BY id", [admin.id])).rows;
 
 describe("okuma", () => {
-  it("yasal metinler, belgeler, belge sayfaları ve sayfa SEO'su son değişiklik anlarıyla; Görünüm", async () => {
+  it("yasal metinler, belgeler, belge sayfaları ve sayfa SEO'su son değişiklik anlarıyla; Belgeler'e ürünler; Görünüm", async () => {
     await withPages(async (db) => {
       const data = await readPagesPanel(db);
+      // Urunler yalnizca Belgeler ekranina (urun secimi) okunur.
+      expect(data.products).toBeUndefined();
+      expect((await readPagesPanel(db, { products: true })).products?.map((p) => [p.id, p.sku])).toEqual([["p1", "ZW-1"]]);
       expect(data.legalPages).toEqual([{ id: "kvkk", title: "KVKK", body: "Metin", updatedAt: T0.toISOString() }]);
       expect(data.documentPages).toEqual([{ section: "msds", title: "MSDS", subtitle: "Formlar", updatedAt: T0.toISOString() }]);
       expect(data.pageSeo).toEqual({ "/msds": { title: "MSDS Başlık", description: undefined, updatedAt: T0.toISOString() } });

@@ -55,7 +55,9 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 4. Veri yükleme (`npm run db:yukle canli|deneme`, KARARLAR K-91): bugünkü
    veri canlı ya da deneme veritabanına yüklenir; satış hareketleri hiç,
    örnek yorum, kupon ve bayi stokları yalnızca denemeye. Tekrar
-   çalıştırılabilir, hiçbir kaydı silmez, stoğun üzerine yazmaz.
+   çalıştırılabilir, hiçbir kaydı silmez, stoğun üzerine yazmaz. Varsayılanı
+   yalnızca eksik kayıtları eklemektir; var olanı değiştirmek için `guncelle`
+   yazılır (Aşama 5.6).
 5. SAP stok okuma işi (deneme dosyasıyla): `/api/sap/stok` ucu 15 dakikada
    bir zamanlayıcıyla çağrılır; okuma kaydı, tek işlemde yenileme, hatada
    son iyi stoğun korunması, stok değişince sayfaların o anda yenilenmesi
@@ -73,7 +75,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) — bitti; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — bitti, K-105) — bitti, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası (6.1 Üyeler; 6.2 İşlem Kaydı ve E-posta Kaydı; 6.3 panel ana sayfası) — bitti; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) — bitti; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — bitti, K-105) — bitti, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası (6.1 Üyeler; 6.2 İşlem Kaydı ve E-posta Kaydı; 6.3 panel ana sayfası) — bitti; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler` — bitti); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. Aşama 5 bitti; kalanlar aşağıda "Veritabanı — bütün kayıtlar" bölümünde. Veri yükleme komutu artık varsayılan olarak yalnızca eksik kayıtları ekler (K-91): `guncelle` yazılmadıkça panelde yapılan değişikliklerin üzerine yazılmaz | — |
 | 2 | **Aşama 6 — Dosya deposu:** panelden görsel ve belge yükleme hazır (K-108; sunucunun diski, `DOSYA_KLASORU`). Kalan: deponun yeri ve yedeği, istenirse S3 uyumlu depo parçası, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** aktarım sırası, iş (`/api/sap/siparis`), yeniden deneme ve panel kutusu hazır (K-108; bugün deneme dosyasına yazıyor). Kalan: siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si ve bağlantı bilgileri; cari ve KDV kararları (CANLIYA-CIKIS-SORULARI › 2) |
@@ -109,8 +111,9 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
   veritabanı için `deneme`) bugünkü veriyi yükler (KARARLAR K-91); komut
   onay için veritabanının adını sorar. `npm run db:seed` örnek üye ve
   siparişleri de yüklediği için yalnızca bilgisayarda çalışır. Panel
-  veritabanına yazmaya başlayınca (Aşama 5) veri doğrudan panelden girilir;
-  komut o zaman yalnızca `eksikler` ile kullanılır.
+  veritabanına yazdığı için (Aşama 5) veri doğrudan panelden girilir; komut
+  yalnızca eksik kayıtları ekler (Aşama 5.6), `guncelle` yazılırsa paneldeki
+  değişikliklerin üzerine yazar.
 
 ### Ölçüm (Aşama 3.7, 2026-11-04)
 
@@ -134,10 +137,14 @@ canlı sunucuda ayrıca ölçülmeli.
 - Veritabanı modunda her sayfa ~22–26 KB daha büyük: katalog sayfanın
   içinde geliyor (3.3'te planlandığı gibi; sayfa geçişlerinde tekrar
   inmez). Toplam indirme ve açılış süresi iki modda neredeyse aynı.
-- Her sayfada ~300 KB JavaScript iniyor. Bunun ~47 KB'ı tarayıcıya giden
-  örnek veri (ürünler, örnek üye ve siparişler dahil); tarayıcı veri
-  tutmayı bıraktığında (Aşama 5) çıkar. Gerçek üye ve sipariş verisi
-  hiçbir zaman tarayıcı paketine girmemeli. Gerisi sitenin kendisi
+- Her sayfada ~300 KB JavaScript iniyor. Ölçümde bunun ~47 KB'ı tarayıcıya
+  giden örnek veriydi (ürünler, örnek üye ve siparişler dahil). Aşama
+  5.6'dan beri veritabanı modunda örnek veri tarayıcı paketine girmez
+  (`npm run test:e2e:db` dener); demo modunda girer. Sayfa tamamen
+  yüklendikten sonra sayılınca veritabanı modunda her sayfa ~28 KB
+  (sıkıştırılmış) daha az JavaScript indirir: anasayfa 329 → 301 KB, ürün
+  sayfası 276 → 248 KB (2026-11-05, bilgisayarda). Gerçek üye ve sipariş
+  verisi hiçbir zaman tarayıcı paketine girmemeli. Gerisi sitenin kendisi
   (Next.js ve React, harita, arama, simgeler).
 - Anasayfa ve sepette en büyük içeriğin geç görünmesinin başlıca nedeni
   görseller ve JavaScript; görsel küçültme (A5) ve canlı sunucuda
@@ -678,9 +685,11 @@ modunda sipariş sunucuda kaydediliyor (Aşama 5.2), ödeme temsili. Canlı içi
 
 ## Veritabanı — bütün kayıtlar (backend)
 
-Bugün bütün kayıtlar (ürünler, siparişler, üyeler, teklifler, ayarlar…)
-ziyaretçinin tarayıcısında duruyor (`zenweld.db.v1`). Her tarayıcı kendi
-kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
+Demo modunda bütün kayıtlar (ürünler, siparişler, üyeler, teklifler,
+ayarlar…) ziyaretçinin tarayıcısında duruyor (`zenweld.db.v1`). Her tarayıcı
+kendi kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
+Veritabanı modunda (`DATA_SOURCE=database`) bütün kayıtlar sunucu
+veritabanındadır; tarayıcıya örnek veri gönderilmez (Aşama 5.6).
 
 1. Bütün kayıt türleri sunucu veritabanına (PostgreSQL, KARARLAR K-81)
    taşınmalı. Kayıt türleri, alanlar, ilişkiler ve silme kuralları:
@@ -797,8 +806,11 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      sağlayıcısı, SAP sipariş aktarım sırası, dosya deposu (panelden
      dosya yükleme) bitti. 6. alan bitti: Üyeler (6.1), İşlem Kaydı ve
      E-posta Kaydı ekranları (6.2), panel ana sayfası (6.3); panelin bütün
-     ekranları veritabanından okur ve yazar. Sonraki: 5.6; canlıya
-     hazırlık.
+     ekranları veritabanından okur ve yazar. 5.6 bitti: veritabanı modunda
+     tarayıcıdaki kopya boş başlar, tarayıcıya yazılmaz ve örnek veri
+     tarayıcı paketine girmez; panelde Belgeler'in ürün listesi de artık
+     veritabanından gelir; `db:yukle` varsayılanı yalnızca eksikleri
+     eklemek. Aşama 5 bitti. Sonraki: canlıya hazırlık.
    - 6. alandan kalanlar: panel ana sayfası siparişlerin, tekliflerin ve
      üyelerin tamamını tarayıcıya gönderir; kayıt sayısı büyüyünce (ör.
      binlerce sipariş) özet ve grafikler sunucuda hesaplanmalı. Üyeler,

@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import { ArrowDown, ArrowUp, ExternalLink, Plus, Trash2 } from "lucide-react";
-import {
-  aboutDraftError,
-  about as defaultAbout,
-  type AboutContent,
-  type AboutSection,
-} from "@zenweld/data";
+import { aboutDraftError, type AboutContent, type AboutSection } from "@zenweld/data";
 import { uid, useDatabase } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, Textarea } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
@@ -60,7 +55,7 @@ const emptySection = (): AboutSection => ({
 export function AboutClient() {
   const db = useDatabase();
   const actions = useContentActions();
-  const [draft, setDraft] = useState<AboutContent>(() => db.about ?? defaultAbout);
+  const [draft, setDraft] = useState<AboutContent>(() => db.about);
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,7 +82,7 @@ export function AboutClient() {
     setError(null);
     const problem = aboutDraftError(draft);
     if (problem) return setError(problem);
-    const answer = await actions.saveAbout({ ...draft, stats: draft.stats.filter((s) => s.value.trim()) }, db.about ?? defaultAbout);
+    const answer = await actions.saveAbout({ ...draft, stats: draft.stats.filter((s) => s.value.trim()) }, db.about);
     if (!answer.ok) return setError(answer.error);
     setDirty(false);
     setSaved(true);
@@ -97,7 +92,7 @@ export function AboutClient() {
     <>
       <AdminPageHeader
         title="Hakkımızda"
-        description={`Son kayıt: ${formatDateTime((db.about ?? defaultAbout).updatedAt)}`}
+        description={`Son kayıt: ${formatDateTime(db.about.updatedAt)}`}
         action={
           <div className="flex items-center gap-3">
             <a

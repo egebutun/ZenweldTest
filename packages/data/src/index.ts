@@ -31,7 +31,6 @@ export { reviews } from "./seed/reviews.seed";
 export { events, news } from "./seed/events.seed";
 export { stockPhotos } from "./seed/images";
 export { defaultSettings } from "./seed/settings.seed";
-export { about, salesReps } from "./seed/company.seed";
 export { legalPages } from "./seed/legal.seed";
 export { DOCUMENT_SECTIONS, documentPages } from "./seed/documents.seed";
 
@@ -104,4 +103,48 @@ export function createSeedDatabase(now: number = Date.now()): ZenweldDatabase {
       settings: defaultSettings,
     }),
   ) as ZenweldDatabase;
+}
+
+/**
+ * Bos veritabani: veri kaynagi veritabaniyken tarayicidaki kopya (Asama
+ * 5.6). Butun kayitlar sunucudan gelir; ornek veri tarayiciya gonderilmez.
+ * Ayarlar yalnizca kaydin tamam olmasi icin varsayilandir; sayfalar
+ * ayarlari sunucudan alir.
+ */
+export function createEmptyDatabase(): ZenweldDatabase {
+  return {
+    version: DB_VERSION,
+    products: [],
+    categories: [],
+    categoryGroups: [],
+    optionDefinitions: [],
+    dealers: [],
+    retailers: [],
+    dealerStock: [],
+    retailerStock: [],
+    stockImports: [],
+    skuAliases: [],
+    warehouseStock: [],
+    users: [],
+    addresses: [],
+    quotes: [],
+    orders: [],
+    coupons: [],
+    couponRedemptions: [],
+    blogPosts: [],
+    events: [],
+    news: [],
+    faqs: [],
+    documentPages: [],
+    documents: [],
+    reviews: [],
+    warranties: [],
+    about: { heroTitle: "", heroSubtitle: "", stats: [], sections: [], updatedAt: "" },
+    salesReps: [],
+    legalPages: [],
+    serviceRequests: [],
+    returnRequests: [],
+    recordCounters: {},
+    settings: structuredClone(defaultSettings),
+  };
 }
