@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "npm run dev --workspace=@zenweld/web",
     "dev:web": "npm run dev --workspace=@zenweld/web",
-    "build": "npm run build --workspace=@zenweld/web",
-    "build:web": "npm run build --workspace=@zenweld/web",
+    "build": "eslint . && npm run build --workspace=@zenweld/web",
+    "build:web": "eslint . && npm run build --workspace=@zenweld/web",
     "lint": "eslint .",
     "typecheck": "npm run typecheck --workspaces --if-present && tsc --noEmit -p tests",
     "test": "vitest run",

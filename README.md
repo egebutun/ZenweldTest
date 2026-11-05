@@ -15,6 +15,12 @@ form e-postalarını gönderen üç küçük uç vardır (`app/api`).
 | Ana Zenweld sitesi | https://zenweld-test-zenweld-web.vercel.app |
 | Zenweld yönetim paneli | https://zenweld-test-zenweld-web.vercel.app/yonetim |
 
+Her gönderimde (push) Vercel siteyi yeniden derleyip yayınlar. Sonuç
+GitHub'da commit'in yanında görünür (Vercel ✓ ya da ✗); ✗ ise site önceki
+başarılı halinde kalır. Vercel paketleri uygulama klasöründen
+(`apps/zenweld-web`) kurar, kod denetimini (ESLint) çalıştırmaz; denetim
+bilgisayarda `npm run build` ile yapılır.
+
 ---
 
 ## Belgeler
