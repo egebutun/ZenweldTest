@@ -80,6 +80,7 @@ Diğer temel bilgiler:
 | 9 | [KARARLAR.md](KARARLAR.md) | Alınan kararlar ve nedenleri |
 | 10 | [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) | Bir özelliğin doğru çalıştığını doğrulamak için madde madde test listesi |
 | 11 | [YAPILACAKLAR.md](YAPILACAKLAR.md) | Sonraya bırakılan işler ve backend'e geçiş notları |
+| 12 | [CANLIYA-CIKIS-SORULARI.md](CANLIYA-CIKIS-SORULARI.md) | Canlıya çıkmadan şirketteki kişilere (BT, SAP danışmanı, muhasebe, hukuk, kargo, ödeme kuruluşu) sorulacaklar |
 | — | [README.md](../README.md) (proje kökünde) | Teknik başlangıç: kurulum, çalıştırma, demo hesaplar, proje yapısı |
 | — | [CLAUDE.md](../CLAUDE.md) (proje kökünde) | Bu projede çalışan Claude oturumları için çalışma kuralları |
 

@@ -83,6 +83,9 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 ### Kodla çözülmeyen, şimdiden başlatılması gerekenler
 
+Şirketteki kişilere sorulacakların kişiye göre listesi:
+[CANLIYA-CIKIS-SORULARI.md](CANLIYA-CIKIS-SORULARI.md).
+
 - **BT:**
   - Canlı sunucu: kendi sunucumuz ve alan adımız (KARARLAR K-92). Yeri
     (KVKK ile birlikte), kurulumu (HTTPS, zamanlayıcı, yedek, izleme) ve
