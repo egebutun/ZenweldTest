@@ -3,6 +3,7 @@ export * from "./read";
 export * from "./sap-stock";
 export * from "./sap-orders";
 export * from "./file-storage";
+export * from "./admin-members";
 export * as schema from "./schema";
 export * from "./orders";
 export * from "./payment";

@@ -1,0 +1,208 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Download, Search, Trash2 } from "lucide-react";
+import { downloadCsv, listUsers, useDatabase } from "@zenweld/store";
+import type { User, UserRole, UserStatus } from "@zenweld/data";
+import { ROLE_LABELS, useAuth } from "@zenweld/auth";
+import { Alert, Badge, Button, Input, Select } from "@zenweld/ui";
+import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { useMembersActions, type PanelAnswer } from "@/lib/admin-members";
+import { formatDate } from "@zenweld/utils";
+
+const STATUS_LABEL: Record<UserStatus, string> = {
+  active: "Aktif",
+  suspended: "Askıda",
+};
+
+/**
+ * Uyeler: arama, rol ve durum filtresi, CSV; rol, durum ve silme.
+ * Veritabani modunda islemler sunucuya yazilir (lib/admin-members.ts).
+ */
+export function MembersClient() {
+  const db = useDatabase();
+  // Yonetici kendi rolunu degistiremez ve kendini askiya alamaz (panelden
+  // atilir). Son yoneticiyi veri katmani ve sunucu da korur (K-35).
+  const { user: me } = useAuth();
+  const actions = useMembersActions();
+  const [error, setError] = useState<string | null>(null);
+  const run = async (action: Promise<PanelAnswer>) => {
+    setError(null);
+    const answer = await action;
+    if (!answer.ok) setError(answer.error);
+  };
+  const save = (u: User, change: Partial<Pick<User, "role" | "status">>) =>
+    void run(actions.save(u, { role: change.role ?? u.role, status: change.status ?? u.status }));
+  const [query, setQuery] = useState("");
+  const [role, setRole] = useState("");
+  const [status, setStatus] = useState("");
+
+  const users = useMemo(() => {
+    const q = query.trim().toLocaleLowerCase("tr");
+    return listUsers(db).filter(
+      (u) =>
+        (!role || u.role === role) &&
+        (!status || u.status === status) &&
+        (!q ||
+          u.email.toLocaleLowerCase("tr").includes(q) ||
+          `${u.firstName} ${u.lastName}`.toLocaleLowerCase("tr").includes(q) ||
+          (u.companyName ?? "").toLocaleLowerCase("tr").includes(q)),
+    );
+  }, [db, query, role, status]);
+
+  return (
+    <>
+      <AdminPageHeader
+        title="Üyeler"
+        description={`${users.length} üye listeleniyor`}
+        action={
+          <Button
+            variant="outline"
+            leftIcon={<Download size={16} />}
+            onClick={() =>
+              downloadCsv(
+                users.map((u) => ({
+                  ad: u.firstName,
+                  soyad: u.lastName,
+                  eposta: u.email,
+                  rol: ROLE_LABELS[u.role],
+                  durum: STATUS_LABEL[u.status],
+                  firma: u.companyName ?? "",
+                  vergiNo: u.taxNumber ?? "",
+                  telefon: u.phone,
+                  sehir: u.city ?? "",
+                  kayitTarihi: u.createdAt,
+                })),
+                "zenweld-uyeler.csv",
+              )
+            }
+          >
+            CSV İndir
+          </Button>
+        }
+      />
+
+      {error && (
+        <div className="mb-4">
+          <Alert tone="danger">{error}</Alert>
+        </div>
+      )}
+
+      <div className="mb-4 grid gap-3 sm:grid-cols-3">
+        <div className="relative">
+          <Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-zw-grey-400" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="İsim, e-posta veya firma ara…"
+            className="pl-9"
+          />
+        </div>
+        <Select value={role} onChange={(e) => setRole(e.target.value)}>
+          <option value="">Tüm roller</option>
+          <option value="individual">Bireysel</option>
+          <option value="business">Kurumsal</option>
+          <option value="admin">Yönetici</option>
+        </Select>
+        <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="">Tüm durumlar</option>
+          <option value="active">Aktif</option>
+          <option value="suspended">Askıda</option>
+        </Select>
+      </div>
+
+      <div className="overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white">
+        <table className="w-full text-sm">
+          <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
+            <tr>
+              <th className="px-4 py-3">Üye</th>
+              <th className="px-4 py-3">Firma / Vergi No</th>
+              <th className="px-4 py-3">Rol</th>
+              <th className="px-4 py-3">Durum</th>
+              <th className="px-4 py-3">Kayıt</th>
+              <th className="px-4 py-3 text-right">İşlem</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-zw-grey-100">
+            {users.map((u) => (
+              <tr key={u.id}>
+                <td className="px-4 py-2.5">
+                  <div className="font-semibold">
+                    {u.firstName} {u.lastName}
+                  </div>
+                  <div className="text-xs text-zw-grey-500">{u.email}</div>
+                  <div className="text-xs text-zw-grey-400">{u.phone}</div>
+                </td>
+                <td className="px-4 py-2.5 text-zw-grey-600">
+                  {u.companyName ? (
+                    <>
+                      <div>{u.companyName}</div>
+                      <div className="text-xs text-zw-grey-400">{u.taxNumber}</div>
+                    </>
+                  ) : (
+                    "—"
+                  )}
+                </td>
+                <td className="px-4 py-2.5">
+                  <Select
+                    value={u.role}
+                    disabled={u.id === me?.id || actions.pending}
+                    title={u.id === me?.id ? "Kendi rolünüzü değiştiremezsiniz." : undefined}
+                    onChange={(e) => save(u, { role: e.target.value as UserRole })}
+                    className="w-32 py-1.5 text-xs"
+                  >
+                    <option value="individual">Bireysel</option>
+                    <option value="business">Kurumsal</option>
+                    <option value="admin">Yönetici</option>
+                  </Select>
+                </td>
+                <td className="px-4 py-2.5">
+                  <div className="flex flex-col gap-1.5">
+                    <Badge tone={u.status === "active" ? "green" : "outline"}>
+                      {STATUS_LABEL[u.status]}
+                    </Badge>
+                    <div className="flex gap-1">
+                      {u.status === "suspended" && (
+                        <button
+                          disabled={actions.pending}
+                          onClick={() => save(u, { status: "active" })}
+                          className="rounded-[3px] border border-zw-grey-300 px-2 py-0.5 text-[11px] font-semibold hover:border-emerald-500 hover:text-emerald-700"
+                        >
+                          Aktifleştir
+                        </button>
+                      )}
+                      {u.status === "active" && u.id !== me?.id && (
+                        <button
+                          disabled={actions.pending}
+                          onClick={() => save(u, { status: "suspended" })}
+                          className="rounded-[3px] border border-zw-grey-300 px-2 py-0.5 text-[11px] font-semibold hover:border-amber-500 hover:text-amber-700"
+                        >
+                          Askıya al
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-4 py-2.5 text-xs text-zw-grey-500">
+                  {formatDate(u.createdAt)}
+                </td>
+                <td className="px-4 py-2.5 text-right">
+                  <button
+                    title="Sil"
+                    disabled={u.role === "admin" || actions.pending}
+                    onClick={() => {
+                      if (confirm(`${u.email} silinsin mi?`)) void run(actions.remove(u));
+                    }}
+                    className="rounded-[3px] p-1.5 text-zw-grey-500 hover:bg-zw-red-50 hover:text-zw-red-600 disabled:opacity-30"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}

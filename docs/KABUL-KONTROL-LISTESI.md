@@ -955,6 +955,22 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       ay" bitişe 12 ay ekler, kaldırılınca çıkarır; elle girilen tarih
       korunur.
 
+**Veritabanı modunda Üyeler (KARARLAR K-35, K-36, K-99):**
+
+- [ ] Sitede yeni üye olunca panelde Üyeler listesinde görünür (sayfa
+      yenilenince); yönetici hesapları da listededir.
+- [ ] Üyenin rolü Kurumsal yapılır, hemen ardından **Askıya al**'a basılır:
+      uyarı çıkmaz, `db:studio`'da ikisi de görünür, işlem kaydına iki satır
+      düşer. Askıdaki üye sitede giriş yapamaz; açık oturumu bir sonraki
+      tıklamada kapanır.
+- [ ] Kendi satırında rol listesi kapalıdır, **Askıya al** yoktur; yönetici
+      satırında **Sil** kapalıdır.
+- [ ] İki yönetici varken biri diğerini askıya alır; kalan tek aktif
+      yönetici (başka tarayıcıdan) askıya alınmaya çalışılınca "Son aktif
+      yöneticinin rolü değiştirilemez, askıya alınamaz." çıkar.
+- [ ] Üye silinince `db:studio`'da adresleri ve oturumları da yoktur;
+      siparişleri kalır, siparişin üye bağı boşalır.
+
 **Veritabanı modunda Bayiler, Online Satıcılar, Satış Temsilcileri (KARARLAR K-99, K-103):**
 
 - [ ] Yeni bayi kaydedilince Yetkili Bayi ve Servis Ağı haritasında hemen

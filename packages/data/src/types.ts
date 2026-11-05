@@ -498,6 +498,8 @@ export interface User {
   createdAt: string;
   lastLoginAt?: string;
   newsletter: boolean;
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu uyede (K-99) */
+  updatedAt?: string;
 }
 
 export interface Address {

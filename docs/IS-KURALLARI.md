@@ -814,6 +814,10 @@ panel `packages/db/src/admin-requests.ts`.
   Lütfen bizimle iletişime geçin."); açık oturumu hemen kapanır.
 - **Son yönetici:** Son aktif yöneticinin rolü düşürülemez, askıya alınamaz
   ve silinemez. Yönetici kendi rolünü değiştiremez ve kendini askıya alamaz.
+  Panelde yönetici hesabı silinmez (önce rolü değişir). Veritabanı modunda
+  bu kurallar sunucuda denetlenir; iki yönetici aynı anda birbirini askıya
+  almaya çalışırsa ikincisi kaydedilmez ("Son aktif yöneticinin rolü
+  değiştirilemez, askıya alınamaz.").
 - **Şifre değiştirme (Hesabım › Profil):** Mevcut şifre doğru olmalı; yeni
   şifre en az 8 karakter ve tekrarıyla aynı olmalı. Oturum açık kalır;
   veritabanı modunda üyenin diğer oturumları kapanır.

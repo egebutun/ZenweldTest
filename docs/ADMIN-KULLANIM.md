@@ -105,9 +105,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     - **İçerik:** Haberler, Etkinlikler, Blog, Hakkımızda, Sık Sorulan
       Sorular, Belgeler, Yasal Metinler, Sayfa SEO
       ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
-    Üyeler ekranındaki işlemler henüz tarayıcıda kalır; Üyeler listesi
-    veritabanındaki üyeleri henüz göstermez. Panel
-    ana sayfası (özet ve grafikler) en son gelir; o zamana kadar
+    - **Üyeler** ([Veritabanı modunda Üyeler](#veritabanı-modunda-üyeler)).
+    Panel ana sayfası (özet ve grafikler) en son gelir; o zamana kadar
     tarayıcıdaki örnek veriyi gösterir.
   - Panele her giriş ve çıkış işlem kaydına (`audit_log`) yazılır.
 
@@ -1821,7 +1820,36 @@ listelenir. Bayiler ana sitenin üyesi değildir.
 - Sitede kayıt olan üye **Aktif** başlar ve siteyi hemen kullanabilir;
   panelden onay gerekmez (karar, bkz. [KARARLAR.md](KARARLAR.md)). Üyelikte
   "onay bekliyor" durumu yoktur.
-- Panelde üye eklenmez; ad, e-posta ve şifre değiştirilmez.
+- Panelde üye eklenmez; ad, e-posta ve şifre değiştirilmez. Veritabanı
+  modunda yönetici hesabı sunucuda `npm run yonetici:olustur` ile açılır
+  (README).
+
+### Veritabanı modunda Üyeler
+
+Veritabanı modunda (`DATA_SOURCE=database`) Üyeler ekranı veritabanındaki
+bütün hesapları (yöneticiler dahil) gösterir; ekran her açılışta ve her
+kayıttan sonra sunucudan okunur, şifre özeti tarayıcıya gönderilmez
+(KARARLAR K-99). Ekran ve kurallar demo moduyla aynıdır; farklar:
+
+- Rol, **Askıya al** / **Aktifleştir** ve **Sil** sunucuya yazılır ve
+  işlem kaydına (`audit_log`) düşer: rol ve durum değişikliğinde eski ve
+  yeni değer, silmede üyenin son hali (şifre özeti yazılmaz). İstek
+  sürerken düğmeler kapanır.
+- Kurallar sunucuda da denetlenir; hata listenin üstünde görünür:
+  - "Kendi rolünüzü değiştiremez, kendinizi askıya alamazsınız."
+  - "Son aktif yöneticinin rolü değiştirilemez, askıya alınamaz." İki
+    yönetici aynı anda birbirini askıya almaya çalışırsa ikincisi bu
+    mesajı alır.
+  - "Yönetici hesabı silinemez; önce rolünü değiştirin."
+  - Ekran açıldıktan sonra üye değiştiyse (başka yönetici ya da üyenin
+    kendisi profilini güncelledi): "Bu kayıt siz açtıktan sonra değişti;
+    sayfayı yenileyin."
+- Rol ya da durum değişince üyenin açık oturumu bir sonraki isteğinde
+  geçersiz olur (askıdaki üye sitede, yöneticilikten çıkan hesap panelde
+  çıkış yapmış olur).
+- Silinen üyenin adresleri, oturumları ve favorileri silinir; siparişleri,
+  teklifleri, servis talepleri, iade talepleri, garantileri ve yorumları
+  kalır, üyeyle bağı boşalır (K-36).
 
 ---
 

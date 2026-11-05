@@ -2130,9 +2130,36 @@ Kurallar (türler, boyut, adres): [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-y�
   renk, punto, alan türleri, fazla alan, eski ekran);
   `tests/unit/icerik-ve-belgeler.test.ts` (kurallar);
   `tests/e2e-db/panel-sayfalar.spec.ts` (tarayıcıda: yasal metin ve sitede
-  görünmesi, sayfa başlığı ve varsayılana dönme, adresle belge ekleme,
+  görünmesi, sayfa başlığı ve varsayılana dönme, depoya yüklenen belge,
   sitede görünme ve açılma, yayından kaldırma, silme; belge sayfası
   açıklaması; Görünüm; oturumsuz istek).
+
+**Panel › Üyeler, adım 6.1 (Aşama 5, 6. alan; KARARLAR K-35, K-36, K-99; `src/admin-members.ts`):**
+
+- **Okuma:** `readMembersPanel`: `users`'ın bütün satırları (yöneticiler
+  dahil), en yeni kayıt önce; `password_hash` boş gönderilir, `updated_at`
+  ekranın gördüğü son değişiklik anıdır.
+- **Yazma:** `POST /api/yonetim/uyeler/<işlem>`
+  (`apps/zenweld-web/src/app/api/yonetim/uyeler/[islem]/route.ts`): `uye`
+  (`role`, `status`), `uye-sil`. Ortak akış ve eski ekran denetimi
+  Satış'takiyle aynı.
+- **Kurallar:** Yönetici kendi rolünü ve durumunu değiştiremez (400). Son
+  aktif yöneticinin rolü düşürülemez, askıya alınamaz (409). Yöneticiyle
+  ilgili değişiklikler sırayla yapılır: satır kilidinden önce
+  `pg_advisory_xact_lock(hashtext('users:admins'))` alınır; iki yönetici
+  aynı anda birbirini askıya alamaz. Yönetici hesabı silinmez (400).
+- **Silme:** `users` satırı silinir; `addresses`, `sessions`,
+  `favourites`, `password_reset_tokens` tablo kurallarıyla silinir;
+  `orders`, `quotes`, `service_requests`, `return_requests`, `warranties`,
+  `reviews`'daki `user_id` boşalır. `audit_log`'a üyenin son hali yazılır
+  (şifre özeti yazılmaz).
+- Rol ya da durum değişince oturum bir sonraki istekte geçersiz olur
+  (`readSession` her istekte rol ve durumu denetler).
+- Test: `tests/db/panel-uyeler.test.ts` (okuma, rol ve durum, değişmeyen
+  kayıt, eski ekran, kendi hesabı, son yönetici, silme ve kalan kayıtlar,
+  aynı anda iki yönetici); `tests/e2e-db/panel-uyeler.spec.ts` (rol, askıya
+  alma ve sitede giriş, aktifleştirme, silme, kendi satırı, oturumsuz
+  istek).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
