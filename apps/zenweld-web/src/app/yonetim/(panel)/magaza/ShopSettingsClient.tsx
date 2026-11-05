@@ -121,7 +121,8 @@ function ShopGeneral() {
         savedText="Mağaza ayarları kaydedildi."
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      {/* grid-cols-1: tek sutunda kutular ekran genisligini asmaz (genis tablo kendi icinde kayar). */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <AdminCard>
           <h2 className="mb-4 font-display text-xl font-bold uppercase">Kargo</h2>
           <div className="grid gap-4 sm:grid-cols-2">

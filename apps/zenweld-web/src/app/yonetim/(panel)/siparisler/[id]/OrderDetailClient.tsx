@@ -50,39 +50,41 @@ export function OrderDetailClient({ id }: { id: string }) {
 
           <AdminCard>
             <Title>Ürünler</Title>
-            <table className="w-full text-sm">
-              <thead className="text-left text-xs uppercase text-zw-grey-500">
-                <tr>
-                  <th className="py-2">Ürün</th>
-                  <th className="py-2 text-right">Adet</th>
-                  <th className="py-2 text-right">Birim (KDV dahil)</th>
-                  <th className="py-2 text-right">Tutar</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zw-grey-100">
-                {order.items.map((i, idx) => (
-                  <tr key={idx}>
-                    <td className="py-2">
-                      <div className="font-semibold">{i.productName}</div>
-                      <div className="text-xs text-zw-grey-500">
-                        {i.sku}
-                        {i.variantLabel && ` · ${i.variantLabel}`}
-                      </div>
-                    </td>
-                    <td className="py-2 text-right">{i.quantity}</td>
-                    <td className="py-2 text-right">{formatPrice(i.unitPrice)}</td>
-                    <td className="py-2 text-right font-semibold">
-                      {formatPrice(i.unitPrice * i.quantity)}
-                      {i.couponDiscount ? (
-                        <div className="text-xs font-normal text-zw-grey-500" title="İadede ödenecek tutar bu pay düşülerek bulunur">
-                          Kupon payı −{formatPrice(i.couponDiscount)}
-                        </div>
-                      ) : null}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="text-left text-xs uppercase text-zw-grey-500">
+                  <tr>
+                    <th className="py-2">Ürün</th>
+                    <th className="py-2 pl-4 text-right">Adet</th>
+                    <th className="py-2 pl-4 text-right">Birim (KDV dahil)</th>
+                    <th className="py-2 pl-4 text-right">Tutar</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-zw-grey-100">
+                  {order.items.map((i, idx) => (
+                    <tr key={idx}>
+                      <td className="py-2">
+                        <div className="font-semibold">{i.productName}</div>
+                        <div className="text-xs text-zw-grey-500">
+                          {i.sku}
+                          {i.variantLabel && ` · ${i.variantLabel}`}
+                        </div>
+                      </td>
+                      <td className="py-2 pl-4 text-right">{i.quantity}</td>
+                      <td className="whitespace-nowrap py-2 pl-4 text-right">{formatPrice(i.unitPrice)}</td>
+                      <td className="whitespace-nowrap py-2 pl-4 text-right font-semibold">
+                        {formatPrice(i.unitPrice * i.quantity)}
+                        {i.couponDiscount ? (
+                          <div className="text-xs font-normal text-zw-grey-500" title="İadede ödenecek tutar bu pay düşülerek bulunur">
+                            Kupon payı −{formatPrice(i.couponDiscount)}
+                          </div>
+                        ) : null}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <dl className="mt-3 space-y-1 border-t border-zw-grey-200 pt-3 text-sm">
               <Row label="Ara toplam" value={formatPrice(order.subtotal)} />
               {order.coupon && (

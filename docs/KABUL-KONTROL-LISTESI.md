@@ -138,6 +138,11 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       verir; listelerde ve aramada görünmez.
 - [ ] Telefon genişliğinde menü, ürün sayfası, sepet, ödeme ve panel
       kullanılabilir.
+- [ ] Telefonda, tablette ve dizüstünde hiçbir sayfa yana taşmaz; sekmeler
+      sığmayınca alt satıra geçer, hiçbir sekme ekranın dışında kalmaz
+      (panelde ürün düzenleme ve Mağaza Ayarları, sitede ürün sayfası).
+      Geniş tablolar kendi kutusunda yana kayar. Tarayıcı testi de dener
+      (`tests/e2e/genislik.spec.ts`).
 
 ---
 

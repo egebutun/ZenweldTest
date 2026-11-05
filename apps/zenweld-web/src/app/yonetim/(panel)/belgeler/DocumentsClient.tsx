@@ -62,7 +62,7 @@ export function DocumentsClient() {
         }
       />
 
-      <div className="mb-5 flex gap-1 overflow-x-auto border-b border-zw-grey-200">
+      <div data-sekmeler className="mb-5 flex flex-wrap gap-x-1 border-b border-zw-grey-200">
         {DOCUMENT_SECTIONS.map((s) => (
           <button
             key={s.id}

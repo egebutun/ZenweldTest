@@ -16,8 +16,9 @@ export function Tabs({
   /** sm: dar alanlar icin (urun sayfasindaki sekmeler) */
   size?: "sm" | "md";
 }) {
+  // Sigmayan sekmeler alt satira gecer: dar ekranda hicbir sekme gizli kalmaz.
   return (
-    <div className={`flex gap-1 overflow-x-auto border-b border-zw-grey-200 ${className}`}>
+    <div data-sekmeler className={`flex flex-wrap gap-x-1 border-b border-zw-grey-200 ${className}`}>
       {tabs.map((t) => (
         <button
           key={t.id}
