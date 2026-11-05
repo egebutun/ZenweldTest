@@ -64,6 +64,26 @@ export function couponStatus(coupon: Coupon, used: number, at: Date = new Date()
 
 export type CouponDraft = Omit<Coupon, "id" | "createdAt" | "updatedAt">;
 
+/**
+ * Kayittan once kuponun bicimi (panel; demo ve veritabani modu ayni): kod
+ * buyuk harfe cevrilir, ad kirpilir, tekrarlar atilir. Butun urunler icin
+ * olan kuponda secili urun ve kategoriler, herkese acik kuponda e-postalar
+ * silinir; e-postalar kucuk harfe cevrilir.
+ */
+export function normalizeCouponDraft(d: CouponDraft): CouponDraft {
+  return {
+    ...d,
+    code: normalizeCouponCode(d.code),
+    name: d.name?.trim() || undefined,
+    productIds: d.scope === "all" ? [] : [...new Set(d.productIds)],
+    categoryIds: d.scope === "all" ? [] : [...new Set(d.categoryIds)],
+    customerEmails: d.audience === "all" ? [] : [...new Set(d.customerEmails.map(normalizeEmail).filter(Boolean))],
+  };
+}
+
+/** Kod baska kuponda kullaniliyorsa gosterilen hata. */
+export const couponCodeTaken = (code: string) => `"${code}" kodu başka bir kuponda kullanılıyor.`;
+
 const isPositiveInt = (n: number | undefined) => n === undefined || (Number.isInteger(n) && n >= 1);
 
 /** Panelde girilen kuponu dogrular; sorun yoksa null. Kodun tekrarini kayit katmani denetler. */

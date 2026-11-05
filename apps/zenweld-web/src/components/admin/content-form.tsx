@@ -89,6 +89,7 @@ export function ContentFormShell({
   savedText,
   submitLabel,
   onSubmit,
+  pending = false,
   children,
 }: {
   form: { tab: string; setTab: (tab: string) => void; error: string | null; saved: boolean };
@@ -96,6 +97,8 @@ export function ContentFormShell({
   savedText: string;
   submitLabel: string;
   onSubmit: () => void;
+  /** Kayit sunucuya gidiyorsa true: Kaydet dugmesi kapanir (veritabani modu). */
+  pending?: boolean;
   children: ReactNode;
 }) {
   const router = useRouter();
@@ -123,7 +126,7 @@ export function ContentFormShell({
       {children}
 
       <div className="sticky bottom-0 mt-6 flex gap-3 border-t border-zw-grey-200 bg-zw-grey-50 py-4">
-        <Button type="submit" size="lg">
+        <Button type="submit" size="lg" disabled={pending}>
           {submitLabel}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>

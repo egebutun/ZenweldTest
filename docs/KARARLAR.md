@@ -1093,6 +1093,27 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Neden:** Tablolar hazırdı ve formlar zaten bu adımda sunucuya geçiyordu;
   istek sınırı için paylaşılan sayaç ve sunucu kararı gerekiyor.
 
+### K-99 · Panel veritabanına alan alan geçer; aynı kaydı iki kişi düzenlerse
+- **Tarih:** 2026-11-04
+- **Karar:**
+  - Aşama 5.4 (panelin okuması) ve 5.5 (panelin yazması) birleştirilir;
+    panel veritabanına **alan alan** geçer, her alanda o alanın ekranları
+    hem okur hem yazar. Sıra: 1) Satış (siparişler, iade talepleri,
+    kuponlar), 2) Talepler (teklifler, servis, garanti, yorumlar ve yeni
+    form kayıtları ekranları), 3) Katalog, 4) Bayiler, satıcılar ve stok,
+    5) İçerik ve ayarlar (e-posta alıcıları dahil), 6) Üyeler ile işlem
+    kaydı ve e-posta kaydı ekranları; sonra 5.6.
+  - Panel ana sayfası (özet ve grafikler) en sona kalır.
+  - İki yönetici aynı kaydı aynı anda düzenlerse: kayıt, yönetici ekranı
+    açtıktan sonra değişmişse (başka yönetici, müşteri ya da sistem)
+    kaydedilmez; "Bu kayıt siz açtıktan sonra değişti; sayfayı yenileyin."
+    yazar. Bütün alanlarda geçerlidir.
+  - Panelde yapılan her değişiklik ve panele giriş/çıkış, değişiklikle
+    aynı işlemde `audit_log`'a yazılır (K-81'in uygulanışı).
+- **Neden:** Her alan bitince o ekranlar gerçekten veritabanıyla çalışır ve
+  denenebilir; okuma ve yazma ayrı adımlarda yapılsaydı ekranlar arada
+  yarım kalırdı. Son kaydeden öncekinin değişikliğini sessizce silmesin.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

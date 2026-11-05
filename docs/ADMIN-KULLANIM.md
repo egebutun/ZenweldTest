@@ -87,14 +87,17 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     giriş yapılamaz: "Çok fazla deneme yapıldı. 15 dakika sonra tekrar
     deneyin."
   - İlk yönetici hesabı `npm run yonetici:olustur` ile açılır (README).
-  - Panelde yapılan işlemler (ürün, sipariş, üye…) Aşama 5'e kadar
-    tarayıcıda kalır; Üyeler listesi veritabanındaki üyeleri henüz
-    göstermez. Sitede verilen siparişler ve iade talepleri veritabanına
-    yazılır (Aşama 5.2), ama Siparişler ve İade Talepleri ekranları
-    bunları 5.4'te gösterir; o zamana kadar tarayıcıdaki örnek kayıtları
-    gösterir. Teklifler, Servis Talepleri, Garantiler ve Yorumlar için de
-    aynısı geçerlidir (sitedeki formlar Aşama 5.3'ten beri veritabanına
-    yazılır).
+  - Panel veritabanına alan alan geçer (KARARLAR K-99). **Satış** alanının
+    ekranları (Siparişler, İade Talepleri, Kuponlar) veritabanından okur
+    ve yazar ([Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)).
+    Diğer ekranlardaki işlemler (ürün, üye, içerik…) henüz tarayıcıda
+    kalır; Üyeler listesi veritabanındaki üyeleri henüz göstermez.
+    Teklifler, Servis Talepleri, Garantiler ve Yorumlar tarayıcıdaki örnek
+    kayıtları gösterir (sitedeki formlar Aşama 5.3'ten beri veritabanına
+    yazılır; bu ekranlar sıradaki alanda gelir). Panel ana sayfası (özet ve
+    grafikler) en son gelir; o zamana kadar tarayıcıdaki örnek veriyi
+    gösterir.
+  - Panele her giriş ve çıkış işlem kaydına (`audit_log`) yazılır.
 
 **Giriş ekranı:**
 
@@ -518,6 +521,41 @@ sayısı, **← Tüm kuponlar**):
   - "Kişiye özel kupon için en az bir e-posta adresi eklenmelidir." /
     "Geçersiz e-posta adresi: <adres>" (Kimler Kullanabilir sekmesi açılır)
   - ""<KOD>" kodu başka bir kuponda kullanılıyor."
+
+### Veritabanı modunda Satış ekranları
+
+Veritabanı modunda (`DATA_SOURCE=database`) Siparişler, İade Talepleri ve
+Kuponlar ekranları veritabanıyla çalışır (KARARLAR K-99). Ekranlar ve
+kurallar demo moduyla aynıdır; farklar:
+
+- Ekran her açılışta ve her kayıttan sonra veriyi sunucudan okur: sitede
+  verilen siparişler ve açılan iade talepleri, müşterinin kullandığı
+  kuponlar burada görünür. Siparişler açılırken ödeme süresi dolan havale
+  siparişleri iptal edilir ve kupon hakları geri verilir.
+- Ödeme Alındı, Kargoya Ver, takip numarası düzeltme, Teslim Edildi,
+  iptal, iç not, iade talebinin durumu ve notu, kupon oluşturma,
+  düzenleme, aktif/pasif ve silme sunucuya yazılır. İstek sürerken düğme
+  kapanır.
+- **Aynı kaydı iki kişi düzenlerse:** Kayıt, ekran açıldıktan sonra
+  değişmişse (başka yönetici, müşteri ya da sistem değiştirdiyse)
+  kaydedilmez: "Bu kayıt siz açtıktan sonra değişti; sayfayı yenileyin."
+  Sayfa yenilenince güncel hali gelir.
+- Diğer hata mesajları:
+  - "Panel oturumunuz kapanmış. Lütfen yeniden giriş yapın." (oturum
+    bitmiş; işlem yapılmaz)
+  - "Bu işlem siparişin şimdiki durumunda yapılamaz; sayfayı yenileyin."
+  - "Kargo firması listede yok. Mağaza ayarlarındaki firmalardan birini
+    seçin."
+  - "Seçilen ürün ya da kategorilerden bazıları artık yok; sayfayı
+    yenileyip yeniden seçin." (kupon; Kapsam sekmesi açılır)
+  - "İşlem yapılamadı. Bağlantınızı kontrol edip tekrar deneyin."
+- Her değişiklik işlem kaydına (`audit_log`) yazılır: kim, ne zaman, hangi
+  kayıt, hangi alan eskiden neydi, yeni ne oldu. Sipariş geçmişindeki her
+  adımda işlemi yapan yönetici de saklanır. Kaydı gösteren ekran Üyeler
+  alanıyla gelir (KARARLAR K-99).
+- Kupon formunun kapsam seçimindeki ürün ve kategoriler sitenin
+  katalogundan, kişiye özel kuponun e-posta önerileri veritabanındaki
+  üyelerden gelir.
 
 ---
 

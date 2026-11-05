@@ -1,11 +1,12 @@
 "use client";
 
 import {
+  couponCodeTaken,
   couponStatus,
   couponUsageCount,
   evaluateCoupon,
   normalizeCouponCode,
-  normalizeEmail,
+  normalizeCouponDraft,
   validateCoupon,
   type Coupon,
   type CouponCartLine,
@@ -58,28 +59,19 @@ export function couponStatusOf(coupon: Coupon, db: ZenweldDatabase = getSnapshot
 }
 
 /**
- * Kuponu ekler ya da gunceller; sorun varsa hata metni doner. Kod buyuk
- * harfe cevrilir ve baska kuponda kullanilamaz. Butun urunler icin olan
- * kuponda secili urun ve kategoriler, herkese acik kuponda e-postalar
- * silinir; e-postalar kucuk harfe cevrilir.
+ * Kuponu ekler ya da gunceller; sorun varsa hata metni doner. Bicim
+ * (normalizeCouponDraft) ve kurallar packages/data'dadir; kod baska kuponda
+ * kullanilamaz.
  */
 export function saveCoupon(
   input: CouponDraft & { id?: string },
 ): { ok: true; id: string } | { ok: false; error: string } {
   const { id: inputId, ...rest } = input;
-  const draft: CouponDraft = {
-    ...rest,
-    code: normalizeCouponCode(rest.code),
-    name: rest.name?.trim() || undefined,
-    productIds: rest.scope === "all" ? [] : [...new Set(rest.productIds)],
-    categoryIds: rest.scope === "all" ? [] : [...new Set(rest.categoryIds)],
-    customerEmails:
-      rest.audience === "all" ? [] : [...new Set(rest.customerEmails.map(normalizeEmail).filter(Boolean))],
-  };
+  const draft = normalizeCouponDraft(rest);
   const problem = validateCoupon(draft);
   if (problem) return { ok: false, error: problem };
   if (getSnapshot().coupons.some((c) => c.code === draft.code && c.id !== inputId)) {
-    return { ok: false, error: `"${draft.code}" kodu başka bir kuponda kullanılıyor.` };
+    return { ok: false, error: couponCodeTaken(draft.code) };
   }
 
   const at = nowIso();

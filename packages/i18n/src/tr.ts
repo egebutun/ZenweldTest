@@ -777,6 +777,21 @@ export const tr = {
       rejected: "Reddedildi",
     },
   },
+  /** Yonetim paneli: sunucunun dondurdugu hatalar (veritabani modu; Asama 5, KARARLAR K-99). */
+  panel: {
+    staleRecord: "Bu kayıt siz açtıktan sonra değişti; sayfayı yenileyin.",
+    sessionEnded: "Panel oturumunuz kapanmış. Lütfen yeniden giriş yapın.",
+    invalidRequest: "İstek geçersiz. Sayfayı yenileyip tekrar deneyin.",
+    failed: "İşlem yapılamadı. Bağlantınızı kontrol edip tekrar deneyin.",
+    orderNotFound: "Sipariş bulunamadı.",
+    returnNotFound: "İade talebi bulunamadı.",
+    couponNotFound: "Kupon bulunamadı.",
+    wrongState: "Bu işlem siparişin şimdiki durumunda yapılamaz; sayfayı yenileyin.",
+    shipmentRequired: "Kargo firması ve takip numarası zorunludur.",
+    unknownCarrier: "Kargo firması listede yok. Mağaza ayarlarındaki firmalardan birini seçin.",
+    couponTargetsMissing: "Seçilen ürün ya da kategorilerden bazıları artık yok; sayfayı yenileyip yeniden seçin.",
+    couponUsed: "Siparişlerde kullanılan kupon silinemez; pasife alabilirsiniz.",
+  },
   errorPage: {
     title: "Bir sorun oluştu",
     text: "Sayfa açılırken beklenmeyen bir hata oluştu. Tekrar deneyin; sorun sürerse ana sayfaya dönün.",

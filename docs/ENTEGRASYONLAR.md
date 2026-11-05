@@ -44,7 +44,7 @@ veritabanında, tarayıcıda ya da depoda (GitHub) **asla** durmaz.
 | Ofis haritası ve yol tarifi | **Bağlı** (Google Haritalar gömme ve bağlantı; anahtar gerekmez) | — |
 | Telefon, WhatsApp, e-posta | **Bağlı** (bağlantılar) | — |
 | Sosyal medya | **Bağlı** (bağlantılar ve paylaşım önizlemesi) | — |
-| Veritabanı | Tarayıcı deposu (demo). PostgreSQL tabloları hazır; site ayarla (`DATA_SOURCE=database`) katalogu tablolardan okuyabiliyor, panel henüz tarayıcıda | Sunucu veritabanı PostgreSQL ([VERITABANI.md](VERITABANI.md)); sunucuyu BT ekibi sağlar |
+| Veritabanı | Tarayıcı deposu (demo). PostgreSQL tabloları hazır; site ayarla (`DATA_SOURCE=database`) katalogu tablolardan okuyabiliyor; panelin Satış ekranları veritabanında (K-99), diğer ekranlar henüz tarayıcıda | Sunucu veritabanı PostgreSQL ([VERITABANI.md](VERITABANI.md)); sunucuyu BT ekibi sağlar |
 | Dosya deposu | Tarayıcı (demo) | Nesne deposu (görseller ve belgeler) |
 | Bülten, şifre sıfırlama, müşteriye e-posta, analitik, e-Fatura, kargo | Yok | Bkz. [10](#10-henüz-bağlanmayanlar) |
 

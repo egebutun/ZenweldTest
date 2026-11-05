@@ -253,7 +253,8 @@ describe("değişiklik kaydı (audit_log, KARARLAR K-81)", () => {
            (now() - interval '1 year', 'Yönetici', 'login', 'users', 'u1')`,
       );
       expect((await db.query("SELECT purge_audit_log() AS n")).rows[0].n).toBe(1);
-      expect(Number((await db.query("SELECT count(*) FROM audit_log")).rows[0].count)).toBe(1);
+      // Yalnizca bu testin kayitlari sayilir (baska testlerin silinemeyen kayitlari olabilir).
+      expect(Number((await db.query("SELECT count(*) FROM audit_log WHERE entity_id = 'u1'")).rows[0].count)).toBe(1);
       // Temizlikten sonra koruma yine çalışır.
       expect((await expectFailure(db, "DELETE FROM audit_log")).code).toBe("42501");
     });

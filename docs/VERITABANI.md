@@ -1128,7 +1128,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `entity_type` | text | zorunlu | Tablo adı (`products`, `orders`…); giriş/çıkışta `users` |
 | `entity_id` | text | zorunlu | Girişte yöneticinin kendi kimliği |
 | `entity_label` | text | | Okunur ad (ürün adı, sipariş no) |
-| `changes` | jsonb | | Değişen alanlar: `{ alan: [eski, yeni] }`; silmede kaydın son hali |
+| `changes` | jsonb | | Değişen alanlar: `{ alan: [eski, yeni] }`; oluşturmada kaydın ilk hali, silmede son hali |
 | `ip` | inet | | |
 
 - Kayıt, değişiklikle aynı işlemde yazılır; değişiklik yapılıp kaydı
@@ -1486,8 +1486,8 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   bir kuponun kullanımları).
 - Bildirim e-postası (`info@zenweld.com`) kayıttan sonra sunucudan gider
   (`apps/zenweld-web/src/lib/server/notify.ts`); yanıt onu beklemez.
-- Panelin Siparişler ve İade Talepleri ekranları Aşama 5.4'e kadar
-  tarayıcıdaki veriyi gösterir.
+- Panelin Siparişler, İade Talepleri ve Kuponlar ekranları veritabanıyla
+  çalışır (aşağıda "Panel › Satış").
 - Test: `tests/db/siparis.test.ts` (kartlı sipariş ve tutarlar, numaranın
   en büyük numaradan devam etmesi, fiyat değişince, stoksuz, satıştan kalkan
   ürün, eksik ve hatalı bilgi, taksit, POS yokluğu; havale ve süre dolunca
@@ -1527,13 +1527,71 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   yazılamazsa e-posta yine gider.
 - Bot tuzağı doluysa kayıt yapılmaz; `email_log`'a `skipped` yazılır.
 - Panelin Teklifler, Servis Talepleri, Garantiler ve Yorumlar ekranları
-  Aşama 5.4'e kadar tarayıcıdaki veriyi gösterir.
+  panelin 2. alanına (Talepler, KARARLAR K-99) kadar tarayıcıdaki veriyi
+  gösterir.
 - Test: `tests/db/formlar.test.ts` (teklif kuralları ve katalogdan alınan
   ürün bilgisi, servis talebi, garanti kaydı, tekrar eden seri no, Türkiye
   gününe göre bitiş, sorgulama, yorum, e-postaya giden formların kaydı,
   e-posta kaydı ve türleri); `tests/e2e-db/formlar.spec.ts` (tarayıcıda:
   ziyaretçi ve üye teklifi, Tekliflerim, servis, garanti, sorgulama,
   Garantilerim, yorum, iletişim, Welders Club, bot tuzağı).
+
+**Panel › Satış (Aşama 5, 1. alan; KARARLAR K-99; `src/admin-sales.ts`, `src/audit.ts`):**
+
+- **Okuma:** Panelin her sayfası verisini kendi sunucu bileşeninde okur
+  (`app/yonetim/(panel)/siparisler/page.tsx` vb.); sayfa her açılışta ve
+  her kayıttan sonra (`router.refresh`) yeniden okunur. Önce geçerli
+  yönetici oturumu denetlenir.
+  - `readOrdersPanel`: siparişler (detayda yalnızca o sipariş) ve mağaza
+    ayarları; önce süresi dolan havaleler iptal edilir (bir işlem içinde).
+  - `readReturnsPanel`: iade talepleri.
+  - `readCouponsPanel`: kuponlar ve kullanımları; düzenlemede yalnızca o
+    kupon, kullanıldığı siparişler ve üyeler (`readPanelMembers`: yönetici
+    hariç, şifre özeti boş). Kupon formunun ürün ve kategorileri sitenin
+    önbellekteki katalogundan.
+- **Yazma:** `POST /api/yonetim/satis/<işlem>`
+  (`apps/zenweld-web/src/app/api/yonetim/satis/[islem]/route.ts`):
+  `odeme-alindi`, `kargo`, `teslim`, `iptal`, `siparis-notu`,
+  `iade-talebi`, `kupon` (oluşturma ve düzenleme), `kupon-durum`,
+  `kupon-sil`. Yalnızca geçerli panel oturumu olan yönetici yazar
+  (yoksa 401); başka siteden gelen istek reddedilir (403). Her işlem tek
+  işlemdir (transaction).
+- **Aynı kaydı iki kişi düzenlerse:** İstek, ekranın gördüğü `updated_at`'i
+  taşır. Kayıt satırı kilitlenir (FOR UPDATE); `updated_at` değişmişse
+  kaydedilmez, 409 "Bu kayıt siz açtıktan sonra değişti; sayfayı
+  yenileyin." Aynı anda gelen ikinci istek birincinin bitmesini bekler ve
+  reddedilir.
+- **Siparişte yazılanlar:** Durum değişince `order_status_history`'ye yeni
+  satır, `changed_by` = yönetici. Ödeme alındı: `paid_at`; süresi dolmuşsa
+  onaylanmaz, "Ödeme süresi doldu" notuyla iptal edilir. Kargo: `shipments`
+  (giden gönderi; firma `carriers`'tan adla bulunur, listeden çıkarılmış
+  kayıtlı firma korunur; takip no düzeltilince `shipped_at` değişmez).
+  Teslim: `shipments.delivered_at`. İptal: kupon kullanımı geri verilir
+  (`coupon_redemptions.released_at`).
+- **Kupon:** Biçim ve kurallar demo moduyla aynı (`packages/data` ›
+  `normalizeCouponDraft`, `validateCoupon`); `coupon_targets` ve
+  `coupon_customers` baştan yazılır; seçilen ürün ve kategoriler var
+  olmalı; kod tekrarı denetlenir (kupon kayıtları aynı anda iki aynı kodu
+  yazmasın diye sırayla yapılır). Kullanılmış kupon silinmez.
+- **İşlem kaydı (`audit_log`):** Her değişiklik aynı işlemde yazılır
+  (`writeAudit`): yönetici kimliği, adı ve IP adresi, işlem, tablo, kayıt
+  kimliği, okunur ad (sipariş no, iade no, kupon kodu) ve `changes`.
+  Güncellemede yalnızca değişen alanlar (`{ alan: [eski, yeni] }`;
+  `changedFields`), oluşturmada kaydın ilk hali, silmede son hali.
+  Değişiklik yoksa hiçbir şey yazılmaz. Panel girişi ve çıkışı da yazılır
+  (`login`/`logout`, `users`, okunur ad yöneticinin e-postası). Sistemin
+  yaptığı iptal (süresi dolan havale) yazılmaz.
+- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-sales.ts`
+  (`useSalesActions`); demo modunda aynı işlemler tarayıcıdaki veriye
+  yazılır.
+- Test: `tests/db/panel-satis.test.ts` (ödeme, kargo, takip no düzeltme,
+  teslim, geçmişte yönetici, işlem kaydı; süresi dolan havale, iptal ve
+  kupon hakkı, iç not; okurken iptal; iade talebi; kupon oluşturma, biçim,
+  kod tekrarı, olmayan ürün, hatalı alan, düzenleme, aktif/pasif, silme,
+  kullanılmış kupon; aynı anda iki yönetici); `tests/e2e-db/panel-satis.spec.ts`
+  (tarayıcıda: oturumsuz ve başka siteden istek, kargoya verme ve teslim,
+  "kayıt değişti" uyarısı, iade talebi, kupon oluşturma, kod tekrarı,
+  pasife alma, silme, giriş ve çıkış kaydı).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

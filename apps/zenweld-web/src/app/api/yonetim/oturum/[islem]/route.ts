@@ -1,5 +1,7 @@
 import type { NextRequest } from "next/server";
 import { deleteSession, login, publicUser, readSession } from "@zenweld/auth/server";
+import { writeAudit } from "@zenweld/db";
+import { actorName } from "@/lib/server/admin";
 import { database, usesDatabase } from "@/lib/server/db";
 import {
   SESSION_COOKIES,
@@ -21,7 +23,8 @@ import {
  *   POST /api/yonetim/oturum/cikis
  *
  * Yalnizca yonetici girer; oturum girisinden 8 saat sonra biter, uzamaz.
- * Cerez sitenin uyelik cerezinden ayridir (zw_panel).
+ * Cerez sitenin uyelik cerezinden ayridir (zw_panel). Basarili giris ve
+ * cikis islem kaydina (audit_log) yazilir (KARARLAR K-99).
  */
 
 export const runtime = "nodejs";
@@ -50,13 +53,38 @@ export async function POST(request: NextRequest, context: Context) {
 
   if (islem === "giris") {
     const body = ((await request.json().catch(() => null)) ?? {}) as Record<string, unknown>;
-    const result = await db.transaction((tx) => login(tx, body, SCOPE, clientInfo(request)));
+    const client = clientInfo(request);
+    const result = await db.transaction(async (tx) => {
+      const answer = await login(tx, body, SCOPE, client);
+      if (answer.ok) {
+        const { user } = answer;
+        await writeAudit(
+          tx,
+          { id: user.id, name: actorName(user), ip: client.ip },
+          { action: "login", entityType: "users", entityId: user.id, entityLabel: user.email },
+          new Date(),
+        );
+      }
+      return answer;
+    });
     if (!result.ok) return failure(result);
     await deleteSession(db, token);
     return setSessionCookie(json({ ok: true, user: result.user }), request, SCOPE, result.session);
   }
   if (islem === "cikis") {
-    await deleteSession(db, token);
+    await db.transaction(async (tx) => {
+      const session = await readSession(tx, token, SCOPE);
+      if (session) {
+        const { user } = session;
+        await writeAudit(
+          tx,
+          { id: user.id, name: actorName(user), ip: clientInfo(request).ip },
+          { action: "logout", entityType: "users", entityId: user.id, entityLabel: user.email },
+          new Date(),
+        );
+      }
+      await deleteSession(tx, token);
+    });
     return clearSessionCookie(json({ ok: true }), request, SCOPE);
   }
   return notFound();

@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { byProductOrder, normalizeEmail, type Coupon, type CouponDiscountType } from "@zenweld/data";
-import { couponRedemptions, saveCoupon, useDatabase } from "@zenweld/store";
+import { couponRedemptions, useDatabase } from "@zenweld/store";
 import { Badge, Button, Checkbox, FormRow, Input, Select } from "@zenweld/ui";
 import { formatDateTime, formatPrice, fromDateTimeLocal, toDateTimeLocal } from "@zenweld/utils";
+import { useSalesActions } from "@/lib/admin-sales";
 import { ContentFormShell, FormPanel, useContentForm } from "./content-form";
 
 /**
@@ -16,7 +17,8 @@ import { ContentFormShell, FormPanel, useContentForm } from "./content-form";
  * Sekmeler: temel bilgiler (kod, indirim, tarihler, sinirlar), kapsam
  * (butun urunler ya da secilen urun ve kategoriler), kimler kullanabilir
  * (herkes ya da kisiye ozel: e-posta adresleri, KARARLAR K-86) ve
- * duzenlemede kuponun kullanildigi siparisler.
+ * duzenlemede kuponun kullanildigi siparisler. Veritabani modunda kayit
+ * sunucuya gider (lib/admin-sales.ts).
  */
 
 /** Formdaki hali: sayilar yazildigi gibi tutulur, kayitta cevrilir. */
@@ -65,15 +67,15 @@ function toForm(c?: Coupon): CouponFormState {
 export function CouponForm({ coupon }: { coupon?: Coupon }) {
   const router = useRouter();
   const db = useDatabase();
+  const actions = useSalesActions();
   const isNew = !coupon;
   const form = useContentForm<CouponFormState>(toForm(coupon));
   const { draft, set } = form;
   const usage = coupon ? couponRedemptions(coupon.id, db) : [];
 
-  const submit = () => {
+  const submit = async () => {
     form.setError(null);
-    const result = saveCoupon({
-      id: coupon?.id,
+    const draftCoupon = {
       code: draft.code,
       name: draft.name,
       discountType: draft.discountType,
@@ -89,12 +91,13 @@ export function CouponForm({ coupon }: { coupon?: Coupon }) {
       audience: draft.audience,
       customerEmails: draft.customerEmails,
       active: draft.active,
-    });
+    };
+    const result = await actions.saveCoupon(draftCoupon, coupon);
     if (!result.ok) {
       const tab = /ürün ya da kategori/.test(result.error) ? "kapsam" : /e-posta/.test(result.error) ? "kisiler" : "temel";
       return form.fail(result.error, tab);
     }
-    if (isNew) router.push(`/yonetim/kuponlar/${result.id}`);
+    if (isNew && result.id) router.push(`/yonetim/kuponlar/${result.id}`);
     else form.flashSaved();
   };
 
@@ -103,7 +106,8 @@ export function CouponForm({ coupon }: { coupon?: Coupon }) {
   return (
     <ContentFormShell
       form={form}
-      onSubmit={submit}
+      onSubmit={() => void submit()}
+      pending={actions.pending}
       savedText="Kupon kaydedildi."
       submitLabel={isNew ? "Kuponu Oluştur" : "Değişiklikleri Kaydet"}
       tabs={[

@@ -7,6 +7,7 @@ import {
   evaluateCoupon,
   installmentQuote,
   normalizeCouponCode,
+  normalizeCouponDraft,
   validateCoupon,
   type Coupon,
   type CouponRedemption,
@@ -92,6 +93,25 @@ describe("Kuponun panelde girilmesi", () => {
   it("belirli ürünler için olan kuponda en az bir ürün ya da kategori seçilir", () => {
     expect(validateCoupon(coupon({ scope: "targets" }))).toMatch(/en az bir ürün/);
     expect(validateCoupon(coupon({ scope: "targets", categoryIds: ["kat-a"] }))).toBeNull();
+  });
+
+  it("kayıttan önce biçim: kod büyük harf, tekrarlar atılır; bütün ürünlerde hedefler, herkese açıkta e-postalar silinir", () => {
+    expect(
+      normalizeCouponDraft(
+        coupon({
+          code: " yaz 25 ",
+          name: "  ",
+          scope: "targets",
+          productIds: ["p1", "p1"],
+          categoryIds: ["c1"],
+          audience: "customers",
+          customerEmails: [" Ali@Firma.com ", "ali@firma.com", " "],
+        }),
+      ),
+    ).toMatchObject({ code: "YAZ25", name: undefined, productIds: ["p1"], categoryIds: ["c1"], customerEmails: ["ali@firma.com"] });
+    expect(
+      normalizeCouponDraft(coupon({ productIds: ["p1"], categoryIds: ["c1"], customerEmails: ["ali@firma.com"] })),
+    ).toMatchObject({ productIds: [], categoryIds: [], customerEmails: [] });
   });
 });
 

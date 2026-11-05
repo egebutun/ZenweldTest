@@ -47,6 +47,7 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 19. [Kategori filtreleri](#19-kategori-filtreleri)
 20. [Zenweld depo stoğu](#20-zenweld-depo-stoğu)
 21. [Kuponlar](#21-kuponlar)
+22. [Panelde kayıt düzenleme](#22-panelde-kayıt-düzenleme)
 
 ---
 
@@ -381,11 +382,12 @@ Siparişi yalnızca **üye** verir.
 - Durum değişince müşteriye e-posta **gitmez**.
 - **Nerede çalışır:** Veritabanı modunda sipariş sunucuda kaydedilir ve
   üyenin siparişleri sunucudan okunur (Aşama 5.2, K-97); başka üyenin
-  siparişi görünmez. Panelin Siparişler ekranı 5.4'e kadar tarayıcıdaki
-  veriyi gösterir; veritabanındaki siparişler o zamana kadar bildirim
-  e-postasında ve `npm run db:studio`'da görülür.
+  siparişi görünmez. Panelin Siparişler ekranı da veritabanından okur ve
+  yazar (K-99); panel işlemleri [22](#22-panelde-kayıt-düzenleme)'deki
+  kurallarla kaydedilir.
 
-Kod: `packages/store/src/repo/commerce.ts`; sunucu: `packages/db/src/orders.ts`.
+Kod: `packages/store/src/repo/commerce.ts`; sunucu: `packages/db/src/orders.ts`,
+panel: `packages/db/src/admin-sales.ts`.
 
 **İade (cayma) talebi:**
 
@@ -1144,3 +1146,38 @@ saymaz.
 **Canlıda:** Sipariş anında sunucu kuponu ve indirimi aynı kurallarla
 yeniden hesaplar; kullanım sınırı aynı anda gelen siparişlerde aşılmayacak
 şekilde denetlenir ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Kuponlar).
+
+---
+
+## 22. Panelde kayıt düzenleme
+
+Veritabanı modunda panel kayıtları sunucuda değiştirir (KARARLAR K-99).
+Bugün Satış ekranlarında (Siparişler, İade Talepleri, Kuponlar) geçerlidir;
+panelin diğer alanları veritabanına geçtikçe onlara da uygulanır.
+
+- **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
+  değiştirilme anı alınır. Kaydederken kayıt bu andan sonra değişmişse
+  (başka yönetici, müşteri ya da sistem değiştirdiyse) kaydedilmez:
+  "Bu kayıt siz açtıktan sonra değişti; sayfayı yenileyin." Sayfa
+  yenilenince kaydın güncel hali gelir; değişiklik yeniden yapılır.
+  - **Örnek:** Ayşe ve Mehmet aynı siparişi açar. Ayşe kargoya verir.
+    Mehmet sayfayı yenilemeden iç not kaydeder → kaydedilmez, uyarı çıkar.
+    Mehmet sayfayı yeniler (sipariş artık Kargoda) ve notu yeniden yazar.
+  - Aynı anda basılırsa biri önce kaydedilir, diğeri onu bekler ve uyarıyı
+    alır; ikisi birden kaydedilmez.
+  - Değişiklik yapmayan kayıt (aynı not, aynı durum) hiçbir şey yazmaz.
+- **İşlem kaydı:** Her değişiklik, değişiklikle aynı anda işlem kaydına
+  (`audit_log`) yazılır: kim (yönetici, IP adresi), ne zaman, hangi kayıt
+  (sipariş no, iade no, kupon kodu), hangi alan eskiden neydi ve yeni ne
+  oldu. Oluşturmada kaydın ilk hali, silmede son hali yazılır. Panele giriş
+  ve çıkış da yazılır. Sistemin kendiliğinden yaptığı değişiklik (süresi
+  dolan havalenin iptali) yönetici işlemi değildir, yazılmaz. Kayıtlar
+  değiştirilemez, 2 yıl saklanır (K-81).
+- **Sipariş geçmişi:** Panelde yapılan her durum değişikliğinde işlemi yapan
+  yönetici de saklanır (müşteriye gösterilmez).
+- Panel işlemleri yalnızca geçerli yönetici oturumuyla yapılır
+  ([16](#16-üyelik-ve-oturum)); oturum bitmişse: "Panel oturumunuz kapanmış.
+  Lütfen yeniden giriş yapın."
+
+Kod: `packages/db/src/admin-sales.ts`, `packages/db/src/audit.ts`;
+tarayıcı: `apps/zenweld-web/src/lib/admin-sales.ts`.

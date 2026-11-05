@@ -666,6 +666,24 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Kullanılmamış kupon silinir; siparişte kullanılmış kuponun sil simgesi
       soluktur.
 
+**Veritabanı modunda Satış ekranları (KARARLAR K-99):**
+
+- [ ] Sitede verilen sipariş ve açılan iade talebi panelde görünür; sitede
+      kullanılan kupon Kuponlar'da kullanım sayısına eklenir.
+- [ ] Ödeme Alındı, Kargoya Ver, Teslim Edildi, iptal ve iç not başka
+      tarayıcıda açılan panelde de görünür; müşteri Siparişlerim'de görür.
+- [ ] Bir sekmede açık sipariş, başka sekmede değiştirilince (ör. kargoya
+      verilince) ilk sekmede kaydedilmez: "Bu kayıt siz açtıktan sonra
+      değişti; sayfayı yenileyin." Sayfa yenilenince kaydedilir.
+- [ ] Aynı denemeler iade talebinde (durum, not) ve kuponda (düzenleme,
+      aktif/pasif, silme) de geçerlidir.
+- [ ] Yeni kupon oluşturulunca düzenleme sayfası açılır; sitede kupon kodu
+      hemen kullanılabilir.
+- [ ] Panel oturumu kapanmışken (ör. başka sekmede çıkış) yapılan işlem
+      kaydedilmez: "Panel oturumunuz kapanmış. Lütfen yeniden giriş yapın."
+- [ ] `npm run db:studio` › `audit_log`: her işlem, panel girişi ve çıkışı
+      yöneticinin adıyla, değişen alanların eski ve yeni haliyle yazılmıştır.
+
 **Mağaza Ayarları:**
 
 - [ ] Kargo sınırı ve ücreti değişince sepetteki kargo değişir.
