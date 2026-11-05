@@ -434,20 +434,21 @@ npm run start --workspace apps/zenweld-web
     olmadan açılmaz; oturum 8 saat sürer. Bilgisayarda `db:seed`'in demo
     yöneticisiyle, canlıda `npm run yonetici:olustur` ile açılan hesapla
     girilir. Giriş ve çıkış `audit_log`'a yazılır.
-  - **Panel veritabanına alan alan geçiyor (Aşama 5, KARARLAR K-99):**
-    Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
-    Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
-    Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
-    Ürünler), Bayiler, Online Satıcılar, Satış Temsilcileri ve Stok
-    Matrisi (elle düzeltme, dosya yükleme, kod eşleştirme, geri alma),
-    Mağaza Ayarları (Kargo ve Ödeme, E-posta Alıcıları, Şirket ve İletişim), Görünüm ve İçerik
-    (Haberler, Etkinlikler, Blog, Hakkımızda, SSS, Belgeler, Yasal
-    Metinler, Sayfa SEO) ekranları veritabanından okur ve yazar; aynı
-    kaydı iki yönetici düzenlerse sonraki kaydetmez ("sayfayı
-    yenileyin"); her değişiklik `audit_log`'a yazılır. Bu modda panelde
-    görsel ve belge dosyası yüklenmez, adresi girilir (dosya deposu gelene
-    kadar; K-101, K-104). Üyeler ekranı henüz veritabanındaki üyeleri
-    göstermez; panel ana sayfası en son bağlanır.
+  - **Panelin bütün ekranları veritabanında (Aşama 5, KARARLAR K-99):**
+    Panel ana sayfası, Satış (Siparişler, İade Talepleri, Kuponlar),
+    Talepler (Teklifler, Servis Talepleri, Garantiler, Yorumlar, Bayilik
+    Başvuruları, Mesajlar, Welders Club), Üyeler, Katalog (Seçenek
+    Tanımları, Kategoriler ve gruplar, Ürünler), Bayiler, Online
+    Satıcılar, Satış Temsilcileri ve Stok Matrisi (elle düzeltme, dosya
+    yükleme, kod eşleştirme, geri alma), Mağaza Ayarları (Kargo ve Ödeme,
+    E-posta Alıcıları, Şirket ve İletişim), Görünüm ve İçerik (Haberler,
+    Etkinlikler, Blog, Hakkımızda, SSS, Belgeler, Yasal Metinler, Sayfa
+    SEO) ekranları veritabanından okur ve yazar; aynı kaydı iki yönetici
+    düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her değişiklik
+    `audit_log`'a yazılır. Yalnızca bu modda olan İşlem Kaydı ve E-posta
+    Kaydı ekranları (Ayarlar) bu kayıtları gösterir. Görsel ve belge
+    dosyası `DOSYA_KLASORU` tanımlıysa yüklenir, değilse adresi girilir
+    (aşağıda › Panelden dosya yükleme).
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
     Derleme sırasında veritabanı çalışıyor olmalı.
   - Ayar yoksa site bugünkü gibi çalışır.
