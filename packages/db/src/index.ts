@@ -5,6 +5,7 @@ export * from "./sap-orders";
 export * from "./file-storage";
 export * from "./admin-members";
 export * from "./admin-logs";
+export * from "./admin-dashboard";
 export * as schema from "./schema";
 export * from "./orders";
 export * from "./payment";

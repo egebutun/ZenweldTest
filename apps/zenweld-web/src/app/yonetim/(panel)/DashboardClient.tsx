@@ -1,0 +1,171 @@
+"use client";
+
+import { useMemo } from "react";
+import {
+  AlertTriangle,
+  CalendarDays,
+  FileText,
+  Newspaper,
+  Package,
+  ShieldCheck,
+  ShoppingCart,
+  Store,
+  Users,
+} from "lucide-react";
+import { listOrders, listQuotes, listUsers, productsWithoutOnlineStock, useDatabase } from "@zenweld/store";
+import { Badge } from "@zenweld/ui";
+import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
+import { DashboardCharts } from "@/components/admin/DashboardCharts";
+import { useDemoExpiredTransfers } from "@/lib/admin-sales";
+import Link from "next/link";
+import { formatDate, formatPrice, localDateKey } from "@zenweld/utils";
+
+/**
+ * Panel ana sayfasi: ozet kutulari, yapilacaklar, son teklif ve siparisler,
+ * grafikler. Veritabani modunda veri sunucuda okunur (page.tsx).
+ */
+export function DashboardClient() {
+  const db = useDatabase();
+  // Odeme suresi dolan havale siparisi ciroda ve "islem bekliyor"da sayilmasin
+  // (veritabani modunda sunucu, veriyi okurken yapar).
+  useDemoExpiredTransfers();
+
+  const stats = useMemo(() => {
+    const activeProducts = db.products.filter((p) => p.active);
+    const noOnlineStock = productsWithoutOnlineStock(db);
+    // Uyeler: yonetici hesaplari haric (uye grafigiyle ayni).
+    const members = listUsers(db).filter((u) => u.role !== "admin");
+    const quotes = listQuotes(db);
+    return {
+      products: activeProducts.length,
+      users: members.length,
+      retailers: db.retailers.filter((r) => r.active).length,
+      newQuotes: quotes.filter((q) => q.status === "new").length,
+      quotes: quotes.length,
+      orders: listOrders(db).length,
+      // Islem bekleyen: havale onayi veya kargoya verilecek.
+      openOrders: listOrders(db).filter(
+        (o) => o.status === "awaiting_payment" || o.status === "preparing",
+      ).length,
+      events: db.events.filter((e) => e.active).length,
+      upcomingEvents: db.events.filter(
+        (e) => e.active && e.endDate >= localDateKey(),
+      ).length,
+      news: db.news.filter((n) => n.active).length,
+      noOnlineStock,
+    };
+  }, [db]);
+
+  const cards = [
+    { href: "/yonetim/urunler", label: "Aktif Ürün", value: stats.products, Icon: Package },
+    { href: "/yonetim/uyeler", label: "Üye", value: stats.users, Icon: Users },
+    { href: "/yonetim/saticilar", label: "Online Satıcı", value: stats.retailers, Icon: Store },
+    { href: "/yonetim/teklifler", label: "Teklif", value: stats.quotes, Icon: FileText, note: stats.newQuotes ? `${stats.newQuotes} yeni` : undefined },
+    { href: "/yonetim/siparisler", label: "Sipariş", value: stats.orders, Icon: ShoppingCart, note: stats.openOrders ? `${stats.openOrders} işlem bekliyor` : undefined },
+    { href: "/yonetim/garantiler", label: "Garanti Kaydı", value: db.warranties.length, Icon: ShieldCheck },
+    { href: "/yonetim/etkinlikler", label: "Etkinlik", value: stats.events, Icon: CalendarDays, note: stats.upcomingEvents ? `${stats.upcomingEvents} yaklaşan` : "yaklaşan etkinlik yok" },
+    { href: "/yonetim/haberler", label: "Haber", value: stats.news, Icon: Newspaper },
+  ];
+
+  return (
+    <>
+      <AdminPageHeader
+        title="Panel"
+        description="Satış, teklif ve müşteri özetleri."
+      />
+
+      <DashboardCharts />
+
+      <h2 className="mb-4 mt-10 font-display text-2xl font-bold uppercase">Genel durum</h2>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {cards.map(({ href, label, value, Icon, note }) => (
+          <Link key={href} href={href}>
+            <AdminCard className="transition-colors hover:border-zw-ink">
+              <Icon size={20} className="text-zw-red-600" />
+              <div className="mt-3 font-display text-3xl font-bold">{value}</div>
+              <div className="text-sm text-zw-grey-600">{label}</div>
+              {note && (
+                <Badge tone="amber" className="mt-2">
+                  {note}
+                </Badge>
+              )}
+            </AdminCard>
+          </Link>
+        ))}
+      </div>
+
+      {stats.noOnlineStock.length > 0 && (
+        <AdminCard className="mt-6">
+          <div className="flex items-center gap-2">
+            <AlertTriangle size={18} className="text-amber-600" />
+            <h2 className="font-display text-xl font-bold uppercase">
+              Hiçbir online satıcıda stokta olmayan ürünler
+            </h2>
+            <Badge tone="amber">{stats.noOnlineStock.length}</Badge>
+          </div>
+          <p className="mt-1 text-sm text-zw-grey-600">
+            Bu ürünlerin sayfasında &quot;online satıcı&quot; bölümü boş görünür. Stok
+            matrisinden güncelleyebilirsiniz.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {stats.noOnlineStock.slice(0, 12).map((p) => (
+              <Link
+                key={p.id}
+                href={`/yonetim/stok?sekme=urun&urun=${p.id}`}
+                className="rounded-[3px] border border-zw-grey-300 px-2.5 py-1 text-xs font-semibold hover:border-zw-ink"
+              >
+                {p.name}
+              </Link>
+            ))}
+          </div>
+        </AdminCard>
+      )}
+
+      <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <AdminCard>
+          <h2 className="font-display text-xl font-bold uppercase">Son Teklifler</h2>
+          <div className="mt-3 divide-y divide-zw-grey-100">
+            {listQuotes(db).slice(0, 5).map((q) => (
+              <Link
+                key={q.id}
+                href="/yonetim/teklifler"
+                className="flex items-center gap-3 py-2.5 text-sm hover:text-zw-red-600"
+              >
+                <span className="font-semibold">{q.code}</span>
+                <span className="min-w-0 truncate text-zw-grey-600">{q.companyName || q.contactName}</span>
+                <span className="ml-auto shrink-0 text-xs text-zw-grey-400">
+                  {formatDate(q.createdAt)}
+                </span>
+              </Link>
+            ))}
+            {listQuotes(db).length === 0 && (
+              <p className="py-3 text-sm text-zw-grey-500">Henüz teklif yok.</p>
+            )}
+          </div>
+        </AdminCard>
+
+        <AdminCard>
+          <h2 className="font-display text-xl font-bold uppercase">Son Siparişler</h2>
+          <div className="mt-3 divide-y divide-zw-grey-100">
+            {listOrders(db).slice(0, 5).map((o) => (
+              <Link
+                key={o.id}
+                href={`/yonetim/siparisler/${o.id}`}
+                className="flex items-center gap-3 py-2.5 text-sm hover:text-zw-red-600"
+              >
+                <span className="font-semibold">{o.code}</span>
+                <span className="min-w-0 truncate text-zw-grey-600">{o.customerName}</span>
+                <span className="ml-auto shrink-0 font-semibold">
+                  {formatPrice(o.total)}
+                </span>
+              </Link>
+            ))}
+            {listOrders(db).length === 0 && (
+              <p className="py-3 text-sm text-zw-grey-500">Henüz sipariş yok.</p>
+            )}
+          </div>
+        </AdminCard>
+      </div>
+    </>
+  );
+}

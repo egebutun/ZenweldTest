@@ -87,8 +87,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     giriş yapılamaz: "Çok fazla deneme yapıldı. 15 dakika sonra tekrar
     deneyin."
   - İlk yönetici hesabı `npm run yonetici:olustur` ile açılır (README).
-  - Panel veritabanına alan alan geçer (KARARLAR K-99). Veritabanından
-    okuyup yazan ekranlar:
+  - Panelin bütün ekranları veritabanından okur ve yazar (alan alan geçti;
+    KARARLAR K-99):
     - **Satış:** Siparişler, İade Talepleri, Kuponlar
       ([Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)).
     - **Talepler:** Teklifler, Servis Talepleri, Garantiler, Yorumlar ile
@@ -105,9 +105,9 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     - **İçerik:** Haberler, Etkinlikler, Blog, Hakkımızda, Sık Sorulan
       Sorular, Belgeler, Yasal Metinler, Sayfa SEO
       ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
-    - **Üyeler** ([Veritabanı modunda Üyeler](#veritabanı-modunda-üyeler)).
-    Panel ana sayfası (özet ve grafikler) en son gelir; o zamana kadar
-    tarayıcıdaki örnek veriyi gösterir.
+    - **Üyeler** ([Veritabanı modunda Üyeler](#veritabanı-modunda-üyeler)),
+      **İşlem Kaydı** ve **E-posta Kaydı** ([24](#24-görünüm)).
+    - **Panel ana sayfası** (özet ve grafikler; [3](#3-panel-ana-sayfa)).
   - Panele her giriş ve çıkış işlem kaydına (`audit_log`) yazılır.
 
 **Giriş ekranı:**
@@ -350,6 +350,15 @@ yalnızca ana sitenin kayıtlarıdır; bayi kayıtları sayılmaz.
   teklif, servis talebi ve garanti kaydı)
   `packages/data/src/seed/sample-activity.seed.ts` dosyasından gelir. Canlıya
   çıkmadan önce silinmelidir.
+
+**Veritabanı modunda:** Ana sayfa her açılışta veriyi sunucudan okur:
+siparişler, teklifler, üyeler (yöneticiler sayılmaz; şifre bilgisi
+gelmez), servis talepleri, garanti kayıtları, ürünler ve kategoriler,
+online satış stoğu, haber ve etkinlikler (KARARLAR K-99). Okumadan önce
+ödeme süresi dolan havale siparişleri sunucuda iptal edilir. Kutular,
+grafikler ve listeler demo modundakiyle aynı kurallarla hesaplanır; sitede
+verilen yeni sipariş, teklif ya da açılan üyelik sayfa yenilenince
+sayılara eklenir. Dönem seçimi yine bu tarayıcıda hatırlanır.
 
 ---
 

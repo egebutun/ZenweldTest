@@ -73,7 +73,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) — bitti; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — bitti, K-105) — bitti, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası (6.1 Üyeler — bitti; 6.2 İşlem Kaydı ve E-posta Kaydı — bitti); 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) — bitti; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — bitti, K-105) — bitti, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası (6.1 Üyeler; 6.2 İşlem Kaydı ve E-posta Kaydı; 6.3 panel ana sayfası) — bitti; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
 | 2 | **Aşama 6 — Dosya deposu:** panelden görsel ve belge yükleme hazır (K-108; sunucunun diski, `DOSYA_KLASORU`). Kalan: deponun yeri ve yedeği, istenirse S3 uyumlu depo parçası, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** aktarım sırası, iş (`/api/sap/siparis`), yeniden deneme ve panel kutusu hazır (K-108; bugün deneme dosyasına yazıyor). Kalan: siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si ve bağlantı bilgileri; cari ve KDV kararları (CANLIYA-CIKIS-SORULARI › 2) |
@@ -727,10 +727,9 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
        Temsilcileri, Stok Matrisi, Mağaza Ayarları (e-posta alıcıları
        dahil), Görünüm ve İçerik (Haberler, Etkinlikler, Blog, Hakkımızda,
        SSS, Belgeler, Yasal Metinler, Sayfa SEO) ekranları veritabanından
-       okur ve yazar (K-99, K-100, K-103, K-104). Üyeler ekranı da
-       veritabanındaki hesapları gösterir ve yazar (6.1). Stok dosyasının
-       kendisi saklanmaz (dosya deposu Aşama 6). Panel ana sayfası (özet ve
-       grafikler) tarayıcıdaki örnek veriyi gösterir.
+       okur ve yazar (K-99, K-100, K-103, K-104). Üyeler, İşlem Kaydı,
+       E-posta Kaydı ve panel ana sayfası da veritabanındadır (6. alan).
+       Stok dosyasının kendisi saklanmaz.
      - Panelde katalog görselleri (ürün, kategori ve grup) ve satış
        temsilcisi fotoğrafı için dosya yüklenmez, görsel adresi girilir;
        dosya deposu (Aşama 6) gelince yükleme açılır (K-101).
@@ -796,9 +795,15 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      kargo firmalarına takip adresi, müşteri ve panelde takip bağlantısı
      (K-105). 5. alan bitti. Değiştirilebilir parçalar (K-108): ödeme
      sağlayıcısı, SAP sipariş aktarım sırası, dosya deposu (panelden
-     dosya yükleme) bitti. 6. alan: Üyeler (6.1), İşlem Kaydı ve E-posta
-     Kaydı ekranları (6.2) bitti. Sonraki: panel ana sayfası (6.3), 5.6;
-     canlıya hazırlık.
+     dosya yükleme) bitti. 6. alan bitti: Üyeler (6.1), İşlem Kaydı ve
+     E-posta Kaydı ekranları (6.2), panel ana sayfası (6.3); panelin bütün
+     ekranları veritabanından okur ve yazar. Sonraki: 5.6; canlıya
+     hazırlık.
+   - 6. alandan kalanlar: panel ana sayfası siparişlerin, tekliflerin ve
+     üyelerin tamamını tarayıcıya gönderir; kayıt sayısı büyüyünce (ör.
+     binlerce sipariş) özet ve grafikler sunucuda hesaplanmalı. Üyeler,
+     İşlem Kaydı dışındaki uzun listeler (Siparişler, Üyeler, Yorumlar)
+     da büyüyünce sayfalanmalı ("Görseller ve uzun listeler").
    - 5.3'ten kalanlar: yorum fotoğraf ve videoları
      dosya deposu gelince (Aşama 6) depoya taşınır (o zamana kadar panelin
      Yorumlar ekranı bütün yorumları dosyalarıyla birlikte okur; yorum
@@ -916,11 +921,9 @@ hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
    (Aşama 4.1–4.2): şifre argon2id ile özetlenir, oturum veritabanında
    (`sessions`) ve yalnızca sunucunun okuyabildiği çerezde tutulur. Panel
    girişi de sunucuda (4.3) ve panel sayfaları yönetici oturumu olmadan
-   gönderilmiyor. Panelin Satış, Talepler, Katalog ve Bayiler, Online
-   Satıcılar, Satış Temsilcileri ekranlarının işlemleri sunucuda yönetici
-   oturumuyla korunuyor (K-99). Kalan: diğer panel alanlarının işlemleri
-   (Aşama 5) aynı şekilde sunucuya geçmeli. Panel › Üyeler veritabanındaki
-   hesapları gösterir ve yazar (6.1). `npm run db:seed` örnek hesapları eski demo özetiyle yazar;
+   gönderilmiyor. Veritabanı modunda panelin bütün ekranlarının işlemleri
+   sunucuda yönetici oturumuyla korunuyor (K-99; 6. alanla tamamlandı).
+   `npm run db:seed` örnek hesapları eski demo özetiyle yazar;
    ilk girişte güçlü özete çevrilir.
 2. **Hesap silinince kalan veriler:** "Hesap silme — açık konular" bölümü.
 3. **Şifre sıfırlama e-postası — konuşulacak (KARARLAR K-105):** Bugünkü

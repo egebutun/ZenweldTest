@@ -2183,6 +2183,23 @@ Kurallar (türler, boyut, adres): [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-y�
   `tests/e2e-db/panel-kayitlar.spec.ts` (menü, girişin kayıtta görünmesi,
   süzgeç adreste, e-posta kaydı satırı, oturumsuz açılmama).
 
+**Panel ana sayfası, adım 6.3 (Aşama 5, 6. alan; KARARLAR K-99; `src/admin-dashboard.ts`):**
+
+- `readDashboardPanel`: önce süresi dolan havale siparişleri iptal edilir
+  (`cancelExpiredTransfers`), sonra ana sayfanın verisi okunur: katalog
+  (ürün, kategori, grup), online satış stoğu (`readRetailersPanel`:
+  satıcılar, bağlı bayiler, sitede görünebilecek stok satırları, ayarlar),
+  `orders`, `quotes`, `users` (şifre özeti boş; adresler gönderilmez),
+  `service_requests`, `warranties`, haber ve etkinlikler. Sunucu sayfası
+  (`app/yonetim/(panel)/page.tsx`) veriyi ekrana verir; özet ve grafikler
+  tarayıcıda demo modundakiyle aynı kurallarla hesaplanır
+  (`apps/zenweld-web/src/lib/admin-stats.ts`).
+- Bugün kayıtların tamamı gönderilir; sipariş ve teklif sayısı büyüyünce
+  özetin sunucuda hesaplanması gerekir (YAPILACAKLAR).
+- Test: `tests/db/panel-ana-sayfa.test.ts` (okunan veri, süresi dolan
+  havale, şifre özeti); `tests/e2e-db/panel-ana-sayfa.spec.ts` (genel
+  durum kutularının veritabanı sayıları, yeni teklifin sayılması).
+
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
 veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını

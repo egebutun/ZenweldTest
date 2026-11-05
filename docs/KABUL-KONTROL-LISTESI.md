@@ -988,6 +988,16 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       satırı çıkar; e-posta servisi ayarlı değilse durumu "Gönderilmedi"dir
       ve nedeni yazar. Teklif numarasına tıklanınca Teklifler açılır.
 
+**Veritabanı modunda panel ana sayfası (KARARLAR K-99):**
+
+- [ ] Panel ana sayfasındaki Sipariş, Üye, Teklif ve Garanti Kaydı
+      kutularının sayıları `db:studio`'daki satır sayılarıyla aynıdır (Üye'de
+      yöneticiler sayılmaz).
+- [ ] Sitede kartla sipariş verilince sayfa yenilenince Sipariş sayısı bir
+      artar; Ciro grafiğinde bugüne eklenir ("Bugün" seçiliyken).
+- [ ] Ödeme süresi geçmiş havale siparişi ana sayfa açılınca "İptal Edildi"
+      olur ve "işlem bekliyor"da sayılmaz.
+
 **Veritabanı modunda Bayiler, Online Satıcılar, Satış Temsilcileri (KARARLAR K-99, K-103):**
 
 - [ ] Yeni bayi kaydedilince Yetkili Bayi ve Servis Ağı haritasında hemen
