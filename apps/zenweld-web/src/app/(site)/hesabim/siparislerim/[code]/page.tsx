@@ -2,9 +2,9 @@
 
 import { Suspense, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { CheckCircle2, Truck } from "lucide-react";
+import { CheckCircle2, ExternalLink, Truck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import type { Order, OrderAddress } from "@zenweld/data";
+import { trackingLink, type Order, type OrderAddress } from "@zenweld/data";
 import { getShopSettings, useDatabase } from "@zenweld/store";
 import { Alert, EmptyState, Modal } from "@zenweld/ui";
 import { formatDate, formatDateTime, formatPrice } from "@zenweld/utils";
@@ -43,6 +43,7 @@ function OrderDetail() {
   }
 
   const shop = getShopSettings(db);
+  const trackingUrl = order.shipment && trackingLink(shop.carriers, order.shipment);
   const paymentText = paymentSummary(order.payment, t);
 
   return (
@@ -101,6 +102,17 @@ function OrderDetail() {
               <strong className="font-mono">{order.shipment.trackingNumber}</strong>
               <CopyButton value={order.shipment.trackingNumber.replace(/\s/g, "")} />
             </span>
+            {/* Firmanin takip adresi Magaza Ayarlari'nda girildiyse (K-105). */}
+            {trackingUrl && (
+              <a
+                href={trackingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 font-semibold text-zw-red-600 hover:underline"
+              >
+                {t.orders.trackShipment} <ExternalLink size={13} />
+              </a>
+            )}
           </div>
         </Box>
       )}

@@ -370,6 +370,18 @@ Siparişi yalnızca **üye** verir.
   müşteri bu geçmişi Hesabım › Siparişlerim'de görür.
 - Kargo firması ve takip numarası zorunludur. Kargodaki siparişte takip
   numarası düzeltilebilir; ilk kargoya verilme tarihi değişmez.
+- **Takip bağlantısı (KARARLAR K-105):** Mağaza Ayarları'nda her kargo
+  firmasına takip sayfasının adresi girilebilir; adresteki `{takip}` yerine
+  gönderinin takip numarası (boşlukları atılarak) yazılır. Müşteri sipariş
+  detayında "Kargoyu takip et", panel sipariş detayında "<firma> takip
+  sayfasını aç" bağlantısını görür. Firma gönderideki adıyla bulunur
+  (büyük/küçük harf fark etmez); takip adresi yoksa ya da firma listeden
+  çıkarıldıysa bağlantı gösterilmez. Takip adresi `https://` ile başlar,
+  `{takip}` içerir, boşluk içermez.
+  - **Örnek:** Adres `https://kargo.ornek/sorgula?no={takip}`, takip
+    numarası "YK 1029 3847 56" → `https://kargo.ornek/sorgula?no=YK1029384756`.
+  - Kargo firmasının API'si (etiket, durum ve teslim bilgisi) ileride
+    bağlanırsa bağlantı bu tek kuraldan değişir (`packages/data/src/shipping.ts`).
 - Teslim edilmiş ya da iptal edilmiş sipariş iptal edilemez.
 - İptal edilen siparişte (havale süresinin dolması dahil) kupon kullanımı
   geri sayılır ([21](#21-kuponlar)).
@@ -1268,6 +1280,17 @@ veritabanına geçtikçe onlara da uygulanır.
   alınır. Kayıt sitede (sepet, ödeme) hemen geçerli olur. Listeden çıkan
   POS ya da kargo firması silinir; eski siparişler onların adını kendi
   kopyasında tutar. E-posta alıcıları için [18](#18-form-e-postaları).
+- **Şirket ve İletişim (KARARLAR K-105):** Tek kayıttır. Ticari unvan,
+  telefon ve geçerli e-posta zorunlu; MERSİS no 16 rakam ya da boş
+  (boşluklar atılır; boşsa sözleşmede "[—]"); en az bir, en fazla 10 ofis,
+  her ofiste şehir ve en az bir adres satırı (en çok 5 satır, 5 telefon);
+  sosyal medya adresleri `https://` ile başlar ya da boştur (boş olan
+  sitede gösterilmez). İlk ofis merkezdir: alt bilgide ve sözleşmelerin
+  Satıcı bölümünde onun adresi yazar. Kayıt sitede hemen görünür. Kural
+  demo modunda da geçerlidir.
+  - **Örnek:** MERSİS kutusuna "0123 4567 8901 2345" yazılırsa
+    "0123456789012345" kaydedilir; "123" yazılırsa kaydedilmez: "MERSİS
+    numarası 16 rakamdan oluşur (boş bırakılabilir)."
 - **İçerik:** Link ([13](#13-linkler-yönlendirme-ve-arama-motorları)) ve
   yayında olma ([14](#14-yayında-olma)) kuralları demo moduyla aynıdır ve
   sunucuda da denetlenir. Aynı link iki yönetici aynı anda kaydetse de iki

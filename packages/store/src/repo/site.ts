@@ -2,6 +2,7 @@
 
 import type {
   AboutContent,
+  CompanySettings,
   EmailRecipient,
   PageSeoFields,
   RichTextStyle,
@@ -63,6 +64,24 @@ export function getShopSettings(db: ZenweldDatabase = getSnapshot()): ShopSettin
 export function saveShopSettings(shop: ShopSettings): boolean {
   return mutate((db) => {
     db.settings = { ...db.settings, shop };
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Sirket ve iletisim (KARARLAR K-105)                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Sirket ve iletisim bilgileri: alt bilgi, Iletisim sayfasi, sozlesmeler.
+ * Kayit yoksa (veritabaninda satir yok) baslangic degerleri kullanilir.
+ */
+export function getCompany(db: ZenweldDatabase = getSnapshot()): CompanySettings {
+  return { ...defaultSettings.company, ...(db.settings?.company ?? {}) };
+}
+
+export function saveCompanySettings(company: CompanySettings): boolean {
+  return mutate((db) => {
+    db.settings = { ...db.settings, company };
   });
 }
 

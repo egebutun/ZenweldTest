@@ -26,7 +26,7 @@ export const settings = pgTable(
     updatedAt: tstz("updated_at").notNull().defaultNow(),
     updatedBy: text("updated_by").references(() => users.id, { onDelete: "set null" }),
   },
-  (t) => [check("settings_key", oneOf(t.key, ["shop", "stock", "rich_text"]))],
+  (t) => [check("settings_key", oneOf(t.key, ["shop", "stock", "rich_text", "company"]))],
 );
 
 /** Banka sanal POS'lari (settings.shop.pos). */

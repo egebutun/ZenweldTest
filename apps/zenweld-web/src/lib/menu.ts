@@ -1,14 +1,16 @@
 "use client";
 
 import { useMemo } from "react";
-import { listLegalPages, listProducts, useDatabase } from "@zenweld/store";
+import { getCompany, listLegalPages, listProducts, useDatabase } from "@zenweld/store";
 import { legalPath, productHighlights, type LegalPageId, type TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
 import { useT } from "./i18n-client";
 import { categoryHref, groupHref } from "./catalog";
 
-// Geriye donuk uyumluluk: iletisim verisi artik contact.ts icinde.
-export { CONTACT, OFFICES, officeQuery, mapEmbedUrl, mapDirectionsUrl, type Office } from "./contact";
+export { headOfficeAddress, mapDirectionsUrl, mapEmbedUrl, officeQuery, socialLinks, type Office } from "./contact";
+
+/** Sirket ve iletisim bilgileri (Magaza Ayarlari > Sirket ve Iletisim; KARARLAR K-105). */
+export const useCompany = () => getCompany(useDatabase());
 
 /** Mega menudeki kucuk urun onizleme karti. */
 export interface MenuProduct {

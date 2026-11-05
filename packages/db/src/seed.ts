@@ -58,7 +58,7 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
   const categoryOf = (slug: string | undefined) => (slug ? (categoryId.get(slug) ?? null) : null);
   const productName = new Map(data.products.map((p) => [p.id, p.name]));
   const shop = data.settings.shop;
-  const carrierIds = new Map(shop.carriers.map((name) => [name, carrierId(name)]));
+  const carrierIds = new Map(shop.carriers.map(({ name }) => [name, carrierId(name)]));
 
   /* ------------------------------ Katalog ------------------------------ */
 
@@ -325,7 +325,7 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
     iban: b.iban,
     position: i,
   }));
-  const carriers = shop.carriers.map((name, i) => ({ id: carrierId(name), name, position: i }));
+  const carriers = shop.carriers.map((c, i) => ({ id: carrierId(c.name), name: c.name, trackingUrl: c.trackingUrl ?? null, position: i }));
   const settings = [
     {
       key: "shop",
@@ -338,6 +338,7 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
     },
     { key: "stock", value: data.settings.stock },
     { key: "rich_text", value: data.settings.richText },
+    { key: "company", value: data.settings.company },
   ];
 
   /* ------------------------ Teklif ve siparis ------------------------ */

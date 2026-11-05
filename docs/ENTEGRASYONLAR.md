@@ -257,7 +257,8 @@ Bunlar servis değil, bağlantıdır; anahtar gerekmez.
 | Telefon | Bayiler, satış temsilcileri, İletişim | `tel:+90…` (boşluksuz) |
 | WhatsApp | Bayiler (WhatsApp numarası varsa), satış temsilcileri | `https://wa.me/<ülke kodu dahil rakamlar>` |
 | E-posta | Satış temsilcileri, İletişim | `mailto:` |
-| Instagram, YouTube, LinkedIn | Alt bilgi | `lib/contact.ts` içindeki adresler |
+| Instagram, YouTube, LinkedIn, TikTok | Alt bilgi | Panelde Mağaza Ayarları › Şirket ve İletişim'de girilen adresler (K-105); boş olan gösterilmez |
+| Kargo takip | Müşterinin ve panelin sipariş detayı | Firmanın takip adresi, `{takip}` yerine takip numarası (K-105) |
 
 **Paylaşım önizlemesi:** WhatsApp, LinkedIn ve X'te paylaşılan sayfada
 başlık, açıklama ve görsel çıkar (Open Graph ve Twitter Card etiketleri).
@@ -450,8 +451,8 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | **Bülten** | Kayıt kutusu var, hiçbir yere gitmez | Bülten servisi seçilip bağlanmalı |
 | **Analitik** (ziyaret, dönüşüm, sepette bırakılan) | Yok | Google Analytics vb.; çerez onayına bağlı yüklenmeli ve adresleri güvenlik politikasına (CSP) eklenmeli. Çerez ayarları penceresine analiz/pazarlama kategorileri eklenmeli |
 | **e-Arşiv / e-Fatura** | Yok | Muhasebe yazılımı ya da entegratör |
-| **Kargo** | Takip numarası elle girilir | İsteğe bağlı: takip bağlantısı (tablo hazır: `carriers.tracking_url`), etiket oluşturma, kargo firmasından teslim bilgisi |
-| **ETBİS ve MERSİS** | Yok | Ticaret Bakanlığı kaydı; numaralar sözleşmelere |
+| **Kargo** | Takip numarası elle girilir; firmaya takip sayfasının adresi girilince müşteri ve panelde takip bağlantısı (`carriers.tracking_url`, KARARLAR K-105) | İsteğe bağlı, firma API verirse: etiket oluşturma, durum ve teslim bilgisinin firmadan okunması; firma başına sunucuda bağlantı parçası, anahtar ortam değişkeninde ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Online satış 9) |
+| **ETBİS ve MERSİS** | MERSİS no panelden girilir, sözleşmelere yazılır (K-105); ETBİS yok | Ticaret Bakanlığı kaydı; gerçek MERSİS no |
 | **Zamanlanmış görevler** | Sayfa açılınca çalışıyor | Havale süresi dolan siparişleri iptal; kampanya başlangıç/bitişinde ürün sayfasını yenileme |
 | **Bayi B2B uygulaması** | Yok | Ayrı uygulama ([YAPILACAKLAR.md](YAPILACAKLAR.md)) |
 | **Doğrulanmış alıcı** | Giriş yapmış her üye | Yorum, üyenin o ürünü satın almasıyla eşleşmeli |

@@ -93,10 +93,41 @@ export const defaultSettings: SiteSettings = {
       },
     ],
     transferDueDays: 3,
-    carriers: ["Yurtiçi Kargo", "Aras Kargo", "MNG Kargo", "PTT Kargo", "Sürat Kargo", "UPS"],
+    // Takip adresleri bos: her firmanin takip sayfasinin adresi panelden girilir.
+    carriers: ["Yurtiçi Kargo", "Aras Kargo", "MNG Kargo", "PTT Kargo", "Sürat Kargo", "UPS"].map((name) => ({ name })),
   },
   stock: {
     // Bayi/satici bu kadar gun dosya gondermezse stogu sitede gizlenir.
     staleDays: 3,
+  },
+
+  // Sirketin bugunku bilgileri; panelde Magaza Ayarlari > Sirket ve Iletisim'den
+  // degisir. MERSIS numarasi henuz girilmedi (sozlesmelerde "[—]").
+  company: {
+    legalName: "Zenweld Kaynak ve Kesme Ekip İnş San Tic A.Ş.",
+    mersisNo: "",
+    phone: "+90 212 549 61 86",
+    email: "info@zenweld.com",
+    offices: [
+      {
+        id: "istanbul",
+        city: "İstanbul",
+        addressLines: ["İkitelli O.S.B. Demirciler Sitesi A1 Blok", "No.7 Başakşehir 34490 İstanbul"],
+        phones: ["+90 212 549 61 86", "+90 212 549 61 89"],
+      },
+      {
+        id: "izmir",
+        city: "İzmir",
+        addressLines: ["İTOB OSB, 10026. Sk. No:7", "35471 Menderes / İzmir"],
+        phones: ["+90 232 203 37 08"],
+      },
+    ],
+    social: {
+      instagram: "https://www.instagram.com/zenweldofficial/",
+      youtube: "https://www.youtube.com/@ZenweldKaynak",
+      linkedin:
+        "https://www.linkedin.com/company/zenweld-kaynak-ve-kesme-ekipmanlar%C4%B1-i%CC%87n%C5%9Faat-sanayi-ve-ticaret-a-%C5%9F/",
+      tiktok: "https://www.tiktok.com/@zenweldkaynak",
+    },
   },
 };

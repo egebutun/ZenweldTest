@@ -663,6 +663,7 @@ export const tr = {
     items: "Ürünler",
     carrier: "Kargo firması",
     trackingNo: "Takip numarası",
+    trackShipment: "Kargoyu takip et",
     copy: "Kopyala",
     copied: "Kopyalandı",
     payment: "Ödeme",

@@ -393,6 +393,10 @@ bulunamadı."
 - **Kargo firması** listesi [Mağaza Ayarları](#6-mağaza-ayarları)'ndan
   gelir. Sonradan listeden çıkarılmış ama siparişte kayıtlı firma "<firma>
   (listede yok)" diye görünür.
+- **Takip bağlantısı:** Siparişin kargo firmasına Mağaza Ayarları'nda takip
+  adresi girildiyse İşlem kutusunun üstünde "<firma> takip sayfasını aç ↗"
+  bağlantısı çıkar (yeni sekmede; KARARLAR K-105). Takip adresi yoksa ya
+  da firma listeden çıkarıldıysa bağlantı yoktur.
 - Kargo firması ve takip numarası zorunludur: "Kargo firması ve takip
   numarası zorunludur."
 - Takip numarası düzeltilince ilk kargoya verilme tarihi değişmez.
@@ -615,17 +619,19 @@ Veritabanı modunda bu ekran veritabanıyla çalışır: [Veritabanı modunda Ta
 ## 6. Mağaza Ayarları
 
 Adres: `/yonetim/magaza`. Açıklama: "Online satışta kargo ücreti, taksit
-seçenekleri, havale/EFT hesapları ve Zenweld'e giden e-postaların
-alıcıları."
+seçenekleri, havale/EFT hesapları, Zenweld'e giden e-postaların alıcıları
+ve şirketin iletişim bilgileri."
 
-İki sekme: **Kargo ve Ödeme** ve **E-posta Alıcıları** (KARARLAR K-104).
-Sekme değişince kaydedilmemiş değişiklik kaybolmaz.
+Üç sekme: **Kargo ve Ödeme**, **E-posta Alıcıları** (KARARLAR K-104) ve
+**Şirket ve İletişim** (K-105). Sekme değişince kaydedilmemiş değişiklik
+kaybolmaz.
 
 **Kaydetme:**
 
 - Her sekme kendi **Kaydet** düğmesiyle (sekmenin üstünde) saklanır.
 - "Kaydedilmemiş değişiklikler var. Saklamak için Kaydet'e basın." /
-  "Mağaza ayarları kaydedildi." / "E-posta alıcıları kaydedildi."
+  "Mağaza ayarları kaydedildi." / "E-posta alıcıları kaydedildi." /
+  "Şirket ve iletişim bilgileri kaydedildi."
 - Ayarlar başka bir sekmede kaydedilirse ekran yenilenir; bu ekranda
   kaydedilmemiş değişiklik varsa korunur.
 - Kaydederken metinler kırpılır, IBAN büyük harfe çevrilir; aynı kargo
@@ -640,8 +646,25 @@ Sekme değişince kaydedilmemiş değişiklik kaybolmaz.
   kargo ücretsiz. Örnek değer 5.000 ₺.
 - **Kargo ücreti (₺, KDV dahil):** Sınırın altındaki siparişlerde. Örnek değer
   250 ₺.
-- **Kargo firmaları:** Her satıra bir firma; sipariş kargoya verilirken
-  seçilir. En az bir firma zorunlu: "En az bir kargo firması girin."
+**Kargo Firmaları** (ayrı kutu):
+
+- Açıklama: "Sipariş kargoya verilirken firma bu listeden seçilir. Takip
+  adresinde {takip} yerine takip numarası yazılır (ör.
+  https://kargo.example/sorgula?no={takip}); müşteri sipariş detayında
+  "Kargoyu takip et" bağlantısını görür. Adres boşsa bağlantı gösterilmez;
+  adresi kargo firmasından öğrenin."
+- Her satır: **Firma** (ad), **Takip adresi**, yukarı/aşağı okları, sil.
+  **Firma Ekle** boş satır ekler. Sıra, sipariş kargoya verilirken
+  listedeki sıradır.
+- Adı boş satır kaydedilmez. En az bir firma zorunlu: "En az bir kargo
+  firması girin."
+- Takip adresi boş bırakılabilir; doluysa `https://` ile başlamalı,
+  `{takip}` içermeli ve boşluk içermemeli: "<firma>: takip adresi https://
+  ile başlamalı, {takip} içermeli ve boşluk içermemeli."
+- Örnek veride takip adresleri boştur; her firmanın takip sayfasının adresi
+  firmadan öğrenilip girilir. Kargo firmasının API'si (etiket, durum,
+  teslim bilgisi) ileride bağlanabilir ([YAPILACAKLAR.md](YAPILACAKLAR.md)
+  › Online satış 9).
 
 **Kartla Taksit:**
 
@@ -732,10 +755,44 @@ alıcıları, türüne göre (KARARLAR K-104).
   gönderdiği için e-postalar varsayılan adrese gider. Veritabanı modunda
   her e-posta gönderilirken bu liste okunur.
 
+### Şirket ve İletişim
+
+Şirketin unvanı, MERSİS numarası ve iletişim bilgileri (KARARLAR K-105).
+Sitede alt bilgide, İletişim sayfasında, sözleşmelerdeki (Ön
+Bilgilendirme Formu, Mesafeli Satış Sözleşmesi) Satıcı bölümünde ve arama
+motorlarına verilen kuruluş bilgisinde kullanılır.
+
+- **Şirket** kutusu:
+  - **Ticari unvan** (zorunlu).
+  - **MERSİS no:** "16 rakam. Boş bırakılırsa sözleşmelerde [—] yazar."
+    Boşluklar kaydederken atılır. Örnek veride boştur.
+  - **Telefon** (zorunlu): "Alt bilgide ve sözleşmelerde".
+  - **E-posta** (zorunlu, geçerli adres): "Sitede görünen adres". Küçük
+    harfe çevrilir.
+  - "Formlardan Zenweld'e giden e-postaların alıcıları E-posta Alıcıları
+    sekmesindedir."
+- **Sosyal Medya** kutusu: Instagram, YouTube, LinkedIn, TikTok adresleri.
+  "Alt bilgide simge olarak görünür. Boş bırakılan gösterilmez." Doluysa
+  `https://` ile başlamalı.
+- **Ofisler** kutusu: "İletişim sayfasında harita ve yol tarifiyle görünür.
+  İlk ofis merkezdir: adresi alt bilgide ve sözleşmelerde yazar."
+  - Her ofiste **Şehir** (ilkinde "Şehir (merkez)"), **Adres** ("Her
+    satıra bir satır"), **Telefonlar** ("Her satıra bir numara"),
+    yukarı/aşağı okları ve sil. **Ofis Ekle**.
+  - İletişim sayfasında merkezin kartında ticari unvan, diğerlerinde
+    "Zenweld <şehir>" yazar.
+- Hatalar:
+  - "Ticari unvan zorunludur." / "Telefon zorunludur." / "Geçerli bir
+    e-posta adresi girin."
+  - "MERSİS numarası 16 rakamdan oluşur (boş bırakılabilir)."
+  - "En az bir ofis girin; her ofiste şehir ve adres zorunludur."
+  - "Sosyal medya adresleri https:// ile başlamalı (boş bırakılabilir)."
+- Boş adres ve telefon satırları kaydedilmez. Ekran kaydedilen hale geçer.
+
 ### Veritabanı modunda Mağaza Ayarları
 
-Veritabanı modunda iki sekme de veritabanıyla çalışır (KARARLAR K-99,
-K-104). Her açılışta ve her kayıttan sonra sunucudan okunur; her
+Veritabanı modunda üç sekme de veritabanıyla çalışır (KARARLAR K-99,
+K-104, K-105). Her açılışta ve her kayıttan sonra sunucudan okunur; her
 değişiklik işlem kaydına yazılır. Farklar:
 
 - **Kargo ve Ödeme** tek kayıt gibi kaydedilir: ekran açıldıktan sonra
@@ -746,7 +803,12 @@ değişiklik işlem kaydına yazılır. Farklar:
   kaydedilmez: "Yalnızca bir POS varsayılan olabilir."
 - Listeden çıkarılan POS ve kargo firması silinir; eski siparişler POS'un
   ve kargo firmasının adını kendi kopyalarında tutar. Listede kalan kargo
-  firmasının takip adresi korunur.
+  firmasının kimliği korunur (gönderiler ona bağlı kalır); takip adresi
+  ekrandaki gibi kaydedilir.
+- **Şirket ve İletişim** tek kayıttır: ekran açıldıktan sonra başka bir
+  yönetici kaydettiyse kaydedilmez. Kayıt sitede (alt bilgi, İletişim,
+  sözleşmeler) hemen görünür. Kayıt hiç yapılmadıysa başlangıç değerleri
+  gösterilir.
 - **E-posta Alıcıları:** Kayıt hemen geçerli olur; sonraki e-posta yeni
   adreslere gider ve e-posta kaydına (`email_log`) bu adreslerle yazılır.
   Ekran açıldıktan sonra başka bir yönetici alıcıları kaydettiyse

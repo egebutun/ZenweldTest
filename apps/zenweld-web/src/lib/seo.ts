@@ -6,13 +6,14 @@ import {
   type BlogPost,
   type Category,
   type CategoryGroup,
+  type CompanySettings,
   type FaqItem,
   type NewsItem,
   type Product,
   type SeoFields,
   type ZenweldEvent,
 } from "@zenweld/data";
-import { CONTACT, OFFICES } from "@/lib/contact";
+import { socialLinks } from "@/lib/contact";
 
 /**
  * SEO yardimcilari.
@@ -219,7 +220,8 @@ export function breadcrumbJsonLd(
   };
 }
 
-export function organizationJsonLd(): Record<string, unknown> {
+/** Arama motorlarina kurulus bilgisi; sirket bilgileri Magaza Ayarlari > Sirket ve Iletisim'den (K-105). */
+export function organizationJsonLd(company: CompanySettings): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -230,17 +232,17 @@ export function organizationJsonLd(): Record<string, unknown> {
     logo: absoluteUrl("/images/brand/zenweld-logo.png"),
     description: SITE_DESCRIPTION,
     // Resmi sosyal medya hesaplari — arama motorlari markayi bu hesaplarla
-    // eslestirir. Tek kaynak CONTACT.social.
-    sameAs: Object.values(CONTACT.social),
+    // eslestirir.
+    sameAs: socialLinks(company).map((s) => s.url),
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: OFFICES[0].phones[0].replace(/\s/g, ""),
-      email: CONTACT.email,
+      telephone: company.phone.replace(/\s/g, ""),
+      email: company.email,
       contactType: "customer service",
       areaServed: "TR",
       availableLanguage: ["Turkish"],
     },
-    address: OFFICES.map((office) => ({
+    address: company.offices.map((office) => ({
       "@type": "PostalAddress",
       streetAddress: office.addressLines.join(" "),
       addressLocality: office.city,

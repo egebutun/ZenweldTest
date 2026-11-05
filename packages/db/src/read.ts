@@ -419,10 +419,11 @@ export async function readSettings(db: ReadDb): Promise<SiteSettings> {
         commissions: p.commissions,
       })),
       bankAccounts: banks.map((b) => ({ id: b.id, bankName: b.bankName, accountHolder: b.accountHolder, iban: b.iban })),
-      carriers: carriers.map((c) => c.name),
+      carriers: carriers.map((c) => ({ name: c.name, ...(c.trackingUrl && { trackingUrl: c.trackingUrl }) })),
     },
     stock: value("stock") as SiteSettings["stock"],
     richText: value("rich_text") as SiteSettings["richText"],
+    company: value("company") as SiteSettings["company"],
   };
 }
 

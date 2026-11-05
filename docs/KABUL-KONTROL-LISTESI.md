@@ -726,8 +726,19 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] E-posta Alıcıları'nda geçersiz adres kaydedilmez ("<tür>: "<adres>"
       geçerli bir e-posta adresi değil."); büyük harfle yazılan adres küçük
       harfe döner.
+- [ ] Kargo Firmaları'nda bir firmaya `https://…{takip}` biçiminde takip
+      adresi girilip kaydedilince o firmayla kargoya verilmiş siparişte
+      müşterinin sipariş detayında **Kargoyu takip et**, panel sipariş
+      detayında "<firma> takip sayfasını aç" çıkar ve takip numarasıyla
+      firmanın sayfasını açar. `{takip}` içermeyen adres kaydedilmez.
+- [ ] Şirket ve İletişim'de MERSİS no girilince Ön Bilgilendirme Formu ve
+      Mesafeli Satış Sözleşmesi'nin Satıcı bölümünde görünür (boşsa
+      "[—]"); 16 rakam değilse kaydedilmez.
+- [ ] Telefon, e-posta ya da merkez ofisin adresi değişince alt bilgide;
+      ofisler değişince İletişim sayfasında değişir. Boş bırakılan sosyal
+      medya simgesi alt bilgide görünmez.
 
-**Veritabanı modunda Mağaza Ayarları (KARARLAR K-99, K-104):**
+**Veritabanı modunda Mağaza Ayarları (KARARLAR K-99, K-104, K-105):**
 
 - [ ] Kargo ücreti değişince sepetteki kargo hemen değişir; işlem kaydına
       eski ve yeni değer yazılır. Hemen ardından eski değer yazılınca uyarı
@@ -740,6 +751,11 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] E-posta Alıcıları'nda bir türe adres yazılınca o formun sonraki
       e-postası `email_log`'da bu adreslerle görünür; boşaltılınca
       `SUPPORT_EMAIL`'e döner.
+- [ ] Kargo firmasına girilen takip adresi `db:studio` › `carriers` ›
+      `tracking_url`'de görünür.
+- [ ] Şirket ve İletişim kaydı sitede (alt bilgi, İletişim, sözleşmeler)
+      hemen görünür; `settings`'te `company` satırı ve işlem kaydı
+      yazılmıştır. Hemen ardından ikinci kayıtta uyarı çıkmaz.
 
 ---
 

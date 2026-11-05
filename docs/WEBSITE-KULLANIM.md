@@ -134,9 +134,11 @@ başlıkları vardır.
   aynı bağlantılar) ve **Politikalar & Yasal**. Yasal sütundaki adlar panelden
   değişebildiği için kayıtlı başlıklardan okunur; sırası
   [21. bölümdeki](#21-yasal-metinler) gibidir.
-- **İletişim:** Logo, İstanbul merkez adresi, telefon (+90 212 549 61 86) ve
-  `info@zenweld.com`. Sosyal medya bağlantıları yeni sekmede açılır:
-  Instagram, YouTube, LinkedIn, TikTok.
+- **İletişim:** Logo, merkez ofisin adresi, telefon ve e-posta (örnek veride
+  İstanbul, +90 212 549 61 86, `info@zenweld.com`). Sosyal medya bağlantıları
+  yeni sekmede açılır: Instagram, YouTube, LinkedIn, TikTok (adresi boş
+  olan gösterilmez). Hepsi panelden (Mağaza Ayarları › Şirket ve İletişim;
+  KARARLAR K-105) değişir.
 - **Bülten kaydı:**
   - E-posta kutusu, **Kayıt Ol** düğmesi ve "Zenweld'den bülten ve pazarlama
     e-postaları almayı kabul ediyorum" onay kutusu vardır. Kutu boş gelir;
@@ -883,7 +885,9 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
 ve Mesafeli Sözleşmeler Yönetmeliği gereği ödeme öncesi onaylanır).
 
 - **Üstteki otomatik tablolar:**
-  - **Satıcı:** Unvan, adres, telefon, e-posta, MERSİS No (henüz boş: "[—]").
+  - **Satıcı:** Unvan, merkez ofisin adresi, telefon, e-posta, MERSİS No
+    (panelde Mağaza Ayarları › Şirket ve İletişim'den; boşsa "[—]", örnek
+    veride boş).
   - **Alıcı:** Ad soyad ya da unvan, e-posta, telefon, teslimat adresi, fatura
     bilgileri.
   - **Sözleşme konusu ürünler:** Ürün (seçeneğiyle), adet, KDV dahil birim
@@ -1088,6 +1092,9 @@ sayısı sunucudan gelir; gelene kadar "…" yazar.
   hesaplardan birine yapın; açıklamaya <sipariş no> yazın..." ve banka
   hesapları (IBAN kopyalanır).
 - **Kargoya verildiyse:** Kargo firması ve takip numarası (kopyalanır).
+  Firmanın takip adresi panelde girildiyse yanında **Kargoyu takip et ↗**
+  bağlantısı çıkar; kargo firmasının sayfasını takip numarasıyla yeni
+  sekmede açar (KARARLAR K-105). Örnek veride takip adresleri boştur.
 - **Ürünler:** Ürün ve seçenek, adet, satır tutarı; Ara Toplam, kupon
   (varsa, "Kupon (<KOD>)"), Kargo, vade farkı (varsa), Toplam.
 - **Ödeme, adresler ve sözleşmeler:**
@@ -1263,9 +1270,10 @@ gelinir.
 - **Kayıt:** Demo modunda kayıt tutulmaz; yalnızca e-posta gider. Veritabanı
   modunda mesaj veritabanına da kaydedilir (Aşama 5.3); kayıt yapıldıysa
   e-posta gitmese de başarı mesajı çıkar.
-- **Ofislerimiz:** İstanbul ve İzmir kartları.
-  - Kartta şehir, şirket unvanı, adres, telefonlar (tıklayınca arar) ve
-    e-posta yer alır.
+- **Ofislerimiz:** Panelde girilen ofislerin kartları, panelindeki sırayla
+  (örnek veride İstanbul ve İzmir).
+  - Kartta şehir, başlık (merkezde ticari unvan, diğerlerinde "Zenweld
+    <şehir>"), adres, telefonlar (tıklayınca arar) ve e-posta yer alır.
   - Gömülü Google haritası vardır; haritaya tıklamak ya da **Yol tarifi al**
     Google Haritalar'da yol tarifini açar.
 

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, PackageCheck, Truck, XCircle } from "lucide-react";
-import type { Order, OrderAddress } from "@zenweld/data";
+import { CheckCircle2, ExternalLink, PackageCheck, Truck, XCircle } from "lucide-react";
+import { trackingLink, type Order, type OrderAddress } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { findOrder, getShopSettings, useDatabase } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
@@ -191,8 +191,9 @@ function Actions({ order }: { order: Order }) {
   // Magaza ayarlarindan cikarilmis firma da listede gorunur; yoksa ekranda
   // baska firma gorunurken kayitli firma kaydedilirdi.
   const storedCarrier = order.shipment?.carrier;
-  const removed = storedCarrier && !carriers.includes(storedCarrier) ? storedCarrier : undefined;
-  const [carrier, setCarrier] = useState(storedCarrier ?? carriers[0] ?? "");
+  const removed = storedCarrier && !carriers.some((c) => c.name === storedCarrier) ? storedCarrier : undefined;
+  const trackingUrl = order.shipment && trackingLink(carriers, order.shipment);
+  const [carrier, setCarrier] = useState(storedCarrier ?? carriers[0]?.name ?? "");
   const [tracking, setTracking] = useState(order.shipment?.trackingNumber ?? "");
   const [cancelling, setCancelling] = useState(false);
   const [reason, setReason] = useState("");
@@ -213,6 +214,18 @@ function Actions({ order }: { order: Order }) {
   return (
     <AdminCard>
       <Title>İşlem</Title>
+
+      {/* Takip sayfasi: firmanin takip adresi Magaza Ayarlari'nda girildiyse (K-105). */}
+      {order.shipment && trackingUrl && (
+        <a
+          href={trackingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-3 inline-flex items-center gap-1 text-sm font-semibold text-zw-red-600 hover:underline"
+        >
+          {order.shipment.carrier} takip sayfasını aç <ExternalLink size={13} />
+        </a>
+      )}
 
       {order.status === "awaiting_payment" && (
         <div className="space-y-3">
@@ -243,7 +256,7 @@ function Actions({ order }: { order: Order }) {
               <Select id="order-carrier" value={carrier} onChange={(e) => setCarrier(e.target.value)}>
                 {removed && <option value={removed}>{removed} (listede yok)</option>}
                 {carriers.map((c) => (
-                  <option key={c}>{c}</option>
+                  <option key={c.name}>{c.name}</option>
                 ))}
               </Select>
             </FormRow>

@@ -7,7 +7,7 @@ import { useBotTrap } from "@/components/common/BotTrap";
 import { PageHero } from "@/components/common/PageShell";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useT } from "@/lib/i18n-client";
-import { CONTACT, mapDirectionsUrl, mapEmbedUrl, type Office } from "@/lib/menu";
+import { mapDirectionsUrl, mapEmbedUrl, useCompany, type Office } from "@/lib/menu";
 import { notifyZenweld, reached } from "@/lib/notify";
 
 export default function ContactPage() {
@@ -18,6 +18,7 @@ export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const set = (key: keyof typeof form, value: string) => setForm((f) => ({ ...f, [key]: value }));
   const bot = useBotTrap();
+  const company = useCompany();
 
   // Mesaj info@zenweld.com'a e-postayla gider; gitmezse ziyaretciye soylenir.
   const submit = async (e: React.FormEvent) => {
@@ -71,8 +72,14 @@ export default function ContactPage() {
             </h2>
             <p className="mt-1.5 text-sm text-zw-grey-600">{t.support.officesSubtitle}</p>
             <div className="mt-5 grid gap-5 md:grid-cols-2">
-              {CONTACT.offices.map((office) => (
-                <OfficeCard key={office.id} office={office} />
+              {company.offices.map((office, i) => (
+                <OfficeCard
+                  key={office.id}
+                  office={office}
+                  // Merkezde (ilk ofis) ticari unvan yazar.
+                  title={i === 0 ? company.legalName : `Zenweld ${office.city}`}
+                  email={company.email}
+                />
               ))}
             </div>
           </aside>
@@ -84,7 +91,7 @@ export default function ContactPage() {
 }
 
 /** Ofis karti: adres, telefonlar, harita ve yol tarifi baglantisi. */
-function OfficeCard({ office }: { office: Office }) {
+function OfficeCard({ office, title, email }: { office: Office; title: string; email: string }) {
   const t = useT();
 
   return (
@@ -94,7 +101,7 @@ function OfficeCard({ office }: { office: Office }) {
           {office.city}
         </div>
         <h3 className="mt-1 font-display text-lg font-bold leading-snug text-zw-ink">
-          {office.legalName ?? `Zenweld ${office.city}`}
+          {title}
         </h3>
         <div className="mt-2.5 space-y-0.5 text-sm text-zw-grey-700">
           {office.addressLines.map((line) => (
@@ -114,11 +121,11 @@ function OfficeCard({ office }: { office: Office }) {
           ))}
         </div>
         <a
-          href={`mailto:${CONTACT.email}`}
+          href={`mailto:${email}`}
           className="mt-2.5 inline-block text-sm text-zw-grey-700 hover:text-zw-red-600"
           title={t.support.emailNote}
         >
-          {CONTACT.email}
+          {email}
         </a>
       </div>
 

@@ -926,7 +926,7 @@ Silme: dosyası da silinir (adresi girilen belgede yalnızca satır silinir).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
-| `key` | text | anahtar; `shop`, `stock`, `rich_text` | |
+| `key` | text | anahtar; `shop`, `stock`, `rich_text`, `company` | |
 | `value` | jsonb | zorunlu | Aşağıda |
 | `updated_at` | timestamptz | zorunlu | |
 | `updated_by` | text | → `users` (boşalır) (yeni) | |
@@ -935,6 +935,10 @@ Silme: dosyası da silinir (adresi girilen belgede yalnızca satır silinir).
   havale süresi (gün). Kargo firmaları `carriers`'tadır.
 - `stock`: stok kaydının sitede geçerli sayıldığı gün sayısı.
 - `rich_text`: biçimli metinlerin görünümü (Görünüm sayfası).
+- `company`: şirket ve iletişim bilgileri (ticari unvan, MERSİS no,
+  telefon, e-posta, ofisler, sosyal medya; Mağaza Ayarları › Şirket ve
+  İletişim, KARARLAR K-105). Satır yoksa site başlangıç değerlerini
+  kullanır. Geçiş betiği `0009_ayar-sirket-bilgileri`.
 
 ### `payment_pos` — banka sanal POS'ları
 
@@ -955,7 +959,8 @@ Koddaki: `settings.shop.pos`.
 
 ### `carriers` — kargo firmaları (yeni)
 
-Koddaki: `settings.shop.carriers` (bugün yalnızca adlar).
+Koddaki: `settings.shop.carriers` (`{ name, trackingUrl? }`). Panelde
+Mağaza Ayarları › Kargo ve Ödeme'den girilir (K-105).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -1847,12 +1852,14 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
 
 **Panel › Mağaza Ayarları, adım 5.1 (Aşama 5, 5. alan; KARARLAR K-99, K-104; `src/admin-settings.ts`):**
 
-- **Okuma:** `readShopPanel(db)`: ayarlar (`readSettings`; mağaza ayarının
-  `settings('shop').updated_at`'iyle) ve `email_recipients`. Yönetici
+- **Okuma:** `readShopPanel(db)`: ayarlar (`readSettings`; mağaza ve
+  şirket ayarlarının `settings('shop'|'company').updated_at`'iyle; şirket
+  satırı yoksa başlangıç değerleri) ve `email_recipients`. Yönetici
   oturumu denetlenir.
 - **Yazma:** `POST /api/yonetim/ayarlar/<işlem>`
   (`apps/zenweld-web/src/app/api/yonetim/ayarlar/[islem]/route.ts`):
-  `magaza` (Kargo ve Ödeme sekmesi), `eposta-alicilari`.
+  `magaza` (Kargo ve Ödeme sekmesi), `eposta-alicilari`, `sirket` (Şirket
+  ve İletişim sekmesi, adım 5.3).
 - **Kargo ve Ödeme:** Tek kayıt gibi kaydedilir; eski ekran denetimi
   `settings('shop').updated_at`'iyle (her kayıtta güncellenir), aynı anda
   iki kayıt `pg_advisory_xact_lock('settings:shop')` ile sıraya girer.
@@ -1868,12 +1875,21 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
     listeden çıkan silinir (`orders.pos_id` boşalır, sipariş `pos_name` ve
     komisyon kopyasını tutar). Varsayılan POS değişirken önce eskisinin
     işareti kalkar (`payment_pos_one_default`).
-  - `carriers`: ada göre; kalan firmanın kimliği ve `tracking_url`'i
-    korunur, yeni ad eklenir, çıkan silinir (`shipments.carrier_id`
-    boşalır, `carrier_name` kopyası kalır).
+  - `carriers`: ada göre; kalan firmanın kimliği korunur, sırası ve
+    `tracking_url`'i ekrandaki gibi yazılır (adım 5.3, K-105); yeni ad
+    eklenir, çıkan silinir (`shipments.carrier_id` boşalır,
+    `carrier_name` kopyası kalır).
   - `audit_log`: `settings` / `shop`; değişen alanlar (listelerde eski ve
     yeni liste). Ardından `refreshSite(["katalog"])` (ayarlar katalogla
     birlikte önbellektedir).
+- **Şirket ve İletişim (adım 5.3, K-105):** `settings('company')` tek
+  satır; yoksa eklenir. Eski ekran denetimi satırın `updated_at`'iyle (satır
+  yokken ekranın gördüğü an boş olmalı), sıra
+  `pg_advisory_xact_lock('settings:company')` ile. Kurallar tarayıcıyla
+  ortak (`parseCompanySettings`). Ofisler ve sosyal medya alan sırasından
+  bağımsız karşılaştırılır; değişmeyen kayıt yazılmaz. `audit_log`:
+  `settings` / `company`. Ardından `refreshSite(["katalog"])` (alt bilgi,
+  İletişim, sözleşmeler ayarları katalogla birlikte okur).
 - **E-posta Alıcıları:** `email_recipients`; tür başına en fazla 10 adres
   (küçük harf, tekrarsız; `parseRecipients`). Eski ekran denetimi listenin
   hali üzerinden (`recipientsVersion`: satır sayısı ve en son
@@ -1888,13 +1904,19 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   (`useSettingsActions`).
 - Test: `tests/db/panel-ayarlar.test.ts` (okuma; kaydetme: varsayılan
   POS'un silinen ve kalan POS'a geçmesi, hesap ekleme/çıkarma, kargo
-  firmalarının ad eşleşmesi ve takip adresinin korunması, işlem kaydı;
-  eski ekran, değişmeyen kayıt, kural ihlalleri; e-posta alıcıları: türlerin
-  şemayla aynı olması, ekleme, değiştirme, boşaltma, e-postada okunma,
-  eski ekran, geçersiz adres ve tür); `tests/unit/magaza-ayarlari.test.ts`
-  (kurallar); `tests/e2e-db/panel-ayarlar.spec.ts` (tarayıcıda: kargo
-  ücretinin sitede hemen geçerli olması ve geri alınması, Welders Club
-  alıcısının e-posta kaydına yazılması, oturumsuz istek).
+  firmalarının ad eşleşmesi, takip adresinin korunması, girilmesi,
+  silinmesi ve kuralı, işlem kaydı; eski ekran, değişmeyen kayıt, kural
+  ihlalleri; e-posta alıcıları: türlerin şemayla aynı olması, ekleme,
+  değiştirme, boşaltma, e-postada okunma, eski ekran, geçersiz adres ve
+  tür; şirket ve iletişim: satır yokken başlangıç değerleri, ilk kayıt,
+  değişiklik, ofis sırası, eski ekran, değişmeyen kayıt, kural ihlali);
+  `tests/unit/magaza-ayarlari.test.ts` (kurallar, takip bağlantısı);
+  `tests/e2e-db/panel-ayarlar.spec.ts` (tarayıcıda: kargo ücretinin sitede
+  hemen geçerli olması ve geri alınması, Welders Club alıcısının e-posta
+  kaydına yazılması, oturumsuz istek); `tests/e2e-db/panel-sirket.spec.ts`
+  (MERSİS no sözleşmede ve telefon alt bilgide hemen görünür; kargo takip
+  adresi girilince müşteri ve panel sipariş detayında bağlantı; oturumsuz
+  istek).
 
 **Panel › İçerik, adım 5.2 (Aşama 5, 5. alan; KARARLAR K-99, K-101; `src/admin-content.ts`):**
 

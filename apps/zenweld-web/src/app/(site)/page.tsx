@@ -2,7 +2,8 @@ import { JsonLd } from "@/components/common/JsonLd";
 import { faqJsonLd, organizationJsonLd } from "@/lib/seo";
 import { ReviewMarquee } from "@/components/home/ReviewMarquee";
 import { PageData } from "@/components/common/PageData";
-import { getHomePageData } from "@/lib/server/catalog";
+import { defaultSettings } from "@zenweld/data";
+import { getHomePageData, getServerCatalog } from "@/lib/server/catalog";
 import { getServerContent } from "@/lib/server/content";
 import { pageMetadataFor } from "@/lib/server/page-metadata";
 import {
@@ -29,10 +30,13 @@ export default async function HomePage() {
   // sunucudan; demo modunda null.
   const pageData = await getHomePageData();
   const { faqs } = await getServerContent();
+  // Sirket satiri yoksa baslangic degerleri (Magaza Ayarlari > Sirket ve Iletisim).
+  const { settings } = await getServerCatalog();
+  const company = { ...defaultSettings.company, ...settings.company };
 
   return (
     <PageData data={pageData}>
-      <JsonLd data={organizationJsonLd()} />
+      <JsonLd data={organizationJsonLd(company)} />
       {/* Sorular arama sonuclarinda acilir baslik olarak cikabilsin */}
       <JsonLd data={faqJsonLd(faqs)} />
       <HomeActionStrip />

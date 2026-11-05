@@ -1,15 +1,20 @@
 import { asc, eq, inArray, sql } from "drizzle-orm";
 import {
+  COMPANY_SOCIAL_KEYS,
   EMAIL_RECIPIENT_TYPES,
   RICH_TEXT_COLORS,
   RICH_TEXT_LIMITS,
   bankAccountKey,
+  carrierKey,
   defaultSettings,
+  parseCompanySettings,
   parseRecipients,
   parseShopSettings,
   posKey,
   recipientsVersion,
   richTextStyleError,
+  type Carrier,
+  type CompanySettings,
   type EmailRecipient,
   type RichTextStyle,
   type ShopSettings,
@@ -22,18 +27,20 @@ import { readSettings, type ReadDb } from "./read";
 import * as s from "./schema";
 
 /**
- * PANEL › MAGAZA AYARLARI SUNUCUDA (Asama 5, 5. alan, adim 5.1; KARARLAR
- * K-99, K-104)
+ * PANEL › MAGAZA AYARLARI SUNUCUDA (Asama 5, 5. alan, adim 5.1 ve 5.3; KARARLAR
+ * K-99, K-104, K-105)
  *
- * Mağaza Ayarları'nin iki sekmesi:
- * - Genel: kargo sinir ve ucreti, kargo firmalari, taksit alt siniri, banka
- *   POS'lari, havale hesaplari ve odeme suresi. Tek kayit gibi kaydedilir;
- *   "ekran acildiktan sonra degisti mi" settings('shop') satirinin
- *   updated_at'iyle denetlenir. POS'un API anahtari ve sifresi burada
- *   yoktur (CLAUDE.md › Guvenlik).
+ * Mağaza Ayarları'nin uc sekmesi:
+ * - Genel: kargo sinir ve ucreti, kargo firmalari (takip adresleriyle),
+ *   taksit alt siniri, banka POS'lari, havale hesaplari ve odeme suresi.
+ *   Tek kayit gibi kaydedilir; "ekran acildiktan sonra degisti mi"
+ *   settings('shop') satirinin updated_at'iyle denetlenir. POS'un API
+ *   anahtari ve sifresi burada yoktur (CLAUDE.md › Guvenlik).
  * - E-posta Alicilari: Zenweld'e giden her e-posta turunun alicilari
  *   (email_recipients). Satiri olmayan tur varsayilan adrese
  *   (SUPPORT_EMAIL) gider.
+ * - Şirket ve İletişim: unvan, MERSIS no, telefon, e-posta, ofisler ve
+ *   sosyal medya; tek kayit, settings('company') satiri (adim 5.3, K-105).
  *
  * Görünüm ekrani (bicimli metinlerin punto ve renkleri) da burada: tek
  * kayit, settings('rich_text') satiri (adim 5.3).
@@ -58,12 +65,24 @@ async function readRecipients(db: ReadDb): Promise<EmailRecipient[]> {
   return rows.map((r) => ({ type: r.type, recipients: r.recipients, updatedAt: iso(r.updatedAt) }));
 }
 
-/** Mağaza Ayarları ekraninin verisi: ayarlar (magaza ayarinin son degisiklik aniyla) ve e-posta alicilari. */
+/**
+ * Mağaza Ayarları ekraninin verisi: ayarlar (magaza ve sirket ayarlarinin
+ * son degisiklik anlariyla) ve e-posta alicilari. Sirket satiri yoksa
+ * baslangic degerleri gosterilir.
+ */
 export async function readShopPanel(db: AuditDb): Promise<Partial<ZenweldDatabase>> {
   const settings = await readSettings(db);
-  const [row] = await db.select({ updatedAt: s.settings.updatedAt }).from(s.settings).where(eq(s.settings.key, "shop"));
+  const rows = await db.select({ key: s.settings.key, updatedAt: s.settings.updatedAt }).from(s.settings);
+  const stamp = (key: string) => {
+    const row = rows.find((r) => r.key === key);
+    return row ? { updatedAt: iso(row.updatedAt) } : {};
+  };
   return {
-    settings: { ...settings, shop: { ...settings.shop, ...(row && { updatedAt: iso(row.updatedAt) }) } },
+    settings: {
+      ...settings,
+      shop: { ...settings.shop, ...stamp("shop") },
+      company: { ...(settings.company ?? defaultSettings.company), ...stamp("company") },
+    },
     emailRecipients: await readRecipients(db),
   };
 }
@@ -97,8 +116,10 @@ export async function adminSaveShopSettings(db: AuditDb, actor: Actor, input: In
 
   const changes: AuditChanges = {
     ...changedFields<ShopValue>(before, next, SCALARS),
-    ...changedFields(before, next, ["carriers"]),
   };
+  if (JSON.stringify(before.carriers.map(carrierKey)) !== JSON.stringify(next.carriers.map(carrierKey))) {
+    changes.carriers = [before.carriers, next.carriers];
+  }
   if (JSON.stringify(before.bankAccounts.map(bankAccountKey)) !== JSON.stringify(next.bankAccounts.map(bankAccountKey))) {
     changes.bankAccounts = [before.bankAccounts, next.bankAccounts];
   }
@@ -173,20 +194,60 @@ async function saveBankAccounts(db: AuditDb, before: ShopSettings["bankAccounts"
 }
 
 /**
- * Kargo firmalari adla eslesir: kalan firmanin takip adresi ve kimligi
- * korunur, yeni ad eklenir, listeden cikan silinir (gonderiler firmanin
- * adini kendi kopyasinda tutar).
+ * Kargo firmalari adla eslesir: kalan firmanin kimligi korunur (gonderiler
+ * ona bagli), sirasi ve takip adresi guncellenir; yeni ad eklenir, listeden
+ * cikan silinir (gonderiler firmanin adini kendi kopyasinda tutar).
  */
-async function saveCarriers(db: AuditDb, names: string[], at: Date) {
+async function saveCarriers(db: AuditDb, carriers: Carrier[], at: Date) {
   const rows = await db.select().from(s.carriers);
   const byName = new Map(rows.map((r) => [r.name, r]));
+  const names = carriers.map((c) => c.name);
   const removed = rows.filter((r) => !names.includes(r.name)).map((r) => r.id);
   if (removed.length) await db.delete(s.carriers).where(inArray(s.carriers.id, removed));
-  for (const [position, name] of names.entries()) {
+  for (const [position, { name, trackingUrl }] of carriers.entries()) {
     const row = byName.get(name);
-    if (!row) await db.insert(s.carriers).values({ id: newId("kargo"), name, position, createdAt: at, updatedAt: at });
-    else if (row.position !== position) await db.update(s.carriers).set({ position, updatedAt: at }).where(eq(s.carriers.id, row.id));
+    const url = trackingUrl ?? null;
+    if (!row) await db.insert(s.carriers).values({ id: newId("kargo"), name, trackingUrl: url, position, createdAt: at, updatedAt: at });
+    else if (row.position !== position || row.trackingUrl !== url) {
+      await db.update(s.carriers).set({ position, trackingUrl: url, updatedAt: at }).where(eq(s.carriers.id, row.id));
+    }
   }
+}
+
+/* ------------------------------ Sirket ve iletisim ------------------------------ */
+
+/**
+ * Sirket ve iletisim bilgilerini kaydeder. input: { company, updatedAt? }.
+ * Tek kayit (settings('company')); satir yoksa eklenir. Degisen bir sey
+ * yoksa hicbir sey yazilmaz.
+ */
+export async function adminSaveCompany(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<Saved>> {
+  const parsed = parseCompanySettings(input.company);
+  if (!parsed.ok) return parsed.error ? fail(400, parsed.error) : invalid();
+  const next = parsed.value;
+
+  await lock(db, "settings:company");
+  const [row] = await db.select().from(s.settings).where(eq(s.settings.key, "company"));
+  if ((row ? iso(row.updatedAt) : undefined) !== (input.updatedAt || undefined)) return fail(409, stale);
+  const before = (row?.value as CompanySettings | undefined) ?? defaultSettings.company;
+
+  // jsonb alanlarin sirasini degistirir: listeler ve sosyal medya ayni sirayla karsilastirilir.
+  const changes = changedFields<CompanySettings>(before, next, ["legalName", "mersisNo", "phone", "email"]);
+  const socialKey = (c: CompanySettings) => JSON.stringify(COMPANY_SOCIAL_KEYS.map((k) => c.social[k] ?? ""));
+  const officesKey = (c: CompanySettings) => JSON.stringify(c.offices.map((o) => [o.id, o.city, o.addressLines, o.phones]));
+  if (socialKey(before) !== socialKey(next)) changes.social = [before.social, next.social];
+  if (officesKey(before) !== officesKey(next)) changes.offices = [before.offices, next.offices];
+  if (row && Object.keys(changes).length === 0) return unchanged(row);
+
+  if (row) await db.update(s.settings).set({ value: next, updatedAt: at }).where(eq(s.settings.key, "company"));
+  else await db.insert(s.settings).values({ key: "company", value: next, updatedAt: at });
+  await writeAudit(
+    db,
+    actor,
+    { action: row ? "update" : "create", entityType: "settings", entityId: "company", entityLabel: "Şirket ve İletişim", changes },
+    at,
+  );
+  return saved(at);
 }
 
 /* ------------------------------ E-posta alicilari ------------------------------ */

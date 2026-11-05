@@ -1094,6 +1094,21 @@ export interface BankAccount {
   iban: string;
 }
 
+/**
+ * Kargo firmasi (Magaza Ayarlari > Kargo ve Odeme). Ad tekildir; gonderi
+ * firmanin adini kendi kopyasinda tutar ve takip baglantisi bu adla bulunur
+ * (shipping.ts > trackingLink).
+ *
+ * Kargo firmasinin API'si baglanirsa (etiket, durum, teslim bilgisi;
+ * YAPILACAKLAR > Online satis) baglanti bilgisi bu kayda eklenir; anahtar ve
+ * sifre yalnizca sunucuda ortam degiskeni olur.
+ */
+export interface Carrier {
+  name: string;
+  /** Takip sayfasinin adresi; {takip} yerine takip numarasi yazilir. Bossa takip baglantisi verilmez. */
+  trackingUrl?: string;
+}
+
 export interface ShopSettings {
   /** Bu tutar ve ustu (KDV dahil sepet) kargo bedava */
   freeShippingThreshold: number;
@@ -1107,7 +1122,7 @@ export interface ShopSettings {
   /** Havale/EFT icin odeme suresi (gun); dolunca siparis iptal edilir */
   transferDueDays: number;
   /** Kargo firmalari (siparise takip no girilirken secilir) */
-  carriers: string[];
+  carriers: Carrier[];
   /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
   updatedAt?: string;
 }
@@ -1131,10 +1146,48 @@ export interface StockSettings {
   updatedAt?: string;
 }
 
+/** Sirketin bir ofisi; ilki merkezdir (sozlesmelerdeki Satici adresi). */
+export interface CompanyOffice {
+  id: string;
+  /** Sitede ofisin adi: "İstanbul" */
+  city: string;
+  addressLines: string[];
+  phones: string[];
+}
+
+/** Resmi sosyal medya hesaplari; bos olan sitede gosterilmez. */
+export interface CompanySocial {
+  instagram: string;
+  youtube: string;
+  linkedin: string;
+  tiktok: string;
+}
+
+/**
+ * Sirket ve iletisim bilgileri (Magaza Ayarlari > Sirket ve Iletisim;
+ * KARARLAR K-105): alt bilgi, Iletisim sayfasi, sozlesmelerdeki Satici
+ * bolumu ve arama motorlarina verilen kurulus bilgisi buradan okunur.
+ */
+export interface CompanySettings {
+  /** Ticari unvan */
+  legalName: string;
+  /** MERSIS numarasi (16 hane); bossa sozlesmede "[—]" yazar */
+  mersisNo: string;
+  /** Ana telefon (alt bilgi, sozlesmeler) */
+  phone: string;
+  /** Genel e-posta adresi */
+  email: string;
+  offices: CompanyOffice[];
+  social: CompanySocial;
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
+}
+
 export interface SiteSettings {
   richText: RichTextStyle;
   shop: ShopSettings;
   stock: StockSettings;
+  company: CompanySettings;
 }
 
 export interface ZenweldDatabase {

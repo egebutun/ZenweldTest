@@ -3,10 +3,10 @@
 import type { ReactNode } from "react";
 import type { Order } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
-import { findLegalPage, useDatabase } from "@zenweld/store";
+import { findLegalPage, getCompany, useDatabase } from "@zenweld/store";
 import { RichText } from "@zenweld/ui";
 import { formatDate, formatPrice } from "@zenweld/utils";
-import { CONTACT, OFFICES } from "@/lib/contact";
+import { headOfficeAddress } from "@/lib/contact";
 import { DOC_ID, type LegalDocumentKind } from "@/lib/legal-documents";
 import { paymentSummary } from "@/lib/order-text";
 import { addressComplete } from "./AddressFields";
@@ -83,8 +83,6 @@ export function orderLegalContext(order: LegalOrder, date: string, t: Dictionary
   };
 }
 
-const SELLER = OFFICES[0];
-
 const TEXT = {
   seller: "Satıcı",
   buyer: "Alıcı",
@@ -130,7 +128,10 @@ export function LegalDocument({
   context?: LegalContext;
 }) {
   const t = TEXT;
-  const page = findLegalPage(DOC_ID[kind], useDatabase());
+  const db = useDatabase();
+  const page = findLegalPage(DOC_ID[kind], db);
+  // Satici: Magaza Ayarlari > Sirket ve Iletisim (merkez ofis; KARARLAR K-105).
+  const seller = getCompany(db);
   const blank = <span className="italic text-zw-grey-400">[{t.filledAtCheckout}]</span>;
 
   return (
@@ -139,11 +140,11 @@ export function LegalDocument({
         <Section title={t.seller}>
           <Facts
             rows={[
-              [t.title, SELLER.legalName ?? "Zenweld"],
-              [t.address, SELLER.addressLines.join(" ")],
-              [t.phone, CONTACT.phone],
-              [t.email, CONTACT.email],
-              [t.mersis, "[—]"],
+              [t.title, seller.legalName],
+              [t.address, headOfficeAddress(seller)],
+              [t.phone, seller.phone],
+              [t.email, seller.email],
+              [t.mersis, seller.mersisNo || "[—]"],
             ]}
           />
         </Section>

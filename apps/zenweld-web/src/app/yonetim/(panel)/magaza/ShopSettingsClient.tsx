@@ -14,84 +14,58 @@ import {
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { getEmailRecipients, getShopSettings, uid, useDatabase } from "@zenweld/store";
-import { Alert, Button, FormRow, Input, Tabs, Textarea } from "@zenweld/ui";
+import { Button, FormRow, Input, Tabs } from "@zenweld/ui";
 import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
 import { PaymentPosSettings } from "@/components/admin/PaymentPosSettings";
 import { useSettingsActions } from "@/lib/admin-settings";
-
-/** Kargo firmalari alani: satir basina bir firma. */
-const parseCarriers = (text: string) => text.split("\n").map((c) => c.trim()).filter(Boolean);
-
-const UNSAVED = "Kaydedilmemiş değişiklikler var. Saklamak için Kaydet'e basın.";
+import { CarrierSettings } from "./CarrierSettings";
+import { CompanySettingsForm } from "./CompanySettingsForm";
+import { SaveBar } from "./SaveBar";
 
 /**
- * MAGAZA AYARLARI — iki sekme:
- * - Kargo ve Ödeme: kargo, taksit ve havale/EFT. Kartla taksit banka POS'u
- *   bazindadir: her POS'un musteriye sunulan taksitleri (vade farki) ve
- *   firma taksit oranlari (banka komisyonu) ayridir (bkz.
- *   components/admin/PaymentPosSettings.tsx).
+ * MAGAZA AYARLARI — uc sekme:
+ * - Kargo ve Ödeme: kargo (firmalar ve takip adresleri: CarrierSettings),
+ *   taksit ve havale/EFT. Kartla taksit banka POS'u bazindadir: her POS'un
+ *   musteriye sunulan taksitleri (vade farki) ve firma taksit oranlari
+ *   (banka komisyonu) ayridir (bkz. components/admin/PaymentPosSettings.tsx).
  * - E-posta Alıcıları: Zenweld'e giden her e-posta turunun alicilari
  *   (KARARLAR K-104).
+ * - Şirket ve İletişim: unvan, MERSIS no, telefon, e-posta, ofisler, sosyal
+ *   medya (CompanySettingsForm; KARARLAR K-105).
  *
  * Veritabani modunda kayit sunucuya gider (lib/admin-settings.ts); kurallar
  * tarayici ve sunucuda ortak (packages/data › settings-rules.ts).
  * defaultRecipient: alicisi yazilmayan turun gittigi adres (SUPPORT_EMAIL).
  */
 export function ShopSettingsClient({ defaultRecipient }: { defaultRecipient: string }) {
-  const [tab, setTab] = useState<"genel" | "eposta">("genel");
+  const [tab, setTab] = useState<"genel" | "eposta" | "sirket">("genel");
   return (
     <>
       <AdminPageHeader
         title="Mağaza Ayarları"
-        description="Online satışta kargo ücreti, taksit seçenekleri, havale/EFT hesapları ve Zenweld'e giden e-postaların alıcıları."
+        description="Online satışta kargo ücreti, taksit seçenekleri, havale/EFT hesapları, Zenweld'e giden e-postaların alıcıları ve şirketin iletişim bilgileri."
       />
       <Tabs
         className="mb-6"
         tabs={[
           { id: "genel", label: "Kargo ve Ödeme" },
           { id: "eposta", label: "E-posta Alıcıları" },
+          { id: "sirket", label: "Şirket ve İletişim" },
         ]}
         active={tab}
         onChange={(id) => setTab(id as typeof tab)}
       />
-      {/* Iki sekme de acik kalir; sekme degisince kaydedilmemis degisiklik kaybolmaz. */}
+      {/* Sekmeler acik kalir; sekme degisince kaydedilmemis degisiklik kaybolmaz. */}
       <div hidden={tab !== "genel"}>
         <ShopGeneral />
       </div>
       <div hidden={tab !== "eposta"}>
         <EmailRecipients defaultRecipient={defaultRecipient} />
       </div>
-    </>
-  );
-}
-
-/** Kaydet dugmesi ve sonuc mesajlari (her sekmenin ustunde). */
-function SaveBar({
-  onSave,
-  disabled,
-  saved,
-  unsaved,
-  error,
-  savedText,
-}: {
-  onSave: () => void;
-  disabled: boolean;
-  saved: boolean;
-  unsaved: boolean;
-  error: string | null;
-  savedText: string;
-}) {
-  return (
-    <div className="mb-4 space-y-3">
-      <div className="flex justify-end">
-        <Button onClick={onSave} disabled={disabled}>
-          Kaydet
-        </Button>
+      <div hidden={tab !== "sirket"}>
+        <CompanySettingsForm />
       </div>
-      {saved && <Alert tone="success">{savedText}</Alert>}
-      {!saved && unsaved && <Alert tone="warning">{UNSAVED}</Alert>}
-      {error && <Alert tone="danger">{error}</Alert>}
-    </div>
+    </>
   );
 }
 
@@ -100,12 +74,11 @@ function ShopGeneral() {
   const actions = useSettingsActions();
   const stored = getShopSettings(db);
   const [draft, setDraft] = useState<ShopSettings>(stored);
-  const [carriers, setCarriers] = useState(() => stored.carriers.join("\n"));
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Son degisiklik ani (updatedAt) karsilastirmaya girmez.
-  const formKey = shopKey({ ...draft, carriers: parseCarriers(carriers) });
+  const formKey = shopKey(draft);
   const storedKey = shopKey(stored);
 
   // Ayarlar baska yerde (baska sekmede) kaydedilirse form yenilenir;
@@ -113,10 +86,7 @@ function ShopGeneral() {
   const [syncedKey, setSyncedKey] = useState(storedKey);
   if (syncedKey !== storedKey) {
     setSyncedKey(storedKey);
-    if (formKey === syncedKey) {
-      setDraft(stored);
-      setCarriers(stored.carriers.join("\n"));
-    }
+    if (formKey === syncedKey) setDraft(stored);
   }
 
   const set = <K extends keyof ShopSettings>(key: K, value: ShopSettings[K]) =>
@@ -129,14 +99,13 @@ function ShopGeneral() {
   const unsaved = formKey !== storedKey;
 
   const save = async () => {
-    const parsed = parseShopSettings({ ...draft, carriers: parseCarriers(carriers) });
+    const parsed = parseShopSettings(draft);
     if (!parsed.ok) return setError(parsed.error ?? tr.panel.invalidRequest);
     setError(null);
     const answer = await actions.saveShop(parsed.value, stored);
     if (!answer.ok) return setError(answer.error);
     // Form kaydedilen (kirpilmis, tekrarsiz) hale gecer.
     setDraft(parsed.value);
-    setCarriers(parsed.value.carriers.join("\n"));
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
@@ -173,11 +142,11 @@ function ShopGeneral() {
               />
             </FormRow>
           </div>
-          <div className="mt-4">
-            <FormRow label="Kargo firmaları" hint="Her satıra bir firma; sipariş kargoya verilirken seçilir">
-              <Textarea value={carriers} onChange={(e) => setCarriers(e.target.value)} className="min-h-32" />
-            </FormRow>
-          </div>
+        </AdminCard>
+
+        <AdminCard className="lg:col-span-2">
+          <h2 className="mb-1 font-display text-xl font-bold uppercase">Kargo Firmaları</h2>
+          <CarrierSettings carriers={draft.carriers} onChange={(carriers) => set("carriers", carriers)} />
         </AdminCard>
 
         <AdminCard className="lg:col-span-2">

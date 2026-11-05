@@ -1,9 +1,20 @@
 import { CARD_PROGRAMS, INSTALLMENT_COUNTS, type CardProgram } from "./checkout";
-import type { BankAccount, EmailRecipient, InstallmentOption, PaymentPos, ShopSettings } from "./types";
+import { isTrackingUrl, trackingUrlError } from "./shipping";
+import type {
+  BankAccount,
+  Carrier,
+  CompanyOffice,
+  CompanySettings,
+  CompanySocial,
+  EmailRecipient,
+  InstallmentOption,
+  PaymentPos,
+  ShopSettings,
+} from "./types";
 
 /**
- * MAGAZA AYARLARI VE E-POSTA ALICILARI KURALLARI — PANEL (demo ve veritabani
- * modu ayni)
+ * MAGAZA AYARLARI, SIRKET VE ILETISIM, E-POSTA ALICILARI KURALLARI — PANEL
+ * (demo ve veritabani modu ayni)
  *
  * Tarayici (Magaza Ayarlari ekrani) ve sunucu (packages/db ›
  * admin-settings.ts) ayni kurallari kullanir; sunucu tarayicidan geleni
@@ -30,6 +41,7 @@ const str = (v: unknown, max = 200) => (typeof v === "string" ? v.trim().slice(0
 const amount = (v: unknown) => (typeof v === "number" && Number.isFinite(v) && v >= 0 ? v : null);
 const recordId = (v: unknown) => (typeof v === "string" && v.length > 0 && v.length <= 100 ? v : null);
 const unique = (values: unknown[]) => new Set(values).size === values.length;
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function parseRates<T extends { count: number; ratePercent: number }>(
   value: unknown,
@@ -85,8 +97,9 @@ function parsePos(value: unknown): Parsed<PaymentPos> {
 
 /**
  * Magaza ayarlarini denetler ve temizler: metinler kirpilir, IBAN buyuk
- * harfe cevrilir, ayni kargo firmasi iki kez yazildiysa bir kez alinir
- * (buyuk/kucuk harf fark etmez), bos satirlar atlanir.
+ * harfe cevrilir, ayni kargo firmasi iki kez yazildiysa ilki alinir
+ * (buyuk/kucuk harf fark etmez), adi bos firma satirlari atlanir. Kargo
+ * firmasinin takip adresi bos olabilir; doluysa shipping.ts kuralina uyar.
  */
 export function parseShopSettings(value: unknown): Parsed<ShopSettings> {
   if (!isRecord(value)) return bad;
@@ -99,16 +112,18 @@ export function parseShopSettings(value: unknown): Parsed<ShopSettings> {
   const lists = [value.carriers, value.bankAccounts, value.pos];
   if (!lists.every((l) => Array.isArray(l) && l.length <= MAX_ITEMS)) return bad;
 
-  const carriers: string[] = [];
+  const carriers: Carrier[] = [];
   const seen = new Set<string>();
   for (const c of value.carriers as unknown[]) {
-    const name = str(c, 100);
-    if (name === null) return bad;
+    if (!isRecord(c)) return bad;
+    const name = str(c.name, 100);
+    const trackingUrl = c.trackingUrl === undefined ? "" : str(c.trackingUrl, 500);
+    if (name === null || trackingUrl === null) return bad;
     const key = name.toLocaleLowerCase("tr");
-    if (name && !seen.has(key)) {
-      seen.add(key);
-      carriers.push(name);
-    }
+    if (!name || seen.has(key)) continue;
+    if (trackingUrl && !isTrackingUrl(trackingUrl)) return { ok: false, error: trackingUrlError(name) };
+    seen.add(key);
+    carriers.push({ name, ...(trackingUrl && { trackingUrl }) });
   }
   if (!carriers.length) return { ok: false, error: SHOP_NO_CARRIER };
 
@@ -156,6 +171,8 @@ export const posKey = (p: PaymentPos) =>
 
 export const bankAccountKey = (b: BankAccount) => JSON.stringify([b.id, b.bankName, b.accountHolder, b.iban]);
 
+export const carrierKey = (c: Carrier) => JSON.stringify([c.name, c.trackingUrl ?? ""]);
+
 /** Ayarlarin karsilastirma anahtari; son degisiklik ani (updatedAt) haric. */
 export const shopKey = (shop: ShopSettings) =>
   JSON.stringify([
@@ -163,9 +180,99 @@ export const shopKey = (shop: ShopSettings) =>
     shop.shippingFee,
     shop.minInstallmentAmount,
     shop.transferDueDays,
-    shop.carriers,
+    shop.carriers.map(carrierKey),
     shop.bankAccounts.map(bankAccountKey),
     shop.pos.map(posKey),
+  ]);
+
+/* ------------------------------------------------------------------ */
+/* Sirket ve iletisim (KARARLAR K-105)                                 */
+/* ------------------------------------------------------------------ */
+
+export const COMPANY_NAME_REQUIRED = "Ticari unvan zorunludur.";
+export const COMPANY_PHONE_REQUIRED = "Telefon zorunludur.";
+export const COMPANY_EMAIL_INVALID = "Geçerli bir e-posta adresi girin.";
+export const COMPANY_MERSIS_INVALID = "MERSİS numarası 16 rakamdan oluşur (boş bırakılabilir).";
+export const COMPANY_OFFICE_REQUIRED = "En az bir ofis girin; her ofiste şehir ve adres zorunludur.";
+export const COMPANY_SOCIAL_INVALID = "Sosyal medya adresleri https:// ile başlamalı (boş bırakılabilir).";
+
+/** En fazla kac ofis; ofiste en fazla kac adres satiri ve telefon. */
+const MAX_OFFICES = 10;
+const MAX_LINES = 5;
+
+export const COMPANY_SOCIAL_KEYS = ["instagram", "youtube", "linkedin", "tiktok"] as const satisfies readonly (keyof CompanySocial)[];
+
+/** Satirlara ayrilmis metin listesi: kirpilir, bos satirlar atlanir. */
+function lines(value: unknown, max: number): string[] | null {
+  if (!Array.isArray(value) || value.length > max * 2) return null;
+  const list: string[] = [];
+  for (const v of value) {
+    const line = str(v, 200);
+    if (line === null) return null;
+    if (line) list.push(line);
+  }
+  return list.length > max ? null : list;
+}
+
+function parseOffice(value: unknown): Parsed<CompanyOffice> {
+  if (!isRecord(value)) return bad;
+  const id = recordId(value.id);
+  const city = str(value.city, 100);
+  const addressLines = lines(value.addressLines, MAX_LINES);
+  const phones = lines(value.phones, MAX_LINES);
+  if (!id || city === null || !addressLines || !phones) return bad;
+  if (!city || !addressLines.length) return { ok: false, error: COMPANY_OFFICE_REQUIRED };
+  return { ok: true, value: { id, city, addressLines, phones } };
+}
+
+/**
+ * Sirket ve iletisim bilgilerini denetler ve temizler: metinler kirpilir,
+ * MERSIS numarasindaki bosluklar atilir, e-posta kucuk harfe cevrilir,
+ * bos adres ve telefon satirlari atlanir. Ilk ofis merkezdir.
+ */
+export function parseCompanySettings(value: unknown): Parsed<CompanySettings> {
+  if (!isRecord(value) || !isRecord(value.social)) return bad;
+  const legalName = str(value.legalName);
+  const mersisNo = typeof value.mersisNo === "string" ? value.mersisNo.replace(/\s+/g, "") : null;
+  const phone = str(value.phone, 50);
+  const email = str(value.email);
+  if (legalName === null || mersisNo === null || phone === null || email === null) return bad;
+  if (!Array.isArray(value.offices) || value.offices.length > MAX_OFFICES) return bad;
+
+  const social = {} as CompanySocial;
+  for (const key of COMPANY_SOCIAL_KEYS) {
+    const url = str(value.social[key], 500);
+    if (url === null) return bad;
+    social[key] = url;
+  }
+
+  const offices: CompanyOffice[] = [];
+  for (const o of value.offices as unknown[]) {
+    const parsed = parseOffice(o);
+    if (!parsed.ok) return parsed;
+    offices.push(parsed.value);
+  }
+  if (!unique(offices.map((o) => o.id))) return bad;
+
+  if (!legalName) return { ok: false, error: COMPANY_NAME_REQUIRED };
+  if (mersisNo && !/^\d{16}$/.test(mersisNo)) return { ok: false, error: COMPANY_MERSIS_INVALID };
+  if (!phone) return { ok: false, error: COMPANY_PHONE_REQUIRED };
+  if (!EMAIL.test(email)) return { ok: false, error: COMPANY_EMAIL_INVALID };
+  if (!offices.length) return { ok: false, error: COMPANY_OFFICE_REQUIRED };
+  if (!Object.values(social).every((url) => !url || /^https:\/\/\S+$/i.test(url))) return { ok: false, error: COMPANY_SOCIAL_INVALID };
+
+  return { ok: true, value: { legalName, mersisNo, phone, email: email.toLowerCase(), offices, social } };
+}
+
+/** Sirket bilgilerinin karsilastirma anahtari; son degisiklik ani (updatedAt) haric. */
+export const companyKey = (c: CompanySettings) =>
+  JSON.stringify([
+    c.legalName,
+    c.mersisNo,
+    c.phone,
+    c.email,
+    c.offices.map((o) => [o.id, o.city, o.addressLines, o.phones]),
+    COMPANY_SOCIAL_KEYS.map((k) => c.social[k]),
   ]);
 
 /* ------------------------------------------------------------------ */
@@ -196,7 +303,6 @@ export type EmailRecipientType = (typeof EMAIL_RECIPIENT_TYPES)[number]["type"];
 /** Bir turde en fazla kac alici. */
 export const MAX_RECIPIENTS = 10;
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * Yazilan alicilar: virgul, noktali virgul, bosluk ya da satir sonuyla

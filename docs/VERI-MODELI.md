@@ -787,7 +787,7 @@ Değiştirilmemiş sayfa kayıtta yer almaz; varsayılan metinler
 
 ## 11. Ayarlar
 
-Tek bir `settings` kaydı; üç bölüm.
+Tek bir `settings` kaydı; dört bölüm.
 
 ### Mağaza ayarları (`settings.shop`)
 
@@ -797,7 +797,7 @@ Tek bir `settings` kaydı; üç bölüm.
 | `shippingFee` | sayı | Sınırın altında kargo ücreti (KDV dahil) | 250 |
 | `minInstallmentAmount` | sayı | Bu tutarın altında taksit gösterilmez | 1.000 |
 | `transferDueDays` | sayı | Havale ödeme süresi (gün, en az 1) | 3 |
-| `carriers` | metin[] | Kargo firmaları; en az biri | Yurtiçi, Aras, MNG, PTT, Sürat, UPS |
+| `carriers[]` | liste | Kargo firmaları `{ name, trackingUrl? }`; en az biri. `trackingUrl`: takip sayfasının adresi, `{takip}` yerine takip numarası yazılır (KARARLAR K-105) | Yurtiçi, Aras, MNG, PTT, Sürat, UPS (takip adresleri boş) |
 | `bankAccounts[]` | liste | `{ id, bankName, accountHolder, iban }`; banka adı ve IBAN zorunlu | 2 hesap |
 | `pos[]` | liste | Banka POS'ları; listedeki sıra önemlidir | 9 POS |
 | `updatedAt?` | an | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99) | |
@@ -825,7 +825,32 @@ Tek bir `settings` kaydı; üç bölüm.
   (`packages/data/src/settings-rules.ts` › `parseShopSettings`):
   tutarlar 0 ya da artı; `transferDueDays` tam sayı, en az 1; her listede
   en fazla 50 kayıt; aynı kargo firması (büyük/küçük harf fark etmez) bir
-  kez; IBAN büyük harf.
+  kez; IBAN büyük harf; takip adresi boş ya da `https://` ile başlar,
+  `{takip}` içerir, boşluk içermez.
+- Gönderinin takip bağlantısı (`packages/data/src/shipping.ts` ›
+  `trackingLink`): gönderideki firma adıyla listedeki firma bulunur
+  (büyük/küçük harf fark etmez), `{takip}` yerine boşlukları atılmış takip
+  numarası yazılır. Firmanın API'si ileride bağlanırsa bağlantı bilgisi bu
+  kayda eklenir; anahtar ve şifre yalnızca sunucuda ortam değişkeni olur.
+
+### Şirket ve iletişim (`settings.company`, KARARLAR K-105)
+
+| Alan | Tür | Açıklama | Örnek değer |
+|---|---|---|---|
+| `legalName` | metin | Ticari unvan; zorunlu | Zenweld Kaynak ve Kesme Ekip İnş San Tic A.Ş. |
+| `mersisNo` | metin | MERSİS no: 16 rakam ya da boş (sözleşmede "[—]") | boş |
+| `phone` | metin | Ana telefon (alt bilgi, sözleşmeler); zorunlu | +90 212 549 61 86 |
+| `email` | metin | Sitede görünen e-posta; geçerli adres, küçük harf | info@zenweld.com |
+| `offices[]` | liste | `{ id, city, addressLines[], phones[] }`; en az bir, en fazla 10; ilki merkez (alt bilgi ve sözleşmedeki adres) | İstanbul, İzmir |
+| `social` | nesne | `instagram`, `youtube`, `linkedin`, `tiktok`: `https://` adresi ya da boş (gösterilmez) | 4 hesap |
+| `updatedAt?` | an | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu | |
+
+- Kayıt yoksa (eski veri, veritabanında satır yok) başlangıç değerleri
+  kullanılır (`defaultSettings.company`).
+- Kurallar tarayıcı ve sunucuda ortak (`settings-rules.ts` ›
+  `parseCompanySettings`): metinler kırpılır, MERSİS boşlukları atılır,
+  boş adres ve telefon satırları atlanır; ofiste şehir ve en az bir adres
+  satırı zorunlu, en fazla 5 satır ve 5 telefon.
 
 ### E-posta alıcıları (`emailRecipients[]`, KARARLAR K-104)
 

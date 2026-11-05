@@ -1,9 +1,19 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { PoolClient } from "pg";
-import { EMAIL_RECIPIENT_TYPES, SHOP_NO_CARRIER, SHOP_ONE_DEFAULT, type ShopSettings } from "@zenweld/data";
+import {
+  COMPANY_MERSIS_INVALID,
+  EMAIL_RECIPIENT_TYPES,
+  SHOP_NO_CARRIER,
+  SHOP_ONE_DEFAULT,
+  defaultSettings,
+  trackingUrlError,
+  type CompanySettings,
+  type ShopSettings,
+} from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import {
+  adminSaveCompany,
   adminSaveEmailRecipients,
   adminSaveShopSettings,
   emailRecipientsFor,
@@ -76,7 +86,7 @@ describe("Mağaza Ayarları › Kargo ve Ödeme", () => {
       expect(data.settings?.shop).toMatchObject({
         shippingFee: 150,
         transferDueDays: 3,
-        carriers: ["Aras Kargo", "MNG Kargo"],
+        carriers: [{ name: "Aras Kargo", trackingUrl: "https://kargo.ornek/{takip}" }, { name: "MNG Kargo" }],
         updatedAt: T0.toISOString(),
       });
       expect(data.settings?.shop.pos.map((p) => [p.id, p.isDefault, p.program])).toEqual([
@@ -93,14 +103,14 @@ describe("Mağaza Ayarları › Kargo ve Ödeme", () => {
       const [a, b] = shop.pos;
       const input = edit(shop, {
         shippingFee: 175,
-        carriers: ["Yurtiçi Kargo", "aras kargo", "Aras Kargo"],
+        carriers: [{ name: "Yurtiçi Kargo" }, { name: "aras kargo" }, { name: "Aras Kargo" }],
         pos: [{ ...b, isDefault: true }],
         bankAccounts: [{ id: "ba-2", bankName: "Ziraat", accountHolder: "Zenweld", iban: "tr02" }],
       });
       expect(await adminSaveShopSettings(db, admin, input, T1)).toEqual({ ok: true, updatedAt: T1.toISOString() });
 
       const after = await current(db);
-      expect(after).toMatchObject({ shippingFee: 175, carriers: ["Yurtiçi Kargo", "aras kargo"], updatedAt: T1.toISOString() });
+      expect(after).toMatchObject({ shippingFee: 175, carriers: [{ name: "Yurtiçi Kargo" }, { name: "aras kargo" }], updatedAt: T1.toISOString() });
       expect(after.pos.map((p) => [p.id, p.isDefault])).toEqual([["pos-b", true]]);
       expect(after.bankAccounts).toEqual([{ id: "ba-2", bankName: "Ziraat", accountHolder: "Zenweld", iban: "TR02" }]);
       // "aras kargo" yeni bir ad: eski "Aras Kargo" satiri silinir.
@@ -131,11 +141,34 @@ describe("Mağaza Ayarları › Kargo ve Ödeme", () => {
   it("kalan kargo firmasının kimliği ve takip adresi korunur; yalnızca sırası değişir", async () => {
     await withSettings(async (db, client) => {
       const shop = await current(db);
-      expect(await adminSaveShopSettings(db, admin, edit(shop, { carriers: ["MNG Kargo", "Aras Kargo"] }), T1)).toMatchObject({ ok: true });
+      const [aras, mng] = shop.carriers;
+      expect(await adminSaveShopSettings(db, admin, edit(shop, { carriers: [mng, aras] }), T1)).toMatchObject({ ok: true });
       expect((await client.query("SELECT id, tracking_url FROM carriers ORDER BY position")).rows).toEqual([
         { id: "mng", tracking_url: null },
         { id: "aras", tracking_url: "https://kargo.ornek/{takip}" },
       ]);
+    });
+  });
+
+  it("kargo firmasının takip adresi girilir, değişir, silinir (K-105); kuralına uymayan adres kaydedilmez", async () => {
+    await withSettings(async (db, client) => {
+      const shop = await current(db);
+      const mngUrl = "https://mng.ornek/sorgu?no={takip}";
+      expect(
+        await adminSaveShopSettings(db, admin, edit(shop, { carriers: [{ name: "Aras Kargo" }, { name: "MNG Kargo", trackingUrl: mngUrl }] }), T1),
+      ).toMatchObject({ ok: true });
+      expect((await client.query("SELECT id, tracking_url FROM carriers ORDER BY position")).rows).toEqual([
+        { id: "aras", tracking_url: null },
+        { id: "mng", tracking_url: mngUrl },
+      ]);
+      expect((await current(db)).carriers).toEqual([{ name: "Aras Kargo" }, { name: "MNG Kargo", trackingUrl: mngUrl }]);
+      const [entry] = await audit(client);
+      expect(Object.keys(entry.changes)).toEqual(["carriers"]);
+
+      const later = await current(db);
+      expect(
+        await adminSaveShopSettings(db, admin, edit(later, { carriers: [{ name: "Aras Kargo", trackingUrl: "https://aras.ornek/sorgu" }] }), T2),
+      ).toEqual({ ok: false, status: 400, error: trackingUrlError("Aras Kargo") });
     });
   });
 
@@ -205,6 +238,57 @@ describe("Mağaza Ayarları › E-posta Alıcıları", () => {
         { type: "servis", recipients: [] },
       ];
       expect(await adminSaveEmailRecipients(db, admin, { items: twice, version }, T1)).toMatchObject({ status: 400 });
+    });
+  });
+});
+
+describe("Mağaza Ayarları › Şirket ve İletişim (K-105)", () => {
+  const company = async (db: Db) => (await readShopPanel(db)).settings!.company;
+  const input = (c: CompanySettings, patch: Partial<CompanySettings>) => {
+    const { updatedAt, ...rest } = c;
+    return { company: { ...rest, ...patch }, ...(updatedAt && { updatedAt }) };
+  };
+
+  it("satır yoksa başlangıç değerleri okunur; ilk kayıtta satır eklenir; sonra değişir; işlem kaydına yazılır", async () => {
+    await withSettings(async (db, client) => {
+      const before = await company(db);
+      expect(before).toEqual(defaultSettings.company);
+
+      expect(await adminSaveCompany(db, admin, input(before, { mersisNo: "0123 4567 8901 2345" }), T1)).toEqual({
+        ok: true,
+        updatedAt: T1.toISOString(),
+      });
+      const saved = await company(db);
+      expect(saved).toMatchObject({ mersisNo: "0123456789012345", updatedAt: T1.toISOString() });
+
+      const offices = [...saved.offices].reverse();
+      expect(await adminSaveCompany(db, admin, input(saved, { offices, social: { ...saved.social, tiktok: "" } }), T2)).toMatchObject({ ok: true });
+      expect((await company(db)).offices.map((o) => o.id)).toEqual(["izmir", "istanbul"]);
+      expect((await company(db)).social.tiktok).toBe("");
+
+      const entries = await audit(client);
+      expect(entries.map((e) => [e.action, e.entity_id, Object.keys(e.changes).sort()])).toEqual([
+        ["create", "company", ["mersisNo"]],
+        ["update", "company", ["offices", "social"]],
+      ]);
+    });
+  });
+
+  it("ekran eskiyse kaydedilmez; değişiklik yoksa yazılmaz; kurala uymayan kaydedilmez", async () => {
+    await withSettings(async (db, client) => {
+      const first = await company(db);
+      expect(await adminSaveCompany(db, admin, input(first, { phone: "+90 212 000 00 00" }), T1)).toMatchObject({ ok: true });
+      // Ilk ekran satir yokken acilmisti: artik eski.
+      expect(await adminSaveCompany(db, admin, input(first, { phone: "+90 212 111 11 11" }), T2)).toEqual(stale);
+      const saved = await company(db);
+      expect(await adminSaveCompany(db, admin, input(saved, {}), T2)).toEqual({ ok: true, updatedAt: T1.toISOString() });
+      expect(await adminSaveCompany(db, admin, input(saved, { mersisNo: "12" }), T2)).toEqual({ ok: false, status: 400, error: COMPANY_MERSIS_INVALID });
+      expect(await adminSaveCompany(db, admin, { company: { ...saved, offices: "x" }, updatedAt: saved.updatedAt }, T2)).toEqual({
+        ok: false,
+        status: 400,
+        error: tr.panel.invalidRequest,
+      });
+      expect((await audit(client)).length).toBe(1);
     });
   });
 });

@@ -7,11 +7,20 @@ import Link from "next/link";
 import { TikTokIcon } from "@/components/common/TikTokIcon";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useT } from "@/lib/i18n-client";
-import { CONTACT, useFooterMenu } from "@/lib/menu";
+import { headOfficeAddress, socialLinks, useCompany, useFooterMenu } from "@/lib/menu";
+
+/** Sosyal medya simgeleri; hesap adresi panelden gelir (bos olan gosterilmez). */
+const SOCIAL = {
+  instagram: { Icon: Instagram, label: "Instagram" },
+  youtube: { Icon: Youtube, label: "YouTube" },
+  linkedin: { Icon: Linkedin, label: "LinkedIn" },
+  tiktok: { Icon: TikTokIcon, label: "TikTok" },
+};
 
 export function Footer() {
   const t = useT();
   const columns = useFooterMenu();
+  const company = useCompany();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   // Ticari ileti onayi bos gelir; isaretlenmeden kayit yapilmaz.
@@ -44,29 +53,27 @@ export function Footer() {
         <div className="mt-14 grid grid-cols-1 gap-8 border-t border-zw-grey-200 pt-10 lg:grid-cols-2">
           <div>
             <ZenweldLogo className="h-8 w-auto" />
-            <p className="mt-4 max-w-sm text-sm text-zw-grey-500">{CONTACT.address}</p>
+            <p className="mt-4 max-w-sm text-sm text-zw-grey-500">{headOfficeAddress(company)}</p>
             <p className="mt-1 text-sm text-zw-grey-500">
-              {CONTACT.phone} · {CONTACT.email}
+              {company.phone} · {company.email}
             </p>
             <div className="mt-5 flex gap-3">
-              {[
-                { Icon: Instagram, href: CONTACT.social.instagram, label: "Instagram" },
-                { Icon: Youtube, href: CONTACT.social.youtube, label: "YouTube" },
-                { Icon: Linkedin, href: CONTACT.social.linkedin, label: "LinkedIn" },
-                { Icon: TikTokIcon, href: CONTACT.social.tiktok, label: "TikTok" },
-              ].map(({ Icon, href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  title={label}
-                  className="text-zw-ink transition-colors hover:text-zw-red-600"
-                >
-                  <Icon size={20} />
-                </a>
-              ))}
+              {socialLinks(company).map(({ key, url }) => {
+                const { Icon, label } = SOCIAL[key];
+                return (
+                  <a
+                    key={key}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    title={label}
+                    className="text-zw-ink transition-colors hover:text-zw-red-600"
+                  >
+                    <Icon size={20} />
+                  </a>
+                );
+              })}
             </div>
           </div>
 

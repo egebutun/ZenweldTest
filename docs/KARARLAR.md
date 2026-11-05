@@ -1227,6 +1227,21 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Neden:** Sahibinin kararı; her biri ayrı ayrı derin ayar gerektiren
   konular.
 
+### K-107 · Sonraya kalan konularda o adımda gereken kadarı, genişletilebilir yapılır
+- **Tarih:** 2026-11-05
+- **Karar:** K-106'daki konulardan biri bir adımda gerekirse (ör. 5.3'te
+  kargo takibi) o adımın ihtiyacı kadarı yapılır; ileride gelebilecek
+  bağlantıya (kargo firmasının API'si, SAP, ödeme kuruluşu…) açık,
+  genişletilebilir kurulur. Derin ayarlar yine en sonda sahibiyle
+  konuşulur (K-106).
+  - Kargo takibi (5.3): her kargo firmasına takip sayfasının adresi girilir
+    (`{takip}` yerine takip numarası); müşteri ve panel sipariş detayında
+    bağlantı çıkar. Bağlantı tek yerden üretilir
+    (`packages/data/src/shipping.ts`); firma API verirse firma kaydına
+    bağlantı türü, sunucuya o firmanın bağlantı parçası eklenir.
+- **Neden:** Sahibinin kararı: "kargo firması bana bir API verecekse esnek
+  olsun, geliştirilebilir olsun"; diğer konular da aynı şekilde.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

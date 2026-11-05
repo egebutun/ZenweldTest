@@ -439,7 +439,7 @@ npm run start --workspace apps/zenweld-web
     Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
     Ürünler), Bayiler, Online Satıcılar, Satış Temsilcileri ve Stok
     Matrisi (elle düzeltme, dosya yükleme, kod eşleştirme, geri alma),
-    Mağaza Ayarları (Kargo ve Ödeme, E-posta Alıcıları), Görünüm ve İçerik
+    Mağaza Ayarları (Kargo ve Ödeme, E-posta Alıcıları, Şirket ve İletişim), Görünüm ve İçerik
     (Haberler, Etkinlikler, Blog, Hakkımızda, SSS, Belgeler, Yasal
     Metinler, Sayfa SEO) ekranları veritabanından okur ve yazar; aynı
     kaydı iki yönetici düzenlerse sonraki kaydetmez ("sayfayı

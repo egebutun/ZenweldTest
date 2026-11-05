@@ -179,7 +179,7 @@ describe("siparişler", () => {
       await order(client, "o1", "awaiting_payment", { dueAt: new Date("2026-03-11T09:00:00.000Z") });
       const { orders, settings } = await readOrdersPanel(db, new Date("2026-03-12T09:00:00.000Z"));
       expect(orders[0].status).toBe("cancelled");
-      expect(settings.shop.carriers).toEqual(["Yurtiçi Kargo"]);
+      expect(settings.shop.carriers).toEqual([{ name: "Yurtiçi Kargo" }]);
       // Sistemin yaptigi iptal yoneticinin degisikligi degildir.
       expect(await audit(client)).toEqual([]);
     });

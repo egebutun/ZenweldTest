@@ -1,14 +1,15 @@
 "use client";
 
-import type { EmailRecipient, RichTextStyle, ShopSettings } from "@zenweld/data";
-import { saveEmailRecipients, saveRichTextStyle, saveShopSettings } from "@zenweld/store";
+import type { CompanySettings, EmailRecipient, RichTextStyle, ShopSettings } from "@zenweld/data";
+import { saveCompanySettings, saveEmailRecipients, saveRichTextStyle, saveShopSettings } from "@zenweld/store";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
 
 export type { PanelAnswer };
 
 /**
  * PANEL › AYAR ISLEMLERI: Mağaza Ayarları'nin Genel sekmesi (kargo,
- * taksit, POS, havale) ve E-posta Alicilari sekmesi; Görünüm ekrani.
+ * taksit, POS, havale), E-posta Alicilari ve Şirket ve İletişim sekmeleri;
+ * Görünüm ekrani.
  *
  * Veritabani modunda islem sunucuya gider (/api/yonetim/ayarlar; Asama 5,
  * 5. alan, KARARLAR K-99, K-104; ortak akis lib/admin-panel.ts). Demo
@@ -32,6 +33,14 @@ export function useSettingsActions() {
       server
         ? call("eposta-alicilari", { items: items.map(({ type, recipients }) => ({ type, recipients })), version })
         : localAnswer(saveEmailRecipients(items)),
+    /** company: denetlenmis bilgiler (parseCompanySettings); stored: ekranin gordugu kayit. */
+    saveCompany: (company: CompanySettings, stored: CompanySettings): Promise<PanelAnswer> => {
+      if (server) {
+        const ref = recordRef("settings", { id: "company", updatedAt: stored.updatedAt });
+        return call("sirket", { company, ...(ref.updatedAt && { updatedAt: ref.updatedAt }), id: "company" }, "settings");
+      }
+      return localAnswer(saveCompanySettings(company));
+    },
     /** Görünüm: bicimli metinlerin punto ve renkleri. stored: ekranin gordugu kayit. */
     saveRichText: (style: RichTextStyle, stored: RichTextStyle): Promise<PanelAnswer> => {
       const value: Partial<RichTextStyle> = { ...style };
