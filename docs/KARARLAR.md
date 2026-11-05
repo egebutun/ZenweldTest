@@ -1160,6 +1160,27 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     Ürün Seçici en sona kalır (K-69). Ürün karşılaştırma bugün sitede yoktur.
 - **Neden:** Sahibinin kararı; gerçek içerik ve tasarım sonra gelecek.
 
+### K-103 · Panelin 4. alanı: stok geçmişi, Satış Temsilcileri ve başvurudan bayi açma
+- **Tarih:** 2026-11-05
+- **Karar:**
+  - **Stok geçmişi:** Veritabanı modunda bayi ve satıcıların stok
+    geçmişinin (dosya yükleme, elle düzeltme, geri alma) bütün kayıtları
+    saklanır; demodaki "kaynak başına son 60 kayıt" sınırı uygulanmaz.
+    Geri alma için stokun önceki hali yalnızca son 5 dosya yüklemesinde
+    tutulur; ekranda yine son 30 işlem görünür. Bayi ya da satıcı
+    silinince geçmişi de silinir (silme işlem kaydında kalır).
+  - **Satış Temsilcileri** panelde "Bayi ve Satış Ağı" menüsünde durduğu
+    için 5. alan (İçerik) yerine 4. alanın ilk adımında (4.1, Bayiler ve
+    Online Satıcılar ile) veritabanına geçer (K-99'daki sıranın
+    değişikliği).
+  - **Bayilik başvurusundan bayi açma** şimdi yapılmaz. Başvuru
+    onaylanınca neler olacağı sahibiyle birlikte tasarlanacak
+    ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Bayilik başvurusundan bayi
+    açma).
+- **Neden:** Sahibinin kararı. Geçmiş kayıtları küçüktür ve kişisel veri
+  içermez; tarayıcı deposundaki sınır veritabanında gerekmez. Temsilciler
+  bayi ağıyla aynı menüde yönetilir.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

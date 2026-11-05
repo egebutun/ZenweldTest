@@ -38,7 +38,7 @@ import {
 import { tr } from "@zenweld/i18n";
 import { slugify } from "@zenweld/utils";
 import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
-import { checkRow, fail, isFailure, newId, saved, text, unchanged, type PanelResult, type Saved } from "./panel";
+import { checkRow, direction, fail, isFailure, newId, reorder, saved, text, unchanged, type PanelResult, type Saved } from "./panel";
 import { readCatalog } from "./read";
 import { combinationKey } from "./seed";
 import * as s from "./schema";
@@ -137,20 +137,6 @@ async function movePath(db: AuditDb, oldPath: string, newPath: string, targetTyp
 
 /** Yeni kaydin adresi baska bir kaydin eski adresiyse o yonlendirme kalkar. */
 const releasePath = (db: AuditDb, path: string) => db.delete(s.redirects).where(eq(s.redirects.oldPath, path));
-
-/** Siradaki yerini degistirir ve siralari 1, 2, 3... yapar; degisen satirlar doner. */
-function reorder<T extends { id: string; position: number }>(rows: T[], id: string, direction: -1 | 1) {
-  const index = rows.findIndex((r) => r.id === id);
-  const target = index + direction;
-  if (index < 0 || target < 0 || target >= rows.length) return [];
-  const list = [...rows];
-  [list[index], list[target]] = [list[target], list[index]];
-  return list
-    .map((row, i) => ({ id: row.id, before: row.position, after: i + 1 }))
-    .filter((r) => r.before !== r.after);
-}
-
-const direction = (value: unknown): -1 | 1 | null => (value === -1 || value === 1 ? value : null);
 
 /* ------------------------------ Secenek tanimlari ------------------------------ */
 

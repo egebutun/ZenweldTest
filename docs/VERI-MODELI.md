@@ -346,6 +346,7 @@ Burada yalnızca alanlar özetlenir.
 | `retailerId` | metin? | Bayinin online mağazası; bir mağaza en fazla bir bayiye bağlı (benzersiz) |
 | `active` | evet/hayır | |
 | `email` | metin? | Kullanılmıyor (bkz. [16](#16-kullanılmayan-alanlar)) |
+| `updatedAt` | tarih-saat? | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99) |
 
 Bayiler sitenin üyesi değildir; sitede bayi girişi yoktur.
 
@@ -361,6 +362,7 @@ Bayiler sitenin üyesi değildir; sitede bayi girişi yoktur.
 | `city` | metin? | |
 | `active` | evet/hayır | |
 | `logoUrl` | metin? | Kullanılmıyor (bkz. [16](#16-kullanılmayan-alanlar)) |
+| `updatedAt` | tarih-saat? | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99) |
 
 ### Stok
 
@@ -749,8 +751,10 @@ Tek kayıt:
 ### Satış temsilcileri (`sales_reps`)
 
 `id`, `name`, `region` (bölge ya da görev; sitedeki bölge düğmeleri bundan
-oluşur), `phone` (en az 10 rakam; Ara ve WhatsApp), `email`, `photoUrl?`,
-`order`, `active`. Ad, bölge, telefon ve e-posta zorunlu.
+oluşur), `phone` (en az 10 rakam; Ara ve WhatsApp), `email`, `photoUrl?`
+(veritabanı modunda yüklenmiş dosya kabul edilmez, adres girilir; KARARLAR
+K-101), `order`, `active`, `updatedAt?` (yalnızca veritabanı modunda
+panelin okuduğu kayıtta; K-99). Ad, bölge, telefon ve e-posta zorunlu.
 
 ### Yasal metinler (`legal_pages`)
 

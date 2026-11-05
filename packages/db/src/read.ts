@@ -296,8 +296,8 @@ const stockRow = (r: StockColumns): StockRow => ({
 
 type DealerStockColumns = StockColumns & { dealerId: string };
 type RetailerStockColumns = StockColumns & { retailerId: string };
-const dealerStockRow = (r: DealerStockColumns): DealerStock => ({ dealerId: r.dealerId, ...stockRow(r) });
-const retailerStockRow = (r: RetailerStockColumns): RetailerStock => ({ retailerId: r.retailerId, ...stockRow(r) });
+export const dealerStockRow = (r: DealerStockColumns): DealerStock => ({ dealerId: r.dealerId, ...stockRow(r) });
+export const retailerStockRow = (r: RetailerStockColumns): RetailerStock => ({ retailerId: r.retailerId, ...stockRow(r) });
 
 /**
  * Bir urunun bayi ve online satici stogu; yalnizca adedi 0'dan buyuk

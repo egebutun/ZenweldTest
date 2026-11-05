@@ -869,6 +869,22 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       ay" bitişe 12 ay ekler, kaldırılınca çıkarır; elle girilen tarih
       korunur.
 
+**Veritabanı modunda Bayiler, Online Satıcılar, Satış Temsilcileri (KARARLAR K-99, K-103):**
+
+- [ ] Yeni bayi kaydedilince Yetkili Bayi ve Servis Ağı haritasında hemen
+      görünür; adı değişince haritada da değişir; hemen ardından yeniden
+      kaydetmek "kayıt değişti" uyarısı vermez.
+- [ ] Silinen bayinin stok satırları, stok geçmişi ve kod eşleştirmeleri
+      `db:studio`'da da yoktur; bayilik başvurusundaki bağlantısı boştur.
+- [ ] Bir sekmede bayi formu açıkken başka sekmede bağlı olduğu online
+      mağaza silinirse ilk sekmede kaydedilmez ("Bu kayıt siz açtıktan
+      sonra değişti; sayfayı yenileyin.").
+- [ ] Temsilci formunda **Dosya yükle** yoktur; fotoğraf adresi girilir.
+      Eklenen temsilci Satış Temsilcilerimiz sayfasında hemen görünür,
+      gizlenince gider.
+- [ ] `db:studio` › `audit_log`: bayi, satıcı ve temsilci değişiklikleri
+      yazılmıştır.
+
 ---
 
 ## 20. Panel: içerik ve ayarlar

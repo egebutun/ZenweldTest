@@ -1723,6 +1723,47 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   oluşturma, hemen ardından fiyat ve link değişikliği, sitede yeni fiyat ve
   eski linkin yönlenmesi, yayından kaldırma, silme; oturumsuz istek).
 
+**Panel › Bayi ağı, adım 4.1 (Aşama 5, 4. alan; KARARLAR K-99, K-103; `src/admin-network.ts`):**
+
+- **Okuma** (her sayfa kendi sunucu bileşeninde; yönetici oturumu
+  denetlenir): `readDealersPanel` (bayiler son değişiklik anıyla, mağaza
+  seçimi için satıcılar), `readRetailersPanel` (satıcılar son değişiklik
+  anıyla, bayiler, ayarlar ve "N ürün sayfasında" sayısı için yalnızca
+  sitede görünebilecek stok satırları: adedi olan ve linkli; bayide yalnızca
+  online mağazası olanlar), `readSalesRepsPanel` (pasifler dahil, sırasıyla).
+- **Yazma:** `POST /api/yonetim/bayi-agi/<işlem>`
+  (`apps/zenweld-web/src/app/api/yonetim/bayi-agi/[islem]/route.ts`):
+  `bayi`, `bayi-sil`, `satici`, `satici-sil`, `temsilci`, `temsilci-durum`,
+  `temsilci-sira`, `temsilci-sil`. Kurallar Satış ile aynı: oturum, kilit,
+  `updated_at` denetimi, `audit_log`. Bayi ve satıcı işlemlerinden sonra
+  `refreshSite(["bayiler", "stok"])`, temsilci işlemlerinden sonra
+  `refreshSite(["icerik"])` çağrılır.
+- **Kurallar demo moduyla aynı** (`packages/data` › `network-rules.ts`):
+  bayi adı, şehri ve türü zorunlu; satıcı adı ve site adresi zorunlu;
+  temsilcide telefon en az 10 rakam, e-posta geçerli. Bayi kayıtları sırayla
+  yapılır (kilit); `dealers.retailer_id` tekilliği önce denetlenir.
+- **Silme:** Bayi ya da satıcı silinince stok satırları tablo kuralıyla,
+  `stock_imports` (kaynağın geçmişi) ve `sku_aliases` (kaynağın kod
+  eşleştirmeleri) sunucuda silinir. Satıcı silinince bağlı bayinin
+  `retailer_id`'si boşalır ve `updated_at`'i değişir. Silinen bayinin
+  `dealer_applications.dealer_id`'si tablo kuralıyla boşalır. İşlem kaydına
+  kaydın son hali ve silinen stok satırı sayısı yazılır.
+- **Temsilci:** Yeni temsilci listenin sonuna eklenir; sıra okları
+  `position`'ı 1, 2, 3… yapar, `updated_at` değişmez. Fotoğrafta yüklenmiş
+  dosya (`data:`) reddedilir (K-101).
+- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-network.ts`
+  (`useNetworkActions`); demo modunda aynı işlemler tarayıcıdaki veriye
+  yazılır.
+- Test: `tests/db/panel-bayi-agi.test.ts` (bayi kuralları, mağaza
+  tekilliği, olmayan mağaza, eski ekran, değişmeyen kayıt; bayi silinince
+  stok, geçmiş, eşleştirme ve başvuru bağlantısı; satıcı ekleme ve
+  düzenleme, ekranın okuduğu stok satırları ve ayar; satıcı silinince
+  bağlı bayi; temsilci kuralları, yüklenmiş fotoğraf, sitede göster/gizle,
+  sıra, silme); `tests/e2e-db/panel-bayi-agi.spec.ts` (tarayıcıda: bayi
+  ekleme, Bayi Bul'da hemen görünmesi, ad değişikliği, silme; satıcı ekleme
+  ve silme; temsilci fotoğrafında kapalı yükleme, sitede görünme ve
+  gizlenme, silme; oturumsuz istek).
+
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
 veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını

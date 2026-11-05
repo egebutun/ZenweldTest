@@ -284,6 +284,8 @@ export interface Dealer {
    */
   retailerId?: string;
   active: boolean;
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -302,6 +304,8 @@ export interface Retailer {
   isOwnStore: boolean;
   city?: string;
   active: boolean;
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -905,6 +909,8 @@ export interface SalesRep {
   /** Listede siralama (kucuk olan once) */
   order: number;
   active: boolean;
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 /* ------------------------------------------------------------------ */

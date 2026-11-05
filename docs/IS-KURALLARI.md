@@ -1163,9 +1163,10 @@ yeniden hesaplar; kullanım sınırı aynı anda gelen siparişlerde aşılmayac
 Veritabanı modunda panel kayıtları sunucuda değiştirir (KARARLAR K-99).
 Bugün Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
 Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
-Welders Club) ve Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
-Ürünler) ekranlarında geçerlidir; panelin diğer alanları veritabanına
-geçtikçe onlara da uygulanır.
+Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
+Ürünler) ve Bayi ağı (Bayiler, Online Satıcılar, Satış Temsilcileri)
+ekranlarında geçerlidir; panelin diğer alanları veritabanına geçtikçe
+onlara da uygulanır.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
   değiştirilme anı alınır. Kaydederken kayıt bu andan sonra değişmişse
@@ -1216,16 +1217,22 @@ geçtikçe onlara da uygulanır.
   - Değişmeyen ürün değişmiş sayılmaz (ürünün filtre değerlerinin sırası
     önemli değildir).
   - Silinen kategori ya da grubun eski adres yönlendirmeleri de silinir.
+- **Bayi ağı:** Bir online mağaza yalnızca bir bayiye bağlanır; iki
+  yönetici aynı anda bağlasa da iki bayiye verilmez. Bayi ya da satıcı
+  silinince stok satırları, stok geçmişi ve kod eşleştirmeleri de silinir;
+  satıcı silinince bağlı bayinin bağlantısı kalkar ve bayi değişmiş sayılır.
 - **Görsel yükleme:** Veritabanı modunda dosya deposu kurulana kadar
   (Aşama 6) panelde görsel dosyası yüklenmez, görsel adresi girilir;
   sunucu yüklenmiş dosya (`data:`) içeren kaydı reddeder (KARARLAR K-101).
-  Bugün ürün görsellerinde ve kategori/grup kart görsellerinde geçerlidir.
+  Bugün ürün görsellerinde, kategori/grup kart görsellerinde ve satış
+  temsilcisi fotoğrafında geçerlidir.
 - Panel işlemleri yalnızca geçerli yönetici oturumuyla yapılır
   ([16](#16-üyelik-ve-oturum)); oturum bitmişse: "Panel oturumunuz kapanmış.
   Lütfen yeniden giriş yapın."
 
 Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
-`admin-requests.ts`, `admin-catalog.ts`, `audit.ts`; katalog formlarının
-ortak kuralları `packages/data/src/catalog-rules.ts`; tarayıcı:
-`apps/zenweld-web/src/lib/admin-panel.ts`, `admin-sales.ts`,
-`admin-requests.ts`, `admin-catalog.ts`.
+`admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`, `audit.ts`;
+formların ortak kuralları `packages/data/src/catalog-rules.ts`,
+`network-rules.ts`; tarayıcı: `apps/zenweld-web/src/lib/admin-panel.ts`,
+`admin-sales.ts`, `admin-requests.ts`, `admin-catalog.ts`,
+`admin-network.ts`.

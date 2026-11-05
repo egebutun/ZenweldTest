@@ -6,19 +6,23 @@ import { readImageFiles } from "@zenweld/utils";
 
 /**
  * Tek gorsel alani: adres yapistirma veya dosya yukleme (yuklenen dosya
- * kucultulup tarayici deposuna yazilir), onizleme ve kaldirma.
+ * kucultulup tarayici deposuna yazilir), onizleme ve kaldirma. uploadNote
+ * verilirse dosya yukleme kapalidir ve not gosterilir (veritabani modu,
+ * dosya deposu gelene kadar; KARARLAR K-101).
  */
 export function ImageField({
   value,
   onChange,
   onError,
   rounded = false,
+  uploadNote,
 }: {
   value?: string;
   onChange: (url: string | undefined) => void;
   onError: (message: string) => void;
   /** Yuvarlak onizleme (vesikalik fotograf icin) */
   rounded?: boolean;
+  uploadNote?: string;
 }) {
   const uploaded = value?.startsWith("data:");
   return (
@@ -41,23 +45,26 @@ export function ImageField({
           readOnly={uploaded}
           value={uploaded ? "(yüklenen dosya)" : (value ?? "")}
           onChange={(e) => onChange(e.target.value.trim() || undefined)}
-          placeholder="Görsel adresi (https://…) veya dosya yükleyin"
+          placeholder={uploadNote ? "Görsel adresi (https://…)" : "Görsel adresi (https://…) veya dosya yükleyin"}
           className={`w-full rounded-[4px] border border-zw-grey-300 px-3 py-2 text-sm ${uploaded ? "bg-zw-grey-50 text-zw-grey-500" : ""}`}
         />
+        {uploadNote && <p className="text-xs text-zw-grey-500">{uploadNote}</p>}
         <div className="flex gap-2">
-          <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-[4px] border border-zw-grey-300 px-3 py-1.5 text-xs font-semibold hover:border-zw-ink">
-            <ImagePlus size={14} />
-            Dosya yükle
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                readImageFiles(e.target.files, (url) => onChange(url), onError);
-                e.target.value = "";
-              }}
-            />
-          </label>
+          {!uploadNote && (
+            <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-[4px] border border-zw-grey-300 px-3 py-1.5 text-xs font-semibold hover:border-zw-ink">
+              <ImagePlus size={14} />
+              Dosya yükle
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  readImageFiles(e.target.files, (url) => onChange(url), onError);
+                  e.target.value = "";
+                }}
+              />
+            </label>
+          )}
           {value && (
             <button
               type="button"

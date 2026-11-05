@@ -11,6 +11,7 @@ export * from "./returns";
 export * from "./warehouse";
 export * from "./coupon";
 export * from "./catalog-rules";
+export * from "./network-rules";
 export * from "./cart";
 export * from "./payment";
 export * from "./orders";

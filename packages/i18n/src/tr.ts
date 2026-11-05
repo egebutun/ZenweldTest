@@ -797,6 +797,7 @@ export const tr = {
     uploadDisabled: "Görsel yükleme dosya deposu kurulunca açılacak; şimdilik görsel adresi girin.",
     optionsMissing: "Seçilen seçeneklerden bazıları artık yok; sayfayı yenileyip yeniden seçin.",
     categoryMissing: "Seçilen kategori artık yok; sayfayı yenileyip yeniden seçin.",
+    storeMissing: "Seçilen online mağaza artık yok; sayfayı yenileyip yeniden seçin.",
   },
   errorPage: {
     title: "Bir sorun oluştu",

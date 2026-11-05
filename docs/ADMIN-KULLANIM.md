@@ -199,8 +199,8 @@ dön** panelin ana ekranına götürür.
   değiştirilemez; **Kaldır** ya da yeni dosya ile değişir.
 - **Demo notu:** Yüklenen görsel veritabanının içine yazılır; gerçek
   sistemde dosya deposuna yüklenecek. Veritabanı modunda katalog
-  görsellerinde (ürün görselleri, kategori ve grup kart görselleri) dosya
-  yüklenmez, adres girilir (bkz.
+  görsellerinde (ürün görselleri, kategori ve grup kart görselleri) ve
+  satış temsilcisi fotoğrafında dosya yüklenmez, adres girilir (bkz.
   [Veritabanı modunda Katalog ekranları](#veritabanı-modunda-katalog-ekranları);
   KARARLAR K-101).
 
@@ -1548,6 +1548,38 @@ düğmeleri listedeki "Bölge / Görev" değerlerinden kendiliğinden oluşur.
   - "E-posta adresi geçersiz görünüyor."
   - "Telefon numarası eksik görünüyor (ör. +90 532 000 00 00)." (en az 10
     rakam)
+
+### Veritabanı modunda Bayiler, Online Satıcılar ve Satış Temsilcileri
+
+Veritabanı modunda bu üç ekran veritabanıyla çalışır (KARARLAR K-99,
+K-103). Kurallar
+[Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
+ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
+kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
+sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
+Ekranlar ve kurallar demo moduyla aynıdır; farklar:
+
+- Kaydedilen ya da silinen bayi ve satıcı sitede (Yetkili Bayi ve Servis
+  Ağı haritası, ürün sayfasındaki "Stoktaki Bayileri Gör" ve online satıcı
+  kartları) hemen değişir; temsilci Satış Temsilcilerimiz sayfasında hemen
+  değişir.
+- Bir online mağazanın tek bayiye bağlanması sunucuda da denetlenir; iki
+  yönetici aynı anda aynı mağazayı iki bayiye bağlayamaz. Seçilen mağaza bu
+  arada silinmişse: "Seçilen online mağaza artık yok; sayfayı yenileyip
+  yeniden seçin."
+- Satıcı silinince bağlı bayinin mağaza bağlantısı kalkar ve bayi değişmiş
+  sayılır (açık bayi formu silinen mağazayı geri yazamaz).
+- Silinen bayinin bayilik başvurusundaki bağlantısı boşalır; başvuru kalır.
+- Online Satıcılar ekranındaki "N ürün sayfasında" sayısı için yalnızca
+  sitede görünebilecek stok satırları okunur (adedi olan, linkli).
+- **Temsilci fotoğrafı:** **Dosya yükle** yoktur; "Görsel yükleme dosya
+  deposu kurulunca açılacak; şimdilik görsel adresi girin." yazar
+  (KARARLAR K-101).
+- Temsilci sıra okları kaydın içeriğini değiştirmez; açık bir form sıra
+  değişti diye eskimez. İstek sürerken düğmeler kapanır.
+- Değişiklik yapmadan kaydedilen form hiçbir şey yazmaz.
+- Bayilik başvurusundan bayi açma henüz yoktur; sahibiyle birlikte
+  tasarlanacak (K-103).
 
 ---
 

@@ -50,7 +50,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok, 5) İçerik ve ayarlar, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme; 4.3 dosya yükleme, eşleştirme, geri alma; K-103), 5) İçerik ve ayarlar, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
 | 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
@@ -660,15 +660,16 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
    - Veritabanı modunun bugünkü sınırları (Aşama 5'te kalkar):
      - Panelin Satış (Siparişler, İade Talepleri, Kuponlar), Talepler
        (Teklifler, Servis Talepleri, Garantiler, Yorumlar, Bayilik
-       Başvuruları, Mesajlar, Welders Club) ve Katalog (Seçenek Tanımları,
-       Kategoriler ve gruplar, Ürünler) ekranları veritabanından okur ve
-       yazar (K-99, K-100). Diğer ekranlar henüz tarayıcıya yazıyor:
-       paneldeki mağaza ayarı, bayi, satıcı, stok ve içerik değişiklikleri
-       bu modda siteye yansımaz; panel ana sayfası (özet ve grafikler)
-       tarayıcıdaki örnek veriyi gösterir.
-     - Panelde katalog görselleri (ürün, kategori ve grup) için dosya
-       yüklenmez, görsel adresi girilir; dosya deposu (Aşama 6) gelince
-       yükleme açılır (K-101).
+       Başvuruları, Mesajlar, Welders Club), Katalog (Seçenek Tanımları,
+       Kategoriler ve gruplar, Ürünler) ve Bayiler, Online Satıcılar, Satış
+       Temsilcileri ekranları veritabanından okur ve yazar (K-99, K-100,
+       K-103). Diğer ekranlar henüz tarayıcıya yazıyor: paneldeki mağaza
+       ayarı, Stok Matrisi ve içerik değişiklikleri bu modda siteye
+       yansımaz; panel ana sayfası (özet ve grafikler) tarayıcıdaki örnek
+       veriyi gösterir.
+     - Panelde katalog görselleri (ürün, kategori ve grup) ve satış
+       temsilcisi fotoğrafı için dosya yüklenmez, görsel adresi girilir;
+       dosya deposu (Aşama 6) gelince yükleme açılır (K-101).
      - Belgelerin (MSDS vb.) listesi tablodan gelir; dosyanın kendisi dosya
        deposu (Aşama 6) kurulana kadar yalnızca yükleyen tarayıcıda durur. Sitede yazılan yeni yorum da tarayıcıya kaydolur
        (zaten panel onayı bekler).
@@ -713,9 +714,10 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      görünür; form kayıtları silinmez, K-100). 3. alan Katalog bitti:
      Seçenek Tanımları, Kategoriler ve gruplar (3.1) ve Ürünler (3.2); link
      değişince eski adres yönlenir, kayıt sitede hemen görünür, görsel
-     yükleme dosya deposuna kadar kapalı (K-101). Sonraki: 4. alan (Bayiler,
-     satıcılar ve stok); sonra 5–6. alanlar, 5.6; 6 dosya deposu; canlıya
-     hazırlık.
+     yükleme dosya deposuna kadar kapalı (K-101). 4. alanın ilk adımı (4.1)
+     bitti: Bayiler, Online Satıcılar ve Satış Temsilcileri (K-103).
+     Sonraki: 4.2 ve 4.3 Stok Matrisi; sonra 5–6. alanlar, 5.6; 6 dosya
+     deposu; canlıya hazırlık.
    - 5.3'ten kalanlar: e-posta alıcıları ile gönderilen e-postalar
      ekranları paneldeki 5. ve 6. alanda (K-99); yorum fotoğraf ve videoları
      dosya deposu gelince (Aşama 6) depoya taşınır (o zamana kadar panelin
@@ -727,9 +729,8 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      eski adres yönlendirmesi bugün
      de tarayıcıda yapılıyor (sunucuda 301: "SEO alanları … ve link yönlendirme" 3).
    - 2. alandan kalanlar: onaylanan bayilik başvurusundan bayi kaydı
-     açılması (`dealer_applications.dealer_id` hazır) Bayiler ekranı
-     veritabanına geçince (4. alan) bağlanabilir; bugün bayi kaydı elle
-     açılır. Form kayıtlarının (başvuru, mesaj, Welders Club) saklama
+     açılması sahibiyle birlikte tasarlanacak ("Bayilik başvurusundan bayi
+     açma" bölümü, K-103); bugün bayi kaydı elle açılır. Form kayıtlarının (başvuru, mesaj, Welders Club) saklama
      süresi ve silinmesi KVKK kararıyla belirlenecek (K-100).
    - 5.2'den kalanlar: kartlı ödeme gerçek POS bağlanana kadar temsili;
      `payment_transactions`'a o zaman yazılır (yol haritası 5). Panel
@@ -823,8 +824,9 @@ hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
    (Aşama 4.1–4.2): şifre argon2id ile özetlenir, oturum veritabanında
    (`sessions`) ve yalnızca sunucunun okuyabildiği çerezde tutulur. Panel
    girişi de sunucuda (4.3) ve panel sayfaları yönetici oturumu olmadan
-   gönderilmiyor. Panelin Satış, Talepler ve Katalog ekranlarının işlemleri
-   sunucuda yönetici oturumuyla korunuyor (K-99). Kalan: diğer panel alanlarının işlemleri
+   gönderilmiyor. Panelin Satış, Talepler, Katalog ve Bayiler, Online
+   Satıcılar, Satış Temsilcileri ekranlarının işlemleri sunucuda yönetici
+   oturumuyla korunuyor (K-99). Kalan: diğer panel alanlarının işlemleri
    (Aşama 5) aynı şekilde sunucuya geçmeli. Ara dönem: Panel › Üyeler listesi tarayıcıdaki örnek üyeleri
    gösterir; veritabanındaki üyeler Aşama 5'te panele gelir. `npm run db:seed` örnek hesapları eski demo özetiyle yazar;
    ilk girişte güçlü özete çevrilir.
@@ -1076,6 +1078,26 @@ Açık soru: vadeli ödeme ve çek bireysel müşterilere de açık mı? Formda 
 seçenek bugün herkese görünüyor. Yalnızca firmalar içinse formda yalnızca
 kurumsal üyelere gösterilmeli; herkese açıksa metinlerdeki "Firmalara"
 ifadesi çıkarılmalı.
+
+## Bayilik başvurusundan bayi açma — sahibiyle birlikte tasarlanacak
+
+**Sahibin kararı (2026-11-05, KARARLAR K-103):** Şimdi yapılmaz; başvuru
+onaylanınca neler olacağı birlikte tasarlanıp onaylanınca kurulur. Bugün
+başvuru Bayi ve Satış Ağı › Bayilik Başvuruları'nda görülür, bayi kaydı
+Bayiler ekranından elle açılır. Veritabanında bağlantı alanı hazır
+(`dealer_applications.dealer_id`).
+
+Tasarımda konuşulacaklar:
+
+1. Başvuru ekranındaki düğme ("Bayi olarak ekle" gibi) ve hangi durumda
+   görüneceği (yalnızca onaylanan başvuruda mı).
+2. Başvurudaki hangi bilgilerin bayi formuna aktarılacağı (firma adı,
+   şehir, telefon, adres …) ve eksik olanların (harita konumu, çalışma
+   saatleri, bayi türü) nasıl girileceği.
+3. Bayi açılınca başvurunun durumu (ör. kendiliğinden "Onaylandı") ve
+   başvurudan bayiye, bayiden başvuruya bağlantı.
+4. Başvuru sahibine e-posta gidip gitmeyeceği ve metni.
+5. Reddedilen başvuruda ne olacağı.
 
 ## Ürün Seçici ve arama — en son yeniden tasarlanacak
 

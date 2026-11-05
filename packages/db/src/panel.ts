@@ -53,3 +53,18 @@ export const saved = (at: Date) => ({ ok: true as const, updatedAt: at.toISOStri
 
 /** Degisen bir sey yok; kayit yazilmadi. */
 export const unchanged = (row: { updatedAt: Date }) => ({ ok: true as const, updatedAt: row.updatedAt.toISOString() });
+
+/** Sira oklari: kaydi bir yukari (-1) ya da asagi (+1) tasir; siralar 1, 2, 3... olur. Degisen satirlar doner. */
+export function reorder<T extends { id: string; position: number }>(rows: T[], id: string, step: -1 | 1) {
+  const index = rows.findIndex((r) => r.id === id);
+  const target = index + step;
+  if (index < 0 || target < 0 || target >= rows.length) return [];
+  const list = [...rows];
+  [list[index], list[target]] = [list[target], list[index]];
+  return list
+    .map((row, i) => ({ id: row.id, before: row.position, after: i + 1 }))
+    .filter((r) => r.before !== r.after);
+}
+
+/** Istekteki yon: -1 ya da +1; baska bir sey gecersiz. */
+export const direction = (value: unknown): -1 | 1 | null => (value === -1 || value === 1 ? value : null);
