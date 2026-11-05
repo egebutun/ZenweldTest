@@ -3,6 +3,27 @@
 Kararlaştırılıp ileri bir tarihe bırakılan işler. Bir iş yapıldığında
 buradan silinir.
 
+## Sonda ayrı ayrı ele alınacak konular (KARARLAR K-106)
+
+Sahibinin kararı (2026-11-05): Aşağıdaki konuların her biri ayrı ayrı,
+derinlemesine ayar ve karar gerektirir; panelin veritabanına geçişi
+bittikten sonra sahibiyle tek tek konuşulup düzenlenecek. O zamana kadar
+bugünkü düzen kalır; bu konularda kendiliğinden ayar ya da tasarım
+yapılmaz.
+
+| Konu | Bugün | Ayrıntılı notlar |
+|---|---|---|
+| **Fotoğraflar** (boyut, sıkıştırma, depolama, hız) | Örnek görseller sitenin klasöründe; veritabanı modunda panelde görsel yükleme kapalı, adres girilir (K-101); iyileştirme sahibi söyleyince (K-102) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar--backend), [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler), [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) |
+| **Belgeler** (MSDS, sertifikalar, rehber) | Demo modunda dosya tarayıcıda; veritabanı modunda dosya yükleme kapalı, adres girilir (K-104) | [Belgeler](#belgeler-msds-kaynak-rehberi-parti-sertifikaları--backend) |
+| **SEO** | Ürün, kategori, grup, blog, haber, etkinlik ve sabit sayfalarda SEO alanları; eski adres yönlendirmesi; site haritası | [SEO alanları](#seo-alanları-ürün-blog-haber-etkinlik-sabit-sayfalar-ve-link-yönlendirme--backend) |
+| **Kargo** (ücret, firmalar, takip, entegrasyon) | Sabit ücret ve ücretsiz kargo sınırı, firma listesi, takip numarası elle girilir; takip bağlantısı 5.3'te | [Online satış](#online-satış--canlıya-çıkmadan-önce) 9–10 |
+| **İade** | Bireysel üye 14 gün içinde talep açar; panelde durum; para iadesi elle | [İade talebi](#i̇ade-talebi--kurumsal-üyeler-ve-backend) 3–5 |
+| **SAP ayarları ve stok kontrolü** | Depo stoğu deneme dosyasından 15 dakikada bir okunur; stokta olmayan ürün sepete eklenmez; bayi stoğunda geçerlilik süresi | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend), [Bayi ve satıcı stokları](#bayi-ve-satıcı-stokları--backend) |
+| **SAP'a sipariş kaydı** | Yok; site siparişleri yalnızca sitede | Yukarıda "Kalan kod işleri" 4, [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) |
+| **API ayarları** (SAP, ödeme, e-posta, kargo bağlantıları) | Bağlantı bilgileri yalnızca sunucuda ortam değişkeni; panelde yok (güvenlik kuralı) | [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) |
+| **Banka ve ödeme ayarları** | Mağaza Ayarları'nda POS tablosu, taksitler ve havale hesapları; ödeme temsili | [Online satış](#online-satış--canlıya-çıkmadan-önce) 1, 10; [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › Kartla ödeme |
+| **E-postalar** (gönderen, metinler, müşteri bildirimleri) | Alıcılar panelde (K-104); servis kurulmadı, hiçbir e-posta gitmiyor | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre--backend) 3, [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı--backend) |
+
 ## Canlıya giden yol
 
 Son güncelleme: 2026-11-04. Her adım bitince bu bölüm güncellenir.
@@ -50,7 +71,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) — bitti; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — K-105), 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) — bitti; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm — bitti; şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — K-105), 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
 | 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
@@ -680,19 +701,18 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
        Başvuruları, Mesajlar, Welders Club), Katalog (Seçenek Tanımları,
        Kategoriler ve gruplar, Ürünler), Bayiler, Online Satıcılar, Satış
        Temsilcileri, Stok Matrisi, Mağaza Ayarları (e-posta alıcıları
-       dahil) ve İçerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS)
-       ekranları veritabanından okur ve yazar (K-99, K-100, K-103, K-104).
-       Stok dosyasının kendisi saklanmaz (dosya deposu Aşama 6). Diğer
-       ekranlar henüz tarayıcıya yazıyor: paneldeki Yasal Metinler,
-       Belgeler, Sayfa SEO ve Görünüm değişiklikleri bu modda siteye
-       yansımaz; panel ana sayfası (özet ve grafikler) tarayıcıdaki örnek
-       veriyi gösterir.
+       dahil), Görünüm ve İçerik (Haberler, Etkinlikler, Blog, Hakkımızda,
+       SSS, Belgeler, Yasal Metinler, Sayfa SEO) ekranları veritabanından
+       okur ve yazar (K-99, K-100, K-103, K-104). Stok dosyasının kendisi
+       saklanmaz (dosya deposu Aşama 6). Üyeler ekranı henüz
+       veritabanındaki üyeleri göstermez; panel ana sayfası (özet ve
+       grafikler) tarayıcıdaki örnek veriyi gösterir.
      - Panelde katalog görselleri (ürün, kategori ve grup) ve satış
        temsilcisi fotoğrafı için dosya yüklenmez, görsel adresi girilir;
        dosya deposu (Aşama 6) gelince yükleme açılır (K-101).
-     - Belgelerin (MSDS vb.) listesi tablodan gelir; dosyanın kendisi dosya
-       deposu (Aşama 6) kurulana kadar yalnızca yükleyen tarayıcıda durur. Sitede yazılan yeni yorum da tarayıcıya kaydolur
-       (zaten panel onayı bekler).
+     - Belgelerin (MSDS vb.) listesi tablodan gelir; dosya deposu (Aşama 6)
+       kurulana kadar panelde dosya yüklenmez, dosyanın adresi girilir ve
+       site belgeyi o adreste açar (K-104).
      - Katalog (bugün ~110 KB, sıkıştırılmış ~17 KB) sayfa çerçevesiyle her
        sayfada gelir (3.3'te planlandığı gibi). Ağır veri (bayi ve satıcı
        stoğu, yorumlar) yalnızca gereken sayfaya gider (3.4); bayi stoğu
@@ -746,11 +766,12 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      `SUPPORT_EMAIL`'e, K-104). 5.2 bitti: Haberler, Etkinlikler, Blog,
      Hakkımızda ve SSS sunucuda; kayıt sitede hemen görünür, link değişince
      eski adres yönlenir, görsel yükleme dosya deposuna kadar kapalı
-     (K-101). Sonraki: 5.3 Yasal Metinler, Belgeler (dosya yükleme
-     kapalı, K-104), Sayfa SEO, Görünüm, yeni "şirket ve iletişim
-     bilgileri" ayarı (MERSİS no dahil) ve kargo firmalarına takip
-     bağlantısı (K-105); sonra 6. alan, 5.6; 6 dosya deposu; canlıya
-     hazırlık.
+     (K-101). 5.3'ün ilk kısmı bitti: Yasal Metinler, Belgeler (dosya
+     yükleme kapalı, adres girilir; K-104), Sayfa SEO ve Görünüm
+     sunucuda; kayıt sitede hemen görünür. Sonraki: 5.3'ün ikinci kısmı,
+     Mağaza Ayarları'nda yeni "Şirket ve İletişim" sekmesi (MERSİS no
+     dahil) ve kargo firmalarına takip bağlantısı (K-105); sonra 6. alan,
+     5.6; 6 dosya deposu; canlıya hazırlık.
    - 5.3'ten kalanlar: gönderilen e-postalar ekranı paneldeki 6. alanda
      (K-99; e-posta alıcıları 5.1'de bitti); yorum fotoğraf ve videoları
      dosya deposu gelince (Aşama 6) depoya taşınır (o zamana kadar panelin

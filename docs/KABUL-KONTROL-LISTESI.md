@@ -950,8 +950,20 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       görseli olan bölüm yan yana görünür.
 - [ ] SSS sırası sitedeki SSS sayfasında, ürün sekmesinde ve anasayfada (ilk
       8) aynıdır.
+- [ ] Belgeler: dosya seçicide yalnızca PDF, Word, Excel, JPG, PNG ve ZIP
+      çıkar; 25 MB'tan büyük dosya yüklenmez; yayından kaldırılan belge
+      sitede görünmez.
+- [ ] Yasal metin başlığı değişince alt bilgideki ad da değişir; adres
+      değişmez.
+- [ ] Sayfa SEO: başlık değişince sayfanın sekme başlığı değişir; Varsayılana
+      dön + Kaydet varsayılana döndürür.
+- [ ] Görünüm: punto ve renk değişikliği haber, blog, Hakkımızda ve yasal
+      metinlere yansır; Varsayılana Dön + Ayarları Kaydet başlangıç
+      değerlerine döndürür.
+- [ ] Görünüm: renk kod kutusuna "#fff" ya da "kırmızı" yazılınca
+      kaydedilmez; "Gövde rengi #RRGGBB biçiminde olmalı…" uyarısı çıkar.
 
-**Veritabanı modunda içerik (KARARLAR K-99, K-101):**
+**Veritabanı modunda içerik (KARARLAR K-99, K-101, K-104):**
 
 - [ ] Yeni haber (etkinlik, blog yazısı) kaydedilince `db:studio`'da görünür
       ve sitede hemen açılır; işlem kaydına yazılır.
@@ -968,16 +980,22 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       (uyarı çıkmaz).
 - [ ] Hakkımızda kaydı sitede hemen görünür; hemen ardından ikinci kayıtta
       uyarı çıkmaz.
-- [ ] Belgeler: dosya seçicide yalnızca PDF, Word, Excel, JPG, PNG ve ZIP
-      çıkar; 25 MB'tan büyük dosya yüklenmez; yayından kaldırılan belge
-      sitede görünmez.
-- [ ] Yasal metin başlığı değişince alt bilgideki ad da değişir; adres
-      değişmez.
-- [ ] Sayfa SEO: başlık değişince sayfanın sekme başlığı değişir; Varsayılana
-      dön + Kaydet varsayılana döndürür.
-- [ ] Görünüm: punto ve renk değişikliği haber, blog, Hakkımızda ve yasal
-      metinlere yansır; Varsayılana Dön + Ayarları Kaydet başlangıç
-      değerlerine döndürür.
+- [ ] Belgeler: Belge Ekle penceresinde dosya seçme yoktur; **Dosya adresi**
+      alanı ve "Dosya yükleme dosya deposu kurulunca açılacak…" notu vardır.
+      `https://` ile başlamayan adres kaydedilmez. Adresle eklenen belge
+      sitedeki sayfada hemen görünür, **Görüntüle** o adresi yeni sekmede
+      açar; boyut yazmaz. Yayından kaldırılan belge sitede görünmez;
+      silinen belge `db:studio`'da da yoktur.
+- [ ] Belge sayfasının başlığı ve açıklaması sitede hemen değişir.
+- [ ] Yasal metin kaydı sitede hemen görünür; hemen ardından ikinci kayıtta
+      uyarı çıkmaz. Bir sekmede açık metin başka sekmede kaydedilince ilk
+      sekmede kaydedilmez.
+- [ ] Sayfa SEO: kaydedilen başlık sayfanın sekme başlığında hemen görünür;
+      Varsayılana dön + Kaydet ile `page_seo` satırı silinir.
+- [ ] Görünüm kaydı sitedeki biçimli metinlere hemen yansır; hemen ardından
+      ikinci kayıtta uyarı çıkmaz.
+- [ ] `db:studio` › `audit_log`: yasal metin, sayfa SEO, belge ve Görünüm
+      değişiklikleri yazılmıştır.
 
 ---
 

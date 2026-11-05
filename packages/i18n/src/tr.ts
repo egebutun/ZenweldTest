@@ -795,6 +795,7 @@ export const tr = {
     invalidDate: "Geçerli bir tarih girin.",
     reviewNotApproved: "Yalnızca onaylı yorum anasayfada gösterilir.",
     uploadDisabled: "Görsel yükleme dosya deposu kurulunca açılacak; şimdilik görsel adresi girin.",
+    documentUploadDisabled: "Dosya yükleme dosya deposu kurulunca açılacak; şimdilik dosyanın adresini girin.",
     optionsMissing: "Seçilen seçeneklerden bazıları artık yok; sayfayı yenileyip yeniden seçin.",
     categoryMissing: "Seçilen kategori artık yok; sayfayı yenileyip yeniden seçin.",
     storeMissing: "Seçilen online mağaza artık yok; sayfayı yenileyip yeniden seçin.",

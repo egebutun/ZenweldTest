@@ -911,12 +911,12 @@ Silme: silinemez.
 | `lot_number` | text | | Parti sertifikalarında |
 | `file_name`, `mime_type` | text | zorunlu | |
 | `size_bytes` | bigint | zorunlu | |
-| `file_key` | text | zorunlu | Dosya deposundaki yol |
+| `file_key` | text | zorunlu | Dosya deposundaki yol. Dosya deposu gelene kadar (Aşama 6) panelde girilen dosya adresi (`https://…` ya da `/…`; KARARLAR K-104); o zaman `size_bytes` 0'dır |
 | `active` | boolean | zorunlu | |
 | `position` | int | zorunlu (yeni) | Sitedeki sıra |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
-Silme: dosyası da silinir.
+Silme: dosyası da silinir (adresi girilen belgede yalnızca satır silinir).
 
 ---
 
@@ -1943,6 +1943,56 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   görünmesi, kapalı görsel yükleme, link değişince eski adresin yönlenmesi,
   silme; SSS ekleme, sitede görünme, sıra, silme; Hakkımızda kaydı ve
   hemen ardından geri alma; oturumsuz istek).
+
+**Panel › Yasal Metinler, Belgeler, Sayfa SEO ve Görünüm, adım 5.3 (Aşama 5, 5. alan; KARARLAR K-99, K-104; `src/admin-pages.ts`, `src/admin-settings.ts`):**
+
+- **Okuma:** `readPagesPanel(db)`: yasal metinler, belge sayfaları,
+  belgeler ve `page_seo` (`updated_at`'leriyle). Yasal Metinler (liste ve
+  düzenleme), Belgeler ve Sayfa SEO'nun sunucu bileşeni okur
+  (`apps/zenweld-web/src/components/admin/PagesPanelData.tsx`).
+  `readAppearancePanel(db)`: ayarlar, `rich_text` satırının
+  `updated_at`'iyle (Görünüm sayfası). Yönetici oturumu denetlenir.
+- **Yazma:** `POST /api/yonetim/icerik/<işlem>`: `yasal-metin`,
+  `sayfa-seo`, `belge-sayfasi`, `belge`, `belge-yayin`, `belge-sil`,
+  `belge-sira`; ardından `refreshSite(["icerik"])`.
+  `POST /api/yonetim/ayarlar/gorunum`; ardından `refreshSite(["katalog"])`
+  (ayarlar katalogla birlikte önbellektedir). Kurallar Satış ile aynı;
+  `audit_log`: `legal_pages`, `page_seo`, `document_pages`, `documents`,
+  `settings` / `rich_text`.
+- **Yasal metin:** Yalnızca var olan satır güncellenir (liste sabit);
+  başlık ve metin zorunlu (`content-rules.ts` › `legalDraftError`).
+- **Sayfa SEO:** Yalnızca Sayfa SEO ekranındaki (aramaya açık) sabit
+  sayfalar kaydedilir; liste sitenin sayfa tablosundan gelir
+  (`apps/zenweld-web/src/lib/page-meta.ts` › `isIndexablePage`, uç verir).
+  Satırı olmayan sayfada ekranın gördüğü an boş olmalı; iki alan da boşsa
+  satır silinir. Başlık en çok 200, açıklama 500 karakter. Sıra
+  `pg_advisory_xact_lock('page_seo:<yol>')` ile.
+- **Belge sayfası:** Satırı yoksa eklenir; başlık zorunlu.
+- **Belgeler:** Dosya yüklenmez, adres girilir (K-104): adres
+  `file_key`'e yazılır; `file_name` ve `mime_type` adresin son
+  parçasından (`documentFileFromAddress`), `size_bytes` 0. Yeni belgede
+  adres zorunlu; düzenlemede boşsa dosya alanları değişmez; bölüm
+  değişmez. Seçilen ürün `products`'ta olmalı; `lot_number` yalnızca
+  `parti-sertifikalari`'nda yazılır. Yeni belge `max(position) + 1`;
+  sıra okları yalnızca aynı bölümdeki belgeler arasında `position`'ı
+  değiştirir, `updated_at`'e dokunmaz (`pg_advisory_xact_lock('documents')`).
+- **Görünüm:** `settings` / `rich_text`; yalnızca bilinen dokuz alan
+  yazılır; renkler `#RRGGBB`, puntolar Görünüm ekranının aralığında
+  (`content-rules.ts` › `richTextStyleError`). Değişmeyen kayıt yazılmaz.
+- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-pages.ts`
+  (`usePagesActions`), `admin-settings.ts` (`saveRichText`).
+- Test: `tests/db/panel-sayfalar.test.ts` (okuma; yasal metin: zorunlu
+  alanlar, eski ekran, değişmeyen kayıt, olmayan metin; sayfa SEO: ekleme,
+  değiştirme, boşalınca silinme, listede olmayan sayfa, silinmiş satıra
+  eski ekran; belge sayfası; belge: adresle ekleme, yanlış adres, `data:`
+  adresi, olmayan ürün, parti numarası, düzenleme, bölümün değişmemesi,
+  yayından kaldırma, silme, eski ekran, bölüm içinde sıra; Görünüm:
+  renk, punto, alan türleri, fazla alan, eski ekran);
+  `tests/unit/icerik-ve-belgeler.test.ts` (kurallar);
+  `tests/e2e-db/panel-sayfalar.spec.ts` (tarayıcıda: yasal metin ve sitede
+  görünmesi, sayfa başlığı ve varsayılana dönme, adresle belge ekleme,
+  sitede görünme ve açılma, yayından kaldırma, silme; belge sayfası
+  açıklaması; Görünüm; oturumsuz istek).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

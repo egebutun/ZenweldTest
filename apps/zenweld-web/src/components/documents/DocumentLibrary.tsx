@@ -83,7 +83,8 @@ export function DocumentLibrary({ section }: { section: DocumentSection }) {
                           </span>
                         )}
                         {doc.lotNumber && <span>Parti No: {doc.lotNumber}</span>}
-                        <span>{formatBytes(doc.size)}</span>
+                        {/* Adresi girilen belgenin boyutu bilinmez (0). */}
+                        {doc.size > 0 && <span>{formatBytes(doc.size)}</span>}
                         <span>{formatDate(doc.updatedAt)}</span>
                       </div>
                     </div>

@@ -1,12 +1,17 @@
 import { asc, eq, inArray, sql } from "drizzle-orm";
 import {
   EMAIL_RECIPIENT_TYPES,
+  RICH_TEXT_COLORS,
+  RICH_TEXT_LIMITS,
   bankAccountKey,
+  defaultSettings,
   parseRecipients,
   parseShopSettings,
   posKey,
   recipientsVersion,
+  richTextStyleError,
   type EmailRecipient,
+  type RichTextStyle,
   type ShopSettings,
   type ZenweldDatabase,
 } from "@zenweld/data";
@@ -30,7 +35,11 @@ import * as s from "./schema";
  *   (email_recipients). Satiri olmayan tur varsayilan adrese
  *   (SUPPORT_EMAIL) gider.
  *
- * Kurallar tarayiciyla ortak: packages/data › settings-rules.ts.
+ * Görünüm ekrani (bicimli metinlerin punto ve renkleri) da burada: tek
+ * kayit, settings('rich_text') satiri (adim 5.3).
+ *
+ * Kurallar tarayiciyla ortak: packages/data › settings-rules.ts,
+ * content-rules.ts (Görünüm).
  */
 
 type Input = Record<string, unknown>;
@@ -233,4 +242,65 @@ export async function adminSaveEmailRecipients(db: AuditDb, actor: Actor, input:
     );
   }
   return changed ? saved(at) : { ok: true };
+}
+
+/* ------------------------------ Gorunum ------------------------------ */
+
+/** Görünüm ekraninin verisi: ayarlar (bicimli metin ayarinin son degisiklik aniyla). */
+export async function readAppearancePanel(db: AuditDb): Promise<Partial<ZenweldDatabase>> {
+  const settings = await readSettings(db);
+  const [row] = await db.select({ updatedAt: s.settings.updatedAt }).from(s.settings).where(eq(s.settings.key, "rich_text"));
+  const richText = { ...defaultSettings.richText, ...settings.richText, ...(row && { updatedAt: iso(row.updatedAt) }) };
+  return { settings: { ...settings, richText } };
+}
+
+type RichTextValue = Omit<RichTextStyle, "updatedAt">;
+const RICH_TEXT_KEYS = [
+  "headingSize",
+  "headingColor",
+  "headingUppercase",
+  "accentColor",
+  "accentWidth",
+  "leadSize",
+  "bodySize",
+  "bodyColor",
+  "strongColor",
+] as const satisfies readonly (keyof RichTextValue)[];
+
+/** Tarayicidan gelen ayar: alan turleri dogru degilse null. */
+function parseRichText(value: unknown): RichTextValue | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const v = value as Record<string, unknown>;
+  if (typeof v.headingUppercase !== "boolean") return null;
+  if (!Object.keys(RICH_TEXT_LIMITS).every((k) => typeof v[k] === "number")) return null;
+  if (!Object.keys(RICH_TEXT_COLORS).every((k) => typeof v[k] === "string")) return null;
+  return Object.fromEntries(RICH_TEXT_KEYS.map((k) => [k, v[k]])) as unknown as RichTextValue;
+}
+
+/**
+ * Görünüm ayarlarini kaydeder. input: { style, updatedAt? }. Degisen bir sey
+ * yoksa hicbir sey yazilmaz.
+ */
+export async function adminSaveRichText(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<Saved>> {
+  const next = parseRichText(input.style);
+  if (!next) return invalid();
+  const error = richTextStyleError(next);
+  if (error) return fail(400, error);
+
+  await lock(db, "settings:rich_text");
+  const [row] = await db.select().from(s.settings).where(eq(s.settings.key, "rich_text"));
+  if ((row ? iso(row.updatedAt) : undefined) !== (input.updatedAt || undefined)) return fail(409, stale);
+  const before = { ...defaultSettings.richText, ...((row?.value ?? {}) as Partial<RichTextValue>) };
+  const changes = changedFields<RichTextValue>(before, next, RICH_TEXT_KEYS);
+  if (Object.keys(changes).length === 0) return row ? unchanged(row) : { ok: true };
+
+  if (row) await db.update(s.settings).set({ value: next, updatedAt: at }).where(eq(s.settings.key, "rich_text"));
+  else await db.insert(s.settings).values({ key: "rich_text", value: next, updatedAt: at });
+  await writeAudit(
+    db,
+    actor,
+    { action: row ? "update" : "create", entityType: "settings", entityId: "rich_text", entityLabel: "Görünüm", changes },
+    at,
+  );
+  return saved(at);
 }

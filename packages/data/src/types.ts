@@ -245,7 +245,10 @@ export interface Product {
 }
 
 /** Sabit sayfalarin (Hakkimizda, SSS ...) panelden degistirilen alanlari. */
-export type PageSeoFields = Pick<SeoFields, "title" | "description">;
+export type PageSeoFields = Pick<SeoFields, "title" | "description"> & {
+  /** Panel (veritabani modu): son degisiklik ani; ayni anda duzenleme denetimi icin. */
+  updatedAt?: string;
+};
 
 /** Panelin SEO sekmesi: urun, blog yazisi, haber ve etkinlik. */
 export interface SeoFields {
@@ -768,6 +771,8 @@ export interface DocumentPage {
   section: DocumentSection;
   title: string;
   subtitle: string;
+  /** Panel (veritabani modu): son degisiklik ani; ayni anda duzenleme denetimi icin. */
+  updatedAt?: string;
 }
 
 export interface DocumentFile {
@@ -780,11 +785,13 @@ export interface DocumentFile {
   lotNumber?: string;
   fileName: string;
   mimeType: string;
-  /** Bayt */
+  /** Bayt; adresi girilen belgede bilinmez (0) */
   size: number;
   /**
    * Dosyanin icerigi nerede: demoda tarayicinin dosya deposundaki anahtar
-   * (bkz. packages/store/src/files.ts); backend'de dosya sunucusundaki yol.
+   * (bkz. packages/store/src/files.ts). Veritabani modunda dosya deposu
+   * gelene kadar dosyanin adresi ("https://…"; KARARLAR K-104,
+   * content-rules.ts › isDocumentAddress).
    */
   fileKey: string;
   active: boolean;
@@ -1039,6 +1046,8 @@ export interface RichTextStyle {
   bodyColor: string;
   /** Kalin vurgulu metinlerin rengi */
   strongColor: string;
+  /** Panel (veritabani modu): son degisiklik ani; ayni anda duzenleme denetimi icin. */
+  updatedAt?: string;
 }
 
 /* ------------------------------------------------------------------ */

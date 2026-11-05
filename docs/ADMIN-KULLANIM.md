@@ -100,11 +100,13 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
       ([Veritabanı modunda Bayiler, Online Satıcılar ve Satış Temsilcileri](#veritabanı-modunda-bayiler-online-satıcılar-ve-satış-temsilcileri))
       ve Stok Matrisi ([Veritabanı modunda Stok Matrisi](#veritabanı-modunda-stok-matrisi)).
     - **Ayarlar:** Mağaza Ayarları
-      ([Veritabanı modunda Mağaza Ayarları](#veritabanı-modunda-mağaza-ayarları)).
+      ([Veritabanı modunda Mağaza Ayarları](#veritabanı-modunda-mağaza-ayarları))
+      ve Görünüm ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
     - **İçerik:** Haberler, Etkinlikler, Blog, Hakkımızda, Sık Sorulan
-      Sorular ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
-    Diğer ekranlardaki işlemler (üye, içerik…) henüz tarayıcıda
-    kalır; Üyeler listesi veritabanındaki üyeleri henüz göstermez. Panel
+      Sorular, Belgeler, Yasal Metinler, Sayfa SEO
+      ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
+    Üyeler ekranındaki işlemler henüz tarayıcıda kalır; Üyeler listesi
+    veritabanındaki üyeleri henüz göstermez. Panel
     ana sayfası (özet ve grafikler) en son gelir; o zamana kadar
     tarayıcıdaki örnek veriyi gösterir.
   - Panele her giriş ve çıkış işlem kaydına (`audit_log`) yazılır.
@@ -1944,8 +1946,9 @@ sekmesinde ve anasayfada (ilk 8 soru) bu sırayla görünür."
 
 ### Veritabanı modunda içerik ekranları
 
-Veritabanı modunda Haberler, Etkinlikler, Blog, Hakkımızda ve Sık Sorulan
-Sorular veritabanıyla çalışır (KARARLAR K-99). Kurallar
+Veritabanı modunda Haberler, Etkinlikler, Blog, Hakkımızda, Sık Sorulan
+Sorular, Belgeler, Yasal Metinler, Sayfa SEO ve Görünüm veritabanıyla
+çalışır (KARARLAR K-99). Kurallar
 [Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
 ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
 kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
@@ -1968,6 +1971,34 @@ Kayıt sitede (anasayfa dahil) hemen görünür. Farklar:
   pencere yine kaydedilir).
 - **Hakkımızda** tek kayıttır: ekran açıldıktan sonra başka bir yönetici
   kaydettiyse kaydedilmez.
+- **Belgeler — dosya yükleme kapalı** (dosya deposu gelene kadar, KARARLAR
+  K-104): Belge Ekle / Belgeyi Düzenle penceresinde dosya seçme yoktur;
+  yerine **Dosya adresi** alanı ve "Dosya yükleme dosya deposu kurulunca
+  açılacak; şimdilik dosyanın adresini girin." notu çıkar.
+  - Adres yeni belgede zorunludur; `https://` (ya da sitedeki bir yol için
+    `/`) ile başlamalı ve boşluk içermemelidir: "Dosyanın adresini girin." /
+    "Dosya adresi https:// ile başlamalı ve boşluk içermemeli."
+  - Düzenlemede adres boş bırakılırsa mevcut dosya kalır ("Mevcut: <dosya
+    adı>").
+  - Başlık elle yazılmadıkça adresteki dosya adıyla (uzantısız) dolar.
+  - Dosya adı ve türü adresin son parçasından alınır (`…/MSDS-ER70S-6.pdf`
+    → "MSDS-ER70S-6.pdf", PDF). Boyut bilinmediği için listede ve sitede
+    gösterilmez. Uzantısı olmayan adreste dosya adı başlık olur, sitede
+    türü "DOSYA" yazar.
+  - **Görüntüle** (panelde ve sitede) belgeyi o adreste yeni sekmede açar.
+  - **Sil**: ""<başlık>" silinsin mi?" (dosya bizde durmadığı için yalnızca
+    kayıt silinir).
+  - Sıra okları kaydı eskitmez; yalnızca belgenin kendi sayfasındaki sırayı
+    değiştirir.
+  - Sayfa metni (başlık ve açıklama) sayfa başına tek kayıttır.
+- **Yasal Metinler:** Metin ekran açıldıktan sonra başka bir yönetici
+  tarafından kaydedildiyse kaydedilmez.
+- **Sayfa SEO:** Sayfa başına tek kayıttır. **Varsayılana dön** ile iki alan
+  boş kaydedilirse kayıt silinir; sayfa varsayılan metne döner. Kayıt
+  sürerken Düzenle düğmeleri kapalıdır.
+- **Görünüm** tek kayıttır: ekran açıldıktan sonra başka bir yönetici
+  kaydettiyse kaydedilmez. Renkler #RRGGBB biçiminde, puntolar tablodaki
+  aralıkta olmalıdır (demo modunda da aynı denetim yapılır; [24](#24-görünüm)).
 
 ---
 
@@ -1991,7 +2022,7 @@ sayfaları. Yüklenen belgeler sitede bu listedeki sırayla görünür."
   - Durum: Yayında / Yayında değil; tıklayınca değişir.
   - **Görüntüle** (yeni sekmede açar), **Düzenle**, **Sil** (""<başlık>"
     silinsin mi? Dosya da silinir.").
-- Boşsa: "Bu sayfada henüz belge yok. “Belge Ekle” ile yükleyin."
+- Boşsa: "Bu sayfada henüz belge yok. “Belge Ekle” ile ekleyin."
 
 **Belge Ekle / Belgeyi Düzenle penceresi:**
 
@@ -2021,7 +2052,8 @@ sayfaları. Yüklenen belgeler sitede bu listedeki sırayla görünür."
 
 **Demo notu:** Dosyanın kendisi tarayıcının dosya deposunda (IndexedDB),
 kaydı veritabanında durur. Başka bir tarayıcıda dosya bulunmaz: "<dosya> bu
-tarayıcıda bulunamadı; dosyayı yeniden yükleyin."
+tarayıcıda bulunamadı; dosyayı yeniden yükleyin." Veritabanı modunda dosya
+yüklenmez, adresi girilir: [Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları).
 
 ---
 
@@ -2136,6 +2168,11 @@ yazıların punto ve renklerini buradan ayarlayın."
 
 - **Canlı önizleme:** Kaydedilmemiş ayarlarla örnek metni gösterir.
 - **Ayarları Kaydet** → "Görünüm ayarları kaydedildi."
+- Hatalar (kaydedilmez):
+  - "<Ara başlık rengi | Vurgu rengi | Gövde rengi | Kalın vurgu rengi>
+    #RRGGBB biçiminde olmalı (örnek: #141619)." (renk kod kutusuna elle
+    yanlış yazıldıysa)
+  - "Punto ve genişlik değerleri <en az>–<en çok> arasında olmalı."
 - **Varsayılana Dön:** Ayarları başlangıç değerlerine çeker; Ayarları Kaydet
   ile uygulanır.
 - Ayarlar başka bir sekmede kaydedilirse ekran yenilenir; kaydedilmemiş

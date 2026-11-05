@@ -1420,13 +1420,15 @@ gelinir.
 - **Başlık ve açıklama:** Panelden (Belgeler) düzenlenir.
 - **Liste:** Panelde verilen sırayla dizilir.
 - **Satır:**
-  - Dosya türü (PDF, DOCX…) ve belge adı.
+  - Dosya türü (PDF, DOCX…; dosya adında uzantı yoksa "DOSYA") ve belge adı.
   - Bağlı ürün "ad · kod": Ürün yayındaysa ürün sayfasına bağlantıdır, değilse
     düz yazıdır.
   - Sertifikalarda "Parti No: <no>".
-  - Dosya boyutu (KB / MB) ve güncelleme tarihi.
+  - Dosya boyutu (KB / MB; boyutu bilinmeyen belgede yazmaz) ve güncelleme
+    tarihi.
   - Düğme: PDF'te **Görüntüle** (yeni sekmede açar), diğer dosyalarda
-    **İndir**.
+    **İndir**. Adresi panelde girilen belge (veritabanı modu) o adreste yeni
+    sekmede açılır.
 - **Arama kutusu:**
   - Yer tutucu: "Belge veya ürün ara…"; sertifikalarda "Belge, ürün veya parti
     no ara…".
@@ -1436,6 +1438,8 @@ gelinir.
 - **Dosya açılamazsa:** "Dosya açılamadı. Lütfen daha sonra tekrar deneyin."
 - **Demo notu:** Yüklenen dosyalar yükleyen tarayıcıda saklanır; başka
   bilgisayarda açılmaz. Gerçek sistemde dosya depolama servisi gerekir.
+  Veritabanı modunda dosya deposu gelene kadar dosya yüklenmez; panelde
+  dosyanın adresi girilir (KARARLAR K-104).
 
 ---
 

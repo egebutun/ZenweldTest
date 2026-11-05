@@ -1215,6 +1215,18 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
     (YAPILACAKLAR).
 - **Neden:** Sahibinin kararı.
 
+### K-106 · Derin ayar gerektiren konular en sonda ayrı ayrı ele alınır
+- **Tarih:** 2026-11-05
+- **Karar:** Fotoğraflar, belgeler, SEO, kargo, iade, SAP ayarları ve stok
+  kontrolü, SAP'a sipariş kaydı, API ayarları, banka ve ödeme ayarları ile
+  e-postalar panelin veritabanına geçişinden sonra sahibiyle ayrı ayrı,
+  derinlemesine konuşulup düzenlenir. O zamana kadar bugünkü düzen kalır;
+  bu konularda kendiliğinden ayar ya da tasarım yapılmaz. Liste:
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Sonda ayrı ayrı ele alınacak
+  konular.
+- **Neden:** Sahibinin kararı; her biri ayrı ayrı derin ayar gerektiren
+  konular.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

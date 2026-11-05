@@ -733,16 +733,20 @@ sunucuda ortaktır: `packages/data/src/content-rules.ts`.
 | `productId` | metin? | İsteğe bağlı ürün |
 | `lotNumber` | metin? | Yalnızca parti sertifikalarında |
 | `fileName`, `mimeType` | metin | |
-| `size` | sayı | Bayt; en fazla 25 MB |
-| `fileKey` | metin | Dosyanın yeri. **Demo notu:** tarayıcının dosya deposundaki anahtar; backend'de dosya deposundaki yol |
+| `size` | sayı | Bayt; en fazla 25 MB. Adresi girilen belgede bilinmez: 0 |
+| `fileKey` | metin | Dosyanın yeri. **Demo notu:** tarayıcının dosya deposundaki anahtar; backend'de dosya deposundaki yol. Veritabanı modunda dosya deposu gelene kadar panelde girilen dosya adresi (`https://…` ya da `/…`; KARARLAR K-104); dosya adı ve türü bu adresten çıkarılır |
 | `active` | evet/hayır | |
 | `createdAt`, `updatedAt` | tarih-saat | |
 
 Sıra listedeki sıradır (backend'de `order` alanı). Kabul edilen uzantılar:
 pdf, doc, docx, xls, xlsx, jpg, jpeg, png, zip.
 
-**Belge sayfaları (`document_pages`):** `section`, `title`, `subtitle`; üç
+**Belge sayfaları (`document_pages`):** `section`, `title`, `subtitle`,
+`updatedAt?` (yalnızca veritabanı modunda panelin okuduğu kayıtta); üç
 sayfa için birer kayıt.
+
+Yasal metin, belge, belge sayfası ve Görünüm formlarının kuralları
+tarayıcı ve sunucuda ortaktır: `packages/data/src/content-rules.ts`.
 
 ### Hakkımızda (`about`)
 
@@ -774,7 +778,8 @@ panelin okuduğu kayıtta; K-99). Ad, bölge, telefon ve e-posta zorunlu.
 ### Sayfa SEO (`page_seo`)
 
 Sabit sayfaların panelden değiştirilen başlık ve açıklaması:
-`pageSeo[<sayfa adresi>] = { title?, description? }` (ör. `"/sss"`).
+`pageSeo[<sayfa adresi>] = { title?, description?, updatedAt? }` (ör.
+`"/sss"`; `updatedAt` yalnızca veritabanı modunda panelin okuduğu kayıtta).
 Değiştirilmemiş sayfa kayıtta yer almaz; varsayılan metinler
 `apps/zenweld-web/src/lib/page-meta.ts`'tedir.
 
@@ -849,7 +854,8 @@ Biçimli metinlerin görünümü: `headingSize` (14–32, 18), `headingColor`
 (#141619), `headingUppercase` (evet), `accentColor` (#b82429),
 `accentWidth` (0–160, 40), `leadSize` (14–26, 18), `bodySize` (12–22, 15),
 `bodyColor` (#3d4348), `strongColor` (#141619). Parantez içinde aralık ve
-başlangıç değeri.
+başlangıç değeri. Renkler `#RRGGBB` biçimindedir. `updatedAt?` yalnızca
+veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99).
 
 ---
 

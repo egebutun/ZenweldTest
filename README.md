@@ -439,15 +439,14 @@ npm run start --workspace apps/zenweld-web
     Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
     Ürünler), Bayiler, Online Satıcılar, Satış Temsilcileri ve Stok
     Matrisi (elle düzeltme, dosya yükleme, kod eşleştirme, geri alma),
-    Mağaza Ayarları (Kargo ve Ödeme, E-posta Alıcıları) ve İçerik
-    (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) ekranları
-    veritabanından okur ve yazar; aynı kaydı iki
-    yönetici düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her
-    değişiklik `audit_log`'a yazılır. Bu modda panelde görsel dosyası
-    yüklenmez, görsel adresi girilir (dosya deposu gelene kadar; K-101).
-    Panelin diğer ekranlarında (Yasal Metinler, Belgeler, Sayfa SEO,
-    Görünüm) yapılan değişiklikler henüz siteye yansımaz; değişiklik `db:studio`'dan
-    yapılır. Panel ana sayfası en son bağlanır.
+    Mağaza Ayarları (Kargo ve Ödeme, E-posta Alıcıları), Görünüm ve İçerik
+    (Haberler, Etkinlikler, Blog, Hakkımızda, SSS, Belgeler, Yasal
+    Metinler, Sayfa SEO) ekranları veritabanından okur ve yazar; aynı
+    kaydı iki yönetici düzenlerse sonraki kaydetmez ("sayfayı
+    yenileyin"); her değişiklik `audit_log`'a yazılır. Bu modda panelde
+    görsel ve belge dosyası yüklenmez, adresi girilir (dosya deposu gelene
+    kadar; K-101, K-104). Üyeler ekranı henüz veritabanındaki üyeleri
+    göstermez; panel ana sayfası en son bağlanır.
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
     Derleme sırasında veritabanı çalışıyor olmalı.
   - Ayar yoksa site bugünkü gibi çalışır.

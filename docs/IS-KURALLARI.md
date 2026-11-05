@@ -1182,8 +1182,9 @@ Bugün Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
 Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
 Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
 Ürünler), Bayi ağı (Bayiler, Online Satıcılar, Satış Temsilcileri), Stok
-Matrisi, Mağaza Ayarları ve İçerik (Haberler, Etkinlikler, Blog,
-Hakkımızda, Sık Sorulan Sorular) ekranlarında geçerlidir; panelin diğer alanları
+Matrisi, Mağaza Ayarları, Görünüm ve İçerik (Haberler, Etkinlikler, Blog,
+Hakkımızda, Sık Sorulan Sorular, Belgeler, Yasal Metinler, Sayfa SEO)
+ekranlarında geçerlidir; panelin diğer alanları
 veritabanına geçtikçe onlara da uygulanır.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
@@ -1273,12 +1274,33 @@ veritabanına geçtikçe onlara da uygulanır.
   haberde (etkinlikte, yazıda) kullanılmaz. Silinen kaydın eski adres
   yönlendirmeleri de silinir. SSS'te sıra değişikliği kaydı eskitmez.
   Kayıt sitede (anasayfa dahil) hemen görünür.
+  - **Yasal metin:** başlık ve metin zorunlu; liste ve adresler sabittir.
+  - **Sayfa SEO:** yalnızca Sayfa SEO ekranındaki sayfalar kaydedilir; iki
+    alan da boş kalırsa kayıt silinir, sayfa varsayılan metne döner.
+  - **Belge sayfası:** başlık zorunlu.
+  - **Belge:** başlık zorunlu; seçilen ürün katalogda olmalı; parti
+    numarası yalnızca parti sertifikalarında tutulur; sıra okları yalnızca
+    aynı sayfadaki belgeler arasında çalışır ve kaydı eskitmez.
+- **Görünüm:** Tek kayıttır. Renkler #RRGGBB biçiminde (ör. #141619);
+  ara başlık puntosu 14–32, giriş paragrafı 14–26, gövde 12–22, başlık
+  altı çizgi 0–160 px (tam sayı). Kural demo modunda da geçerlidir.
+  Kayıt sitedeki biçimli metinlerde hemen geçerli olur.
+  - **Örnek:** Gövde rengi kutusuna "#fff" yazılırsa kaydedilmez: "Gövde
+    rengi #RRGGBB biçiminde olmalı (örnek: #141619)."
 - **Görsel yükleme:** Veritabanı modunda dosya deposu kurulana kadar
   (Aşama 6) panelde görsel dosyası yüklenmez, görsel adresi girilir;
   sunucu yüklenmiş dosya (`data:`) içeren kaydı reddeder (KARARLAR K-101).
   Bugün ürün görsellerinde, kategori/grup kart görsellerinde, satış
   temsilcisi fotoğrafında, haber, etkinlik ve blog görsellerinde ve
   Hakkımızda görsellerinde geçerlidir.
+- **Belge dosyası:** Aynı nedenle veritabanı modunda belge dosyası da
+  yüklenmez; dosyanın adresi girilir (KARARLAR K-104). Adres `https://`
+  (ya da sitedeki bir yol için `/`) ile başlar ve boşluk içermez. Dosya
+  adı ve türü adresin son parçasından alınır; boyut bilinmez, gösterilmez.
+  Düzenlemede adres boş bırakılırsa mevcut dosya kalır. Sitede belge o
+  adreste yeni sekmede açılır.
+  - **Örnek:** `https://dosya.zenweld.com/msds/ER70S-6%20Tel.pdf` → dosya
+    adı "ER70S-6 Tel.pdf", türü PDF (sitede **Görüntüle**).
 - Panel işlemleri yalnızca geçerli yönetici oturumuyla yapılır
   ([16](#16-üyelik-ve-oturum)); oturum bitmişse: "Panel oturumunuz kapanmış.
   Lütfen yeniden giriş yapın."
@@ -1286,8 +1308,8 @@ veritabanına geçtikçe onlara da uygulanır.
 Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
 `admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`,
 `admin-stock.ts`, `admin-settings.ts`, `admin-content.ts`, `links.ts`,
-`audit.ts`; formların ortak kuralları `packages/data/src/catalog-rules.ts`,
+`admin-pages.ts`, `audit.ts`; formların ortak kuralları `packages/data/src/catalog-rules.ts`,
 `network-rules.ts`, `settings-rules.ts`, `content-rules.ts`; tarayıcı:
 `apps/zenweld-web/src/lib/admin-panel.ts`, `admin-sales.ts`,
 `admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`,
-`admin-stock.ts`, `admin-settings.ts`, `admin-content.ts`.
+`admin-stock.ts`, `admin-settings.ts`, `admin-content.ts`, `admin-pages.ts`.
