@@ -50,7 +50,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm), 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
+| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — K-105), 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
 | 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
@@ -238,6 +238,9 @@ numarası ve ETBİS bilgisi yok. Sözleşmelerdeki MERSİS alanı da boş ("[—
   Satış Sözleşmesi'ne yazılmalı.
 - Hangi bilgilerin zorunlu olduğu hukuk danışmanıyla teyit edilmeli
   (bkz. [Online satış](#online-satış--canlıya-çıkmadan-önce) 4).
+- Panel: Unvan, ofis adresleri, telefonlar, e-posta, sosyal medya ve MERSİS
+  numarası panelin 5.3 adımında panelden girilebilir olacak (KARARLAR
+  K-105); bugün `apps/zenweld-web/src/lib/contact.ts`'te sabit.
 
 ## Ürün seçenekleri (3 m / 5 m gibi) — backend
 
@@ -613,6 +616,20 @@ modunda sipariş sunucuda kaydediliyor (Aşama 5.2), ödeme temsili. Canlı içi
 4. **Para iadesi:** Ödeme kuruluşunun iade işlemi bağlanırsa onaylanan
    talepten iade başlatılabilir ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) ›
    Kartla ödeme 7).
+5. **Süreç şirketle konuşulacak (KARARLAR K-105, 2026-11-05):** Bugünkü
+   düzen ayarsız kalır; şirketle konuşulup karar verilince düzenlenir.
+   Konuşulacaklar:
+   - Kim inceler, talep kaç günde yanıtlanır.
+   - Ürün nasıl geri gelir: kargo firması ve anlaşmalı iade kodu, adres,
+     kargo ücretini kim öder (cayma ile kusurlu/yanlış ürün ayrımı).
+   - Ürün depoya ulaşınca kontrol; açılmış, kullanılmış ya da eksik ürün.
+   - Para iadesi kaç günde, hangi yolla (kart, havale); kısmi iade.
+   - Değişim (aynı ürünün yenisi) olacak mı.
+   - Müşteriye hangi aşamada e-posta gider ("Müşteriye e-posta
+     bildirimleri" 4).
+   - Kurumsal üyeler (1. madde).
+   - "İade ve Değişim" yasal metni (`/yasal/iade`) bu karara göre
+     güncellenir.
 
 ## Veritabanı — bütün kayıtlar (backend)
 
@@ -727,8 +744,10 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      E-posta Alıcıları sekmesi (tür başına alıcı; yazılmayan tür
      `SUPPORT_EMAIL`'e, K-104). Sonraki: 5.2 içerik (Haberler, Etkinlikler,
      Blog, Hakkımızda, SSS), 5.3 Yasal Metinler, Belgeler (dosya yükleme
-     kapalı, K-104), Sayfa SEO, Görünüm; sonra 6. alan, 5.6; 6 dosya
-     deposu; canlıya hazırlık.
+     kapalı, K-104), Sayfa SEO, Görünüm, yeni "şirket ve iletişim
+     bilgileri" ayarı (MERSİS no dahil) ve kargo firmalarına takip
+     bağlantısı (K-105); sonra 6. alan, 5.6; 6 dosya deposu; canlıya
+     hazırlık.
    - 5.3'ten kalanlar: gönderilen e-postalar ekranı paneldeki 6. alanda
      (K-99; e-posta alıcıları 5.1'de bitti); yorum fotoğraf ve videoları
      dosya deposu gelince (Aşama 6) depoya taşınır (o zamana kadar panelin
@@ -843,6 +862,26 @@ hesaplanıyor ve kullanım tarayıcıdaki veriye yazılıyor. Canlıdan önce:
    gösterir; veritabanındaki üyeler Aşama 5'te panele gelir. `npm run db:seed` örnek hesapları eski demo özetiyle yazar;
    ilk girişte güçlü özete çevrilir.
 2. **Hesap silinince kalan veriler:** "Hesap silme — açık konular" bölümü.
+3. **Şifre sıfırlama e-postası — konuşulacak (KARARLAR K-105):** Bugünkü
+   düzen (yalnızca veritabanı modunda; demo sitede e-posta gitmez):
+   - Müşteri Şifremi Unuttum'a e-postasını yazar; hesap olsa da olmasa da
+     aynı mesaj görünür.
+   - Hesap varsa e-posta servisi (Resend) üzerinden müşterinin adresine
+     "Zenweld şifre sıfırlama" konulu düz metin e-posta gider. Gönderen
+     sunucudaki `SUPPORT_FROM` adresidir (tanımlı değilse Resend'in deneme
+     adresi; canlıda `web@zenweld.com` gibi doğrulanmış bir adres
+     gerekir). Metin kodda sabittir (`packages/i18n/src/tr.ts`).
+   - Bağlantı 1 saat geçerli ve tek kullanımlık; aynı hesap için 15
+     dakikada bir. Gönderim `email_log`'a yazılır.
+   - E-posta servisi kurulmadığı için bugün hiçbir e-posta gitmez.
+
+   Konuşulacaklar: gönderen adres ve adı (ör. "Zenweld
+   <noreply@zenweld.com>"), e-postanın metni ve görünümü (logo, düz metin
+   mi), metnin panelden değişip değişmeyeceği, bağlantı süresi, gönderen
+   alan adının doğrulanması (SPF/DKIM; BT ile).
+4. **Yöneticinin kendi şifresini panelden değiştirmesi:** Bugün yönetici
+   şifresi yalnızca sunucuda `npm run yonetici:olustur` ile değişir. Panelde
+   "Şifremi değiştir" eklenecek; şimdi yapılmıyor (KARARLAR K-105).
 
 ## Hesap silme — açık konular (KVKK ve yasal saklama)
 

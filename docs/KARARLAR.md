@@ -1197,6 +1197,24 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   ayardır; dosyanın kendisi veritabanına konmaz, depo gelince taşınması
   gerekmesin.
 
+### K-105 · 5.3'e eklenenler; iade süreci ve şifre sıfırlama e-postası konuşulacak
+- **Tarih:** 2026-11-05
+- **Karar:**
+  - Panelin 5.3 adımına eklenir:
+    - **Şirket ve iletişim bilgileri:** Bugün kodda sabit duran unvan, ofis
+      adresleri, telefonlar, e-posta ve sosyal medya bağlantıları panelden
+      değişir.
+    - **MERSİS numarası:** Aynı yerden girilir; sözleşmelerdeki Satıcı
+      bölümüne yazılır (bugün "[—]").
+    - **Kargo takip bağlantısı:** Mağaza Ayarları'nda her kargo firmasına
+      takip adresi girilir.
+  - Yöneticinin kendi şifresini panelden değiştirmesi şimdi yapılmaz;
+    YAPILACAKLAR'da durur.
+  - İade (cayma) süreci ve şifre sıfırlama e-postasının ayarları şirketle
+    konuşulup karar verilecek; o zamana kadar bugünkü düzen değişmez
+    (YAPILACAKLAR).
+- **Neden:** Sahibinin kararı.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

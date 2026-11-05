@@ -92,6 +92,9 @@ ilgili belge **aynı commit'te** güncellenir:
   çalıştırılır; davranış değiştiyse tarayıcı testleri de. Veritabanından
   okuma ya da yazma değiştiyse `test:db` ve `test:e2e:db` de.
   Davranış değiştiyse kontrol listesindeki ilgili maddeler denenir.
+- **Yayın:** Gönderimden (push) sonra Vercel yayınının başarılı olduğu
+  kontrol edilir (GitHub'da commit'in yanındaki Vercel durumu). Başarısızsa
+  iş bitmiş sayılmaz; neden bulunup düzeltilir.
 
 ## Güvenlik
 
