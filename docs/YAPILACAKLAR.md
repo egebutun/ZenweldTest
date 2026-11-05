@@ -133,7 +133,9 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | İş | Neyi bekliyor | Ayrıntı |
 |---|---|---|
 | Çerez ayarları penceresi (analiz ve pazarlama çerezlerini ayrı açıp kapama) ve analiz kodlarının kurulması | Hangi analiz aracının kullanılacağı | [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler) 1–3, [Online satış](#online-satış--canlıya-çıkmadan-önce) 12 |
-| Kategori filtrelerinin değerleri ve ürünlere eşlenmesi | Ürünlerin kesinleşmesi; Şebeke Voltajı, Amper ve Güç değerleri | [Kategori filtreleri](#kategori-filtreleri) |
+| Kategori filtrelerinin değerleri ve ürünlere eşlenmesi | Ürünlerin kesinleşmesi; Şebeke Voltajı, Amper ve Güç değerleri. Bugünkü filtreler örnek (KARARLAR K-102) | [Kategori filtreleri](#kategori-filtreleri) |
+| Ürün karşılaştırma (bugün yok) | Ürünlerin kesinleşmesi; istenirse (KARARLAR K-102) | — |
+| Menü düzeni, sayfalar, metinler | Sahibinin kararı; bugünkü hepsi örnek (KARARLAR K-102). Dört ana bölüm kodda sabit; yeni bölüm ya da sayfa kod işidir | — |
 | Ürün Seçici'nin yeniden kurulması | Bütün ürünlerin kesinleşmesi; en son ele alınacak (KARARLAR K-69) | [Ürün Seçici ve arama](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) |
 | "İlgili Ürünler" öneri mantığı | Bölümdeki kararlar | "Ürün önerileri" bölümü |
 | Teklif Al metinleri | Müdür kararı | [Teklif Al metinleri](#teklif-al-metinleri--herkese-hitap-edecek-şekilde-güncellenecek) |
@@ -144,7 +146,7 @@ bekleyen site işleri. Ayrıntısı olanlar ilgili bölüme bağlanmıştır.
 | Kurumsal üyelerde iade talebi | Kurumsal alıcılara cayma hakkının uygulanıp uygulanmayacağı sorulup öğrenilecek | "İade talebi" bölümü |
 | KVKK başvuru formu (2b) | İleride düşünülecek; hesap silme için 2a (Hesabımı Sil) seçildi | "Hesap silme — açık konular" 10 |
 | Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | "Erişilebilirlik" bölümü |
-| Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil | "Görseller ve uzun listeler" bölümü |
+| Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil. Görseller sahibi söyleyince; dosya deposu, gerçek fotoğraflar ve canlıya hazırlıkta hatırlatılır (KARARLAR K-102) | "Görseller ve uzun listeler" bölümü |
 | Ekipmanların eksik fotoğrafları (19 ürün ve 4 soğutma hali) ve diğer bölümlerin ürün fotoğrafları | Sahibinin bulup göndermesi | [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) |
 | Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi (Force serisi 9 ürün geldi) | "Ürün içeriği" 2 |
 | Geçici ürün kodlarının (`ZW-GECICI-…`) SAP kodlarıyla değiştirilmesi | SAP kodlarının açılması | "Ürün içeriği" 6 |
@@ -208,7 +210,8 @@ teyit edilmeli). Yapılacaklar:
 
 Ekipmanların 8 alt kategorisinin sayfasında filtreler var; filtreler ve
 ürünlerin değerleri panelden yönetilir (KARARLAR K-76, IS-KURALLARI › 19).
-Kalanlar:
+Ürünler belli olmadığı için bugünkü filtreler ve değerleri örnektir; ürünler
+kesinleşince yeniden kurulur (KARARLAR K-102). Kalanlar:
 
 1. **Değerlerin girilmesi:** Şebeke Voltajı, Amper ve Güç (W) filtrelerinin
    değerleri yok; ürünler kesinleşince sahibinden gelecek. Değeri olmayan
@@ -536,8 +539,10 @@ Sahibinin kararıyla sonra girilecek; belki çok sonra. Girerken netleşecekler:
 Tasarım (renk, yerleşim, yazı tipi, efektler) sahibi tarafından sonra
 yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
 
-1. Bütün özellikler, sayfa adresleri ve metinler korunmalı; yalnızca görünüm
-   değişmeli (davranış: WEBSITE-KULLANIM ve ADMIN-KULLANIM).
+1. Bütün özellikler korunmalı (davranış: WEBSITE-KULLANIM ve
+   ADMIN-KULLANIM). Menü düzeni, sayfalar ve metinler de sahibinin
+   isteğiyle değişebilir; bugünkü hepsi örnek (KARARLAR K-102). Değişen
+   davranış belgelere ve testlere işlenir.
 2. Tasarımdan sonra tarayıcı testleri (`npm run test:e2e`) ve kabul kontrol
    listesi çalıştırılmalı. Testler bazı form alanlarını ekrandaki sırasıyla
    seçiyor (Üye Ol, Teklif Al); formların yapısı değişirse testler de
@@ -890,6 +895,13 @@ Hangi bildirimlerin gönderileceği ve metinleri kararlaştırılmalı.
 Panelden yüklenen görseller (ürün, kategori ve grup kartı, haber, blog,
 etkinlik, Hakkımızda, satış temsilcisi) ve yorumlardaki fotoğraf ve videolar
 bugün veritabanının içine metin olarak (`data:` ile başlayan) yazılıyor.
+Veritabanı modunda panelin katalog ekranlarında yükleme kapalı, adres
+giriliyor (KARARLAR K-101).
+
+**Sahibin kararı (K-102):** Görsellerin hız, görünürlük ve performans için
+iyileştirilmesi ve nasıl tutulacağı sahibi söyleyince ele alınır; dosya
+deposu kurulurken (Aşama 6), gerçek fotoğraflar gelince ve canlıya
+hazırlıkta sahibine hatırlatılır.
 
 1. Dosyalar bir nesne deposuna (S3 uyumlu) yüklenmeli; kayıtta yalnızca
    adres kalmalı.

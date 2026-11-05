@@ -1143,6 +1143,23 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   sayfaları büyür; dosya deposu gelince bu görseller yeniden taşınmak
   zorunda kalır.
 
+### K-102 · Bugünkü içerik örnektir; görseller ve ürüne bağlı ayarlar sonra
+- **Tarih:** 2026-11-05
+- **Karar:**
+  - Sitedeki ürünler ve ayrıntıları, menülerin düzeni, sayfalar, sitede
+    yazan bütün metinler ve tasarım örnektir. Hepsi değişebilir; yeni menü
+    ve sayfa eklenebilir. Geliştirme içerikten bağımsız altyapıyla
+    (veritabanı, panel, kurallar) sürer.
+  - Görsellerin hız, arama motorlarında görünürlük ve performans için
+    iyileştirilmesi ile veritabanında ve dosya deposunda nasıl tutulacağı
+    sahibi söyleyince ele alınır. Gerektiği an hatırlatılır: dosya deposu
+    kurulurken (Aşama 6), gerçek fotoğraflar gelince ve canlıya hazırlıkta.
+  - Ürünler belli olmadığı için ürüne bağlı ayarlar (kategori filtreleri ve
+    değerleri, Ürün Seçici, istenirse ürün karşılaştırma) ürünler
+    kesinleşince kurulur. Bugünkü filtreler ve değerleri örnektir (K-76);
+    Ürün Seçici en sona kalır (K-69). Ürün karşılaştırma bugün sitede yoktur.
+- **Neden:** Sahibinin kararı; gerçek içerik ve tasarım sonra gelecek.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**
