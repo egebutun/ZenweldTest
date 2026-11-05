@@ -4,9 +4,9 @@ import {
   defaultSettings,
   diffStock,
   isInStock,
-  isStockFresh,
   normalizeCode,
   stockKey,
+  stockSourceStatus,
   summarizeImport,
   type MatchedStockFile,
   type Retailer,
@@ -262,15 +262,12 @@ export function sourceStatus(
   now: number = Date.now(),
 ): SourceStatus {
   const rows = stockOfSource(type, id, db);
-  const lastUpdate = rows.map((r) => r.updatedAt).sort().pop();
-  const { staleDays } = getStockSettings(db);
-  return {
+  const summary = {
     rows: rows.length,
     inStock: rows.filter((r) => r.quantity > 0).length,
-    lastUpdate,
-    fresh: lastUpdate ? isStockFresh(lastUpdate, staleDays, now) : false,
-    ageDays: lastUpdate ? Math.floor((now - new Date(lastUpdate).getTime()) / 86_400_000) : undefined,
+    lastUpdate: rows.map((r) => r.updatedAt).sort().pop(),
   };
+  return stockSourceStatus(summary, getStockSettings(db).staleDays, now);
 }
 
 /** Kaynagin gecmisi (yeniden eskiye). */

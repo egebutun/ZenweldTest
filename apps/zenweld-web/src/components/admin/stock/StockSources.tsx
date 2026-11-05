@@ -3,35 +3,44 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Search } from "lucide-react";
-import type { StockSourceType } from "@zenweld/data";
-import { getStockSettings, listStockSources, saveStockSettings, sourceStatus, useDatabase, useNow } from "@zenweld/store";
-import { Badge, Button, Input } from "@zenweld/ui";
+import { stockSourceStatus, type StockSettings, type StockSourceSummary, type StockSourceType } from "@zenweld/data";
+import { getStockSettings, listStockSources, sourceStatus, useDatabase, useNow } from "@zenweld/store";
+import { Alert, Badge, Button, Input } from "@zenweld/ui";
+import { useStockActions } from "@/lib/admin-stock";
 import { formatDateTime } from "@zenweld/utils";
 import { FreshnessBadge, SOURCE_TYPE_LABEL, ageText, sourceParam } from "./shared";
 
-/** Stok Matrisi > Bayi ve Satıcılar: her kaynagin durumu. */
-export function StockSources() {
+/**
+ * Stok Matrisi > Bayi ve Satıcılar: her kaynagin durumu. Veritabani modunda
+ * kaynaklarin ozet sayilari sunucudan gelir (summaries); satirlarin kendisi
+ * gonderilmez.
+ */
+export function StockSources({ summaries }: { summaries?: StockSourceSummary[] }) {
   const db = useDatabase();
   const now = useNow().getTime();
   const [type, setType] = useState<"" | StockSourceType>("");
   const [query, setQuery] = useState("");
-  const { staleDays } = getStockSettings(db);
+  const settings = getStockSettings(db);
+  const { staleDays } = settings;
 
   const rows = useMemo(() => {
     const q = query.trim().toLocaleLowerCase("tr");
     return listStockSources(db)
       .filter((s) => !type || s.type === type)
       .filter((s) => !q || s.name.toLocaleLowerCase("tr").includes(q) || (s.city ?? "").toLocaleLowerCase("tr").includes(q))
-      .map((s) => ({ source: s, status: sourceStatus(s.type, s.id, db, now) }))
+      .map((s) => {
+        const summary = summaries?.find((x) => x.type === s.type && x.id === s.id) ?? { rows: 0, inStock: 0 };
+        return { source: s, status: summaries ? stockSourceStatus(summary, staleDays, now) : sourceStatus(s.type, s.id, db, now) };
+      })
       // Guncellenmemis olanlar ustte: yonetici once onlari gorsun.
       .sort((a, b) => Number(a.status.fresh) - Number(b.status.fresh) || a.source.name.localeCompare(b.source.name, "tr"));
-  }, [db, type, query, now]);
+  }, [db, type, query, now, summaries, staleDays]);
 
   const staleCount = rows.filter((r) => !r.status.fresh).length;
 
   return (
     <>
-      <StaleDaysSetting value={staleDays} />
+      <StaleDaysSetting settings={settings} />
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="inline-flex rounded-[4px] border border-zw-grey-300 bg-white p-0.5">
@@ -133,9 +142,12 @@ export function StockSources() {
 }
 
 /** Sitede gosterilecek stogun en fazla kac gunluk olabilecegi. */
-function StaleDaysSetting({ value }: { value: number }) {
+function StaleDaysSetting({ settings }: { settings: StockSettings }) {
+  const value = settings.staleDays;
+  const actions = useStockActions();
   const [draft, setDraft] = useState(String(value));
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const parsed = Number(draft);
   const valid = Number.isInteger(parsed) && parsed >= 0 && parsed <= 365;
 
@@ -163,16 +175,22 @@ function StaleDaysSetting({ value }: { value: number }) {
         <span className="text-sm text-zw-grey-600">gün</span>
         <Button
           size="sm"
-          disabled={!valid || parsed === value}
-          onClick={() => {
-            saveStockSettings({ staleDays: parsed });
-            setSaved(true);
+          disabled={!valid || parsed === value || actions.pending}
+          onClick={async () => {
+            const answer = await actions.saveStockSettings(parsed, settings);
+            setError(answer.ok ? null : answer.error);
+            setSaved(answer.ok);
           }}
         >
           Kaydet
         </Button>
         {saved && <span className="text-xs font-semibold text-emerald-700">Kaydedildi</span>}
       </div>
+      {error && (
+        <div className="mt-2">
+          <Alert tone="danger">{error}</Alert>
+        </div>
+      )}
     </div>
   );
 }

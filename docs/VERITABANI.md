@@ -1764,6 +1764,46 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   ve silme; temsilci fotoğrafında kapalı yükleme, sitede görünme ve
   gizlenme, silme; oturumsuz istek).
 
+**Panel › Stok Matrisi, adım 4.2 (Aşama 5, 4. alan; KARARLAR K-99, K-103; `src/admin-stock.ts`):**
+
+- **Okuma:** `readStockPanel(db, görünüm)` — sayfanın sunucu bileşeni
+  adresten görünümü seçer (`?kaynak=dealer:<id>`, `?sekme=urun`, liste);
+  yönetici oturumu denetlenir. Her görünümde bayiler, satıcılar, ayarlar
+  (stok ayarının `updated_at`'iyle), ürünler ve seçenek tanımları; ayrıca:
+  - liste: kaynak başına `count(*)`, adedi 0'dan büyük satır sayısı ve
+    `max(updated_at)` (satırların kendisi gönderilmez);
+  - kaynak sayfası: o kaynağın satırları, `stock_imports` kayıtları (geri
+    alma kopyası `previous` gönderilmez, yalnızca var olduğu) ve
+    `sku_aliases`'ı;
+  - Ürün Bazında: aktif bayilerin ve bir bayiye bağlı olmayan aktif
+    satıcıların adedi 0'dan büyük satırları.
+- **Yazma:** `POST /api/yonetim/stok/<işlem>`
+  (`apps/zenweld-web/src/app/api/yonetim/stok/[islem]/route.ts`): `satir`
+  (elle düzeltme ya da satır ekleme), `satir-sil`, `ayar`. Kurallar Satış
+  ile aynı: oturum, satır kilidi (FOR UPDATE), `updated_at` denetimi,
+  `audit_log` (`entity_type` = `dealer_stock` / `retailer_stock`,
+  `entity_id` = `<kaynak>/<ürün>|<seçenek>`; ayarda `settings` / `stock`).
+  Başarılı işlemden sonra `refreshSite(["stok"])`; ayarda
+  `refreshSite(["katalog", "stok"])`.
+- **Elle düzeltme:** Demo ile aynı (`packages/store` › `setStockLevel`,
+  `deleteStockLevel`): adet tam sayı ve 0 ya da artı, fiyat 0 ya da artı
+  (iki ondalık), link `http(s)://` ile başlar ya da boş. Yeni satırın kodu
+  seçeneğin ya da ürünün kodudur. Her düzeltme `stock_imports`'a `manual`
+  kaydı (not, özet, yönetici adı) yazar; değişiklik yoksa hiçbir şey
+  yazılmaz. Bir bayiye bağlı online satıcı ayrı kaynak değildir; satırı
+  bayinin listesindedir.
+- **Ayar:** `settings` (`stock`) → `{ staleDays }`, 0–365.
+- Dosya yükleme, kod eşleştirme ve geri alma adım 4.3'te sunucuya geçer.
+- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-stock.ts`
+  (`useStockActions`).
+- Test: `tests/db/panel-stok.test.ts` (görünümlerin okuduğu satırlar ve
+  özet sayılar, geri alma kopyasının gönderilmemesi; satır ekleme,
+  düzeltme, eski ekran, değişmeyen kayıt, geçersiz değer, bayiye bağlı
+  satıcı, olmayan seçenek, geçmiş notları; satır silme; stok ayarı);
+  `tests/e2e-db/panel-stok.spec.ts` (tarayıcıda: listede özet sayılar,
+  adet düzeltme ve hemen ardından geri alma, satır ekleme ve silme, stok
+  geçerlilik süresi, Ürün Bazında, oturumsuz istek).
+
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
 veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını

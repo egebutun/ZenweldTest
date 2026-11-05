@@ -1164,9 +1164,9 @@ Veritabanı modunda panel kayıtları sunucuda değiştirir (KARARLAR K-99).
 Bugün Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
 Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
 Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
-Ürünler) ve Bayi ağı (Bayiler, Online Satıcılar, Satış Temsilcileri)
-ekranlarında geçerlidir; panelin diğer alanları veritabanına geçtikçe
-onlara da uygulanır.
+Ürünler), Bayi ağı (Bayiler, Online Satıcılar, Satış Temsilcileri) ve Stok
+Matrisi'nde elle düzeltme ekranlarında geçerlidir; panelin diğer alanları
+veritabanına geçtikçe onlara da uygulanır.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
   değiştirilme anı alınır. Kaydederken kayıt bu andan sonra değişmişse
@@ -1221,6 +1221,12 @@ onlara da uygulanır.
   yönetici aynı anda bağlasa da iki bayiye verilmez. Bayi ya da satıcı
   silinince stok satırları, stok geçmişi ve kod eşleştirmeleri de silinir;
   satıcı silinince bağlı bayinin bağlantısı kalkar ve bayi değişmiş sayılır.
+- **Stok Matrisi (elle düzeltme):** "Aynı kaydı iki kişi düzenlerse"
+  kuralı stok satırı başınadır: satır ekran açıldıktan sonra değişmişse
+  (başka yönetici düzeltti, dosya yüklendi) düzeltme kaydedilmez. Yeni
+  satır eklenirken o ürün bu arada listeye girmişse eklenmez. Her düzeltme
+  stok geçmişine "Elle" kaydı ve işlem kaydına yazılır; geçmiş kayıtları
+  silinmez (KARARLAR K-103).
 - **Görsel yükleme:** Veritabanı modunda dosya deposu kurulana kadar
   (Aşama 6) panelde görsel dosyası yüklenmez, görsel adresi girilir;
   sunucu yüklenmiş dosya (`data:`) içeren kaydı reddeder (KARARLAR K-101).
@@ -1231,8 +1237,9 @@ onlara da uygulanır.
   Lütfen yeniden giriş yapın."
 
 Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
-`admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`, `audit.ts`;
+`admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`,
+`admin-stock.ts`, `audit.ts`;
 formların ortak kuralları `packages/data/src/catalog-rules.ts`,
 `network-rules.ts`; tarayıcı: `apps/zenweld-web/src/lib/admin-panel.ts`,
 `admin-sales.ts`, `admin-requests.ts`, `admin-catalog.ts`,
-`admin-network.ts`.
+`admin-network.ts`, `admin-stock.ts`.

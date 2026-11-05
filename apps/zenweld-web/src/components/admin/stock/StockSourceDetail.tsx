@@ -5,12 +5,10 @@ import Link from "next/link";
 import { ArrowLeft, Download, Plus, Search, Trash2, Undo2, Upload } from "lucide-react";
 import { stockTemplateRows, type StockImport, type StockRow } from "@zenweld/data";
 import {
-  deleteStockLevel,
   downloadCsvRows,
   getStockSettings,
   revertableImport,
   revertStockImport,
-  setStockLevel,
   sourceStatus,
   stockHistory,
   stockOfSource,
@@ -22,19 +20,33 @@ import { Alert, Badge, Button, Input, Select } from "@zenweld/ui";
 import { formatDateTime, formatPrice, slugify } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { readStockFile, StockFileError } from "@/lib/stock-file";
+import { useStockActions, type PanelAnswer } from "@/lib/admin-stock";
 import { StockUpload } from "./StockUpload";
 import { FreshnessBadge, SOURCE_TYPE_LABEL, ageText, productChoices, productLabel, splitChoice, useAdminName } from "./shared";
 
-/** Stok Matrisi > bir bayinin/saticinin stok listesi, dosya yukleme ve gecmis. */
+/** Veritabani modunda dosya yukleme ve geri alma adim 4.3'te gelir; o zamana kadar kapali. */
+const SOON = "Veritabanı modunda dosya yükleme ve geri alma bir sonraki adımda açılacak.";
+
+/**
+ * Stok Matrisi > bir bayinin/saticinin stok listesi, dosya yukleme ve
+ * gecmis. Veritabani modunda elle duzeltme sunucuya yazilir
+ * (lib/admin-stock.ts).
+ */
 export function StockSourceDetail({ source }: { source: StockSource }) {
   const db = useDatabase();
   const now = useNow().getTime();
   const by = useAdminName();
+  const actions = useStockActions();
   const fileInput = useRef<HTMLInputElement>(null);
   const [upload, setUpload] = useState<{ table: unknown[][]; fileName: string } | null>(null);
   const [message, setMessage] = useState<{ tone: "success" | "danger"; text: string } | null>(null);
   const [query, setQuery] = useState("");
   const [onlyInStock, setOnlyInStock] = useState(false);
+  /** Elle duzeltmenin sonucu: sunucu reddettiyse uyari. */
+  const report = (answer: PanelAnswer) => {
+    if (!answer.ok) setMessage({ tone: "danger", text: answer.error });
+    return answer.ok;
+  };
 
   const { withUrl } = source;
   const { staleDays } = getStockSettings(db);
@@ -92,7 +104,12 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
             <Button variant="outline" leftIcon={<Download size={16} />} onClick={downloadTemplate}>
               Şablon İndir
             </Button>
-            <Button leftIcon={<Upload size={16} />} onClick={() => fileInput.current?.click()}>
+            <Button
+              leftIcon={<Upload size={16} />}
+              onClick={() => fileInput.current?.click()}
+              disabled={actions.server}
+              title={actions.server ? SOON : undefined}
+            >
               Dosya Yükle (CSV / XLSX)
             </Button>
             <input
@@ -177,7 +194,15 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
               </thead>
               <tbody className="divide-y divide-zw-grey-100">
                 {rows.map(({ level, label }) => (
-                  <StockRow key={`${level.productId}|${level.variantId ?? ""}`} level={level} label={label} source={source} by={by} now={now} />
+                  <StockRow
+                    key={`${level.productId}|${level.variantId ?? ""}`}
+                    level={level}
+                    label={label}
+                    source={source}
+                    by={by}
+                    now={now}
+                    report={report}
+                  />
                 ))}
                 {rows.length === 0 && (
                   <tr>
@@ -189,7 +214,7 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
               </tbody>
             </table>
           </div>
-          <AddRow source={source} by={by} />
+          <AddRow source={source} by={by} report={report} />
         </div>
 
         <aside>
@@ -215,6 +240,8 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
                 {revertable?.id === h.id && (
                   <button
                     type="button"
+                    disabled={actions.server}
+                    title={actions.server ? SOON : undefined}
                     onClick={() => {
                       if (window.confirm(`"${h.fileName}" yüklemesi geri alınsın mı? Stok bu yüklemeden önceki haline döner.`)) {
                         if (revertStockImport(h.id, by)) {
@@ -222,7 +249,7 @@ export function StockSourceDetail({ source }: { source: StockSource }) {
                         }
                       }
                     }}
-                    className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-zw-red-600 hover:underline"
+                    className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-zw-red-600 hover:underline disabled:cursor-not-allowed disabled:opacity-40 disabled:no-underline"
                   >
                     <Undo2 size={13} /> Bu yüklemeyi geri al
                   </button>
@@ -248,13 +275,16 @@ function StockRow({
   source,
   by,
   now,
+  report,
 }: {
   level: StockRow;
   label: string;
   source: StockSource;
   by?: string;
   now: number;
+  report: (answer: PanelAnswer) => boolean;
 }) {
+  const actions = useStockActions();
   const [qty, setQty] = useState(String(level.quantity));
   const [price, setPrice] = useState(level.price != null ? String(level.price) : "");
   const [url, setUrl] = useState(level.url ?? "");
@@ -267,23 +297,32 @@ function StockRow({
     setPrice(level.price != null ? String(level.price) : "");
     setUrl(level.url ?? "");
   }
-  const key = { sourceType: source.type, sourceId: source.id, productId: level.productId, variantId: level.variantId, by, label };
+  const target = { source, productId: level.productId, variantId: level.variantId, by, label };
+  const reset = () => {
+    setQty(String(level.quantity));
+    setPrice(level.price != null ? String(level.price) : "");
+    setUrl(level.url ?? "");
+  };
+  // Sunucu reddederse (or. satir bu arada degisti) uyari cikar ve kayitli deger geri gelir.
+  const save = async (patch: Parameters<typeof actions.setStockLevel>[1]) => {
+    if (!report(await actions.setStockLevel(target, patch, level))) reset();
+  };
 
   const commitQty = () => {
     const n = Number(qty);
     // Bos birakilan kutu 0 sayilmaz; onceki deger geri gelir.
     if (qty.trim() === "" || !Number.isInteger(n) || n < 0) return setQty(String(level.quantity));
-    if (n !== level.quantity) setStockLevel({ ...key, patch: { quantity: n } });
+    if (n !== level.quantity) void save({ quantity: n });
   };
   const commitPrice = () => {
     const n = price.trim() === "" ? undefined : Number(price.replace(",", "."));
     if (n !== undefined && (!Number.isFinite(n) || n < 0)) return setPrice(level.price != null ? String(level.price) : "");
-    if (n !== level.price) setStockLevel({ ...key, patch: { price: n } });
+    if (n !== level.price) void save({ price: n });
   };
   const commitUrl = () => {
     const v = url.trim() || undefined;
     if (v && !/^https?:\/\//i.test(v)) return setUrl(level.url ?? "");
-    if (v !== level.url) setStockLevel({ ...key, patch: { url: v } });
+    if (v !== level.url) void save({ url: v });
   };
   const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && e.currentTarget.blur();
 
@@ -335,7 +374,10 @@ function StockRow({
         <button
           type="button"
           aria-label={`${label} satırını sil`}
-          onClick={() => window.confirm(`${label} bu listeden çıkarılsın mı?`) && deleteStockLevel(key)}
+          disabled={actions.pending}
+          onClick={async () => {
+            if (window.confirm(`${label} bu listeden çıkarılsın mı?`)) report(await actions.deleteStockLevel(target, level));
+          }}
           className="rounded-[3px] p-1.5 text-zw-grey-400 hover:bg-zw-grey-100 hover:text-zw-red-600"
         >
           <Trash2 size={15} />
@@ -346,8 +388,9 @@ function StockRow({
 }
 
 /** Dosyayi beklemeden tek urun ekleme */
-function AddRow({ source, by }: { source: StockSource; by?: string }) {
+function AddRow({ source, by, report }: { source: StockSource; by?: string; report: (answer: PanelAnswer) => boolean }) {
   const db = useDatabase();
+  const actions = useStockActions();
   const [choice, setChoice] = useState("");
   const [qty, setQty] = useState("1");
   const choices = useMemo(() => productChoices(db), [db]);
@@ -368,10 +411,15 @@ function AddRow({ source, by }: { source: StockSource; by?: string }) {
       <Button
         size="sm"
         leftIcon={<Plus size={15} />}
-        disabled={!choice || qty.trim() === "" || !Number.isInteger(n) || n < 0}
-        onClick={() => {
+        disabled={!choice || qty.trim() === "" || !Number.isInteger(n) || n < 0 || actions.pending}
+        onClick={async () => {
           const { productId, variantId } = splitChoice(choice);
-          setStockLevel({ sourceType: source.type, sourceId: source.id, productId, variantId, patch: { quantity: n }, by, label: productLabel(db, productId, variantId) });
+          // Listede zaten varsa o satir duzeltilir.
+          const stored = stockOfSource(source.type, source.id, db).find(
+            (r) => r.productId === productId && (r.variantId ?? "") === (variantId ?? ""),
+          );
+          const target = { source, productId, variantId, by, label: productLabel(db, productId, variantId) };
+          if (!report(await actions.setStockLevel(target, { quantity: n }, stored))) return;
           setChoice("");
           setQty("1");
         }}

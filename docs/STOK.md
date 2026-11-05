@@ -215,14 +215,14 @@ WHERE ds.product_id = $1 AND ds.quantity > 0 AND ds.url IS NOT NULL
 
 | Uç | Karşılığı (bugün) |
 |---|---|
-| `GET  /api/admin/stock/sources` | `listStockSources`, `sourceStatus` (`:type` = `dealer` → `dealer_stock`, `retailer` → `retailer_stock`) |
-| `GET  /api/admin/stock/:type/:id` | `stockOfSource`, `stockHistory` |
+| `GET  /api/admin/stock/sources` | `listStockSources`, `sourceStatus` (`:type` = `dealer` → `dealer_stock`, `retailer` → `retailer_stock`). **Yapıldı:** Stok Matrisi sayfasının sunucu bileşeni kaynak başına özeti okur (`readStockPanel`) |
+| `GET  /api/admin/stock/:type/:id` | `stockOfSource`, `stockHistory`. **Yapıldı:** kaynak sayfası yalnızca o kaynağın satırlarını ve geçmişini okur |
 | `POST /api/admin/stock/:type/:id/preview` (dosya) | `readStockSheet` → `matchStockRows` → `diffStock`; **yazmaz** |
 | `POST /api/admin/stock/:type/:id/imports` (dosya + `confirmTruncated`) | `applyStockImport` |
 | `POST /api/admin/stock/imports/:importId/revert` | `revertStockImport` |
-| `PATCH / DELETE /api/admin/stock/:type/:id/levels/:productId[/:variantId]` | `setStockLevel`, `deleteStockLevel` |
+| `PATCH / DELETE /api/admin/stock/:type/:id/levels/:productId[/:variantId]` | `setStockLevel`, `deleteStockLevel`. **Yapıldı** (veritabanı modu, panel 4.2): `POST /api/yonetim/stok/satir` ve `satir-sil` |
 | `PUT / DELETE /api/admin/stock/aliases` | `saveSkuAlias`, `deleteSkuAlias` |
-| `PUT  /api/admin/settings/stock` | `saveStockSettings` |
+| `PUT  /api/admin/settings/stock` | `saveStockSettings`. **Yapıldı:** `POST /api/yonetim/stok/ayar` |
 | `GET  /api/admin/retailers` (kartta ürün sayısı) | `onlineProductCount` |
 | Ürün sayfası (sunucu bileşeni ya da `GET /api/products/:id/availability`) | `retailersInStockFor`, `dealersWithProduct`. Veritabanı modunda (KARARLAR K-88) ürün sayfasının sunucu bileşeni o ürünün stoktaki satırlarını okur (`readProductStock`) ve sayfaya verir; satıcının fiyatı gönderilmez |
 

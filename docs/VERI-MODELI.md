@@ -813,7 +813,8 @@ Tek bir `settings` kaydı; üç bölüm.
 ### Stok ayarı (`settings.stock`)
 
 `staleDays`: Bu kadar günden eski stok satırları sitede gösterilmez (0 =
-sınır yok; 0–365). Örnek değer 3.
+sınır yok; 0–365). Örnek değer 3. `updatedAt?`: son değişiklik; yalnızca
+veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99).
 
 ### Görünüm (`settings.richText`)
 

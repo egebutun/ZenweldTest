@@ -10,4 +10,5 @@ export * from "./admin-sales";
 export * from "./admin-requests";
 export * from "./admin-catalog";
 export * from "./admin-network";
+export * from "./admin-stock";
 export type { PanelFailure, PanelResult, Saved } from "./panel";

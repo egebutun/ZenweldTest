@@ -1401,6 +1401,34 @@ sayfasından yapılır.
 - `?sekme=urun&urun=<id>` ile açılınca o ürün en üstte, açık ve sarı
   vurgulu gelir.
 
+### Veritabanı modunda Stok Matrisi
+
+Veritabanı modunda Stok Matrisi veritabanıyla çalışır (KARARLAR K-99,
+K-103). Kurallar
+[Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
+ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
+satırı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
+sonra değişti; sayfayı yenileyin."; kutudaki değer kayıtlı haline döner);
+her değişiklik işlem kaydına yazılır. Farklar:
+
+- Her görünüm yalnızca gereken stoğu okur:
+  - **Bayi ve Satıcılar:** kaynak başına özet sayılar (satır, stoktaki
+    ürün, son güncelleme).
+  - **Kaynak sayfası:** yalnızca o kaynağın satırları, geçmişi ve kod
+    eşleştirmeleri.
+  - **Ürün Bazında:** aktif bayi ve satıcıların adedi 0'dan büyük
+    satırları. Bu görünümde adedi 0 olan satırlar ("Stokta yok")
+    listelenmez; satırın kendisi kaynağın sayfasında görünür.
+- Adet, fiyat ve link düzeltme, **Satır ekle** ve satır silme sunucuya
+  yazılır; geçmişe "Elle" kaydı düşer, işlemi yapan yönetici oturumdan
+  alınır. Ürün sayfalarındaki stoktaki bayiler ve online satıcı kartları
+  hemen değişir.
+- **Satır ekle** ile listede zaten olan ürün seçilirse o satır düzeltilir.
+- **Stok geçerlilik süresi** sunucuya yazılır; sitede hemen geçerli olur.
+- **Dosya Yükle** ve **Bu yüklemeyi geri al** bu modda şimdilik kapalıdır
+  (pasif; üzerine gelince "Veritabanı modunda dosya yükleme ve geri alma
+  bir sonraki adımda açılacak."). Bir sonraki adımda (4.3) açılacak.
+
 ---
 
 ## 11. Yorumlar

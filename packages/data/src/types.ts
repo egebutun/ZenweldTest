@@ -1096,6 +1096,8 @@ export interface ShopSettings {
 export interface StockSettings {
   /** Bu kadar gunden eski stok kayitlari sitede gosterilmez (0 = sinir yok). */
   staleDays: number;
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 export interface SiteSettings {

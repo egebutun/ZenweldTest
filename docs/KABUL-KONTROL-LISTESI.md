@@ -847,6 +847,23 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Kombinasyon koduyla gelen satır yalnızca o kombinasyonu, ana kodla
       gelen satır bütün kombinasyonları stokta gösterir.
 
+**Veritabanı modunda Stok Matrisi (KARARLAR K-99, K-103):**
+
+- [ ] Listede her kaynağın "stoktaki / satır" sayısı `db:studio`'daki
+      satırlarla aynıdır.
+- [ ] Kaynak sayfasında adet 0 yapılınca ürün sayfasında o bayi "stoktaki
+      bayiler"den hemen çıkar; geçmişte "Elle" kaydı yöneticinin adıyla
+      görünür. Hemen ardından eski adet yazılınca uyarı çıkmaz.
+- [ ] Bir sekmede kaynak sayfası açıkken başka sekmede aynı satır
+      düzeltilirse ilk sekmedeki düzeltme kaydedilmez ("Bu kayıt siz
+      açtıktan sonra değişti; sayfayı yenileyin.") ve kutudaki değer geri
+      gelir.
+- [ ] **Satır ekle** ile eklenen satır ve silinen satır `db:studio`'da
+      görünür/kalkar; geçmişte "(yeni satır)" ve "listeden çıkarıldı"
+      yazar.
+- [ ] Stok geçerlilik süresi değişince ürün sayfalarındaki stoktaki
+      bayiler hemen değişir.
+
 ---
 
 ## 19. Panel: bayi ağı, müşteriler ve servis

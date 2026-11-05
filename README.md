@@ -431,12 +431,13 @@ npm run start --workspace apps/zenweld-web
     Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
     Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
     Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
-    Ürünler) ve Bayiler, Online Satıcılar, Satış Temsilcileri ekranları
+    Ürünler), Bayiler, Online Satıcılar, Satış Temsilcileri ve Stok
+    Matrisi (elle düzeltme; dosya yükleme sonraki adımda) ekranları
     veritabanından okur ve yazar; aynı kaydı iki
     yönetici düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her
     değişiklik `audit_log`'a yazılır. Bu modda panelde görsel dosyası
     yüklenmez, görsel adresi girilir (dosya deposu gelene kadar; K-101).
-    Panelin diğer ekranlarında (mağaza ayarı, Stok Matrisi, içerik)
+    Panelin diğer ekranlarında (mağaza ayarı, içerik)
     yapılan değişiklikler henüz siteye yansımaz; değişiklik `db:studio`'dan
     yapılır. Panel ana sayfası en son bağlanır.
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
@@ -448,7 +449,7 @@ npm run start --workspace apps/zenweld-web
     dener: bütün sayfalar, fiyat ve stok, değişikliğin hemen görünmesi,
     ağır verinin yalnızca gereken sayfaya gitmesi, kartla satın alma,
     panelin Satış, Talepler, Katalog (seçenek, kategori, grup, ürün) ve bayi
-    ağı (bayi, satıcı, temsilci) ekranları. Demo
+    ağı (bayi, satıcı, temsilci) ve Stok Matrisi ekranları. Demo
     derlemesi (`.next`) etkilenmez. `test:db` ile aynı anda çalıştırılmaz.
   - **SAP stok okuma (deneme dosyasıyla):** SAP bağlanana kadar depo
     stoğu bir CSV dosyasından okunur. `.env.local`'a

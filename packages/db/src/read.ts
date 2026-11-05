@@ -323,6 +323,29 @@ export async function readProductStock(
   return { dealerStock: dealer.map(dealerStockRow), retailerStock: retailer.map(retailerStockRow) };
 }
 
+/** Stok islemi (dosya yukleme, elle duzeltme, geri alma) kaydi. */
+export const stockImportRow = (i: typeof s.stockImports.$inferSelect): StockImport => ({
+  id: i.id,
+  sourceType: i.sourceType as StockImport["sourceType"],
+  sourceId: i.sourceId,
+  kind: i.kind as StockImport["kind"],
+  fileName: opt(i.fileName),
+  createdAt: iso(i.createdAt),
+  createdBy: opt(i.createdBy),
+  note: opt(i.note),
+  summary: {
+    rows: i.rows,
+    matched: i.matched,
+    unmatched: i.unmatched,
+    invalid: i.invalid,
+    added: i.added,
+    changed: i.changed,
+    zeroed: i.zeroed,
+  },
+  previous: opt(i.previous),
+  revertedAt: isoOpt(i.revertedAt),
+});
+
 /** Bayi ve online satici stoklari ile stok islemleri. */
 export async function readStock(db: ReadDb): Promise<{
   dealerStock: DealerStock[];
@@ -342,27 +365,7 @@ export async function readStock(db: ReadDb): Promise<{
   return {
     dealerStock: dealer.map(dealerStockRow),
     retailerStock: retailer.map(retailerStockRow),
-    stockImports: imports.map((i) => ({
-      id: i.id,
-      sourceType: i.sourceType as StockImport["sourceType"],
-      sourceId: i.sourceId,
-      kind: i.kind as StockImport["kind"],
-      fileName: opt(i.fileName),
-      createdAt: iso(i.createdAt),
-      createdBy: opt(i.createdBy),
-      note: opt(i.note),
-      summary: {
-        rows: i.rows,
-        matched: i.matched,
-        unmatched: i.unmatched,
-        invalid: i.invalid,
-        added: i.added,
-        changed: i.changed,
-        zeroed: i.zeroed,
-      },
-      previous: opt(i.previous),
-      revertedAt: isoOpt(i.revertedAt),
-    })),
+    stockImports: imports.map(stockImportRow),
     skuAliases: aliases.map((a) => ({
       sourceId: a.sourceId,
       code: a.code,

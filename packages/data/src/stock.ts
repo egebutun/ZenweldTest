@@ -1,4 +1,4 @@
-import type { OptionDefinition, Product, SkuAlias, StockImportSummary, StockRow } from "./types";
+import type { OptionDefinition, Product, SkuAlias, StockImportSummary, StockRow, StockSourceType } from "./types";
 import { productOptionsView } from "./variants";
 
 /**
@@ -30,6 +30,30 @@ export const stockKey = (row: { productId: string; variantId?: string }) =>
 export function isStockFresh(updatedAt: string, staleDays: number, now: number = Date.now()): boolean {
   if (!staleDays) return true;
   return now - new Date(updatedAt).getTime() <= staleDays * 86_400_000;
+}
+
+/** Bir bayinin ya da saticinin stok listesinin ozeti (panelde Stok Matrisi listesi). */
+export interface StockSourceSummary {
+  type: StockSourceType;
+  id: string;
+  /** Satir sayisi */
+  rows: number;
+  /** Adedi 0'dan buyuk satir */
+  inStock: number;
+  /** En son guncellenen satirin ani */
+  lastUpdate?: string;
+}
+
+/** Kaynagin durumu: sitede gorunur mu (son guncelleme sinir icinde) ve kac gundur guncellenmedi. */
+export function stockSourceStatus(summary: Pick<StockSourceSummary, "rows" | "inStock" | "lastUpdate">, staleDays: number, now: number) {
+  const { rows, inStock, lastUpdate } = summary;
+  return {
+    rows,
+    inStock,
+    lastUpdate,
+    fresh: lastUpdate ? isStockFresh(lastUpdate, staleDays, now) : false,
+    ageDays: lastUpdate ? Math.floor((now - new Date(lastUpdate).getTime()) / 86_400_000) : undefined,
+  };
 }
 
 /** Sitede "stokta" sayilir mi: adet > 0 ve guncel. */
