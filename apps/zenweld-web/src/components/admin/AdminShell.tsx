@@ -29,6 +29,8 @@ import {
   Scale,
   Search,
   Settings,
+  History,
+  MailCheck,
   ShieldCheck,
   ShoppingCart,
   SlidersHorizontal,
@@ -132,6 +134,9 @@ const NAV_GROUPS: NavGroup[] = [
     Icon: Settings,
     items: [
       { href: "/yonetim/gorunum", label: "Görünüm", Icon: Palette },
+      // Kayitlar yalnizca veritabani modunda tutulur (audit_log, email_log).
+      { href: "/yonetim/islem-kaydi", label: "İşlem Kaydı", Icon: History, server: true },
+      { href: "/yonetim/e-posta-kaydi", label: "E-posta Kaydı", Icon: MailCheck, server: true },
     ],
   },
 ];
@@ -140,6 +145,8 @@ interface NavItem {
   href: string;
   label: string;
   Icon: LucideIcon;
+  /** Yalnizca veritabani modunda gorunur */
+  server?: boolean;
 }
 
 interface NavGroup {
@@ -154,6 +161,7 @@ const isActive = (pathname: string, href: string) =>
 
 function AdminNav() {
   const pathname = usePathname();
+  const { api } = useAuth();
   const current = NAV_GROUPS.find((g) => g.items.some((i) => isActive(pathname, i.href)))?.id;
   const [open, setOpen] = useState<Set<string>>(() => new Set(current ? [current] : []));
 
@@ -200,12 +208,14 @@ function AdminNav() {
             </button>
             {expanded && (
               <div className="mb-1 ml-4 space-y-0.5 border-l border-zw-grey-200 pl-2">
-                {group.items.map(({ href, label, Icon }) => (
-                  <Link key={href} href={href} className={linkClass(isActive(pathname, href))}>
-                    <Icon size={15} />
-                    {label}
-                  </Link>
-                ))}
+                {group.items
+                  .filter((item) => !item.server || api !== null)
+                  .map(({ href, label, Icon }) => (
+                    <Link key={href} href={href} className={linkClass(isActive(pathname, href))}>
+                      <Icon size={15} />
+                      {label}
+                    </Link>
+                  ))}
               </div>
             )}
           </div>

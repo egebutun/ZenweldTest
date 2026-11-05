@@ -45,7 +45,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 21. [Belgeler](#21-belgeler)
 22. [Yasal Metinler](#22-yasal-metinler)
 23. [Sayfa SEO](#23-sayfa-seo)
-24. [Görünüm](#24-görünüm)
+24. [Görünüm](#24-görünüm) (İşlem Kaydı ve E-posta Kaydı dahil)
 25. [Siteden panele gelenler](#25-siteden-panele-gelenler)
 26. [Bütün panel adresleri](#26-bütün-panel-adresleri)
 27. [Bilinen durumlar](#27-bilinen-durumlar)
@@ -139,7 +139,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 | Bayi ve Satış Ağı | Bayiler · Bayilik Başvuruları · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar · Welders Club |
 | İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
-| Ayarlar | Görünüm |
+| Ayarlar | Görünüm · İşlem Kaydı · E-posta Kaydı (son ikisi yalnızca veritabanı modunda) |
 
 **Bulunamayan panel sayfası:** "Sayfa bulunamadı" ve **Panele dön**
 düğmesi.
@@ -596,8 +596,8 @@ kurallar demo moduyla aynıdır; farklar:
   - "İşlem yapılamadı. Bağlantınızı kontrol edip tekrar deneyin."
 - Her değişiklik işlem kaydına (`audit_log`) yazılır: kim, ne zaman, hangi
   kayıt, hangi alan eskiden neydi, yeni ne oldu. Sipariş geçmişindeki her
-  adımda işlemi yapan yönetici de saklanır. Kaydı gösteren ekran Üyeler
-  alanıyla gelir (KARARLAR K-99).
+  adımda işlemi yapan yönetici de saklanır. Kayıt Ayarlar › İşlem
+  Kaydı'nda görünür ([24](#24-görünüm) › İşlem Kaydı).
 - Kupon formunun kapsam seçimindeki ürün ve kategoriler sitenin
   katalogundan, kişiye özel kuponun e-posta önerileri veritabanındaki
   üyelerden gelir.
@@ -2307,6 +2307,51 @@ yazıların punto ve renklerini buradan ayarlayın."
 - Ayarlar başka bir sekmede kaydedilirse ekran yenilenir; kaydedilmemiş
   değişiklik varsa korunur.
 
+### İşlem Kaydı (veritabanı modu)
+
+Adres: `/yonetim/islem-kaydi` (Ayarlar › **İşlem Kaydı**; yalnızca
+veritabanı modunda menüde görünür). Açıklama: "Panelde yapılan her
+değişiklik ve panele giriş/çıkış; en yeni önce." (KARARLAR K-81, K-99)
+
+- **Süzgeçler** (**Süz** ile uygulanır; adres çubuğunda kalır, sayfa
+  yenilenince ya da adres paylaşılınca aynı liste gelir):
+  - Kayıt türü: Tüm kayıtlar ya da kayıtta geçen türler (Sipariş, Ürün,
+    Kupon, Üye / yönetici, Yüklenen dosya…).
+  - Yönetici: Tüm yöneticiler ya da kayıtta geçen yöneticiler.
+  - İşlem: Ekledi, Değiştirdi, Sildi, Giriş yaptı, Çıkış yaptı.
+  - Başlangıç ve bitiş tarihi (Türkiye günü; iki gün de dahil).
+  - Arama: "Kayıt, no ya da yönetici ara…" (kaydın adı, numarası ya da
+    yöneticinin adı içinde geçen metin).
+- **Tablo:** Zaman; Yönetici (altında IP adresi); İşlem; Kayıt (türü ve
+  adı; kayıt silinmediyse paneldeki sayfasına bağlantı); Değişiklik.
+- **Değişiklik:** "<N> alan" açılınca alanlar görünür: değiştirmede
+  "eski → yeni", eklemede ve silmede kaydın hali. Uzun değerler kırpılır.
+  Giriş ve çıkışta değişiklik yoktur (—).
+- Sayfa başına 50 kayıt. Daha eski kayıt varsa **Daha eski kayıtlar →**;
+  geri dönmek için **← En yeni kayıtlar**. Kayıt yoksa: "Kayıt yok."
+- Kayıtlar değiştirilemez ve elle silinemez; 2 yıldan eski kayıtlar her
+  gün kendiliğinden silinir (VERITABANI.md › audit_log).
+
+### E-posta Kaydı (veritabanı modu)
+
+Adres: `/yonetim/e-posta-kaydi` (Ayarlar › **E-posta Kaydı**; yalnızca
+veritabanı modunda menüde görünür). Açıklama: "Sitenin gönderdiği
+e-postalar; en yeni önce. E-postanın metni saklanmaz." (KARARLAR K-98)
+
+- **Süzgeçler:** Tür (Yeni sipariş, İade talebi, Teklif talebi … Şifre
+  sıfırlama), Durum (Gönderildi / Gönderilemedi / Gönderilmedi), başlangıç
+  ve bitiş tarihi, arama ("Adres, konu ya da kayıt no ara…": alıcı, yanıt
+  adresi, konu ya da kayıt numarası).
+- **Tablo:** Zaman; Tür (altında formun gönderildiği sayfa); Alıcı (varsa
+  "Yanıt: <adres>"); Konu (altında bağlı kayıt, ör. "Teklif: TKL-…",
+  ekranına bağlantıyla); Durum.
+- **Durumlar:**
+  - **Gönderildi:** E-posta servisi e-postayı aldı.
+  - **Gönderilemedi:** Servis hata verdi ya da ulaşılamadı; nedeni altta.
+  - **Gönderilmedi:** E-posta servisi ayarlı değil ya da form bot
+    tuzağına takıldı; nedeni altta.
+- Sayfa başına 50 kayıt; **Daha eski kayıtlar →** / **← En yeni kayıtlar**.
+
 ---
 
 ## 25. Siteden panele gelenler
@@ -2461,6 +2506,8 @@ sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazıl�
 | `/yonetim/yasal-metinler/<id>` | Yasal metin düzenleme |
 | `/yonetim/sayfa-seo` | Sayfa SEO |
 | `/yonetim/gorunum` | Görünüm |
+| `/yonetim/islem-kaydi` | İşlem Kaydı (veritabanı modu) |
+| `/yonetim/e-posta-kaydi` | E-posta Kaydı (veritabanı modu) |
 
 ---
 

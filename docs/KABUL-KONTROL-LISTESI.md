@@ -971,6 +971,23 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Üye silinince `db:studio`'da adresleri ve oturumları da yoktur;
       siparişleri kalır, siparişin üye bağı boşalır.
 
+**Veritabanı modunda İşlem Kaydı ve E-posta Kaydı (KARARLAR K-81, K-98, K-99):**
+
+- [ ] Ayarlar menüsünde İşlem Kaydı ve E-posta Kaydı vardır (demo modunda
+      yoktur).
+- [ ] Panelde bir siparişin iç notu kaydedilince İşlem Kaydı'nda en üstte
+      "Değiştirdi · Sipariş · SIP-…" satırı çıkar; "1 alan" açılınca eski
+      ve yeni not görünür; sipariş adına tıklanınca sipariş açılır.
+- [ ] İşlem "Giriş yaptı" seçilip **Süz**'e basılınca yalnızca girişler
+      kalır; adres çubuğunda `islem=login` vardır, sayfa yenilenince süzgeç
+      kalır. Bugünün tarihi başlangıç ve bitişe yazılınca yalnızca bugünün
+      kayıtları görünür.
+- [ ] 50'den çok kayıt varsa **Daha eski kayıtlar →** sonraki 50'yi
+      getirir; **← En yeni kayıtlar** başa döner.
+- [ ] Sitede teklif formu gönderilince E-posta Kaydı'nda "Teklif talebi"
+      satırı çıkar; e-posta servisi ayarlı değilse durumu "Gönderilmedi"dir
+      ve nedeni yazar. Teklif numarasına tıklanınca Teklifler açılır.
+
 **Veritabanı modunda Bayiler, Online Satıcılar, Satış Temsilcileri (KARARLAR K-99, K-103):**
 
 - [ ] Yeni bayi kaydedilince Yetkili Bayi ve Servis Ağı haritasında hemen

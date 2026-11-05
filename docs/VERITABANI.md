@@ -2161,6 +2161,28 @@ Kurallar (türler, boyut, adres): [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-y�
   alma ve sitede giriş, aktifleştirme, silme, kendi satırı, oturumsuz
   istek).
 
+**Panel › İşlem Kaydı ve E-posta Kaydı, adım 6.2 (Aşama 5, 6. alan; KARARLAR K-81, K-98, K-99; `src/admin-logs.ts`):**
+
+- Yalnızca okur: `readAuditLog` (`audit_log`), `auditLogFacets` (kayıtta
+  geçen türler ve yöneticiler; yöneticinin son kayıttaki adı),
+  `readEmailLog` (`email_log`). Sunucu sayfaları
+  (`app/yonetim/(panel)/islem-kaydi/page.tsx`, `e-posta-kaydi/page.tsx`)
+  süzgeçleri adresten okur (`tur`, `yonetici`, `islem`, `durum`,
+  `baslangic`, `bitis`, `ara`, `once`); geçerli panel oturumu yoksa sayfa
+  gönderilmez.
+- En yeni önce (`id` azalan), sayfa başına 50; bir fazlası okunup "daha
+  eski var mı" bulunur. Sonraki sayfa: `id < once`.
+- Tarih süzgeci Türkiye günüdür (UTC+3): başlangıç gününün 00:00'ından
+  bitiş gününün ertesi 00:00'ına kadar. Geçersiz tarih yok sayılır.
+- Metin araması `ILIKE` ile; `%` ve `_` harfiyen aranır. İşlem kaydında
+  kaydın adı, numarası ve yöneticinin adında; e-posta kaydında alıcılar,
+  yanıt adresi, konu ve kayıt numarasında.
+- Dizinler: `audit_log_at`, `audit_log_entity`, `email_log_type`.
+- Test: `tests/db/panel-kayitlar.test.ts` (sıra, süzgeçler, Türkiye günü,
+  `%`/`_`, sayfalama, süzgeç seçenekleri);
+  `tests/e2e-db/panel-kayitlar.spec.ts` (menü, girişin kayıtta görünmesi,
+  süzgeç adreste, e-posta kaydı satırı, oturumsuz açılmama).
+
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
 veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını
