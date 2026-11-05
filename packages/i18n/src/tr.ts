@@ -791,6 +791,9 @@ export const tr = {
     unknownCarrier: "Kargo firması listede yok. Mağaza ayarlarındaki firmalardan birini seçin.",
     couponTargetsMissing: "Seçilen ürün ya da kategorilerden bazıları artık yok; sayfayı yenileyip yeniden seçin.",
     couponUsed: "Siparişlerde kullanılan kupon silinemez; pasife alabilirsiniz.",
+    recordNotFound: "Kayıt bulunamadı; sayfayı yenileyin.",
+    invalidDate: "Geçerli bir tarih girin.",
+    reviewNotApproved: "Yalnızca onaylı yorum anasayfada gösterilir.",
   },
   errorPage: {
     title: "Bir sorun oluştu",

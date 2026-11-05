@@ -87,16 +87,17 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     giriş yapılamaz: "Çok fazla deneme yapıldı. 15 dakika sonra tekrar
     deneyin."
   - İlk yönetici hesabı `npm run yonetici:olustur` ile açılır (README).
-  - Panel veritabanına alan alan geçer (KARARLAR K-99). **Satış** alanının
-    ekranları (Siparişler, İade Talepleri, Kuponlar) veritabanından okur
-    ve yazar ([Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)).
+  - Panel veritabanına alan alan geçer (KARARLAR K-99). Veritabanından
+    okuyup yazan ekranlar:
+    - **Satış:** Siparişler, İade Talepleri, Kuponlar
+      ([Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)).
+    - **Talepler:** Teklifler, Servis Talepleri, Garantiler, Yorumlar ile
+      Bayilik Başvuruları, Mesajlar ve Welders Club
+      ([Veritabanı modunda Talepler ekranları](#veritabanı-modunda-talepler-ekranları)).
     Diğer ekranlardaki işlemler (ürün, üye, içerik…) henüz tarayıcıda
-    kalır; Üyeler listesi veritabanındaki üyeleri henüz göstermez.
-    Teklifler, Servis Talepleri, Garantiler ve Yorumlar tarayıcıdaki örnek
-    kayıtları gösterir (sitedeki formlar Aşama 5.3'ten beri veritabanına
-    yazılır; bu ekranlar sıradaki alanda gelir). Panel ana sayfası (özet ve
-    grafikler) en son gelir; o zamana kadar tarayıcıdaki örnek veriyi
-    gösterir.
+    kalır; Üyeler listesi veritabanındaki üyeleri henüz göstermez. Panel
+    ana sayfası (özet ve grafikler) en son gelir; o zamana kadar
+    tarayıcıdaki örnek veriyi gösterir.
   - Panele her giriş ve çıkış işlem kaydına (`audit_log`) yazılır.
 
 **Giriş ekranı:**
@@ -125,8 +126,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 |---|---|
 | Satış | Siparişler · Teklifler · İade Talepleri · Kuponlar · Mağaza Ayarları |
 | Ürünler | Ürünler · Kategoriler · Seçenek Tanımları · Stok Matrisi · Yorumlar |
-| Bayi ve Satış Ağı | Bayiler · Online Satıcılar · Satış Temsilcileri |
-| Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler |
+| Bayi ve Satış Ağı | Bayiler · Bayilik Başvuruları · Online Satıcılar · Satış Temsilcileri |
+| Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar · Welders Club |
 | İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
 | Ayarlar | Görünüm |
 
@@ -539,7 +540,8 @@ kurallar demo moduyla aynıdır; farklar:
 - **Aynı kaydı iki kişi düzenlerse:** Kayıt, ekran açıldıktan sonra
   değişmişse (başka yönetici, müşteri ya da sistem değiştirdiyse)
   kaydedilmez: "Bu kayıt siz açtıktan sonra değişti; sayfayı yenileyin."
-  Sayfa yenilenince güncel hali gelir.
+  Sayfa yenilenince güncel hali gelir. Yöneticinin kendi kaydı uyarı vermez
+  (ör. siparişi kargoya verip hemen ardından iç not kaydetmek).
 - Diğer hata mesajları:
   - "Panel oturumunuz kapanmış. Lütfen yeniden giriş yapın." (oturum
     bitmiş; işlem yapılmaz)
@@ -590,6 +592,8 @@ burada değildir (ileride ayrı B2B uygulamasında).
 - **E-posta Gönder:** E-posta programını açar; konu "Zenweld Teklif <kod>".
 - **Sil:** "<kod> silinsin mi?". Silinen teklifin numarası yeniden
   kullanılmaz.
+
+Veritabanı modunda bu ekran veritabanıyla çalışır: [Veritabanı modunda Talepler ekranları](#veritabanı-modunda-talepler-ekranları).
 
 ---
 
@@ -1369,6 +1373,8 @@ aynı yorumları paylaşır.
 - Boşsa: "Yorum bulunamadı."
 - Panelde yorum yazılmaz ve metni düzenlenmez.
 
+Veritabanı modunda bu ekran veritabanıyla çalışır: [Veritabanı modunda Talepler ekranları](#veritabanı-modunda-talepler-ekranları).
+
 ---
 
 ## 12. Bayiler
@@ -1551,6 +1557,8 @@ koduyla **Yeni** durumunda gelir. En yeni talep önce.
 - Boşsa: "Henüz servis talebi yok."
 - Talep silinmez. Servis talebi müşterinin Hesabım sayfasında görünmez.
 
+Veritabanı modunda bu ekran veritabanıyla çalışır: [Veritabanı modunda Talepler ekranları](#veritabanı-modunda-talepler-ekranları).
+
 ---
 
 ## 17. Garantiler
@@ -1592,6 +1600,8 @@ sitedeki garanti sorgulamaya anında yansır (aynı veri).
   eklenir, kaldırılınca 12 ay çıkarılır."
 - 29 Şubat'a denk gelen tarihler bilinçli olarak olduğu gibi bırakıldı (bkz.
   [KARARLAR.md](KARARLAR.md)).
+
+Veritabanı modunda bu ekran veritabanıyla çalışır: [Veritabanı modunda Talepler ekranları](#veritabanı-modunda-talepler-ekranları).
 
 ---
 
@@ -1917,10 +1927,10 @@ yazıların punto ve renklerini buradan ayarlayın."
 | Garanti Kaydı | Garantiler | — |
 | Ürün değerlendirmesi | Yorumlar | Onay bekliyor |
 | Üye Ol | Üyeler | Aktif |
-| İletişim | — (yalnızca e-posta) | — |
-| Bayilik Başvurusu | — (yalnızca e-posta) | — |
-| Welders Club | — (yalnızca e-posta) | — |
-| Ürün sayfası destek sorusu | — (yalnızca e-posta) | — |
+| İletişim | Mesajlar (veritabanı modunda) | Yeni |
+| Bayilik Başvurusu | Bayilik Başvuruları (veritabanı modunda) | Yeni |
+| Welders Club | Welders Club (veritabanı modunda) | Aktif |
+| Ürün sayfası destek sorusu | Mesajlar (veritabanı modunda) | Yeni |
 | Bülten kaydı | — (hiçbir yere gitmez) | — |
 | Şifremi Unuttum | — (hiçbir yere gitmez) | — |
 
@@ -1929,9 +1939,11 @@ yazıların punto ve renklerini buradan ayarlayın."
   hiçbir e-posta gitmez ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 2).
   - E-postada **Yanıtla** denince yanıt doğrudan formu dolduran kişiye gider.
   - Sipariş e-postasına T.C. kimlik no ve kart bilgisi yazılmaz.
-  - Yalnızca e-postayla giden formlarda e-posta gönderilemezse ziyaretçiye hata
-    gösterilir ve tekrar deneyebilir; panele kaydı olan formlar kaydı yine
-    alır.
+  - Demo modunda iletişim, bayilik, Welders Club ve ürün destek formları
+    yalnızca e-postayla gider; bu yüzden Bayilik Başvuruları, Mesajlar ve
+    Welders Club ekranları demo modunda boştur. E-posta gönderilemezse
+    ziyaretçiye hata gösterilir ve tekrar deneyebilir. Veritabanı modunda
+    bu formlar kaydedilir; e-posta gitmese de form ulaşmış sayılır.
   - Her formda botlar için görünmez bir tuzak alanı vardır; onu dolduran
     gönderim e-posta olarak gelmez.
   - E-posta için sunucuda e-posta servisinin anahtarı tanımlı olmalıdır (bkz.
@@ -1939,6 +1951,75 @@ yazıların punto ve renklerini buradan ayarlayın."
     e-posta gitmez.
   - Ayrıntı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md).
 - Panelden müşteriye e-posta gitmez.
+
+### Bayilik Başvuruları (`/yonetim/bayilik-basvurulari`)
+
+Menüde Bayi ve Satış Ağı grubundadır (KARARLAR K-100). Sitedeki "Bayimiz
+Olun" formundan gelen başvurular. Başlık altı: "<n> başvuru · <n> yeni".
+
+- **Tablo:** Firma (ad, tarih-saat), Yetkili (ad, e-posta), Şehir, Durum.
+  En yeni başvuru üstte. Boşsa "Henüz bayilik başvurusu yok."
+- **Satıra tıklayınca:** Vergi dairesi / no, Faaliyet alanı, Sektördeki yıl,
+  Çalıştığı markalar, Showroom var mı, Servis kabiliyeti, E-posta, Telefon
+  ve Not.
+  - Uyarı: "Başvuru onaylanınca bayi kaydını Bayiler ekranından açın."
+  - **Durum** (Yeni, İnceleniyor, Onaylandı, Reddedildi) ve iç not;
+    **Kaydet** → "Kaydedildi". **E-posta gönder** e-posta programını açar
+    (konu "Zenweld bayilik başvurunuz — <firma>").
+- Başvuru silinmez (KARARLAR K-100).
+
+### Mesajlar (`/yonetim/mesajlar`)
+
+Menüde Müşteriler ve Servis grubundadır. Sitedeki iletişim formundan ve
+ürün sayfasındaki destek sohbetinden gelen sorular. Başlık altı: "<n> mesaj
+· <n> yeni".
+
+- **Süzgeç:** Bütün mesajlar / İletişim formu / Ürün sorusu.
+- **Tablo:** Kimden (ad ya da e-posta, tarih-saat), Tür, Konu / Ürün
+  (iletişim formunda konu; ürün sorusunda ürün adı ve kodu), Durum. En yeni
+  mesaj üstte. Boşsa "Henüz mesaj yok." / "Bu türde mesaj yok."
+- **Satıra tıklayınca:** Mesajın tamamı, E-posta, Telefon, Sayfa (formun
+  gönderildiği sayfa; tıklayınca yeni sekmede açılır).
+  - **Durum** (Yeni, Okundu, Yanıtlandı) ve iç not; **Kaydet** →
+    "Kaydedildi". E-postası olan mesajda **E-posta ile yanıtla** e-posta
+    programını açar. Yanıt panelden gönderilmez.
+- Mesaj silinmez (KARARLAR K-100).
+
+### Welders Club (`/yonetim/welders-club`)
+
+Menüde Müşteriler ve Servis grubundadır. Sitedeki Welders Club formundan
+katılanlar. Başlık altı: "<n> aktif · <n> pasif".
+
+- **Arama:** "Ad, e-posta veya şehir ara…".
+- **Tablo:** Ad Soyad, E-posta, Şehir, Katılım tarihi, Durum ("Aktif" ya da
+  "Pasif · <tarih>"), İşlem. En yeni katılım üstte. Boşsa "Henüz Welders
+  Club katılımı yok." / "Aramanıza uygun kayıt yok."
+- **Pasife al:** Kulüpten ayrılmak isteyen kişi pasife alınır; satır soluk
+  görünür. **Aktif yap** geri alır.
+- Kayıt silinmez (KARARLAR K-100). Ekranın altındaki not: "Kulüpten
+  ayrılmak isteyen kişi pasife alınır; kaydı silinmez."
+
+### Veritabanı modunda Talepler ekranları
+
+Veritabanı modunda Teklifler, Servis Talepleri, Garantiler, Yorumlar,
+Bayilik Başvuruları, Mesajlar ve Welders Club veritabanıyla çalışır
+(KARARLAR K-99, K-100). Kurallar
+[Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
+ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
+kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
+sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
+
+- Yöneticinin kendi kaydı uyarı vermez: örneğin teklifin durumu seçilip
+  hemen ardından iç not yazılırsa ikisi de kaydedilir.
+- **Yorumlar:** Onaylanan, yayından kaldırılan, anasayfaya alınan ya da
+  silinen yorum sitede (ürün sayfası ve anasayfa şeridi) hemen değişir.
+  Anasayfa sınırı (10) aynı anda işaretleyen iki yönetici için de geçerlidir.
+- **Garantiler:** "+12 ay" kayıttaki güncel bitiş tarihine 12 ay ekler ya da
+  çıkarır. Geçersiz tarihte: "Geçerli bir tarih girin."
+- Kayıt başka bir sekmede silinmişse: "Kayıt bulunamadı; sayfayı yenileyin."
+- Garantiler ekranındaki "Üye" rozeti ve kişiye özel kupon önerileri gibi
+  üye bilgileri veritabanındaki üyelerden gelir; ürün ve kategori adları
+  sitenin katalogundan.
 
 ---
 
@@ -1970,11 +2051,14 @@ yazıların punto ve renklerini buradan ayarlayın."
 | `/yonetim/stok?kaynak=dealer:<id>` / `retailer:<id>` | Kaynağın stok sayfası |
 | `/yonetim/yorumlar` | Yorumlar |
 | `/yonetim/bayiler` | Bayiler |
+| `/yonetim/bayilik-basvurulari` | Bayilik Başvuruları |
 | `/yonetim/saticilar` | Online Satıcılar |
 | `/yonetim/satis-temsilcileri` | Satış Temsilcileri |
 | `/yonetim/uyeler` | Üyeler |
 | `/yonetim/servis-talepleri` | Servis Talepleri |
 | `/yonetim/garantiler` | Garantiler |
+| `/yonetim/mesajlar` | Mesajlar |
+| `/yonetim/welders-club` | Welders Club |
 | `/yonetim/haberler`, `/yeni`, `/<id>` | Haberler |
 | `/yonetim/etkinlikler`, `/yeni`, `/<id>` | Etkinlikler |
 | `/yonetim/blog`, `/yeni`, `/<id>` | Blog |

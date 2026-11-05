@@ -684,6 +684,28 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] `npm run db:studio` › `audit_log`: her işlem, panel girişi ve çıkışı
       yöneticinin adıyla, değişen alanların eski ve yeni haliyle yazılmıştır.
 
+**Veritabanı modunda Talepler ekranları (KARARLAR K-99, K-100):**
+
+- [ ] Sitede gönderilen teklif, servis talebi, garanti kaydı ve yorum
+      panelde görünür.
+- [ ] Teklifin durumu seçilip hemen ardından iç not yazılınca ikisi de
+      kaydedilir ("kayıt değişti" uyarısı çıkmaz); müşteri Tekliflerim'de
+      yeni durumu görür.
+- [ ] Panelde onaylanan yorum ürün sayfasında hemen görünür; yayından
+      kaldırılınca gider; anasayfaya alınan yorum anasayfa şeridinde görünür.
+- [ ] Garantide "+12 ay" işaretlenince bitiş tarihi 12 ay ileri gider;
+      müşterinin Garantilerim sayfasında ve garanti sorgulamada görünür.
+- [ ] Sitedeki Bayimiz Olun formu Bayi ve Satış Ağı › Bayilik
+      Başvuruları'nda; iletişim formu ve ürün sayfasındaki destek sorusu
+      Müşteriler ve Servis › Mesajlar'da; Welders Club katılımı Müşteriler
+      ve Servis › Welders Club'da görünür.
+- [ ] Başvurunun ve mesajın durumu ve iç notu kaydedilir; başvuru, mesaj
+      ve Welders Club kaydı için silme düğmesi yoktur.
+- [ ] Welders Club'da **Pasife al** satırı soluklaştırır ve "Pasif · <tarih>"
+      yazar; **Aktif yap** geri alır.
+- [ ] Bir sekmede açık kayıt başka sekmede değiştirilince ilk sekmede
+      kaydedilmez: "Bu kayıt siz açtıktan sonra değişti; sayfayı yenileyin."
+
 **Mağaza Ayarları:**
 
 - [ ] Kargo sınırı ve ücreti değişince sepetteki kargo değişir.

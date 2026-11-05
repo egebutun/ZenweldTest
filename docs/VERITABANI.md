@@ -985,7 +985,9 @@ Sahibinin kararı (K-81): bugün yalnızca info@zenweld.com'a e-posta olarak
 giden formlar veritabanında da saklanır. E-posta yine gider; kayıt, e-posta
 gitmese de alınır; gidip gitmediği `email_log`'dadır. Veritabanı modunda
 site bu tablolara yazıyor (Aşama 5.3; aşağıda [14](#14-kod-betikler-ve-komutlar)
-› Formlar). Panel ekranları siteyi veritabanına bağlarken eklenecek. Bülten kaydı bunlara girmez; bülten
+› Formlar). Panelde Bayilik Başvuruları, Mesajlar ve Welders Club ekranlarında
+görünür (aşağıda [14](#14-kod-betikler-ve-komutlar) › Panel › Talepler); kayıtlar panelden
+silinmez (K-100). Bülten kaydı bunlara girmez; bülten
 servisi kararını bekliyor (YAPILACAKLAR › Bülten ve İYS).
 
 `dealer_applications` — Bayilik Başvurusu:
@@ -1026,13 +1028,15 @@ servisi kararını bekliyor (YAPILACAKLAR › Bülten ve İYS).
 
 `welders_club_signups` — Welders Club katılım:
 
-| Kolon | Tür | Kural |
-|---|---|---|
-| `id` | text | anahtar |
-| `name`, `email` | text | zorunlu |
-| `city` | text | |
-| `user_id` | text | → `users` (boşalır) |
-| `created_at` | timestamptz | zorunlu |
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `name`, `email` | text | zorunlu | |
+| `city` | text | | |
+| `user_id` | text | → `users` (boşalır) | |
+| `left_at` | timestamptz | | Kulüpten ayrılmak isteyen panelde pasife alınınca o an; boşsa aktif (K-100; 0008) |
+| `created_at` | timestamptz | zorunlu | |
+| `updated_at` | timestamptz | zorunlu | Son değişiklik (0008) |
 
 ### `email_recipients` — e-postaların alıcıları (yeni)
 
@@ -1193,6 +1197,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | `migrations/0005_kisiye-ozel-kupon.sql` | Kişiye özel kupon: `coupons.audience` ve `coupon_customers` |
 | `migrations/0006_giris-deneme-siniri.sql` | Yanlış şifre sınırı: `users.failed_login_count`, `failed_login_since`, `login_locked_until` (K-94) |
 | `migrations/0007_e-posta-turu-sifre-sifirlama.sql` | `email_log.type` müşteriye giden şifre sıfırlama e-postasını da kabul eder (`sifre-sifirlama`; Aşama 5.3) |
+| `migrations/0008_welders-club-pasif.sql` | `welders_club_signups`'a `left_at` (pasife alınma) ve `updated_at` (panelde aynı kayıt koruması; K-100) |
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
 | `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
@@ -1526,9 +1531,9 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   `skipped`), servisin verdiği numara ve hata. Metin yazılmaz. Kayıt
   yazılamazsa e-posta yine gider.
 - Bot tuzağı doluysa kayıt yapılmaz; `email_log`'a `skipped` yazılır.
-- Panelin Teklifler, Servis Talepleri, Garantiler ve Yorumlar ekranları
-  panelin 2. alanına (Talepler, KARARLAR K-99) kadar tarayıcıdaki veriyi
-  gösterir.
+- Panelin Teklifler, Servis Talepleri, Garantiler, Yorumlar, Bayilik
+  Başvuruları, Mesajlar ve Welders Club ekranları veritabanıyla çalışır
+  (aşağıda "Panel › Talepler").
 - Test: `tests/db/formlar.test.ts` (teklif kuralları ve katalogdan alınan
   ürün bilgisi, servis talebi, garanti kaydı, tekrar eden seri no, Türkiye
   gününe göre bitiş, sorgulama, yorum, e-postaya giden formların kaydı,
@@ -1560,7 +1565,11 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   taşır. Kayıt satırı kilitlenir (FOR UPDATE); `updated_at` değişmişse
   kaydedilmez, 409 "Bu kayıt siz açtıktan sonra değişti; sayfayı
   yenileyin." Aynı anda gelen ikinci istek birincinin bitmesini bekler ve
-  reddedilir.
+  reddedilir. Başarılı yazma yeni `updated_at`'i döndürür; ekran sayfa
+  yenilenmeden aynı kaydı yeniden kaydederse onu gönderir (yöneticinin
+  kendi kaydı reddedilmez). Ortak kurallar: `src/panel.ts`; ortak uç akışı:
+  `apps/zenweld-web/src/lib/server/admin.ts` (`runPanelAction`); tarayıcı:
+  `apps/zenweld-web/src/lib/admin-panel.ts`.
 - **Siparişte yazılanlar:** Durum değişince `order_status_history`'ye yeni
   satır, `changed_by` = yönetici. Ödeme alındı: `paid_at`; süresi dolmuşsa
   onaylanmaz, "Ödeme süresi doldu" notuyla iptal edilir. Kargo: `shipments`
@@ -1592,6 +1601,43 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   (tarayıcıda: oturumsuz ve başka siteden istek, kargoya verme ve teslim,
   "kayıt değişti" uyarısı, iade talebi, kupon oluşturma, kod tekrarı,
   pasife alma, silme, giriş ve çıkış kaydı).
+
+**Panel › Talepler (Aşama 5, 2. alan; KARARLAR K-99, K-100; `src/admin-requests.ts`):**
+
+- **Okuma** (her sayfa kendi sunucu bileşeninde; yönetici oturumu
+  denetlenir): `readQuotesPanel`, `readServicePanel`, `readWarrantiesPanel`
+  (garantiler son değişiklik anıyla, üyeler), `readReviewsPanel` (bütün
+  yorumlar, onay bekleyenler dahil, son değişiklik anıyla),
+  `readDealerApplications`, `readSupportMessages`, `readWeldersClub`.
+  Ürün ve kategori adları sitenin önbellekteki katalogundan.
+- **Yazma:** `POST /api/yonetim/talepler/<işlem>`
+  (`apps/zenweld-web/src/app/api/yonetim/talepler/[islem]/route.ts`):
+  `teklif` (durum, atanan temsilci ya da iç not; istekte olmayan alan
+  değişmez), `teklif-sil` (satırlarıyla), `servis`, `garanti` (bitiş tarihi
+  ya da uzatılmış garanti; +12 ay kayıttaki güncel tarihten), `garanti-sil`,
+  `yorum-onay` (kaldırılan yorumun `featured`'ı da kalkar), `yorum-anasayfa`,
+  `yorum-sil`, `basvuru`, `mesaj`, `welders-club` (`left_at` doldurulur ya da
+  boşaltılır). Kurallar Satış ile aynı: oturum, kilit, `updated_at`
+  denetimi, `audit_log`.
+- **Anasayfa yorum sınırı:** İşaretleme sırayla yapılır (kilit); onaylı,
+  `featured` ve ürünü yayında yorumlar sayılır, 10'a ulaşınca reddedilir.
+- **Site önbelleği:** Yorum işlemleri başarılı olunca `refreshSite(["yorumlar"])`
+  çağrılır; ürün sayfası ve anasayfa şeridi hemen yenilenir. Teklif,
+  garanti ve servis kayıtları sitede önbelleksiz okunduğu için yenileme
+  gerekmez.
+- **Silinmeyen kayıtlar:** `dealer_applications`, `support_messages`,
+  `welders_club_signups` için silme işlemi yoktur (K-100).
+- **İşlem kaydı:** Yorum silinirken fotoğraf ve videolar `changes`'e
+  yazılmaz, yalnızca sayıları ("2 dosya").
+- Test: `tests/db/panel-talepler.test.ts` (teklifin alan alan kaydı ve
+  kendi kaydının ardından yeni anla ikinci kayıt, silme; servis; garanti
+  tarihi, geçersiz tarih, +12 ay, silme; yorum onayı, onaysız yorumun
+  anasayfaya alınmaması, anasayfa sınırı, silme; başvuru ve mesaj durumu;
+  Welders Club pasif/aktif); `tests/e2e-db/panel-talepler.spec.ts`
+  (tarayıcıda: menüdeki yeni ekranlar, teklif durumu ve hemen ardından not,
+  onaylanan yorumun ürün sayfasında hemen görünmesi, sitedeki bayilik
+  başvurusu ve ürün sorusunun panelde görünmesi, Welders Club, oturumsuz
+  istek).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

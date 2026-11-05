@@ -531,6 +531,10 @@ Kod: `apps/zenweld-web/src/app/(site)/servis-talebi/page.tsx`,
   ([KARARLAR.md](KARARLAR.md)).
 - Değişiklik müşterinin Garantilerim sayfasına ve garanti sorgulamaya anında
   yansır.
+- Veritabanı modunda değişiklik sunucuda yapılır: "+12 ay" kayıttaki güncel
+  bitiş tarihinden hesaplanır; elle girilen tarih geçerli bir gün olmalıdır
+  ("Geçerli bir tarih girin."). Kural: `packages/data/src/forms.ts`
+  (`toggledWarrantyExpiry`, `isValidDateKey`).
 
 **Veritabanı modunda** (Aşama 5.3):
 
@@ -731,8 +735,13 @@ Kod: `packages/utils/src/images.ts` › `slugify`,
   Fotoğraf ve videolar dosya deposu kurulana kadar (Aşama 6) yorumun
   içinde veri olarak saklanır; bir dosya en fazla ~3 MB (2 MB video).
 
-Kod: `packages/store/src/repo/reviews.ts`; sunucu: `packages/db/src/forms.ts`
-(`createReview`).
+- **Panelde (veritabanı modu):** Onay, yayından kaldırma, anasayfa ve silme
+  sunucuda yapılır; sitedeki yorumlar hemen yenilenir. Anasayfa sınırı
+  sunucuda da denetlenir ([22](#22-panelde-kayıt-düzenleme)).
+
+Kod: `packages/store/src/repo/reviews.ts`, sınır `packages/data/src/forms.ts`
+(`FEATURED_REVIEW_LIMIT`); sunucu: `packages/db/src/forms.ts` (`createReview`),
+panel `packages/db/src/admin-requests.ts`.
 
 ---
 
@@ -1152,8 +1161,10 @@ yeniden hesaplar; kullanım sınırı aynı anda gelen siparişlerde aşılmayac
 ## 22. Panelde kayıt düzenleme
 
 Veritabanı modunda panel kayıtları sunucuda değiştirir (KARARLAR K-99).
-Bugün Satış ekranlarında (Siparişler, İade Talepleri, Kuponlar) geçerlidir;
-panelin diğer alanları veritabanına geçtikçe onlara da uygulanır.
+Bugün Satış (Siparişler, İade Talepleri, Kuponlar) ve Talepler (Teklifler,
+Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
+Welders Club) ekranlarında geçerlidir; panelin diğer alanları veritabanına
+geçtikçe onlara da uygulanır.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
   değiştirilme anı alınır. Kaydederken kayıt bu andan sonra değişmişse
@@ -1166,6 +1177,9 @@ panelin diğer alanları veritabanına geçtikçe onlara da uygulanır.
   - Aynı anda basılırsa biri önce kaydedilir, diğeri onu bekler ve uyarıyı
     alır; ikisi birden kaydedilmez.
   - Değişiklik yapmayan kayıt (aynı not, aynı durum) hiçbir şey yazmaz.
+  - Yöneticinin kendi kaydı "değişiklik" sayılmaz: sayfa yenilenmeden aynı
+    kaydı yeniden kaydederse (ör. önce teklifin durumu, hemen ardından iç
+    notu) ikisi de kaydedilir.
 - **İşlem kaydı:** Her değişiklik, değişiklikle aynı anda işlem kaydına
   (`audit_log`) yazılır: kim (yönetici, IP adresi), ne zaman, hangi kayıt
   (sipariş no, iade no, kupon kodu), hangi alan eskiden neydi ve yeni ne
@@ -1175,9 +1189,16 @@ panelin diğer alanları veritabanına geçtikçe onlara da uygulanır.
   değiştirilemez, 2 yıl saklanır (K-81).
 - **Sipariş geçmişi:** Panelde yapılan her durum değişikliğinde işlemi yapan
   yönetici de saklanır (müşteriye gösterilmez).
+- **Silinmeyen kayıtlar:** Bayilik başvurusu, mesaj ve Welders Club kaydı
+  panelden silinmez; Welders Club'dan ayrılmak isteyen pasife alınır
+  (KARARLAR K-100). Kullanılmış kupon da silinmez ([21](#21-kuponlar)).
+- **Anasayfa yorum sınırı:** En fazla 10 yorum ([15](#15-ürün-yorumları));
+  iki yönetici aynı anda işaretlese de sınır aşılmaz. Onaylanan ya da
+  kaldırılan yorum sitede hemen değişir.
 - Panel işlemleri yalnızca geçerli yönetici oturumuyla yapılır
   ([16](#16-üyelik-ve-oturum)); oturum bitmişse: "Panel oturumunuz kapanmış.
   Lütfen yeniden giriş yapın."
 
-Kod: `packages/db/src/admin-sales.ts`, `packages/db/src/audit.ts`;
-tarayıcı: `apps/zenweld-web/src/lib/admin-sales.ts`.
+Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
+`admin-requests.ts`, `audit.ts`; tarayıcı: `apps/zenweld-web/src/lib/admin-panel.ts`,
+`admin-sales.ts`, `admin-requests.ts`.

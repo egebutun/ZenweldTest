@@ -634,6 +634,7 @@ Müşterinin sepette yazdığı indirim kodu (kurallar:
 | `registeredAt` | tarih-saat | Garanti bu andan başlar (satın alma tarihi sorulmaz) |
 | `expiresAt` | tarih | Kayıt + ürünün garanti süresi (+ istendiyse 12 ay); panelde elle değişebilir |
 | `extended` | evet/hayır | 12 ay uzatma |
+| `updatedAt` | tarih-saat? | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (aynı kaydı iki yönetici düzenlerse; KARARLAR K-99) |
 
 Garanti kaydında üye kimliği tutulmaz; üyeyle e-posta üzerinden eşleşir.
 
@@ -657,6 +658,18 @@ Garanti kaydında üye kimliği tutulmaz; üyeyle e-posta üzerinden eşleşir.
 | `approved` | evet/hayır | Panelde onaylanınca yayında; yeni yorum onaysız gelir |
 | `featured` | evet/hayır | Anasayfadaki şeritte; en fazla 10, yalnızca onaylı yorumda |
 | `createdAt` | tarih-saat | |
+| `updatedAt` | tarih-saat? | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99) |
+
+### Yalnızca veritabanında tutulan form kayıtları
+
+Bayilik başvurusu, iletişim mesajı ve ürün destek sorusu, Welders Club
+katılımı tarayıcıdaki veride yoktur; demo modunda yalnızca e-postayla
+gider. Veritabanı modunda kendi tablolarına yazılır ve panelde Bayilik
+Başvuruları, Mesajlar ve Welders Club ekranlarında görünür (KARARLAR
+K-100). Alanlar: [VERITABANI.md](VERITABANI.md) › `dealer_applications`,
+`support_messages`, `welders_club_signups`; panelin kullandığı kayıt
+türleri `packages/db/src/admin-requests.ts`'tedir
+(`DealerApplicationRecord`, `SupportMessageRecord`, `WeldersClubRecord`).
 
 ---
 

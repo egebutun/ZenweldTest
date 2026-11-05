@@ -1,6 +1,6 @@
 "use client";
 
-import type { ProductReview, ZenweldDatabase } from "@zenweld/data";
+import { FEATURED_REVIEW_LIMIT, type ProductReview, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nowIso } from "./shared";
 
@@ -8,8 +8,8 @@ import { nowIso } from "./shared";
 /* Urun degerlendirmeleri                                              */
 /* ------------------------------------------------------------------ */
 
-/** Anasayfadaki kayan seritte en fazla bu kadar yorum gosterilir. */
-export const FEATURED_REVIEW_LIMIT = 10;
+// Sinir packages/data/src/forms.ts'te (sunucu da kullanir).
+export { FEATURED_REVIEW_LIMIT };
 
 /** Bir urunun yayindaki yorumlari (en yeni once). */
 export function listProductReviews(

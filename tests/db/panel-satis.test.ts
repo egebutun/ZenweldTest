@@ -67,18 +67,22 @@ async function withPanel(run: (db: Db, client: PoolClient) => Promise<void>) {
 const audit = async (client: PoolClient) =>
   (
     await client.query(
-      "SELECT actor_user_id, actor_name, action, entity_type, entity_id, entity_label, changes, host(ip) AS ip FROM audit_log ORDER BY id",
+      // Yalnizca bu testin yoneticisi: baska testlerin silinemeyen kayitlari sayilmaz.
+      "SELECT actor_user_id, actor_name, action, entity_type, entity_id, entity_label, changes, host(ip) AS ip FROM audit_log WHERE actor_user_id = $1 ORDER BY id",
+      [admin.id],
     )
   ).rows;
 
 const ref = (id: string, updatedAt = T0) => ({ id, updatedAt: updatedAt.toISOString() });
+/** Basarili yazma: kaydin yeni son degisiklik ani doner. */
+const saved = (at: Date, extra: Record<string, unknown> = {}) => ({ ok: true, updatedAt: at.toISOString(), ...extra });
 
 describe("siparişler", () => {
   it("ödeme → kargo → takip no düzeltme → teslim; her adım geçmişe yöneticiyle ve audit_log'a yazılır", async () => {
     await withPanel(async (db, client) => {
       await order(client, "o1", "awaiting_payment", { dueAt: new Date("2026-03-13T09:00:00.000Z") });
       const t1 = new Date("2026-03-11T10:00:00.000Z");
-      expect(await adminMarkOrderPaid(db, admin, ref("o1"), t1)).toEqual({ ok: true, expired: false });
+      expect(await adminMarkOrderPaid(db, admin, ref("o1"), t1)).toEqual(saved(t1, { expired: false }));
 
       // Ekranin gordugu an eskidi: kaydedilmez.
       expect(await adminShipOrder(db, admin, { ...ref("o1"), carrier: "Yurtiçi Kargo", trackingNumber: "123" }, t1)).toEqual({
@@ -95,11 +99,11 @@ describe("siparişler", () => {
         error: tr.panel.shipmentRequired,
       });
       const t2 = new Date("2026-03-11T11:00:00.000Z");
-      expect(await adminShipOrder(db, admin, { ...ref("o1", t1), carrier: "Yurtiçi Kargo", trackingNumber: "123" }, t2)).toEqual({ ok: true });
+      expect(await adminShipOrder(db, admin, { ...ref("o1", t1), carrier: "Yurtiçi Kargo", trackingNumber: "123" }, t2)).toEqual(saved(t2));
       const t3 = new Date("2026-03-11T12:00:00.000Z");
-      expect(await adminShipOrder(db, admin, { ...ref("o1", t2), carrier: "Yurtiçi Kargo", trackingNumber: "456" }, t3)).toEqual({ ok: true });
+      expect(await adminShipOrder(db, admin, { ...ref("o1", t2), carrier: "Yurtiçi Kargo", trackingNumber: "456" }, t3)).toEqual(saved(t3));
       const t4 = new Date("2026-03-12T12:00:00.000Z");
-      expect(await adminMarkOrderDelivered(db, admin, ref("o1", t3), t4)).toEqual({ ok: true });
+      expect(await adminMarkOrderDelivered(db, admin, ref("o1", t3), t4)).toEqual(saved(t4));
       // Teslim edilen siparis iptal edilemez.
       expect(await adminCancelOrder(db, admin, ref("o1", t4), t4)).toMatchObject({ status: 409, error: tr.panel.wrongState });
 
@@ -148,12 +152,12 @@ describe("siparişler", () => {
       );
       // Son gun 11 Mart 23:59 (Turkiye); 12 Mart'ta onaylanmak istenir.
       const late = new Date("2026-03-12T09:00:00.000Z");
-      expect(await adminMarkOrderPaid(db, admin, ref("o1"), late)).toEqual({ ok: true, expired: true });
+      expect(await adminMarkOrderPaid(db, admin, ref("o1"), late)).toEqual(saved(late, { expired: true }));
 
-      expect(await adminCancelOrder(db, admin, { ...ref("o2"), note: "Stok yok" }, late)).toEqual({ ok: true });
-      expect(await adminSaveOrderNote(db, admin, { ...ref("o2", late), adminNote: " Müşteri aradı " }, late)).toEqual({ ok: true });
-      // Degisiklik yoksa yazilmaz.
-      expect(await adminSaveOrderNote(db, admin, { ...ref("o2", late), adminNote: "Müşteri aradı" }, late)).toEqual({ ok: true });
+      expect(await adminCancelOrder(db, admin, { ...ref("o2"), note: "Stok yok" }, late)).toEqual(saved(late));
+      expect(await adminSaveOrderNote(db, admin, { ...ref("o2", late), adminNote: " Müşteri aradı " }, late)).toEqual(saved(late));
+      // Degisiklik yoksa yazilmaz; son degisiklik ani ayni kalir.
+      expect(await adminSaveOrderNote(db, admin, { ...ref("o2", late), adminNote: "Müşteri aradı" }, new Date())).toEqual(saved(late));
 
       const { orders } = await readOrdersPanel(db, late);
       const byId = Object.fromEntries(orders.map((o) => [o.id, o]));
@@ -193,9 +197,7 @@ describe("iade talepleri", () => {
       );
       const at = new Date("2026-03-11T09:00:00.000Z");
       expect(await adminSaveReturnRequest(db, admin, { ...ref("r1"), status: "uydurma" }, at)).toMatchObject({ status: 400 });
-      expect(await adminSaveReturnRequest(db, admin, { ...ref("r1"), status: "approved", adminNote: "Kargo kodu verildi" }, at)).toEqual({
-        ok: true,
-      });
+      expect(await adminSaveReturnRequest(db, admin, { ...ref("r1"), status: "approved", adminNote: "Kargo kodu verildi" }, at)).toEqual(saved(at));
       expect(await adminSaveReturnRequest(db, admin, { ...ref("r1"), status: "rejected" }, at)).toMatchObject({
         status: 409,
         error: tr.panel.staleRecord,
@@ -297,12 +299,12 @@ describe("kuponlar", () => {
 
       const edit = draft({ scope: "all", audience: "all", discountValue: 30 });
       expect(await adminSaveCoupon(db, admin, { ...edit, ...ref(id, T0) }, later)).toMatchObject({ status: 409, error: tr.panel.staleRecord });
-      expect(await adminSaveCoupon(db, admin, { ...edit, ...ref(id, at) }, later)).toEqual({ ok: true, id });
+      expect(await adminSaveCoupon(db, admin, { ...edit, ...ref(id, at) }, later)).toEqual(saved(later, { id }));
       let [coupon] = (await readCouponsPanel(db, id)).coupons;
       expect(coupon).toMatchObject({ discountValue: 30, scope: "all", productIds: [], categoryIds: [], customerEmails: [], updatedAt: later.toISOString() });
 
       const off = new Date("2026-03-11T11:00:00.000Z");
-      expect(await adminSetCouponActive(db, admin, { ...ref(id, later), active: false }, off)).toEqual({ ok: true });
+      expect(await adminSetCouponActive(db, admin, { ...ref(id, later), active: false }, off)).toEqual(saved(off));
       [coupon] = (await readCouponsPanel(db, id)).coupons;
       expect(coupon.active).toBe(false);
 
@@ -359,7 +361,7 @@ describe("aynı anda iki yönetici", () => {
       await a.query("COMMIT");
       const result = await second;
       await b.query("COMMIT");
-      expect(first).toEqual({ ok: true });
+      expect(first).toMatchObject({ ok: true });
       expect(result).toEqual({ ok: false, status: 409, error: tr.panel.staleRecord });
       const [row] = (await a.query("SELECT admin_note FROM orders WHERE id = $1", [`${p}o1`])).rows;
       expect(row.admin_note).toBe("Birinci");

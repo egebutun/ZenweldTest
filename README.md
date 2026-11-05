@@ -422,19 +422,20 @@ npm run start --workspace apps/zenweld-web
     kaydı ve sorgulama, ürün yorumu, iletişim, bayilik başvurusu, ürün
     destek sorusu ve Welders Club veritabanına yazılır; gönderilen her
     e-posta `email_log`'a kaydedilir. Tekliflerim ve Garantilerim
-    sunucudan okunur. Panel bu kayıtları sıradaki adımda (Talepler)
-    gösterir.
+    sunucudan okunur. Panel bu kayıtları gösterir ve yönetir (Talepler).
   - **Panel girişi sunucuda (Aşama 4.3):** `/yonetim` yönetici oturumu
     olmadan açılmaz; oturum 8 saat sürer. Bilgisayarda `db:seed`'in demo
     yöneticisiyle, canlıda `npm run yonetici:olustur` ile açılan hesapla
     girilir. Giriş ve çıkış `audit_log`'a yazılır.
   - **Panel veritabanına alan alan geçiyor (Aşama 5, KARARLAR K-99):**
-    Satış ekranları (Siparişler, İade Talepleri, Kuponlar) veritabanından
-    okur ve yazar; aynı kaydı iki yönetici düzenlerse sonraki kaydetmez
-    ("sayfayı yenileyin"); her değişiklik `audit_log`'a yazılır. Panelin
-    diğer ekranlarında (ürün, kategori, seçenek, mağaza ayarı, bayi, stok,
-    yorum, içerik) yapılan değişiklikler henüz siteye yansımaz;
-    değişiklik `db:studio`'dan yapılır. Panel ana sayfası en son bağlanır.
+    Satış (Siparişler, İade Talepleri, Kuponlar) ve Talepler (Teklifler,
+    Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
+    Welders Club) ekranları veritabanından okur ve yazar; aynı kaydı iki
+    yönetici düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her
+    değişiklik `audit_log`'a yazılır. Panelin diğer ekranlarında (ürün,
+    kategori, seçenek, mağaza ayarı, bayi, stok, içerik) yapılan
+    değişiklikler henüz siteye yansımaz; değişiklik `db:studio`'dan
+    yapılır. Panel ana sayfası en son bağlanır.
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
     Derleme sırasında veritabanı çalışıyor olmalı.
   - Ayar yoksa site bugünkü gibi çalışır.
@@ -443,7 +444,7 @@ npm run start --workspace apps/zenweld-web
     moduyla ayrı bir klasöre (`.next-db`) derler ve 3100 portunda açıp
     dener: bütün sayfalar, fiyat ve stok, değişikliğin hemen görünmesi,
     ağır verinin yalnızca gereken sayfaya gitmesi, kartla satın alma,
-    panelin Satış ekranları. Demo
+    panelin Satış ve Talepler ekranları. Demo
     derlemesi (`.next`) etkilenmez. `test:db` ile aynı anda çalıştırılmaz.
   - **SAP stok okuma (deneme dosyasıyla):** SAP bağlanana kadar depo
     stoğu bir CSV dosyasından okunur. `.env.local`'a
@@ -554,16 +555,16 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
    korunur; bu gerçek bir güvenlik değildir. Veritabanı modunda üyelik ve
    panel girişi sunucudadır (Aşama 4): şifreler argon2id ile özetlenir,
    oturum yalnızca sunucunun okuyabildiği çerezde durur, yanlış şifre sınırı
-   ve şifre sıfırlama vardır. Panelin Satış ekranlarının işlemleri de
-   sunucuda, yönetici oturumuyla yapılır. Kalan: panelin diğer alanlarının
-   işlemlerinin de sunucuya geçmesi (Aşama 5).
+   ve şifre sıfırlama vardır. Panelin Satış ve Talepler ekranlarının
+   işlemleri de sunucuda, yönetici oturumuyla yapılır. Kalan: panelin diğer
+   alanlarının işlemlerinin de sunucuya geçmesi (Aşama 5).
 2. **Verinin veritabanına taşınması tamamlanmalı.** Sunucu veritabanı
    PostgreSQL'dir (KARARLAR K-81; tablolar `packages/db`,
    [docs/VERITABANI.md](docs/VERITABANI.md)). Veritabanı modunda katalog,
    stok, içerik ve ayarlar veritabanından okunur (Aşama 3); üyelik, adresler
    ve favoriler, siparişler, iade talepleri ve formlar veritabanına yazılır
-   (Aşama 4, 5.1–5.3). Panel alan alan bağlanıyor; Satış bağlandı
-   (K-99), kalan alanlar Aşama 5'te
+   (Aşama 4, 5.1–5.3). Panel alan alan bağlanıyor; Satış ve Talepler
+   bağlandı (K-99), kalan alanlar Aşama 5'te
    ([docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Veritabanı).
 3. **Ürün içeriği ve fiyatlar girilmeli.** Ekipmanlar'daki ürünlerin adı, kodu,
    alt grubu, garantisi ve seçenekleri gerçektir; Force serisi 9 ürün dışında

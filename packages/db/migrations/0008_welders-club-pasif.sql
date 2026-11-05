@@ -1,0 +1,2 @@
+ALTER TABLE "welders_club_signups" ADD COLUMN "left_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "welders_club_signups" ADD COLUMN "updated_at" timestamp with time zone DEFAULT now() NOT NULL;

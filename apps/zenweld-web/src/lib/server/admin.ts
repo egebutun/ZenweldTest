@@ -1,11 +1,12 @@
 import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { readSession, type SessionUser } from "@zenweld/auth/server";
-import type { Actor } from "@zenweld/db";
+import type { Actor, PanelResult } from "@zenweld/db";
+import { tr } from "@zenweld/i18n";
 import type { CatalogData } from "@zenweld/store";
 import { getDatabaseCatalog } from "./catalog";
 import { database, usesDatabase } from "./db";
-import { clientInfo, SESSION_COOKIES } from "./session-cookie";
+import { clientInfo, json, notFound, sameOrigin, SESSION_COOKIES } from "./session-cookie";
 
 /**
  * PANELDEKI YONETICI (veritabani modu; Asama 5, KARARLAR K-99)
@@ -38,4 +39,38 @@ export async function hasPanelSession(): Promise<boolean> {
 export async function panelCatalog(): Promise<Pick<CatalogData, "products" | "categories" | "categoryGroups"> | null> {
   const catalog = await getDatabaseCatalog();
   return catalog && { products: catalog.products, categories: catalog.categories, categoryGroups: catalog.categoryGroups };
+}
+
+/** Panelin yazan islemi: islem (transaction) icinde, yonetici ve istekle. */
+export type PanelAction = (
+  db: Parameters<Parameters<ReturnType<typeof database>["transaction"]>[0]>[0],
+  actor: Actor,
+  input: Record<string, unknown>,
+  at: Date,
+) => Promise<PanelResult<object>>;
+
+/**
+ * Panelin yazma uclarinin ortak akisi (/api/yonetim/satis, /api/yonetim/talepler):
+ * yalnizca veritabani modunda; baska siteden gelen istek 403; gecerli panel
+ * oturumu yoksa 401; islem tek bir islemde (transaction) calisir. Basarida
+ * afterSuccess cagrilir (or. sitenin onbellegini yenilemek).
+ */
+export async function runPanelAction(
+  request: NextRequest,
+  actions: Record<string, PanelAction>,
+  name: string,
+  afterSuccess?: (name: string) => void,
+) {
+  if (!usesDatabase() || !Object.hasOwn(actions, name)) return notFound();
+  if (!sameOrigin(request)) return json({ ok: false, error: "baska-site" }, 403);
+  const actor = await panelAdmin(request);
+  if (!actor) return json({ ok: false, error: tr.panel.sessionEnded }, 401);
+  const body = await request.json().catch(() => null);
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return json({ ok: false, error: tr.panel.invalidRequest }, 400);
+  }
+  const result = await database().transaction((tx) => actions[name](tx, actor, body as Record<string, unknown>, new Date()));
+  if (!result.ok) return json({ ok: false, error: result.error }, result.status);
+  afterSuccess?.(name);
+  return json(result);
 }

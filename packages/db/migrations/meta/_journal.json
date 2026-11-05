@@ -57,6 +57,13 @@
       "when": 1793833925429,
       "tag": "0007_e-posta-turu-sifre-sifirlama",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793838117541,
+      "tag": "0008_welders-club-pasif",
+      "breakpoints": true
     }
   ]
 }

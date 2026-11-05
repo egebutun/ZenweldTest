@@ -1114,6 +1114,22 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   denenebilir; okuma ve yazma ayrı adımlarda yapılsaydı ekranlar arada
   yarım kalırdı. Son kaydeden öncekinin değişikliğini sessizce silmesin.
 
+### K-100 · Form kayıtları panelde: yer, silme ve Welders Club'tan ayrılma
+- **Tarih:** 2026-11-05
+- **Karar:** Panelin 2. alanında (Talepler) sitedeki formlardan gelen
+  kayıtlar için üç yeni ekran eklenir:
+  - **Bayilik Başvuruları** sol menüde "Bayi ve Satış Ağı" grubunda,
+    Bayiler'in yanında.
+  - **Mesajlar** (iletişim formu ve ürün destek soruları) ve **Welders
+    Club** "Müşteriler ve Servis" grubunda.
+  - Bu kayıtlar (başvuru, mesaj, Welders Club) panelden silinmez. Silme,
+    KVKK saklama süresi kararıyla birlikte ele alınır. Welders Club'dan
+    ayrılmak isteyen kişi o zamana kadar pasife alınır (yeniden aktif
+    yapılabilir).
+- **Neden:** Bayilik başvurusu Bayiler'in yanında kolay bulunur. Kişisel
+  veri içeren kayıtların ne kadar saklanacağı henüz belli değil; yanlışlıkla
+  silinmesin.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

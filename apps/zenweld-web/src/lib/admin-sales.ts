@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useAuth } from "@zenweld/auth";
 import type { Coupon, CouponDraft, Order, ReturnRequest, ReturnRequestStatus } from "@zenweld/data";
-import { tr } from "@zenweld/i18n";
 import {
   cancelExpiredTransfers,
   cancelOrder,
@@ -16,94 +14,60 @@ import {
   saveReturnRequest,
   shipOrder,
 } from "@zenweld/store";
+import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
+
+export type { PanelAnswer };
 
 /**
  * PANEL › SATIS ISLEMLERI (siparisler, iade talepleri, kuponlar)
  *
  * Ekranlar islemleri buradan yapar; demo ve veritabani modunda ayni sonucu
- * alir: { ok: true } ya da { ok: false, error }.
- *
- * - Veritabani modunda islem sunucuya gider (/api/yonetim/satis; Asama 5,
- *   1. alan, KARARLAR K-99). Basarili olunca ekranin verisi sunucudan
- *   yeniden okunur (router.refresh). Kayit ekran acildiktan sonra
- *   degismisse sunucu kaydetmez ve "sayfayi yenileyin" der.
- * - Demo modunda tarayicidaki veriye yazilir (packages/store).
- *
- * pending: istek ya da ardindan gelen yenileme surerken true (dugmeler
- * kapatilir, ayni islem iki kez gonderilmez).
+ * alir: { ok: true } ya da { ok: false, error }. Veritabani modunda islem
+ * sunucuya gider (/api/yonetim/satis; Asama 5, 1. alan, KARARLAR K-99;
+ * ortak akis: lib/admin-panel.ts). Demo modunda tarayicidaki veriye yazilir
+ * (packages/store).
  */
-
-export type PanelAnswer = { ok: true; id?: string } | { ok: false; error: string };
-
-const done = (written = true, id?: string): Promise<PanelAnswer> =>
-  Promise.resolve(written ? { ok: true, id } : { ok: false, error: tr.panel.failed });
-
-/** Kaydin kimligi ve ekranin gordugu son degisiklik ani. */
-const ref = (record: { id: string; updatedAt: string }) => ({ id: record.id, updatedAt: record.updatedAt });
-
 export function useSalesActions() {
-  const { api } = useAuth();
-  const server = api !== null;
-  const router = useRouter();
-  const [sending, setSending] = useState(false);
-  const [refreshing, startRefresh] = useTransition();
-
-  const call = async (action: string, body: object): Promise<PanelAnswer> => {
-    setSending(true);
-    try {
-      const response = await fetch(`/api/yonetim/satis/${action}`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      const answer = (await response.json().catch(() => null)) as PanelAnswer | null;
-      if (!answer || typeof answer.ok !== "boolean") return { ok: false, error: tr.panel.failed };
-      if (answer.ok) startRefresh(() => router.refresh());
-      return answer;
-    } catch {
-      return { ok: false, error: tr.panel.failed };
-    } finally {
-      setSending(false);
-    }
-  };
+  const { server, pending, call } = usePanelCall("satis");
+  const order = (o: Order) => recordRef("orders", o);
+  const request = (r: ReturnRequest) => recordRef("return_requests", r);
+  const coupon = (c: Coupon) => recordRef("coupons", c);
 
   return {
     server,
-    pending: sending || refreshing,
+    pending,
 
-    markPaid: (order: Order) => (server ? call("odeme-alindi", ref(order)) : done(markOrderPaid(order.id) || true)),
-    ship: (order: Order, carrier: string, trackingNumber: string) =>
+    markPaid: (o: Order) =>
+      server ? call("odeme-alindi", order(o), "orders") : (markOrderPaid(o.id), localAnswer()),
+    ship: (o: Order, carrier: string, trackingNumber: string) =>
       server
-        ? call("kargo", { ...ref(order), carrier, trackingNumber })
-        : (shipOrder(order.id, carrier, trackingNumber), done()),
-    markDelivered: (order: Order) =>
-      server ? call("teslim", ref(order)) : (markOrderDelivered(order.id), done()),
-    cancel: (order: Order, note?: string) =>
-      server ? call("iptal", { ...ref(order), note }) : (cancelOrder(order.id, note), done()),
-    saveOrderNote: (order: Order, adminNote: string) =>
-      server ? call("siparis-notu", { ...ref(order), adminNote }) : done(saveOrderAdminNote(order.id, adminNote)),
+        ? call("kargo", { ...order(o), carrier, trackingNumber }, "orders")
+        : (shipOrder(o.id, carrier, trackingNumber), localAnswer()),
+    markDelivered: (o: Order) =>
+      server ? call("teslim", order(o), "orders") : (markOrderDelivered(o.id), localAnswer()),
+    cancel: (o: Order, note?: string) =>
+      server ? call("iptal", { ...order(o), note }, "orders") : (cancelOrder(o.id, note), localAnswer()),
+    saveOrderNote: (o: Order, adminNote: string) =>
+      server ? call("siparis-notu", { ...order(o), adminNote }, "orders") : localAnswer(saveOrderAdminNote(o.id, adminNote)),
 
-    saveReturnRequest: (request: ReturnRequest, status: ReturnRequestStatus, adminNote: string) =>
+    saveReturnRequest: (r: ReturnRequest, status: ReturnRequestStatus, adminNote: string) =>
       server
-        ? call("iade-talebi", { ...ref(request), status, adminNote })
-        : done(saveReturnRequest({ ...request, status, adminNote: adminNote || undefined })),
+        ? call("iade-talebi", { ...request(r), status, adminNote }, "return_requests")
+        : localAnswer(saveReturnRequest({ ...r, status, adminNote: adminNote || undefined })),
 
-    /** Yeni kupon (coupon yok) ya da duzenleme; basarida id doner. */
-    saveCoupon: (draft: CouponDraft, coupon?: Coupon): Promise<PanelAnswer> => {
-      if (server) return call("kupon", coupon ? { ...draft, ...ref(coupon) } : draft);
-      const result = saveCoupon({ ...draft, id: coupon?.id });
+    /** Yeni kupon (c yok) ya da duzenleme; basarida id doner. */
+    saveCoupon: (draft: CouponDraft, c?: Coupon): Promise<PanelAnswer> => {
+      if (server) return call("kupon", c ? { ...draft, ...coupon(c) } : draft, "coupons");
+      const result = saveCoupon({ ...draft, id: c?.id });
       return Promise.resolve(result.ok ? { ok: true, id: result.id } : result);
     },
-    setCouponActive: (coupon: Coupon, active: boolean) =>
-      server ? call("kupon-durum", { ...ref(coupon), active }) : saveCouponActive(coupon, active),
-    deleteCoupon: (coupon: Coupon) =>
-      server ? call("kupon-sil", ref(coupon)) : done(deleteCoupon(coupon.id)),
+    setCouponActive: (c: Coupon, active: boolean): Promise<PanelAnswer> => {
+      if (server) return call("kupon-durum", { ...coupon(c), active }, "coupons");
+      const result = saveCoupon({ ...c, active });
+      return Promise.resolve(result.ok ? { ok: true } : result);
+    },
+    deleteCoupon: (c: Coupon) => (server ? call("kupon-sil", coupon(c)) : localAnswer(deleteCoupon(c.id))),
   };
-}
-
-function saveCouponActive(coupon: Coupon, active: boolean): Promise<PanelAnswer> {
-  const result = saveCoupon({ ...coupon, active });
-  return Promise.resolve(result.ok ? { ok: true } : result);
 }
 
 /**

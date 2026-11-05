@@ -409,7 +409,7 @@ export async function saveWeldersClubSignup(
   const id = newId("wc");
   await db
     .insert(s.weldersClubSignups)
-    .values({ id, name: v.name, email: v.email, city: v.city || null, userId: member?.id ?? null, createdAt: at });
+    .values({ id, name: v.name, email: v.email, city: v.city || null, userId: member?.id ?? null, createdAt: at, updatedAt: at });
   return id;
 }
 

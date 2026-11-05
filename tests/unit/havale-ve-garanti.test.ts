@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { Order, ZenweldDatabase } from "@zenweld/data";
+import { isValidDateKey, toggledWarrantyExpiry, type Order, type ZenweldDatabase } from "@zenweld/data";
 import { isTransferExpired, registerWarranty, warrantiesForEmail, warrantyExpiry } from "@zenweld/store";
-import { addMonthsToDate } from "@zenweld/utils";
 
 /* docs/IS-KURALLARI.md › 6. Havale / EFT */
 describe("Havale / EFT ödeme süresi", () => {
@@ -53,13 +52,20 @@ describe("Garanti bitiş tarihi", () => {
   });
 
   it("panelde +12 ay eklenir ve kaldırılınca 12 ay çıkarılır", () => {
-    expect(addMonthsToDate("2029-03-15", 12)).toBe("2030-03-15");
-    expect(addMonthsToDate("2030-03-15", -12)).toBe("2029-03-15");
+    expect(toggledWarrantyExpiry("2029-03-15", true)).toBe("2030-03-15");
+    expect(toggledWarrantyExpiry("2030-03-15", false)).toBe("2029-03-15");
   });
 
   it("29 Şubat + 12 ay → 1 Mart; geri alınca 1 Mart'tan çıkar (karar: bir gün kayar)", () => {
-    expect(addMonthsToDate("2028-02-29", 12)).toBe("2029-03-01");
-    expect(addMonthsToDate("2029-03-01", -12)).toBe("2028-03-01");
+    expect(toggledWarrantyExpiry("2028-02-29", true)).toBe("2029-03-01");
+    expect(toggledWarrantyExpiry("2029-03-01", false)).toBe("2028-03-01");
+  });
+
+  it("panelde elle girilen bitiş tarihi geçerli bir gün olmalı", () => {
+    expect(isValidDateKey("2028-02-29")).toBe(true);
+    expect(isValidDateKey("2027-02-29")).toBe(false);
+    expect(isValidDateKey("2028-13-01")).toBe(false);
+    expect(isValidDateKey("1.3.2028")).toBe(false);
   });
 });
 

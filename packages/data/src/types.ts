@@ -728,6 +728,11 @@ export interface ProductReview {
   /** Anasayfadaki kayan seritte gosterilsin mi (en fazla 10 tane). */
   featured: boolean;
   createdAt: string;
+  /**
+   * Son degisiklik ani. Yalnizca veritabani modunda panelin okudugu kayitta
+   * dolu (ayni kaydi iki yonetici duzenlerse; KARARLAR K-99).
+   */
+  updatedAt?: string;
 }
 
 export interface FaqItem {
@@ -845,6 +850,11 @@ export interface WarrantyRecord {
   registeredAt: string;
   expiresAt: string;
   extended: boolean;
+  /**
+   * Son degisiklik ani. Yalnizca veritabani modunda panelin okudugu kayitta
+   * dolu (ayni kaydi iki yonetici duzenlerse; KARARLAR K-99).
+   */
+  updatedAt?: string;
 }
 
 /* ------------------------------------------------------------------ */

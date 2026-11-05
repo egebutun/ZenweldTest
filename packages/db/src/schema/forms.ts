@@ -7,8 +7,8 @@ import { users } from "./users";
 /**
  * BUGUN YALNIZCA E-POSTAYA GIDEN FORMLAR (docs/VERITABANI.md › 11, K-81)
  *
- * E-posta yine gider; kayit e-posta gitmese de alinir. Panel ekranlari
- * siteyi veritabanina baglarken eklenecek.
+ * E-posta yine gider; kayit e-posta gitmese de alinir. Panel ekranlari:
+ * Bayilik Basvurulari, Mesajlar, Welders Club (Asama 5, 2. alan; K-100).
  */
 
 /** Bayilik Basvurusu. */
@@ -86,7 +86,10 @@ export const weldersClubSignups = pgTable(
     email: text("email").notNull(),
     city: text("city"),
     userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+    /** Kulupten ayrilmak isteyen panelde pasife alinir; kayit silinmez (K-100) */
+    leftAt: tstz("left_at"),
     createdAt: tstz("created_at").notNull().defaultNow(),
+    updatedAt: tstz("updated_at").notNull().defaultNow(),
   },
   (t) => [index("welders_club_signups_created").on(t.createdAt.desc())],
 );

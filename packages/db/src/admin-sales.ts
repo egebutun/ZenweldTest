@@ -1,4 +1,3 @@
-import { randomBytes } from "node:crypto";
 import { and, eq, inArray, isNull, max, ne, sql } from "drizzle-orm";
 import {
   couponCodeTaken,
@@ -19,6 +18,7 @@ import {
 import { tr } from "@zenweld/i18n";
 import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
 import { cancelExpiredTransfers } from "./orders";
+import { checkRow, fail, isFailure, newId, saved, text, unchanged, type PanelFailure, type PanelResult, type Saved } from "./panel";
 import { readCoupons, readOrders, readReturnRequests, readSettings, userRecord } from "./read";
 import * as s from "./schema";
 
@@ -29,28 +29,12 @@ import * as s from "./schema";
  * degisiklikleri buraya yazar. Kurallar demo modundaki panelle aynidir
  * (packages/store › commerce.ts, returns.ts, coupons.ts; packages/data).
  *
- * Her yazma:
- * - bir islem (transaction) icinde cagrilir; kayit satiri kilitlenir,
- * - yoneticinin ekrani actigi andaki updatedAt'i ister: kayit o andan sonra
- *   degismisse (baska yonetici, musteri ya da sistem) kaydetmez,
- *   "Bu kayit siz actiktan sonra degisti; sayfayi yenileyin." der,
- * - ayni islemde audit_log'a yazar (kim, ne zaman, hangi alan eskiden neydi).
+ * Her yazma panel.ts'teki ortak kurallarla yapilir: islem icinde, kayit
+ * kilitlenerek, ekran acildiktan sonra degismis kayit kaydedilmeden ve
+ * audit_log'a yazilarak.
  */
 
-export interface PanelFailure {
-  ok: false;
-  status: 400 | 404 | 409;
-  error: string;
-}
-
-export type PanelResult<T extends object = object> = ({ ok: true } & T) | PanelFailure;
-
-const fail = (status: PanelFailure["status"], error: string): PanelFailure => ({ ok: false, status, error });
-const text = (value: unknown, maxLength = 200) => (typeof value === "string" ? value.trim().slice(0, maxLength) : "");
-const newId = (prefix: string) => `${prefix}-${randomBytes(8).toString("hex")}`;
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : undefined);
-/** Ekranin gordugu son degisiklik ani ile kayittaki ayni mi. */
-const fresh = (row: { updatedAt: Date }, input: Record<string, unknown>) => row.updatedAt.toISOString() === input.updatedAt;
 
 /* ------------------------------ Okuma ------------------------------ */
 
@@ -107,12 +91,8 @@ type OrderRow = typeof s.orders.$inferSelect;
 async function lockOrder(db: AuditDb, input: Record<string, unknown>): Promise<OrderRow | PanelFailure> {
   const id = text(input.id, 100);
   const [row] = id ? await db.select().from(s.orders).where(eq(s.orders.id, id)).for("update") : [];
-  if (!row) return fail(404, tr.panel.orderNotFound);
-  if (!fresh(row, input)) return fail(409, tr.panel.staleRecord);
-  return row;
+  return checkRow(row, input, tr.panel.orderNotFound, tr.panel.staleRecord);
 }
-
-const isFailure = (value: object): value is PanelFailure => "ok" in value && value.ok === false;
 
 /** Siparisin zaman cizelgesine yeni durum (yonetici changed_by'a yazilir). */
 async function pushStatus(db: AuditDb, order: OrderRow, status: OrderStatus, at: Date, actor: Actor, note?: string) {
@@ -145,7 +125,7 @@ export async function adminMarkOrderPaid(
   actor: Actor,
   input: Record<string, unknown>,
   at: Date,
-): Promise<PanelResult<{ expired: boolean }>> {
+): Promise<PanelResult<{ expired: boolean } & Saved>> {
   const order = await lockOrder(db, input);
   if (isFailure(order)) return order;
   if (order.status !== "awaiting_payment") return fail(409, tr.panel.wrongState);
@@ -156,12 +136,12 @@ export async function adminMarkOrderPaid(
     await pushStatus(db, order, "cancelled", at, actor, PAYMENT_EXPIRED_NOTE);
     await releaseCoupon(db, order.id, at);
     await auditOrder(db, actor, order, { status: [order.status, "cancelled"] }, at);
-    return { ok: true, expired: true };
+    return { ...saved(at), expired: true };
   }
   await db.update(s.orders).set({ status: "preparing", paidAt: at, updatedAt: at }).where(eq(s.orders.id, order.id));
   await pushStatus(db, order, "preparing", at, actor);
   await auditOrder(db, actor, order, { status: [order.status, "preparing"], paidAt: [null, at.toISOString()] }, at);
-  return { ok: true, expired: false };
+  return { ...saved(at), expired: false };
 }
 
 /**
@@ -175,7 +155,7 @@ export async function adminShipOrder(
   actor: Actor,
   input: Record<string, unknown>,
   at: Date,
-): Promise<PanelResult> {
+): Promise<PanelResult<Saved>> {
   const carrier = text(input.carrier, 100);
   const trackingNumber = text(input.trackingNumber, 100);
   if (!carrier || !trackingNumber) return fail(400, tr.panel.shipmentRequired);
@@ -196,7 +176,7 @@ export async function adminShipOrder(
     { status, carrier, trackingNumber },
     ["status", "carrier", "trackingNumber"],
   );
-  if (Object.keys(changes).length === 0) return { ok: true };
+  if (Object.keys(changes).length === 0) return unchanged(order);
 
   const carrierId = known?.id ?? null;
   if (shipment) {
@@ -220,7 +200,7 @@ export async function adminShipOrder(
   await db.update(s.orders).set({ status, updatedAt: at }).where(eq(s.orders.id, order.id));
   if (status !== order.status) await pushStatus(db, order, status, at, actor);
   await auditOrder(db, actor, order, changes, at);
-  return { ok: true };
+  return saved(at);
 }
 
 /** Kargodaki siparis teslim edildi. */
@@ -229,7 +209,7 @@ export async function adminMarkOrderDelivered(
   actor: Actor,
   input: Record<string, unknown>,
   at: Date,
-): Promise<PanelResult> {
+): Promise<PanelResult<Saved>> {
   const order = await lockOrder(db, input);
   if (isFailure(order)) return order;
   if (order.status !== "shipped") return fail(409, tr.panel.wrongState);
@@ -240,7 +220,7 @@ export async function adminMarkOrderDelivered(
   await db.update(s.orders).set({ status: "delivered", updatedAt: at }).where(eq(s.orders.id, order.id));
   await pushStatus(db, order, "delivered", at, actor);
   await auditOrder(db, actor, order, { status: [order.status, "delivered"] }, at);
-  return { ok: true };
+  return saved(at);
 }
 
 /** Teslim edilmemis siparisi iptal eder (neden musteriye gorunur); kupon hakki geri verilir. */
@@ -249,7 +229,7 @@ export async function adminCancelOrder(
   actor: Actor,
   input: Record<string, unknown>,
   at: Date,
-): Promise<PanelResult> {
+): Promise<PanelResult<Saved>> {
   const note = text(input.note, 500) || undefined;
   const order = await lockOrder(db, input);
   if (isFailure(order)) return order;
@@ -258,7 +238,7 @@ export async function adminCancelOrder(
   await pushStatus(db, order, "cancelled", at, actor, note);
   await releaseCoupon(db, order.id, at);
   await auditOrder(db, actor, order, { status: [order.status, "cancelled"], ...(note ? { note: [null, note] } : {}) }, at);
-  return { ok: true };
+  return saved(at);
 }
 
 /** Siparisin ic notu (yalnizca panelde gorunur). */
@@ -267,14 +247,14 @@ export async function adminSaveOrderNote(
   actor: Actor,
   input: Record<string, unknown>,
   at: Date,
-): Promise<PanelResult> {
+): Promise<PanelResult<Saved>> {
   const adminNote = text(input.adminNote, 2000) || null;
   const order = await lockOrder(db, input);
   if (isFailure(order)) return order;
-  if ((order.adminNote ?? null) === adminNote) return { ok: true };
+  if ((order.adminNote ?? null) === adminNote) return unchanged(order);
   await db.update(s.orders).set({ adminNote, updatedAt: at }).where(eq(s.orders.id, order.id));
   await auditOrder(db, actor, order, { adminNote: [order.adminNote, adminNote] }, at);
-  return { ok: true };
+  return saved(at);
 }
 
 /* ------------------------------ Iade talepleri ------------------------------ */
@@ -287,17 +267,17 @@ export async function adminSaveReturnRequest(
   actor: Actor,
   input: Record<string, unknown>,
   at: Date,
-): Promise<PanelResult> {
+): Promise<PanelResult<Saved>> {
   const status = RETURN_STATUSES.find((x) => x === input.status);
   if (!status) return fail(400, tr.panel.invalidRequest);
   const adminNote = text(input.adminNote, 2000) || null;
   const id = text(input.id, 100);
-  const [row] = id ? await db.select().from(s.returnRequests).where(eq(s.returnRequests.id, id)).for("update") : [];
-  if (!row) return fail(404, tr.panel.returnNotFound);
-  if (!fresh(row, input)) return fail(409, tr.panel.staleRecord);
+  const [found] = id ? await db.select().from(s.returnRequests).where(eq(s.returnRequests.id, id)).for("update") : [];
+  const row = checkRow(found, input, tr.panel.returnNotFound, tr.panel.staleRecord);
+  if (isFailure(row)) return row;
 
   const changes = changedFields(row, { ...row, status, adminNote }, ["status", "adminNote"]);
-  if (Object.keys(changes).length === 0) return { ok: true };
+  if (Object.keys(changes).length === 0) return unchanged(row);
   await db.update(s.returnRequests).set({ status, adminNote, updatedAt: at }).where(eq(s.returnRequests.id, row.id));
   await writeAudit(
     db,
@@ -305,7 +285,7 @@ export async function adminSaveReturnRequest(
     { action: "update", entityType: "return_requests", entityId: row.id, entityLabel: row.code, changes },
     at,
   );
-  return { ok: true };
+  return saved(at);
 }
 
 /* ------------------------------ Kuponlar ------------------------------ */
@@ -375,10 +355,9 @@ const findCoupon = async (db: AuditDb, id: string) => (await readCoupons(db, eq(
 /** Duzenlenecek kuponu kilitler; yoksa ya da ekran acildiktan sonra degismisse hata. */
 async function lockCoupon(db: AuditDb, input: Record<string, unknown>): Promise<Coupon | PanelFailure> {
   const id = text(input.id, 100);
-  const [row] = id ? await db.select().from(s.coupons).where(eq(s.coupons.id, id)).for("update") : [];
-  if (!row) return fail(404, tr.panel.couponNotFound);
-  if (!fresh(row, input)) return fail(409, tr.panel.staleRecord);
-  return findCoupon(db, row.id);
+  const [found] = id ? await db.select().from(s.coupons).where(eq(s.coupons.id, id)).for("update") : [];
+  const row = checkRow(found, input, tr.panel.couponNotFound, tr.panel.staleRecord);
+  return isFailure(row) ? row : findCoupon(db, row.id);
 }
 
 /**
@@ -391,7 +370,7 @@ export async function adminSaveCoupon(
   actor: Actor,
   input: Record<string, unknown>,
   at: Date,
-): Promise<PanelResult<{ id: string }>> {
+): Promise<PanelResult<{ id: string } & Saved>> {
   const parsed = parseCouponDraft(input);
   if (!parsed) return fail(400, tr.panel.invalidRequest);
   const draft = normalizeCouponDraft(parsed);
@@ -462,7 +441,7 @@ export async function adminSaveCoupon(
       at,
     );
   }
-  return { ok: true, id };
+  return { ...saved(at), id };
 }
 
 /** Kupon listesindeki goz dugmesi: aktif / pasif. */
@@ -471,11 +450,11 @@ export async function adminSetCouponActive(
   actor: Actor,
   input: Record<string, unknown>,
   at: Date,
-): Promise<PanelResult> {
+): Promise<PanelResult<Saved>> {
   if (typeof input.active !== "boolean") return fail(400, tr.panel.invalidRequest);
   const coupon = await lockCoupon(db, input);
   if (isFailure(coupon)) return coupon;
-  if (coupon.active === input.active) return { ok: true };
+  if (coupon.active === input.active) return { ok: true, updatedAt: coupon.updatedAt };
   await db.update(s.coupons).set({ active: input.active, updatedAt: at }).where(eq(s.coupons.id, coupon.id));
   await writeAudit(
     db,
@@ -489,7 +468,7 @@ export async function adminSetCouponActive(
     },
     at,
   );
-  return { ok: true };
+  return saved(at);
 }
 
 /** Hic kullanilmamis kupon silinir; kullanilmis kupon silinmez, pasife alinir. */
