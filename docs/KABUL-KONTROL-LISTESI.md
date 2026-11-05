@@ -621,6 +621,10 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       geçici olarak hata veren bir ekran gerekir; yazılımcı dener.)
 - [ ] Sol menü grupları: Satış, Ürünler, Bayi ve Satış Ağı, Müşteriler ve
       Servis, İçerik, Ayarlar; açık sayfanın grubu açık gelir.
+- [ ] Telefonda menü kapalı gelir, sayfanın başlığı ilk ekranda görünür;
+      üstteki **Menü** düğmesinde açık sayfanın adı yazar. Düğmeyle menü
+      açılır, bir sayfa seçilince kapanır. Dizüstünde düğme yoktur, menü
+      solda açıktır.
 - [ ] Panelde her silme onay ister (yorum silme dahil).
 - [ ] Tarayıcı deposu dolunca kırmızı "Kaydedilemedi…" bandı çıkar ve
       "kaydedildi" mesajı görünmez.

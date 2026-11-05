@@ -31,6 +31,7 @@ import {
   Settings,
   History,
   MailCheck,
+  Menu,
   ShieldCheck,
   ShoppingCart,
   SlidersHorizontal,
@@ -159,7 +160,14 @@ interface NavGroup {
 const isActive = (pathname: string, href: string) =>
   pathname === href || pathname.startsWith(`${href}/`);
 
-function AdminNav() {
+/** Acik sayfanin menudeki adi (telefondaki Menu dugmesinde yazar). */
+function currentLabel(pathname: string): string {
+  if (pathname === "/yonetim") return "Panel";
+  return NAV_GROUPS.flatMap((g) => g.items).find((i) => isActive(pathname, i.href))?.label ?? "";
+}
+
+/** onNavigate: bir sayfaya tiklaninca (telefonda menu kapanir). */
+function AdminNav({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
   const { api } = useAuth();
   const current = NAV_GROUPS.find((g) => g.items.some((i) => isActive(pathname, i.href)))?.id;
@@ -185,7 +193,7 @@ function AdminNav() {
 
   return (
     <nav className="space-y-1">
-      <Link href="/yonetim" className={linkClass(pathname === "/yonetim")}>
+      <Link href="/yonetim" onClick={onNavigate} className={linkClass(pathname === "/yonetim")}>
         <LayoutDashboard size={17} />
         Panel
       </Link>
@@ -211,7 +219,7 @@ function AdminNav() {
                 {group.items
                   .filter((item) => !item.server || api !== null)
                   .map(({ href, label, Icon }) => (
-                    <Link key={href} href={href} className={linkClass(isActive(pathname, href))}>
+                    <Link key={href} href={href} onClick={onNavigate} className={linkClass(isActive(pathname, href))}>
                       <Icon size={15} />
                       {label}
                     </Link>
@@ -232,6 +240,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   // Bilerek cikis yapildiysa "geri donulecek sayfa" eklenmez.
   const leaving = useRef(false);
   const writeFailed = useWriteFailed();
+  // Telefonda ve tablette (lg altinda) menu kapali gelir; Menu dugmesiyle acilir.
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Giris yoksa panelin kendi giris ekranina; donuste ayni sayfaya gelinir.
   useEffect(() => {
@@ -287,7 +297,21 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <div className="zw-container py-8">
         <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
           <aside>
-            <AdminNav />
+            <button
+              type="button"
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-expanded={menuOpen}
+              aria-controls="panel-menu"
+              className="flex w-full items-center gap-2.5 rounded-[4px] border border-zw-grey-200 bg-white px-3 py-2.5 text-left text-sm font-bold lg:hidden"
+            >
+              <Menu size={17} />
+              <span className="flex-1">Menü</span>
+              <span className="truncate font-semibold text-zw-grey-500">{currentLabel(pathname)}</span>
+              <ChevronDown size={15} className={`shrink-0 transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+            </button>
+            <div id="panel-menu" className={menuOpen ? "mt-2 lg:mt-0" : "hidden lg:block"}>
+              <AdminNav onNavigate={() => setMenuOpen(false)} />
+            </div>
           </aside>
 
           <div className="min-w-0">

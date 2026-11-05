@@ -7,7 +7,8 @@ import { SESSION, expect, test } from "./yardimci";
  * Sayfa yana tasmaz; sekme cubuklarinda ([data-sekmeler]) hicbir sekme
  * ekranin disinda kalmaz: sigmayan sekmeler alt satira gecer. Genis tablolar
  * kendi kutusunda yana kayar, sayfa kaymaz. Telefonda butun panel sayfalari,
- * tablet ve dizustunde sekmeli sayfalar denenir.
+ * tablet ve dizustunde sekmeli sayfalar denenir. Telefonda ve tablette panel
+ * menusu tek "Menu" dugmesidir; sayfa ilk ekranda gorunur.
  */
 const TABBED = [
   "/yonetim/magaza",
@@ -88,6 +89,32 @@ test.describe("panel", () => {
     test.setTimeout(180_000);
     await check(page, 390, PANEL);
   });
+  test("telefonda menü tek düğme: sayfa ilk ekranda; menü açılır, sayfa seçilince kapanır", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/yonetim/magaza");
+    const toggle = page.getByRole("button", { name: /^Menü/ });
+    const nav = page.locator("#panel-menu");
+    await expect(toggle).toContainText("Mağaza Ayarları");
+    await expect(nav).toBeHidden();
+    // Sayfanin basligi ilk ekranda (menunun altinda kalmaz).
+    const title = await page.getByRole("heading", { name: "Mağaza Ayarları" }).boundingBox();
+    expect(title!.y + title!.height).toBeLessThan(844);
+
+    await toggle.click();
+    await expect(nav).toBeVisible();
+    // Acik sayfanin grubu (Satis) acik gelir.
+    await nav.getByRole("link", { name: "Siparişler" }).click();
+    await expect(page).toHaveURL(/\/yonetim\/siparisler$/);
+    await expect(nav).toBeHidden();
+    await expect(toggle).toContainText("Siparişler");
+  });
+
+  test("dizüstünde menü solda açık, Menü düğmesi yok", async ({ page }) => {
+    await page.goto("/yonetim/magaza");
+    await expect(page.locator("#panel-menu")).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Menü/ })).toBeHidden();
+  });
+
   for (const width of [768, 1280]) {
     test(`${width} px'te sekmeli sayfalar taşmaz, sekmeler ekranda`, async ({ page }) => {
       test.setTimeout(120_000);

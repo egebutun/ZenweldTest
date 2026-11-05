@@ -131,6 +131,10 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 - En üstte **Panel** (ana sayfa).
 - Altında gruplar vardır. Grup başlığına tıklayınca sayfaları açılır; açık
   olan sayfanın grubu kendiliğinden açık gelir.
+- Telefonda ve tablette menü kapalı gelir; sayfanın üstünde tek bir
+  **Menü** düğmesi vardır, yanında açık sayfanın adı yazar. Düğmeye
+  dokununca menü açılır, bir sayfa seçilince kapanır. Dizüstü ve
+  masaüstünde menü solda hep açıktır.
 
 | Grup | Sayfalar |
 |---|---|
