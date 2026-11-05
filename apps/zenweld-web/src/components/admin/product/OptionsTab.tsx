@@ -6,7 +6,6 @@ import { ArrowUp, Plus, Trash2, X } from "lucide-react";
 import {
   MAX_PRODUCT_OPTIONS,
   combinationLabel,
-  normalizeCode,
   variantIdFor,
   type OptionDefinition,
   type Product,
@@ -644,100 +643,4 @@ function VariantBox({
       )}
     </div>
   );
-}
-
-/* ------------------------------------------------------------------ */
-/* Kayit oncesi                                                        */
-/* ------------------------------------------------------------------ */
-
-/**
- * Baska urunlerin kodlari (urun ve varyant kodlari) -> nerede kullanildigi.
- * Kodlar tek havuzda benzersizdir; bayi ve satici stok dosyalari bu kodla
- * eslesir (buildCodeIndex).
- */
-function codesInUse(products: Product[], selfId: string): Map<string, string> {
-  const taken = new Map<string, string>();
-  products
-    .filter((p) => p.id !== selfId)
-    .forEach((p) => {
-      taken.set(normalizeCode(p.sku), `"${p.name}" ürününde kullanılıyor`);
-      p.options?.variants.forEach((v) => taken.set(normalizeCode(v.sku), `"${p.name}" ürününün bir kombinasyonunda kullanılıyor`));
-    });
-  return taken;
-}
-
-/** Urunun kendi kodu baska bir urunun ya da varyantinin koduyla ayni olamaz. */
-export function productCodeError(draft: Product, products: Product[]): string | null {
-  const code = normalizeCode(draft.sku);
-  const clash = code ? codesInUse(products, draft.id).get(code) : undefined;
-  return clash ? `Ürün kodu (${draft.sku.trim()}) ${clash}.` : null;
-}
-
-/**
- * Secenekler: en fazla 3; her secenekte en az bir deger; ayni kombinasyon
- * iki kez olamaz. Kombinasyon kodlari zorunludur; urunun kendi koduyla,
- * ayni urunun baska kombinasyonuyla ya da baska bir urunun (veya
- * varyantinin) koduyla ayni olamaz. Fiyat eksiye dusemez.
- */
-export function optionsError(draft: Product, definitions: OptionDefinition[], products: Product[]): string | null {
-  const own = draft.options;
-  if (!own) return null;
-  if (own.optionIds.length > MAX_PRODUCT_OPTIONS) return `Bir üründe en fazla ${MAX_PRODUCT_OPTIONS} seçenek olur.`;
-  const defs = own.optionIds.map((id) => definitions.find((d) => d.id === id));
-  if (defs.some((d) => !d)) return "Ürünün seçenek tanımlarından biri bulunamadı.";
-  const used = defs as OptionDefinition[];
-  const empty = used.find((d) => !own.variants.some((v) => d.values.some((x) => x.id === v.values[d.id])));
-  if (empty && own.variants.length) return `"${empty.name}" seçeneği için en az bir değer işaretleyin.`;
-  const label = (v: ProductVariant) =>
-    used.map((d) => d.values.find((x) => x.id === v.values[d.id])?.label ?? "?").join(" · ");
-
-  const taken = codesInUse(products, draft.id);
-  if (draft.sku.trim()) taken.set(normalizeCode(draft.sku), "ürünün kendi koduyla aynı olamaz");
-  const combos = new Set<string>();
-
-  for (const v of own.variants) {
-    const name = label(v);
-    if (used.some((d) => !d.values.some((x) => x.id === v.values[d.id])))
-      return `"${name}" kombinasyonunda her seçenekten bir değer olmalı.`;
-    const combo = own.optionIds.map((o) => v.values[o]).join("|");
-    if (combos.has(combo)) return `"${name}" kombinasyonu iki kez girilmiş.`;
-    combos.add(combo);
-    const code = normalizeCode(v.sku);
-    if (!code) return `"${name}" kombinasyonunun ürün kodu zorunludur.`;
-    const clash = taken.get(code);
-    if (clash) return `"${name}" kombinasyonunun kodu (${v.sku.trim()}) ${clash}.`;
-    taken.set(code, `"${name}" kombinasyonunda da var`);
-    if (draft.priceExVat + v.priceDeltaExVat < 0) return `"${name}" kombinasyonunun fiyatı eksiye düşüyor.`;
-  }
-  return null;
-}
-
-/**
- * Kayit icin toparlar: kombinasyonu olmayan secenekler kaldirilir, bos
- * satir ve maddeler atilir, urunden silinmis fotograf secimi temizlenir.
- * Eski ayri urunun linki (previousSlugs) korunur.
- */
-export function tidyOptions(draft: Product): ProductOptions | undefined {
-  const own = draft.options;
-  if (!own?.variants.length) return undefined;
-  const images = new Set(draft.images.map((i) => i.url));
-  return {
-    optionIds: own.optionIds,
-    variants: own.variants.map(({ id, values, sku, priceDeltaExVat, specOverrides, inTheBox, image, previousSlugs }) => {
-      const specs = (specOverrides ?? [])
-        .map((r) => ({ label: r.label.trim(), value: r.value.trim() }))
-        .filter((r) => r.label && r.value);
-      const box = (inTheBox ?? []).map((x) => x.trim()).filter(Boolean);
-      return {
-        id,
-        values: Object.fromEntries(own.optionIds.map((o) => [o, values[o]])),
-        sku: sku.trim(),
-        priceDeltaExVat,
-        ...(specs.length ? { specOverrides: specs } : {}),
-        ...(box.length ? { inTheBox: box } : {}),
-        ...(image && images.has(image) ? { image } : {}),
-        ...(previousSlugs?.length ? { previousSlugs } : {}),
-      };
-    }),
-  };
 }

@@ -239,7 +239,7 @@ Kategori ↔ tanım bağı (`category_options`) kategorinin `optionIds` alanıd�
 | `vatRate` | sayı | KDV oranı (%), ör. 20 |
 | `currency` | `"TRY"` | |
 | `discount` | kampanya? | Bkz. aşağıda |
-| `images[]` | liste | `{ url, alt }`; ilki kapak |
+| `images[]` | liste | `{ url, alt }`; ilki kapak. Veritabanı modunda yüklenmiş dosya (`data:`) kabul edilmez, adres girilir (KARARLAR K-101) |
 | `specs[]` | liste | Teknik özellik satırları `{ label, value }` |
 | `inTheBox[]` | metin[] | Kutu içeriği |
 | `highlights[]` | metin[] | Öne çıkan özellikler; ilk 3'ü menü kartında |

@@ -9,34 +9,47 @@ import {
   groupHref,
   groupSlugTakenText,
   isUploadedFile,
+  normalizeCode,
   optionDefinitionError,
   optionInUseText,
   optionValueInUseText,
+  optionsError,
+  productCodeError,
+  productSlugTakenText,
   tidyFilterValues,
+  tidyOptions,
+  validateDiscount,
   type Category,
   type CategoryFilter,
   type CategoryGroup,
   type OptionDefinition,
   type OptionValue,
   type Product,
+  type ProductDiscount,
   type ProductFilterValues,
+  type ProductImage,
+  type ProductOptions,
+  type ProductVariant,
   type SeoFields,
+  type SpecRow,
   type TopLevelSection,
+  type WeldingProcess,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { slugify } from "@zenweld/utils";
 import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
-import { checkRow, fail, isFailure, newId, saved, text, type PanelResult, type Saved } from "./panel";
+import { checkRow, fail, isFailure, newId, saved, text, unchanged, type PanelResult, type Saved } from "./panel";
 import { readCatalog } from "./read";
+import { combinationKey } from "./seed";
 import * as s from "./schema";
 import { SECTIONS } from "./schema/columns";
 
 /**
  * PANEL › KATALOG SUNUCUDA (veritabani modu; Asama 5, 3. alan; KARARLAR K-99)
  *
- * Adim 3.1: Seçenek Tanımları, Kategoriler ve gruplar. Kurallar demo
- * modundaki panelle aynidir (packages/store › repo/options.ts,
- * categories.ts; packages/data › catalog-rules.ts, filters.ts). Yazmalar
+ * Adim 3.1: Seçenek Tanımları, Kategoriler ve gruplar; adim 3.2: Ürünler.
+ * Kurallar demo modundaki panelle aynidir (packages/store › repo/options.ts,
+ * categories.ts, products.ts; packages/data › catalog-rules.ts, filters.ts). Yazmalar
  * panel.ts'teki ortak kurallarla yapilir; basarili kayittan sonra sitenin
  * katalog onbellegi yenilenir (cagiran uc).
  *
@@ -113,7 +126,7 @@ function parseSeo(value: unknown): SeoFields | undefined | null {
 const validSlug = (slug: string) => slug !== "" && slugify(slug) === slug;
 
 /** Adres degisti: eski adres kayda yonlenir; yeni adres baska bir kaydin eski adresiyse o yonlendirme kalkar. */
-async function movePath(db: AuditDb, oldPath: string, newPath: string, targetType: "category" | "group", targetId: string) {
+async function movePath(db: AuditDb, oldPath: string, newPath: string, targetType: "product" | "category" | "group", targetId: string) {
   if (oldPath === newPath) return;
   await db
     .insert(s.redirects)
@@ -763,5 +776,434 @@ export async function adminMoveGroup(db: AuditDb, actor: Actor, input: Input, at
       at,
     );
   }
+  return { ok: true };
+}
+
+/* ------------------------------ Urunler ------------------------------ */
+
+const PROCESSES: readonly WeldingProcess[] = ["MIG", "MAG", "TIG", "MMA", "PULSE", "PLAZMA", "MULTI"];
+
+const PRODUCT_FIELDS = [
+  "name",
+  "slug",
+  "sku",
+  "modelCode",
+  "brand",
+  "section",
+  "categorySlug",
+  "processes",
+  "shortDescription",
+  "description",
+  "priceExVat",
+  "vatRate",
+  "discount",
+  "images",
+  "specs",
+  "inTheBox",
+  "highlights",
+  "options",
+  "isNew",
+  "order",
+  "manualUrl",
+  "warrantyMonths",
+  "active",
+  "seo",
+] as const satisfies readonly (keyof Product)[];
+
+/** Varyant kimligi: deger kimliklerinden uretilir ("su-sogutmali_8-m"). */
+const VARIANT_ID_PATTERN = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
+
+const texts = (value: unknown, max: number, limit = 200): string[] | null =>
+  Array.isArray(value) && value.length <= limit ? value.map((x) => text(x, max)) : null;
+
+/** Teknik ozellik satirlari. */
+function parseSpecs(value: unknown): SpecRow[] | null {
+  if (value === undefined || value === null) return [];
+  if (!Array.isArray(value) || value.length > 200) return null;
+  return value.map((r) => ({ label: text(record(r).label, 200), value: text(record(r).value, 2000) }));
+}
+
+/** Para: 0 ya da artı, en fazla iki ondalık (kolon numeric(12,2)). */
+const money = (value: unknown, allowNegative = false): number | null =>
+  typeof value === "number" && Number.isFinite(value) && Math.abs(value) < 1e10 && (allowNegative || value >= 0)
+    ? Math.round(value * 100) / 100
+    : null;
+
+const isoOrUndefined = (value: unknown): string | undefined | null => {
+  if (value === undefined || value === null || value === "") return undefined;
+  if (typeof value !== "string") return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+};
+
+/** Kampanya: yoksa ya da oran 0 ise kampanya yok. */
+function parseDiscount(value: unknown): ProductDiscount | undefined | null {
+  if (value === undefined || value === null) return undefined;
+  const input = record(value);
+  if (input.percent === 0 || input.percent === undefined) return undefined;
+  const startsAt = isoOrUndefined(input.startsAt);
+  const endsAt = isoOrUndefined(input.endsAt);
+  if (typeof input.percent !== "number" || startsAt === null || endsAt === null) return null;
+  return { percent: input.percent, ...(startsAt && { startsAt }), ...(endsAt && { endsAt }) };
+}
+
+/** Secenekler ve kombinasyonlar (formun gonderdigi hal; kurallar optionsError'da). */
+function parseOptions(value: unknown): ProductOptions | undefined | null {
+  if (value === undefined || value === null) return undefined;
+  const input = record(value);
+  const optionIds = texts(input.optionIds, 100, 10);
+  if (!optionIds || !Array.isArray(input.variants) || input.variants.length > 500) return null;
+  const variants = [];
+  for (const v of input.variants) {
+    const row = record(v);
+    const id = text(row.id, 200);
+    const delta = money(row.priceDeltaExVat ?? 0, true);
+    const values: Record<string, string> = {};
+    for (const [definitionId, valueId] of Object.entries(record(row.values))) {
+      if (typeof valueId !== "string") return null;
+      values[definitionId] = valueId;
+    }
+    const specOverrides = row.specOverrides === undefined ? undefined : parseSpecs(row.specOverrides);
+    const inTheBox = row.inTheBox === undefined ? undefined : texts(row.inTheBox, 500);
+    if (!VARIANT_ID_PATTERN.test(id) || delta === null || specOverrides === null || inTheBox === null) return null;
+    variants.push({
+      id,
+      values,
+      sku: text(row.sku, 100),
+      priceDeltaExVat: delta,
+      ...(specOverrides && { specOverrides }),
+      ...(inTheBox && { inTheBox }),
+      ...(text(row.image, 2000) && { image: text(row.image, 2000) }),
+    });
+  }
+  if (new Set(variants.map((v) => v.id)).size !== variants.length) return null;
+  return { optionIds, variants };
+}
+
+/** Kombinasyon, eski ayri urun linkleri olmadan (linkler kayitli halden alinir). */
+function withoutPreviousSlugs(variant: ProductVariant): ProductVariant {
+  const copy = { ...variant };
+  delete copy.previousSlugs;
+  return copy;
+}
+
+/** Islem kaydi icin secenekler: eski ayri urunlerin linkleri (yonlendirme) haric. */
+const optionsForAudit = (options: ProductOptions | undefined) =>
+  options && {
+    optionIds: options.optionIds,
+    variants: options.variants.map((v) => withoutPreviousSlugs(v)),
+  };
+
+/** Urunun tablolardaki son hali ve kategorisi. */
+async function productParts(db: AuditDb, id: string) {
+  const catalog = await readCatalog(db);
+  return { catalog, product: catalog.products.find((p) => p.id === id) };
+}
+
+/**
+ * Urunu ekler (id yoksa) ya da gunceller: temel bilgiler, fiyat ve
+ * kampanya, aciklamalar, gorseller (adres; yuklenmis dosya kabul edilmez,
+ * K-101), teknik ozellikler, kutu icerigi, secenekler ve kombinasyonlar,
+ * filtre degerleri, SEO.
+ * - Urun ve kombinasyon kodlari tek havuzda benzersizdir; link urunler
+ *   arasinda benzersizdir.
+ * - Link degisince eski adres yeni adrese yonlenir.
+ * - Kaldirilan kombinasyonun (secenek listesi degistiyse butun
+ *   kombinasyonlarin) bayi/satici stok satirlari ve kod eslesmeleri silinir.
+ * - Degisiklik yoksa hicbir sey yazilmaz.
+ */
+export async function adminSaveProduct(
+  db: AuditDb,
+  actor: Actor,
+  input: Input,
+  at: Date,
+): Promise<PanelResult<{ id: string } & Saved>> {
+  const seo = parseSeo(input.seo);
+  const discount = parseDiscount(input.discount);
+  const options = parseOptions(input.options);
+  const specs = parseSpecs(input.specs);
+  const inTheBox = texts(input.inTheBox, 500);
+  const highlights = texts(input.highlights, 500);
+  const priceExVat = money(input.priceExVat);
+  const vatRate = typeof input.vatRate === "number" && input.vatRate >= 0 && input.vatRate <= 100 ? input.vatRate : null;
+  const warrantyMonths = Number.isInteger(input.warrantyMonths) && (input.warrantyMonths as number) >= 0 ? (input.warrantyMonths as number) : null;
+  const order = input.order === undefined || input.order === null ? undefined : Number.isInteger(input.order) && (input.order as number) >= 1 ? (input.order as number) : null;
+  const images = Array.isArray(input.images) && input.images.length <= 50
+    ? input.images.map((i): ProductImage => ({ url: text(record(i).url, 2000), alt: text(record(i).alt, 300) }))
+    : null;
+  const filterValues: ProductFilterValues = {};
+  for (const [filterId, ids] of Object.entries(record(input.filterValues))) {
+    if (!Array.isArray(ids)) return invalid();
+    filterValues[filterId] = ids.filter((x): x is string => typeof x === "string");
+  }
+  if (
+    seo === null ||
+    discount === null ||
+    options === null ||
+    !specs ||
+    !inTheBox ||
+    !highlights ||
+    !images ||
+    images.some((i) => !i.url) ||
+    priceExVat === null ||
+    vatRate === null ||
+    warrantyMonths === null ||
+    order === null ||
+    typeof input.isNew !== "boolean" ||
+    typeof input.active !== "boolean"
+  ) {
+    return invalid();
+  }
+  const name = text(input.name, 300);
+  const slug = text(input.slug, 200);
+  const sku = text(input.sku, 100);
+  if (!name) return fail(400, "Ürün adı zorunludur.");
+  if (!normalizeCode(sku)) return fail(400, "Ürün kodu zorunludur.");
+  if (!validSlug(slug)) return invalid();
+  if (images.some((i) => isUploadedFile(i.url))) return fail(400, tr.panel.uploadDisabled);
+  if (discount) {
+    const problem = validateDiscount(discount);
+    if (problem) return fail(400, problem);
+  }
+
+  // Kod ve link tekilligi: urun kayitlari sirayla yapilir.
+  await serialize(db, "catalog.products");
+  const isNew = input.id === undefined || input.id === null || input.id === "";
+  let row: typeof s.products.$inferSelect | undefined;
+  if (!isNew) {
+    const id = text(input.id, 100);
+    const [found] = id ? await db.select().from(s.products).where(eq(s.products.id, id)).for("update") : [];
+    const checked = checkRow(found, input, notFound, stale);
+    if (isFailure(checked)) return checked;
+    row = checked;
+  }
+  const id = row?.id ?? newId("p");
+  const { catalog, product: before } = await productParts(db, id);
+  const category = catalog.categories.find((c) => c.slug === text(input.categorySlug, 200));
+  if (!category) return fail(400, tr.panel.categoryMissing);
+  const [categoryRow] = await db.select({ id: s.categories.id }).from(s.categories).where(eq(s.categories.id, category.id));
+
+  const draft: Product = {
+    id,
+    slug,
+    sku,
+    name,
+    modelCode: text(input.modelCode, 100) || undefined,
+    brand: text(input.brand, 100) || undefined,
+    section: category.section,
+    categorySlug: category.slug,
+    processes: (texts(input.processes, 20, 10) ?? []).filter((x): x is WeldingProcess => PROCESSES.includes(x as WeldingProcess)),
+    shortDescription: text(input.shortDescription, 2000),
+    description: text(input.description, 100000),
+    priceExVat,
+    vatRate,
+    currency: "TRY",
+    images,
+    specs,
+    inTheBox,
+    highlights,
+    discount,
+    options,
+    isNew: input.isNew,
+    order,
+    manualUrl: text(input.manualUrl, 2000) || undefined,
+    warrantyMonths,
+    createdAt: before?.createdAt ?? iso(at),
+    updatedAt: iso(at),
+    active: input.active,
+    seo,
+  };
+  const codeProblem = productCodeError(draft, catalog.products);
+  if (codeProblem) return fail(409, codeProblem);
+  const clash = catalog.products.find((p) => p.id !== id && p.slug === slug);
+  if (clash) return fail(409, productSlugTakenText(slug, clash.name));
+  const optionsProblem = optionsError(draft, catalog.optionDefinitions, catalog.products);
+  if (optionsProblem) return fail(400, optionsProblem);
+
+  // Eski ayri urunlerin linkleri (kombinasyona yonlenenler) kayitli halden alinir.
+  const tidy = tidyOptions(draft);
+  const previous = new Map((before?.options?.variants ?? []).map((v) => [v.id, v.previousSlugs]));
+  const nextOptions: ProductOptions | undefined = tidy && {
+    optionIds: tidy.optionIds,
+    variants: tidy.variants.map((v) => ({
+      ...withoutPreviousSlugs(v),
+      ...(previous.get(v.id)?.length && { previousSlugs: previous.get(v.id) }),
+    })),
+  };
+  const nextFilters = tidyFilterValues(filterValues, category.filters);
+  const after: Product = { ...draft, options: nextOptions, filterValues: nextFilters };
+
+  // SEO alanlari ayni bicimde karsilastirilir (bos alan yazilmaz).
+  const compare = (p: Product) => ({ ...p, options: optionsForAudit(p.options), seo: parseSeo(p.seo) ?? undefined });
+  const changes = before
+    ? {
+        ...changedFields(compare(before), compare(after), PRODUCT_FIELDS),
+        ...(!sameValues(before.filterValues, nextFilters) && { filterValues: [before.filterValues ?? null, nextFilters ?? null] }),
+      }
+    : Object.fromEntries([...PRODUCT_FIELDS, "filterValues" as const].map((key) => [key, compare(after)[key] ?? null]));
+  if (row && !Object.keys(changes).length) return { ...unchanged(row), id };
+
+  const columns = {
+    slug,
+    sku,
+    name,
+    categoryId: categoryRow.id,
+    modelCode: draft.modelCode ?? null,
+    brand: draft.brand ?? null,
+    shortDescription: draft.shortDescription,
+    description: draft.description,
+    priceExVat,
+    vatRate,
+    discountPercent: discount?.percent ?? null,
+    discountStartsAt: discount?.startsAt ? new Date(discount.startsAt) : null,
+    discountEndsAt: discount?.endsAt ? new Date(discount.endsAt) : null,
+    images,
+    specs,
+    inTheBox,
+    highlights,
+    processes: draft.processes,
+    isNew: draft.isNew,
+    manualUrl: draft.manualUrl ?? null,
+    warrantyMonths,
+    active: draft.active,
+    seo: seo ?? null,
+    updatedAt: at,
+  };
+  if (row) {
+    // Kombinasyonlar yeniden yazilir: kodlar urunler ve kombinasyonlar arasinda yer degistirebilir.
+    await db.delete(s.productVariants).where(eq(s.productVariants.productId, id));
+    await db.delete(s.productOptions).where(eq(s.productOptions.productId, id));
+    await db.update(s.products).set({ ...columns, position: order ?? null }).where(eq(s.products.id, id));
+  } else {
+    const [{ last }] = await db
+      .select({ last: max(s.products.position) })
+      .from(s.products)
+      .where(eq(s.products.categoryId, categoryRow.id));
+    after.order = order ?? (last ?? 0) + 1;
+    await db.insert(s.products).values({ id, ...columns, position: after.order, createdAt: at });
+  }
+
+  if (nextOptions) {
+    await db
+      .insert(s.productOptions)
+      .values(nextOptions.optionIds.map((optionDefinitionId, position) => ({ productId: id, optionDefinitionId, position })));
+    await db.insert(s.productVariants).values(
+      nextOptions.variants.map((v, position) => ({
+        productId: id,
+        id: v.id,
+        combinationKey: combinationKey(nextOptions.optionIds, v.values),
+        sku: v.sku,
+        priceDeltaExVat: v.priceDeltaExVat,
+        specOverrides: v.specOverrides ?? null,
+        inTheBox: v.inTheBox ?? null,
+        image: v.image ?? null,
+        position,
+      })),
+    );
+    await db.insert(s.productVariantValues).values(
+      nextOptions.variants.flatMap((v) =>
+        nextOptions.optionIds.map((optionDefinitionId) => ({
+          productId: id,
+          variantId: v.id,
+          optionDefinitionId,
+          optionValueId: v.values[optionDefinitionId],
+        })),
+      ),
+    );
+    // Kombinasyonun silinmesi onun eski ayri urun linklerini de sildi; kalan kombinasyonlarinki geri yazilir.
+    const kept = nextOptions.variants.flatMap((v) =>
+      (v.previousSlugs ?? []).map((old) => ({ oldPath: `/urun/${old}`, targetType: "product", targetId: id, variantId: v.id })),
+    );
+    if (kept.length) await db.insert(s.redirects).values(kept).onConflictDoNothing();
+  }
+
+  const path = `/urun/${slug}`;
+  if (before) await movePath(db, `/urun/${before.slug}`, path, "product", id);
+  else await releasePath(db, path);
+
+  await db.delete(s.productFilterValues).where(eq(s.productFilterValues.productId, id));
+  const filterRows = Object.entries(nextFilters ?? {}).flatMap(([filterId, ids]) =>
+    ids.map((valueId) => ({ productId: id, categoryId: categoryRow.id, filterId, valueId })),
+  );
+  if (filterRows.length) await db.insert(s.productFilterValues).values(filterRows);
+
+  if (before) {
+    // Kaldirilan kombinasyonlarin stok satirlari ve kod eslesmeleri silinir. Secenek listesi
+    // degistiyse hepsi: iki tanimda ayni kimlikli deger ("3-m") olabilir, eski stok yeni
+    // kombinasyonun sanilmasin. Butun kombinasyonlar icin girilmis satirlar (variant_id bos) kalir.
+    const sameOptions = (before.options?.optionIds ?? []).join("|") === (nextOptions?.optionIds ?? []).join("|");
+    const keep = sameOptions ? (nextOptions?.variants ?? []).map((v) => v.id) : [];
+    for (const table of [s.dealerStock, s.retailerStock, s.skuAliases]) {
+      await db
+        .delete(table)
+        .where(
+          and(
+            eq(table.productId, id),
+            ne(table.variantId, ""),
+            ...(keep.length ? [sql`${table.variantId} NOT IN (${sql.join(keep.map((k) => sql`${k}`), sql`, `)})`] : []),
+          ),
+        );
+    }
+  }
+
+  await writeAudit(
+    db,
+    actor,
+    {
+      action: before ? "update" : "create",
+      entityType: "products",
+      entityId: id,
+      entityLabel: name,
+      changes: before ? changes : { ...changes, order: after.order ?? null },
+    },
+    at,
+  );
+  return { ...saved(at), id };
+}
+
+/** Urunu yayina alir ya da yayindan kaldirir (Ürünler listesindeki goz). */
+export async function adminSetProductActive(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<Saved>> {
+  if (typeof input.active !== "boolean") return invalid();
+  const id = text(input.id, 100);
+  const [found] = id ? await db.select().from(s.products).where(eq(s.products.id, id)).for("update") : [];
+  const row = checkRow(found, input, notFound, stale);
+  if (isFailure(row)) return row;
+  if (row.active === input.active) return unchanged(row);
+  await db.update(s.products).set({ active: input.active, updatedAt: at }).where(eq(s.products.id, row.id));
+  await writeAudit(
+    db,
+    actor,
+    { action: "update", entityType: "products", entityId: row.id, entityLabel: row.name, changes: { active: [row.active, input.active] } },
+    at,
+  );
+  return saved(at);
+}
+
+/**
+ * Urunu siler. Bagli kayitlar tablo kurallariyla temizlenir: secenekleri,
+ * kombinasyonlari, filtre degerleri, bayi/satici stok satirlari, kod
+ * eslesmeleri, favoriler, kuponlardaki secimi ve eski linkleri silinir;
+ * belgelerdeki baglantisi bosalir. Gecmis siparis, teklif, yorum, servis ve
+ * garanti kayitlarindaki ad ve kod kopyasi kalir.
+ */
+export async function adminDeleteProduct(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult> {
+  const id = text(input.id, 100);
+  const [found] = id ? await db.select().from(s.products).where(eq(s.products.id, id)).for("update") : [];
+  const row = checkRow(found, input, notFound, stale);
+  if (isFailure(row)) return row;
+  const { product } = await productParts(db, row.id);
+  await db.delete(s.products).where(eq(s.products.id, row.id));
+  await writeAudit(
+    db,
+    actor,
+    {
+      action: "delete",
+      entityType: "products",
+      entityId: row.id,
+      entityLabel: row.name,
+      changes: product ? { ...product, options: optionsForAudit(product.options) } : undefined,
+    },
+    at,
+  );
   return { ok: true };
 }

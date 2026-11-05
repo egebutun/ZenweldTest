@@ -1,15 +1,15 @@
 import type { Page } from "@playwright/test";
 import { tr } from "@zenweld/i18n";
 import { demoAccount } from "../e2e/yardimci";
-import { closeDatabase, expect, sql, test } from "./yardimci";
+import { closeDatabase, expect, offerOnPage, sql, test } from "./yardimci";
 
 /**
- * PANEL › KATALOG VERITABANINDA, ADIM 3.1 (Asama 5, 3. alan; KARARLAR K-99, K-101)
+ * PANEL › KATALOG VERITABANINDA, ADIM 3.1 VE 3.2 (Asama 5, 3. alan; KARARLAR K-99, K-101)
  *
- * Seçenek Tanımları, Kategoriler ve gruplar veritabanindan okunur ve
- * yazilir. Kategorinin linki degisince sitede eski adres yeni adrese
- * yonlenir ve yeni ad hemen gorunur. Gorsel yukleme dosya deposu gelene
- * kadar kapalidir.
+ * Seçenek Tanımları, Kategoriler ve gruplar, Ürünler veritabanindan okunur
+ * ve yazilir. Kategorinin ya da urunun linki degisince sitede eski adres yeni
+ * adrese yonlenir ve degisiklik hemen gorunur. Gorsel yukleme dosya deposu
+ * gelene kadar kapalidir.
  */
 test.describe.configure({ mode: "serial" });
 test.afterAll(closeDatabase);
@@ -21,6 +21,7 @@ const GROUP = { id: `g-e2e-${stamp}`, slug: `deneme-grup-${stamp}`, name: `Denem
 const CATEGORY = { id: `c-e2e-${stamp}`, slug: `deneme-kategori-${stamp}`, name: `Deneme Kategori ${stamp}` };
 const NEW = { slug: `yeni-kategori-${stamp}`, name: `Yeni Kategori ${stamp}` };
 const NEW_GROUP = `Yeni Grup ${stamp}`;
+const PRODUCT = { name: `Deneme Ürün ${stamp}`, sku: `ZW-E2E-${stamp}`, slug: `deneme-urun-${stamp}`, newSlug: `deneme-urun-yeni-${stamp}` };
 
 async function panelLogin(page: Page) {
   await page.goto("/yonetim/giris");
@@ -58,6 +59,7 @@ test.afterAll(async () => {
   await sql("DELETE FROM categories WHERE id = $1", [CATEGORY.id]);
   await sql("DELETE FROM category_groups WHERE id = $1 OR name = $2", [GROUP.id, NEW_GROUP]);
   await sql("DELETE FROM option_definitions WHERE name LIKE $1", [`${OPTION}%`]);
+  await sql("DELETE FROM products WHERE sku = $1", [PRODUCT.sku]);
 });
 
 test("seçenek tanımı: eklenir, hemen ardından adı değişir (kendi kaydı uyarı vermez), silinir", async ({ page }) => {
@@ -135,6 +137,53 @@ test("grup eklenir ve silinir; kategorisi olan grup silinemez; kategori silinir"
   // Silinen kategorinin eski adresleri de kalkar.
   expect(await sql("SELECT old_path FROM redirects WHERE target_id = $1", [CATEGORY.id])).toEqual([]);
   await expect(page.getByRole("button", { name: `${GROUP.name} sil` })).toBeEnabled();
+});
+
+test("ürün: oluşturulur; fiyatı ve linki değişince sitede hemen görünür, eski link yönlenir; yayından kaldırılır, silinir", async ({
+  page,
+  request,
+}) => {
+  await panelLogin(page);
+  await page.goto("/yonetim/urunler/yeni");
+  await field(page, "Ürün Adı").fill(PRODUCT.name);
+  await field(page, "Ürün Kodu (SKU)").fill(PRODUCT.sku);
+  await field(page, "Normal fiyat (KDV hariç, ₺)").fill("1000");
+  await page.getByRole("button", { name: /^Görseller/ }).click();
+  await expect(page.getByText(tr.panel.uploadDisabled)).toBeVisible();
+  await expect(page.getByText("Dosya Yükle")).toHaveCount(0);
+  await page.getByRole("button", { name: "Ürünü Oluştur" }).click();
+  await expect(page).toHaveURL(/\/yonetim\/urunler\/p-[0-9a-f]+$/);
+  await expect(page.getByRole("heading", { name: PRODUCT.name })).toBeVisible();
+  const [{ id, slug }] = await sql<{ id: string; slug: string }>("SELECT id, slug FROM products WHERE sku = $1", [PRODUCT.sku]);
+  expect(slug).toBe(PRODUCT.slug);
+  expect((await offerOnPage(request, `/urun/${slug}`)).price).toBe(1200);
+
+  // Hemen ardindan fiyat ve link degisir (kendi kaydi uyari vermez).
+  await field(page, "Normal fiyat (KDV hariç, ₺)").fill("2000");
+  await page.getByRole("button", { name: "SEO", exact: true }).click();
+  await field(page, "Ürün Linki").fill(PRODUCT.newSlug);
+  await page.getByRole("button", { name: "Değişiklikleri Kaydet" }).click();
+  await expect(page.getByText("Ürün kaydedildi.")).toBeVisible();
+  await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
+  expect((await offerOnPage(request, `/urun/${PRODUCT.newSlug}`)).price).toBe(2400);
+  await page.goto(`/urun/${PRODUCT.slug}`);
+  await expect(page).toHaveURL(new RegExp(`/urun/${PRODUCT.newSlug}$`));
+
+  await page.goto("/yonetim/urunler");
+  await page.getByPlaceholder("Ürün adı veya SKU ara…").fill(PRODUCT.sku);
+  await page.getByRole("button", { name: `${PRODUCT.name} yayından kaldır` }).click();
+  await expect(page.getByRole("button", { name: `${PRODUCT.name} yayına al` })).toBeVisible();
+  expect((await sql<{ active: boolean }>("SELECT active FROM products WHERE id = $1", [id]))[0].active).toBe(false);
+  const hidden = await page.context().newPage();
+  await hidden.goto(`/urun/${PRODUCT.newSlug}`);
+  await expect(hidden.getByRole("heading", { name: "Sayfa bulunamadı" })).toBeVisible();
+  await hidden.close();
+
+  page.once("dialog", (d) => void d.accept());
+  await page.getByRole("button", { name: `${PRODUCT.name} sil` }).click();
+  await expect.poll(async () => (await sql("SELECT id FROM products WHERE id = $1", [id])).length).toBe(0);
+  const audit = await sql<{ action: string }>("SELECT action FROM audit_log WHERE entity_type = 'products' AND entity_id = $1 ORDER BY id", [id]);
+  expect(audit.map((r) => r.action)).toEqual(["create", "update", "update", "delete"]);
 });
 
 test("oturumsuz katalog isteği reddedilir", async ({ request }) => {

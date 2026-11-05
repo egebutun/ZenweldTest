@@ -1639,20 +1639,24 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   başvurusu ve ürün sorusunun panelde görünmesi, Welders Club, oturumsuz
   istek).
 
-**Panel › Katalog, adım 3.1 (Aşama 5, 3. alan; KARARLAR K-99, K-101; `src/admin-catalog.ts`):**
+**Panel › Katalog, adım 3.1 ve 3.2 (Aşama 5, 3. alan; KARARLAR K-99, K-101; `src/admin-catalog.ts`):**
 
 - **Okuma:** `readCatalogPanel` katalogu önbelleksiz okur (panel her zaman
   güncel kaydı görür): gruplar, kategoriler ve seçenek tanımları son
-  değişiklik anıyla, ürünler. Seçenek Tanımları ve Kategoriler sayfaları
-  (liste, kategori ve grup formları) bunu kendi sunucu bileşeninde okur;
-  yönetici oturumu denetlenir.
+  değişiklik anıyla, ürünler. Seçenek Tanımları, Kategoriler (liste,
+  kategori ve grup formları) ve Ürünler (liste, ürün formu) sayfaları bunu
+  kendi sunucu bileşeninde okur; Ürünler listesi Zenweld depo stoğunu da
+  (`readWarehouseStock`) okur. Yönetici oturumu denetlenir.
 - **Yazma:** `POST /api/yonetim/katalog/<işlem>`
   (`apps/zenweld-web/src/app/api/yonetim/katalog/[islem]/route.ts`):
   `secenek` (oluşturma ve düzenleme), `secenek-sil`, `kategori` (oluşturma
   ve düzenleme), `kategori-sil`, `kategori-sira`, `grup` (oluşturma ve
-  düzenleme), `grup-sil`, `grup-sira`. Kurallar Satış ile aynı: oturum,
-  kilit, `updated_at` denetimi, `audit_log`. Başarılı her işlemden sonra
-  `refreshSite(["katalog"])` çağrılır; site hemen yenilenir.
+  düzenleme), `grup-sil`, `grup-sira`, `urun` (oluşturma ve düzenleme),
+  `urun-yayin`, `urun-sil`. Kurallar Satış ile aynı: oturum, kilit,
+  `updated_at` denetimi, `audit_log`. Başarılı her işlemden sonra
+  `refreshSite(["katalog"])` çağrılır; ürün işlemlerinde `stok` ve
+  `yorumlar` da (kaldırılan kombinasyonun stok satırları silinir; anasayfa
+  yorum şeridi yalnızca yayındaki ürünlerin yorumlarını gösterir).
 - **Kurallar demo moduyla aynı** (`packages/data` › `catalog-rules.ts`,
   `filters.ts`): tanım adı tekil, değer adları tanımda tekil; üründe
   kullanılan değer (`product_variant_values`) kaldırılamaz, tanım
@@ -1677,8 +1681,26 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   değişir (açık kategori formu silinen tanımı geri yazamaz).
 - **Sıra okları** `position`'ı 1, 2, 3… yapar; `updated_at` değişmez (sıra
   kaydın içeriği sayılmaz). Değişen her satır işlem kaydına yazılır.
-- **Görsel:** Kart görselinde yüklenmiş dosya (`data:` adresi) reddedilir;
-  dosya deposu gelene kadar adres girilir (K-101).
+- **Ürün kaydı:** Kurallar `packages/data` › `catalog-rules.ts`
+  (`productCodeError`, `optionsError`, `tidyOptions`) ve `discount.ts`
+  (`validateDiscount`). Ürün kayıtları sırayla yapılır (kilit): kod
+  (`sku_codes`) ve link tekilliği önce denetlenir. Düzenlemede ürünün
+  kombinasyonları ve seçenekleri silinip yeniden yazılır; böylece ürün ve
+  kombinasyon kodları yer değiştirebilir (tetikleyici kod havuzunu
+  günceller). Kombinasyonun silinmesi onun eski ayrı ürün linklerini de
+  sildiği için kalan kombinasyonlarınki kayıtlı halden geri yazılır. Link
+  değişince `/urun/<eski>` yeni adrese yönlenir. Filtre değerleri ürünün
+  (yeni) kategorisinin filtrelerine göre baştan yazılır. Kaldırılan
+  kombinasyonların (seçenek listesi değiştiyse hepsinin) `dealer_stock`,
+  `retailer_stock` ve `sku_aliases` satırları silinir; `variant_id` boş
+  olanlar kalır. Yeni ürün kategorisinin sonuna eklenir (Sıra boşsa).
+  Değişiklik yoksa hiçbir şey yazılmaz.
+- **Ürün silme:** Bağlı satırlar tablo kurallarıyla temizlenir
+  (`ON DELETE CASCADE` / `SET NULL`, yönlendirme tetikleyicisi). İşlem
+  kaydına ürünün son hali yazılır.
+- **Görsel:** Ürün görsellerinde ve kart görselinde yüklenmiş dosya
+  (`data:` adresi) reddedilir; dosya deposu gelene kadar adres girilir
+  (K-101).
 - Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-catalog.ts`
   (`useCatalogActions`); demo modunda aynı işlemler tarayıcıdaki veriye
   yazılır.
@@ -1689,11 +1711,17 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   değişince yönlendirme, kaldırılan filtre değeri, eşleme tablosu ve eski
   ürün; değişmeyen ürünün kayıt anının korunması; silme engelleri, sıra;
   grup linki değişince kategorilerin yönlendirmesi, bölümün değişmemesi,
-  grup silme ve sıra); `tests/e2e-db/panel-katalog.spec.ts` (tarayıcıda:
+  grup silme ve sıra; yeni ürün, kod ve link tekrarı, yüklenmiş görsel,
+  olmayan kategori, hatalı kampanya ve fiyat; link değişince yönlendirme,
+  ürün ve kombinasyon kodlarının yer değiştirmesi, kaldırılan kombinasyonun
+  stoğu, eski ekran, değişmeyen kayıt; seçenek listesi ve kategori
+  değişince stok ve filtre değerleri; yayından kaldırma, silme ve bağlı
+  kayıtlar); `tests/e2e-db/panel-katalog.spec.ts` (tarayıcıda:
   seçenek tanımı ekleme, hemen ardından düzenleme ve silme; kategori linki
   değişince sitede eski adresin yönlenmesi ve yeni adın görünmesi, kapalı
-  görsel yükleme; grup ekleme ve silme, silme engeli, kategori silme;
-  oturumsuz istek).
+  görsel yükleme; grup ekleme ve silme, silme engeli, kategori silme; ürün
+  oluşturma, hemen ardından fiyat ve link değişikliği, sitede yeni fiyat ve
+  eski linkin yönlenmesi, yayından kaldırma, silme; oturumsuz istek).
 
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek

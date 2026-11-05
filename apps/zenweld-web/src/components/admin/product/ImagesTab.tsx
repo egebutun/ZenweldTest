@@ -6,8 +6,18 @@ import { Alert, Badge, Button, Input, ProductImage } from "@zenweld/ui";
 import { readImageFiles } from "@zenweld/utils";
 import type { ProductTabProps } from "./types";
 
-/** Gorseller sekmesi: URL veya dosya ile ekleme, siralama, silme. Ilk gorsel kapaktir. */
-export function ImagesTab({ draft, set, setDraft, onError }: ProductTabProps & { onError: (message: string) => void }) {
+/**
+ * Gorseller sekmesi: URL veya dosya ile ekleme, siralama, silme. Ilk gorsel
+ * kapaktir. uploadNote verilirse dosya yukleme kapalidir (veritabani modu,
+ * dosya deposu gelene kadar; KARARLAR K-101).
+ */
+export function ImagesTab({
+  draft,
+  set,
+  setDraft,
+  onError,
+  uploadNote,
+}: ProductTabProps & { onError: (message: string) => void; uploadNote?: string }) {
   const [imageUrlInput, setImageUrlInput] = useState("");
 
   // readImageFiles gorseli tarayicida otomatik kucultup WebP'ye cevirir.
@@ -26,8 +36,14 @@ export function ImagesTab({ draft, set, setDraft, onError }: ProductTabProps & {
   return (
     <div className="space-y-5 rounded-[4px] border border-zw-grey-200 bg-white p-5">
       <Alert tone="info">
-        Görsel URL&apos;si girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar
-        otomatik olarak küçültülüp WebP'ye çevrilir; boyutla uğraşmanıza gerek yok. İlk görsel kapak görselidir.
+        {uploadNote ? (
+          <>{uploadNote} İlk görsel kapak görselidir.</>
+        ) : (
+          <>
+            Görsel URL&apos;si girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar otomatik olarak küçültülüp
+            WebP&apos;ye çevrilir; boyutla uğraşmanıza gerek yok. İlk görsel kapak görselidir.
+          </>
+        )}
       </Alert>
 
       <div className="flex flex-col gap-2 sm:flex-row">
@@ -52,20 +68,22 @@ export function ImagesTab({ draft, set, setDraft, onError }: ProductTabProps & {
         >
           URL Ekle
         </Button>
-        <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-[4px] border border-zw-grey-300 px-4 text-sm font-semibold hover:border-zw-ink">
-          <Upload size={16} />
-          Dosya Yükle
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(e) => {
-              onFileUpload(e.target.files);
-              e.target.value = "";
-            }}
-          />
-        </label>
+        {!uploadNote && (
+          <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-[4px] border border-zw-grey-300 px-4 text-sm font-semibold hover:border-zw-ink">
+            <Upload size={16} />
+            Dosya Yükle
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                onFileUpload(e.target.files);
+                e.target.value = "";
+              }}
+            />
+          </label>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4">

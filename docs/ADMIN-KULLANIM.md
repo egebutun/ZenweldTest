@@ -198,8 +198,9 @@ dön** panelin ana ekranına götürür.
   yüklenen dosyanın adresi "(yüklenen dosya)" diye görünür ve elle
   değiştirilemez; **Kaldır** ya da yeni dosya ile değişir.
 - **Demo notu:** Yüklenen görsel veritabanının içine yazılır; gerçek
-  sistemde dosya deposuna yüklenecek. Veritabanı modunda kategori ve grup
-  kart görsellerinde dosya yüklenmez, adres girilir (bkz.
+  sistemde dosya deposuna yüklenecek. Veritabanı modunda katalog
+  görsellerinde (ürün görselleri, kategori ve grup kart görselleri) dosya
+  yüklenmez, adres girilir (bkz.
   [Veritabanı modunda Katalog ekranları](#veritabanı-modunda-katalog-ekranları);
   KARARLAR K-101).
 
@@ -1181,22 +1182,40 @@ değişir.
 
 ### Veritabanı modunda Katalog ekranları
 
-Veritabanı modunda Seçenek Tanımları ile Kategoriler ve gruplar (liste,
-kategori formu, grup formu) veritabanıyla çalışır (KARARLAR K-99, K-101).
-Ürünler ekranı sonraki adımda gelir. Kurallar
+Veritabanı modunda Seçenek Tanımları, Kategoriler ve gruplar (liste,
+kategori formu, grup formu) ve Ürünler (liste, ürün formu) veritabanıyla
+çalışır (KARARLAR K-99, K-101). Stok Matrisi henüz tarayıcıdaki veriyle
+çalışır (4. alan). Kurallar
 [Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
 ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
 kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
 sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 Ekranlar ve kurallar demo moduyla aynıdır; farklar:
 
-- Kaydedilen, silinen ya da sırası değişen seçenek, kategori ve grup sitede
-  (menü, bölüm, grup ve kategori sayfaları, ürün sayfası) hemen değişir.
-  Linki değişen kategori ya da grubun eski adresi yeni adrese yönlenir.
-- **Görsel yükleme kapalı:** Kart Görseli alanında **Dosya Yükle** yoktur;
-  altında "Görsel yükleme dosya deposu kurulunca açılacak; şimdilik görsel
-  adresi girin." yazar. Görsel adresi girilir; kayıtlı görseller görünmeye
-  devam eder. Yüklenmiş dosya içeren kayıt aynı mesajla reddedilir.
+- Kaydedilen, silinen, yayından kaldırılan ya da sırası değişen seçenek,
+  kategori, grup ve ürün sitede (menü, bölüm, grup ve kategori sayfaları,
+  ürün sayfası, site haritası) hemen değişir. Linki değişen ürün, kategori
+  ya da grubun eski adresi yeni adrese yönlenir.
+- **Görsel yükleme kapalı:** Ürünün Görseller sekmesinde ve Kart Görseli
+  alanında **Dosya Yükle** yoktur; "Görsel yükleme dosya deposu kurulunca
+  açılacak; şimdilik görsel adresi girin." yazar. Görsel adresi girilir;
+  kayıtlı görseller görünmeye devam eder. Yüklenmiş dosya içeren kayıt aynı
+  mesajla reddedilir.
+- **Ürünler:**
+  - Ürün kodu, kombinasyon kodları ve link sunucuda da denetlenir; iki
+    yönetici aynı anda aynı kodu ya da linki girse de iki ürüne verilmez.
+    Ürünün kodu ile kombinasyonun kodu tek kayıtta yer değiştirebilir.
+  - Listedeki göz (**Yayından kaldır** / **Yayına al**) ve **Sil** sunucuya
+    yazılır; istek sürerken düğmeler kapanır.
+  - Değişiklik yapmadan **Değişiklikleri Kaydet**'e basılırsa hiçbir şey
+    yazılmaz.
+  - Ürünün kategorisi bu arada silinmişse: "Seçilen kategori artık yok;
+    sayfayı yenileyip yeniden seçin."
+  - Silinen ürünün seçenekleri, kombinasyonları, filtre değerleri, bayi ve
+    satıcı stok satırları, kod eşleştirmeleri, favorilerdeki ve kuponlardaki
+    yeri, eski linkleri de silinir; belgelerdeki bağlantısı boşalır. Sipariş,
+    teklif, yorum, servis ve garanti kayıtlarındaki ad ve kod kopyası kalır.
+  - Yeni ürün oluşturulunca düzenleme sayfası açılır.
 - **Filtreler sekmesindeki eşleme tablosu:** Tabloda değiştirilen bir ürün,
   form açıldıktan sonra başka yerde değişmişse kategori kaydedilmez ("Bu
   kayıt siz açtıktan sonra değişti; sayfayı yenileyin."). Silinen filtre ya

@@ -4,14 +4,17 @@ import type { Category, CategoryGroup, OptionDefinition, Product, ProductFilterV
 import {
   createCategory,
   createGroup,
+  createProduct,
   deleteCategory,
   deleteGroup,
   deleteOptionDefinition,
+  deleteProduct,
   moveCategory,
   moveGroup,
   saveCategory,
   saveGroup,
   saveOptionDefinition,
+  saveProduct,
 } from "@zenweld/store";
 import { tr } from "@zenweld/i18n";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
@@ -19,7 +22,7 @@ import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-
 export type { PanelAnswer };
 
 /**
- * PANEL › KATALOG ISLEMLERI (Seçenek Tanımları, Kategoriler ve gruplar)
+ * PANEL › KATALOG ISLEMLERI (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler)
  *
  * Veritabani modunda islem sunucuya gider (/api/yonetim/katalog; Asama 5,
  * 3. alan, KARARLAR K-99; ortak akis lib/admin-panel.ts). Demo modunda
@@ -33,6 +36,7 @@ export function useCatalogActions() {
   const option = (o: OptionDefinition) => recordRef("option_definitions", o);
   const category = (c: Category) => recordRef("categories", c);
   const group = (g: CategoryGroup) => recordRef("category_groups", g);
+  const product = (p: Product) => recordRef("products", p);
 
   return {
     server,
@@ -113,5 +117,44 @@ export function useCatalogActions() {
     deleteGroup: (g: CategoryGroup) => (server ? call("grup-sil", group(g)) : localAnswer(deleteGroup(g.id))),
     moveGroup: (g: CategoryGroup, direction: -1 | 1) =>
       server ? call("grup-sira", { id: g.id, direction }) : (moveGroup(g.id, direction), localAnswer()),
+
+    /** Urun: yeni (stored yok) ya da duzenleme; kayit formda toparlanmis haldir. Basarida id doner. */
+    saveProduct: (next: Product, stored?: Product): Promise<PanelAnswer> => {
+      if (server) {
+        const fields = {
+          name: next.name,
+          slug: next.slug,
+          sku: next.sku,
+          modelCode: next.modelCode,
+          brand: next.brand,
+          categorySlug: next.categorySlug,
+          processes: next.processes,
+          shortDescription: next.shortDescription,
+          description: next.description,
+          priceExVat: next.priceExVat,
+          vatRate: next.vatRate,
+          discount: next.discount,
+          images: next.images,
+          specs: next.specs,
+          inTheBox: next.inTheBox,
+          highlights: next.highlights,
+          options: next.options,
+          filterValues: next.filterValues,
+          isNew: next.isNew,
+          order: next.order,
+          manualUrl: next.manualUrl,
+          warrantyMonths: next.warrantyMonths,
+          active: next.active,
+          seo: next.seo,
+        };
+        return call("urun", stored ? { ...fields, ...product(stored) } : fields, "products");
+      }
+      if (!stored) return Promise.resolve({ ok: true, id: createProduct(next).id });
+      saveProduct(next);
+      return localAnswer();
+    },
+    setProductActive: (p: Product, active: boolean) =>
+      server ? call("urun-yayin", { ...product(p), active }, "products") : (saveProduct({ ...p, active }), localAnswer()),
+    deleteProduct: (p: Product) => (server ? call("urun-sil", product(p)) : (deleteProduct(p.id), localAnswer())),
   };
 }

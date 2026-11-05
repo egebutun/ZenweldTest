@@ -781,7 +781,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       `?secenek=` bağlantısı çalışmaya devam eder.
 - [ ] Aynı adla ikinci tanım, tanım içinde aynı değer iki kez kaydedilemez.
 
-**Veritabanı modunda Seçenek Tanımları, Kategoriler ve gruplar (KARARLAR K-99, K-101):**
+**Veritabanı modunda Seçenek Tanımları, Kategoriler ve gruplar, Ürünler (KARARLAR K-99, K-101):**
 
 - [ ] Yeni seçenek tanımı, kategori ya da grup kaydedilince başka
       tarayıcıda açılan panelde de görünür; kategori ve grup sitenin
@@ -800,6 +800,19 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       ürün formundan kaydedilmişse kategori kaydedilmez (aynı uyarı).
 - [ ] Yeni tanım hemen ardından düzenlenince "kayıt değişti" uyarısı
       çıkmaz.
+- [ ] Yeni ürün oluşturulunca düzenleme sayfası açılır; ürün sitede
+      `/urun/<link>` adresinde girilen fiyatla görünür. Hemen ardından fiyat
+      ve link değiştirilip kaydedilince uyarı çıkmaz; sitede yeni fiyat
+      görünür, eski link yeni linke yönlenir.
+- [ ] Ürünün Görseller sekmesinde **Dosya Yükle** yoktur; görsel adresi
+      eklenince sitede görünür.
+- [ ] Listede göz ile yayından kaldırılan ürünün sayfası açılmaz
+      ("Sayfa bulunamadı"); yayına alınınca açılır. Silinen ürün listeden ve
+      siteden gider; geçmiş tekliflerde adı kalır.
+- [ ] Başka üründe kullanılan kod (büyük/küçük harf ve boşluk farkıyla da)
+      ya da link girilince kaydedilmez.
+- [ ] Kombinasyonu kaldırılan ürünün o kombinasyona ait bayi stok satırları
+      Stok Matrisi'nden kalkar (`db:studio` › `dealer_stock`).
 - [ ] `npm run db:studio` › `audit_log`: tanım, kategori ve grup
       değişiklikleri ile tablodan değişen ürünlerin filtre değerleri
       yazılmıştır; `redirects`'te eski adresler vardır.

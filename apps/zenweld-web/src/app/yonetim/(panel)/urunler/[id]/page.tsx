@@ -1,42 +1,17 @@
-"use client";
+import { readCatalogPanel } from "@zenweld/db";
+import { PageData } from "@/components/common/PageData";
+import { hasPanelSession } from "@/lib/server/admin";
+import { database, usesDatabase } from "@/lib/server/db";
+import { EditProductClient } from "./EditProductClient";
 
-import { use } from "react";
-import { findProductById, useDatabase } from "@zenweld/store";
-import { Alert } from "@zenweld/ui";
-import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { ProductForm } from "@/components/admin/ProductForm";
-import { siteUrl } from "@/lib/admin-links";
-
-export default function EditProductPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const db = useDatabase();
-  const product = findProductById(id, db);
-
-  if (!product) {
-    return <Alert tone="danger">Ürün bulunamadı.</Alert>;
-  }
-
+/** Ürün düzenleme. Veritabani modunda katalog her acilista ve her kayittan sonra onbelleksiz okunur (KARARLAR K-99). */
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!usesDatabase()) return <EditProductClient id={id} />;
+  if (!(await hasPanelSession())) return null;
   return (
-    <>
-      <AdminPageHeader
-        title={product.name}
-        description={`SKU: ${product.sku}`}
-        action={
-          <a
-            href={siteUrl(`/urun/${product.slug}`)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-semibold text-zw-red-600 hover:underline"
-          >
-            Ürün sayfasını gör ↗
-          </a>
-        }
-      />
-      <ProductForm product={product} />
-    </>
+    <PageData data={await readCatalogPanel(database())}>
+      <EditProductClient id={id} />
+    </PageData>
   );
 }

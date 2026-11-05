@@ -1,28 +1,50 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { tidyFilterValues, validateDiscount, type Product } from "@zenweld/data";
-import { createProduct, saveProduct, useDatabase } from "@zenweld/store";
+import {
+  optionsError,
+  productCodeError,
+  productSlugTakenText,
+  tidyFilterValues,
+  tidyOptions,
+  validateDiscount,
+  type Product,
+} from "@zenweld/data";
+import { tr } from "@zenweld/i18n";
+import { useDatabase } from "@zenweld/store";
 import { ContentFormShell, EMPTY_SLUG_ERROR, findSlugClash, resolveSlug, useContentForm } from "./content-form";
 import { BasicsTab } from "./product/BasicsTab";
 import { DescriptionTab } from "./product/DescriptionTab";
 import { ImagesTab } from "./product/ImagesTab";
 import { InTheBoxTab, SpecsTab } from "./product/ListTabs";
 import { FiltersTab } from "./product/FiltersTab";
-import { OptionsTab, optionsError, productCodeError, tidyOptions } from "./product/OptionsTab";
+import { OptionsTab } from "./product/OptionsTab";
 import { SeoPanel, storedLinks } from "./SeoPanel";
 import { productSeo } from "@/lib/seo";
+import { useCatalogActions } from "@/lib/admin-catalog";
 
 /**
  * URUN FORMU
  *
  * Durum ve kayit kurallari burada; her sekme components/admin/product/
  * altinda kendi dosyasindadir. Cerceve (uyarilar, sekmeler, Kaydet/Vazgec)
- * icerik formlariyla ortaktir.
+ * icerik formlariyla ortaktir. Kurallar packages/data › catalog-rules.ts;
+ * veritabani modunda kayit sunucuya gider (lib/admin-catalog.ts) ve sunucu
+ * ayni kurallari yeniden dener.
  */
+
+/** Sunucunun reddettigi kaydin hangi sekmede duzeltilecegi. */
+function errorTab(error: string): string {
+  if (error.startsWith("Ürün kodu")) return "temel";
+  if (error.includes(" adresi ")) return "seo";
+  if (/kombinasyon|seçenek/.test(error)) return "secenekler";
+  if (error === tr.panel.uploadDisabled) return "gorseller";
+  return "temel";
+}
 export function ProductForm({ product }: { product?: Product }) {
   const db = useDatabase();
   const router = useRouter();
+  const actions = useCatalogActions();
   const isNew = !product;
   const form = useContentForm<Product>(
     product ?? {
@@ -52,7 +74,7 @@ export function ProductForm({ product }: { product?: Product }) {
   const { draft } = form;
   const tabProps = { draft, set: form.set, setDraft: form.setDraft };
 
-  const submit = () => {
+  const submit = async () => {
     form.setError(null);
     if (!draft.name.trim()) return form.fail("Ürün adı zorunludur.");
 
@@ -62,7 +84,7 @@ export function ProductForm({ product }: { product?: Product }) {
     const slug = resolveSlug(draft.slug, draft.name);
     if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
     const clash = findSlugClash(db.products, draft.id, slug);
-    if (clash) return form.fail(`"${slug}" adresi "${clash.name}" ürününde kullanılıyor.`, "seo");
+    if (clash) return form.fail(productSlugTakenText(slug, clash.name), "seo");
 
     const discountError = draft.discount ? validateDiscount(draft.discount) : null;
     if (discountError) return form.fail(discountError);
@@ -78,18 +100,18 @@ export function ProductForm({ product }: { product?: Product }) {
       options: tidyOptions(draft),
       filterValues: tidyFilterValues(draft.filterValues, category?.filters),
     };
-    if (isNew) {
-      router.push(`/yonetim/urunler/${createProduct(record).id}`);
-    } else {
-      saveProduct(record);
-      form.flashSaved();
-    }
+    const stored = product && db.products.find((p) => p.id === product.id);
+    const answer = await actions.saveProduct(record, stored);
+    if (!answer.ok) return form.fail(answer.error, errorTab(answer.error));
+    if (isNew && answer.id) router.push(`/yonetim/urunler/${answer.id}`);
+    else form.flashSaved();
   };
 
   return (
     <ContentFormShell
       form={form}
-      onSubmit={submit}
+      onSubmit={() => void submit()}
+      pending={actions.pending}
       savedText="Ürün kaydedildi."
       submitLabel={isNew ? "Ürünü Oluştur" : "Değişiklikleri Kaydet"}
       tabs={[
@@ -105,7 +127,7 @@ export function ProductForm({ product }: { product?: Product }) {
     >
       {form.tab === "temel" && <BasicsTab {...tabProps} isNew={isNew} />}
       {form.tab === "aciklama" && <DescriptionTab {...tabProps} />}
-      {form.tab === "gorseller" && <ImagesTab {...tabProps} onError={form.setError} />}
+      {form.tab === "gorseller" && <ImagesTab {...tabProps} onError={form.setError} uploadNote={actions.uploadNote} />}
       {form.tab === "teknik" && <SpecsTab {...tabProps} />}
       {form.tab === "kutu" && <InTheBoxTab {...tabProps} />}
       {form.tab === "secenekler" && <OptionsTab {...tabProps} />}

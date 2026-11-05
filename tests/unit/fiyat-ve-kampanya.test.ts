@@ -5,13 +5,13 @@ import {
   discountPercent,
   discountStatusOf,
   combinationLabel,
+  optionsError,
   productOptionsView,
   salePriceExVat,
   validateDiscount,
 } from "@zenweld/data";
 import { priceWithVat } from "@zenweld/utils";
 import { pickValue, resolveVariant, valueAvailable, variantLabel } from "@/lib/variants";
-import { optionsError } from "@/components/admin/product/OptionsTab";
 import { cooling, hoseLength, options, product } from "./ornek";
 
 /* docs/IS-KURALLARI.md › 1. Fiyat ve KDV */

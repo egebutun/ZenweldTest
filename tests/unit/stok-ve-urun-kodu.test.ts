@@ -5,12 +5,13 @@ import {
   looksTruncated,
   matchStockRows,
   normalizeCode,
+  optionsError,
+  productCodeError,
   readStockSheet,
   type StockRow,
   type ZenweldDatabase,
 } from "@zenweld/data";
 import { dealersWithProduct } from "@zenweld/store";
-import { optionsError, productCodeError } from "@/components/admin/product/OptionsTab";
 import { cooling, hoseLength, options, product } from "./ornek";
 
 const DAY = 86_400_000;

@@ -1,16 +1,16 @@
-"use client";
+import { readCatalogPanel } from "@zenweld/db";
+import { PageData } from "@/components/common/PageData";
+import { hasPanelSession } from "@/lib/server/admin";
+import { database, usesDatabase } from "@/lib/server/db";
+import { NewProductClient } from "./NewProductClient";
 
-import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { ProductForm } from "@/components/admin/ProductForm";
-
-export default function NewProductPage() {
+/** Yeni ürün. Veritabani modunda katalog her acilista onbelleksiz okunur (KARARLAR K-99). */
+export default async function NewProductPage() {
+  if (!usesDatabase()) return <NewProductClient />;
+  if (!(await hasPanelSession())) return null;
   return (
-    <>
-      <AdminPageHeader
-        title="Yeni Ürün"
-        description="Kataloğa yeni bir ürün ekleyin. Kaydettikten sonra stok matrisinden satıcı stoklarını işaretleyebilirsiniz."
-      />
-      <ProductForm />
-    </>
+    <PageData data={await readCatalogPanel(database())}>
+      <NewProductClient />
+    </PageData>
   );
 }

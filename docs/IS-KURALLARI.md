@@ -610,8 +610,8 @@ Kod: `packages/data/src/stock.ts`, `packages/store/src/repo/stock.ts`.
   kod" olur.
 
 Kod: `packages/data/src/stock.ts` › `normalizeCode`,
-`apps/zenweld-web/src/components/admin/product/OptionsTab.tsx`
-(`productCodeError`, `optionsError`).
+`packages/data/src/catalog-rules.ts` (`productCodeError`, `optionsError`;
+panel ve sunucu ortak). Veritabanında kod havuzu `sku_codes` tablosudur.
 
 ---
 
@@ -1163,8 +1163,8 @@ yeniden hesaplar; kullanım sınırı aynı anda gelen siparişlerde aşılmayac
 Veritabanı modunda panel kayıtları sunucuda değiştirir (KARARLAR K-99).
 Bugün Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
 Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
-Welders Club) ve Katalog'un ilk kısmı (Seçenek Tanımları, Kategoriler ve
-gruplar) ekranlarında geçerlidir; panelin diğer alanları veritabanına
+Welders Club) ve Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
+Ürünler) ekranlarında geçerlidir; panelin diğer alanları veritabanına
 geçtikçe onlara da uygulanır.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
@@ -1206,14 +1206,20 @@ geçtikçe onlara da uygulanır.
     ürünler, silinen seçenek tanımını listeleyen kategoriler değişmiş
     sayılır (açık form eski hali geri yazamaz).
   - Sıra değişikliği (oklar) kaydı eskitmez.
-  - Aynı link iki yönetici aynı anda kaydetse de iki kayda verilmez.
+  - Aynı link ya da ürün kodu iki yönetici aynı anda kaydetse de iki kayda
+    verilmez ([12](#12-ürün-kodları)). Ürünün kodu ile kombinasyonunun kodu
+    tek kayıtta yer değiştirebilir.
+  - Üründen kaldırılan kombinasyonun (seçenek listesi değiştiyse bütün
+    kombinasyonların) bayi ve satıcı stok satırları ile kod eşleştirmeleri
+    silinir; bütün kombinasyonlar için girilmiş satırlar kalır (demo ile
+    aynı).
   - Değişmeyen ürün değişmiş sayılmaz (ürünün filtre değerlerinin sırası
     önemli değildir).
   - Silinen kategori ya da grubun eski adres yönlendirmeleri de silinir.
 - **Görsel yükleme:** Veritabanı modunda dosya deposu kurulana kadar
   (Aşama 6) panelde görsel dosyası yüklenmez, görsel adresi girilir;
   sunucu yüklenmiş dosya (`data:`) içeren kaydı reddeder (KARARLAR K-101).
-  Bugün kategori ve grup kart görsellerinde geçerlidir.
+  Bugün ürün görsellerinde ve kategori/grup kart görsellerinde geçerlidir.
 - Panel işlemleri yalnızca geçerli yönetici oturumuyla yapılır
   ([16](#16-üyelik-ve-oturum)); oturum bitmişse: "Panel oturumunuz kapanmış.
   Lütfen yeniden giriş yapın."
