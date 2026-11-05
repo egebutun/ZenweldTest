@@ -101,6 +101,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
       ve Stok Matrisi ([Veritabanı modunda Stok Matrisi](#veritabanı-modunda-stok-matrisi)).
     - **Ayarlar:** Mağaza Ayarları
       ([Veritabanı modunda Mağaza Ayarları](#veritabanı-modunda-mağaza-ayarları)).
+    - **İçerik:** Haberler, Etkinlikler, Blog, Hakkımızda, Sık Sorulan
+      Sorular ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
     Diğer ekranlardaki işlemler (üye, içerik…) henüz tarayıcıda
     kalır; Üyeler listesi veritabanındaki üyeleri henüz göstermez. Panel
     ana sayfası (özet ve grafikler) en son gelir; o zamana kadar
@@ -1939,6 +1941,33 @@ sekmesinde ve anasayfada (ilk 8 soru) bu sırayla görünür."
 - **Pencere:** **Konu** (Genel / Sipariş & Teklif / Garanti / Teknik),
   **Soru** (zorunlu), **Cevap** (zorunlu). Hata: "Soru ve cevap
   zorunludur." Yeni soru listenin sonuna eklenir.
+
+### Veritabanı modunda içerik ekranları
+
+Veritabanı modunda Haberler, Etkinlikler, Blog, Hakkımızda ve Sık Sorulan
+Sorular veritabanıyla çalışır (KARARLAR K-99). Kurallar
+[Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
+ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
+kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
+sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
+Kayıt sitede (anasayfa dahil) hemen görünür. Farklar:
+
+- **Görsel yükleme kapalı** (dosya deposu gelene kadar, KARARLAR K-101):
+  Haber, etkinlik ve blog formlarının görsel sekmesinde, galeride ve
+  Hakkımızda'nın görsel alanlarında **Dosya Yükle** yoktur; yerine
+  "Görsel yükleme dosya deposu kurulunca açılacak…" notu çıkar, görsel
+  adresi (`/images/…` ya da tam adres) girilir. Kayıtlı görseller
+  görünmeye devam eder. Yüklenmiş dosya içeren kayıt sunucuda da
+  kaydedilmez.
+- **Link:** Haber, etkinlik ya da yazının linki değişince eski adres yeni
+  adrese yönlenir; aynı link iki kayda verilmez (iki yönetici aynı anda
+  kaydetse de). Silinen kaydın eski adres yönlendirmeleri de silinir.
+- Listeden **Yayına al / Yayından kaldır** ve **Sil** de sunucuya yazılır;
+  sorun olursa listenin üstünde hata gösterilir.
+- **Sık Sorulan Sorular:** Sıra okları kaydı eskitmez (sıra değişince açık
+  pencere yine kaydedilir).
+- **Hakkımızda** tek kayıttır: ekran açıldıktan sonra başka bir yönetici
+  kaydettiyse kaydedilmez.
 
 ---
 

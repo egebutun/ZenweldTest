@@ -3,6 +3,8 @@
 import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ImagePlus, Trash2, Upload } from "lucide-react";
+import { EMPTY_SLUG_ERROR } from "@zenweld/data";
+import { tr } from "@zenweld/i18n";
 import { useWriteFailed } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, ProductImage, Tabs, Textarea } from "@zenweld/ui";
 import { readImageFiles, slugify } from "@zenweld/utils";
@@ -65,10 +67,20 @@ export const resolveSlug = (slug: string, title: string) => slugify(slug) || slu
 
 /**
  * resolveSlug bos dondururse (adda Latin harf ya da rakam yok, orn. Rusca
- * bir etkinlik adi) kayit yapilmaz; bos linkli sayfa acilamazdi.
+ * bir etkinlik adi) kayit yapilmaz; bos linkli sayfa acilamazdi. Metin
+ * sunucuyla ortak (packages/data › content-rules.ts).
  */
-export const EMPTY_SLUG_ERROR =
-  "Link oluşturulamadı: adda Latin harf ya da rakam yok. SEO sekmesinde Latin harf ve rakamlarla bir link yazın.";
+export { EMPTY_SLUG_ERROR };
+
+/**
+ * Kayit hatasinin gosterilecegi sekme: link hatasi SEO sekmesinde, gorsel
+ * yukleme hatasi gorsel sekmesinde, digerleri ilk sekmede.
+ */
+export function errorTab(error: string, imageTab: string, firstTab = "temel"): string {
+  if (error === EMPTY_SLUG_ERROR || error.endsWith("kullanılıyor.")) return "seo";
+  if (error === tr.panel.uploadDisabled) return imageTab;
+  return firstTab;
+}
 
 /** Ayni adresi kullanan baska kayit varsa onu dondurur. */
 export function findSlugClash<R extends { id: string; slug: string }>(
@@ -318,6 +330,7 @@ export function GalleryField({
   alt,
   placeholder,
   description,
+  uploadNote,
 }: {
   images: string[];
   onChange: (update: (images: string[]) => string[]) => void;
@@ -325,6 +338,8 @@ export function GalleryField({
   alt: string;
   placeholder: string;
   description?: string;
+  /** Verilirse dosya yukleme kapalidir (veritabani modu, dosya deposu gelene kadar; KARARLAR K-101). */
+  uploadNote?: string;
 }) {
   const [input, setInput] = useState("");
 
@@ -354,21 +369,24 @@ export function GalleryField({
         >
           URL Ekle
         </Button>
-        <label className={UPLOAD_LABEL}>
-          <Upload size={16} />
-          Dosya Yükle
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(e) => {
-              readImageFiles(e.target.files, (url) => onChange((list) => [...list, url]), onError);
-              e.target.value = "";
-            }}
-          />
-        </label>
+        {!uploadNote && (
+          <label className={UPLOAD_LABEL}>
+            <Upload size={16} />
+            Dosya Yükle
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                readImageFiles(e.target.files, (url) => onChange((list) => [...list, url]), onError);
+                e.target.value = "";
+              }}
+            />
+          </label>
+        )}
       </div>
+      {uploadNote && <p className="mt-2 text-xs text-zw-grey-500">{uploadNote}</p>}
 
       <div className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {images.map((img, i) => (

@@ -1182,7 +1182,8 @@ Bugün Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
 Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
 Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
 Ürünler), Bayi ağı (Bayiler, Online Satıcılar, Satış Temsilcileri), Stok
-Matrisi ve Mağaza Ayarları ekranlarında geçerlidir; panelin diğer alanları
+Matrisi, Mağaza Ayarları ve İçerik (Haberler, Etkinlikler, Blog,
+Hakkımızda, Sık Sorulan Sorular) ekranlarında geçerlidir; panelin diğer alanları
 veritabanına geçtikçe onlara da uygulanır.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
@@ -1266,20 +1267,27 @@ veritabanına geçtikçe onlara da uygulanır.
   alınır. Kayıt sitede (sepet, ödeme) hemen geçerli olur. Listeden çıkan
   POS ya da kargo firması silinir; eski siparişler onların adını kendi
   kopyasında tutar. E-posta alıcıları için [18](#18-form-e-postaları).
+- **İçerik:** Link ([13](#13-linkler-yönlendirme-ve-arama-motorları)) ve
+  yayında olma ([14](#14-yayında-olma)) kuralları demo moduyla aynıdır ve
+  sunucuda da denetlenir. Aynı link iki yönetici aynı anda kaydetse de iki
+  haberde (etkinlikte, yazıda) kullanılmaz. Silinen kaydın eski adres
+  yönlendirmeleri de silinir. SSS'te sıra değişikliği kaydı eskitmez.
+  Kayıt sitede (anasayfa dahil) hemen görünür.
 - **Görsel yükleme:** Veritabanı modunda dosya deposu kurulana kadar
   (Aşama 6) panelde görsel dosyası yüklenmez, görsel adresi girilir;
   sunucu yüklenmiş dosya (`data:`) içeren kaydı reddeder (KARARLAR K-101).
-  Bugün ürün görsellerinde, kategori/grup kart görsellerinde ve satış
-  temsilcisi fotoğrafında geçerlidir.
+  Bugün ürün görsellerinde, kategori/grup kart görsellerinde, satış
+  temsilcisi fotoğrafında, haber, etkinlik ve blog görsellerinde ve
+  Hakkımızda görsellerinde geçerlidir.
 - Panel işlemleri yalnızca geçerli yönetici oturumuyla yapılır
   ([16](#16-üyelik-ve-oturum)); oturum bitmişse: "Panel oturumunuz kapanmış.
   Lütfen yeniden giriş yapın."
 
 Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
 `admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`,
-`admin-stock.ts`, `admin-settings.ts`, `audit.ts`;
-formların ortak kuralları `packages/data/src/catalog-rules.ts`,
-`network-rules.ts`, `settings-rules.ts`; tarayıcı:
+`admin-stock.ts`, `admin-settings.ts`, `admin-content.ts`, `links.ts`,
+`audit.ts`; formların ortak kuralları `packages/data/src/catalog-rules.ts`,
+`network-rules.ts`, `settings-rules.ts`, `content-rules.ts`; tarayıcı:
 `apps/zenweld-web/src/lib/admin-panel.ts`, `admin-sales.ts`,
 `admin-requests.ts`, `admin-catalog.ts`, `admin-network.ts`,
-`admin-stock.ts`, `admin-settings.ts`.
+`admin-stock.ts`, `admin-settings.ts`, `admin-content.ts`.

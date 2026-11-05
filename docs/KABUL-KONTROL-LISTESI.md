@@ -950,6 +950,24 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       görseli olan bölüm yan yana görünür.
 - [ ] SSS sırası sitedeki SSS sayfasında, ürün sekmesinde ve anasayfada (ilk
       8) aynıdır.
+
+**Veritabanı modunda içerik (KARARLAR K-99, K-101):**
+
+- [ ] Yeni haber (etkinlik, blog yazısı) kaydedilince `db:studio`'da görünür
+      ve sitede hemen açılır; işlem kaydına yazılır.
+- [ ] Haberin linki değişince eski adres yeni adrese gider; haber
+      silinince `redirects`'teki satırı da silinir.
+- [ ] Görseller sekmesinde **Dosya Yükle** yoktur, "Görsel yükleme dosya
+      deposu kurulunca açılacak…" notu vardır; adres girilerek görsel
+      eklenir.
+- [ ] Bir sekmede açık haber başka sekmede kaydedilince ilk sekmede
+      kaydedilmez ("Bu kayıt siz açtıktan sonra değişti; sayfayı
+      yenileyin.").
+- [ ] SSS'te soru eklenir, oklarla taşınır, silinir; SSS sayfası hemen
+      değişir. Taşıdıktan sonra aynı soru pencerede düzeltilip kaydedilir
+      (uyarı çıkmaz).
+- [ ] Hakkımızda kaydı sitede hemen görünür; hemen ardından ikinci kayıtta
+      uyarı çıkmaz.
 - [ ] Belgeler: dosya seçicide yalnızca PDF, Word, Excel, JPG, PNG ve ZIP
       çıkar; 25 MB'tan büyük dosya yüklenmez; yayından kaldırılan belge
       sitede görünmez.

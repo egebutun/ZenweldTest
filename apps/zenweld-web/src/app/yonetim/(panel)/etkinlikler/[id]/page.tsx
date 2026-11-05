@@ -1,25 +1,12 @@
-"use client";
+import { ContentPanelData } from "@/components/admin/ContentPanelData";
+import { EditEventClient } from "./EditEventClient";
 
-import { use } from "react";
-import { findEventById, useDatabase } from "@zenweld/store";
-import { Alert } from "@zenweld/ui";
-import { formatDate } from "@zenweld/utils";
-import { EventForm } from "@/components/admin/EventForm";
-import { EditPageFrame } from "@/components/admin/content-form";
-
-export default function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const item = findEventById(id, useDatabase());
-  if (!item) return <Alert tone="danger">Etkinlik bulunamadı.</Alert>;
-
+/** Duzenleme sayfasi. Veritabani modunda kayit son degisiklik aniyla veritabanindan okunur (KARARLAR K-99). */
+export default async function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
-    <EditPageFrame
-      title={item.title}
-      description={`${formatDate(item.startDate)} — ${formatDate(item.endDate)}`}
-      sitePath={`/etkinlikler/${item.slug}`}
-      siteLinkLabel="Etkinlik sayfasını gör"
-    >
-      <EventForm event={item} />
-    </EditPageFrame>
+    <ContentPanelData>
+      <EditEventClient id={id} />
+    </ContentPanelData>
   );
 }

@@ -438,14 +438,15 @@ npm run start --workspace apps/zenweld-web
     Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
     Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
     Ürünler), Bayiler, Online Satıcılar, Satış Temsilcileri ve Stok
-    Matrisi (elle düzeltme, dosya yükleme, kod eşleştirme, geri alma) ve
-    Mağaza Ayarları (Kargo ve Ödeme, E-posta Alıcıları) ekranları
+    Matrisi (elle düzeltme, dosya yükleme, kod eşleştirme, geri alma),
+    Mağaza Ayarları (Kargo ve Ödeme, E-posta Alıcıları) ve İçerik
+    (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) ekranları
     veritabanından okur ve yazar; aynı kaydı iki
     yönetici düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her
     değişiklik `audit_log`'a yazılır. Bu modda panelde görsel dosyası
     yüklenmez, görsel adresi girilir (dosya deposu gelene kadar; K-101).
-    Panelin diğer ekranlarında (içerik)
-    yapılan değişiklikler henüz siteye yansımaz; değişiklik `db:studio`'dan
+    Panelin diğer ekranlarında (Yasal Metinler, Belgeler, Sayfa SEO,
+    Görünüm) yapılan değişiklikler henüz siteye yansımaz; değişiklik `db:studio`'dan
     yapılır. Panel ana sayfası en son bağlanır.
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
     Derleme sırasında veritabanı çalışıyor olmalı.
@@ -456,7 +457,8 @@ npm run start --workspace apps/zenweld-web
     dener: bütün sayfalar, fiyat ve stok, değişikliğin hemen görünmesi,
     ağır verinin yalnızca gereken sayfaya gitmesi, kartla satın alma,
     panelin Satış, Talepler, Katalog (seçenek, kategori, grup, ürün), bayi
-    ağı (bayi, satıcı, temsilci), Stok Matrisi ve Mağaza Ayarları ekranları. Demo
+    ağı (bayi, satıcı, temsilci), Stok Matrisi, Mağaza Ayarları ve İçerik
+    (haber, SSS, Hakkımızda) ekranları. Demo
     derlemesi (`.next`) etkilenmez. `test:db` ile aynı anda çalıştırılmaz.
   - **SAP stok okuma (deneme dosyasıyla):** SAP bağlanana kadar depo
     stoğu bir CSV dosyasından okunur. `.env.local`'a

@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { ZenweldEvent } from "@zenweld/data";
-import { createEvent, saveEvent, useDatabase } from "@zenweld/store";
+import { eventDraftError, eventSlugTakenText, type ZenweldEvent } from "@zenweld/data";
+import { useDatabase } from "@zenweld/store";
 import { Alert, Checkbox, FormRow, Input } from "@zenweld/ui";
 import { localDateKey, logoAlternates, slugify } from "@zenweld/utils";
 import {
@@ -12,12 +12,14 @@ import {
   ContentTextFields,
   SingleImageField,
   EMPTY_SLUG_ERROR,
+  errorTab,
   findSlugClash,
   resolveSlug,
   useContentForm,
 } from "./content-form";
 import { SeoPanel, storedLinks } from "./SeoPanel";
 import { eventSeo } from "@/lib/seo";
+import { useContentActions } from "@/lib/admin-content";
 
 const COUNTRIES = [
   "Türkiye",
@@ -56,6 +58,7 @@ const EMPTY: ZenweldEvent = {
 export function EventForm({ event }: { event?: ZenweldEvent }) {
   const db = useDatabase();
   const router = useRouter();
+  const actions = useContentActions();
   const isNew = !event;
   const today = localDateKey();
   const form = useContentForm<ZenweldEvent>(
@@ -63,32 +66,27 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
   );
   const { draft, set } = form;
 
-  const submit = () => {
+  const submit = async () => {
     form.setError(null);
-    if (!draft.title.trim()) return form.fail("Etkinlik adı zorunludur.");
-    if (draft.endDate < draft.startDate) {
-      return form.fail("Bitiş tarihi başlangıç tarihinden önce olamaz.");
-    }
+    const problem = eventDraftError(draft);
+    if (problem) return form.fail(problem);
 
     const slug = resolveSlug(draft.slug, draft.title);
     if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
     const clash = findSlugClash(db.events, draft.id, slug);
-    if (clash) return form.fail(`"${slug}" adresi "${clash.title}" etkinliğinde kullanılıyor.`, "seo");
+    if (clash) return form.fail(eventSlugTakenText(slug, clash.title), "seo");
 
-    const next: ZenweldEvent = { ...draft, slug };
-
-    if (isNew) {
-      router.push(`/yonetim/etkinlikler/${createEvent(next).id}`);
-    } else {
-      saveEvent(next);
-      form.flashSaved();
-    }
+    const answer = await actions.events.save({ ...draft, slug }, event);
+    if (!answer.ok) return form.fail(answer.error, errorTab(answer.error, "gorseller"));
+    if (isNew) router.push(`/yonetim/etkinlikler/${answer.id}`);
+    else form.flashSaved();
   };
 
   return (
     <ContentFormShell
       form={form}
-      onSubmit={submit}
+      onSubmit={() => void submit()}
+      pending={actions.pending}
       savedText="Etkinlik kaydedildi."
       submitLabel={isNew ? "Etkinliği Oluştur" : "Değişiklikleri Kaydet"}
       tabs={[
@@ -193,10 +191,16 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
       {form.tab === "gorseller" && (
         <FormPanel>
           <Alert tone="info">
-            Logo ve fotoğraflar için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar
-            otomatik olarak küçültülüp WebP&apos;ye çevrilir; boyutla uğraşmanıza gerek yok. Kalıcı
-            kullanım için görselleri <code>public/images/events/</code> klasörüne koyup
-            <code> /images/events/dosya.png</code> yolunu girin.
+            {actions.uploadNote ? (
+              actions.uploadNote
+            ) : (
+              <>
+                Logo ve fotoğraflar için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar
+                otomatik olarak küçültülüp WebP&apos;ye çevrilir; boyutla uğraşmanıza gerek yok. Kalıcı
+                kullanım için görselleri <code>public/images/events/</code> klasörüne koyup
+                <code> /images/events/dosya.png</code> yolunu girin.
+              </>
+            )}
           </Alert>
 
           <div>
@@ -216,6 +220,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
               alternates={logoAlternates(draft.logoUrl)}
               trimEdges
               removeLabel="Logoyu kaldır"
+              uploadNote={actions.uploadNote}
             />
           </div>
 
@@ -225,6 +230,7 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
             onError={form.setError}
             alt={draft.title}
             placeholder="/images/events/etkinlik/1.jpg"
+            uploadNote={actions.uploadNote}
           />
         </FormPanel>
       )}

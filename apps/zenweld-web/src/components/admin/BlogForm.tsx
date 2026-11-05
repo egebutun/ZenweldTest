@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { BlogPost } from "@zenweld/data";
-import { createBlogPost, saveBlogPost, useDatabase } from "@zenweld/store";
+import { blogDraftError, blogSlugTakenText, type BlogPost } from "@zenweld/data";
+import { useDatabase } from "@zenweld/store";
 import { Alert, Checkbox, FormRow, Input } from "@zenweld/ui";
 import { slugify } from "@zenweld/utils";
 import {
@@ -12,12 +12,14 @@ import {
   PublishedAtField,
   SingleImageField,
   EMPTY_SLUG_ERROR,
+  errorTab,
   findSlugClash,
   resolveSlug,
   useContentForm,
 } from "./content-form";
 import { SeoPanel, storedLinks } from "./SeoPanel";
 import { blogPostSeo } from "@/lib/seo";
+import { useContentActions } from "@/lib/admin-content";
 
 const EMPTY: BlogPost = {
   id: "",
@@ -36,39 +38,41 @@ const EMPTY: BlogPost = {
 export function BlogForm({ item }: { item?: BlogPost }) {
   const db = useDatabase();
   const router = useRouter();
+  const actions = useContentActions();
   const isNew = !item;
   const form = useContentForm<BlogPost>(
     item ?? { ...EMPTY, publishedAt: new Date().toISOString() },
   );
   const { draft, set } = form;
 
-  const submit = () => {
+  const submit = async () => {
     form.setError(null);
-    if (!draft.title.trim()) return form.fail("Yazı başlığı zorunludur.");
+    const problem = blogDraftError(draft);
+    if (problem) return form.fail(problem);
 
     const slug = resolveSlug(draft.slug, draft.title);
     if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
     const clash = findSlugClash(db.blogPosts, draft.id, slug);
-    if (clash) return form.fail(`"${slug}" adresi "${clash.title}" yazısında kullanılıyor.`, "seo");
+    if (clash) return form.fail(blogSlugTakenText(slug, clash.title), "seo");
 
     const next: BlogPost = {
       ...draft,
       slug,
       author: draft.author.trim() || "Zenweld",
+      // Eski kayitta alan yoksa yayinda sayilir.
+      active: draft.active !== false,
     };
-
-    if (isNew) {
-      router.push(`/yonetim/blog/${createBlogPost(next).id}`);
-    } else {
-      saveBlogPost(next);
-      form.flashSaved();
-    }
+    const answer = await actions.blog.save(next, item);
+    if (!answer.ok) return form.fail(answer.error, errorTab(answer.error, "gorsel"));
+    if (isNew) router.push(`/yonetim/blog/${answer.id}`);
+    else form.flashSaved();
   };
 
   return (
     <ContentFormShell
       form={form}
-      onSubmit={submit}
+      onSubmit={() => void submit()}
+      pending={actions.pending}
       savedText="Yazı kaydedildi."
       submitLabel={isNew ? "Yazıyı Oluştur" : "Değişiklikleri Kaydet"}
       tabs={[
@@ -137,8 +141,8 @@ export function BlogForm({ item }: { item?: BlogPost }) {
       {form.tab === "gorsel" && (
         <FormPanel>
           <Alert tone="info">
-            Kapak görseli için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar
-            otomatik olarak küçültülüp WebP&apos;ye çevrilir; boyutla uğraşmanıza gerek yok.
+            {actions.uploadNote ??
+              "Kapak görseli için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar otomatik olarak küçültülüp WebP'ye çevrilir; boyutla uğraşmanıza gerek yok."}
           </Alert>
           <SingleImageField
             value={draft.coverUrl}
@@ -147,6 +151,7 @@ export function BlogForm({ item }: { item?: BlogPost }) {
             alt={draft.title}
             placeholder="https://… veya /images/blog/yazi.jpg"
             previewClassName="aspect-[16/9] w-64"
+            uploadNote={actions.uploadNote}
           />
         </FormPanel>
       )}

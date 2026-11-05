@@ -707,6 +707,8 @@ export interface BlogPost {
   seo?: SeoFields;
   /** Eski adresler: link degisince eski adres yenisine yonlenir */
   previousSlugs?: string[];
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -750,6 +752,8 @@ export interface FaqItem {
   question: string;
   answer: string;
   topic: "genel" | "garanti" | "siparis" | "teknik";
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -817,6 +821,8 @@ export interface ZenweldEvent {
   seo?: SeoFields;
   /** Eski adresler: link degisince eski adres yenisine yonlenir */
   previousSlugs?: string[];
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -839,6 +845,8 @@ export interface NewsItem {
   seo?: SeoFields;
   /** Eski adresler: link degisince eski adres yenisine yonlenir */
   previousSlugs?: string[];
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
 }
 
 export interface WarrantyRecord {

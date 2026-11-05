@@ -685,13 +685,15 @@ türleri `packages/db/src/admin-requests.ts`'tedir
 `id`, `slug` (adres `/blog/<slug>`; blog yazıları arasında benzersiz),
 `title`, `excerpt` (özet), `body` (biçimli metin), `coverUrl`, `category`
 (serbest metin; ayrı bir kategori tablosu yoktur), `author` (boşsa
-"Zenweld"), `publishedAt`, `active?`, `seo?`, `previousSlugs?`.
+"Zenweld"), `publishedAt`, `active?`, `seo?`, `previousSlugs?`,
+`updatedAt?` (yalnızca veritabanı modunda panelin okuduğu kayıtta dolu,
+KARARLAR K-99; haber, etkinlik ve SSS'te de aynı).
 
 ### Haberler (`news`)
 
 `id`, `slug` (adres `/haberler/<slug>`; benzersiz), `title`, `summary`,
 `body` (biçimli), `coverUrl`, `images[]` (galeri), `publishedAt`, `active`,
-`seo?`, `previousSlugs?`.
+`seo?`, `previousSlugs?`, `updatedAt?`.
 
 Blog ve haberde `publishedAt` yalnızca sıralama ve gösterim içindir; kayıt
 yayında işaretliyse hemen görünür (zamanlanmış yayın yoktur).
@@ -710,12 +712,16 @@ yayında işaretliyse hemen görünür (zamanlanmış yayın yoktur).
 | `websiteUrl` | metin? | |
 | `active` | evet/hayır | |
 | `seo`, `previousSlugs` | | |
+| `updatedAt?` | an | Yalnızca veritabanı modunda panelin okuduğu kayıtta |
 
 ### Sık sorulan sorular (`faqs`)
 
 `id`, `question`, `answer`, `topic` (`genel`, `siparis` = Sipariş & Teklif,
-`garanti`, `teknik`). Sıra listedeki sıradır; backend'de bir `order` alanı
-eklenmeli.
+`garanti`, `teknik`), `updatedAt?`. Sıra listedeki sıradır; veritabanında
+`faqs.position` (sıra değişikliği `updatedAt`'i değiştirmez).
+
+Haber, blog, etkinlik, SSS ve Hakkımızda formlarının kuralları tarayıcı ve
+sunucuda ortaktır: `packages/data/src/content-rules.ts`.
 
 ### Belgeler (`documents`)
 

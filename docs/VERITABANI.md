@@ -1896,6 +1896,54 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   ücretinin sitede hemen geçerli olması ve geri alınması, Welders Club
   alıcısının e-posta kaydına yazılması, oturumsuz istek).
 
+**Panel › İçerik, adım 5.2 (Aşama 5, 5. alan; KARARLAR K-99, K-101; `src/admin-content.ts`):**
+
+- **Okuma:** `readContentPanel(db)`: blog, haber, etkinlik ve SSS
+  (`updated_at`'leriyle) ve Hakkımızda. Haber, etkinlik ve blog
+  sayfalarının (liste, yeni, düzenleme) ve SSS ile Hakkımızda'nın sunucu
+  bileşeni okur (`apps/zenweld-web/src/components/admin/ContentPanelData.tsx`);
+  yönetici oturumu denetlenir.
+- **Yazma:** `POST /api/yonetim/icerik/<işlem>`
+  (`apps/zenweld-web/src/app/api/yonetim/icerik/[islem]/route.ts`):
+  `haber`, `haber-yayin`, `haber-sil`, `etkinlik`, `etkinlik-yayin`,
+  `etkinlik-sil`, `blog`, `blog-yayin`, `blog-sil`, `sss`, `sss-sil`,
+  `sss-sira`, `hakkimizda`. Kurallar Satış ile aynı: oturum, satır kilidi
+  (FOR UPDATE), `updated_at` denetimi, `audit_log` (`news`, `events`,
+  `blog_posts`, `faqs`, `about_page`). Başarılı işlemden sonra
+  `refreshSite(["icerik"])`.
+- **Haber, etkinlik, blog:** Kurallar tarayıcıyla ortak
+  (`packages/data` › `content-rules.ts`): başlık zorunlu; link bossa
+  başlıktan (`slugify`), boş kalırsa kaydedilmez; aynı link aynı türde iki
+  kayda verilmez (`pg_advisory_xact_lock('<tür>:slug')`); etkinlikte
+  bitiş başlangıçtan önce olamaz, tarihler `YYYY-AA-GG`; blogda yazar
+  boşsa "Zenweld". Link değişince `redirects`'e eski adres yazılır
+  (`src/links.ts` › `movePath`; yeni adres başka kaydın eski adresiyse o
+  yönlendirme kalkar); kayıt silinince yönlendirmelerini veritabanı siler
+  (`zw_delete_redirects`). Yüklenmiş görsel (`data:`) olan kayıt
+  reddedilir (K-101). Değişmeyen kayıt yazılmaz (SEO alanları aynı
+  biçimde karşılaştırılır).
+- **SSS:** Yeni soru listenin sonuna (`max(position) + 1`); konu `genel`,
+  `siparis`, `garanti`, `teknik`; sıra okları yalnızca `position`'ı
+  değiştirir, `updated_at`'e dokunmaz (`pg_advisory_xact_lock('faqs')`).
+- **Hakkımızda:** Tek satır (`about_page`, id 1); yoksa eklenir. Değeri
+  boş rakam kutusu yazılmaz; bölüm kimlikleri tekrarsız. JSON alanları
+  (`stats`, `sections`) formdaki alan sırasıyla karşılaştırılır.
+- Ortak link ve SEO kuralları katalogla aynı dosyada: `src/links.ts`
+  (`parseSeo`, `validSlug`, `movePath`, `releasePath`).
+- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-content.ts`
+  (`useContentActions`).
+- Test: `tests/db/panel-icerik.test.ts` (okuma; haber ekleme, link
+  çakışması, boş link, başlıksız; link değişince yönlendirme ve eski
+  adresin başka kayda verilmesi, eski ekran, değişmeyen kayıt; yüklenmiş
+  görsel, yayından kaldırma, silme ve yönlendirmenin kalkması; etkinlik
+  tarih kuralları ve boş site adresi; blog yazarı ve yönlendirme; SSS
+  ekleme, düzeltme, eski ekran, konu, silme, sıra; Hakkımızda: eski ekran,
+  başlıksız, yüklenmiş görsel, boş rakam kutusu, değişmeyen kayıt);
+  `tests/e2e-db/panel-icerik.spec.ts` (tarayıcıda: haber ekleme ve sitede
+  görünmesi, kapalı görsel yükleme, link değişince eski adresin yönlenmesi,
+  silme; SSS ekleme, sitede görünme, sıra, silme; Hakkımızda kaydı ve
+  hemen ardından geri alma; oturumsuz istek).
+
 **Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
 kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
 veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını

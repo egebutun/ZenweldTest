@@ -1,25 +1,12 @@
-"use client";
+import { ContentPanelData } from "@/components/admin/ContentPanelData";
+import { EditBlogPostClient } from "./EditBlogPostClient";
 
-import { use } from "react";
-import { findBlogPostById, useDatabase } from "@zenweld/store";
-import { Alert } from "@zenweld/ui";
-import { formatDate } from "@zenweld/utils";
-import { BlogForm } from "@/components/admin/BlogForm";
-import { EditPageFrame } from "@/components/admin/content-form";
-
-export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const item = findBlogPostById(id, useDatabase());
-  if (!item) return <Alert tone="danger">Yazı bulunamadı.</Alert>;
-
+/** Duzenleme sayfasi. Veritabani modunda kayit son degisiklik aniyla veritabanindan okunur (KARARLAR K-99). */
+export default async function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
-    <EditPageFrame
-      title={item.title}
-      description={`${item.category} · ${formatDate(item.publishedAt)}`}
-      sitePath={`/blog/${item.slug}`}
-      siteLinkLabel="Yazı sayfasını gör"
-    >
-      <BlogForm item={item} />
-    </EditPageFrame>
+    <ContentPanelData>
+      <EditBlogPostClient id={id} />
+    </ContentPanelData>
   );
 }

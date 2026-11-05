@@ -30,14 +30,13 @@ import {
   type ProductImage,
   type ProductOptions,
   type ProductVariant,
-  type SeoFields,
   type SpecRow,
   type TopLevelSection,
   type WeldingProcess,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
-import { slugify } from "@zenweld/utils";
 import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
+import { movePath, parseSeo, releasePath, validSlug } from "./links";
 import { checkRow, direction, fail, isFailure, newId, reorder, saved, text, unchanged, type PanelResult, type Saved } from "./panel";
 import { readCatalog } from "./read";
 import { combinationKey } from "./seed";
@@ -105,38 +104,6 @@ function parseValues(value: unknown): OptionValue[] | null {
   if (values.some((v) => !CATALOG_ID_PATTERN.test(v.id))) return null;
   return new Set(values.map((v) => v.id)).size === values.length ? values : null;
 }
-
-/** SEO alanlari; bos alan yazilmaz. Bicim bozuksa null. */
-function parseSeo(value: unknown): SeoFields | undefined | null {
-  if (value === undefined || value === null) return undefined;
-  if (typeof value !== "object" || Array.isArray(value)) return null;
-  const input = record(value);
-  const keywords = Array.isArray(input.keywords)
-    ? input.keywords.map((k) => text(k, 60)).filter(Boolean).slice(0, 30)
-    : [];
-  const seo: SeoFields = {
-    ...(text(input.title, 200) && { title: text(input.title, 200) }),
-    ...(text(input.description, 500) && { description: text(input.description, 500) }),
-    ...(keywords.length && { keywords }),
-  };
-  return Object.keys(seo).length ? seo : undefined;
-}
-
-/** Link: gecerli bir adres parcasi olmali (bosluksuz, kucuk harf, tire). */
-const validSlug = (slug: string) => slug !== "" && slugify(slug) === slug;
-
-/** Adres degisti: eski adres kayda yonlenir; yeni adres baska bir kaydin eski adresiyse o yonlendirme kalkar. */
-async function movePath(db: AuditDb, oldPath: string, newPath: string, targetType: "product" | "category" | "group", targetId: string) {
-  if (oldPath === newPath) return;
-  await db
-    .insert(s.redirects)
-    .values({ oldPath, targetType, targetId, variantId: null })
-    .onConflictDoUpdate({ target: s.redirects.oldPath, set: { targetType, targetId, variantId: null } });
-  await db.delete(s.redirects).where(eq(s.redirects.oldPath, newPath));
-}
-
-/** Yeni kaydin adresi baska bir kaydin eski adresiyse o yonlendirme kalkar. */
-const releasePath = (db: AuditDb, path: string) => db.delete(s.redirects).where(eq(s.redirects.oldPath, path));
 
 /* ------------------------------ Secenek tanimlari ------------------------------ */
 

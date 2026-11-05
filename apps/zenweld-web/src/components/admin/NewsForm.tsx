@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { NewsItem } from "@zenweld/data";
-import { createNews, saveNews, useDatabase } from "@zenweld/store";
+import { newsDraftError, newsSlugTakenText, type NewsItem } from "@zenweld/data";
+import { useDatabase } from "@zenweld/store";
 import { Alert, Checkbox, FormRow, Input } from "@zenweld/ui";
 import { slugify } from "@zenweld/utils";
 import {
@@ -13,12 +13,14 @@ import {
   PublishedAtField,
   SingleImageField,
   EMPTY_SLUG_ERROR,
+  errorTab,
   findSlugClash,
   resolveSlug,
   useContentForm,
 } from "./content-form";
 import { SeoPanel, storedLinks } from "./SeoPanel";
 import { newsSeo } from "@/lib/seo";
+import { useContentActions } from "@/lib/admin-content";
 
 const EMPTY: NewsItem = {
   id: "",
@@ -35,35 +37,34 @@ const EMPTY: NewsItem = {
 export function NewsForm({ item }: { item?: NewsItem }) {
   const db = useDatabase();
   const router = useRouter();
+  const actions = useContentActions();
   const isNew = !item;
   const form = useContentForm<NewsItem>(
     item ?? { ...EMPTY, publishedAt: new Date().toISOString() },
   );
   const { draft, set } = form;
 
-  const submit = () => {
+  const submit = async () => {
     form.setError(null);
-    if (!draft.title.trim()) return form.fail("Haber başlığı zorunludur.");
+    const problem = newsDraftError(draft);
+    if (problem) return form.fail(problem);
 
     const slug = resolveSlug(draft.slug, draft.title);
     if (!slug) return form.fail(EMPTY_SLUG_ERROR, "seo");
     const clash = findSlugClash(db.news, draft.id, slug);
-    if (clash) return form.fail(`"${slug}" adresi "${clash.title}" haberinde kullanılıyor.`, "seo");
+    if (clash) return form.fail(newsSlugTakenText(slug, clash.title), "seo");
 
-    const next: NewsItem = { ...draft, slug };
-
-    if (isNew) {
-      router.push(`/yonetim/haberler/${createNews(next).id}`);
-    } else {
-      saveNews(next);
-      form.flashSaved();
-    }
+    const answer = await actions.news.save({ ...draft, slug }, item);
+    if (!answer.ok) return form.fail(answer.error, errorTab(answer.error, "gorsel"));
+    if (isNew) router.push(`/yonetim/haberler/${answer.id}`);
+    else form.flashSaved();
   };
 
   return (
     <ContentFormShell
       form={form}
-      onSubmit={submit}
+      onSubmit={() => void submit()}
+      pending={actions.pending}
       savedText="Haber kaydedildi."
       submitLabel={isNew ? "Haberi Oluştur" : "Değişiklikleri Kaydet"}
       tabs={[
@@ -114,9 +115,8 @@ export function NewsForm({ item }: { item?: NewsItem }) {
       {form.tab === "gorsel" && (
         <FormPanel>
           <Alert tone="info">
-            Kapak görseli ve galeri fotoğrafları için URL girebilir veya dosya yükleyebilirsiniz.
-            Yüklenen dosyalar otomatik olarak küçültülüp WebP&apos;ye çevrilir; boyutla uğraşmanıza
-            gerek yok.
+            {actions.uploadNote ??
+              "Kapak görseli ve galeri fotoğrafları için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar otomatik olarak küçültülüp WebP'ye çevrilir; boyutla uğraşmanıza gerek yok."}
           </Alert>
           <SingleImageField
             value={draft.coverUrl}
@@ -125,6 +125,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
             alt={draft.title}
             placeholder="https://… veya /images/news/haber.jpg"
             previewClassName="aspect-[4/3] w-56"
+            uploadNote={actions.uploadNote}
           />
           <div className="border-t border-zw-grey-200 pt-5">
             <GalleryField
@@ -134,6 +135,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
               alt={draft.title}
               placeholder="/images/news/haber/1.jpg"
               description="Kapak görselinin yanı sıra habere istediğiniz kadar fotoğraf ekleyebilirsiniz. Bunlar haber sayfasının altında görünür."
+              uploadNote={actions.uploadNote}
             />
           </div>
         </FormPanel>
