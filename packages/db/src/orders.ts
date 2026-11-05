@@ -6,7 +6,6 @@ import {
   canRequestReturn,
   cardBrand,
   cardInstallments,
-  cardProgram,
   cartTotals,
   couponCartLines,
   couponView,
@@ -34,6 +33,7 @@ import {
   type OrderAddress,
   type OrderInvoice,
   type OrderPayment,
+  type PaymentPos,
   type PricedCartLine,
   type ReturnReason,
   type ReturnRequest,
@@ -43,6 +43,7 @@ import {
 import { tr } from "@zenweld/i18n";
 import { formatPrice } from "@zenweld/utils";
 import { nextRecordCode } from "./codes";
+import { TEMSILI_ODEME, type CardPaymentResult, type PaymentProvider } from "./payment";
 import { readCatalog, readCoupons, readOrders, readReturnRequests, readSettings, readWarehouseStock } from "./read";
 import * as s from "./schema";
 
@@ -60,8 +61,10 @@ import * as s from "./schema";
  *   siparis alinmaz ve yeni tutar soylenir.
  * - Stok (Zenweld deposu) ve kupon yeniden denetlenir. Kupon satiri
  *   kilitlenir: ayni anda gelen iki siparis kullanim sinirini asamaz.
- * - Kartli odeme gercek POS baglanana kadar temsilidir: siparis odenmis
- *   sayilir ve "Hazirlaniyor" olarak kaydedilir.
+ * - Kartla odeme odeme saglayicisi parcasiyla yapilir (payment.ts; K-108):
+ *   kartin programi ondan alinir, tahsilati o yapar, sonucu
+ *   payment_transactions'a yazilir. Bugunku saglayici temsilidir: siparis
+ *   odenmis sayilir ve "Hazirlaniyor" olarak kaydedilir (K-97).
  * - Odeme suresi dolan havale siparisi, siparisler okunurken iptal edilir
  *   ve kupon hakki geri verilir.
  *
@@ -75,7 +78,8 @@ export type Member = Pick<User, "id" | "role" | "email" | "firstName" | "lastNam
 
 export interface OrderFailure {
   ok: false;
-  status: 400 | 404 | 409;
+  /** 402: odeme saglayicisi tahsilati yapmadi */
+  status: 400 | 402 | 404 | 409;
   error: string;
   /** Kupon uygulanamadiysa nedeni (metni site yazar) */
   coupon?: CouponView;
@@ -203,8 +207,9 @@ function parseInvoice(input: unknown): OrderInvoice | string {
 
 /**
  * Uyenin siparisi. Basarili olursa kaydedilen siparis doner; tutar tutmazsa,
- * stok bittiyse, kupon artik uygulanamiyorsa ya da bilgi eksikse siparis
- * alinmaz.
+ * stok bittiyse, kupon artik uygulanamiyorsa, bilgi eksikse ya da kartla
+ * tahsilat yapilamazsa siparis alinmaz. provider: kartla odemenin saglayicisi
+ * (payment.ts; site ODEME_SAGLAYICI ayarina gore verir).
  */
 export async function placeOrder(
   db: OrderDb,
@@ -212,6 +217,7 @@ export async function placeOrder(
   input: Record<string, unknown>,
   at: Date,
   { catalog, shop }: PricingData,
+  provider: PaymentProvider = TEMSILI_ODEME,
 ): Promise<{ ok: true; order: Order } | OrderFailure> {
   const stored = parseCartLines(input.lines);
   if (!stored || stored.length === 0) return fail(400, tr.checkout.cartChanged);
@@ -246,14 +252,16 @@ export async function placeOrder(
   const totals = cartTotals({ lines, lineDiscounts: coupon?.lineDiscounts }, shop);
 
   let payment: OrderPayment;
+  let card: { pos: PaymentPos; installments: number } | undefined;
   let fee = 0;
   if (method === "card") {
-    const program = cardProgram(bin);
+    const program = await provider.cardProgram(bin);
     const { pos, options } = cardInstallments(totals.total, program, shop);
     if (!pos) return fail(409, tr.checkout.noPos);
     const option = options.find((o) => o.count === installments);
     if (!option) return fail(409, tr.checkout.invalidInstallment);
     fee = installmentQuote(totals.total, option).fee;
+    card = { pos, installments: option.count };
     payment = {
       method,
       installments: option.count,
@@ -263,8 +271,6 @@ export async function placeOrder(
       posId: pos.id,
       posName: pos.name,
       commissionPercent: posCommission(pos, option.count),
-      // Gercek POS baglanana kadar odeme temsilidir (K-97).
-      paidAt: at.toISOString(),
     };
   } else {
     payment = { method, dueAt: new Date(at.getTime() + shop.transferDueDays * 86_400_000).toISOString() };
@@ -275,8 +281,16 @@ export async function placeOrder(
     return fail(409, tr.checkout.priceChanged.replace("{amount}", formatPrice(total)));
   }
 
-  const status = method === "card" ? "preparing" : "awaiting_payment";
+  // Kartla tahsilat: her sey denetlendikten sonra, siparis numarasi verilmeden once.
   const id = newId("o");
+  let paid: Extract<CardPaymentResult, { ok: true }> | undefined;
+  if (card) {
+    const result = await provider.pay({ orderId: id, amount: total, installments: card.installments, pos: card.pos, card: { bin, last4 } }, at);
+    if (!result.ok) return fail(402, result.error);
+    paid = result;
+  }
+
+  const status = method === "card" ? "preparing" : "awaiting_payment";
   const orderCode = await nextRecordCode(db, s.orders, orderCodePrefix(at), ORDER_CODE_DIGITS);
   const items = orderItemsFromLines(lines, coupon?.lineDiscounts);
   await db.insert(s.orders).values({
@@ -304,7 +318,7 @@ export async function placeOrder(
     posId: payment.posId,
     posName: payment.posName,
     commissionPercent: payment.commissionPercent,
-    paidAt: payment.paidAt ? at : null,
+    paidAt: paid?.paidAt ?? null,
     dueAt: payment.dueAt ? new Date(payment.dueAt) : null,
     customerNote: text(input.customerNote, 2000) || null,
     termsAcceptedAt: at,
@@ -328,6 +342,20 @@ export async function placeOrder(
     })),
   );
   await db.insert(s.orderStatusHistory).values({ orderId: id, seq: 0, status, at });
+  if (card && paid) {
+    await db.insert(s.paymentTransactions).values({
+      id: newId("pay"),
+      orderId: id,
+      posId: card.pos.id,
+      kind: "sale",
+      amount: total,
+      installments: card.installments,
+      status: "success",
+      providerRef: paid.reference,
+      raw: { saglayici: provider.id },
+      createdAt: at,
+    });
+  }
   if (coupon) {
     await db.insert(s.couponRedemptions).values({
       couponId: coupon.coupon.id,

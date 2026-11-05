@@ -452,7 +452,9 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       eklenen bir kuponun kodu uygulanır, olmayan kod "Bu kupon kodu geçerli
       değil." der. Kartla verilen sipariş `orders`'ta "preparing" durumunda,
       sunucunun hesapladığı tutarla görünür; `card_last4` son 4 hanedir, kart
-      numarasının tamamı hiçbir yerde yoktur. Sipariş başka tarayıcıda aynı
+      numarasının tamamı hiçbir yerde yoktur. `payment_transactions`'ta o
+      siparişin `sale` / `success` satırı vardır (`provider_ref`
+      `TEMSILI-…`; K-108). Sipariş başka tarayıcıda aynı
       üyeyle Siparişlerim'de görünür. Ödeme sayfası açıkken ürünün fiyatı
       veritabanında değiştirilip "Öde"ye basılınca sipariş alınmaz ve
       "Fiyatlar güncellendi; ödenecek tutar artık <tutar>." çıkar. Havale

@@ -1242,6 +1242,28 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Neden:** Sahibinin kararı: "kargo firması bana bir API verecekse esnek
   olsun, geliştirilebilir olsun"; diğer konular da aynı şekilde.
 
+### K-108 · Dış bağlantılar değiştirilebilir parça olarak kurulur: ödeme, SAP sipariş, dosya deposu
+- **Tarih:** 2026-11-05
+- **Karar:** K-107'nin uygulanışı. Bugün esnek olmayan üç konu, şirketten
+  cevap beklemeden, bugünkü davranışı bozmadan değiştirilebilir parçaya
+  ayrılır; sırayla yapılır, sonra panelin 6. alanı gelir:
+  1. **Kartla ödeme:** Kartın programını bulan ve tahsilatı yapan ödeme
+     sağlayıcısı parçası (`packages/db/src/payment.ts`). Bugünkü temsili
+     ödeme ilk sağlayıcıdır; kuruluş seçilince onun parçası eklenir,
+     sunucudaki `ODEME_SAGLAYICI` ayarıyla seçilir. Her kartlı siparişte
+     sağlayıcının sonucu `payment_transactions`'a yazılır.
+  2. **SAP'a sipariş aktarımı:** Ödemesi kesinleşen sipariş bir aktarım
+     sırasına girer; zamanlanmış iş gönderir, başarısızsa yeniden dener,
+     panelde durum ve hata görünür. SAP'a yazan parça bilgiler gelince
+     eklenir; o zamana kadar siparişi dosyaya yazan deneme parçası çalışır.
+  3. **Dosya deposu (fotoğraf ve belgeler):** Sunucuda tek bir dosya
+     deposu parçası; ilk hali sunucunun diski. BT başka bir depo seçerse o
+     eklenir. Yapılınca panelde dosya yükleme açılır.
+- **Neden:** Sahibinin kararı (2026-11-05): "Bu üç işi şimdi bu sırayla
+  yap, sonra panelin 6. alanını bitir." Teknik konularda şirketten gelecek
+  cevaplar (CANLIYA-CIKIS-SORULARI.md) yalnızca bağlantı parçasını
+  değiştirsin, sitenin geri kalanını değil.
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

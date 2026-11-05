@@ -163,6 +163,15 @@ Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
   sayılır; **para çekilmez.**
 - Siparişe yalnızca marka, program, son 4 hane, taksit sayısı, POS adı ve
   komisyon oranı yazılır.
+- **Ödeme sağlayıcısı parçası (veritabanı modu, KARARLAR K-108):** Sunucuda
+  kartın programını bulan ve tahsilatı yapan kısım ayrı, değiştirilebilir
+  bir parçadır (`packages/db/src/payment.ts` › `PaymentProvider`). Hangisinin
+  kullanılacağını sunucudaki `ODEME_SAGLAYICI` ayarı seçer
+  (`apps/zenweld-web/src/lib/server/payment.ts`); bugün tek sağlayıcı
+  `temsili`dir: para çekilmez, sipariş ödenmiş sayılır (K-97). Her kartlı
+  siparişte sağlayıcının sonucu `payment_transactions`'a yazılır (satış,
+  başarılı, sağlayıcının işlem numarası). Sağlayıcı tahsilatı reddederse
+  sipariş alınmaz ve sağlayıcının verdiği neden müşteriye gösterilir.
 - Banka POS'ları, taksit ve komisyon oranları panelde Mağaza Ayarları ›
   Kartla Taksit'te tanımlıdır; değerler **örnektir.**
 
@@ -173,8 +182,10 @@ Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
 2. **Kart bilgisi Zenweld sunucusuna gelmemeli:** Kuruluşun ödeme formu ya da
    3D Secure sayfası kullanılmalı.
 3. **Kart programı ve taksitler:** Kartın programı kuruluşun kart (BIN)
-   sorgusundan alınmalı; demodaki sabit kural kaldırılmalı
-   (`packages/data/src/payment.ts` › `cardProgram`).
+   sorgusundan alınmalı: sunucuda yeni sağlayıcının `cardProgram`'ı bunu
+   yapar. Ödeme sayfası taksitleri bugün tarayıcıda demodaki sabit kuralla
+   (`packages/data/src/payment.ts` › `cardProgram`) hesaplıyor; sunucuya
+   kartın programını soran bir uç eklenmeli.
 4. **POS eşleştirmesi:** Paneldeki her POS gerçek bir sanal POS'a
    bağlanmalı. Mağaza no panelde kalabilir; **API anahtarı, şifre ve
    benzeri gizli bilgiler yalnızca sunucuda** ortam değişkeni olarak durmalı
@@ -183,11 +194,14 @@ Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
 5. **Tutarlar sunucuda yeniden hesaplanır:** Veritabanı modunda yapıldı
    (Aşama 5.2): ürün fiyatı, kampanya, kupon, kargo ve vade farkı sunucuda
    [IS-KURALLARI.md](IS-KURALLARI.md)'deki kurallarla hesaplanır, sipariş
-   numarasını sunucu verir (`packages/db/src/orders.ts`). Ödeme kuruluşu
-   bağlanınca çekilecek tutar bu hesaptan alınmalı; işlemler
-   `payment_transactions`'a yazılmalı.
-6. **Ödeme sonucu:** Kuruluşun dönüş (callback) adresi siparişi
-   kesinleştirmeli; başarısız ödemede sipariş oluşmamalı.
+   numarasını sunucu verir (`packages/db/src/orders.ts`). Sağlayıcıya
+   çekilecek tutar bu hesaptan gider; sonuç `payment_transactions`'a
+   yazılır (yapıldı, K-108).
+6. **Ödeme sonucu (3D Secure):** Gerçek kuruluşta müşteri kuruluşun
+   sayfasına gidip döner. Sipariş önce "ödeme bekleniyor" olarak kaydedilir;
+   kuruluşun dönüş (callback) adresi ödemeyi kuruluşa doğrulatıp siparişi
+   kesinleştirir. Bunun için sağlayıcının `pay`'i iki adıma ayrılır.
+   Başarısız ödemede sipariş oluşmaz (bugün de öyle).
 7. **İade ve iptal:** Bugün panel iade yapmaz ("İadeyi ödeme kuruluşu /
    banka üzerinden ayrıca yapmanız gerekir"). Kuruluşun iade API'si
    bağlanabilir.
@@ -201,7 +215,9 @@ Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
 
 Kod: `apps/zenweld-web/src/app/(site)/odeme/page.tsx`,
 `apps/zenweld-web/src/components/shop/CardPayment.tsx`,
-`apps/zenweld-web/src/lib/payment.ts`, `packages/data/src/checkout.ts`.
+`apps/zenweld-web/src/lib/payment.ts`, `packages/data/src/checkout.ts`;
+sunucu: `packages/db/src/payment.ts`, `packages/db/src/orders.ts`,
+`apps/zenweld-web/src/lib/server/payment.ts`.
 
 ---
 
@@ -374,6 +390,7 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `DATA_SOURCE` | Yönetici | Sitenin veri kaynağı (KARARLAR K-88). Boşsa site bugünkü gibi tarayıcıdaki veriyle çalışır. `database` ise ürünler, kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları (her sayfada) ile bayiler, bayi ve satıcı stokları ve yorumlar (yalnızca ürün sayfası, Bayi Bul ve anasayfa) ve içerik (blog, haber, etkinlik, SSS, yasal metinler, Hakkımızda, satış temsilcileri, belgeler, Sayfa SEO) veritabanından okunur; değişiklik en geç bir dakikada sitede görünür. Sitenin üyeliği (kayıt, giriş, oturum) de sunucudadır (Aşama 4.2). Derlemede de okunur: değiştirince yeniden derlenir, derleme sırasında veritabanına erişilebilmelidir |
 | `REVALIDATE_SECRET` | Yönetici (gizli) | Siteyi beklemeden yenileme anahtarı (Aşama 3.6). Tanımlıysa `/api/yenile` ucu açılır; `npm run site:yenile` aynı anahtarla siteyi o anda yeniler. Boşsa uç kapalıdır. SAP stok okuma işi (ve ileride panel) siteyi kendi içinden yeniler, bu anahtara ihtiyaç duymaz |
 | `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma ucu (`/api/sap/stok`) açılır; zamanlayıcı ve `npm run sap:stok` bu anahtarla çağırır. Boşsa uç kapalıdır |
+| `ODEME_SAGLAYICI` | Yönetici | Kartla ödemenin sağlayıcısı (K-108). Boşsa `temsili` (para çekilmez, sipariş ödenmiş sayılır; K-97). Ödeme kuruluşu bağlanınca onun adı yazılır (ör. `iyzico`); bilinmeyen ad yazılırsa sipariş alınmaz ve sunucu hata verir. Kuruluşun anahtarları ayrı değişkenlerde, yalnızca sunucuda durur |
 | `SAP_STOK_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar depo stoğunun okunacağı deneme dosyası (CSV; örnek `packages/db/deneme/sap-stok.csv`). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir. Boşsa ve SAP bağlantısı da yoksa okuma işi çalışmaz |
 | `NEXT_DIST_DIR` | Otomatik (test) | Derleme klasörü; boşsa `.next`. Yalnızca veritabanı modunun testleri (`npm run test:e2e:db`) `.next-db` kullanır, demo derlemesi bozulmaz |
 | `SITE_URL` | Geliştirici | Yalnızca `npm run site:yenile` ve `npm run sap:stok`: sitenin adresi; boşsa `NEXT_PUBLIC_SITE_URL`, o da boşsa `http://localhost:3000` |

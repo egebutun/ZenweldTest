@@ -9,10 +9,14 @@ import {
   memberOrders,
   placeOrder,
   readCatalog,
+  TEMSILI_ODEME,
+  type CardPaymentRequest,
   type Member,
+  type PaymentProvider,
   type PricingData,
 } from "../../packages/db/src";
 import * as schema from "../../packages/db/src/schema";
+import { tr } from "@zenweld/i18n";
 import { formatPrice } from "@zenweld/utils";
 import { category, closePool, group, inTransaction, product, testDatabaseUrl, user } from "./ortak";
 
@@ -138,6 +142,52 @@ describe("sipariş verme", () => {
 
       const second = await placeOrder(db, memberA, order(), at, data);
       expect(second.ok && second.order.code).toBe(`${prefix}00043`);
+
+      // Kartla tahsilat odeme saglayicisinin kaydiyla yazilir (temsili saglayici, K-108).
+      expect((await client.query("SELECT order_id, pos_id, kind, amount, installments, status, provider_ref, raw FROM payment_transactions")).rows).toEqual([
+        {
+          order_id: result.order.id,
+          pos_id: "pos-1",
+          kind: "sale",
+          amount: "2783.00",
+          installments: 3,
+          status: "success",
+          provider_ref: `TEMSILI-${result.order.id}`,
+          raw: { saglayici: "temsili" },
+        },
+      ]);
+    });
+  });
+
+  it("ödeme sağlayıcısı: kart programını o verir; tahsilatı reddederse sipariş alınmaz, numara harcanmaz", async () => {
+    await withShop(async (db, client, data) => {
+      const at = new Date();
+      const card = { method: "card", cardBin: BIN, cardLast4: "1234", installments: 3 };
+      const requests: CardPaymentRequest[] = [];
+      const declining: PaymentProvider = {
+        id: "deneme",
+        cardProgram: async () => "Bonus",
+        pay: async (request) => {
+          requests.push(request);
+          return { ok: false, error: "Kart limiti yetersiz." };
+        },
+      };
+      expect(await placeOrder(db, memberA, order({ payment: card, expectedTotal: 2783 }), at, data, declining)).toEqual({
+        ok: false,
+        status: 402,
+        error: "Kart limiti yetersiz.",
+      });
+      expect(requests).toMatchObject([{ amount: 2783, installments: 3, pos: { id: "pos-1" }, card: { bin: BIN, last4: "1234" } }]);
+      expect((await client.query("SELECT count(*)::int AS n FROM orders")).rows[0].n).toBe(0);
+      expect((await client.query("SELECT count(*)::int AS n FROM payment_transactions")).rows[0].n).toBe(0);
+      expect((await client.query("SELECT count(*)::int AS n FROM record_counters")).rows[0].n).toBe(0);
+
+      // Saglayici kartin programini bilmiyorsa yalnizca varsayilan POS'tan tek cekim: 3 taksit alinmaz.
+      const unknown: PaymentProvider = { ...TEMSILI_ODEME, cardProgram: async () => undefined };
+      expect(await placeOrder(db, memberA, order({ payment: card, expectedTotal: 2783 }), at, data, unknown)).toMatchObject({
+        ok: false,
+        error: tr.checkout.invalidInstallment,
+      });
     });
   });
 

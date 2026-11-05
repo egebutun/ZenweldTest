@@ -270,6 +270,12 @@ Kod: `packages/data/src/cart.ts` (`priceCartLines`),
   Paraf, Advantage, BankkartCombo) göre yapılır.
 - **Demo notu:** Program bugün kartın ilk 6 hanesinden sabit bir kuralla
   seçilir; gerçekte ödeme kuruluşunun kart (BIN) sorgusundan gelecek.
+- **Ödeme sağlayıcısı (veritabanı modu, KARARLAR K-108):** Sunucuda kartın
+  programını ve tahsilatı ödeme sağlayıcısı verir. Bugünkü sağlayıcı
+  temsilidir (yukarıdaki sabit kural; para çekilmez, K-97). Sağlayıcı
+  tahsilatı reddederse sipariş alınmaz, sipariş numarası verilmez ve
+  sağlayıcının nedeni ödeme sayfasında gösterilir (ör. "Kart limiti
+  yetersiz.").
 
 **Kartın çekileceği POS (banka):**
 

@@ -7,8 +7,9 @@ import { orderNotice, returnNotice } from "@/lib/order-text";
 import { getDatabaseCatalog } from "@/lib/server/catalog";
 import { database, usesDatabase } from "@/lib/server/db";
 import { sourcePath } from "@/lib/server/mail";
-import { sendNotification } from "@/lib/server/notify";
 import { siteMember } from "@/lib/server/member";
+import { sendNotification } from "@/lib/server/notify";
+import { paymentProvider } from "@/lib/server/payment";
 import { clearSessionCookie, json, notFound, sameOrigin } from "@/lib/server/session-cookie";
 
 /**
@@ -22,7 +23,8 @@ import { clearSessionCookie, json, notFound, sameOrigin } from "@/lib/server/ses
  *   POST /api/siparis/iade   {orderCode, items, reason, note}: iade talebi
  *
  * Tutar, stok ve kupon sunucuda yeniden hesaplanir; kurallar
- * packages/db/src/orders.ts. Uye oturum cerezinden bulunur. Zenweld'e
+ * packages/db/src/orders.ts. Kartla odeme ODEME_SAGLAYICI'daki saglayiciyla
+ * yapilir (lib/server/payment.ts; K-108). Uye oturum cerezinden bulunur. Zenweld'e
  * bildirim e-postasi kayittan sonra gider; yanit onu beklemez.
  */
 
@@ -66,7 +68,7 @@ export async function POST(request: NextRequest, context: Context) {
   const db = database();
   if (islem === "ver") {
     const pricing = await readPricingData(db);
-    const result = await db.transaction((tx) => placeOrder(tx, member, body, new Date(), pricing));
+    const result = await db.transaction((tx) => placeOrder(tx, member, body, new Date(), pricing, paymentProvider()));
     if (!result.ok) return orderFailure(result);
     const { order } = result;
     after(() =>

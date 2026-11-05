@@ -77,7 +77,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 | 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
 | 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
-| 5 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez | Ödeme kuruluşu anlaşması |
+| 5 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez. Ödeme sağlayıcısı parçası hazır (`packages/db/src/payment.ts`, K-108): kuruluşun parçası eklenir, 3D Secure için ödeme iki adıma ayrılır, ödeme sayfası kart programını sunucudan alır | Ödeme kuruluşu anlaşması |
 | 6 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
 | 7 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
 
@@ -811,8 +811,9 @@ kopyasını görür; panelde yapılan değişiklik müşteriye ulaşmaz.
      açılması sahibiyle birlikte tasarlanacak ("Bayilik başvurusundan bayi
      açma" bölümü, K-103); bugün bayi kaydı elle açılır. Form kayıtlarının (başvuru, mesaj, Welders Club) saklama
      süresi ve silinmesi KVKK kararıyla belirlenecek (K-100).
-   - 5.2'den kalanlar: kartlı ödeme gerçek POS bağlanana kadar temsili;
-     `payment_transactions`'a o zaman yazılır (yol haritası 5). Panel
+   - 5.2'den kalanlar: kartlı ödeme gerçek POS bağlanana kadar temsili
+     (yol haritası 5); ödeme sağlayıcısı parçası hazır, kuruluş seçilince
+     onun parçası eklenir ve `ODEME_SAGLAYICI` ayarlanır (K-108). Panel
      siparişleri sayfalamadan, hepsini birden okur; sipariş sayısı binleri
      bulunca liste sayfalanmalı (sunucuda süzme ve arama).
    - Siteyi ve paneli bağlarken panele eklenecek ekranlar: gönderilen

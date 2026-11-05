@@ -655,9 +655,13 @@ Anahtar: (`order_id`, `seq`).
 
 ### `payment_transactions` — banka POS işlemleri (yeni)
 
-Banka POS'u bağlanınca kesinleşecek; bugün ödeme demo. Veritabanı modunda
-verilen siparişte de (Aşama 5.2) bu tabloya henüz satır yazılmaz; kartlı
-ödeme gerçek POS bağlanana kadar temsilidir (KARARLAR K-97).
+Kartla ödemenin sağlayıcıdan dönen sonucu (KARARLAR K-108). Veritabanı
+modunda her kartlı siparişte ödeme sağlayıcısının sonucu buraya yazılır
+(`packages/db/src/payment.ts`, `orders.ts` › `placeOrder`): `kind` `sale`,
+`status` `success`, `provider_ref` sağlayıcının işlem numarası, `raw`
+`{ saglayici }`. Bugünkü sağlayıcı temsilidir (`provider_ref`
+`TEMSILI-<sipariş kimliği>`; para çekilmez, K-97). İade ve iptal
+(`refund`, `cancel`) ödeme kuruluşu bağlanınca yazılır.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -1481,8 +1485,12 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
 - **Yazılanlar (tek işlem):** `orders`, `order_items` (seçenek kimliği
   `variant_id` dahil), `order_status_history` (ilk durum), kupon varsa
   `coupon_redemptions`; numara `record_counters` üzerinden
-  (`nextRecordCode`). Kartlı siparişte `paid_at` sipariş anıdır (temsili
-  ödeme); havalede `due_at` = sipariş anı + mağaza ayarındaki gün.
+  (`nextRecordCode`). Kartlı siparişte kartın programını ve tahsilatı ödeme
+  sağlayıcısı yapar (`src/payment.ts`, K-108): `paid_at` sağlayıcının
+  verdiği ödeme anıdır (temsili sağlayıcıda sipariş anı), sonuç
+  `payment_transactions`'a yazılır; sağlayıcı reddederse (402) sipariş
+  yazılmaz ve sipariş numarası harcanmaz. Havalede `due_at` = sipariş anı +
+  mağaza ayarındaki gün.
 - **Kilitler:** Kuponlu siparişte kupon satırı (`coupons`, FOR UPDATE)
   kilitlenir; aynı kuponla aynı anda gelen siparişler sırayla sayılır, sınır
   aşılmaz. İade talebinde sipariş satırı kilitlenir. Havale iptalinde
