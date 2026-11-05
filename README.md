@@ -1,12 +1,22 @@
 # ZENWELD — Kurumsal Site ve Online Mağaza
 
-Zenweld kaynak makineleri ve ekipmanları için hazırlanmış **frontend demo** projesi.
-Backend yoktur; tüm veriler tarayıcıda (localStorage) tutulur. Sunucuda yalnızca
-form e-postalarını gönderen üç küçük uç vardır (`app/api`).
+Zenweld kaynak makineleri ve ekipmanları için kurumsal site, online mağaza ve
+yönetim paneli (`/yonetim`). Site iki modda çalışır:
 
-> ⚠️ **Bu bir demo/sunum çalışmasıdır.** Üyelik ve yönetim paneli özellikleri
-> gerçek bir sunucu tarafı kimlik doğrulaması olmadan çalışır. Canlıya çıkmadan
-> önce [Canlıya Çıkış](#canlıya-çıkış-notları) bölümünü okuyun.
+- **Demo modu** (varsayılan; yayındaki `vercel.app` adresi bu moddadır):
+  veriler tarayıcıda (localStorage) tutulur ve yalnızca o tarayıcıda görünür.
+  Sunucu yalnızca e-postaları gönderir (`app/api`: bildirim, bayilik, destek).
+  Üyelik ve panel girişi gerçek güvenlik sağlamaz.
+- **Veritabanı modu** (`DATA_SOURCE=database`): bütün veri sunucudaki
+  PostgreSQL veritabanındadır. Üyelik, sipariş, formlar ve panelin bütün
+  ekranları sunucu üzerinden çalışır (Aşama 3–5). Kod hazırdır ve kendi
+  testleriyle denenir (`npm run test:e2e:db`); canlı sunucu kurulunca site
+  bu modda yayına alınır (KARARLAR K-92).
+
+İki modun farkları: [Demo ve veritabanı modu](#demo-ve-veritabanı-modu).
+
+> ⚠️ Canlıya çıkmadan önce [Canlıya Çıkış](#canlıya-çıkış-notları) bölümünü
+> okuyun.
 
 ## Yayındaki adresler
 
@@ -135,8 +145,9 @@ Marka sitesi ve **online mağazadır**. Ziyaretçi ürünü şu yollardan alır:
   (bireysel: T.C. kimlik no · kurumsal: unvan, vergi dairesi, VKN), ödeme yöntemi ve
   Ön Bilgilendirme Formu + Mesafeli Satış Sözleşmesi onayı.
 - **Kartla ödeme + taksit**: kart numarası girilince kart programı ve taksit
-  tablosu (tek çekim, 2–12 taksit, vade farkı) çıkar. *Demo: para çekilmez;*
-  gerçek ödeme kuruluşu (iyzico / PayTR / banka sanal POS) backend ile bağlanacak.
+  tablosu (tek çekim, 2–12 taksit, vade farkı) çıkar. *Para çekilmez:*
+  gerçek ödeme kuruluşu (iyzico / PayTR / banka sanal POS) henüz bağlanmadı;
+  bağlanacağı parça hazırdır (KARARLAR K-108).
 - **Havale / EFT**: sipariş "Ödeme Bekleniyor" olarak açılır, IBAN'lar gösterilir;
   yönetici "Ödeme Alındı" deyince hazırlanmaya geçer. Süre dolarsa iptal edilir.
 - **Sipariş takibi**: Hesabım › Siparişlerim — durum çizelgesi
@@ -260,7 +271,7 @@ ZenweldTest/
 │   │   ├── migrations/             Geçiş betikleri (0000 üretilen, 0001 elle yazılan kurallar)
 │   │   └── scripts/                npm run db:migrate / db:reset / db:seed / db:yukle
 │   │
-│   ├── store/                      Backend yerine geçen veri katmanı
+│   ├── store/                      Tarayıcıdaki veri katmanı (demo modunda bütün veri)
 │   │   └── src/
 │   │       ├── database.ts         localStorage motoru + abonelik
 │   │       ├── repo/               Veri işlemleri, konuya göre (ürün, stok, bayi, içerik…)
@@ -268,7 +279,7 @@ ZenweldTest/
 │   │       ├── files.ts            Belge dosyaları (IndexedDB)
 │   │       └── export-import.ts    CSV indirme
 │   │
-│   ├── auth/                       Demo kimlik doğrulama
+│   ├── auth/                       Üyelik ve panel girişi (demo: tarayıcıda; veritabanı modu: sunucuda)
 │   │   └── src/ auth-context.tsx · roles.ts · hash.ts
 │   │
 │   ├── i18n/                       tr.ts — sitenin arayüz metinleri (düğme, başlık, uyarı…)
@@ -338,21 +349,21 @@ ZenweldTest/
 
 ## Veriler Nerede Saklanıyor?
 
-Backend olmadığı için:
+Demo modunda (varsayılan, yayındaki adres):
 
 1. Uygulama açıldığında `packages/data` içindeki **başlangıç verisi** tarayıcının
    `localStorage`'ına yüklenir.
 2. Yönetim panelinde yapılan her değişiklik ve sitede verilen sipariş, teklif,
-   yorum gibi kayıtlar `localStorage`'a yazılır; sayfalar anında güncellenir.
+   yorum, form gibi kayıtlar `localStorage`'a yazılır; sayfalar anında güncellenir.
 3. Değişiklikler **yalnızca o tarayıcıda** görünür. Başka bilgisayarda görünmez.
 4. Panelden yüklenen belge dosyaları (MSDS, sertifikalar…) tarayıcının ayrı
    dosya deposunda (IndexedDB) durur.
-5. Veritabanı modunda (`DATA_SOURCE=database`, aşağıda) bunlar olmaz:
-   kayıtlar sunucudadır; tarayıcıya örnek veri gönderilmez, `localStorage`'a
-   veri yazılmaz (Aşama 5.6).
 
-Backend gelene kadar panelde yapılan değişiklikler yalnızca o tarayıcıda kalır;
-kalıcı veri için başlangıç (seed) dosyaları güncellenir.
+Bu yüzden demoda herkesin göreceği kalıcı bir değişiklik için başlangıç
+(seed) dosyaları güncellenir. Veritabanı modunda (`DATA_SOURCE=database`,
+aşağıda) bunların hiçbiri olmaz: kayıtlar sunucudadır, panelde yapılan
+değişikliği bütün ziyaretçiler görür; tarayıcıya örnek veri gönderilmez,
+`localStorage`'a veri yazılmaz (Aşama 5.6).
 
 **Veri sürümü (`DB_VERSION`):** `packages/data/src/index.ts`'tedir. Başlangıç
 verisi ya da kayıtların yapısı değişince bir artırılır; artırılmazsa
@@ -364,12 +375,30 @@ Bütün kayıt türleri ve alanları: [docs/VERI-MODELI.md](docs/VERI-MODELI.md)
 Sunucu veritabanının (PostgreSQL) tabloları ve kolonları:
 [docs/VERITABANI.md](docs/VERITABANI.md).
 
-### Veritabanı (PostgreSQL) — hazırlanıyor
+### Demo ve veritabanı modu
 
-Sunucu veritabanının tabloları `packages/db`'de hazırlanıyor (KARARLAR
-K-81). Site varsayılan olarak yukarıdaki tarayıcı verisiyle çalışır; ayarla
-katalogu veritabanından okuyabilir (5. adım). Tabloları bilgisayarda kurmak
-ve denemek için:
+Ekranlar ve kurallar iki modda aynıdır. Farklar:
+
+| Konu | Demo modu | Veritabanı modu |
+|---|---|---|
+| Veri | Her tarayıcı örnek veriyle başlar; değişiklik yalnızca o tarayıcıda görünür | Herkes aynı veriyi görür; panelde kaydedilen değişiklik sitede de görünür |
+| Üyelik ve panel girişi | Şifre tarayıcıda karşılaştırılır; gerçek güvenlik değildir | Sunucuda: şifre argon2id ile özetlenir, oturum güvenli çerezde (panel 8 saat) |
+| Şifremi unuttum | Aynı mesaj çıkar, e-posta gitmez | Hesap varsa 1 saat geçerli bağlantı e-postayla gider |
+| Kartla ödeme | Para çekilmez | Para çekilmez (ödeme kuruluşu bağlanana kadar); tutar, stok ve kupon sunucuda yeniden hesaplanır |
+| İşlem Kaydı, E-posta Kaydı | Ekranlar menüdedir, tablo boştur ("site veritabanına bağlandığında burada listelenir") | Paneldeki her işlem ve gönderilen her e-posta listelenir |
+| Mesajlar, Welders Club, Bayilik Başvuruları | Formu gönderen tarayıcının panelinde görünür (K-109) | Sunucudadır; bütün yöneticiler görür |
+| Sipariş detayındaki SAP Aktarımı kutusu | Yoktur | Ödemesi kesinleşen siparişte görünür |
+| Aynı kaydı iki yönetici düzenlerse | Her tarayıcının kendi kopyası vardır | Sonra kaydeden uyarı alır ("sayfayı yenileyin"), kayıt değişmez |
+| Görsel ve belge yükleme | Görsel kaydın içine, belge tarayıcının dosya deposuna yazılır | `DOSYA_KLASORU` ayarlıysa sunucuya yüklenir (`/dosya/…`); değilse adres girilir |
+| Favoriler, adresler | Yalnızca o tarayıcıda (favoriler üyeye değil tarayıcıya bağlı) | Üyeye bağlı; başka cihazda da aynısı görünür |
+| SAP depo stoğu okuma | Yoktur; depo stoğu örnek veridir | Zamanlayıcıyla okunur (bugün deneme dosyasından) |
+
+### Veritabanı (PostgreSQL)
+
+Sunucu veritabanının tabloları `packages/db`'dedir (KARARLAR K-81). Site
+varsayılan olarak demo modunda (yukarıdaki tarayıcı verisiyle) çalışır;
+`DATA_SOURCE=database` ayarıyla bütün veriyi veritabanından okur ve yazar
+(aşağıda 5. adım). Tabloları bilgisayarda kurmak ve denemek için:
 
 ```bash
 # 1. PostgreSQL 18'i başlatın. Docker ile:
@@ -448,8 +477,9 @@ npm run start --workspace apps/zenweld-web
     Etkinlikler, Blog, Hakkımızda, SSS, Belgeler, Yasal Metinler, Sayfa
     SEO) ekranları veritabanından okur ve yazar; aynı kaydı iki yönetici
     düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her değişiklik
-    `audit_log`'a yazılır. Yalnızca bu modda olan İşlem Kaydı ve E-posta
-    Kaydı ekranları (Ayarlar) bu kayıtları gösterir. Görsel ve belge
+    `audit_log`'a yazılır. İşlem Kaydı ve E-posta Kaydı ekranları
+    (Ayarlar) bu kayıtları gösterir (demo modunda kayıt tutulmaz, tablo
+    boştur; K-109). Görsel ve belge
     dosyası `DOSYA_KLASORU` tanımlıysa yüklenir, değilse adresi girilir
     (aşağıda › Panelden dosya yükleme).
   - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
@@ -585,24 +615,25 @@ gerekmez.
 
 ## Canlıya Çıkış Notları
 
-Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
+Yayındaki site bugün demo modundadır. Gerçek kullanıma almadan önce:
 
 1. **Site veritabanı modunda çalışmalı** (`DATA_SOURCE=database`). Demo
    modunda şifre tarayıcıda karşılaştırılır ve `/yonetim` paneli tarayıcıda
    korunur; bu gerçek bir güvenlik değildir. Veritabanı modunda üyelik ve
    panel girişi sunucudadır (Aşama 4): şifreler argon2id ile özetlenir,
    oturum yalnızca sunucunun okuyabildiği çerezde durur, yanlış şifre sınırı
-   ve şifre sıfırlama vardır. Panelin Satış ve Talepler ekranlarının
-   işlemleri de sunucuda, yönetici oturumuyla yapılır. Kalan: panelin diğer
-   alanlarının işlemlerinin de sunucuya geçmesi (Aşama 5).
-2. **Verinin veritabanına taşınması tamamlanmalı.** Sunucu veritabanı
+   ve şifre sıfırlama vardır. Panelin bütün ekranlarının işlemleri de
+   sunucuda, yönetici oturumuyla yapılır ve işlem kaydına yazılır (Aşama 5).
+2. **Canlı veritabanı kurulmalı ve veri yüklenmeli.** Sunucu veritabanı
    PostgreSQL'dir (KARARLAR K-81; tablolar `packages/db`,
-   [docs/VERITABANI.md](docs/VERITABANI.md)). Veritabanı modunda katalog,
-   stok, içerik ve ayarlar veritabanından okunur (Aşama 3); üyelik, adresler
-   ve favoriler, siparişler, iade talepleri ve formlar veritabanına yazılır
-   (Aşama 4, 5.1–5.3). Panel alan alan bağlanıyor; Satış ve Talepler
-   bağlandı (K-99), kalan alanlar Aşama 5'te
-   ([docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Veritabanı).
+   [docs/VERITABANI.md](docs/VERITABANI.md)). Veritabanı modunun kodu
+   tamamdır: katalog, stok, içerik ve ayarlar veritabanından okunur
+   (Aşama 3); üyelik, adresler ve favoriler, siparişler, iade talepleri,
+   formlar ve panelin bütün ekranları veritabanına yazar (Aşama 4–5, K-99).
+   Kalan: canlı sunucunun ve veritabanının kurulması, tabloların
+   (`db:migrate`) ve verinin (`db:yukle canli`, K-91) yüklenmesi, ilk
+   yöneticinin açılması (`yonetici:olustur`)
+   ([docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Canlıya giden yol).
 3. **Ürün içeriği ve fiyatlar girilmeli.** Ekipmanlar'daki ürünlerin adı, kodu,
    alt grubu, garantisi ve seçenekleri gerçektir; Force serisi 9 ürün dışında
    açıklama, teknik özellikler ve kutu içeriği örnektir; fotoğraflar örnektir,
@@ -613,9 +644,13 @@ Bu proje bir sunum demosu olarak hazırlandı. Gerçek kullanıma almadan önce:
    [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Ürün içeriği.
 4. **Yasal metinler** (KVKK, gizlilik, iade, sözleşmeler…) şu an başlıkları
    hazır **taslaklardır**; hukuk danışmanının metinleriyle değiştirilmelidir.
-5. **Örnek satış hareketleri silinmeli:** Panel grafikleri için üretilen örnek
-   üye, sipariş, teklif, servis ve garanti kayıtları
-   (`packages/data/src/seed/sample-activity.seed.ts`).
+5. **Örnek satış hareketleri canlıya gitmez:** Panel grafikleri için
+   üretilen örnek üye, sipariş, teklif, servis ve garanti kayıtları
+   (`packages/data/src/seed/sample-activity.seed.ts`) yalnızca demodadır;
+   `db:yukle` bunları hiç yüklemez (K-91), veritabanı modunda tarayıcıya da
+   gönderilmez (Aşama 5.6). Örnek verinin koddan kaldırılması:
+   [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Canlıya giden yol ›
+   Kalan kod işleri 7.
 6. **Gerçek değerler girilmeli:** Kargo ücreti, banka POS'ları ve vade farkı
    oranları, IBAN'lar (Mağaza Ayarları'ndaki değerler örnektir).
 7. **Ödeme kuruluşu bağlanmalı** (iyzico, PayTR ya da bankanın sanal POS'u);

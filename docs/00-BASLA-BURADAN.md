@@ -40,13 +40,23 @@ Diğer temel bilgiler:
 - **Yönetim paneli** sitenin içindedir (`/yonetim`). Kendi giriş ekranı ve
   oturumu vardır; site üyeliğinden ayrıdır.
 - **Dil:** Site ve panel yalnızca Türkçedir.
-- **Bugünkü durum:** Proje bir **demo**dur; sunucu tarafında veritabanı yoktur.
-  - Veriler tarayıcıda (localStorage) tutulur ve yalnızca o tarayıcıda görünür.
+- **Bugünkü durum:** Site iki modda çalışır; ekranlar ve kurallar ikisinde
+  aynıdır.
+  - **Demo modu** (yayındaki adres bugün bu moddadır): veriler tarayıcıda
+    (localStorage) tutulur ve yalnızca o tarayıcıda görünür; üyelik ve panel
+    girişi gerçek güvenlik sağlamaz.
+  - **Veritabanı modu** (`DATA_SOURCE=database`): bütün veri sunucudaki
+    PostgreSQL veritabanındadır; üyelik, sipariş, formlar ve panelin bütün
+    ekranları sunucu üzerinden çalışır ([VERITABANI.md](VERITABANI.md)).
+    Kodu hazırdır; canlı sunucu kurulunca site bu modda yayına alınır
+    (KARARLAR K-92).
+  - İki modun farkları (veri, giriş, İşlem Kaydı, dosya yükleme, SAP…):
+    [README.md](../README.md) › Demo ve veritabanı modu.
   - Form e-postaları gerçekten gönderilir (e-posta servisinin anahtarı
     tanımlıysa).
-  - Ödeme demo modundadır; karttan para çekilmez.
-  - Gerçek sisteme geçişte yapılacaklar
-    [YAPILACAKLAR.md](YAPILACAKLAR.md)'de, teknik kurulum ve demo hesapları
+  - Ödeme kuruluşu henüz bağlanmadı; karttan para çekilmez.
+  - Canlıya geçişte yapılacaklar [YAPILACAKLAR.md](YAPILACAKLAR.md) ›
+    Canlıya giden yol'da, teknik kurulum ve demo hesapları
     [README.md](../README.md)'dedir.
 
 ---

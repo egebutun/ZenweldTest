@@ -34,12 +34,14 @@ Son güncelleme: 2026-11-05. Her adım bitince bu bölüm güncellenir.
 PostgreSQL'de durur; stok SAP'tan okunur, siparişler SAP'a satış siparişi
 olarak yazılır; site hızlı ve hatasız çalışır.
 
-**Bugün:** Sitenin ortak bir veri merkezi yok; her ziyaretçinin tarayıcısı
-verinin kendi kopyasını tutuyor. Panelde yapılan değişiklik yalnızca o
-tarayıcıda görünür; sipariş müşterinin tarayıcısına yazılır. Geçiş bir
-ayarla, parça parça yapılıyor (`DATA_SOURCE=database`, KARARLAR K-88):
-biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gibi
-çalışır.
+**Bugün:** Yayındaki site demo modundadır: ortak bir veri merkezi yok, her
+ziyaretçinin tarayıcısı verinin kendi kopyasını tutuyor; panelde yapılan
+değişiklik yalnızca o tarayıcıda görünür. Veritabanı modu
+(`DATA_SOURCE=database`, KARARLAR K-88) hazırdır: sitenin ve panelin bütün
+okuma ve yazmaları sunucudan, veritabanından yapılır (Aşama 3–5, aşağıda
+"Yapılanlar" ve "Kalan kod işleri" 1). Canlı sunucu ve veritabanı kurulunca
+site bu modda yayına alınır; ayar kapalıyken demo bugünkü gibi çalışır.
+İki modun farkları: [README](../README.md) › Demo ve veritabanı modu.
 
 ### Yapılanlar
 

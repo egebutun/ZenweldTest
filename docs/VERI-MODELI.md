@@ -674,13 +674,14 @@ Garanti kaydında üye kimliği tutulmaz; üyeyle e-posta üzerinden eşleşir.
 | `createdAt` | tarih-saat | |
 | `updatedAt` | tarih-saat? | Son değişiklik; yalnızca veritabanı modunda panelin okuduğu kayıtta dolu (KARARLAR K-99) |
 
-### Yalnızca veritabanında tutulan form kayıtları
+### E-posta formlarının kayıtları
 
 Bayilik başvurusu, iletişim mesajı ve ürün destek sorusu, Welders Club
-katılımı tarayıcıdaki veride yoktur; demo modunda yalnızca e-postayla
-gider. Veritabanı modunda kendi tablolarına yazılır ve panelde Bayilik
-Başvuruları, Mesajlar ve Welders Club ekranlarında görünür (KARARLAR
-K-100). Alanlar: [VERITABANI.md](VERITABANI.md) › `dealer_applications`,
+katılımı panelde Bayilik Başvuruları, Mesajlar ve Welders Club
+ekranlarında görünür (KARARLAR K-100). Veritabanı modunda kendi
+tablolarına yazılır. Demo modunda tarayıcıdaki verinin isteğe bağlı
+listelerinde durur (`dealerApplications`, `supportMessages`, `weldersClub`;
+K-109) ve yalnızca formu gönderen tarayıcıda görünür. Alanlar: [VERITABANI.md](VERITABANI.md) › `dealer_applications`,
 `support_messages`, `welders_club_signups`; panelin kullandığı kayıt
 türleri `packages/db/src/admin-requests.ts`'tedir
 (`DealerApplicationRecord`, `SupportMessageRecord`, `WeldersClubRecord`).

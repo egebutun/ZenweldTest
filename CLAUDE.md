@@ -3,8 +3,11 @@
 ## Proje
 
 Zenweld kaynak makineleri için kurumsal site, online mağaza ve yönetim paneli
-(`/yonetim`). Next.js monorepo; bugün **demo**: backend yok, veriler
-tarayıcıda tutulur.
+(`/yonetim`). Next.js monorepo; iki modda çalışır: **demo modu**
+(varsayılan; yayındaki vercel.app adresi, veriler tarayıcıda) ve
+**veritabanı modu** (`DATA_SOURCE=database`; PostgreSQL, üyelik ve panelin
+bütün işlemleri sunucuda; canlı sunucu gelince bu modda yayına alınır).
+İki modun farkları: README › Demo ve veritabanı modu.
 
 İşe başlamadan önce [docs/00-BASLA-BURADAN.md](docs/00-BASLA-BURADAN.md)
 okunur; hangi bilginin hangi dosyada olduğu orada yazar.

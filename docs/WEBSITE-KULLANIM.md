@@ -78,11 +78,12 @@ tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
   - Kaydı panelde tutulan formlar (sipariş, teklif, servis talebi, garanti,
     değerlendirme, üyelik) e-postanın sonucunu beklemez; kayıt her durumda
     yapılır.
-  - Kaydı olmayan formlar (iletişim, bayilik, Welders Club, ürün destek
-    sohbeti) e-posta gidemezse ziyaretçiye hata gösterir ve
-    `info@zenweld.com`'a doğrudan yazmasını söyler. Veritabanı modunda bu
-    formlar da veritabanına kaydedilir (Aşama 5.3); kayıt yapıldıysa e-posta
-    gitmese de hata gösterilmez.
+  - E-posta formları (iletişim, bayilik, Welders Club, ürün destek
+    sohbeti) demo modunda e-posta gidemezse ziyaretçiye hata gösterir ve
+    `info@zenweld.com`'a doğrudan yazmasını söyler; e-posta gidince kayıt
+    tarayıcıya da yazılır ve aynı tarayıcının panelinde görünür (KARARLAR
+    K-109). Veritabanı modunda bu formlar veritabanına kaydedilir (Aşama
+    5.3); kayıt yapıldıysa e-posta gitmese de hata gösterilmez.
   - Veritabanı modunda teklif, servis talebi, garanti kaydı ve
     değerlendirmeyi sunucu kaydeder ve kuralları yeniden denetler (Aşama
     5.3); gönderilen her e-posta kayıt altına alınır (`email_log`).
@@ -481,7 +482,9 @@ Yalnızca ürün sayfalarında, sağ altta bir düğme olarak durur.
     gider.
   - Ekranda sabit yanıt çıkar: "Destek ekibimiz size en kısa sürede dönüş
     yapacaktır. İyi günler dileriz."
-  - Veritabanı modunda soru veritabanına da kaydedilir (Aşama 5.3).
+  - Demo modunda soru tarayıcıya da kaydedilir ve aynı tarayıcıda panelin
+    Mesajlar ekranında görünür (KARARLAR K-109). Veritabanı modunda soru
+    veritabanına kaydedilir (Aşama 5.3).
   - E-posta gidemezse ayrıca "Mesajınız alındı. Acele bir durumsa
     info@zenweld.com adresine de yazabilirsiniz." yazar.
 - KVKK notu ve bot tuzağı vardır.
@@ -1267,9 +1270,10 @@ gelinir.
   - Başarı: "Mesajınız alındı. En kısa sürede dönüş yapacağız."
   - Hata: "Mesajınız şu an gönderilemedi. Lütfen tekrar deneyin ya da
     info@zenweld.com adresine e-posta gönderin."
-- **Kayıt:** Demo modunda kayıt tutulmaz; yalnızca e-posta gider. Veritabanı
-  modunda mesaj veritabanına da kaydedilir (Aşama 5.3); kayıt yapıldıysa
-  e-posta gitmese de başarı mesajı çıkar.
+- **Kayıt:** Demo modunda e-posta gidince mesaj tarayıcıya da kaydedilir ve
+  aynı tarayıcıda panelin Mesajlar ekranında görünür (KARARLAR K-109).
+  Veritabanı modunda mesaj veritabanına kaydedilir (Aşama 5.3); kayıt
+  yapıldıysa e-posta gitmese de başarı mesajı çıkar.
 - **Ofislerimiz:** Panelde girilen ofislerin kartları, panelindeki sırayla
   (örnek veride İstanbul ve İzmir).
   - Kartta şehir, başlık (merkezde ticari unvan, diğerlerinde "Zenweld
@@ -1290,10 +1294,11 @@ gelinir.
   - Zorunlu: Yetkili Kişi, E-posta, Telefon.
   - İsteğe bağlı: Eklemek İstedikleriniz.
 - KVKK notu ve bot tuzağı vardır.
-- **Kayıt:** Demo modunda kayıt tutulmaz; yalnızca `info@zenweld.com`'a
-  "Bayilik başvurusu — <firma>" e-postası gider. Veritabanı modunda başvuru
-  veritabanına da kaydedilir (Aşama 5.3); kayıt yapıldıysa e-posta gitmese
-  de başarı ekranı çıkar.
+- **Kayıt:** `info@zenweld.com`'a "Bayilik başvurusu — <firma>" e-postası
+  gider. Demo modunda e-posta gidince başvuru tarayıcıya da kaydedilir ve
+  aynı tarayıcıda panelin Bayilik Başvuruları ekranında görünür (KARARLAR
+  K-109). Veritabanı modunda başvuru veritabanına kaydedilir (Aşama 5.3);
+  kayıt yapıldıysa e-posta gitmese de başarı ekranı çıkar.
 - **Sonuç:**
   - Başarı: Form yerine "Başvurunuz Alındı — İlginiz için teşekkür ederiz.
     Sizlere info@zenweld.com maili üzerinden dönüş sağlıyor olacağız." ve
@@ -1339,10 +1344,11 @@ gelinir.
   - Zorunlu: Ad, E-posta.
   - İsteğe bağlı: Şehir.
   - **Kulübe Katıl** düğmesi; bot tuzağı vardır.
-- **Kayıt:** Demo modunda kayıt tutulmaz; yalnızca `info@zenweld.com`'a
-  "Welders Club katılım" e-postası gider. Veritabanı modunda katılım
-  veritabanına da kaydedilir (Aşama 5.3); kayıt yapıldıysa e-posta gitmese
-  de başarı mesajı çıkar.
+- **Kayıt:** `info@zenweld.com`'a "Welders Club katılım" e-postası gider.
+  Demo modunda e-posta gidince katılım tarayıcıya da kaydedilir ve aynı
+  tarayıcıda panelin Welders Club ekranında görünür (KARARLAR K-109).
+  Veritabanı modunda katılım veritabanına kaydedilir (Aşama 5.3); kayıt
+  yapıldıysa e-posta gitmese de başarı mesajı çıkar.
 - **Sonuç:**
   - Başarı: "Kulüp üyeliğiniz oluşturuldu!"
   - Hata: "Kaydınız şu an alınamadı. Lütfen tekrar deneyin ya da
