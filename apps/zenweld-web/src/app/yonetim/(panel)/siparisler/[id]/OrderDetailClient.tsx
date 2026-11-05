@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, ExternalLink, PackageCheck, Truck, XCircle } from "lucide-react";
-import { trackingLink, type Order, type OrderAddress } from "@zenweld/data";
+import { CheckCircle2, ExternalLink, PackageCheck, RotateCcw, Truck, XCircle } from "lucide-react";
+import { trackingLink, type Order, type OrderAddress, type OrderSapExport } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { findOrder, getShopSettings, useDatabase } from "@zenweld/store";
 import { Alert, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
@@ -168,6 +168,9 @@ export function OrderDetailClient({ id }: { id: string }) {
             <Title>Ödeme</Title>
             <PaymentInfo order={order} />
           </AdminCard>
+
+          {/* Yalnizca veritabani modunda, odemesi kesinlesen sipariste (K-108). */}
+          {order.sapExport && <SapExportInfo key={order.sapExport.status} order={order} sap={order.sapExport} />}
 
           {order.customerNote && (
             <AdminCard>
@@ -366,6 +369,60 @@ function Commission({ order, percent }: { order: Order; percent: number }) {
       <Row label="Banka komisyonu (tahmini)" value={`%${percent.toLocaleString("tr-TR")} · ${formatPrice(fee)}`} />
       <Row label="Net tahsilat (tahmini)" value={formatPrice(order.total - fee)} />
     </>
+  );
+}
+
+const SAP_STATUS: Record<OrderSapExport["status"], string> = {
+  pending: "Sırada",
+  sent: "Aktarıldı",
+  failed: "Aktarılamadı",
+  skipped: "Aktarılmadı",
+};
+
+/**
+ * Siparisin SAP'a aktarimi: odemesi kesinlesen siparis siraya girer,
+ * zamanlanmis is gonderir; olmazsa artan aralarla yeniden dener. Deneme
+ * hakki biten siparis buradan yeniden siraya alinir.
+ */
+function SapExportInfo({ order, sap }: { order: Order; sap: OrderSapExport }) {
+  const actions = useSalesActions();
+  const [error, setError] = useState<string | null>(null);
+  const requeue = async () => {
+    setError(null);
+    const answer = await actions.requeueSap(order);
+    if (!answer.ok) setError(answer.error);
+  };
+  return (
+    <AdminCard>
+      <Title>SAP Aktarımı</Title>
+      <dl className="space-y-1 text-sm">
+        <Row label="Durum" value={<strong>{SAP_STATUS[sap.status]}</strong>} />
+        {sap.sapDocNo && <Row label="SAP belge no" value={sap.sapDocNo} />}
+        {sap.sentAt && <Row label="Aktarıldığı an" value={formatDateTime(sap.sentAt)} />}
+        {sap.nextAttemptAt && <Row label="Sıradaki deneme" value={formatDateTime(sap.nextAttemptAt)} />}
+        {sap.attempts > 0 && sap.status !== "sent" && <Row label="Deneme" value={sap.attempts} />}
+      </dl>
+      {sap.lastError && sap.status !== "sent" && (
+        <p className={`mt-2 text-xs ${sap.status === "skipped" ? "text-zw-grey-600" : "text-red-700"}`}>{sap.lastError}</p>
+      )}
+      {sap.status === "failed" && (
+        <Button
+          size="sm"
+          variant="outline"
+          className="mt-3"
+          leftIcon={<RotateCcw size={15} />}
+          disabled={actions.pending}
+          onClick={() => void requeue()}
+        >
+          Yeniden sıraya al
+        </Button>
+      )}
+      {error && (
+        <div className="mt-2">
+          <Alert tone="danger">{error}</Alert>
+        </div>
+      )}
+    </AdminCard>
   );
 }
 

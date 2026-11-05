@@ -20,6 +20,7 @@ import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
 import { cancelExpiredTransfers } from "./orders";
 import { checkRow, fail, isFailure, newId, saved, text, unchanged, type PanelFailure, type PanelResult, type Saved } from "./panel";
 import { readCoupons, readOrders, readReturnRequests, readSettings, userRecord } from "./read";
+import { queueSapOrder, readSapExports, requeueSapOrder } from "./sap-orders";
 import * as s from "./schema";
 
 /**
@@ -56,7 +57,10 @@ export async function readOrdersPanel(
   await cancelExpiredTransfers(db, at);
   const orders = await readOrders(db, id === undefined ? undefined : eq(s.orders.id, id));
   const settings = await readSettings(db);
-  return { orders, settings };
+  if (id === undefined) return { orders, settings };
+  // Detay: SAP'a aktarimin durumu (K-108).
+  const exports = await readSapExports(db, orders.map((o) => o.id));
+  return { orders: orders.map((o) => (exports.has(o.id) ? { ...o, sapExport: exports.get(o.id) } : o)), settings };
 }
 
 export async function readReturnsPanel(db: AuditDb): Promise<{ returnRequests: ReturnRequest[] }> {
@@ -141,6 +145,8 @@ export async function adminMarkOrderPaid(
   await db.update(s.orders).set({ status: "preparing", paidAt: at, updatedAt: at }).where(eq(s.orders.id, order.id));
   await pushStatus(db, order, "preparing", at, actor);
   await auditOrder(db, actor, order, { status: [order.status, "preparing"], paidAt: [null, at.toISOString()] }, at);
+  // Havale alindi: SAP'a aktarim sirasina girer (K-108).
+  await queueSapOrder(db, order.id, at);
   return { ...saved(at), expired: false };
 }
 
@@ -255,6 +261,30 @@ export async function adminSaveOrderNote(
   await db.update(s.orders).set({ adminNote, updatedAt: at }).where(eq(s.orders.id, order.id));
   await auditOrder(db, actor, order, { adminNote: [order.adminNote, adminNote] }, at);
   return saved(at);
+}
+
+/**
+ * SAP'a aktarilamayan ("basarisiz") siparis yeniden siraya alinir: bir
+ * sonraki calismada hemen, deneme sayisi sifirdan (K-108). Siparisin
+ * kendisi degismez.
+ */
+export async function adminRequeueSapOrder(
+  db: AuditDb,
+  actor: Actor,
+  input: Record<string, unknown>,
+  at: Date,
+): Promise<PanelResult<Saved>> {
+  const id = text(input.id, 100);
+  const [order] = id ? await db.select({ id: s.orders.id, code: s.orders.code }).from(s.orders).where(eq(s.orders.id, id)) : [];
+  if (!order) return fail(404, tr.panel.orderNotFound);
+  if (!(await requeueSapOrder(db, order.id, at))) return fail(409, tr.panel.sapNotFailed);
+  await writeAudit(
+    db,
+    actor,
+    { action: "update", entityType: "orders", entityId: order.id, entityLabel: order.code, changes: { sapExport: ["failed", "pending"] } },
+    at,
+  );
+  return { ok: true };
 }
 
 /* ------------------------------ Iade talepleri ------------------------------ */

@@ -156,6 +156,12 @@ describe("sipariş verme", () => {
           raw: { saglayici: "temsili" },
         },
       ]);
+
+      // Odemesi kesinlesen kart siparisi SAP'a aktarim sirasina girer; havale siparisi (odeme bekleniyor) girmez (K-108).
+      const exports = await client.query("SELECT order_id, status, attempts, next_attempt_at FROM sap_order_exports WHERE order_id = ANY($1)", [
+        [result.order.id, second.ok ? second.order.id : ""],
+      ]);
+      expect(exports.rows).toEqual([{ order_id: result.order.id, status: "pending", attempts: 0, next_attempt_at: at }]);
     });
   });
 

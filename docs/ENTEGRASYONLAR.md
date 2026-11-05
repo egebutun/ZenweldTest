@@ -389,11 +389,12 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `DATABASE_URL` | Yönetici (gizli) | Veritabanı (PostgreSQL) bağlantı adresi. `npm run db:*` komutları ([VERITABANI.md](VERITABANI.md)) ve `DATA_SOURCE=database` ise site kullanır |
 | `DATA_SOURCE` | Yönetici | Sitenin veri kaynağı (KARARLAR K-88). Boşsa site bugünkü gibi tarayıcıdaki veriyle çalışır. `database` ise ürünler, kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları (her sayfada) ile bayiler, bayi ve satıcı stokları ve yorumlar (yalnızca ürün sayfası, Bayi Bul ve anasayfa) ve içerik (blog, haber, etkinlik, SSS, yasal metinler, Hakkımızda, satış temsilcileri, belgeler, Sayfa SEO) veritabanından okunur; değişiklik en geç bir dakikada sitede görünür. Sitenin üyeliği (kayıt, giriş, oturum) de sunucudadır (Aşama 4.2). Derlemede de okunur: değiştirince yeniden derlenir, derleme sırasında veritabanına erişilebilmelidir |
 | `REVALIDATE_SECRET` | Yönetici (gizli) | Siteyi beklemeden yenileme anahtarı (Aşama 3.6). Tanımlıysa `/api/yenile` ucu açılır; `npm run site:yenile` aynı anahtarla siteyi o anda yeniler. Boşsa uç kapalıdır. SAP stok okuma işi (ve ileride panel) siteyi kendi içinden yeniler, bu anahtara ihtiyaç duymaz |
-| `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma ucu (`/api/sap/stok`) açılır; zamanlayıcı ve `npm run sap:stok` bu anahtarla çağırır. Boşsa uç kapalıdır |
+| `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma (`/api/sap/stok`) ve SAP sipariş aktarımı (`/api/sap/siparis`) uçları açılır; zamanlayıcı, `npm run sap:stok` ve `npm run sap:siparis` bu anahtarla çağırır. Boşsa uçlar kapalıdır |
 | `ODEME_SAGLAYICI` | Yönetici | Kartla ödemenin sağlayıcısı (K-108). Boşsa `temsili` (para çekilmez, sipariş ödenmiş sayılır; K-97). Ödeme kuruluşu bağlanınca onun adı yazılır (ör. `iyzico`); bilinmeyen ad yazılırsa sipariş alınmaz ve sunucu hata verir. Kuruluşun anahtarları ayrı değişkenlerde, yalnızca sunucuda durur |
 | `SAP_STOK_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar depo stoğunun okunacağı deneme dosyası (CSV; örnek `packages/db/deneme/sap-stok.csv`). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir. Boşsa ve SAP bağlantısı da yoksa okuma işi çalışmaz |
+| `SAP_SIPARIS_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar SAP'a aktarılan siparişlerin yazılacağı deneme dosyası (her satıra bir sipariş, JSON; K-108). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir. Boşsa ve SAP bağlantısı da yoksa aktarım işi çalışmaz, siparişler sırada bekler |
 | `NEXT_DIST_DIR` | Otomatik (test) | Derleme klasörü; boşsa `.next`. Yalnızca veritabanı modunun testleri (`npm run test:e2e:db`) `.next-db` kullanır, demo derlemesi bozulmaz |
-| `SITE_URL` | Geliştirici | Yalnızca `npm run site:yenile` ve `npm run sap:stok`: sitenin adresi; boşsa `NEXT_PUBLIC_SITE_URL`, o da boşsa `http://localhost:3000` |
+| `SITE_URL` | Geliştirici | Yalnızca `npm run site:yenile`, `npm run sap:stok` ve `npm run sap:siparis`: sitenin adresi; boşsa `NEXT_PUBLIC_SITE_URL`, o da boşsa `http://localhost:3000` |
 | `TEST_DATABASE_URL` | Geliştirici | Yalnızca veritabanı testleri (`npm run test:db`); her çalıştırmada silinip baştan kurulur, `DATABASE_URL` ile aynı olamaz |
 | `NEXT_PUBLIC_BUILD_TIME` | Otomatik (derleme) | Derleme anı; sunucu çıktısı ile tarayıcının ilk çiziminin aynı anı kullanması için |
 | `VERCEL_ENV`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_URL` | Otomatik (yalnızca demo, Vercel) | Site adresi tanımlı değilse yedek; önizleme sürümleri her zaman aramaya kapalı. Canlıda yoktur (K-92) |
@@ -401,18 +402,31 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 **Site adresi sırası:** `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik
 değişkenleri → `http://localhost:3000`.
 
-**Zamanlanmış işler:** Bugün tek iş var: SAP depo stoğu okuma, 15 dakikada
-bir (KARARLAR K-84). İş sitenin `/api/sap/stok` ucudur (POST,
-`Authorization: Bearer <CRON_SECRET>`; ayrıntı [VERITABANI.md](VERITABANI.md)
-› 14 › SAP stok okuma). Canlı sunucunun zamanlayıcısına (cron) bir satır
-eklenir (K-92):
+**Zamanlanmış işler:** İki iş var; ikisi de sitenin ucudur (POST,
+`Authorization: Bearer <CRON_SECRET>`). Canlı sunucunun zamanlayıcısına
+(cron) birer satır eklenir (K-92):
 
-`*/15 * * * * curl -fsS -X POST -H "Authorization: Bearer <CRON_SECRET>" https://zenweld.com/api/sap/stok`
+1. **SAP depo stoğu okuma**, 15 dakikada bir (KARARLAR K-84; ayrıntı
+   [VERITABANI.md](VERITABANI.md) › 14 › SAP stok okuma):
 
-Sunucu şirket ağına (VPN) bağlıysa SAP internete açılmadan okunur. Uç
-başarılı okumada 200, okunamayan ya da yarım okumada 502 (son stok kalır),
-kaynak tanımlı değilse 503 döner; zamanlayıcının kaydında başarısız
-görünür.
+   `*/15 * * * * curl -fsS -X POST -H "Authorization: Bearer <CRON_SECRET>" https://zenweld.com/api/sap/stok`
+
+   Uç başarılı okumada 200, okunamayan ya da yarım okumada 502 (son stok
+   kalır), kaynak tanımlı değilse 503 döner; zamanlayıcının kaydında
+   başarısız görünür.
+2. **SAP'a sipariş aktarımı**, birkaç dakikada bir (KARARLAR K-108; ayrıntı
+   [VERITABANI.md](VERITABANI.md) › 14 › SAP sipariş aktarımı). Sıklığı SAP
+   ekibiyle kesinleşir (CANLIYA-CIKIS-SORULARI › 2):
+
+   `*/5 * * * * curl -fsS -X POST -H "Authorization: Bearer <CRON_SECRET>" https://zenweld.com/api/sap/siparis`
+
+   Uç 200 ile gönderilen, yeniden denenecek, başarısız ve atlanan
+   siparişlerin numaralarını döndürür; aktarıcı tanımlı değilse 503.
+   Gönderilemeyen sipariş işi durdurmaz, kendi sırasında yeniden denenir;
+   deneme hakkı biten sipariş panelde görünür.
+
+Sunucu şirket ağına (VPN) bağlıysa SAP internete açılmadan okunur ve
+yazılır.
 
 **Arama motorlarına açıklık:** Site yalnızca `zenweld.com` ve
 `www.zenweld.com` adreslerinde aramaya açıktır. Gerçek alan adı farklıysa
@@ -460,7 +474,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 |---|---|---|
 | **Veritabanı ve sunucu API'si** | Veri tarayıcıda; PostgreSQL tabloları hazır. Veritabanı modunda (K-88) katalog, içerik ve stok tablolardan okunuyor; üyelik, adresler, favoriler, siparişler ve iade talepleri sunucuda (Aşama 4, 5.1, 5.2) | Siteyi ve paneli veritabanına bağlama ([VERITABANI.md](VERITABANI.md)); kimlik doğrulama ve yetki kontrolü sunucuda |
 | **SAP Business One (depo stoğu)** | Okuma işi hazır, SAP yerine deneme dosyasını okuyor (`/api/sap/stok`, `SAP_STOK_DOSYASI`; [9](#9-barındırma-ve-ortam-değişkenleri) › Zamanlanmış işler) | SAP ekibinin hazırladığı "kullanılabilir stok" görünümünü (`AVAILABLE_STOCK`, ad kesinleşmedi) okuyan bağlantı parçası (KARARLAR K-82, K-84). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı) ve görünümün kolonları SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması |
-| **SAP Business One (satış siparişi)** | Yok | Site siparişleri SAP'a satış siparişi olarak kaydedilecek (KARARLAR K-84); SAP'ın sipariş API'si (ör. `SALES_ORDER`) ve bağlantı bilgileri SAP ekibinden gelecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Zenweld depo stoğu (SAP)) |
+| **SAP Business One (satış siparişi)** | Aktarım sırası ve iş hazır, SAP yerine deneme dosyasına yazıyor (`/api/sap/siparis`, `SAP_SIPARIS_DOSYASI`, `sap_order_exports`; K-108). Panelde sipariş detayında SAP Aktarımı kutusu | Siparişi SAP'a satış siparişi olarak yazan aktarıcı parça (KARARLAR K-84; `packages/db/src/sap-orders.ts` › `SapOrderExporter`). SAP'ın sipariş API'si (ör. `SALES_ORDER`), cari, KDV, kargo, kupon ve vade farkının SAP'ta nasıl yazılacağı ve bağlantı bilgileri SAP ekibinden gelecek (CANLIYA-CIKIS-SORULARI › 2); bilgiler yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması. SAP'a geçmiş siparişin iptali ve iadesi ayrıca konuşulur |
 | **Dosya deposu** | Görseller veritabanında, belgeler tarayıcıda. Veritabanı modunda panelde katalog görselleri (ürün, kategori, grup) ve satış temsilcisi fotoğrafı yüklenmez, adres girilir (KARARLAR K-101) | Nesne deposu |
 | **Ödeme kuruluşu** | Demo | Bkz. [3](#3-kartla-ödeme) |
 | **Müşteriye e-posta** | Yok | Sipariş onayı ve sözleşme kopyası (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi |

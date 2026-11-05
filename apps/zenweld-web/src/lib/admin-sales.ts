@@ -49,6 +49,8 @@ export function useSalesActions() {
       server ? call("iptal", { ...order(o), note }, "orders") : (cancelOrder(o.id, note), localAnswer()),
     saveOrderNote: (o: Order, adminNote: string) =>
       server ? call("siparis-notu", { ...order(o), adminNote }, "orders") : localAnswer(saveOrderAdminNote(o.id, adminNote)),
+    /** Basarisiz SAP aktarimini yeniden siraya alir (yalnizca veritabani modunda; demo modunda SAP yok). */
+    requeueSap: (o: Order) => (server ? call("sap-yeniden", { id: o.id }) : localAnswer(false)),
 
     saveReturnRequest: (r: ReturnRequest, status: ReturnRequestStatus, adminNote: string) =>
       server

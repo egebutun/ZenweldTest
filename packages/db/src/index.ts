@@ -1,6 +1,7 @@
 export * from "./client";
 export * from "./read";
 export * from "./sap-stock";
+export * from "./sap-orders";
 export * as schema from "./schema";
 export * from "./orders";
 export * from "./payment";

@@ -84,6 +84,7 @@ npm run db:generate # şema değişince yeni geçiş betiği üretir
 npm run db:studio   # tabloları tarayıcıda gösterir
 npm run site:yenile # veritabanındaki değişikliği sitede o anda gösterir (aşağıda)
 npm run sap:stok    # SAP depo stoğunu beklemeden bir kez okutur (aşağıda)
+npm run sap:siparis # sıradaki siparişleri beklemeden SAP'a gönderir (aşağıda)
 ```
 
 ---
@@ -468,6 +469,15 @@ npm run start --workspace apps/zenweld-web
     o ürün sayfada hemen STOKTA YOK olur. Dosyada olmayan kalem stoktan
     çıkar; hatalı dosyada son stok kalır. Sunucuda bu iş 15 dakikada bir
     zamanlayıcıyla çalışır (docs/ENTEGRASYONLAR.md › 9 › Zamanlanmış işler).
+  - **SAP sipariş aktarımı (deneme dosyasıyla):** SAP bağlanana kadar SAP'a
+    aktarılan siparişler bir dosyaya yazılır. `.env.local`'a
+    `CRON_SECRET=<uzun bir değer>` ve
+    `SAP_SIPARIS_DOSYASI=/tmp/zenweld-sap-siparisler.jsonl` (depo dışında
+    bir yol) yazıp siteyi başlatın. Kartla bir sipariş verin ya da panelde
+    havale siparişine **Ödeme Alındı** deyin; `npm run sap:siparis`
+    siparişi dosyaya bir satır olarak yazar ve panelde sipariş detayındaki
+    SAP Aktarımı kutusu "Aktarıldı" olur. Sunucuda bu iş birkaç dakikada
+    bir zamanlayıcıyla çalışır (docs/ENTEGRASYONLAR.md › 9).
   - **Sayfa boyutu ve hız ölçümü:** site açıkken
     `node scripts/sayfa-olcumu.mjs http://localhost:3000` (birden fazla
     adres yan yana ölçülür). Sonuçlar: docs/YAPILACAKLAR.md › Ölçüm.

@@ -45,6 +45,7 @@ import { formatPrice } from "@zenweld/utils";
 import { nextRecordCode } from "./codes";
 import { TEMSILI_ODEME, type CardPaymentResult, type PaymentProvider } from "./payment";
 import { readCatalog, readCoupons, readOrders, readReturnRequests, readSettings, readWarehouseStock } from "./read";
+import { queueSapOrder } from "./sap-orders";
 import * as s from "./schema";
 
 /**
@@ -355,6 +356,8 @@ export async function placeOrder(
       raw: { saglayici: provider.id },
       createdAt: at,
     });
+    // Odemesi kesinlesti: SAP'a aktarim sirasina girer (K-108).
+    await queueSapOrder(db, id, at);
   }
   if (coupon) {
     await db.insert(s.couponRedemptions).values({

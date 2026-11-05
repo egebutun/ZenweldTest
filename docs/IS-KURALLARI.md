@@ -407,6 +407,28 @@ Siparişi yalnızca **üye** verir.
 Kod: `packages/store/src/repo/commerce.ts`; sunucu: `packages/db/src/orders.ts`,
 panel: `packages/db/src/admin-sales.ts`.
 
+**SAP'a aktarım (veritabanı modu, KARARLAR K-84, K-108):**
+
+- Ödemesi kesinleşen sipariş SAP'a satış siparişi olarak aktarılmak üzere
+  sıraya girer: kartla verilen sipariş verildiği anda, havale siparişi
+  panelde **Ödeme Alındı** denince. Ödeme bekleyen sipariş sıraya girmez;
+  süresi dolup iptal edilen havale siparişi hiç girmez.
+- Zamanlanmış iş sıradaki siparişleri gönderir. Gönderilemeyen sipariş
+  artan aralarla yeniden denenir: n. başarısız denemeden sonra
+  5 × 2<sup>n−1</sup> dakika, en fazla 6 saat.
+  - **Örnek:** 1. deneme 10:00'da olmadı → 10:05; o da olmadı → 10:15;
+    sonra 10:35, 11:15, 12:35, 15:15, 20:35.
+- 8. denemede de olmazsa ya da SAP hatanın geçici olmadığını söylerse
+  (ör. cari bulunamadı) sipariş "Aktarılamadı" olur; panelden yeniden
+  sıraya alınır (deneme sayısı sıfırdan, hemen).
+- Gönderilmeden iptal edilen sipariş aktarılmaz ("Aktarılmadı"). SAP'a
+  aktarılmış siparişin iptali ve iadesi SAP'ta ayrıca yapılır (bugün
+  sistem SAP'a iptal göndermez).
+- Siparişin SAP'ta nasıl yazılacağı (cari, KDV, kargo, kupon, vade farkı)
+  SAP danışmanıyla kesinleşir; aktarıcıya siparişin bütün bilgisi gider.
+
+Kod: `packages/db/src/sap-orders.ts`.
+
 **İade (cayma) talebi:**
 
 - Yalnızca **bireysel üye**, yalnızca **Teslim Edildi** durumundaki siparişi

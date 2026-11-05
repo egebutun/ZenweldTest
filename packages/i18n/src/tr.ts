@@ -789,6 +789,7 @@ export const tr = {
     couponNotFound: "Kupon bulunamadı.",
     wrongState: "Bu işlem siparişin şimdiki durumunda yapılamaz; sayfayı yenileyin.",
     shipmentRequired: "Kargo firması ve takip numarası zorunludur.",
+    sapNotFailed: "Bu siparişin SAP aktarımı başarısız durumda değil; sayfayı yenileyin.",
     unknownCarrier: "Kargo firması listede yok. Mağaza ayarlarındaki firmalardan birini seçin.",
     couponTargetsMissing: "Seçilen ürün ya da kategorilerden bazıları artık yok; sayfayı yenileyip yeniden seçin.",
     couponUsed: "Siparişlerde kullanılan kupon silinemez; pasife alabilirsiniz.",

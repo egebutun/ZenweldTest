@@ -561,6 +561,28 @@ kurallar demo moduyla aynıdır; farklar:
   kaydedilmez: "Bu kayıt siz açtıktan sonra değişti; sayfayı yenileyin."
   Sayfa yenilenince güncel hali gelir. Yöneticinin kendi kaydı uyarı vermez
   (ör. siparişi kargoya verip hemen ardından iç not kaydetmek).
+- **SAP Aktarımı kutusu** (sipariş detayında, sağ sütunda Ödeme'nin
+  altında; KARARLAR K-108): Ödemesi kesinleşen sipariş SAP'a aktarım
+  sırasına girer (kartla verilen sipariş hemen, havale siparişi **Ödeme
+  Alındı** denince); zamanlanmış iş birkaç dakikada bir gönderir. Ödeme
+  bekleyen siparişte ve bu özellikten önce ödenmiş siparişlerde kutu
+  yoktur.
+  - **Durum:** "Sırada", "Aktarıldı", "Aktarılamadı" ya da "Aktarılmadı".
+  - Aktarıldıysa **SAP belge no** ve **Aktarıldığı an**. SAP bağlanana
+    kadar sipariş deneme dosyasına yazılır; belge no "DENEME-<sipariş
+    no>" olur.
+  - Sıradaysa **Sıradaki deneme** anı; denendiyse **Deneme** sayısı ve son
+    hata (kırmızı). Gönderilemeyen sipariş 5, 10, 20, 40… dakika arayla
+    (en fazla 6 saat) yeniden denenir; 8 denemede de olmazsa ya da SAP
+    hatanın geçici olmadığını söylerse "Aktarılamadı" olur.
+  - "Aktarılamadı" siparişte **Yeniden sıraya al** düğmesi: sorun
+    giderildikten sonra (ör. SAP'ta cari açıldı) basılır; sipariş bir
+    sonraki çalışmada hemen gönderilir, deneme sayısı sıfırdan başlar.
+    Değişiklik kaydına yazılır. Başka yönetici önce bastıysa: "Bu
+    siparişin SAP aktarımı başarısız durumda değil; sayfayı yenileyin."
+  - Gönderilmeden iptal edilen sipariş aktarılmaz: "Aktarılmadı" ve
+    "Sipariş gönderilmeden iptal edildi; aktarılmadı." SAP'a aktarılmış
+    siparişin iptali SAP'ta ayrıca yapılır.
 - Diğer hata mesajları:
   - "Panel oturumunuz kapanmış. Lütfen yeniden giriş yapın." (oturum
     bitmiş; işlem yapılmaz)

@@ -461,6 +461,16 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       siparişinin `due_at`'i geçmişe çekilince Siparişlerim açılırken sipariş
       "İptal Edildi" olur ve geçmişte "Ödeme süresi doldu" yazar. Teslim
       edilmiş siparişte açılan iade talebi `return_requests`'te görünür.
+- [ ] SAP'a sipariş aktarımı (veritabanı modu, K-108; README › SAP sipariş
+      aktarımı): kartla verilen siparişin `sap_order_exports`'ta `pending`
+      satırı vardır; havale siparişinin yoktur, panelde **Ödeme Alındı**
+      denince olur. Panel sipariş detayında SAP Aktarımı kutusu "Sırada"
+      der. `npm run sap:siparis` siparişi `SAP_SIPARIS_DOSYASI`'na bir satır
+      olarak yazar; kutu "Aktarıldı" ve "DENEME-<sipariş no>" gösterir.
+      Satır `failed` yapılınca kutu "Aktarılamadı", son hata ve **Yeniden
+      sıraya al** gösterir; basınca "Sırada" olur ve `audit_log`'a yazılır.
+      Ödenip gönderilmeden iptal edilen sipariş "Aktarılmadı" olur.
+      Anahtarsız ya da yanlış anahtarla `/api/sap/siparis` çalışmaz.
 - [ ] Formlar (veritabanı modu, Aşama 5.3, K-98): ziyaretçi olarak gönderilen
       teklif `quotes`'ta `TKL-…` numarasıyla görünür; üyenin teklifi
       Tekliflerim'de görünür. Servis talebi `service_requests`'te, garanti

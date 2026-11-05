@@ -116,6 +116,8 @@ describe("siparişler", () => {
         // Takip no duzeltilince gonderi tarihi degismez.
         shipment: { carrier: "Yurtiçi Kargo", trackingNumber: "456", shippedAt: t2.toISOString(), deliveredAt: t4.toISOString() },
         history: [{ status: "awaiting_payment" }, { status: "preparing" }, { status: "shipped" }, { status: "delivered" }],
+        // Havale alininca SAP'a aktarim sirasina girdi (K-108).
+        sapExport: { status: "pending", attempts: 0, nextAttemptAt: t1.toISOString() },
       });
       const changedBy = (await client.query("SELECT changed_by FROM order_status_history WHERE order_id = 'o1' ORDER BY seq")).rows;
       expect(changedBy.map((r) => r.changed_by)).toEqual([null, "u-yonetici", "u-yonetici", "u-yonetici"]);

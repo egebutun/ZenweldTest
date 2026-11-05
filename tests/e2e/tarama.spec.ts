@@ -123,12 +123,13 @@ test.describe("ziyaretçi", () => {
     expect((await request.get("/yonetim/giris")).headers()["x-robots-tag"]).toContain("noindex");
   });
 
-  test("yenileme ve SAP okuma uçları anahtarsız ya da yanlış anahtarla çalışmaz", async ({ request }) => {
+  test("yenileme ve SAP uçları anahtarsız ya da yanlış anahtarla çalışmaz", async ({ request }) => {
     // Anahtar tanimli degilse uc kapali (404), tanimliysa yetkisiz (401).
     const attempts: Record<string, string>[] = [{}, { authorization: "Bearer yanlis-anahtar" }];
     for (const headers of attempts) {
       expect([401, 404]).toContain((await request.post("/api/yenile", { headers, data: {} })).status());
       expect([401, 404]).toContain((await request.post("/api/sap/stok", { headers })).status());
+      expect([401, 404]).toContain((await request.post("/api/sap/siparis", { headers })).status());
     }
   });
 });

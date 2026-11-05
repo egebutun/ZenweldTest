@@ -21,7 +21,7 @@ ileride gelecek bağlantılara (API) açık ve genişletilebilir yapılır
 | **Kargo** (ücret, firmalar, takip, entegrasyon) | Sabit ücret ve ücretsiz kargo sınırı, firma listesi, takip numarası elle girilir; firmaya takip adresi girilince müşteri ve panelde takip bağlantısı (K-105); kargo firması API'si yok | [Online satış](#online-satış--canlıya-çıkmadan-önce) 9–10 |
 | **İade** | Bireysel üye 14 gün içinde talep açar; panelde durum; para iadesi elle | [İade talebi](#i̇ade-talebi--kurumsal-üyeler-ve-backend) 3–5 |
 | **SAP ayarları ve stok kontrolü** | Depo stoğu deneme dosyasından 15 dakikada bir okunur; stokta olmayan ürün sepete eklenmez; bayi stoğunda geçerlilik süresi | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend), [Bayi ve satıcı stokları](#bayi-ve-satıcı-stokları--backend) |
-| **SAP'a sipariş kaydı** | Yok; site siparişleri yalnızca sitede | Yukarıda "Kalan kod işleri" 4, [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) |
+| **SAP'a sipariş kaydı** | Veritabanı modunda aktarım sırası hazır (K-108): ödemesi kesinleşen sipariş sıraya girer, iş gönderir, başarısızsa yeniden dener, panelde durum ve **Yeniden sıraya al**; SAP yerine deneme dosyasına yazıyor | Yukarıda "Kalan kod işleri" 4, [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) |
 | **API ayarları** (SAP, ödeme, e-posta, kargo bağlantıları) | Bağlantı bilgileri yalnızca sunucuda ortam değişkeni; panelde yok (güvenlik kuralı) | [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md), [Bağlantıların durumu](#bağlantıların-durumu-panelde--öneri) |
 | **Banka ve ödeme ayarları** | Mağaza Ayarları'nda POS tablosu, taksitler ve havale hesapları; ödeme temsili | [Online satış](#online-satış--canlıya-çıkmadan-önce) 1, 10; [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › Kartla ödeme |
 | **E-postalar** (gönderen, metinler, müşteri bildirimleri) | Alıcılar panelde (K-104); servis kurulmadı, hiçbir e-posta gitmiyor | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre--backend) 3, [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı--backend) |
@@ -76,7 +76,7 @@ biten parçalar veritabanından çalışır, ayar kapalıyken demo bugünkü gib
 | 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) — bitti; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — bitti, K-105) — bitti, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler`); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. En büyük iş. Veri yükleme komutu bundan sonra yalnızca `eksikler` ile çalıştırılır (varsayılanı değişir; K-91): panelde yapılan değişikliklerin üzerine yazılmasın | — |
 | 2 | **Aşama 6 — Dosya deposu:** ürün görselleri ve belgeler (MSDS vb.) | Depo seçimi (BT) |
 | 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
-| 4 | **SAP satış siparişi aktarımı:** ödeme kesinleşince, başarısızsa yeniden deneme, panelde aktarım durumu | Aşama 5; SAP sipariş API'si |
+| 4 | **SAP satış siparişi aktarımı:** aktarım sırası, iş (`/api/sap/siparis`), yeniden deneme ve panel kutusu hazır (K-108; bugün deneme dosyasına yazıyor). Kalan: siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si ve bağlantı bilgileri; cari ve KDV kararları (CANLIYA-CIKIS-SORULARI › 2) |
 | 5 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez. Ödeme sağlayıcısı parçası hazır (`packages/db/src/payment.ts`, K-108): kuruluşun parçası eklenir, 3D Secure için ödeme iki adıma ayrılır, ödeme sayfası kart programını sunucudan alır | Ödeme kuruluşu anlaşması |
 | 6 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
 | 7 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
@@ -868,11 +868,23 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
    veritabanından okumaya geçince, Aşama 5).
 3. (Veritabanı modunda yapıldı, Aşama 5.2) Sipariş anında stok sunucuda
    son kez kontrol edilir; stok bitmişse sipariş alınmaz.
-4. Site siparişleri SAP'a satış siparişi olarak kaydedilecek (K-84). SAP
-   ekibinden sipariş API'sinin (ör. `SALES_ORDER`) bilgileri gelince:
-   siparişe SAP belge numarası, aktarım durumu ve hata kolonları; aktarımın
-   ne zaman yapılacağı (öneri: ödeme kesinleşince); başarısız aktarımın
-   yeniden denenmesi ve panelde görünmesi.
+4. Site siparişleri SAP'a satış siparişi olarak kaydedilecek (K-84).
+   **Kuruldu (2026-11-05, K-108), SAP yerine deneme dosyasıyla:** ödemesi
+   kesinleşen sipariş `sap_order_exports` sırasına girer (kartla verilince,
+   havalede Ödeme Alındı denince); `/api/sap/siparis` işi gönderir; geçici
+   hatada artan aralarla 8 kez dener; belge numarası, durum ve hata panelde
+   sipariş detayında görünür, başarısız sipariş **Yeniden sıraya al** ile
+   tekrar gönderilir; gönderilmeden iptal edilen sipariş aktarılmaz.
+   Ayrıntı: [VERITABANI.md](VERITABANI.md) › 14 › SAP sipariş aktarımı.
+   Kalan:
+   - SAP ekibinden sipariş API'sinin (ör. `SALES_ORDER`) bilgileri gelince
+     SAP'a yazan aktarıcı parça (siparişi SAP'ın biçimine çevirir; geçici
+     hata ile kalıcı hatayı ayırır).
+   - Zamanlayıcının canlı sunucuda kurulması (birkaç dakikada bir).
+   - SAP'a aktarılmış sipariş sitede iptal edilirse ya da iade edilirse
+     SAP'a bildirilmesi (bugün SAP'ta elle yapılır).
+   - İstenirse panelde sırada bekleyen ve başarısız sipariş sayısı
+     ([Bağlantıların durumu](#bağlantıların-durumu-panelde--öneri)).
 
 ## Kuponlar — backend
 
@@ -1100,7 +1112,8 @@ K-106): panelde salt okunur bir "Bağlantılar" ekranı.
 
 - Her servis için: tanımlı mı (anahtarın kendisi gösterilmeden), son
   başarılı işlem ve son hata (ör. son SAP stok okuması `sap_sync_runs`'tan,
-  son gönderilemeyen e-posta `email_log`'dan).
+  SAP'a aktarılmayı bekleyen ve aktarılamayan sipariş sayısı
+  `sap_order_exports`'tan, son gönderilemeyen e-posta `email_log`'dan).
 - Ayar değiştirilmez; değişiklik sunucunun ortam değişkenlerinden yapılır
   ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9).
 

@@ -682,10 +682,27 @@ export interface Order {
   customerNote?: string;
   /** Yalnizca yonetim panelinde gorunur */
   adminNote?: string;
+  /** SAP'a aktarimin durumu; yalnizca veritabani modunda panelin okudugu sipariste (K-108) */
+  sapExport?: OrderSapExport;
   /** Musteri on bilgilendirme formu ve mesafeli satis sozlesmesini onayladi */
   termsAcceptedAt: string;
   createdAt: string;
   updatedAt: string;
+}
+
+/**
+ * Siparisin SAP'a aktarimi (KARARLAR K-84, K-108): bekliyor, gonderildi,
+ * basarisiz (deneme hakki bitti) ya da atlandi (gonderilmeden iptal edildi).
+ */
+export interface OrderSapExport {
+  status: "pending" | "sent" | "failed" | "skipped";
+  attempts: number;
+  /** Bekleyen siparisin en erken gonderilecegi an */
+  nextAttemptAt?: string;
+  /** SAP'in verdigi belge numarasi */
+  sapDocNo?: string;
+  lastError?: string;
+  sentAt?: string;
 }
 
 /* ------------------------------------------------------------------ */

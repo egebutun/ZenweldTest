@@ -4,6 +4,7 @@ import {
   adminDeleteCoupon,
   adminMarkOrderDelivered,
   adminMarkOrderPaid,
+  adminRequeueSapOrder,
   adminSaveCoupon,
   adminSaveOrderNote,
   adminSaveReturnRequest,
@@ -20,6 +21,7 @@ import { runPanelAction } from "@/lib/server/admin";
  *   POST /api/yonetim/satis/teslim         {id, updatedAt}
  *   POST /api/yonetim/satis/iptal          {id, updatedAt, note?}
  *   POST /api/yonetim/satis/siparis-notu   {id, updatedAt, adminNote}
+ *   POST /api/yonetim/satis/sap-yeniden    {id}  basarisiz SAP aktarimini yeniden siraya alir
  *   POST /api/yonetim/satis/iade-talebi    {id, updatedAt, status, adminNote}
  *   POST /api/yonetim/satis/kupon          kupon formu (+ id, updatedAt duzenlemede)
  *   POST /api/yonetim/satis/kupon-durum    {id, updatedAt, active}
@@ -38,6 +40,7 @@ const ACTIONS = {
   teslim: adminMarkOrderDelivered,
   iptal: adminCancelOrder,
   "siparis-notu": adminSaveOrderNote,
+  "sap-yeniden": adminRequeueSapOrder,
   "iade-talebi": adminSaveReturnRequest,
   kupon: adminSaveCoupon,
   "kupon-durum": adminSetCouponActive,

@@ -116,10 +116,14 @@ oradaki konulardan **şirketten öğrenilecek** olanları toplar.
 - [ ] Siparişte fiyat KDV dahil mi hariç mi gönderilecek? Kargo ücreti,
       kupon indirimi ve taksit vade farkı SAP'ta nasıl gösterilecek
       (ayrı satır, belge indirimi…)? [Karar]
-- [ ] Sipariş ne zaman aktarılsın (öneri: ödeme kesinleşince)? İptal ve
-      iade SAP'a nasıl yansısın? [Karar]
-- [ ] Aktarım başarısız olursa kim ilgilenecek? SAP'ın verdiği belge
-      numarası panelde görünsün mü? [Karar]
+- [ ] Sipariş ödeme kesinleşince aktarılacak şekilde kuruldu (kartla
+      verilince, havalede "Ödeme Alındı" denince); uygun mu? Kaç dakikada
+      bir gönderilsin (bugün öneri 5 dakika)? İptal ve iade SAP'a nasıl
+      yansısın? [Karar]
+- [ ] Aktarım başarısız olursa kim ilgilenecek? (Panelde sipariş
+      detayında durum, hata ve SAP belge numarası görünüyor; gönderilemeyen
+      sipariş yeniden sıraya alınabiliyor.) SAP'ın hangi hataları geçici
+      sayılsın (yeniden denensin), hangileri kalıcı? [Karar] [Kod]
 - [ ] Faturayı (e-Fatura / e-Arşiv) SAP mi kesiyor? [Karar]
 
 ---

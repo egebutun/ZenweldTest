@@ -450,6 +450,30 @@ SAP stok okuma.
 Okuma başarısız olursa son başarılı stok kullanılmaya devam eder; panel son
 başarılı okumanın zamanını gösterir.
 
+### `sap_order_exports` — SAP'a sipariş aktarım sırası (yeni)
+
+Sahibinin kararı (K-84, K-108): site siparişleri SAP'a satış siparişi olarak
+yazılır. Ödemesi kesinleşen sipariş buraya `pending` olarak girer: kartla
+verilen sipariş verildiği anda, havale siparişi panelde **Ödeme Alındı**
+denince. Zamanlanmış iş siparişi SAP'a gönderir; başarısızsa artan
+aralarla yeniden dener. Kurallar: [14](#14-kod-betikler-ve-komutlar) › SAP
+sipariş aktarımı. Bu tablodan önce ödenmiş siparişlerin (örnek veri) satırı
+yoktur; aktarılmazlar.
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `order_id` | text | anahtar; → `orders` (silinemez) | |
+| `status` | text | zorunlu; `pending`, `sent`, `failed`, `skipped` | Sırada, aktarıldı, aktarılamadı (deneme hakkı bitti), aktarılmadı (gönderilmeden iptal) |
+| `attempts` | int | zorunlu; ≥ 0 | Yapılan gönderme denemesi |
+| `next_attempt_at` | timestamptz | zorunlu | Sıradaki siparişin en erken gönderileceği an |
+| `sap_doc_no` | text | | SAP'ın verdiği belge numarası (deneme aktarıcısında `DENEME-<sipariş no>`) |
+| `last_error` | text | | Son hata; atlanan siparişte nedeni |
+| `sent_at` | timestamptz | | Aktarıldığı an |
+| `created_at`, `updated_at` | timestamptz | zorunlu | |
+
+Dizin: `sap_order_exports_due` (`status`, `next_attempt_at`): işin sıradaki
+siparişleri bulması için.
+
 ---
 
 ## 5. Üyeler ve oturumlar
@@ -1161,7 +1185,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 |---|---|---|
 | Katalog | `category_groups`, `categories`, `category_option_definitions`, `category_filters`, `category_filter_values`, `option_definitions`, `option_values`, `products`, `product_options`, `product_variants`, `product_variant_values`, `product_filter_values`, `sku_codes`, `redirects` | 14 |
 | Bayi ve stok | `dealers`, `retailers`, `dealer_stock`, `retailer_stock`, `stock_imports`, `sku_aliases` | 6 |
-| Zenweld depo stoğu (SAP) | `warehouse_stock`, `sap_sync_runs` | 2 |
+| Zenweld depo stoğu ve sipariş aktarımı (SAP) | `warehouse_stock`, `sap_sync_runs`, `sap_order_exports` | 3 |
 | Üyeler | `users`, `addresses`, `sessions`, `password_reset_tokens`, `favourites` | 5 |
 | Teklif | `quotes`, `quote_items` | 2 |
 | Sipariş, kargo ve iade | `orders`, `order_items`, `order_status_history`, `payment_transactions`, `shipments`, `return_requests`, `return_request_items` | 7 |
@@ -1171,7 +1195,7 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 | Ayarlar, ödeme ve kargo | `settings`, `payment_pos`, `bank_accounts`, `carriers` | 4 |
 | Formlar | `dealer_applications`, `support_messages`, `welders_club_signups` | 3 |
 | Sistem | `email_recipients`, `email_log`, `record_counters`, `audit_log` | 4 |
-| **Toplam** | | **64** |
+| **Toplam** | | **65** |
 
 ---
 
@@ -1259,6 +1283,7 @@ link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
 | `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
 | `npm run yonetici:olustur` | Panel için yönetici hesabı açar ya da var olan yöneticinin şifresini değiştirir (aşağıda) |
 | `npm run sap:stok [zorla]` | SAP depo stoğunu beklemeden bir kez okutur (sitenin `/api/sap/stok` ucunu çağırır; aşağıda). `zorla`: yarım okuma korumasına takılan okumayı uygular |
+| `npm run sap:siparis` | Sıradaki siparişleri beklemeden SAP'a gönderir (sitenin `/api/sap/siparis` ucunu çağırır; aşağıda) |
 
 Testler tablo listesinin ve kolonların bu dosyayla aynı olduğunu da
 dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer.
@@ -1366,6 +1391,52 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   hatada son stoğun kalması, kilit, yarıda kalan okuma, yarım okuma
   koruması, deneme dosyası); `tests/e2e-db` (uç: anahtar, stok 0 gelince
   sayfanın hemen STOKTA YOK olması, hatalı ve yarım okuma, zorla).
+
+**SAP sipariş aktarımı (`src/sap-orders.ts`; KARARLAR K-84, K-108):**
+Ödemesi kesinleşen siparişi SAP'a gönderir (`sap_order_exports`).
+
+- **Sıraya girme:** Kartla verilen sipariş, siparişle aynı işlemde
+  (`orders.ts` › `placeOrder`); havale siparişi panelde **Ödeme Alındı**
+  denince, aynı işlemde (`admin-sales.ts` › `adminMarkOrderPaid`). Sipariş
+  sıraya bir kez girer.
+- **Gönderme:** Her çalışmada zamanı gelmiş (`pending`, `next_attempt_at`
+  geçmiş) en fazla 20 sipariş, en eskisinden başlayarak, her biri ayrı
+  işlemde gönderilir. Satır `FOR UPDATE SKIP LOCKED` ile alınır: aynı anda
+  iki çalışma aynı siparişi göndermez.
+- **Aktarıcı:** Siparişi SAP'a yazan parça (`SapOrderExporter`). Siparişin
+  bütün bilgisini alır (`SapOrderPayload`: sipariş no ve tarihleri, müşteri,
+  fatura ve teslimat adresi, satırlar (kod, ad, seçenek, adet, KDV hariç
+  birim fiyat, KDV oranı, kupon payı), kargo, vade farkı, kupon, toplam,
+  ödeme) ve SAP'ın istediği biçime kendisi çevirir. Bugün tek aktarıcı
+  deneme dosyasıdır (`SAP_SIPARIS_DOSYASI`): her siparişi dosyaya bir satır
+  JSON olarak ekler, belge numarası `DENEME-<sipariş no>`. SAP bilgileri
+  gelince SAP'a yazan aktarıcı eklenir (`orderExporterFromEnv`); sıra,
+  yeniden deneme ve panel değişmez. Gönderme sonucu yazılamazsa (sunucu o
+  anda kapanırsa) sipariş yeniden gönderilebilir; SAP'a yazan aktarıcı
+  siparişi sipariş numarasıyla yazar ve aynı numara SAP'ta varsa yeni
+  sipariş açmaz, var olanın belge numarasını döndürür. Aktarıcı tanımlı değilse iş çalışmaz,
+  siparişler sırada bekler.
+- **Sonuç:** Başarılıysa `sent`, belge numarası ve an yazılır. Geçici
+  hatada deneme sayısı artar, sıradaki deneme 5, 10, 20, 40… dakika sonra
+  (en fazla 6 saat); 8. denemede de olmazsa `failed`. Aktarıcı hatanın
+  geçici olmadığını söylerse (ör. SAP'ta cari yok) ilk denemede `failed`.
+  Gönderilmeden iptal edilen sipariş gönderilmez, `skipped` olur.
+- **Panel:** Sipariş detayında **SAP Aktarımı** kutusu (yalnızca veritabanı
+  modunda, sırada olan siparişte). `failed` sipariş **Yeniden sıraya al**
+  ile `pending`'e döner (deneme sayısı sıfır, hemen); değişiklik kaydına
+  (`audit_log`) yazılır (`admin-sales.ts` › `adminRequeueSapOrder`).
+- **Çalıştırma:** Sitenin `/api/sap/siparis` ucu (POST; yalnızca
+  `CRON_SECRET` anahtarıyla, veritabanı modunda). Sunucunun zamanlayıcısı
+  birkaç dakikada bir çağırır ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9 ›
+  Zamanlanmış işler); `npm run sap:siparis` elle bir kez çağırır. Uç
+  gönderilen, yeniden denenecek, başarısız ve atlanan siparişlerin
+  numaralarını döndürür.
+- Test: `tests/db/sap-siparis.test.ts` (gönderme ve aktarıcıya giden
+  bilgi, zamanı gelmeyen sipariş, artan aralarla deneme ve başarısız,
+  geçici olmayan hata, iptal edilen sipariş, panelden yeniden sıraya alma,
+  aynı anda iki çalışma, deneme dosyası); `tests/db/siparis.test.ts` ve
+  `panel-satis.test.ts` (sıraya girme); `tests/e2e-db/sap-siparis.spec.ts`
+  (panel kutusu, uç, yeniden sıraya alma).
 
 **Şifre ve oturum (`packages/auth/src/server`; KARARLAR K-94):**
 
@@ -1488,7 +1559,8 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   (`nextRecordCode`). Kartlı siparişte kartın programını ve tahsilatı ödeme
   sağlayıcısı yapar (`src/payment.ts`, K-108): `paid_at` sağlayıcının
   verdiği ödeme anıdır (temsili sağlayıcıda sipariş anı), sonuç
-  `payment_transactions`'a yazılır; sağlayıcı reddederse (402) sipariş
+  `payment_transactions`'a yazılır ve sipariş SAP aktarım sırasına girer
+  (`sap_order_exports`, K-108); sağlayıcı reddederse (402) sipariş
   yazılmaz ve sipariş numarası harcanmaz. Havalede `due_at` = sipariş anı +
   mağaza ayarındaki gün.
 - **Kilitler:** Kuponlu siparişte kupon satırı (`coupons`, FOR UPDATE)
@@ -1561,8 +1633,9 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   (`app/yonetim/(panel)/siparisler/page.tsx` vb.); sayfa her açılışta ve
   her kayıttan sonra (`router.refresh`) yeniden okunur. Önce geçerli
   yönetici oturumu denetlenir.
-  - `readOrdersPanel`: siparişler (detayda yalnızca o sipariş) ve mağaza
-    ayarları; önce süresi dolan havaleler iptal edilir (bir işlem içinde).
+  - `readOrdersPanel`: siparişler (detayda yalnızca o sipariş ve SAP
+    aktarım durumu, `sap_order_exports`) ve mağaza ayarları; önce süresi
+    dolan havaleler iptal edilir (bir işlem içinde).
   - `readReturnsPanel`: iade talepleri.
   - `readCouponsPanel`: kuponlar ve kullanımları; düzenlemede yalnızca o
     kupon, kullanıldığı siparişler ve üyeler (`readPanelMembers`: yönetici
@@ -1571,7 +1644,8 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
 - **Yazma:** `POST /api/yonetim/satis/<işlem>`
   (`apps/zenweld-web/src/app/api/yonetim/satis/[islem]/route.ts`):
   `odeme-alindi`, `kargo`, `teslim`, `iptal`, `siparis-notu`,
-  `iade-talebi`, `kupon` (oluşturma ve düzenleme), `kupon-durum`,
+  `sap-yeniden` (başarısız SAP aktarımını yeniden sıraya alır; 14 › SAP
+  sipariş aktarımı), `iade-talebi`, `kupon` (oluşturma ve düzenleme), `kupon-durum`,
   `kupon-sil`. Yalnızca geçerli panel oturumu olan yönetici yazar
   (yoksa 401); başka siteden gelen istek reddedilir (403). Her işlem tek
   işlemdir (transaction).
@@ -1585,8 +1659,9 @@ sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
   `apps/zenweld-web/src/lib/server/admin.ts` (`runPanelAction`); tarayıcı:
   `apps/zenweld-web/src/lib/admin-panel.ts`.
 - **Siparişte yazılanlar:** Durum değişince `order_status_history`'ye yeni
-  satır, `changed_by` = yönetici. Ödeme alındı: `paid_at`; süresi dolmuşsa
-  onaylanmaz, "Ödeme süresi doldu" notuyla iptal edilir. Kargo: `shipments`
+  satır, `changed_by` = yönetici. Ödeme alındı: `paid_at` ve SAP aktarım
+  sırası (`sap_order_exports`); süresi dolmuşsa onaylanmaz, "Ödeme süresi
+  doldu" notuyla iptal edilir. Kargo: `shipments`
   (giden gönderi; firma `carriers`'tan adla bulunur, listeden çıkarılmış
   kayıtlı firma korunur; takip no düzeltilince `shipped_at` değişmez).
   Teslim: `shipments.delivered_at`. İptal: kupon kullanımı geri verilir

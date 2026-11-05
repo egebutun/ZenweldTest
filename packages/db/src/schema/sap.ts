@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
-import { bigint, check, integer, numeric, pgTable, text } from "drizzle-orm/pg-core";
-import { oneOf, tstz } from "./columns";
+import { bigint, check, index, integer, numeric, pgTable, text } from "drizzle-orm/pg-core";
+import { oneOf, timestamps, tstz } from "./columns";
+import { orders } from "./sales";
 
 /**
  * SAP: ZENWELD DEPO STOGU (docs/VERITABANI.md › 4, KARARLAR K-82)
@@ -46,4 +47,37 @@ export const warehouseStock = pgTable(
     syncRunId: bigint("sync_run_id", { mode: "number" }).references(() => sapSyncRuns.id, { onDelete: "set null" }),
   },
   (t) => [check("warehouse_stock_quantity", sql`${t.quantity} >= 0`)],
+);
+
+/**
+ * SAP'A SIPARIS AKTARIM SIRASI (KARARLAR K-84, K-108)
+ *
+ * Odemesi kesinlesen siparis (kartla verildiginde ya da havalesi
+ * onaylandiginda) buraya "bekliyor" olarak girer. Zamanlanmis is
+ * siparisleri SAP'a gonderir (packages/db/src/sap-orders.ts); basarisizsa
+ * artan aralarla yeniden dener, en fazla deneme sayisinda "basarisiz" olur.
+ * Gonderilmeden iptal edilen siparis aktarilmaz ("atlandi").
+ */
+export const sapOrderExports = pgTable(
+  "sap_order_exports",
+  {
+    orderId: text("order_id")
+      .primaryKey()
+      .references(() => orders.id, { onDelete: "restrict" }),
+    status: text("status").notNull().default("pending"),
+    /** Yapilan gonderme denemesi */
+    attempts: integer("attempts").notNull().default(0),
+    /** Bekleyen siparisin en erken gonderilecegi an */
+    nextAttemptAt: tstz("next_attempt_at").notNull().defaultNow(),
+    /** SAP'in verdigi belge numarasi */
+    sapDocNo: text("sap_doc_no"),
+    lastError: text("last_error"),
+    sentAt: tstz("sent_at"),
+    ...timestamps(),
+  },
+  (t) => [
+    check("sap_order_exports_status", oneOf(t.status, ["pending", "sent", "failed", "skipped"])),
+    check("sap_order_exports_attempts", sql`${t.attempts} >= 0`),
+    index("sap_order_exports_due").on(t.status, t.nextAttemptAt),
+  ],
 );
