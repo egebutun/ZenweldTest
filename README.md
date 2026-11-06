@@ -371,7 +371,7 @@ tarayıcılarda eski veri kalır. Artırılınca tarayıcılardaki veri silinir 
 başlangıç verisiyle yeniden kurulur, yani panelde yapılmış değişiklikler de
 gider.
 
-Bütün kayıt türleri ve alanları: [docs/VERI-MODELI.md](docs/VERI-MODELI.md).
+Bütün kayıt türleri, alanları ve tabloları: [docs/VERITABANI.md](docs/VERITABANI.md).
 Sunucu veritabanının (PostgreSQL) tabloları ve kolonları:
 [docs/VERITABANI.md](docs/VERITABANI.md).
 
@@ -503,7 +503,7 @@ npm run start --workspace apps/zenweld-web
     yazar. Dosyada bir kalemin miktarını 0 yapıp komutu tekrar çalıştırın:
     o ürün sayfada hemen STOKTA YOK olur. Dosyada olmayan kalem stoktan
     çıkar; hatalı dosyada son stok kalır. Sunucuda bu iş 15 dakikada bir
-    zamanlayıcıyla çalışır (docs/ENTEGRASYONLAR.md › 9 › Zamanlanmış işler).
+    zamanlayıcıyla çalışır (docs/SUNUCU.md › 3).
   - **SAP sipariş aktarımı (deneme dosyasıyla):** SAP bağlanana kadar SAP'a
     aktarılan siparişler bir dosyaya yazılır. `.env.local`'a
     `CRON_SECRET=<uzun bir değer>` ve
@@ -512,7 +512,7 @@ npm run start --workspace apps/zenweld-web
     havale siparişine **Ödeme Alındı** deyin; `npm run sap:siparis`
     siparişi dosyaya bir satır olarak yazar ve panelde sipariş detayındaki
     SAP Aktarımı kutusu "Aktarıldı" olur. Sunucuda bu iş birkaç dakikada
-    bir zamanlayıcıyla çalışır (docs/ENTEGRASYONLAR.md › 9).
+    bir zamanlayıcıyla çalışır (docs/SUNUCU.md › 3).
   - **Panelden dosya yükleme (dosya deposu):** Veritabanı modunda panelde
     görsel ve belge yüklemek için `.env.local`'a
     `DOSYA_KLASORU=/tmp/zenweld-dosyalar` (depo dışında bir klasör) yazıp
@@ -552,7 +552,7 @@ npm run start --workspace apps/zenweld-web
     yapıldığı tablo tablo ekrana basılır.
   - Bilgisayar dışındaki bir veritabanına yüklemeden önce veritabanının
     adı yazılarak onay verilir.
-  - Ayrıntılar: docs/VERITABANI.md › 14.
+  - Ayrıntılar: docs/SUNUCU.md › 5.
 - **Yönetici hesabı (veritabanında):** Canlıya hiç hesap yüklenmediği için
   ilk yönetici `npm run yonetici:olustur` ile açılır: e-posta, ad, soyad,
   telefon ve şifre sorar (şifre ekranda görünmez, en az 8 karakter). Aynı

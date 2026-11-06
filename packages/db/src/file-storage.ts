@@ -4,7 +4,7 @@ import { dirname, resolve, sep } from "node:path";
 import { isUploadKey } from "@zenweld/data";
 
 /**
- * DOSYA DEPOSU — DEGISTIRILEBILIR PARCA (KARARLAR K-108; docs/ENTEGRASYONLAR.md
+ * DOSYA DEPOSU — DEGISTIRILEBILIR PARCA (KARARLAR K-108; docs/SUNUCU.md
  * › Dosya deposu)
  *
  * Panelde yuklenen gorsel ve belgeler buradaki "dosya deposu" parcasina

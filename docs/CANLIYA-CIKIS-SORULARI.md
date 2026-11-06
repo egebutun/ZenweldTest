@@ -22,7 +22,7 @@ olduğu gibi sorulabilir.
 **Güvenlik:** Şifreler, API anahtarları ve banka bilgileri bu dosyaya,
 panele, e-postaya ya da mesaja **yazılmaz**. Yalnızca sunucuyu kuran
 kişiye verilir; o kişi doğrudan sunucuya girer
-([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9).
+([SUNUCU.md](SUNUCU.md) › 2).
 
 Ayrıntılı teknik notlar: [YAPILACAKLAR.md](YAPILACAKLAR.md). Bu dosya
 oradaki konulardan **şirketten öğrenilecek** olanları toplar.

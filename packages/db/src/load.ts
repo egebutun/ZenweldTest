@@ -5,7 +5,7 @@ import * as s from "./schema";
 import { seedTables } from "./seed";
 
 /**
- * VERI YUKLEME (npm run db:yukle; KARARLAR K-90, K-91; docs/VERITABANI.md › 14)
+ * VERI YUKLEME (npm run db:yukle; KARARLAR K-90, K-91; docs/SUNUCU.md › 5)
  *
  * Sitenin bugunku verisini (packages/data) canli ya da deneme veritabanina
  * yukler. db:seed'den farki:

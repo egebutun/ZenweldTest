@@ -10,10 +10,10 @@ yoktur; yalnızca kurallar vardır.
 
 - Ekranlar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md)
-- Kayıtlar ve alanlar: [VERI-MODELI.md](VERI-MODELI.md)
+- Kayıtlar, alanlar ve tablolar: [VERITABANI.md](VERITABANI.md)
 - Stok dosyası ve stok kurallarının ayrıntısı: [STOK.md](STOK.md)
-- Ödeme kuruluşu, e-posta ve harita servisleri:
-  [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)
+- Sunucu, ödeme kuruluşu, e-posta ve harita servisleri:
+  [SUNUCU.md](SUNUCU.md)
 
 Kuralların koddaki yeri her bölümün sonunda yazar. Bir kural değişirse
 yalnızca o yer değişmeli; site, panel ve sipariş kaydı aynı yeri kullanır.
@@ -397,7 +397,7 @@ Siparişi yalnızca **üye** verir.
 - Müşteri sitede siparişini iptal edemez (bugün düğme yok; ileride
   düşünülecek, [YAPILACAKLAR.md](YAPILACAKLAR.md)).
 - Sipariş kaydı ürün adı, kodu, seçenek adı, birim fiyat ve KDV oranını
-  sipariş anındaki haliyle saklar ([VERI-MODELI.md](VERI-MODELI.md)).
+  sipariş anındaki haliyle saklar ([VERITABANI.md](VERITABANI.md)).
 - Durum değişince müşteriye e-posta **gitmez**.
 - **Nerede çalışır:** Veritabanı modunda sipariş sunucuda kaydedilir ve
   üyenin siparişleri sunucudan okunur (Aşama 5.2, K-97); başka üyenin
@@ -905,7 +905,7 @@ sunucuda; Aşama 5.2–5.3).
 ## 18. Form e-postaları
 
 Sitedeki formlar Zenweld'e e-posta gönderir. Servisin kurulumu ve demo
-davranışı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md). Bugün servis kurulu
+davranışı: [SUNUCU.md](SUNUCU.md) › 9. Bugün servis kurulu
 olmadığı için hiçbir e-posta gitmez.
 
 **Alıcılar (KARARLAR K-104):**

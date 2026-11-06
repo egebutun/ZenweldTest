@@ -4,7 +4,7 @@ import type { Product, ZenweldDatabase } from "@zenweld/data";
 import * as s from "./schema";
 
 /**
- * ORNEK VERIYI TABLOLARA YUKLEME (npm run db:seed; docs/VERITABANI.md › 14)
+ * ORNEK VERIYI TABLOLARA YUKLEME (npm run db:seed; docs/SUNUCU.md › 5)
  *
  * Sitenin bugun tarayicida kurdugu ornek verinin (packages/data,
  * createSeedDatabase) tamami tablolara yazilir. Esleme belgedeki "Bugunku

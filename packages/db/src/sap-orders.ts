@@ -9,7 +9,7 @@ import * as s from "./schema";
 
 /**
  * SIPARISLERIN SAP'A AKTARIMI (KARARLAR K-84, K-108; docs/VERITABANI.md ›
- * sap_order_exports, ENTEGRASYONLAR › SAP)
+ * sap_order_exports, SUNUCU › 11)
  *
  * Odemesi kesinlesen siparis aktarim sirasina girer (queueSapOrder):
  * kartla verilen siparis verildigi anda, havale siparisi panelde "Odeme

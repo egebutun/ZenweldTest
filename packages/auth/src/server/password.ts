@@ -2,7 +2,7 @@ import { hash, verify } from "@node-rs/argon2";
 import { demoHash } from "../hash";
 
 /**
- * SIFRE OZETI (yalnizca sunucu; KARARLAR K-94, docs/VERITABANI.md › 14 ›
+ * SIFRE OZETI (yalnizca sunucu; KARARLAR K-94, docs/SUNUCU.md › 7 ›
  * Sifre ve oturum)
  *
  * Sifreler argon2id ile ozetlenir (kutuphanenin varsayilani: 19 MB bellek,

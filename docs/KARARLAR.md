@@ -10,8 +10,8 @@ Karar değişirse bu dosyada güncellenir; eski hali "Değişti" notuyla bırak�
 
 Kararların tarihi ilk alındığı gündür. Ayrıntılı davranış ilgili dosyada
 yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
-[ADMIN-KULLANIM.md](ADMIN-KULLANIM.md), [VERI-MODELI.md](VERI-MODELI.md),
-[IS-KURALLARI.md](IS-KURALLARI.md), [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md),
+[ADMIN-KULLANIM.md](ADMIN-KULLANIM.md), [VERITABANI.md](VERITABANI.md),
+[IS-KURALLARI.md](IS-KURALLARI.md), [SUNUCU.md](SUNUCU.md),
 [STOK.md](STOK.md).
 
 ---
@@ -25,7 +25,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 5. [Bayiler, online satıcılar ve stok](#5-bayiler-online-satıcılar-ve-stok)
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap)
 7. [Garanti ve servis](#7-garanti-ve-servis)
-8. [İçerik](#8-içerik)
+8. [İçerik](#8-i̇çerik)
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta)
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler)
 11. [Panel](#11-panel)
@@ -362,7 +362,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   - Panelde kombinasyonlar işaretlenen değerlerden kendiliğinden oluşur.
 - **Neden:** Sahibinin kararı; e-ticaret sistemlerinin (Shopify, WooCommerce,
   Magento) ortak yapısı. Veritabanında tutulma biçimi:
-  [VERI-MODELI.md](VERI-MODELI.md) › Ürünler › Seçenekler.
+  [VERITABANI.md](VERITABANI.md) › 3 › Seçenekli ürün.
 
 ### K-16 · Kategoride seçenek işareti kaldırma engellenmez
 - **Tarih:** 2026-10-21
@@ -864,7 +864,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Karar:** Kategori/grup numarası (`code`), kategori simgesi (`icon`),
   bayi e-postası, satıcı logo adresi ve teklif satırı notu bugün
   kullanılmıyor ama **silinmez**; ileride kullanılmak üzere backend'e
-  taşınır ([VERI-MODELI.md](VERI-MODELI.md#16-kullanılmayan-alanlar)).
+  taşınır ([VERITABANI.md](VERITABANI.md#19-kullanılmayan-alanlar)).
 
 ### K-61 · Ürün → kategori bağı backend'de kimlikle
 - **Tarih:** 2026-10-22
@@ -935,7 +935,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Neden:** Geçiş boyunca demo çalışmaya devam etsin; geliştirici
   bilgisayarında panel ile site birbirinden kopmasın.
 - **Uygulama (2026-11-04):** Ayar `DATA_SOURCE=database`
-  ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › ortam değişkenleri). Bu modda
+  ([SUNUCU.md](SUNUCU.md) › ortam değişkenleri). Bu modda
   ürünler, kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları
   her sayfada; bayiler, bayi ve satıcı stokları ve yorumlar yalnızca gereken
   sayfada (ürün sayfası, Bayi Bul, anasayfa) veritabanından okunur; içerik

@@ -10,7 +10,7 @@ import { database, usesDatabase } from "./db";
  *
  * KURULUM (yayina alirken bir kez yapilir): canli site kendi sunucumuzda
  * calisir (KARARLAR K-92); asagidakiler o sunucuda ortam degiskeni olarak
- * tanimlanir (ornek: apps/zenweld-web/.env.example; docs/ENTEGRASYONLAR.md):
+ * tanimlanir (ornek: apps/zenweld-web/.env.example; docs/SUNUCU.md):
  *     RESEND_API_KEY   resend.com uzerinden alinan anahtar
  *     SUPPORT_EMAIL    (istege bagli) varsayilan alici, varsayilan info@zenweld.com
  *     SUPPORT_FROM     (istege bagli) dogrulanmis gonderici adresi

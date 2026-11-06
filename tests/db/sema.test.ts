@@ -117,7 +117,7 @@ describe("Türkçe büyük/küçük harf duyarsız benzersizlik", () => {
  */
 const RESTRICTED = "23001";
 
-describe("silme kuralları (VERI-MODELI › Silme kuralları)", () => {
+describe("silme kuralları (VERITABANI › Silme kuralları)", () => {
   it("içinde ürün olan kategori, içinde kategori olan grup silinmez", async () => {
     await inTransaction(async (db) => {
       await group(db);

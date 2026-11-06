@@ -22,8 +22,8 @@ ileride gelecek bağlantılara (API) açık ve genişletilebilir yapılır
 | **İade** | Bireysel üye 14 gün içinde talep açar; panelde durum; para iadesi elle | [İade talebi](#i̇ade-talebi--kurumsal-üyeler-ve-backend) 3–5 |
 | **SAP ayarları ve stok kontrolü** | Depo stoğu deneme dosyasından 15 dakikada bir okunur; stokta olmayan ürün sepete eklenmez; bayi stoğunda geçerlilik süresi | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend), [Bayi ve satıcı stokları](#bayi-ve-satıcı-stokları--backend) |
 | **SAP'a sipariş kaydı** | Veritabanı modunda aktarım sırası hazır (K-108): ödemesi kesinleşen sipariş sıraya girer, iş gönderir, başarısızsa yeniden dener, panelde durum ve **Yeniden sıraya al**; SAP yerine deneme dosyasına yazıyor | Aşağıda "Kalan kod işleri" 3, [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) |
-| **API ayarları** (SAP, ödeme, e-posta, kargo bağlantıları) | Bağlantı bilgileri yalnızca sunucuda ortam değişkeni; panelde yok (güvenlik kuralı) | [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md), [Bağlantıların durumu](#bağlantıların-durumu-panelde--öneri) |
-| **Banka ve ödeme ayarları** | Mağaza Ayarları'nda POS tablosu, taksitler ve havale hesapları; ödeme temsili | [Online satış](#online-satış--canlıya-çıkmadan-önce) 1, 10; [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › Kartla ödeme |
+| **API ayarları** (SAP, ödeme, e-posta, kargo bağlantıları) | Bağlantı bilgileri yalnızca sunucuda ortam değişkeni; panelde yok (güvenlik kuralı) | [SUNUCU.md](SUNUCU.md), [Bağlantıların durumu](#bağlantıların-durumu-panelde--öneri) |
+| **Banka ve ödeme ayarları** | Mağaza Ayarları'nda POS tablosu, taksitler ve havale hesapları; ödeme temsili | [Online satış](#online-satış--canlıya-çıkmadan-önce) 1, 10; [SUNUCU.md](SUNUCU.md) › Kartla ödeme |
 | **E-postalar** (gönderen, metinler, müşteri bildirimleri) | Alıcılar panelde (K-104); servis kurulmadı, hiçbir e-posta gitmiyor | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre--backend) 3, [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı--backend) |
 
 ## Canlıya giden yol
@@ -120,7 +120,7 @@ alınır; ayar kapalıyken demo bugünkü gibi çalışır.
   - Birden fazla sunucu çalışacaksa ortak önbellek (ör. Redis); tek sunucuda gerekmez.
 - **SAP ekibi:** Aşağıdaki "SAP" bölümündeki sorular.
 - **Ödeme kuruluşu:** Seçim ve anlaşma (iyzico, PayTR ya da banka sanal POS'u).
-- **E-posta:** Resend hesabı ve `zenweld.com` alan adına Resend'in verdiği DNS kayıtlarının eklenmesi. Bugün hiçbir e-posta gitmiyor ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 2).
+- **E-posta:** Resend hesabı ve `zenweld.com` alan adına Resend'in verdiği DNS kayıtlarının eklenmesi. Bugün hiçbir e-posta gitmiyor ([SUNUCU.md](SUNUCU.md) › 9).
 - **Hukuk:** Sözleşme metinleri, KVKK, kurumsal alıcıda cayma, ETBİS kaydı, MERSİS numarası; e-Arşiv / e-Fatura entegratörü.
 - **İçerik:** Gerçek ürün bilgileri ve fotoğraflar, fiyatlar, kargo ücretleri, IBAN'lar.
 
@@ -308,8 +308,8 @@ Panel ve site hazır: Seçenek Tanımları, kategorinin Seçenekler sekmesi, ür
 Seçenekler sekmesi (en fazla 3 seçenek, kombinasyonlar), ürün sayfası, sepet,
 sipariş ve Teklif Al. Veri şimdilik tarayıcıda. Örnek veride 17 makinede var
 (Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu, Tepe Güç; uzunluklar temsili).
-Önerilen tablo yapısı: [VERI-MODELI.md](VERI-MODELI.md) › Ürünler ›
-Seçenekler (KARARLAR K-70).
+Tablo yapısı: [VERITABANI.md](VERITABANI.md) › 3 › Seçenekli ürün
+(KARARLAR K-70).
 
 1. **Tablolar:**
    - `option_definitions`: seçenek adı ("Torç Uzunluğu"); ad benzersiz.
@@ -382,8 +382,8 @@ kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
   KVKK kapsamında değerlendirilmeli; sunucunun yeri hukuk/BT ile belirlenir.
 - **Kurulum:** Site standart bir Node.js uygulamasıdır (`npm run build` +
   `npm start`, Node.js 22). Önünde HTTPS sağlayan bir web sunucusu (ör.
-  nginx), zamanlayıcı (SAP stok okuma, [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)
-  › 9), yedek ve izleme. `NEXT_PUBLIC_SITE_URL` = `https://zenweld.com`
+  nginx), zamanlayıcı (SAP stok okuma, [SUNUCU.md](SUNUCU.md)
+  › 3), yedek ve izleme. `NEXT_PUBLIC_SITE_URL` = `https://zenweld.com`
   tanımlanır; site bu alan adında kendiliğinden arama motorlarına açılır.
   Alan adı `zenweld.com` değilse `src/lib/seo.ts` içindeki
   `INDEXABLE_HOSTS` güncellenmeli.
@@ -433,8 +433,7 @@ kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
 ## Güvenlik başlıkları — canlıya çıkarken
 
 Başlıklar `apps/zenweld-web/next.config.mjs`'de; ne yaptıkları
-[ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9. Barındırma ve ortam
-değişkenleri › Güvenlik başlıkları'nda.
+[SUNUCU.md](SUNUCU.md) › 3 › Güvenlik başlıkları'nda.
 
 **Bilerek gevşek bırakılanlar** (bugünkü yapıda başka yolu yok; canlıya
 çıkarken sıkılaştırılmalı):
@@ -689,7 +688,7 @@ modunda sipariş sunucuda kaydediliyor (Aşama 5.2), ödeme temsili. Canlı içi
 3. **Ürünün geri gönderilmesi:** Müşteriye kargo kodu ya da gönderim adresi
    verilmesi, ürün depoya ulaşınca kontrol edilmesi süreci tanımlanmalı.
 4. **Para iadesi:** Ödeme kuruluşunun iade işlemi bağlanırsa onaylanan
-   talepten iade başlatılabilir ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) ›
+   talepten iade başlatılabilir ([SUNUCU.md](SUNUCU.md) ›
    Kartla ödeme 7).
 5. **Süreç şirketle konuşulacak (KARARLAR K-105, 2026-11-05):** Bugünkü
    düzen ayarsız kalır; şirketle konuşulup karar verilince düzenlenir.
@@ -715,8 +714,7 @@ Veritabanı modunda (`DATA_SOURCE=database`) bütün kayıtlar sunucu
 veritabanındadır; tarayıcıya örnek veri gönderilmez (Aşama 5.6).
 
 1. Bütün kayıt türleri sunucu veritabanına (PostgreSQL, KARARLAR K-81)
-   taşınmalı. Kayıt türleri, alanlar, ilişkiler ve silme kuralları:
-   [VERI-MODELI.md](VERI-MODELI.md); tablolar ve kolonlar:
+   taşınmalı. Kayıt türleri, alanlar, tablolar, ilişkiler ve silme kuralları:
    [VERITABANI.md](VERITABANI.md) (liste onaylandı).
    - Aşama 1 (bitti): tablo ve kolon listesi → geçiş betikleri, yerel
      PostgreSQL, komutlar ve veritabanı testleri (`packages/db`) → örnek
@@ -868,7 +866,7 @@ veritabanındadır; tarayıcıya örnek veri gönderilmez (Aşama 5.6).
    örnek satış hareketleri hiç yüklenmemeli (bkz. "Online satış" 11).
 5. Tarayıcıda yalnızca ziyaretçiye ait küçük veriler kalır (sepet, teklif
    listesi, çerez tercihi); hangisinin nereye taşınacağı:
-   [VERI-MODELI.md](VERI-MODELI.md) › Tarayıcıda tutulanlar.
+   [VERITABANI.md](VERITABANI.md) › Tarayıcıda tutulanlar.
 
 ## Zenweld depo stoğu (SAP) — backend
 
@@ -883,7 +881,7 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
   - **Service Layer (önerilen):** SAP B1'in resmi web servisi (HTTPS, kullanıcı adı ve şifre). Siparişleri SAP'a yazmak için de bu kullanılacağı için tek bağlantı iki işi görür.
   - **Salt okunur veritabanı kullanıcısı:** Görünüme doğrudan bağlanılır. Daha basit; ama sunucudan SAP veritabanına ağ erişimi (VPN ya da güvenlik duvarı izni) gerekir.
 - **Kuruldu (2026-11-04), SAP yerine deneme dosyasıyla:**
-  - Okuma işi: sitenin `/api/sap/stok` ucu; zamanlayıcı 15 dakikada bir çağırır (canlı sunucunun zamanlayıcısı, KARARLAR K-92; [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9). Yarım okuma koruması (K-93).
+  - Okuma işi: sitenin `/api/sap/stok` ucu; zamanlayıcı 15 dakikada bir çağırır (canlı sunucunun zamanlayıcısı, KARARLAR K-92; [SUNUCU.md](SUNUCU.md) › 3). Yarım okuma koruması (K-93).
   - Stok tablosunun tek işlemde yenilenmesi; her okumanın `sap_sync_runs`'a yazılması; aynı anda tek okuma.
   - Hata olursa son iyi stoğun korunması.
   - Stok değişince sayfaların o anda yenilenmesi.
@@ -902,8 +900,8 @@ okunur; stokta olmayan ürün sepete eklenmez. Tablolar hazır
    kolonları (kalem kodu, kullanılabilir miktar, kalem adı), bağlanma yolu
    (SAP Business One Service Layer ya da veritabanına salt okunur
    kullanıcı) ve bağlantı bilgileri (yalnızca sunucuda ortam değişkeni).
-2. Zamanlayıcının canlı sunucuda kurulması ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)
-   › 9 › Zamanlanmış işler). Panelde son okuma zamanı ve hatası (panel
+2. Zamanlayıcının canlı sunucuda kurulması ([SUNUCU.md](SUNUCU.md)
+   › 3 › Zamanlanmış işler). Panelde son okuma zamanı ve hatası (panel
    veritabanından okumaya geçince, Aşama 5).
 3. (Veritabanı modunda yapıldı, Aşama 5.2) Sipariş anında stok sunucuda
    son kez kontrol edilir; stok bitmişse sipariş alınmaz.
@@ -1170,7 +1168,7 @@ K-106): panelde salt okunur bir "Bağlantılar" ekranı.
   SAP'a aktarılmayı bekleyen ve aktarılamayan sipariş sayısı
   `sap_order_exports`'tan, son gönderilemeyen e-posta `email_log`'dan).
 - Ayar değiştirilmez; değişiklik sunucunun ortam değişkenlerinden yapılır
-  ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9).
+  ([SUNUCU.md](SUNUCU.md) › 2).
 
 ## Formlar — güvenlik (backend)
 

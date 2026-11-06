@@ -27,7 +27,7 @@ import {
 import * as s from "./schema";
 
 /**
- * VERITABANINDAN OKUMA (docs/VERITABANI.md › 14)
+ * VERITABANINDAN OKUMA (docs/SUNUCU.md › 6)
  *
  * Tablolardaki kayitlari sitenin kullandigi kayit sekline cevirir
  * (packages/data › types.ts); ornek veriyi yazan src/seed.ts'in tersidir.

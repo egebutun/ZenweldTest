@@ -9,7 +9,7 @@ import { closePool, inTransaction } from "./ortak";
 /*
  * npm run db:seed: sitenin ornek verisi (packages/data) tablolara hatasiz
  * yuklenir ve tablolar veriyle ayni sayida, ayni baglarla dolar
- * (docs/VERITABANI.md › 14). Her test kendi isleminde yukler, sonunda geri alir.
+ * (docs/SUNUCU.md › 5). Her test kendi isleminde yukler, sonunda geri alir.
  */
 
 afterAll(closePool);

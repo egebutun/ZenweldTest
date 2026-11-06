@@ -6,7 +6,7 @@ import { diffWarehouseStock, looksLikePartialSapRead, readSapStock, type SapStoc
 import * as s from "./schema";
 
 /**
- * SAP DEPO STOGU OKUMA ISI (KARARLAR K-82, K-84; docs/VERITABANI.md › 14,
+ * SAP DEPO STOGU OKUMA ISI (KARARLAR K-82, K-84; docs/SUNUCU.md › 11,
  * IS-KURALLARI › 20)
  *
  * Her calismada stok kaynagi bir kez okunur:

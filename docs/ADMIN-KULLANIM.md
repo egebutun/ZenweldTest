@@ -9,9 +9,9 @@ sitede ne değiştiği. Tasarım (renk, yerleşim) anlatılmaz.
 - Bu içeriklerin sitede nasıl göründüğü: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md)
 - Fiyat, KDV, kampanya, taksit, sipariş ve garanti kurallarının ayrıntısı:
   [IS-KURALLARI.md](IS-KURALLARI.md)
-- Kayıtların alanları ve tablolar: [VERI-MODELI.md](VERI-MODELI.md)
+- Kayıtların alanları ve tablolar: [VERITABANI.md](VERITABANI.md)
 - Bayi ve online satıcı stoklarının ayrıntısı: [STOK.md](STOK.md)
-- Ödeme, e-posta ve harita servisleri: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)
+- Sunucu, ödeme, e-posta ve harita servisleri: [SUNUCU.md](SUNUCU.md)
 
 **Demo notu** ile işaretli yerler bugünkü demonun sınırlarıdır (verinin
 tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
@@ -755,7 +755,7 @@ kaybolmaz.
 - Oranlarda virgül kullanılabilir. Hata: "Oranlar 0 veya daha büyük bir
   sayı olmalı."
 - POS'un API anahtarı ve şifresi panelde **yoktur**; yalnızca sunucuda
-  saklanır (bkz. [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)).
+  saklanır (bkz. [SUNUCU.md](SUNUCU.md) › 2).
 
 **Havale / EFT:**
 
@@ -2392,7 +2392,7 @@ veritabanına bağlandığında burada listelenir." yazar.
 
 - Bu formların hepsi ayrıca `info@zenweld.com`'a e-posta gönderir (bülten ve
   şifre hariç). **Bugün:** E-posta servisi (Resend) kurulu olmadığı için
-  hiçbir e-posta gitmez ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 2).
+  hiçbir e-posta gitmez ([SUNUCU.md](SUNUCU.md) › 9).
   - E-postada **Yanıtla** denince yanıt doğrudan formu dolduran kişiye gider.
   - Sipariş e-postasına T.C. kimlik no ve kart bilgisi yazılmaz.
   - İletişim, bayilik, Welders Club ve ürün destek formları e-posta
@@ -2407,7 +2407,7 @@ veritabanına bağlandığında burada listelenir." yazar.
   - E-posta için sunucuda e-posta servisinin anahtarı tanımlı olmalıdır (bkz.
     README). Demo adresinde anahtar yoksa formlar başarılı görünür ama
     e-posta gitmez.
-  - Ayrıntı: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md).
+  - Ayrıntı: [SUNUCU.md](SUNUCU.md) › 9.
 - Panelden müşteriye e-posta gitmez.
 
 ### Bayilik Başvuruları (`/yonetim/bayilik-basvurulari`)

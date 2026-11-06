@@ -10,7 +10,7 @@ eder: sayfada ne olduğu, hangi alanların zorunlu olduğu, hangi mesajların
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md)
 - Fiyat, KDV, kampanya, taksit, stok ve e-posta kurallarının ayrıntısı:
   [IS-KURALLARI.md](IS-KURALLARI.md)
-- Ödeme, e-posta ve harita servisleri: [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md)
+- Sunucu, ödeme, e-posta ve harita servisleri: [SUNUCU.md](SUNUCU.md)
 
 **Demo notu** ile işaretli yerler bugünkü demonun sınırlarıdır (verinin
 tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
@@ -975,7 +975,7 @@ ve Mesafeli Sözleşmeler Yönetmeliği gereği ödeme öncesi onaylanır).
   üyenin e-postasına bağlantı gider: "Zenweld şifre sıfırlama". Bağlantı 1
   saat geçerlidir ve bir kez kullanılır. Aynı hesap için 15 dakikada bir
   bağlantı gönderilir; yeni bağlantı eskisini geçersiz kılar. E-posta
-  Resend kurulunca gider ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 2).
+  Resend kurulunca gider ([SUNUCU.md](SUNUCU.md) › 9).
 - **Demo modunda** e-posta gönderilmez.
 
 ### Yeni Şifre (`/sifre-sifirla`)

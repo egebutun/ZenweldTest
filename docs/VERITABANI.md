@@ -1,61 +1,79 @@
-# Veritabanı — PostgreSQL Tabloları ve Kolonları
+# Veritabanı — Kayıtlar, Tablolar ve Alanlar
 
-Bu dosya sitenin ve panelin sunucu veritabanını tablo tablo anlatır: her
-tablonun kolonları, türleri, hangi kolonun zorunlu ya da benzersiz olduğu,
-tabloların birbirine nasıl bağlandığı ve bir kayıt silinince ne olduğu.
+Bu dosya sitenin ve panelin sakladığı bütün kayıtları tek yerde anlatır: hangi
+kayıt türleri var, her birinin tablosu ve kolonları, kolonların anlamı ve
+kuralları, kayıtların birbirine nasıl bağlandığı, hangi alanların benzersiz
+olduğu ve bir kayıt silinince ne olduğu.
 
-**Durum (2026-11-05):** Liste sahibince onaylandı (KARARLAR K-81). Tablolar
-kodda (`packages/db/src/schema/`) ve geçiş betiklerinde hazır; bilgisayardaki
-PostgreSQL'de kuruluyor ve testleri geçiyor. Site ayarla
-(`DATA_SOURCE=database`, K-88) bütün kayıtları tablolardan okur ve yazar:
-site, üyelik, formlar ve panelin bütün ekranları (Aşama 3–5). Bu modda
-tarayıcıya örnek veri gönderilmez ve tarayıcı deposuna veri yazılmaz
-(Aşama 5.6).
-Tabloların asıl tanımı koddadır; bu dosya her şema değişikliğinde aynı
-commit'te güncellenir. Kod ve komutlar: [14](#14-kod-betikler-ve-komutlar).
+**İki modda nerede durur:**
+
+- **Veritabanı modunda** (`DATA_SOURCE=database`, KARARLAR K-88) bütün
+  kayıtlar sunucudaki PostgreSQL tablolarındadır. Site, üyelik, formlar ve
+  panelin bütün ekranları bu tablolardan okur ve yazar (Aşama 3–5).
+  Tarayıcıya örnek veri gönderilmez, tarayıcı deposuna veri yazılmaz
+  (Aşama 5.6).
+- **Demo modunda** bütün veri tarayıcıda tek bir JSON nesnesidir
+  (`zenweld.db.v1`). Şekli `packages/data/src/types.ts` › `ZenweldDatabase`
+  tipidir; her dizisi bir tabloya karşılık gelir. Tablolardan farkları:
+  [2](#2-tarayıcıdaki-veri-ile-tablolar-arasındaki-farklar).
+
+Tabloların asıl tanımı koddadır (`packages/db/src/schema/`); bu dosya her
+şema değişikliğinde aynı commit'te güncellenir. Tablo listesi ve kolonlar
+`npm run test:db` ile bu dosyaya karşı denetlenir.
 
 İlgili dosyalar:
 
-- Alanların anlamı, sitede ve panelde nasıl kullanıldığı:
-  [VERI-MODELI.md](VERI-MODELI.md). Bu dosya onun veritabanındaki karşılığıdır.
-- Stok tablolarının SQL'i ve stok sorguları: [STOK.md](STOK.md) › Backend'e
-  geçiş.
-- Hesap kuralları (fiyat, KDV, taksit, numara): [IS-KURALLARI.md](IS-KURALLARI.md).
+- Sunucunun bu tablolardan nasıl okuyup yazdığı, betikler ve komutlar:
+  [SUNUCU.md](SUNUCU.md)
+- Fiyat, KDV, kampanya, taksit, sipariş ve garanti hesapları:
+  [IS-KURALLARI.md](IS-KURALLARI.md)
+- Kayıtların ekranlarda nasıl girildiği: [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
+  [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md)
+- Stok tablolarının SQL'i ve stok dosyası: [STOK.md](STOK.md)
 
 ---
 
 ## İçindekiler
 
 1. [Genel kurallar](#1-genel-kurallar)
-2. [Bugünkü veriden farklar](#2-bugünkü-veriden-farklar)
+2. [Tarayıcıdaki veri ile tablolar arasındaki farklar](#2-tarayıcıdaki-veri-ile-tablolar-arasındaki-farklar)
 3. [Katalog](#3-katalog)
 4. [Bayiler, online satıcılar ve stok](#4-bayiler-online-satıcılar-ve-stok)
 5. [Üyeler ve oturumlar](#5-üyeler-ve-oturumlar)
 6. [Teklifler](#6-teklifler)
-7. [Siparişler ve iadeler](#7-siparişler-ve-iadeler)
+7. [Siparişler, iadeler ve kuponlar](#7-siparişler-iadeler-ve-kuponlar)
 8. [Servis talepleri, garantiler, yorumlar](#8-servis-talepleri-garantiler-yorumlar)
-9. [İçerik](#9-içerik)
+9. [İçerik](#9-i̇çerik)
 10. [Ayarlar ve ödeme](#10-ayarlar-ve-ödeme)
 11. [Formlar, e-postalar, kayıt numaraları ve değişiklik kaydı](#11-formlar-e-postalar-kayıt-numaraları-ve-değişiklik-kaydı)
 12. [Tablo listesi](#12-tablo-listesi)
 13. [Açık sorular](#13-açık-sorular)
-14. [Kod, betikler ve komutlar](#14-kod-betikler-ve-komutlar)
+14. [İlişkiler](#14-i̇lişkiler)
+15. [Benzersiz alanlar](#15-benzersiz-alanlar)
+16. [Silme kuralları](#16-silme-kuralları)
+17. [Tarayıcıda tutulanlar](#17-tarayıcıda-tutulanlar)
+18. [Örnek veri ve veri sürümü](#18-örnek-veri-ve-veri-sürümü)
+19. [Kullanılmayan alanlar](#19-kullanılmayan-alanlar)
 
 ---
 
 ## 1. Genel kurallar
 
 **Adlar:** Tablo ve kolon adları küçük harf ve alt çizgiyle yazılır
-(`category_id`). Koddaki alanın karşılığı her tabloda "Koddaki" sütununda
-yazar (`categorySlug`).
+(`category_id`). Koddaki alan adı kolonun birleşik yazılışıdır
+(`first_name` → `firstName`); farklı olanlar tablonun altındaki "Koddaki"
+satırında ya da Açıklama sütununda yazar (`position` → `order`).
+
+**(yeni):** Tarayıcıdaki veride (demo modu) olmayan, yalnızca tabloda
+bulunan kolon ya da tablo.
 
 **Türler:**
 
 | Ne | Tür | Not |
 |---|---|---|
-| Kimlik | `text` | Bugünkü kimlikler aynen taşınır (`p-ultimate-250-mtc`). Yeni kaydın kimliğini bugünkü gibi uygulama verir (`<önek>-<zaman><rastgele>`) |
-| Tarih ve saat | `timestamptz` | Saat dilimiyle saklanır. Gün hesapları ve ekrandaki tarih Türkiye saatine (Europe/Istanbul) göredir |
-| Yalnızca tarih | `date` | Etkinlik başlangıç/bitişi, garanti bitişi |
+| Kimlik | `text` | Tarayıcıdaki kimlikler aynen taşınır (`p-ultimate-250-mtc`) |
+| Tarih ve saat | `timestamptz` | Saat dilimiyle saklanır |
+| Yalnızca tarih | `date` | `YYYY-AA-GG`: etkinlik başlangıç/bitişi, garanti bitişi |
 | Para | `numeric(12,2)` | Türk lirası; kuruş kayması olmaz. Hangi tutarın KDV dahil, hangisinin hariç olduğu kolon adında yazar (`_ex_vat` = KDV hariç) |
 | Oran (%) | `numeric(5,2)` | KDV, komisyon, vade farkı |
 | Sabit değer listesi | `text` + `CHECK` | Durum, rol, bölüm gibi. Yeni değer eklemek bir betikle yapılır |
@@ -64,26 +82,104 @@ yazar (`categorySlug`).
 
 **Zorunlu:** "Kural" sütununda **zorunlu** yazmayan kolon boş bırakılabilir.
 
-**Zaman damgaları:** Değiştirilebilen her tabloda `created_at` (oluşturulma)
-ve `updated_at` (son değişiklik) vardır. Bugünkü veride olmayanlar
-"(yeni)" diye işaretlidir.
+**Kimlik (id):**
 
-**Silme:** Bağlantılarda silinince ne olacağı [VERI-MODELI.md › Silme
-kuralları](VERI-MODELI.md#13-silme-kuralları)'na göredir:
+- Panelde ya da sitede yeni oluşan kayıtta kimliği uygulama verir:
+  `<önek>-<zaman><rastgele>` (ör. `p-mvjccq8u1zic2`). Önekler: ürün `p`,
+  kategori `c`, grup `g`, seçenek tanımı `opt`, haber `n`, blog `b`,
+  etkinlik `e`, SSS `f`, yorum `rv`, adres `adr`, teklif `q`, sipariş `o`,
+  servis talebi `srv`, garanti `w`, belge `doc`, stok işlemi `si`, satış
+  temsilcisi `sr`, banka hesabı `ba`, POS `pos`, Hakkımızda bölümü `a`,
+  rakam kutusu `s`.
+- Üye `u-<zaman>`, bayi `d-<zaman>`, online satıcı `r-<zaman>` biçimindedir.
+- Örnek veride kimlikler okunabilir yazılmıştır (`p-ultimate-250-mtc`,
+  `d-basak-hirdavat`, `u-admin`).
+- Kimlik yalnızca bağlantı içindir, ekranda gösterilmez.
+
+**Tarih ve saat:**
+
+- Tarih-saat alanları ISO 8601'dir (`2026-10-09T09:15:00+03:00`). Sistemin
+  oluşturduğu kayıtlar UTC yazar (`…Z`); örnek veri Türkiye saatiyle
+  (+03:00) yazılmıştır.
+- Gün hesapları Türkiye saatine (Europe/Istanbul) göredir: havalenin son
+  ödeme günü, iade süresi, garantinin bitişi ve kayıt numarasının yılı
+  (`packages/data/src/orders.ts` › `turkeyDayEnd`, `turkeyYear`; iki modda
+  da aynı kod).
+- Ekranda tarih ve saat her zaman Türkiye saatiyle yazılır
+  (`packages/utils/src/format.ts`); sayfayı önceden hazırlayan sunucu ile
+  tarayıcı aynı günü gösterir.
+
+**Para:** Bütün tutarlar Türk lirasıdır (TRY). Hesaplar:
+[IS-KURALLARI.md](IS-KURALLARI.md).
+
+**Link (slug) ve eski linkler:**
+
+- Sayfası olan kayıtlarda (ürün, kategori, grup, blog yazısı, haber,
+  etkinlik) `slug` adresin son parçasıdır. Yalnızca küçük Latin harf, rakam
+  ve tire içerir.
+- Link değişince eski adres yeni linke yönlenir. Tabloda eski adresler
+  `redirects`'tedir. Tarayıcıdaki veride ürün, blog, haber ve etkinlikte
+  `previousSlugs` (yalnızca son parça), kategori ve grupta `previousPaths`
+  (tam yol; kategori adresi grubun linkine bağlı olduğu için), seçeneğe
+  dönüştürülmüş eski üründe seçeneğin `previousSlugs` alanıdır.
+- Yeni link başka bir kaydın eski linkiyse o eski yönlendirme silinir.
+
+**SEO alanları:** Ürün, kategori, grup, blog yazısı, haber ve etkinlikte
+`seo` (jsonb): `title` (sayfa başlığı; boşsa otomatik), `description`
+(arama sonucu açıklaması; boşsa kısa açıklama ya da özet), `keywords[]`
+(site içi arama ve `keywords` etiketi). Bütün alanlar boşsa `seo` hiç
+yazılmaz. Sabit sayfaların SEO'su: [`page_seo`](#page_seo--sabit-sayfaların-arama-bilgileri).
+
+**Kopya (anlık görüntü) alanlar:** Sipariş, teklif, iade ve servis
+satırlarındaki ürün adı, kodu, seçenek adı ve fiyatı o anın kopyasıdır;
+ürün sonradan değişse ya da silinse de değişmez. Siparişin adresleri, fatura
+bilgileri ve ödeme bilgileri (POS adı, komisyon oranı) de sipariş anındaki
+kopyadır.
+
+**Yayında (`active`):** `active` kapalı olan ürün, blog yazısı, haber,
+etkinlik, belge, bayi, online satıcı ve satış temsilcisi sitede görünmez ama
+silinmez. Tarayıcıdaki eski blog kayıtlarında alan olmayabilir; yoksa
+yayında sayılır.
+
+**Son değişiklik (`updated_at`):** Değiştirilebilen her tabloda
+`created_at` ve `updated_at` vardır. Panel bir kaydı açarken `updated_at`'i
+de alır; kaydı iki yönetici düzenlerse sonra kaydeden "sayfayı yenileyin"
+uyarısı alır, kayıt değişmez (KARARLAR K-99;
+[IS-KURALLARI.md › 22](IS-KURALLARI.md#22-panelde-kayıt-düzenleme)).
+Tarayıcıdaki veride bu alan yalnızca veritabanı modunda panelin okuduğu
+kayıtta doludur.
+
+**Görseller ve dosyalar:**
+
+- Görsel ve belge kolonlarında yalnızca adres durur; dosyanın kendisi
+  veritabanına yazılmaz.
+- Veritabanı modunda panelde yüklenen görsel ve belge sunucunun dosya
+  deposuna yazılır, kolona sitedeki adresi (`/dosya/…`) girer (K-108;
+  [SUNUCU.md › Dosya deposu](SUNUCU.md#dosya-deposu)). Depo ayarlı değilse
+  yükleme kapalıdır ve adres girilir (`https://…` ya da `/images/…`); sunucu
+  yüklenmiş dosya (`data:` adresi) içeren kaydı kabul etmez (K-101, K-104).
+- Demo modunda panelden yüklenen görsel kaydın içine `data:` adresi olarak
+  yazılır; belgelerin dosyaları tarayıcının dosya deposunda (IndexedDB)
+  durur. Bu görseller canlı veri yüklemesiyle taşınmaz (örnek görseller
+  `/images/…` adresindedir).
+- Kurallar: [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar).
+
+**Gizli bilgiler:** POS API anahtarı ve şifresi ile e-posta servisinin
+anahtarı hiçbir tabloda tutulmaz; yalnızca sunucuda ortam değişkenidir.
+Kart numarası hiç saklanmaz; siparişte yalnızca son 4 hane durur.
+
+**Silme:** Bağlantılarda silinince ne olacağı kolonun yanında yazar; bütün
+liste: [16](#16-silme-kuralları).
 
 - **zincir:** bağlı kayıt da silinir (ör. ürün silinince stok satırları).
 - **boşalır:** bağlantı kolonu boşalır, kayıt kalır (ör. ürün silinince
   siparişteki ürün bağı; satırdaki ad ve kod kopyası durur).
 - **engeller:** bağlı kayıt varken silinmez (ör. içinde ürün olan kategori).
 
-**Kopya alanlar:** Sipariş, teklif, iade ve servis satırlarındaki ürün adı,
-kodu, seçenek adı ve fiyatı o anın kopyasıdır; ürün değişse ya da silinse de
-değişmez.
-
-**Sürüm:** PostgreSQL 18 (KARARLAR K-81). Not: 18'de "engeller" kuralına
+**Sürüm:** PostgreSQL 18 (KARARLAR K-81). 18'de "engeller" kuralına
 takılan silme 23001 (`restrict_violation`) hata koduyla döner; 17 ve
 öncesinde 23503 dönerdi. Kayıt katmanı hatayı Türkçe mesaja çevirirken
-ikisini de tanımalıdır.
+ikisini de tanır.
 
 **Türkçe büyük/küçük harf:** "Benzersiz (harf duyarsız)" yazan kolonlar
 Türkçe kurallarla karşılaştırılır (I/ı, İ/i; "Işık" = "IŞIK", "Isık"
@@ -91,52 +187,38 @@ farklı). Veritabanında Türkçe küçük harfe çevrilmiş hali üzerinden ben
 dizinle sağlanır (`lower(ad COLLATE "tr-x-icu")`); PostgreSQL'in ICU desteği
 gerekir (AWS ve Google Cloud'un PostgreSQL servislerinde vardır).
 
-**Dosyalar:** Görsel ve belge kolonlarında yalnızca adres durur; dosyanın
-kendisi veritabanına yazılmaz. Veritabanı modunda panelde yüklenen dosya
-sunucunun dosya deposuna yazılır ve kolona sitedeki adresi (`/dosya/…`)
-girer ([14](#14-kod-betikler-ve-komutlar) › Dosya deposu; K-108). Demo
-modunda panelden yüklenen görseller kaydın içinde duruyor; yükleme ile
-taşınmaz (canlı veri yüklemesinde örnek görseller `/images/…` adresindedir).
-
-**Gizli bilgiler:** POS API anahtarı ve şifresi ile e-posta servisinin
-anahtarı hiçbir tabloda tutulmaz; yalnızca sunucuda ortam değişkenidir.
-Kart numarası hiç saklanmaz; siparişte yalnızca son 4 hane durur.
-
 ---
 
-## 2. Bugünkü veriden farklar
+## 2. Tarayıcıdaki veri ile tablolar arasındaki farklar
 
-Bugünkü veri (`packages/data/src/types.ts › ZenweldDatabase`) çoğunlukla
-tabloya birebir gider. Farklı olanlar:
+Demo modunda veri tarayıcıda tek bir nesnedir (`ZenweldDatabase`) ve
+çoğunlukla tabloya birebir gider. Farklı olanlar:
 
-| Bugün | Veritabanında | Neden |
+| Tarayıcıdaki veride | Veritabanında | Neden |
 |---|---|---|
 | Kategori gruba linkle bağlı (`group`) | `categories.group_id` | Grubun linki değişince bağ bozulmasın |
 | Ürün kategoriye linkle bağlı (`categorySlug`); servis talebi ve garanti de | `category_id` | Aynı neden |
 | Üründe, kategoride ve grupta `section` | Yalnızca grupta; kategori ve ürün grubundan alır | Tek yerde dursun, çelişmesin |
 | `previousSlugs`, `previousPaths` (ürün, varyant, kategori, grup, blog, haber, etkinlik) | `redirects` tablosu | Eski adresler tek tabloda; "yeni link başka kaydın eski linkiyse o yönlendirme silinir" kuralı kendiliğinden sağlanır |
-| Ürün kodu ve varyant kodlarının tek havuzda benzersizliği (bugün panel kontrol ediyor) | `sku_codes` tablosu | İki tabloya yayılan kural veritabanında da sağlansın |
+| Ürün kodu ve varyant kodlarının tek havuzda benzersizliği (panel denetler) | `sku_codes` tablosu | İki tabloya yayılan kural veritabanında da sağlansın |
 | Ürünün `options` nesnesi | `product_options`, `product_variants`, `product_variant_values` | Varyant kodu, stok ve sepet varyanta bağlanıyor |
 | Ürünün `filterValues` nesnesi | `product_filter_values` | Filtre ya da değer silinince ürünlerdeki işaret de kalksın |
 | Kategorinin `optionIds` ve `filters` listeleri | `category_option_definitions`, `category_filters`, `category_filter_values` | Aynı neden |
 | Ürünün `discount` nesnesi | `products.discount_*` kolonları | Anasayfadaki kampanya listesi sorgulanabilsin |
-| Siparişin `payment`, `shipment` nesneleri | `orders` kolonları | Havale süresi, ödeme ve kargo tarihleri sorgulanabilsin |
+| Siparişin `payment`, `shipment` nesneleri | `orders` kolonları, `shipments` | Havale süresi, ödeme ve kargo tarihleri sorgulanabilsin; iade gönderisi de tutulabilsin |
 | Siparişin `history` listesi | `order_status_history` | Kimin değiştirdiği de yazılsın |
-| `settings.shop.pos`, `settings.shop.bankAccounts` | `payment_pos`, `bank_accounts` | Siparişler POS'a bağlanıyor |
+| `settings.shop.pos`, `settings.shop.bankAccounts`, `settings.shop.carriers` (metin listesi) | `payment_pos`, `bank_accounts`, `carriers` | Siparişler POS'a bağlanıyor; takip bağlantısı verilebilsin |
 | `about` nesnesi | `about_page` (tek satır) | — |
 | `recordCounters` | `record_counters` | Aynı anda gelen iki kayıt aynı numarayı almasın |
-| Favoriler tarayıcıda | `favourites` | Üye başka cihazda da görsün |
-| Oturum tarayıcıda | `sessions` | Oturum sunucuda tutulmalı (YAPILACAKLAR › Üyelik) |
-| İletişim, bayilik, Welders Club, ürün destek formları yalnızca e-posta | `dealer_applications`, `support_messages`, `welders_club_signups` | Sahibinin kararı (K-81) |
-| Zenweld deposunda her ürün stokta sayılıyor (K-20) | `warehouse_stock`, `sap_sync_runs` | Depo stoğu SAP'tan okunur (K-82) |
-| Siparişin kargo bilgisi (`shipment`) siparişin içinde; kargo firmaları ayarlarda metin listesi | `shipments`, `carriers` | İade gönderisi de tutulabilsin; takip bağlantısı verilebilsin |
 | Kuponun `productIds`, `categoryIds`, `customerEmails` listeleri | `coupon_targets`, `coupon_customers` | Silinen ürün ve kategori kupondan da çıksın; e-postayla arama yapılabilsin (K-85, K-86) |
-| Bütün form e-postaları tek adrese gidiyor (`SUPPORT_EMAIL`, varsayılan info@zenweld.com) | `email_recipients` | Alıcı forma göre panelden değişir (K-81, K-104); satırı olmayan tür `SUPPORT_EMAIL`'e gider |
-| Gönderilen e-postaların kaydı yok | `email_log` | Hangi sayfa ve özellik için gönderildiği tutulur (K-81) |
-| Panel değişikliklerinin kaydı yok | `audit_log` | Sahibinin kararı (K-81) |
+| Favoriler ve oturum tarayıcıda | `favourites`, `sessions` | Üye başka cihazda da görsün; oturum sunucuda tutulur (K-94, K-96) |
+| İletişim, bayilik, Welders Club ve ürün destek formları: isteğe bağlı `dealerApplications`, `supportMessages`, `weldersClub` listeleri (K-109; eski kayıtlarda yok, yalnızca formu gönderen tarayıcıda) | `dealer_applications`, `support_messages`, `welders_club_signups` | Sahibinin kararı (K-81); panelde bütün yöneticiler görsün (K-100) |
+| `warehouseStock` (örnek depo stoğu) | `warehouse_stock`, `sap_sync_runs` | Depo stoğu SAP'tan okunur, okumaların kaydı tutulur (K-82) |
+| `emailRecipients` (tarayıcıda saklanır ama kullanılmaz; e-postaları sunucu gönderir) | `email_recipients` | Alıcı forma göre panelden değişir (K-81, K-104); satırı olmayan tür `SUPPORT_EMAIL`'e gider |
+| Gönderilen e-postaların ve panel değişikliklerinin kaydı yok | `email_log`, `audit_log` | Sahibinin kararı (K-81) |
 
 Tarayıcıda kalacaklar (sepet, teklif listesi, çerez tercihi):
-[VERI-MODELI.md › Tarayıcıda tutulanlar](VERI-MODELI.md#14-tarayıcıda-tutulanlar).
+[17](#17-tarayıcıda-tutulanlar).
 
 ---
 
@@ -144,19 +226,20 @@ Tarayıcıda kalacaklar (sepet, teklif listesi, çerez tercihi):
 
 ### `category_groups` — gruplar
 
+Menüde bölümün altında sol kolondaki gruplar (ör. Kaynak Makineleri).
 Koddaki: `categoryGroups`.
 
-| Kolon | Tür | Kural | Açıklama (koddaki alan) |
+| Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `section` | text | zorunlu; `ekipmanlar`, `guvenlik`, `aksesuarlar`, `dolgu-metalleri` | Bölüm |
-| `slug` | text | zorunlu; bölüm içinde benzersiz | Link |
+| `section` | text | zorunlu; `ekipmanlar`, `guvenlik`, `aksesuarlar`, `dolgu-metalleri` | Bölüm; kayıttan sonra değişmez |
+| `slug` | text | zorunlu; bölüm içinde benzersiz | Adres: `/<bölüm>/<slug>` |
 | `name` | text | zorunlu | |
-| `description` | text | | Grup sayfasındaki kısa açıklama |
-| `about_text` | text | | Sayfa altındaki tanıtım (`aboutText`) |
+| `description` | text | | Grup sayfasındaki kısa açıklama; boşsa kategori adlarından üretilir |
+| `about_text` | text | | Sayfa altındaki tanıtım metni (biçimli) |
 | `image` | text | | Kart görseli |
-| `position` | int | zorunlu | Sıra (`order`) |
-| `code` | text | | Kategori tablosundaki numara ("1.2"); kullanılmıyor |
+| `position` | int | zorunlu | Bölüm içindeki sıra (`order`) |
+| `code` | text | | Kategori tablosundaki numara ("1.2"); kullanılmıyor ([19](#19-kullanılmayan-alanlar)) |
 | `seo` | jsonb | | `{ title, description, keywords[] }` |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
@@ -164,18 +247,18 @@ Silme: içinde kategori varsa silinmez.
 
 ### `categories` — kategoriler
 
-| Kolon | Tür | Kural | Açıklama (koddaki alan) |
+| Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `group_id` | text | zorunlu; → `category_groups` (engeller) | `group` (bugün grubun linki) |
-| `slug` | text | zorunlu; bütün sitede benzersiz | |
+| `group_id` | text | zorunlu; → `category_groups` (engeller) | Tarayıcıdaki veride `group` (grubun linki) ve `section` |
+| `slug` | text | zorunlu; bütün sitede benzersiz | Adres: `/<bölüm>/<grup>/<slug>` |
 | `name` | text | zorunlu | |
-| `description` | text | zorunlu | |
-| `about_text` | text | | `aboutText` |
-| `image` | text | | Kart görseli |
+| `description` | text | zorunlu | Kısa açıklama |
+| `about_text` | text | | Tanıtım metni (biçimli) |
+| `image` | text | | Kart görseli; yoksa kategorinin ilk ürününün fotoğrafı |
 | `icon` | text | | Kullanılmıyor |
 | `code` | text | | "1.2.3"; kullanılmıyor |
-| `position` | int | zorunlu | `order` |
+| `position` | int | zorunlu | Grup içindeki sıra (`order`) |
 | `seo` | jsonb | | |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
@@ -183,7 +266,8 @@ Silme: içinde ürün varsa silinmez.
 
 ### `category_option_definitions` — kategoride listelenen seçenek tanımları
 
-Koddaki: `categories.optionIds`.
+Bu kategoride ürüne seçenek eklenirken listelenen tanımlar. Koddaki:
+`categories.optionIds`.
 
 | Kolon | Tür | Kural |
 |---|---|---|
@@ -195,52 +279,56 @@ Anahtar: (`category_id`, `option_definition_id`).
 
 ### `category_filters` ve `category_filter_values` — kategori filtreleri
 
-Koddaki: `categories.filters` (KARARLAR K-76).
+Kategori sayfasındaki filtreler, sırasıyla. Filtreler kategoriye özeldir;
+aynı adlı filtrenin değerleri kategoriye göre değişebilir (TIG'de Çalışma
+Modu: DC, AC/DC; MIG'de Standart, Puls). Koddaki: `categories.filters`
+(KARARLAR K-76).
 
 `category_filters`:
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `category_id` | text | → `categories` (zincir) | |
-| `id` | text | zorunlu | Filtre kimliği; ilk addan üretilir, değişmez, adreste kullanılır (`model-serisi`) |
-| `name` | text | zorunlu; kategori içinde benzersiz (harf duyarsız) | |
+| `id` | text | zorunlu; kategori içinde benzersiz | Filtrenin ilk adından üretilir (`model-serisi`) ve hiç değişmez; sayfa adresinde kullanılır (`?model-serisi=force`) |
+| `name` | text | zorunlu; kategori içinde benzersiz (harf duyarsız) | Ör. "Model Serisi" |
 | `position` | int | zorunlu | |
 
-Anahtar: (`category_id`, `id`).
+Anahtar: (`category_id`, `id`). Değeri olmayan filtre sitede görünmez.
 
 `category_filter_values`:
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `category_id`, `filter_id` | text | → `category_filters` (zincir) | |
-| `id` | text | zorunlu | Değer kimliği; değişmez |
-| `label` | text | zorunlu; filtre içinde benzersiz (harf duyarsız) | |
+| `id` | text | zorunlu | Değerin ilk adından üretilir (`kompakt`) ve hiç değişmez; aynısı varsa sonuna `-2` eklenir |
+| `label` | text | zorunlu; filtre içinde benzersiz (harf duyarsız) | Ör. "Kompakt"; ad düzeltilebilir |
 | `position` | int | zorunlu | |
 
 Anahtar: (`category_id`, `filter_id`, `id`).
 
 ### `option_definitions` ve `option_values` — seçenek tanımları
 
-Koddaki: `optionDefinitions`.
+Ortak seçenek adları ve değerleri (KARARLAR K-14). Koddaki:
+`optionDefinitions`.
 
 `option_definitions`:
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `name` | text | zorunlu; benzersiz (harf duyarsız) | "Soğutma" |
+| `name` | text | zorunlu; benzersiz (harf duyarsız) | Ör. "Torç Uzunluğu" |
 | `position` | int | zorunlu (yeni) | Paneldeki sıra |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
 Silme: bir üründe kullanılıyorsa silinmez.
 
-`option_values`:
+`option_values` (koddaki: `values[]`):
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `option_definition_id` | text | → `option_definitions` (zincir) | |
-| `id` | text | zorunlu | Değer kimliği (`4-m`); değişmez |
-| `label` | text | zorunlu; tanım içinde benzersiz (harf duyarsız) | "4 m" |
+| `id` | text | zorunlu | Değerin ilk adından üretilir (`4-m`) ve **hiç değişmez**; aynısı varsa sonuna `-2`, `-3` eklenir |
+| `label` | text | zorunlu; tanım içinde benzersiz (harf duyarsız) | Ör. "4 m"; ad düzeltilebilir |
 | `position` | int | zorunlu | Sitede bu sırayla görünür |
 
 Anahtar: (`option_definition_id`, `id`). Silme: bir üründe kullanılıyorsa
@@ -248,46 +336,73 @@ silinmez.
 
 ### `products` — ürünler
 
-| Kolon | Tür | Kural | Açıklama (koddaki alan) |
+Ürün sayfası: ad, link, marka, kategori, açıklama, fiyat, garanti.
+
+| Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `slug` | text | zorunlu; benzersiz | |
+| `slug` | text | zorunlu; benzersiz | Adres: `/urun/<slug>` |
 | `sku` | text | zorunlu; `sku_codes` ile tek havuzda benzersiz | Ürün kodu (SAP kodu, K-72) |
-| `name` | text | zorunlu | |
-| `category_id` | text | zorunlu; → `categories` (engeller) | `categorySlug` |
-| `model_code` | text | | `modelCode`; boş kalır (K-72) |
-| `brand` | text | | Boşsa Zenweld |
+| `name` | text | zorunlu | Markasız ("Zenweld" yazılmaz) |
+| `category_id` | text | zorunlu; → `categories` (engeller) | Tarayıcıdaki veride `categorySlug` (+ `section`) |
+| `model_code` | text | | Model kodu (ör. "Z03.01.15"); bugün boş kalır (K-72) |
+| `brand` | text | | Marka (ör. "Jasic"); boşsa Zenweld. Arama motorlarına giden ürün bilgisinde kullanılır |
 | `short_description` | text | zorunlu (boş olabilir) | |
 | `description` | text | zorunlu (boş olabilir) | |
-| `price_ex_vat` | numeric(12,2) | zorunlu; ≥ 0 | KDV hariç **normal** fiyat |
-| `vat_rate` | numeric(5,2) | zorunlu | KDV oranı (%) |
+| `price_ex_vat` | numeric(12,2) | zorunlu; ≥ 0 | KDV hariç **normal** (indirimsiz) fiyat |
+| `vat_rate` | numeric(5,2) | zorunlu | KDV oranı (%), ör. 20 |
 | `currency` | text | zorunlu; yalnızca `TRY` | |
 | `discount_percent` | int | 1–90 | Kampanya oranı (`discount.percent`) |
-| `discount_starts_at` | timestamptz | | Boş: kayıt anında başlar |
-| `discount_ends_at` | timestamptz | başlangıçtan sonra | Boş: süresiz |
-| `images` | jsonb | zorunlu | `[{ url, alt }]`, sırayla |
+| `discount_starts_at` | timestamptz | | Boşsa hemen (kayıt anında) başlar |
+| `discount_ends_at` | timestamptz | başlangıçtan sonra | Boşsa süresiz |
+| `images` | jsonb | zorunlu | `[{ url, alt }]`, sırayla; ilki kapak |
 | `specs` | jsonb | zorunlu | Teknik özellikler `[{ label, value }]` |
 | `in_the_box` | jsonb | zorunlu | Kutu içeriği (metin listesi) |
-| `highlights` | jsonb | zorunlu | Öne çıkanlar (metin listesi) |
-| `processes` | text[] | | Kaynak yöntemleri; yalnızca eski Ürün Seçici ve arama kullanır, Ürün Seçici yeniden kurulunca kalkar (K-69) |
+| `highlights` | jsonb | zorunlu | Öne çıkanlar (metin listesi); ilk 3'ü menü kartında |
+| `processes` | text[] | | Kaynak yöntemleri: `MIG`, `MAG`, `TIG`, `MMA`, `PULSE`, `PLAZMA`, `MULTI`. Yalnızca eski Ürün Seçici ve arama kullanır, panelde girilmez; Ürün Seçici yeniden kurulunca kalkar (K-69) |
 | `is_new` | boolean | zorunlu | "Yeni" rozeti |
-| `position` | int | | Kategori içindeki sıra (`order`) |
-| `manual_url` | text | | Kullanım kılavuzu |
-| `warranty_months` | int | zorunlu | |
+| `position` | int | | Kategori içindeki sıra (`order`); boş olan sona, eşitler ada göre |
+| `manual_url` | text | | Kullanım kılavuzu (PDF) |
+| `warranty_months` | int | zorunlu | Garanti süresi (ay) |
 | `active` | boolean | zorunlu | Yayında |
 | `seo` | jsonb | | |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
-Bölüm (`section`) kategoriden gelir. Teklife açık olup olmadığı da bölümden
-çıkar (K-79).
+- Bölüm (`section`) kategoriden gelir. Teklife açık olup olmadığı da
+  bölümden çıkar (K-79).
+- Seçeneksiz ürünün kodu ve fiyatı ürün satırındadır; sepet, sipariş ve
+  stok satırında `variant_id` boş kalır. Seçenekli üründe her satılan
+  kombinasyonun kendi kodu ve fiyat farkı vardır (aşağıda). Seçeneksiz
+  ürünün de tek varyantla tutulması önerisi:
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün seçenekleri.
+- **SAP ile eşleşme:** SAP Business One'da standart olarak "ana ürün +
+  varyant" yapısı yoktur; her satılabilir kalem ayrı bir kalemdir
+  (ItemCode). Eşleşme "varyantın ürün kodu = SAP kalem kodu"dur. Sitede
+  türetilen ve SAP'ta olmayan kodlar:
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün seçenekleri.
 
 Silme: stok satırları, kod eşleştirmeleri, varyantlar, favoriler ve
 yönlendirmeleri silinir. Sipariş, teklif, iade, servis, garanti, yorum ve
 belgelerdeki bağ boşalır; o kayıtlar kalır.
 
-### `product_options` — ürünün kullandığı seçenekler
+### Seçenekli ürün: `product_options`, `product_variants`, `product_variant_values`
 
-Koddaki: `options.optionIds`.
+Bir ürün en fazla 3 seçenek kullanır (ör. Soğutma ve Torç Uzunluğu). Satılan
+her kombinasyon (ör. Su Soğutmalı · 8 m) bir **varyanttır**; satılmayan
+kombinasyonun varyantı yoktur (KARARLAR K-70). Koddaki: ürünün `options`
+nesnesi.
+
+- Seçeneklerin ve değerlerin adı ve sırası tanımdan okunur; ürün yalnızca
+  kendine özel olanları tutar.
+- Varyantlar ekranda önce birinci seçeneğin, sonra ikincisinin tanımdaki
+  değer sırasıyla dizilir.
+- Kombinasyonu olmayan seçenek kaydedilmez; aynı kombinasyon bir üründe iki
+  kez olamaz.
+- Seçenek listesi (tanımlar) değişince varyant kimlikleri yeniden üretilir;
+  sıra değişince değişmez.
+
+`product_options` — ürünün kullandığı seçenekler (koddaki:
+`options.optionIds`, sayfadaki sırasıyla):
 
 | Kolon | Tür | Kural |
 |---|---|---|
@@ -297,27 +412,26 @@ Koddaki: `options.optionIds`.
 
 Anahtar: (`product_id`, `option_definition_id`).
 
-### `product_variants` — satılan kombinasyonlar
-
-Koddaki: `options.variants`.
+`product_variants` — satılan kombinasyonlar (koddaki: `options.variants`):
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `product_id` | text | → `products` (zincir) | |
-| `id` | text | zorunlu | Ürün içindeki kimlik (`su_8-m`); değişmez. Stok, sepet ve `?secenek=` linki bunu kullanır |
-| `combination_key` | text | zorunlu; ürün içinde benzersiz (yeni) | Değerlerin sıralı yazımı: ürünün seçenek sırasıyla `tanım=değer`, `\|` ile (`sogutma=su\|torc=8-m`); bir kombinasyon bir üründe bir kez |
-| `sku` | text | zorunlu; `sku_codes` ile tek havuzda benzersiz | |
-| `price_delta_ex_vat` | numeric(12,2) | zorunlu; eksi olabilir | Fiyat farkı |
-| `spec_overrides` | jsonb | | Yalnızca farklı teknik özellikler |
-| `in_the_box` | jsonb | | Boşsa ürününki |
-| `image` | text | | Boşsa ürünün fotoğrafları |
+| `id` | text | zorunlu | Ürün içindeki kimlik; oluşturulduğu andaki değer kimliklerinden üretilir (`su_8-m`; tek seçenekte değerin kimliği, `4-m`) ve sonra değişmez. Stok, sepet, teklif listesi ve `?secenek=` linki bunu kullanır |
+| `combination_key` | text | zorunlu; ürün içinde benzersiz (yeni) | Değerlerin sıralı yazımı: ürünün seçenek sırasıyla `tanım=değer`, `\|` ile (`sogutma=su\|torc-uzunlugu=8-m`); bir kombinasyon bir üründe bir kez |
+| `sku` | text | zorunlu; `sku_codes` ile tek havuzda benzersiz | Varyantın ürün kodu |
+| `price_delta_ex_vat` | numeric(12,2) | zorunlu; eksi olabilir | Ana fiyata eklenen fark (KDV hariç); toplam eksiye düşemez |
+| `spec_overrides` | jsonb | | Yalnızca farklı teknik özellikler; aynı adlı satırın yerine geçer |
+| `in_the_box` | jsonb | | Boşsa ürünün kutu içeriği |
+| `image` | text | | Ürünün görsellerinden biri; boşsa ürünün fotoğrafları |
 | `position` | int | zorunlu (yeni) | |
 
-Anahtar: (`product_id`, `id`).
+Anahtar: (`product_id`, `id`). Varyant önceden ayrı bir ürünken kullanılan
+linkler `redirects`'te (`variant_id` ile; koddaki
+`variants[].previousSlugs`).
 
-### `product_variant_values` — kombinasyonun değerleri
-
-Koddaki: `options.variants[].values`.
+`product_variant_values` — kombinasyonun değerleri (koddaki:
+`options.variants[].values`, `{ <tanım kimliği>: <değer kimliği> }`):
 
 | Kolon | Tür | Kural |
 |---|---|---|
@@ -326,20 +440,24 @@ Koddaki: `options.variants[].values`.
 | `option_value_id` | text | → `option_values` (engeller: kullanılan değer silinmez) |
 
 Anahtar: (`product_id`, `variant_id`, `option_definition_id`). Varyant
-ürünün her seçeneğinden tam bir değer alır.
+ürünün her seçeneğinden tam bir değer alır; değer o tanımdan olmalıdır.
 
 ### `product_filter_values` — ürünün filtre değerleri
 
-Koddaki: `filterValues`.
+Koddaki: `filterValues` (`{ <filtre kimliği>: [<değer kimliği>, …] }`).
 
 | Kolon | Tür | Kural |
 |---|---|---|
 | `product_id` | text | → `products` (zincir) |
 | `category_id`, `filter_id`, `value_id` | text | → `category_filter_values` (zincir: filtre ya da değer silinince işaret kalkar) |
 
-Anahtar: (`product_id`, `filter_id`, `value_id`). Yalnızca ürünün kendi
-kategorisinin filtreleri; ürün başka kategoriye taşınınca eski kategorinin
-değerleri silinir.
+Anahtar: (`product_id`, `filter_id`, `value_id`).
+
+- Bir filtrede birden çok değer olabilir; seçenekli üründe değer ürünün
+  tamamı içindir.
+- Yalnızca ürünün kendi kategorisinin filtreleri; kayıtta kategoride
+  olmayan filtre ve değer silinir. Ürün başka kategoriye taşınınca eski
+  kategorinin değerleri silinir.
 
 ### `sku_codes` — ürün ve varyant kodlarının tek havuzu (yeni)
 
@@ -351,7 +469,7 @@ değerleri silinir.
 
 Benzersiz: (`product_id`, `variant_id`). Ürün ve varyant kodu kaydedilince
 veritabanı bu tabloyu kendisi günceller (tetikleyici); aynı kod ikinci kez
-girilemez (IS-KURALLARI › Ürün kodları).
+girilemez ([IS-KURALLARI.md › 12](IS-KURALLARI.md#12-ürün-kodları)).
 
 ### `redirects` — eski linkler (yeni)
 
@@ -375,15 +493,17 @@ silinince satırları da silinir.
 
 ### `dealers` — bayiler
 
+Bayiler sitenin üyesi değildir; sitede bayi girişi yoktur (K-03).
+
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
 | `name`, `city`, `district`, `address`, `phone`, `working_hours` | text | zorunlu | |
 | `whatsapp` | text | | |
-| `email` | text | | Kullanılmıyor |
+| `email` | text | | Kullanılmıyor ([19](#19-kullanılmayan-alanlar)) |
 | `lat`, `lng` | numeric(9,6) | zorunlu | Harita konumu |
-| `badges` | text[] | zorunlu; `yetkili-satici`, `yetkili-servis` | |
-| `retailer_id` | text | benzersiz; → `retailers` (boşalır) | Bayinin online mağazası (bire bir) |
+| `badges` | text[] | zorunlu; `yetkili-satici` (Yetkili Bayi), `yetkili-servis` (Yetkili Servis); en az biri | |
+| `retailer_id` | text | benzersiz; → `retailers` (boşalır) | Bayinin online mağazası; bir mağaza en fazla bir bayiye bağlı |
 | `active` | boolean | zorunlu | |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
@@ -392,25 +512,30 @@ silinince satırları da silinir.
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `name`, `website_url`, `logo_text` | text | zorunlu | |
-| `logo_url` | text | | Kullanılmıyor |
-| `is_own_store` | boolean | zorunlu | Zenweld'in kendi mağazası |
+| `name`, `website_url`, `logo_text` | text | zorunlu | `website_url`: satıcının ana sayfası. `logo_text`: ürün sayfasındaki kutuda görünen yazı; boşsa adın büyük harfi |
+| `logo_url` | text | | Kullanılmıyor; logo yerine `logo_text` |
+| `is_own_store` | boolean | zorunlu | Zenweld'in kendi mağazası (kırmızı rozetle en başta) |
 | `city` | text | | |
 | `active` | boolean | zorunlu | |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
 ### Stok tabloları
 
-`dealer_stock`, `retailer_stock`, `stock_imports`, `sku_aliases`: kolonlar,
-anahtarlar ve sorgular [STOK.md › Backend'e geçiş](STOK.md#4-backende-geçiş)'te
-SQL olarak yazılı; aynen kullanılır. Özet:
+Kolonlar, anahtarlar ve sorgular [STOK.md](STOK.md)'de SQL olarak yazılı;
+stok dosyasının biçimi ve kuralları da orada.
 
-| Tablo | Ne tutar | Anahtar |
-|---|---|---|
-| `dealer_stock` | Bayinin ürün/varyant başına adedi, fiyatı (sitede gösterilmez), linki, güncellenme zamanı | (`dealer_id`, `product_id`, `variant_id`) |
-| `retailer_stock` | Bayiye bağlı olmayan online satıcının aynı bilgileri | (`retailer_id`, `product_id`, `variant_id`) |
-| `stock_imports` | Her dosya yükleme, elle düzeltme ve geri alma; özet sayılar, geri alma için önceki satırlar, orijinal dosyanın yolu | `id` |
-| `sku_aliases` | Bayinin kendi ürün kodu → bizim ürün/varyant | (`source_id`, `code`) |
+| Tablo | Ne tutar | Alanlar (koddaki) | Anahtar |
+|---|---|---|---|
+| `dealer_stock` | Bayinin ürün/varyant başına stoğu | `dealerId`, `productId`, `variantId?`, `sku` (dosyadaki kod), `quantity`, `price?` (KDV dahil, sitede gösterilmez), `url?` (online mağazalı bayide ürün linki), `updatedAt` | (`dealer_id`, `product_id`, `variant_id`) |
+| `retailer_stock` | Bayiye bağlı olmayan online satıcının aynı bilgileri | `retailerId` + bayi satırıyla aynı alanlar | (`retailer_id`, `product_id`, `variant_id`) |
+| `stock_imports` | Her dosya yükleme, elle düzeltme ve geri alma | `id`, `sourceType` (`dealer`/`retailer`), `sourceId`, `kind` (`file`/`manual`/`revert`), `fileName?`, `createdAt`, `createdBy?` (yönetici adı), `note?`, `summary` (`rows`, `matched`, `unmatched`, `invalid`, `added`, `changed`, `zeroed`), `previous?` (geri alma için önceki satırlar), `revertedAt?`; tabloda ayrıca orijinal dosyanın yolu | `id` |
+| `sku_aliases` | Bayinin kendi ürün kodu → bizim ürün/varyant | `sourceId`, `code` (büyük harf, boşluksuz), `productId`, `variantId?` | (`source_id`, `code`) |
+
+- `variant_id` boşsa (dosyada ürünün ana kodu geçtiyse) satır ürünün bütün
+  varyantları için geçerlidir.
+- Bir kaynakta aynı ürün ve varyant için tek satır olur.
+- Sitede "stokta" sayılmak için: adet > 0 ve satır, stok geçerlilik
+  süresinden eski değil ([`settings` › `stock`](#settings--ayarlar)).
 
 Silme: bayi ya da satıcı silinince stok satırları, stok işlemleri ve kod
 eşleştirmeleri de silinir.
@@ -420,10 +545,17 @@ eşleştirmeleri de silinir.
 Sahibinin kararı (K-82, K-84): Zenweld deposunun stoğu SAP'tan okunur. SAP
 ekibi model başına "kullanılabilir stok" görünümü (view) hazırlıyor (adı
 `AVAILABLE_STOCK`, kesinleşmedi). Sunucu bu görünümü 15 dakikada bir okuyup
-`warehouse_stock`'a yazar; site ve panel
-stoğu buradan okur, sayfa açılırken SAP'a gidilmez (hız, K-83). Ürün ve
-seçenek kodlarıyla eşleşmesi ve "stokta yok" kuralı: [IS-KURALLARI.md ›
-Zenweld depo stoğu](IS-KURALLARI.md#20-zenweld-depo-stoğu).
+`warehouse_stock`'a yazar; site ve panel stoğu buradan okur, sayfa açılırken
+SAP'a gidilmez (hız, K-83). Okuma işi:
+[SUNUCU.md › SAP stok okuma](SUNUCU.md#sap-stok-okuma).
+
+- Ürüne ve seçeneğe SAP kodu üzerinden bağlanır; kimlikle bağlı değildir.
+  Eşleşme ve "stokta yok" kuralı:
+  [IS-KURALLARI.md › 20](IS-KURALLARI.md#20-zenweld-depo-stoğu).
+- Panelden değiştirilmez.
+- Demoda örnek veridir (koddaki `warehouseStock`): her SAP kalemine örnek
+  adet; ForceArc 280 MMA ve UV-5 ile Ultimate 405 MTS'nin su soğutmalı
+  kalemi stoksuzdur (`packages/data/src/seed/warehouse.seed.ts`).
 
 `warehouse_stock`:
 
@@ -436,8 +568,7 @@ Zenweld depo stoğu](IS-KURALLARI.md#20-zenweld-depo-stoğu).
 | `sync_run_id` | bigint | → `sap_sync_runs` (boşalır) | |
 
 Her başarılı okumada tablo tek işlemde yenilenir: SAP görünümünde artık
-olmayan kalem silinir. Okuma işi: [14](#14-kod-betikler-ve-komutlar) ›
-SAP stok okuma.
+olmayan kalem silinir.
 
 `sap_sync_runs`:
 
@@ -460,9 +591,9 @@ Sahibinin kararı (K-84, K-108): site siparişleri SAP'a satış siparişi olara
 yazılır. Ödemesi kesinleşen sipariş buraya `pending` olarak girer: kartla
 verilen sipariş verildiği anda, havale siparişi panelde **Ödeme Alındı**
 denince. Zamanlanmış iş siparişi SAP'a gönderir; başarısızsa artan
-aralarla yeniden dener. Kurallar: [14](#14-kod-betikler-ve-komutlar) › SAP
-sipariş aktarımı. Bu tablodan önce ödenmiş siparişlerin (örnek veri) satırı
-yoktur; aktarılmazlar.
+aralarla yeniden dener ([SUNUCU.md › SAP sipariş
+aktarımı](SUNUCU.md#sap-sipariş-aktarımı)). Bu tablodan önce ödenmiş
+siparişlerin (örnek veri) satırı yoktur; aktarılmazlar.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -487,37 +618,46 @@ siparişleri bulması için.
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `role` | text | zorunlu; `individual`, `business`, `admin` | Bireysel, kurumsal, yönetici |
-| `status` | text | zorunlu; `active`, `suspended` | |
-| `email` | text | zorunlu; benzersiz (harf duyarsız) | |
-| `password_hash` | text | zorunlu | Güçlü özet (argon2id). Eski demo özeti (`zw1$…`, yalnızca bilgisayardaki ve denemedeki örnek hesaplar) ilk girişte argon2id'ye çevrilir ([14](#14-kod-betikler-ve-komutlar) › Şifre ve oturum) |
+| `role` | text | zorunlu; `individual` (Bireysel), `business` (Kurumsal), `admin` (Yönetici) | |
+| `status` | text | zorunlu; `active` (Aktif), `suspended` (Askıda) | Yeni üye Aktif başlar; onay durumu yoktur (K-34) |
+| `email` | text | zorunlu; benzersiz (harf duyarsız) | Küçük harfle saklanır |
+| `password_hash` | text | zorunlu | Güçlü özet (argon2id). Demo modunda tarayıcıda basit bir özet (`zw1$…`); bilgisayardaki ve denemedeki örnek hesaplarda bu eski özet ilk girişte argon2id'ye çevrilir ([SUNUCU.md › Şifre ve oturum](SUNUCU.md#şifre-ve-oturum)) |
 | `first_name`, `last_name`, `phone` | text | zorunlu | |
-| `company_name`, `tax_office`, `tax_number`, `sector`, `city` | text | | Kurumsal bilgiler |
-| `newsletter` | boolean | zorunlu | Haber ve kampanya e-postası izni |
+| `company_name`, `tax_office`, `tax_number`, `sector`, `city` | text | | Kurumsal üyede firma bilgileri |
+| `newsletter` | boolean | zorunlu | Kayıtta "haber ve kampanya e-postaları" izni |
 | `created_at`, `updated_at` | timestamptz | zorunlu (`updated_at` yeni) | |
-| `last_login_at` | timestamptz | | |
+| `last_login_at` | timestamptz | | Her girişte yazılır |
 | `password_changed_at` | timestamptz | (yeni) | Son şifre değişikliği. Şifre değişince üyenin diğer oturumları silinir |
 | `failed_login_count` | int | zorunlu; varsayılan 0 (yeni) | Yanlış şifre sayacı (KARARLAR K-94) |
 | `failed_login_since` | timestamptz | (yeni) | Sayılan ilk yanlış denemenin anı; 15 dakikalık pencere buradan başlar |
 | `login_locked_until` | timestamptz | (yeni) | Bu ana kadar giriş yapılamaz (10 yanlış denemeden sonra 15 dakika) |
+
+- Yönetici hesapları sitede giriş yapamaz; site hesapları panele giremez.
+- En az bir aktif yönetici her zaman kalmalıdır.
 
 Silme: adresleri, oturumları ve favorileri silinir; sipariş, teklif, servis,
 iade, garanti ve yorumlardaki bağ boşalır. Son aktif yönetici silinemez.
 
 ### `addresses` — üye adresleri
 
-| Kolon | Tür | Kural |
-|---|---|---|
-| `id` | text | anahtar |
-| `user_id` | text | zorunlu; → `users` (zincir) |
-| `title`, `full_name`, `phone`, `city`, `district`, `line` | text | zorunlu |
-| `is_default` | boolean | zorunlu; üye başına tam bir varsayılan |
-| `created_at`, `updated_at` | timestamptz | zorunlu (yeni) |
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `user_id` | text | zorunlu; → `users` (zincir) | Sahibi |
+| `title`, `full_name`, `phone`, `city`, `district`, `line` | text | zorunlu | `title`: "Ev", "Atölye" gibi |
+| `is_default` | boolean | zorunlu; üye başına tam bir varsayılan | Ödeme sayfasında seçili gelir |
+| `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
+
+- Üyenin ilk adresi varsayılan olur; varsayılan adres silinirse kalan ilk
+  adres varsayılan olur.
+- Adresi yalnızca sahibi değiştirebilir.
+- Üye başına en fazla 20 adres (K-96). Veritabanı modunda adresler
+  sunucudadır (Aşama 5.1).
 
 ### `sessions` — oturumlar (yeni)
 
 Demo modunda oturum tarayıcıda; veritabanı modunda site ve panel oturumu
-burada ([14](#14-kod-betikler-ve-komutlar) › Şifre ve oturum).
+burada ([SUNUCU.md › Şifre ve oturum](SUNUCU.md#şifre-ve-oturum)).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -530,9 +670,9 @@ burada ([14](#14-kod-betikler-ve-komutlar) › Şifre ve oturum).
 
 ### `password_reset_tokens` — şifre sıfırlama (yeni)
 
-Veritabanı modunda kullanılır (Aşama 4.4, KARARLAR K-95):
-`token_hash` bağlantıdaki anahtarın sha256 özetidir; anahtarın kendisi
-yalnızca e-postadadır. Üye başına en fazla bir geçerli bağlantı durur.
+Veritabanı modunda kullanılır (Aşama 4.4, KARARLAR K-95): `token_hash`
+bağlantıdaki anahtarın sha256 özetidir; anahtarın kendisi yalnızca
+e-postadadır. Üye başına en fazla bir geçerli bağlantı durur.
 
 | Kolon | Tür | Kural |
 |---|---|---|
@@ -564,16 +704,16 @@ Anahtar: (`user_id`, `product_id`).
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `code` | text | zorunlu; benzersiz | `TKL-<yıl>-<4 hane>` |
-| `user_id` | text | → `users` (boşalır) | Ziyaretçide boş |
-| `status` | text | zorunlu; `new`, `reviewing`, `sent`, `won`, `lost` | |
-| `company_name`, `contact_name`, `email`, `phone`, `city` | text | zorunlu (firma bireysel üyede boş olabilir) | |
+| `code` | text | zorunlu; benzersiz | `TKL-<yıl>-<4 hane>` ([11](#record_counters--kayıt-numaraları)) |
+| `user_id` | text | → `users` (boşalır) | Üye gönderdiyse; ziyaretçide boş |
+| `status` | text | zorunlu; `new` (Yeni), `reviewing` (İnceleniyor), `sent` (Teklif Gönderildi), `won` (Kazanıldı), `lost` (Kapandı) | |
+| `company_name`, `contact_name`, `email`, `phone`, `city` | text | zorunlu | Firma ziyaretçi ve kurumsal üyede zorunlu, bireysel üyede boş olabilir |
 | `tax_number` | text | | |
-| `payment_preference` | text | zorunlu; `vadeli`, `cek`, `havale`, `belirsiz` | |
-| `term_days` | int | | Vadeli ödemede gün |
-| `message` | text | | |
-| `assigned_to` | text | | Panelde atanan kişi |
-| `admin_note` | text | | |
+| `payment_preference` | text | zorunlu; `vadeli` (Vadeli), `cek` (Çek), `havale` (Havale/EFT), `belirsiz` (Görüşülecek) | |
+| `term_days` | int | | Vadeli ödemede gün: 30, 45, 60, 90 ya da 120 |
+| `message` | text | | Müşteri notu |
+| `assigned_to` | text | | Panelde atanan satış temsilcisi (serbest metin) |
+| `admin_note` | text | | İç not |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
 Silme: satırları da silinir; numarası yeniden verilmez.
@@ -587,7 +727,7 @@ Silme: satırları da silinir; numarası yeniden verilmez.
 | `product_id` | text | → `products` (boşalır) | |
 | `variant_id` | text | (yeni) | Seçilen kombinasyon |
 | `product_name` | text | zorunlu | Kopya |
-| `sku`, `variant_label` | text | | Kopya |
+| `sku`, `variant_label` | text | | Kopya: teklif anındaki kod (seçenekli üründe seçeneğin kodu) ve seçenek yazısı (ör. "Soğutma: Su Soğutmalı · Torç Uzunluğu: 8 m") |
 | `quantity` | int | zorunlu; ≥ 1 | |
 | `note` | text | | Kullanılmıyor |
 
@@ -595,7 +735,10 @@ Anahtar: (`quote_id`, `line`).
 
 ---
 
-## 7. Siparişler ve iadeler
+## 7. Siparişler, iadeler ve kuponlar
+
+Siparişi yalnızca üye verir (K-21). Durum akışı ve tutar hesapları:
+[IS-KURALLARI.md › 7](IS-KURALLARI.md#7-sipariş-durumları).
 
 ### `orders` — siparişler
 
@@ -603,37 +746,41 @@ Anahtar: (`quote_id`, `line`).
 |---|---|---|---|
 | `id` | text | anahtar | |
 | `code` | text | zorunlu; benzersiz | `SIP-<yıl>-<5 hane>` |
-| `user_id` | text | → `users` (boşalır) | Sipariş yalnızca üyeden; üye silinse de sipariş kalır |
-| `status` | text | zorunlu; `awaiting_payment`, `preparing`, `shipped`, `delivered`, `cancelled` | |
-| `customer_name`, `email`, `phone` | text | zorunlu | Kopya |
+| `user_id` | text | → `users` (boşalır) | Siparişi veren üye; üye silinse de sipariş kalır |
+| `status` | text | zorunlu; `awaiting_payment` (Ödeme Bekleniyor), `preparing` (Hazırlanıyor), `shipped` (Kargoda), `delivered` (Teslim Edildi), `cancelled` (İptal) | |
+| `customer_name`, `email`, `phone` | text | zorunlu | Sipariş anındaki kopya |
 | `shipping_address` | jsonb | zorunlu | Kopya: `{ fullName, phone, city, district, line }` |
-| `invoice` | jsonb | zorunlu | Kopya: tür, ad ya da firma, T.C. kimlik no ya da vergi bilgisi, adres |
+| `invoice` | jsonb | zorunlu | Kopya: `type` `individual` (bireysel: `fullName`, `tcKimlikNo` 11 hane) ya da `corporate` (kurumsal: `companyName`, `taxOffice`, `taxNumber` 10 hane); `address` (teslimat adresiyle aynı biçim) |
 | `subtotal` | numeric(12,2) | zorunlu | Ürünler toplamı (KDV dahil, kupon öncesi) |
-| `vat` | numeric(12,2) | zorunlu | Ürünlere ödenen tutarın (ürünler toplamı − kupon) içindeki KDV |
-| `shipping` | numeric(12,2) | zorunlu | Kargo (KDV dahil) |
-| `installment_fee` | numeric(12,2) | zorunlu | Vade farkı |
-| `coupon_code` | text | (yeni) | Kopya: kullanılan kupon |
+| `vat` | numeric(12,2) | zorunlu | Ürünlere ödenen tutarın (ürünler toplamı − kupon) içindeki KDV (bilgi; kuruşlu) |
+| `shipping` | numeric(12,2) | zorunlu | Kargo (KDV dahil); ücretsizse 0 |
+| `installment_fee` | numeric(12,2) | zorunlu | Taksitli ödemede vade farkı |
+| `coupon_code` | text | (yeni) | Kopya: kullanılan kupon (koddaki `coupon: { couponId, code, discount }`) |
 | `coupon_discount` | numeric(12,2) | zorunlu (yeni) | Kupon indirimi (KDV dahil); kupon yoksa 0 |
-| `total` | numeric(12,2) | zorunlu | Ödenen toplam |
-| `payment_method` | text | zorunlu; `card`, `transfer` | |
-| `installments` | int | | Kartta taksit sayısı |
-| `card_brand`, `card_program` | text | | |
+| `total` | numeric(12,2) | zorunlu | Müşterinin ödediği toplam: `subtotal − kupon + shipping + installmentFee` |
+| `payment_method` | text | zorunlu; `card` (kart), `transfer` (havale/EFT) | |
+| `installments` | int | | Kartta taksit sayısı (1 = tek çekim) |
+| `card_brand`, `card_program` | text | | "Visa", "Mastercard", "Troy"; Bonus, World… |
 | `card_last4` | text | 4 rakam | Kart numarası hiç saklanmaz |
-| `pos_id` | text | → `payment_pos` (boşalır) | |
+| `pos_id` | text | → `payment_pos` (boşalır) | Çekimin yapıldığı POS |
 | `pos_name` | text | | Kopya |
-| `commission_percent` | numeric(5,2) | | Kopya: bankanın kestiği oran |
-| `paid_at` | timestamptz | | |
-| `due_at` | timestamptz | | Havalede son ödeme anı |
-| `customer_note`, `admin_note` | text | | |
-| `terms_accepted_at` | timestamptz | zorunlu | Ön bilgilendirme ve sözleşme onayı |
+| `commission_percent` | numeric(5,2) | | Kopya: sipariş anında bankanın kestiği oran |
+| `paid_at` | timestamptz | | Ödemenin alındığı an |
+| `due_at` | timestamptz | | Havalede son ödeme anı; geçerse sipariş iptal |
+| `customer_note`, `admin_note` | text | | Müşterinin notu; iç not (yalnızca panelde) |
+| `terms_accepted_at` | timestamptz | zorunlu | Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi onayı |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
-Kargo bilgisi `shipments`'tadır. Silme: panelde silinmez.
+Koddaki `payment` nesnesi (`method`, `installments`, `cardBrand`,
+`cardProgram`, `cardLast4`, `posId`, `posName`, `commissionPercent`,
+`paidAt`, `dueAt`) bu kolonlara yazılır. Kargo bilgisi `shipments`'tadır.
+Silme: panelde silinmez.
 
 ### `shipments` — kargo gönderileri (yeni)
 
-Koddaki: `orders.shipment`. Siparişin gönderisi ve iadede müşterinin geri
-gönderisi. Bugün siparişte en fazla bir gönderi vardır.
+Koddaki: `orders.shipment` (`carrier`, `trackingNumber`, `shippedAt`,
+`deliveredAt?`). Siparişin gönderisi ve iadede müşterinin geri gönderisi.
+Bugün siparişte en fazla bir gönderi vardır.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -644,7 +791,7 @@ gönderisi. Bugün siparişte en fazla bir gönderi vardır.
 | `carrier_id` | text | → `carriers` (boşalır) | |
 | `carrier_name` | text | zorunlu | Kopya |
 | `tracking_number` | text | zorunlu | |
-| `shipped_at` | timestamptz | zorunlu | |
+| `shipped_at` | timestamptz | zorunlu | İlk kargoya verilme; takip no düzeltilince değişmez |
 | `delivered_at` | timestamptz | gönderiden önce olamaz | |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
@@ -656,19 +803,19 @@ gönderisi. Bugün siparişte en fazla bir gönderi vardır.
 | `line` | int | zorunlu | Sıra; iade satırları buna bağlanır |
 | `product_id` | text | → `products` (boşalır) | |
 | `variant_id` | text | (yeni) | |
-| `product_name`, `sku` | text | zorunlu | Kopya |
+| `product_name`, `sku` | text | zorunlu | Kopya (seçenekli üründe seçeneğin kodu) |
 | `variant_label` | text | | Kopya |
 | `quantity` | int | zorunlu; ≥ 1 | |
-| `unit_price_ex_vat` | numeric(12,2) | zorunlu | İndirim uygulanmış, KDV hariç |
+| `unit_price_ex_vat` | numeric(12,2) | zorunlu | Birim fiyat, indirim uygulanmış, KDV hariç |
 | `vat_rate` | numeric(5,2) | zorunlu | |
-| `unit_price` | numeric(12,2) | zorunlu | KDV dahil |
-| `coupon_discount` | numeric(12,2) | zorunlu; ≥ 0; varsayılan 0 | Kupon indiriminin bu satıra düşen payı (satırın tamamı, KDV dahil); iadede ödenecek tutar bundan bulunur (yeni) |
+| `unit_price` | numeric(12,2) | zorunlu | Birim fiyat, KDV dahil |
+| `coupon_discount` | numeric(12,2) | zorunlu; ≥ 0; varsayılan 0 | Kupon indiriminin bu satıra düşen payı (satırın tamamı, KDV dahil, kuruşlu); iadede ödenecek tutar bundan bulunur (yeni) |
 
 Anahtar: (`order_id`, `line`).
 
 ### `order_status_history` — sipariş zaman çizelgesi
 
-Koddaki: `orders.history`.
+Koddaki: `orders.history` (her durum değişikliği: `{ status, at, note? }`).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -707,6 +854,9 @@ modunda her kartlı siparişte ödeme sağlayıcısının sonucu buraya yazılı
 
 ### `return_requests` ve `return_request_items` — iade talepleri
 
+Bireysel üyenin teslim edilen siparişi için açtığı iade (cayma) talebi
+(kurallar: [IS-KURALLARI.md › 7](IS-KURALLARI.md#7-sipariş-durumları)).
+
 `return_requests`:
 
 | Kolon | Tür | Kural | Açıklama |
@@ -715,53 +865,53 @@ modunda her kartlı siparişte ödeme sağlayıcısının sonucu buraya yazılı
 | `code` | text | zorunlu; benzersiz | `IAD-<yıl>-<4 hane>` |
 | `order_id` | text | zorunlu; → `orders` | |
 | `order_code` | text | zorunlu | Kopya |
-| `user_id` | text | → `users` (boşalır) | |
-| `customer_name`, `email`, `phone` | text | zorunlu | |
-| `reason` | text | zorunlu; `changed_mind`, `defective`, `wrong_item`, `other` | |
-| `note` | text | | |
-| `status` | text | zorunlu; `new`, `reviewing`, `approved`, `rejected` | |
-| `admin_note` | text | | |
+| `user_id` | text | → `users` (boşalır) | Talebi açan üye |
+| `customer_name`, `email`, `phone` | text | zorunlu | Siparişteki müşteri bilgilerinin kopyası |
+| `reason` | text | zorunlu; `changed_mind` (Vazgeçtim), `defective` (Kusurlu ürün), `wrong_item` (Yanlış ürün gönderildi), `other` (Diğer) | |
+| `note` | text | | Müşterinin açıklaması |
+| `status` | text | zorunlu; `new` (Yeni), `reviewing` (İnceleniyor), `approved` (Onaylandı), `rejected` (Reddedildi) | |
+| `admin_note` | text | | Yalnızca panelde |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
-`return_request_items`:
+`return_request_items` (koddaki: `items` › `{ line, productId, productName,
+sku, variantLabel?, quantity }`):
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `return_request_id` | text | → `return_requests` (zincir) | |
-| `order_line` | int | zorunlu | Siparişin satır sırası (`line`) |
+| `order_line` | int | zorunlu | Siparişin satır sırası (`line`, 0'dan) |
 | `product_id` | text | → `products` (boşalır) | |
-| `product_name`, `sku` | text | zorunlu | Kopya |
+| `product_name`, `sku` | text | zorunlu | Kopya (sipariş anındaki) |
 | `variant_label` | text | | Kopya |
 | `quantity` | int | zorunlu; ≥ 1 | |
 
 Anahtar: (`return_request_id`, `order_line`). Silme: panelde silinmez.
 
-### `coupons`, `coupon_targets`, `coupon_redemptions` — kuponlar (yeni)
+### `coupons`, `coupon_targets`, `coupon_customers`, `coupon_redemptions` — kuponlar (yeni)
 
-Sahibinin isteği (2026-11-02, KARARLAR K-85). Sitede (sepet) ve panelde
-(Satış › Kuponlar) kupon özelliği var; bugün tarayıcıdaki veride
-(`coupons`, `couponRedemptions`; [VERI-MODELI.md](VERI-MODELI.md)).
-Kurallar: [IS-KURALLARI.md › Kuponlar](IS-KURALLARI.md#21-kuponlar).
-Kuponun `productIds` ve `categoryIds` listeleri `coupon_targets`,
-kişiye özel kuponun `customerEmails` listesi `coupon_customers` satırlarına
-yazılır.
+Müşterinin sepette yazdığı indirim kodu (sahibinin isteği 2026-11-02,
+KARARLAR K-85). Sitede sepette ve panelde Satış › Kuponlar'da; tarayıcıdaki
+veride `coupons`, `couponRedemptions`. Kurallar:
+[IS-KURALLARI.md › 21](IS-KURALLARI.md#21-kuponlar). Kuponun `productIds`
+ve `categoryIds` listeleri `coupon_targets`, kişiye özel kuponun
+`customerEmails` listesi `coupon_customers` satırlarına yazılır.
 
 `coupons`:
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `code` | text | zorunlu; benzersiz (büyük/küçük harf duyarsız) | Müşterinin yazdığı kod |
+| `code` | text | zorunlu; benzersiz (büyük/küçük harf duyarsız) | Müşterinin yazdığı kod: büyük harf; harf, rakam, tire (3–30) |
 | `name` | text | | Panelde tanımak için ad ya da not |
 | `discount_type` | text | zorunlu; `percent`, `amount` | Yüzde ya da sabit TL |
-| `discount_value` | numeric(12,2) | zorunlu; > 0; yüzdede en fazla 100 | |
-| `min_cart_total` | numeric(12,2) | | En az sepet tutarı (KDV dahil) |
-| `starts_at`, `ends_at` | timestamptz | bitiş başlangıçtan sonra | Boşsa sınırsız |
+| `discount_value` | numeric(12,2) | zorunlu; > 0; yüzdede en fazla 100 | Yüzde (1–100) ya da TL (KDV dahil); tam sayı |
+| `min_cart_total` | numeric(12,2) | | En az sepet tutarı (ürünlerin KDV dahil toplamı) |
+| `starts_at`, `ends_at` | timestamptz | bitiş başlangıçtan sonra | Boşsa hemen geçerli / süresiz |
 | `total_usage_limit` | int | ≥ 1 | Toplam kullanım sınırı; boşsa sınırsız |
 | `per_user_limit` | int | ≥ 1 | Kişi başı kullanım sınırı; boşsa sınırsız |
 | `scope` | text | zorunlu; `all`, `targets` | Bütün ürünler ya da yalnızca `coupon_targets` |
 | `audience` | text | zorunlu; `all`, `customers`; varsayılan `all` | Herkes ya da yalnızca `coupon_customers`'taki e-postalar (kişiye özel, K-86) (yeni) |
-| `active` | boolean | zorunlu | |
+| `active` | boolean | zorunlu | Pasif kupon sepette kabul edilmez |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
 `coupon_targets` (kupon belirli ürün ya da kategorilere özelse):
@@ -782,22 +932,25 @@ kuponda bir kez.
 |---|---|---|---|
 | `id` | bigint | anahtar; sırayla artar | |
 | `coupon_id` | text | zorunlu; → `coupons` (zincir) | |
-| `email` | text | zorunlu; kuponda bir kez (büyük/küçük harf duyarsız) | Üyeye değil e-postaya bağlıdır: kişi henüz üye olmasa da eklenir; o e-postayla giriş yapan üye kullanır |
+| `email` | text | zorunlu; kuponda bir kez (büyük/küçük harf duyarsız) | Küçük harf. Üyeye değil e-postaya bağlıdır: kişi henüz üye olmasa da eklenir; o e-postayla giriş yapan üye kullanır |
 
 E-postaya göre arama için dizin vardır (ileride Hesabım'da "Kuponlarım").
 
-`coupon_redemptions` (kim, hangi siparişte, ne kadar indirim aldı):
+`coupon_redemptions` (kim, hangi siparişte, ne kadar indirim aldı; koddaki
+`couponRedemptions`):
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | bigint | anahtar; sırayla artar | |
 | `coupon_id` | text | zorunlu; → `coupons` (engeller) | Kullanılmış kupon silinmez, pasife alınır |
 | `coupon_code` | text | zorunlu | Kopya |
-| `user_id` | text | → `users` (boşalır) | |
+| `user_id` | text | → `users` (boşalır) | Siparişi veren üye |
 | `order_id` | text | zorunlu; benzersiz; → `orders` | Siparişte en fazla bir kupon |
 | `discount_amount` | numeric(12,2) | zorunlu; > 0 | Uygulanan indirim (KDV dahil) |
-| `created_at` | timestamptz | zorunlu | |
-| `released_at` | timestamptz | | Sipariş iptal edilince dolar; kullanım sınırlarında sayılmaz |
+| `created_at` | timestamptz | zorunlu | Sipariş anı |
+| `released_at` | timestamptz | | Sipariş iptal edilince (havale süresinin dolması dahil) dolar; kullanım sınırlarında sayılmaz |
+
+Kullanım sipariş kaydıyla aynı anda yazılır.
 
 ---
 
@@ -809,15 +962,15 @@ E-postaya göre arama için dizin vardır (ileride Hesabım'da "Kuponlarım").
 |---|---|---|---|
 | `id` | text | anahtar | |
 | `code` | text | zorunlu; benzersiz | `SRV-<yıl>-<4 hane>` |
-| `status` | text | zorunlu; `new`, `in_progress`, `done` | |
-| `category_id` | text | → `categories` (boşalır) | `categorySlug` |
-| `product_id` | text | → `products` (boşalır) | |
+| `status` | text | zorunlu; `new` (Yeni), `in_progress` (İşlemde), `done` (Tamamlandı) | |
+| `category_id` | text | → `categories` (boşalır) | Makine türü; tarayıcıdaki veride `categorySlug` |
+| `product_id` | text | → `products` (boşalır) | Model |
 | `product_name` | text | zorunlu | Kopya |
-| `reasons` | text[] | zorunlu; `kurulum`, `bakim`, `onarim`, `egitim` | |
-| `complaint` | text | zorunlu | |
-| `company_name`, `address`, `city`, `district`, `email`, `phone`, `contact_name`, `contact_gsm` | text | zorunlu | |
-| `user_id` | text | → `users` (boşalır) | Giriş yapmışsa |
-| `admin_note` | text | | |
+| `reasons` | text[] | zorunlu; `kurulum`, `bakim`, `onarim`, `egitim` (Kullanım/Bakım Eğitimi); en az biri | |
+| `complaint` | text | zorunlu | Müşteri şikayeti |
+| `company_name`, `address`, `city`, `district`, `email`, `phone`, `contact_name`, `contact_gsm` | text | zorunlu | `contact_name`, `contact_gsm`: yetkili kişi |
+| `user_id` | text | → `users` (boşalır) | Üye giriş yapmışsa |
+| `admin_note` | text | | İç not |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
 Silme: panelde silinmez.
@@ -827,32 +980,35 @@ Silme: panelde silinmez.
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `serial_number` | text | zorunlu; benzersiz (büyük harfe çevrilerek) | |
-| `category_id` | text | → `categories` (boşalır) | |
-| `product_id` | text | → `products` (boşalır) | |
+| `serial_number` | text | zorunlu; benzersiz (büyük harfe çevrilerek) | Büyük harfe çevrilip kırpılarak saklanır |
+| `category_id` | text | → `categories` (boşalır) | Ürün kategorisi; tarayıcıdaki veride `categorySlug` |
+| `product_id` | text | → `products` (boşalır) | Model |
 | `product_name` | text | (yeni) | Kopya; ürün silinse de model okunur |
-| `owner_name`, `email`, `phone`, `city`, `postal_code`, `address` | text | zorunlu | Üyeye e-postayla eşleşir |
-| `seller_tax_number` | text | zorunlu | Satan firmanın vergi no |
-| `registered_at` | timestamptz | zorunlu | |
-| `expires_at` | date | zorunlu | |
-| `extended` | boolean | zorunlu | |
+| `owner_name`, `email`, `phone`, `city`, `postal_code`, `address` | text | zorunlu | E-posta küçük harfle saklanır; posta kodu 5 hane |
+| `seller_tax_number` | text | zorunlu | Satan firmanın vergi no (10 hane, şahıs firmasında 11) |
+| `registered_at` | timestamptz | zorunlu | Garanti bu andan başlar (satın alma tarihi sorulmaz) |
+| `expires_at` | date | zorunlu | Kayıt + ürünün garanti süresi (+ istendiyse 12 ay); panelde elle değişebilir |
+| `extended` | boolean | zorunlu | 12 ay uzatma |
 | `updated_at` | timestamptz | zorunlu (yeni) | |
+
+Garanti kaydında üye kimliği tutulmaz; üyeyle e-posta üzerinden eşleşir
+(Hesabım › Garantilerim bu e-postayla bulur).
 
 ### `reviews` — ürün yorumları
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `product_id` | text | → `products` (boşalır) | |
-| `user_id` | text | → `users` (boşalır) | |
+| `product_id` | text | → `products` (boşalır) | Ürüne bağlı (seçeneğe değil); bütün seçenekler aynı yorumları görür (K-17) |
+| `user_id` | text | → `users` (boşalır) | Üye yazdıysa |
 | `author_name` | text | zorunlu | |
 | `rating` | smallint | zorunlu; 1–5 | |
 | `title` | text | | |
 | `body` | text | zorunlu | |
-| `media` | jsonb | zorunlu | `[{ url, kind: image|video }]`; dosyalar dosya deposunda |
-| `verified_purchase` | boolean | | Doğrulanmış alıcı |
-| `approved` | boolean | zorunlu | Yalnızca onaylılar yayında |
-| `featured` | boolean | zorunlu | Anasayfa şeridi (en fazla 10) |
+| `media` | jsonb | zorunlu | `[{ url, kind: image|video }]` (video en fazla 2 MB); dosyalar dosya deposunda |
+| `verified_purchase` | boolean | | "Doğrulanmış alıcı" rozeti. Bugün giriş yapmış her üyede işaretlenir; gerçekte üyenin o ürünü satın almasıyla eşleşmeli |
+| `approved` | boolean | zorunlu | Yalnızca onaylılar yayında; yeni yorum onaysız gelir |
+| `featured` | boolean | zorunlu | Anasayfa şeridi; en fazla 10, yalnızca onaylı yorumda |
 | `created_at` | timestamptz | zorunlu | |
 | `updated_at` | timestamptz | zorunlu (yeni) | |
 
@@ -860,71 +1016,89 @@ Silme: panelde silinmez.
 
 ## 9. İçerik
 
+Haber, blog, etkinlik, SSS, Hakkımızda, yasal metin, belge, belge sayfası ve
+Görünüm formlarının kuralları tarayıcı ve sunucuda ortaktır:
+`packages/data/src/content-rules.ts`.
+
 ### `blog_posts`, `news`, `events` — blog, haberler, etkinlikler
 
 Ortak kolonlar: `id` (anahtar), `slug` (zorunlu; kendi türü içinde
 benzersiz), `title` (zorunlu), `active` (zorunlu), `seo` (jsonb),
 `created_at` ve `updated_at` (zorunlu, yeni). Eski linkler `redirects`'te.
 
-| Tablo | Diğer kolonlar |
-|---|---|
-| `blog_posts` | `excerpt`, `body`, `cover_url`, `category`, `author` (text, zorunlu); `published_at` (timestamptz, zorunlu) |
-| `news` | `summary`, `body`, `cover_url` (text, zorunlu); `images` (jsonb, adres listesi); `published_at` (timestamptz, zorunlu) |
-| `events` | `summary`, `description`, `venue`, `city`, `country`, `logo_url` (text, zorunlu); `start_date`, `end_date` (date, zorunlu; bitiş başlangıçtan önce olamaz); `images` (jsonb); `website_url` (text) |
+| Tablo | Adres | Diğer kolonlar |
+|---|---|---|
+| `blog_posts` | `/blog/<slug>` | `excerpt` (özet), `body` (biçimli), `cover_url`, `category` (serbest metin; ayrı bir kategori tablosu yoktur), `author` (boşsa "Zenweld") (text, zorunlu); `published_at` (timestamptz, zorunlu) |
+| `news` | `/haberler/<slug>` | `summary`, `body` (biçimli), `cover_url` (text, zorunlu); `images` (jsonb, galeri adres listesi); `published_at` (timestamptz, zorunlu) |
+| `events` | `/etkinlikler/<slug>` | `summary` (kart), `description` (detaylı, biçimli), `venue`, `city`, `country` (sitedeki süzgeçte kullanılır), `logo_url` (text, zorunlu); `start_date`, `end_date` (date, zorunlu; bitiş başlangıçtan önce olamaz; bitişi bugün ya da sonra olan "yaklaşan"); `images` (jsonb, galeri); `website_url` (text) |
+
+Blog ve haberde `published_at` yalnızca sıralama ve gösterim içindir; kayıt
+yayında işaretliyse hemen görünür (zamanlanmış yayın yoktur, K-42).
 
 ### `faqs` — sık sorulan sorular
 
-| Kolon | Tür | Kural |
-|---|---|---|
-| `id` | text | anahtar |
-| `question`, `answer` | text | zorunlu |
-| `topic` | text | zorunlu; `genel`, `garanti`, `siparis`, `teknik` |
-| `position` | int | zorunlu (yeni; bugün listedeki sıra) |
-| `created_at`, `updated_at` | timestamptz | zorunlu (yeni) |
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `question`, `answer` | text | zorunlu | |
+| `topic` | text | zorunlu; `genel`, `garanti`, `siparis` (Sipariş & Teklif), `teknik` | |
+| `position` | int | zorunlu (yeni) | Tarayıcıdaki veride listedeki sıra; sıra değişikliği `updated_at`'i değiştirmez |
+| `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
 ### `sales_reps` — satış temsilcileri
 
-| Kolon | Tür | Kural |
-|---|---|---|
-| `id` | text | anahtar |
-| `name`, `region`, `phone`, `email` | text | zorunlu |
-| `photo_url` | text | |
-| `position` | int | zorunlu (`order`) |
-| `active` | boolean | zorunlu |
-| `created_at`, `updated_at` | timestamptz | zorunlu (yeni) |
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `name`, `region`, `phone`, `email` | text | zorunlu | `region`: bölge ya da görev; sitedeki bölge düğmeleri bundan oluşur. `phone`: en az 10 rakam; Ara ve WhatsApp |
+| `photo_url` | text | | |
+| `position` | int | zorunlu | `order` |
+| `active` | boolean | zorunlu | |
+| `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
 ### `legal_pages` — yasal metinler
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | Sabit kimlik; sayfanın adresi koddaki eşlemeden gelir |
-| `title`, `body` | text | zorunlu | |
+| `title`, `body` | text | zorunlu | `body` biçimli |
 | `updated_at` | timestamptz | zorunlu | |
 
-Silme: silinemez.
+- 11 sabit kayıt vardır; kimlik ve adres eşlemesi
+  `packages/data/src/legal.ts`'tedir (ör. `kvkk` → `/yasal/kvkk`,
+  `garanti-kosullari` → `/garanti/kosullar`).
+- Eklenmez, silinmez; yalnızca başlık ve metin değişir.
 
 ### `about_page` — Hakkımızda (tek satır)
+
+Koddaki: `about`.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | smallint | anahtar; yalnızca 1 | |
 | `hero_title`, `hero_subtitle` | text | zorunlu | |
 | `hero_image` | text | | |
-| `stats` | jsonb | zorunlu | Rakam kutuları `[{ id, value, label }]` |
-| `sections` | jsonb | zorunlu | Bölümler `[{ id, title, body, imageUrl }]` |
+| `stats` | jsonb | zorunlu | Rakam kutuları `[{ id, value, label }]` (ör. "25+", "Yıllık Tecrübe") |
+| `sections` | jsonb | zorunlu | Bölümler `[{ id, title, body (biçimli), imageUrl }]`, sırayla |
 | `updated_at` | timestamptz | zorunlu | |
 
 ### `page_seo` — sabit sayfaların arama bilgileri
 
+Sabit sayfaların panelden değiştirilen başlık ve açıklaması. Koddaki:
+`pageSeo[<sayfa adresi>] = { title?, description?, updatedAt? }`.
+
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
-| `path` | text | anahtar | `/hakkimizda` |
+| `path` | text | anahtar | `/hakkimizda`, `/sss` |
 | `title`, `description` | text | | |
 | `updated_at` | timestamptz | zorunlu | |
 
+Değiştirilmemiş sayfanın satırı yoktur; varsayılan metinler
+`apps/zenweld-web/src/lib/page-meta.ts`'tedir.
+
 ### `document_pages` ve `documents` — belgeler
 
-`document_pages` (belge sayfalarının başlığı):
+`document_pages` (üç belge sayfasının başlığı; sayfa başına bir kayıt):
 
 | Kolon | Tür | Kural |
 |---|---|---|
@@ -939,15 +1113,16 @@ Silme: silinemez.
 | `id` | text | anahtar | |
 | `section` | text | zorunlu; yukarıdaki üç değer | |
 | `title` | text | zorunlu | |
-| `product_id` | text | → `products` (boşalır) | |
-| `lot_number` | text | | Parti sertifikalarında |
+| `product_id` | text | → `products` (boşalır) | İsteğe bağlı ürün |
+| `lot_number` | text | | Yalnızca parti sertifikalarında |
 | `file_name`, `mime_type` | text | zorunlu | |
-| `size_bytes` | bigint | zorunlu | |
-| `file_key` | text | zorunlu | Dosyanın adresi: depoya yüklenen dosyada `/dosya/belge/…` (K-108; `size_bytes` depodaki boyut), dosya deposu ayarlı değilse panelde girilen adres (`https://…` ya da `/…`; KARARLAR K-104; `size_bytes` 0) |
+| `size_bytes` | bigint | zorunlu | Bayt; en fazla 25 MB. Koddaki `size` |
+| `file_key` | text | zorunlu | Dosyanın yeri. Veritabanı modunda adres: depoya yüklenen dosyada `/dosya/belge/…` (K-108; `size_bytes` depodaki boyut), dosya deposu ayarlı değilse panelde girilen adres (`https://…` ya da `/…`; KARARLAR K-104; `size_bytes` 0; dosya adı ve türü bu adresten çıkarılır). Demo modunda tarayıcının dosya deposundaki anahtar |
 | `active` | boolean | zorunlu | |
-| `position` | int | zorunlu (yeni) | Sitedeki sıra |
+| `position` | int | zorunlu (yeni) | Sitedeki sıra (tarayıcıdaki veride listedeki sıra) |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
+Kabul edilen uzantılar: pdf, doc, docx, xls, xlsx, jpg, jpeg, png, zip.
 Silme: dosyası da silinir (adresi girilen belgede yalnızca satır silinir).
 
 ---
@@ -956,6 +1131,8 @@ Silme: dosyası da silinir (adresi girilen belgede yalnızca satır silinir).
 
 ### `settings` — ayarlar
 
+Tek bir ayar kaydının bölümleri; her bölüm bir satır.
+
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `key` | text | anahtar; `shop`, `stock`, `rich_text`, `company` | |
@@ -963,47 +1140,98 @@ Silme: dosyası da silinir (adresi girilen belgede yalnızca satır silinir).
 | `updated_at` | timestamptz | zorunlu | |
 | `updated_by` | text | → `users` (boşalır) (yeni) | |
 
-- `shop`: kargo bedava eşiği, kargo ücreti, taksit için en düşük tutar,
-  havale süresi (gün). Kargo firmaları `carriers`'tadır.
-- `stock`: stok kaydının sitede geçerli sayıldığı gün sayısı.
-- `rich_text`: biçimli metinlerin görünümü (Görünüm sayfası).
-- `company`: şirket ve iletişim bilgileri (ticari unvan, MERSİS no,
-  telefon, e-posta, ofisler, sosyal medya; Mağaza Ayarları › Şirket ve
-  İletişim, KARARLAR K-105). Satır yoksa site başlangıç değerlerini
-  kullanır. Geçiş betiği `0009_ayar-sirket-bilgileri`.
+**`shop` — mağaza ayarları** (koddaki `settings.shop`; POS, havale
+hesapları ve kargo firmaları ayrı tablolarda, aşağıda):
+
+| Alan | Açıklama | Örnek değer |
+|---|---|---|
+| `freeShippingThreshold` | Bu tutar ve üzeri (KDV dahil sepet) kargo ücretsiz | 5.000 |
+| `shippingFee` | Sınırın altında kargo ücreti (KDV dahil) | 250 |
+| `minInstallmentAmount` | Bu tutarın altında taksit gösterilmez | 1.000 |
+| `transferDueDays` | Havale ödeme süresi (gün, en az 1) | 3 |
+
+- Kayıt kuralları tarayıcı ve sunucuda ortaktır
+  (`packages/data/src/settings-rules.ts` › `parseShopSettings`): tutarlar 0
+  ya da artı; `transferDueDays` tam sayı, en az 1; her listede en fazla 50
+  kayıt; aynı kargo firması (büyük/küçük harf fark etmez) bir kez; IBAN
+  büyük harf; takip adresi boş ya da `https://` ile başlar, `{takip}`
+  içerir, boşluk içermez.
+- Kargo, POS ve IBAN değerleri örnektir; canlıya çıkmadan gerçekleri
+  girilmeli.
+
+**`company` — şirket ve iletişim** (koddaki `settings.company`; Mağaza
+Ayarları › Şirket ve İletişim, KARARLAR K-105; geçiş betiği
+`0009_ayar-sirket-bilgileri`):
+
+| Alan | Açıklama | Örnek değer |
+|---|---|---|
+| `legalName` | Ticari unvan; zorunlu | Zenweld Kaynak ve Kesme Ekip İnş San Tic A.Ş. |
+| `mersisNo` | MERSİS no: 16 rakam ya da boş (sözleşmede "[—]") | boş |
+| `phone` | Ana telefon (alt bilgi, sözleşmeler); zorunlu | +90 212 549 61 86 |
+| `email` | Sitede görünen e-posta; geçerli adres, küçük harf | info@zenweld.com |
+| `offices[]` | `{ id, city, addressLines[], phones[] }`; en az bir, en fazla 10; ilki merkez (alt bilgi ve sözleşmedeki adres) | İstanbul, İzmir |
+| `social` | `instagram`, `youtube`, `linkedin`, `tiktok`: `https://` adresi ya da boş (gösterilmez) | 4 hesap |
+
+- Satır yoksa (eski veri) site başlangıç değerlerini kullanır
+  (`defaultSettings.company`).
+- Kurallar tarayıcı ve sunucuda ortak (`settings-rules.ts` ›
+  `parseCompanySettings`): metinler kırpılır, MERSİS boşlukları atılır, boş
+  adres ve telefon satırları atlanır; ofiste şehir ve en az bir adres
+  satırı zorunlu, en fazla 5 satır ve 5 telefon.
+
+**`stock` — stok ayarı** (koddaki `settings.stock`): `staleDays`: bu kadar
+günden eski stok satırları sitede gösterilmez (0 = sınır yok; 0–365).
+Örnek değer 3.
+
+**`rich_text` — Görünüm** (koddaki `settings.richText`): biçimli metinlerin
+görünümü: `headingSize` (14–32, 18), `headingColor` (#141619),
+`headingUppercase` (evet), `accentColor` (#b82429), `accentWidth` (0–160,
+40), `leadSize` (14–26, 18), `bodySize` (12–22, 15), `bodyColor`
+(#3d4348), `strongColor` (#141619). Parantez içinde aralık ve başlangıç
+değeri. Renkler `#RRGGBB` biçimindedir.
 
 ### `payment_pos` — banka sanal POS'ları
 
-Koddaki: `settings.shop.pos`.
+Koddaki: `settings.shop.pos` (örnek veride 9 POS).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `bank_short_name`, `name`, `pos_name` | text | zorunlu | |
-| `program` | text | | Kart programı (Bonus, World…); boşsa program yok |
-| `merchant_no` | text | zorunlu | Üye işyeri numarası. API anahtarı ve şifre burada **yok**, yalnızca sunucuda ortam değişkeni |
+| `bank_short_name`, `name`, `pos_name` | text | zorunlu | Listede görünen kısa ad; banka adı; POS adı |
+| `program` | text | | Kart programı: Bonus, World, Maximum, Axess, CardFinans, Paraf, Advantage, BankkartCombo. Boşsa yalnızca tek çekim |
+| `merchant_no` | text | zorunlu | Bankanın verdiği üye işyeri numarası. API anahtarı ve şifre burada **yok**, yalnızca sunucuda ortam değişkeni ([SUNUCU.md](SUNUCU.md)) |
 | `active` | boolean | zorunlu | |
 | `is_default` | boolean | zorunlu; en fazla bir POS | Programı eşleşmeyen kartlar buradan tek çekim |
-| `position` | int | zorunlu | Aynı programda üstteki geçerli |
-| `installments` | jsonb | zorunlu | Müşteriye sunulan taksitler `[{ count, ratePercent, enabled }]` |
-| `commissions` | jsonb | zorunlu | Bankanın kestiği oranlar `[{ count, ratePercent }]` |
+| `position` | int | zorunlu | Listedeki sıra önemlidir: aynı programda üstteki geçerli |
+| `installments` | jsonb | zorunlu | Müşteriye sunulan taksitler `[{ count (2, 3, 6, 9, 12), ratePercent (vade farkı), enabled }]` |
+| `commissions` | jsonb | zorunlu | Bankanın kestiği oranlar `[{ count (1 = tek çekim, 2…12), ratePercent }]` |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
 ### `carriers` — kargo firmaları (yeni)
 
-Koddaki: `settings.shop.carriers` (`{ name, trackingUrl? }`). Panelde
-Mağaza Ayarları › Kargo ve Ödeme'den girilir (K-105).
+Koddaki: `settings.shop.carriers` (`{ name, trackingUrl? }`; en az biri;
+örnek veride Yurtiçi, Aras, MNG, PTT, Sürat, UPS, takip adresleri boş).
+Panelde Mağaza Ayarları › Kargo ve Ödeme'den girilir (K-105).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
 | `name` | text | zorunlu; benzersiz | |
-| `tracking_url` | text | | Takip sayfası; `{takip}` yerine takip numarası yazılır. Boşsa bağlantı verilmez |
+| `tracking_url` | text | | Takip sayfasının adresi; `{takip}` yerine takip numarası yazılır. Boşsa bağlantı verilmez |
 | `active` | boolean | zorunlu | |
 | `position` | int | zorunlu | |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
+Gönderinin takip bağlantısı (`packages/data/src/shipping.ts` ›
+`trackingLink`): gönderideki firma adıyla listedeki firma bulunur
+(büyük/küçük harf fark etmez), `{takip}` yerine boşlukları atılmış takip
+numarası yazılır. Firmanın API'si ileride bağlanırsa bağlantı bilgisi bu
+kayda eklenir; anahtar ve şifre yalnızca sunucuda ortam değişkeni olur.
+
 ### `bank_accounts` — havale hesapları
+
+Koddaki: `settings.shop.bankAccounts` (`{ id, bankName, accountHolder,
+iban }`; örnek veride 2 hesap).
 
 | Kolon | Tür | Kural |
 |---|---|---|
@@ -1012,20 +1240,31 @@ Mağaza Ayarları › Kargo ve Ödeme'den girilir (K-105).
 | `position` | int | zorunlu (yeni) |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) |
 
+Panelde banka adı ve IBAN zorunludur; hesap sahibi boş kalabilir (boş metin).
+
 ---
 
 ## 11. Formlar, e-postalar, kayıt numaraları ve değişiklik kaydı
 
-### Yalnızca e-postaya giden formlar (yeni)
+### E-posta formlarının kayıtları (yeni)
 
-Sahibinin kararı (K-81): bugün yalnızca info@zenweld.com'a e-posta olarak
-giden formlar veritabanında da saklanır. E-posta yine gider; kayıt, e-posta
-gitmese de alınır; gidip gitmediği `email_log`'dadır. Veritabanı modunda
-site bu tablolara yazıyor (Aşama 5.3; aşağıda [14](#14-kod-betikler-ve-komutlar)
-› Formlar). Panelde Bayilik Başvuruları, Mesajlar ve Welders Club ekranlarında
-görünür (aşağıda [14](#14-kod-betikler-ve-komutlar) › Panel › Talepler); kayıtlar panelden
-silinmez (K-100). Bülten kaydı bunlara girmez; bülten
-servisi kararını bekliyor (YAPILACAKLAR › Bülten ve İYS).
+Sahibinin kararı (K-81): iletişim formu, ürün destek sorusu, bayilik
+başvurusu ve Welders Club katılımı e-postayla birlikte kayıt olarak da
+saklanır.
+
+- **Veritabanı modunda** kayıt bu tablolara yazılır; e-posta gitmese de
+  kayıt alınır, gidip gitmediği `email_log`'dadır (Aşama 5.3;
+  [SUNUCU.md › Formlar](SUNUCU.md#formlar)).
+- **Demo modunda** kayıt, e-posta gidince tarayıcıdaki verinin isteğe bağlı
+  listelerine yazılır (`dealerApplications`, `supportMessages`,
+  `weldersClub`; K-109) ve yalnızca formu gönderen tarayıcıda görünür.
+  Alanlar tablolarla aynıdır.
+- Panelde Bayilik Başvuruları, Mesajlar ve Welders Club ekranlarında
+  görünür; kayıtlar panelden silinmez (K-100). Panelin kullandığı kayıt
+  türleri `packages/db/src/admin-requests.ts`'tedir
+  (`DealerApplicationRecord`, `SupportMessageRecord`, `WeldersClubRecord`).
+- Bülten kaydı bunlara girmez; bülten servisi kararını bekliyor
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Bülten ve İYS).
 
 `dealer_applications` — Bayilik Başvurusu:
 
@@ -1077,24 +1316,26 @@ servisi kararını bekliyor (YAPILACAKLAR › Bülten ve İYS).
 
 ### `email_recipients` — e-postaların alıcıları (yeni)
 
-Sahibinin kararı (K-81): bugün bütün form e-postaları info@zenweld.com'a
-gider; ileride forma göre farklı adreslere gidebilir. Alıcılar e-posta türü
-başına tutulur; başlangıçta hepsi info@zenweld.com'dur.
+Sahibinin kararı (K-81, K-104): Zenweld'e giden e-postaların alıcıları
+e-posta türü başına tutulur; başlangıçta hepsi info@zenweld.com'dur.
+Panelde Mağaza Ayarları › E-posta Alıcıları sekmesinden değişir (panel 5.1).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
-| `type` | text | anahtar | E-posta türü (aşağıda) |
-| `recipients` | text[] | zorunlu; en az bir geçerli adres | Alıcı adresleri |
+| `type` | text | anahtar | E-posta türü (aşağıda; koddaki `EMAIL_RECIPIENT_TYPES`) |
+| `recipients` | text[] | zorunlu; en az bir geçerli adres | Alıcı adresleri: 1–10 geçerli adres, küçük harf, tekrarsız |
 | `updated_at` | timestamptz | zorunlu | |
 | `updated_by` | text | → `users` (boşalır) | |
 
-Bir türün satırı yoksa e-posta sunucudaki varsayılan adrese
-(`SUPPORT_EMAIL`, yoksa info@zenweld.com) gider. Alıcılar panelde Mağaza
-Ayarları › E-posta Alıcıları sekmesinden değişir (K-104; panel 5.1);
-alıcısı boşaltılan türün satırı silinir.
+- Bir türün satırı yoksa e-posta sunucudaki varsayılan adrese
+  (`SUPPORT_EMAIL`, yoksa info@zenweld.com) gider. Alıcısı boşaltılan
+  türün satırı silinir.
+- Demo modunda liste tarayıcıda (`emailRecipients[]`) saklanır ama
+  e-postaları sunucu gönderdiği için kullanılmaz; e-postalar varsayılan
+  adrese gider. Eski tarayıcı kayıtlarında liste yoktur.
 
-**E-posta türleri** (bugün Zenweld'e giden e-postalar; IS-KURALLARI › Form
-e-postaları):
+**E-posta türleri** (Zenweld'e giden e-postalar;
+[IS-KURALLARI.md › 18](IS-KURALLARI.md#18-form-e-postaları)):
 
 | `type` | Sitedeki özellik |
 |---|---|
@@ -1123,7 +1364,8 @@ eklenir.
 ### `email_log` — gönderilen e-postalar (yeni)
 
 Sahibinin kararı (K-81): gönderilen her e-postanın sitenin hangi özelliği ve
-sayfası için gönderildiği tutulur.
+sayfası için gönderildiği tutulur. Panelde Ayarlar › E-posta Kaydı'nda
+listelenir; demo modunda kayıt tutulmaz (K-109).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -1144,21 +1386,36 @@ duruyor). Aranır: türe, bağlı kayda ve tarihe göre.
 
 ### `record_counters` — kayıt numaraları
 
+Koddaki: `recordCounters` (ön ek → sayı, ör. `"TKL-2026-": 49`).
+
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `prefix` | text | anahtar | `TKL-2026-` |
 | `last_number` | int | zorunlu | Son verilen numara |
 
-Numara tek bir işlemde artırılıp okunur; aynı anda gelen iki kayıt aynı
-numarayı alamaz. Silinen kaydın numarası yeniden verilmez
-(IS-KURALLARI › Kayıt numaraları). Sipariş ve iade talebi numarasını veren
-sunucu (Aşama 5.2) sayaç yoksa ya da tablodaki en büyük numaranın
-gerisindeyse o numaradan devam eder (örnek veriyle yüklenen siparişlerde
-sayaç boştur).
+**Numara biçimleri** (yıl Türkiye saatine göre):
+
+| Kayıt | Biçim | Örnek |
+|---|---|---|
+| Sipariş | `SIP-<yıl>-<5 hane>` | SIP-2026-00003 |
+| Teklif | `TKL-<yıl>-<4 hane>` | TKL-2026-0004 |
+| Servis talebi | `SRV-<yıl>-<4 hane>` | SRV-2026-0034 |
+| İade talebi | `IAD-<yıl>-<4 hane>` | IAD-2026-0001 |
+
+- Numara o yıl şimdiye kadar verilmiş en büyük numaranın bir fazlasıdır;
+  her yıl 1'den başlar.
+- Silinen kaydın numarası yeniden verilmez, en son kayıt silinse de
+  (K-64; [IS-KURALLARI.md › 17](IS-KURALLARI.md#17-kayıt-numaraları)).
+- Numara kayıt anında, tek bir işlemde artırılıp okunur; aynı anda gelen
+  iki kayıt aynı numarayı alamaz.
+- Sipariş ve iade talebi numarasını veren sunucu (Aşama 5.2) sayaç yoksa ya
+  da tablodaki en büyük numaranın gerisindeyse o numaradan devam eder
+  (örnek veriyle yüklenen siparişlerde sayaç boştur).
 
 ### `audit_log` — panel değişiklik kaydı (yeni)
 
-Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
+Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir. Panelde
+Ayarlar › İşlem Kaydı'nda listelenir; demo modunda kayıt tutulmaz (K-109).
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
@@ -1208,1062 +1465,194 @@ Sahibinin kararı (K-81): panelde yapılan her değişiklik kaydedilir.
 1. **Kişisel verilerin saklama süresi (KVKK):** Sipariş faturasındaki T.C.
    kimlik no, form kayıtları, gönderilen e-postaların kaydı ve silinen
    üyenin geçmiş kayıtları ne kadar tutulacak? Sahibi avukata soracak
-   (YAPILACAKLAR › Hesap silme). Cevaba göre bu dosyaya saklama süreleri ve
-   kendiliğinden silme eklenir.
+   ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Hesap silme). Cevaba göre bu
+   dosyaya saklama süreleri ve kendiliğinden silme eklenir.
 2. **SAP stok görünümü (SAP ekibi):** Adı `AVAILABLE_STOCK` olacak
    (kesinleşmedi), 15 dakikada bir okunacak (K-84). Kolonları (kalem kodu,
    kullanılabilir miktar, kalem adı) ve sunucunun bağlanma yolu (SAP
    Business One Service Layer ya da veritabanına salt okunur kullanıcı)
    bekleniyor. Cevaba göre `warehouse_stock`'a kolon eklenebilir.
-3. **Site siparişlerinin SAP'a aktarılması:** Aktarılacak (K-84). SAP'ın
-   sipariş API'sinin (ör. `SALES_ORDER`) bilgileri gelince siparişe SAP
-   belge numarası ve aktarım durumu kolonları eklenir.
+3. **Site siparişlerinin SAP'a aktarılması:** Aktarım sırası
+   (`sap_order_exports`) ve SAP belge numarası kolonu hazır (K-84, K-108).
+   SAP'ın sipariş API'sinin (ör. `SALES_ORDER`) bilgileri gelince siparişi
+   SAP'a yazan parça eklenir; gerekirse siparişe yeni kolonlar eklenir.
 
 ---
 
-## 14. Kod, betikler ve komutlar
+## 14. İlişkiler
 
-**Kod:** `packages/db`
+Koddaki alan adlarıyla; tablodaki bağlar her tablonun "Kural" sütununda
+yazar.
 
-| Yer | İçerik |
-|---|---|
-| `src/schema/` | Tabloların tanımı (Drizzle ORM), konuya göre dosyalar: `catalog`, `network` (bayi, satıcı, stok), `users`, `sales` (teklif, sipariş, kargo gönderisi, iade), `coupons`, `sap` (depo stoğu), `support` (servis, garanti, yorum), `content`, `settings` (ayarlar, POS, banka, kargo firmaları), `forms` (bayilik, destek mesajları, Welders Club), `system` (e-postalar, numaralar, değişiklik kaydı) |
-| `migrations/0000_kurulum.sql` | Tabloları kuran betik; şemadan üretilir (`npm run db:generate`) |
-| `migrations/0001_kurallar.sql` | Tablo tanımıyla ifade edilemeyen kurallar; elle yazılır (aşağıda) |
-| `migrations/0002_kaldirilanlar.sql`, `0003_stok-kargo-kupon-formlar.sql` | 2026-11-02 eklemeleri: `form_submissions` ve siparişteki kargo kolonları kaldırıldı; SAP depo stoğu, kargo, kupon ve form tabloları eklendi. Kaldırma ve ekleme ayrı betiktedir (betik üretici, aynı betikte "ad mı değişti" diye sorar) |
-| `migrations/0004_kupon-satir-payi.sql` | Sipariş satırına kupon payı (`order_items.coupon_discount`) |
-| `migrations/0005_kisiye-ozel-kupon.sql` | Kişiye özel kupon: `coupons.audience` ve `coupon_customers` |
-| `migrations/0006_giris-deneme-siniri.sql` | Yanlış şifre sınırı: `users.failed_login_count`, `failed_login_since`, `login_locked_until` (K-94) |
-| `migrations/0007_e-posta-turu-sifre-sifirlama.sql` | `email_log.type` müşteriye giden şifre sıfırlama e-postasını da kabul eder (`sifre-sifirlama`; Aşama 5.3) |
-| `migrations/0008_welders-club-pasif.sql` | `welders_club_signups`'a `left_at` (pasife alınma) ve `updated_at` (panelde aynı kayıt koruması; K-100) |
-| `src/client.ts` | Bağlantı (`DATABASE_URL`) |
-| `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
-| `src/seed.ts` | Örnek veriyi tablolara çevirme ve yazma (`npm run db:seed`) |
-| `src/load.ts` | Bugünkü veriyi canlı ya da deneme veritabanına yükleme (`npm run db:yukle`; aşağıda) |
-| `src/sap-stock.ts` | SAP depo stoğu okuma işi ve deneme kaynağı (aşağıda) |
-| `src/orders.ts` | Siparişler sunucuda: kupon denetimi, sipariş, süresi dolan havale, iade talebi (aşağıda) |
-| `src/forms.ts` | Formlar sunucuda: teklif, servis talebi, garanti kaydı ve sorgulama, ürün yorumu, e-postaya giden formların kaydı, e-posta kaydı (aşağıda) |
-| `src/codes.ts` | Kayıt numarası (`nextRecordCode`; sipariş, iade, teklif, servis) |
-| `packages/auth/src/server/` | Şifre özeti ve oturumlar (aşağıda; yalnızca sunucu, `@zenweld/auth/server`) |
-| `packages/auth/scripts/create-admin.ts` | Yönetici hesabı açma (`npm run yonetici:olustur`) |
-| `deneme/sap-stok.csv` | SAP yerine okunan örnek stok dosyası (50 kalem, 3'ü stoksuz) |
-| `src/read.ts` | Okuma katmanı: tablolardaki kayıtları sitenin kullandığı kayıt yapısına çevirir (aşağıda) |
+| Kayıt | Bağlı olduğu | Alan | Not |
+|---|---|---|---|
+| Kategori | Grup | `section` + `group` (grubun linki) | Tabloda grup kimliğiyle (`group_id`) |
+| Kategori | Seçenek tanımları | `optionIds[]` | Çoka çok; yalnızca "listelensin" bağı |
+| Kategori | Filtreler | `filters[]` | Filtreler kategorinin içindedir (kategoriye özel, ortak değil) |
+| Ürün | Kategori | `categorySlug` (+ `section`) | Tabloda kategori kimliğiyle (`category_id`); bölüm kategoriden gelir |
+| Ürün | Seçenek tanımları | `options.optionIds[]` | Ürün başına en fazla 3 tanım, sayfadaki sırasıyla |
+| Varyant (kombinasyon) | Seçenek değerleri | `options.variants[].values` | Ürünün her seçeneğinden bir değer; değer o tanımdan olmalı |
+| Ürün | Kategorisinin filtre değerleri | `filterValues` | Filtre başına bir ya da birden çok değer; yalnızca kendi kategorisinin filtreleri |
+| Bayi | Online satıcı | `retailerId` | Bire bir: bir mağaza en fazla bir bayiye bağlı |
+| Bayi stok satırı | Bayi, ürün, varyant | `dealerId`, `productId`, `variantId` | Ayrıntı: [STOK.md](STOK.md) |
+| Satıcı stok satırı | Satıcı, ürün, varyant | `retailerId`, `productId`, `variantId` | |
+| Stok işlemi | Bayi ya da satıcı | `sourceType` + `sourceId` | |
+| Kod eşleştirmesi | Bayi/satıcı, ürün, varyant | `sourceId`, `productId`, `variantId` | |
+| Depo stoğu | Ürün ya da varyant | `sapItemCode` | Kimlikle değil SAP koduyla eşleşir |
+| Adres | Üye | `userId` | |
+| Teklif | Üye (isteğe bağlı) | `userId` | Ziyaretçi de teklif ister |
+| Teklif satırı | Ürün | `productId` | Ad, kod ve seçenek kopya |
+| Sipariş | Üye (zorunlu) | `userId` | Sipariş yalnızca üyeden |
+| İade talebi | Sipariş, üye | `orderId`, `userId` | Satırları siparişin satırlarına sırayla (`line`) bağlı |
+| Sipariş satırı | Ürün | `productId` | Ad, kod, seçenek ve fiyat kopya |
+| Sipariş | Kupon (isteğe bağlı) | `coupon.couponId` | Kod ve indirim kopya |
+| Kupon | Ürünler, kategoriler | `productIds[]`, `categoryIds[]` | Kapsam "seçilenler" ise; kategori kimlikle bağlı |
+| Kişiye özel kupon | Üye (e-postayla) | `customerEmails[]` | Kimlikle değil e-postayla eşleşir; kişi henüz üye olmayabilir |
+| Kupon kullanımı | Kupon, sipariş, üye | `couponId`, `orderId`, `userId` | Siparişte en fazla bir |
+| Servis talebi | Kategori, ürün, üye (isteğe bağlı) | `categorySlug`, `productId`, `userId` | Tabloda kategori kimliğiyle |
+| Garanti kaydı | Kategori, ürün | `categorySlug`, `productId` | Tabloda kategori kimliğiyle. Üyeye e-postayla eşleşir (kimlikle değil) |
+| Yorum | Ürün, üye (isteğe bağlı) | `productId`, `userId` | Seçenekten bağımsız; bütün seçenekler aynı yorumları görür |
+| Belge | Ürün (isteğe bağlı) | `productId` | |
+| Form kayıtları | Üye, ürün, bayi (isteğe bağlı) | `userId`, `productId`, `dealerId` | Başvurudan bayi açılınca `dealerId` |
 
-**Geçiş betikleri:** Sırayla ve bir kez çalışır; hangilerinin çalıştığı
-veritabanında tutulur (`drizzle.__drizzle_migrations`). Aynı betikler
-bilgisayarda, testte, deneme ve canlı sunucuda aynı sonucu verir. Çalışmış
-bir betik değiştirilmez; şema değişince yeni betik üretilir.
+---
 
-**Veritabanındaki kurallar** (`0001_kurallar.sql`):
+## 15. Benzersiz alanlar
 
-| Ad | Ne yapar |
-|---|---|
-| `products_sku`, `product_variants_sku` (tetikleyici) | Ürün ve varyant kodunu `sku_codes`'a yazar; kod kullanılıyorsa kaydı reddeder ("Ürün kodu başka bir üründe ya da seçenekte kullanılıyor") |
-| `zw_normalize_sku()` | Kodu karşılaştırma biçimine çevirir (boşluksuz, büyük harf) |
-| `*_redirects` (tetikleyici) | Ürün, kategori, grup, blog, haber ya da etkinlik silinince eski linklerini siler; varyant silinince ona yönlenen eski ürün linkini siler |
-| `product_filter_values_category`, `products_category_moved` (tetikleyici) | Ürüne yalnızca kendi kategorisinin filtre değeri işaretlenir; ürün başka kategoriye taşınınca eski değerler silinir |
-| `audit_log_guard`, `audit_log_no_truncate` (tetikleyici) | Değişiklik kaydı değiştirilemez ve silinemez |
-| `purge_audit_log()` | 2 yıldan eski değişiklik kayıtlarını siler; silinen sayıyı döndürür. Canlıda her gün çalıştırılmalı (YAPILACAKLAR › Veritabanı) |
-| `next_record_number(önek)` | Kayıt numarasını tek işlemde artırıp döndürür (`next_record_number('TKL-2026-')` → 50) |
-
-**Kayıt katmanının sağlayacakları** (veritabanında değil; site ve panel
-bağlanırken): üyenin tam bir varsayılan adresi olması (Aşama 5.1:
-`packages/auth/src/server/account-data.ts`), son aktif
-yöneticinin silinememesi, anasayfa yorum şeridinde en fazla 10 yorum, eski
-link yeni bir kaydın linki olunca yönlendirmenin silinmesi, varyantın
-ürünün her seçeneğinden tam bir değer alması.
-
-**Komutlar** (kurulum: [README](../README.md) › Veritabanı):
-
-| Komut | Ne yapar |
-|---|---|
-| `npm run db:migrate` | Henüz çalışmamış betikleri çalıştırır |
-| `npm run db:reset` | Bilgisayardaki veritabanını silip tabloları baştan kurar; yalnızca `localhost` adresinde çalışır |
-| `npm run db:seed` | Sitenin örnek verisini boş veritabanına yükler (aşağıda); yalnızca `localhost` adresinde çalışır |
-| `npm run db:yukle <canli\|deneme> [guncelle]` | Bugünkü veriyi canlı ya da deneme veritabanına yükler; varsayılan yalnızca eksik kayıtları ekler (aşağıda); bilgisayar dışındaki veritabanında onay ister |
-| `npm run db:generate` | Şema değişince yeni geçiş betiği üretir |
-| `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar |
-| `npm run test:e2e:db` | Sitenin veritabanı modunda tarayıcı testleri (`tests/e2e-db`, `scripts/e2e-db.mts`): test veritabanını baştan kurup örnek veriyi yükler, siteyi `.next-db`'ye derler, testleri çalıştırır |
-| `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
-| `npm run yonetici:olustur` | Panel için yönetici hesabı açar ya da var olan yöneticinin şifresini değiştirir (aşağıda) |
-| `npm run sap:stok [zorla]` | SAP depo stoğunu beklemeden bir kez okutur (sitenin `/api/sap/stok` ucunu çağırır; aşağıda). `zorla`: yarım okuma korumasına takılan okumayı uygular |
-| `npm run sap:siparis` | Sıradaki siparişleri beklemeden SAP'a gönderir (sitenin `/api/sap/siparis` ucunu çağırır; aşağıda) |
-
-Testler tablo listesinin ve kolonların bu dosyayla aynı olduğunu da
-dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer.
-
-**Örnek veri (`npm run db:seed`, `src/seed.ts`):** Sitenin bugün
-tarayıcıda kurduğu örnek verinin tamamı (`packages/data` ›
-`createSeedDatabase`; ürünler, kategoriler, bayiler ve stokları, üyeler,
-siparişler, teklifler, kuponlar, içerik, ayarlar) tablolara yazılır. Ne
-yazıldığı tablo tablo ekrana basılır.
-
-- Yalnızca **boş** veritabanına yüklenir (`products` boş değilse durur:
-  önce `npm run db:reset`) ve yalnızca bilgisayarda (`localhost`) çalışır.
-  Örnek üye ve siparişler içerdiği için canlı ya da deneme sunucusuna
-  yüklenmez; onlar için `npm run db:yukle` (aşağıda).
-- Tek işlemde yazılır; bir satır kurala takılırsa hiçbir şey yazılmaz.
-- Eşleme "Bugünkü veriden farklar" tablosuna göredir. Ayrıca:
-  - Silinmiş bir ürüne ya da üyeye bağlı kopya kayıtlarda (teklif ve
-    sipariş satırı, yorum, servis, garanti) bağ boş kalır; ad ve kod
-    kopyası durur.
-  - Kargo firmalarının kimliği adından üretilir (`Yurtiçi Kargo` →
-    `yurtici-kargo`); siparişin kargo bilgisi `shipments`'a gider.
-  - Zenweld depo stoğu tek bir başarılı SAP okuması (`sap_sync_runs`)
-    olarak yazılır.
-  - Örnek üyelerin şifre özeti bugünkü basit özettir; sunucuda giriş
-    yazılınca güçlü özete (argon2id) geçilecek (YAPILACAKLAR › Üyelik).
-- Testler (`tests/db/ornek-veri.test.ts`) yüklemenin hatasız olduğunu,
-  tablolardaki satır sayılarının veriyle aynı olduğunu ve başlıca bağları
-  (ürün → kategori → grup, varyant değerleri, sipariş ve kargo, kupon
-  kapsamı, depo stoğu) dener.
-
-**Veri yükleme (`npm run db:yukle`, `src/load.ts`; KARARLAR K-90, K-91):**
-Sitenin bugünkü verisi (`packages/data` › `createSeedDatabase`) canlı ya da
-deneme veritabanına yazılır. Tablolar önce `npm run db:migrate` ile kurulur;
-kurulmamışsa komut bunu söyler. Bağlantı `DATABASE_URL`'dir.
-
-| Kayıtlar | `canli` | `deneme` |
+| Ne | Kapsam | Not |
 |---|---|---|
-| Katalog (gruplar, kategoriler, seçenekler, filtreler, ürünler, eski linkler), içerik (blog, haber, etkinlik, SSS, yasal metinler, Hakkımızda, Sayfa SEO, belge sayfaları, satış temsilcileri), mağaza ayarları (POS, havale hesapları, kargo firmaları, ayarlar), bayiler, satıcılar, Zenweld depo stoğu | Yüklenir | Yüklenir |
-| Örnek yorumlar, kuponlar (kapsam ve kişiye özel e-postalarıyla), bayi ve satıcı stok listeleri ve yükleme geçmişi | — | Yüklenir |
-| Demo hesaplar ve örnek üyeler, adresler, teklifler, siparişler, iadeler, kupon kullanımları, servis talepleri, garantiler, kayıt numarası sayaçları | — | — |
+| Ürün kodu ve varyant kodları | Tek havuz | Ürün kodu, başka ürünün kodu ya da herhangi bir varyantın koduyla aynı olamaz. Boşluksuz ve büyük harfe çevrilerek karşılaştırılır. Veritabanında `sku_codes` ve tetikleyiciyle |
+| Ürün linki | Ürünler | |
+| Kategori linki | Bütün site | |
+| Grup linki | Bölüm içinde | |
+| Blog, haber, etkinlik linki | Kendi türü içinde | |
+| Seçenek tanımı adı | Tanımlar | Türkçe büyük/küçük harf duyarsız |
+| Seçenek değeri adı | Tanım içinde | Türkçe büyük/küçük harf duyarsız |
+| Filtre adı / filtre değeri adı | Kategori içinde / filtre içinde | Türkçe büyük/küçük harf duyarsız |
+| Ürünün varyantı | Ürün + kombinasyon | Bir kombinasyon bir üründe bir kez |
+| Üye e-postası | Üyeler | Büyük/küçük harf duyarsız |
+| Garanti seri numarası | Garantiler | Büyük harfe çevrilerek |
+| Bayinin online mağazası | Bayiler | Bir mağaza en fazla bir bayiye |
+| Stok satırı | Kaynak + ürün + varyant | |
+| Kod eşleştirmesi | Kaynak + kod | |
+| Kupon kodu | Kuponlar | Büyük harfe çevrilerek |
+| Siparişin kupon kullanımı | Siparişler | Siparişte en fazla bir kupon |
+| Sipariş, teklif, servis, iade numarası | Kendi türü içinde | |
+| Varsayılan POS | POS'lar | En fazla bir |
+| Varsayılan adres | Üyenin adresleri | Tam olarak bir (adresi varsa) |
 
-- **Eşleme:** `db:seed` ile aynı (`seedTables`). Yorumlar üyeye bağlanmaz
-  (üyeler yüklenmez). Depo stoğu bir SAP okuması sayılmaz:
-  `sap_sync_runs`'a satır yazılmaz, `sync_run_id` boş kalır.
-- **Tekrar çalıştırılabilir:** Kayıt birincil anahtarıyla eşleşir.
-  Varsayılan olarak yalnızca olmayan kayıt eklenir; kimliği ya da benzersiz
-  bir alanı (kod, ad, link) var olan satır atlanır ("zaten var"). Panel
-  veritabanına yazdığı için (Aşama 5) paneldeki değişikliklerin üzerine
-  yazılmasın diye varsayılan budur (Aşama 5.6).
-- **Hiçbir kayıt silinmez:** Veriden çıkarılmış ya da veritabanına başka
-  yoldan eklenmiş kayıt (üye, sipariş, panelden eklenen içerik) olduğu gibi
-  kalır. Ürün başka kategoriye taşınırsa eski kategorinin filtre değerlerini
-  veritabanının kendi kuralı siler (`products_category_moved`).
-- **`guncelle`:** Olan kayıt veriden farklıysa güncellenir, aynıysa
-  yazılmaz ("değişmeyen"). Panelde yapılan değişiklikler kaybolur; komut
-  bunu ekrana yazar. Veride bulunmayan bir "son değişiklik" kolonu
-  (`updated_at`) güncellenen satırda o anın zamanını alır. Eski yazım
-  `eksikler` artık kabul edilmez (varsayılan zaten odur).
-- **Stok üzerine yazılmaz:** Depo stoğu, bayi ve satıcı stokları, yükleme
-  geçmişi ve kod eşlemeleri her iki şekilde de yalnızca eksikse eklenir;
-  depo stoğunu SAP okuma işi, bayi stoğunu bayinin dosyası günceller.
-- **Tek işlem:** Bir satır kurala takılırsa (ör. aynı ürün kodu
-  veritabanında başka bir üründe) hiçbir şey yazılmaz; hata ekrana basılır.
-- **Onay:** Adres `localhost` değilse veritabanının adı yazılarak onay
-  verilir; terminal dışından (otomatik) çalıştırılırsa durur.
-- Ne yapıldığı tablo tablo basılır (eklenen, güncellenen, değişmeyen).
-  Deneme verisindeki kuponların tarihleri yükleme anına göre verildiği
-  için her yüklemede güncellenir. Site değişikliği en geç bir dakikada
-  gösterir; hemen görmek için `npm run site:yenile`.
-- Test (`tests/db/yukleme.test.ts`): canlı yüklemede veritabanı okununca
-  bugünkü veriyle (satış hareketleri, örnek yorum, kupon ve bayi stoğu
-  hariç) birebir aynı; deneme yüklemesi; tekrar çalıştırınca değişiklik
-  olmaması; güncelleme ve ekleme, silmeme; `eksikler`; stoğun üzerine
-  yazılmaması; çakışmada anlaşılır hata.
+Demo modunda bu kuralları panel ve site denetler; veritabanında ayrıca
+tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
+"Kural" sütunu).
 
-**SAP stok okuma (`src/sap-stock.ts`; KARARLAR K-82, K-84):** Zenweld depo
-stoğunu kaynaktan okuyup `warehouse_stock`'a yazar. Kurallar (kodun
-sadeleşmesi, aynı kalemin toplanması, eksi miktar, geçersiz okuma):
-[IS-KURALLARI.md › 20](IS-KURALLARI.md#20-zenweld-depo-stoğu).
+---
 
-- Her çalışmada `sap_sync_runs`'a bir satır yazılır (`running`). Okuma
-  başarılıysa `success` ve kalem sayısı; değilse `failed` ve hata metni.
-  30 dakikadan uzun `running` kalan okuma bir sonraki çalışmada
-  "Yarıda kaldı" diye kapatılır.
-- Başarılı okuma `warehouse_stock`'u tek işlemde yeniler: okumada olmayan
-  kalem silinir, olan eklenir ya da güncellenir; bütün satırların
-  `synced_at`'i ve `sync_run_id`'si bu okumadır. Başarısız okumada tabloya
-  dokunulmaz (son iyi stok kalır).
-- Aynı anda iki okuma uygulanmaz: yazma, veritabanı kilidi
-  (`pg_try_advisory_xact_lock(82084)`) alınarak yapılır; kilit başkasındaysa
-  okuma "Başka bir stok okuması sürüyor" hatasıyla biter.
-- Yarım okuma koruması (KARARLAR K-93): stoktaki kalem sayısı öncekinin
-  yarısının altına düşerse okuma `failed` olur ve uygulanmaz; `force`
-  (uçta `{"zorla": true}`, `npm run sap:stok zorla`) ile uygulanır.
-- **Kaynak:** Bugün deneme dosyası (`SAP_STOK_DOSYASI`; başlık satırı
-  `kod;ad;miktar`, ayraç noktalı virgül, virgül ya da sekme; Excel'in CSV'si
-  okunur). SAP bağlantı bilgileri gelince SAP'tan okuyan kaynak eklenir;
-  okuma kuralları ve yazma değişmez. Kaynak tanımlı değilse iş çalışmaz.
-- **Çalıştırma:** Sitenin `/api/sap/stok` ucu (POST; yalnızca
-  `CRON_SECRET` anahtarıyla, veritabanı modunda). Sunucunun zamanlayıcısı
-  15 dakikada bir çağırır ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9 › Zamanlanmış
-  işler); `npm run sap:stok` elle bir kez çağırır. Stok değiştiyse
-  (eklenen, çıkan ya da miktarı değişen kalem) depo stoğunu kullanan
-  sayfalar o anda yenilenir (`refreshSite(["depo-stogu"])`); değişmediyse
-  yenilenmez.
-- Test: `tests/db/sap-stok.test.ts` (okuma kaydı, tek işlemde yenileme,
-  hatada son stoğun kalması, kilit, yarıda kalan okuma, yarım okuma
-  koruması, deneme dosyası); `tests/e2e-db` (uç: anahtar, stok 0 gelince
-  sayfanın hemen STOKTA YOK olması, hatalı ve yarım okuma, zorla).
+## 16. Silme kuralları
 
-**SAP sipariş aktarımı (`src/sap-orders.ts`; KARARLAR K-84, K-108):**
-Ödemesi kesinleşen siparişi SAP'a gönderir (`sap_order_exports`).
+| Silinen | Engel | Birlikte silinen / değişen |
+|---|---|---|
+| Ürün | — | Bayi ve satıcı stok satırları, kod eşleştirmeleri, varyantlar, favoriler, yönlendirmeler, kuponların kapsamındaki ürün. Belgelerdeki ürün bağı kalkar (belge kalır). Sipariş, teklif, iade, garanti, servis ve yorum kayıtları kalır (bağ boşalır) |
+| Ürünün bir varyantı (kombinasyonu) | — | O varyantın stok satırları ve kod eşleştirmeleri; eski ürün linki yönlendirmesi. Ürünün seçenek listesi (tanımları) değişirse bütün varyantlı stok satırları |
+| Kategori | İçinde ürün varsa silinmez | Kuponların kapsamındaki kategori |
+| Kupon | Siparişte kullanıldıysa silinmez (pasife alınır) | — |
+| Kategori filtresi ya da filtre değeri | — (kaç üründe işaretli olduğu söylenip onay istenir) | Kategorinin ürünlerindeki o filtre ya da değer |
+| Grup | İçinde kategori varsa silinmez | — |
+| Seçenek tanımı | Bir üründe kullanılıyorsa silinmez | Kategorilerdeki bağı |
+| Seçenek değeri | Bir üründe kullanılıyorsa silinmez | — |
+| Bayi | — | Stok satırları, stok işlemleri, kod eşleştirmeleri |
+| Online satıcı | — | Stok satırları, stok işlemleri, kod eşleştirmeleri; bağlı bayinin `retailer_id`'si boşalır |
+| Üye (panelden ya da üyenin kendisi Hesabım'dan) | Son aktif yönetici silinemez; panelde yönetici satırı silinemez | Kayıtlı adresleri, oturumları ve favorileri. Siparişleri, teklifleri, servis talepleri, iade talepleri, garanti kayıtları ve yorumları kalır (geçmiş kayıt; bağ boşalır) |
+| Teklif | — | Satırları; numarası boşta kalır (yeniden verilmez) |
+| Garanti, yorum, SSS, temsilci, haber, blog, etkinlik | — | Blog, haber ve etkinliğin yönlendirmeleri |
+| Belge | — | Dosyası (adresi girilen belgede yalnızca kayıt) |
+| Yasal metin | Silinemez | — |
+| Sipariş, servis talebi, iade talebi | Panelde silinmez | — |
+| Bayilik başvurusu, mesaj, Welders Club katılımı | Panelde silinmez (K-100) | — |
+| İşlem kaydı (`audit_log`) | Elle silinmez | 2 yıldan eskisi her gün kendiliğinden silinir |
 
-- **Sıraya girme:** Kartla verilen sipariş, siparişle aynı işlemde
-  (`orders.ts` › `placeOrder`); havale siparişi panelde **Ödeme Alındı**
-  denince, aynı işlemde (`admin-sales.ts` › `adminMarkOrderPaid`). Sipariş
-  sıraya bir kez girer.
-- **Gönderme:** Her çalışmada zamanı gelmiş (`pending`, `next_attempt_at`
-  geçmiş) en fazla 20 sipariş, en eskisinden başlayarak, her biri ayrı
-  işlemde gönderilir. Satır `FOR UPDATE SKIP LOCKED` ile alınır: aynı anda
-  iki çalışma aynı siparişi göndermez.
-- **Aktarıcı:** Siparişi SAP'a yazan parça (`SapOrderExporter`). Siparişin
-  bütün bilgisini alır (`SapOrderPayload`: sipariş no ve tarihleri, müşteri,
-  fatura ve teslimat adresi, satırlar (kod, ad, seçenek, adet, KDV hariç
-  birim fiyat, KDV oranı, kupon payı), kargo, vade farkı, kupon, toplam,
-  ödeme) ve SAP'ın istediği biçime kendisi çevirir. Bugün tek aktarıcı
-  deneme dosyasıdır (`SAP_SIPARIS_DOSYASI`): her siparişi dosyaya bir satır
-  JSON olarak ekler, belge numarası `DENEME-<sipariş no>`. SAP bilgileri
-  gelince SAP'a yazan aktarıcı eklenir (`orderExporterFromEnv`); sıra,
-  yeniden deneme ve panel değişmez. Gönderme sonucu yazılamazsa (sunucu o
-  anda kapanırsa) sipariş yeniden gönderilebilir; SAP'a yazan aktarıcı
-  siparişi sipariş numarasıyla yazar ve aynı numara SAP'ta varsa yeni
-  sipariş açmaz, var olanın belge numarasını döndürür. Aktarıcı tanımlı değilse iş çalışmaz,
-  siparişler sırada bekler.
-- **Sonuç:** Başarılıysa `sent`, belge numarası ve an yazılır. Geçici
-  hatada deneme sayısı artar, sıradaki deneme 5, 10, 20, 40… dakika sonra
-  (en fazla 6 saat); 8. denemede de olmazsa `failed`. Aktarıcı hatanın
-  geçici olmadığını söylerse (ör. SAP'ta cari yok) ilk denemede `failed`.
-  Gönderilmeden iptal edilen sipariş gönderilmez, `skipped` olur.
-- **Panel:** Sipariş detayında **SAP Aktarımı** kutusu (yalnızca veritabanı
-  modunda, sırada olan siparişte). `failed` sipariş **Yeniden sıraya al**
-  ile `pending`'e döner (deneme sayısı sıfır, hemen); değişiklik kaydına
-  (`audit_log`) yazılır (`admin-sales.ts` › `adminRequeueSapOrder`).
-- **Çalıştırma:** Sitenin `/api/sap/siparis` ucu (POST; yalnızca
-  `CRON_SECRET` anahtarıyla, veritabanı modunda). Sunucunun zamanlayıcısı
-  birkaç dakikada bir çağırır ([ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › 9 ›
-  Zamanlanmış işler); `npm run sap:siparis` elle bir kez çağırır. Uç
-  gönderilen, yeniden denenecek, başarısız ve atlanan siparişlerin
-  numaralarını döndürür.
-- Test: `tests/db/sap-siparis.test.ts` (gönderme ve aktarıcıya giden
-  bilgi, zamanı gelmeyen sipariş, artan aralarla deneme ve başarısız,
-  geçici olmayan hata, iptal edilen sipariş, panelden yeniden sıraya alma,
-  aynı anda iki çalışma, deneme dosyası); `tests/db/siparis.test.ts` ve
-  `panel-satis.test.ts` (sıraya girme); `tests/e2e-db/sap-siparis.spec.ts`
-  (panel kutusu, uç, yeniden sıraya alma).
+---
 
-**Dosya deposu (`src/file-storage.ts`; KARARLAR K-108):** Panelde
-yüklenen görsel ve belgeler veritabanına değil dosya deposuna yazılır.
-Kurallar (türler, boyut, adres): [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar).
+## 17. Tarayıcıda tutulanlar
 
-- **Depo parçası:** `FileStorage` (`put`, `get`, `size`). Bugün tek depo
-  sunucunun diskidir (`diskStorage`, `DOSYA_KLASORU`); dosya önce geçici
-  adla yazılıp yerine konur (yarım dosya sunulmaz). Anahtar biçimi
-  denetlenir; klasörün dışına çıkan yol okunmaz, yazılmaz. BT başka bir
-  depo seçerse aynı arayüzle eklenir (`fileStorageFromEnv`).
-- **Yükleme:** `POST /api/yonetim/dosya?tur=gorsel|belge` (çok parçalı
-  form, `dosya`): yalnızca veritabanı modunda ve geçerli panel oturumuyla
-  (401), aynı siteden (403); depo ayarlı değilse 503. Tür dosyanın
-  içeriğinden bulunur; kabul edilmeyen tür 400, büyük dosya 413. Yükleme
-  `audit_log`'a (`files`) yazılır; yanıt `{ ok, address, fileName, size }`.
-  Adres kayda panelin kendi kaydetme isteğinde yazılır.
-- **Sunma:** `GET /dosya/<anahtar>` (`apps/zenweld-web/src/app/dosya/[...yol]/route.ts`):
-  depodaki dosya türüyle gönderilir; bir yıl önbellekte tutulabilir
-  (`immutable`). Geçersiz anahtar, ayarsız depo ya da olmayan dosya 404.
-- **Belge kaydı:** `adminSaveDocument` adres depodaki bir dosyanınsa
-  (`/dosya/belge/…`) boyutu depodan okur (`storedSize`); dosya yoksa ya da
-  depo ayarlı değilse kaydetmez.
-- **Panel:** Panel kabuğu depo ayarlıysa yüklemeyi açar
-  (`components/admin/PanelFeatures.tsx`); görsel tarayıcıda küçültülüp
-  yüklenir (`lib/admin-files.ts`).
-- Kayıttan kaldırılan görselin ya da silinen belgenin dosyası depoda kalır
-  (temizlik sonraya, [YAPILACAKLAR.md](YAPILACAKLAR.md)).
-- Test: `tests/unit/yuklenen-dosyalar.test.ts` (türler, boyut, adres,
-  disk deposu), `tests/db/panel-sayfalar.test.ts` (belgenin depodaki
-  boyutu), `tests/e2e-db/dosya-yukleme.spec.ts` (uç, sunma),
-  `panel-katalog.spec.ts` (ürün görseli), `panel-sayfalar.spec.ts` (belge).
+| Anahtar | Yer | İçerik | Veritabanı modunda |
+|---|---|---|---|
+| `zenweld.db.v1` | localStorage | Bütün veri (`ZenweldDatabase`, `version` alanıyla) | Yazılmaz; demodan kalan silinir (Aşama 5.6) |
+| `zenweld.session.v1` | localStorage | Site oturumu: üyenin kimliği | Sunucu oturumu (`sessions`, çerez) |
+| `zenweld.admin.session.v1` | localStorage | Panel oturumu: yöneticinin kimliği | Sunucu oturumu (`sessions`, çerez) |
+| `zenweld.cart.v1` | localStorage | Sepet: `[{ productId, variantId?, quantity }]` (eski `selection` biçimli satırlar tek seçenekte okunur) | Tarayıcıda kalır; fiyat her açılışta üründen hesaplanır |
+| `zenweld.cart.coupon.v1` | localStorage | Sepete uygulanan kupon kodu (büyük harf); sipariş verilince silinir | Tarayıcıda kalır; indirim sunucuda yeniden hesaplanır |
+| `zenweld.quotelist.v1` | localStorage | Teklif listesi: `[{ productId, variantId?, productName, quantity }]` | Tarayıcıda kalır |
+| `zenweld.favourites.v1` | localStorage | Favori ürün kimlikleri (giriş yapmamış ziyaretçi ve demo modu) | Giriş yapmış üyenin favorileri `favourites` tablosunda; girişte bu liste hesaba eklenir ve boşaltılır (K-96) |
+| `zenweld.cookie-consent.v1` | localStorage | Çerez tercihi: `{ choice: "all" | "necessary", at }` | Tarayıcıda kalır |
+| `zenweld.admin.range` | localStorage | Panel ana sayfasındaki dönem seçimi | Tarayıcıda kalır |
+| `zenweld.welcome.seen` | sessionStorage | Karşılama penceresi bu oturumda gösterildi | Tarayıcıda kalır |
+| `zenweld.files.v1` | IndexedDB (`files`) | Belgelerin dosyaları (demo modu) | Dosya deposu |
 
-**Şifre ve oturum (`packages/auth/src/server`; KARARLAR K-94):**
+- Sepet ve teklif listesindeki ürün yayından kalkarsa ya da seçeneği artık
+  yoksa o satır gösterilmez.
+- Sepette fiyat saklanmaz; her açılışta ürünün güncel fiyatından hesaplanır.
 
-- **Şifre özeti:** argon2id (`@node-rs/argon2`; 19 MB bellek, 2 tur, 1 iş
-  parçacığı). Özet tuzu ve ayarları içinde taşır. Eski demo özeti
-  (`zw1$…`) de doğrulanır; doğruysa yeni özet döner ve kaydedilir (ilk
-  girişte güçlü özete geçilir). Yeni şifre en az 8 karakter
-  (`packages/auth/src/rules.ts`).
-- **Oturum:** 32 rastgele baytlık anahtar tarayıcıya yalnızca sunucunun
-  okuyabildiği çerezle verilir; `sessions.id` anahtarın sha256 özetidir
-  (veritabanı okunsa da oturum çalınmaz). Site oturumu (`site`) yalnızca
-  bireysel ve kurumsal üyeye, panel oturumu (`admin`) yalnızca yöneticiye
-  açılır; askıdaki ya da rolü değişen üyenin oturumu geçersizdir.
-- **Süre:** Site 30 gün; kullanıldıkça uzar (en fazla saatte bir yazılır).
-  Panel girişten 8 saat sonra biter, uzamaz.
-- **Kapatma:** Çıkışta oturum silinir; şifre değişince üyenin diğer
-  oturumları silinir; yeni girişte üyenin süresi dolmuş oturumları
-  temizlenir.
-- **Site üyeliği (Aşama 4.2):** Veritabanı modunda sitenin kayıt, giriş,
-  çıkış, profil, şifre değiştirme ve hesap silme işlemleri
-  `apps/zenweld-web/src/app/api/uyelik/[islem]/route.ts` ucundan,
-  `packages/auth/src/server/accounts.ts` kurallarıyla yapılır; tarayıcı
-  tarafı `AuthProvider`'ın sunucu modudur. Oturum çerezi `zw_oturum`:
-  HttpOnly, SameSite=Lax, gerçek alan adında Secure; sayfa her açılışta
-  `/api/uyelik/ben` ile üyeyi okur. Başka siteden gelen istek (Origin
-  farklı) reddedilir. Girişte üye satırı kilitlenir: aynı anda gelen yanlış
-  denemeler de doğru sayılır (`failed_login_*`, `login_locked_until`).
-  Tarayıcıya giden üye kaydında şifre özeti boştur.
-- **Panel girişi (Aşama 4.3):** Veritabanı modunda panelin girişi ve çıkışı
-  `apps/zenweld-web/src/app/api/yonetim/oturum/[islem]/route.ts` ucundan
-  (`ben`, `giris`, `cikis`); oturum çerezi `zw_panel` (sitenin çerezinden
-  ayrı). Panel düzeni (`app/yonetim/(panel)/layout.tsx`) her istekte
-  oturumu sunucuda okur; geçerli yönetici oturumu yoksa sayfa gönderilmez,
-  giriş ekranına yönlendirilir. Çerez ve istek denetimi iki uçta ortak:
-  `lib/server/session-cookie.ts`.
-- **Şifre sıfırlama (Aşama 4.4, K-95; `packages/auth/src/server/password-reset.ts`):**
-  `POST /api/uyelik/sifre-unuttum` hesap olsa da olmasa da aynı yanıtı
-  verir; hesap aktif bir üyeyse 32 baytlık anahtar üretilir, özeti
-  `password_reset_tokens`'a yazılır (üyenin eski bağlantıları silinir) ve
-  bağlantı (`<NEXT_PUBLIC_SITE_URL>/sifre-sifirla?anahtar=…`; adres isteğin
-  Host başlığından alınmaz) üyeye e-postayla gider. Aynı üye için 15
-  dakikada bir. `POST /api/uyelik/sifre-sifirla` anahtarı ve yeni şifreyi
-  alır: 1 saat içinde ve kullanılmamışsa şifre değişir, bağlantı kullanılmış
-  olur, üyenin bütün oturumları silinir, yanlış şifre sayacı sıfırlanır.
-- **`npm run yonetici:olustur`:** `DATABASE_URL`'deki veritabanında e-posta,
-  ad, soyad, telefon ve şifre (ekrana yazılmaz, iki kez) sorup yönetici
-  hesabı açar. Canlıya hiç hesap yüklenmediği için (K-91) ilk yönetici
-  bununla açılır. E-posta bir yöneticiye aitse şifresini değiştirir ve açık
-  oturumlarını kapatır; bir üyeye aitse hesap açmaz. Terminal dışından
-  çalışmaz.
-- Test: `tests/db/oturum.test.ts` (özet, eski özetin çevrilmesi, oturumun
-  türü ve rolü, süreler, askı, çıkış ve diğer oturumların kapanması; kayıt,
-  giriş, deneme sınırı, profil, şifre değiştirme, hesap silme, şifre
-  sıfırlama);
-  `tests/unit/uyelik.test.ts` (şifre kuralı, deneme sınırı);
-  `tests/e2e-db/uyelik.spec.ts` (tarayıcıda: kayıt, çerez, çıkış, giriş,
-  tek mesaj, deneme sınırı, diğer cihazın oturumu, profil, hesap silme,
-  eski özetin çevrilmesi, başka siteden istek, şifre sıfırlama);
-  `tests/e2e-db/panel.spec.ts`
-  (oturumsuz panelin gönderilmemesi, 8 saatlik oturum, üyenin panele
-  girememesi, çıkış, askı, süre dolması, deneme sınırı).
+---
 
-**Üyenin adresleri ve favorileri (Aşama 5.1, KARARLAR K-96;
-`packages/auth/src/server/account-data.ts`):**
+## 18. Örnek veri ve veri sürümü
 
-- Veritabanı modunda giriş yapmış üye adreslerini ve favorilerini
-  `/api/uyelik/[islem]` ucundan okur ve değiştirir; üye oturum çerezinden
-  bulunur, istekte üye kimliği gönderilmez.
-  - Okuma (GET): `adresler`, `favoriler`.
-  - Değiştirme (POST): `adres-kaydet` (kimlik varsa düzenleme),
-    `adres-sil`, `adres-varsayilan`, `favori-ekle` (`{ ids }`),
-    `favori-cikar` (`{ id }`). Her yanıt listenin son halini döndürür.
-- **Adres:** Yalnızca üyenin kendi adresi değişir; başkasınınki "Adres
-  bulunamadı." İlk adres varsayılan olur; varsayılan silinince kalan ilk
-  eklenen varsayılan olur; varsayılan yapılınca diğerleri kalkar. Liste
-  varsayılan önce, sonra eklenme sırasıyla gelir. En fazla 20 adres.
-- Ekleme, silme, varsayılan değişikliği ve favori ekleme tek işlemdedir ve
-  önce üyenin `users` satırını kilitler: aynı üyeden aynı anda gelen iki
-  istek (ör. iki sekme) sırayla çalışır; iki varsayılan adres oluşmaz,
-  sınır aşılmaz.
-- **Favori:** Aynı ürün iki kez eklenmez; olmayan ürün atlanır. Girişte
-  tarayıcıdaki liste tek istekle eklenir (sığan kadarı); tek ürün
-  eklenirken sınır doluysa hata döner. En fazla 500 favori. Ürün ya da üye
-  silinince favori de silinir.
-- Tarayıcı tarafı: `apps/zenweld-web/src/lib/addresses.ts` (Adreslerim ve
-  ödeme) ve `apps/zenweld-web/src/lib/favourites.tsx`; demo modunda ikisi
-  de tarayıcıdaki veriyi kullanır.
-- Test: `tests/db/hesap-verisi.test.ts` (varsayılan kuralları, yalnızca
-  sahibin değiştirmesi, zorunlu alanlar, 20 adres, aynı anda gelen
-  istekler; favori ekleme, tekrar,
-  çıkarma, ürün silinince gitmesi, 500 sınırı ve girişteki birleştirme);
-  `tests/e2e-db/hesap-verisi.spec.ts` (tarayıcıda: adres ekleme, varsayılan,
-  silme, başka cihaz; misafir favorilerinin girişte hesaba geçmesi, başka
-  cihaz, çıkışta boş kalpler).
+**Veri sürümü (`DB_VERSION`, yalnızca demo modu):**
 
-**Siparişler (Aşama 5.2, KARARLAR K-97; `src/orders.ts`):**
+- `packages/data/src/index.ts`'tedir (bugün 76).
+- Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
+  örnek veriyle yeniden kurulur.
+- Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
+  Artırınca demo tarayıcılarındaki panel değişiklikleri kaybolur.
+- Veritabanı modunda veri sürümü kullanılmaz; tablo değişiklikleri geçiş
+  betikleriyle yapılır, veri silinmez ([SUNUCU.md](SUNUCU.md) › Geçiş
+  betikleri).
+- Aynı örnek veri `npm run db:seed` ile bilgisayardaki PostgreSQL'e de
+  yüklenir; canlıya ve denemeye `npm run db:yukle` ne yüklendiğini seçer
+  (K-91; [SUNUCU.md › Veri yükleme](SUNUCU.md#veri-yükleme)).
 
-- Veritabanı modunda site siparişi `apps/zenweld-web/src/app/api/siparis/[islem]/route.ts`
-  ucundan verir ve okur; üye oturum çerezinden bulunur.
-  - `POST /api/siparis/kupon` `{code, lines}`: sepete yazılan kuponun
-    sonucu (`checkCartCoupon`). Ziyaretçi de çağırır; fiyatlar sayfanın
-    önbellekteki katalogundan, kupon ve kullanımları veritabanından okunur.
-    Tarayıcıya kuponun kendisi değil, yalnızca sonucu (`CouponView`) gider.
-  - `POST /api/siparis/ver`: sipariş (`placeOrder`). Tarayıcı ürün, seçenek,
-    adet, kupon kodu, adres, fatura, ödeme yöntemi, taksit sayısı, kartın
-    ilk 6 ve son 4 hanesi ve gördüğü tutarı (`expectedTotal`) gönderir.
-  - `GET /api/siparis/liste`: üyenin siparişleri ve iade talepleri
-    (`memberOrders`); önce süresi dolan havaleler iptal edilir
-    (`cancelExpiredTransfers`).
-  - `POST /api/siparis/iade`: iade talebi (`createReturnRequest`).
-- **Hesap:** Fiyat, kupon, kargo ve vade farkı sepetle aynı kurallardan
-  (`packages/data` › `cart.ts`, `checkout.ts`, `coupon.ts`), veritabanındaki
-  güncel katalog, depo stoğu ve mağaza ayarlarıyla (`readPricingData`;
-  önbelleksiz) yeniden hesaplanır. Tutar `expectedTotal`'la tutmazsa,
-  ürün satıştan kalktıysa, stoğu bittiyse ya da kupon uygulanamıyorsa
-  sipariş yazılmaz.
-- **Yazılanlar (tek işlem):** `orders`, `order_items` (seçenek kimliği
-  `variant_id` dahil), `order_status_history` (ilk durum), kupon varsa
-  `coupon_redemptions`; numara `record_counters` üzerinden
-  (`nextRecordCode`). Kartlı siparişte kartın programını ve tahsilatı ödeme
-  sağlayıcısı yapar (`src/payment.ts`, K-108): `paid_at` sağlayıcının
-  verdiği ödeme anıdır (temsili sağlayıcıda sipariş anı), sonuç
-  `payment_transactions`'a yazılır ve sipariş SAP aktarım sırasına girer
-  (`sap_order_exports`, K-108); sağlayıcı reddederse (402) sipariş
-  yazılmaz ve sipariş numarası harcanmaz. Havalede `due_at` = sipariş anı +
-  mağaza ayarındaki gün.
-- **Kilitler:** Kuponlu siparişte kupon satırı (`coupons`, FOR UPDATE)
-  kilitlenir; aynı kuponla aynı anda gelen siparişler sırayla sayılır, sınır
-  aşılmaz. İade talebinde sipariş satırı kilitlenir. Havale iptalinde
-  süresi dolan siparişler kilitlenir.
-- **Havale süresi:** Son ödeme gününün sonu Türkiye saatine göredir
-  (`packages/data/src/orders.ts`). Süresi dolan sipariş `cancelled` olur,
-  geçmişe "Ödeme süresi doldu" notuyla yazılır, `coupon_redemptions.released_at`
-  dolar.
-- **Okuma:** `readOrders`, `readReturnRequests`, `readCoupons` (ve Aşama 5.3'te
-  `readQuotes`, `readServiceRequests`, `readWarranties`) isteğe bağlı
-  bir koşulla yalnızca ilgili kayıtları okur (ör. bir üyenin siparişleri,
-  bir kuponun kullanımları).
-- Bildirim e-postası (`info@zenweld.com`) kayıttan sonra sunucudan gider
-  (`apps/zenweld-web/src/lib/server/notify.ts`); yanıt onu beklemez.
-- Panelin Siparişler, İade Talepleri ve Kuponlar ekranları veritabanıyla
-  çalışır (aşağıda "Panel › Satış").
-- Test: `tests/db/siparis.test.ts` (kartlı sipariş ve tutarlar, numaranın
-  en büyük numaradan devam etmesi, fiyat değişince, stoksuz, satıştan kalkan
-  ürün, eksik ve hatalı bilgi, taksit, POS yokluğu; havale ve süre dolunca
-  iptal, kupon hakkının geri verilmesi; sepet kuponu ve kişiye özel kupon;
-  iade talebi kuralları; aynı anda gelen siparişlerde kupon sınırı);
-  `tests/e2e-db/siparis.spec.ts` (tarayıcıda: sepette kupon, kartla sipariş,
-  başka cihaz, iade talebi; fiyat değişince; havale süresi dolunca iptal).
+**Örnek veri** (`packages/data/src/seed/`):
 
-**Formlar (Aşama 5.3, KARARLAR K-81; `src/forms.ts`):**
+| Kayıt | Sayı | Not |
+|---|---|---|
+| Ürün | 40 | Hepsi Ekipmanlar'da (sahibinin listeleri; fiyat temsili, Force serisi dışında içerik örnek, KARARLAR K-73, K-75). Güvenlik, Aksesuarlar ve Dolgu Metalleri'ndeki 48 örnek ürün sahibinin isteğiyle silindi; bu bölümlerin kategorileri boş (KARARLAR K-78). 17'si seçenekli (makineler). Ekipmanların 21'inde sahibinin fotoğrafı var, Force serisinin 9'unda geçici ortak fotoğraf; soğutmalı makinede her kombinasyon kendi soğutma halinin fotoğrafını gösterir (K-77) |
+| Grup / kategori | 12 / 50 | Aksesuarlar'daki Lazer Aksesuarları grubunun 5 kategorisinde henüz ürün yok (KARARLAR K-05 eki). Ekipmanların 8 alt kategorisinde filtre var (KARARLAR K-76); ürünlere yalnızca Model Serisi eşli |
+| Seçenek tanımı | 4 | Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu (temsili), Tepe Güç |
+| Bayi / online satıcı | 29 / 9 | |
+| Stok satırı (bayi / satıcı) | ~2.750 / ~415 | Veri ilk kurulduğunda o günün tarihiyle üretilir |
+| Zenweld depo stoğu (SAP kalemi) | 50 | 3'ü stoksuz ([4](#warehouse_stock-ve-sap_sync_runs--zenweld-depo-stoğu-sap-yeni)) |
+| Üye | 69 | 1 yönetici, 46 bireysel, 22 kurumsal |
+| Sipariş / teklif | 133 / 48 | |
+| Servis talebi / garanti | 34 / 54 | |
+| İade talebi | 0 | Hesabım'dan açılır |
+| Kupon / kupon kullanımı | 4 / 0 | HOSGELDIN5 (%5, bütün ürünler, kişi başı 1), LAZER25000 (25.000 ₺, Lazer Kaynak Makineleri, en az 500.000 ₺, 20 kullanım, 60 gün), YAZ10 (%10, süresi dolmuş), OZEL15 (%15, kişiye özel: bir örnek kurumsal üyenin ve henüz üye olmayan bir kişinin e-postası, kişi başı 1, 30 gün); tarihler kurulum anına göre |
+| Yorum | 11 | 10'u onaylı, 1'i onay bekliyor; hepsi ekipmanlarda |
+| Blog / haber / etkinlik | 6 / 2 / 8 | |
+| SSS / temsilci / yasal metin | 8 / 11 / 11 | |
+| Belge | 0 | Panelden yüklenir |
+| Mağaza ayarları | — | 9 POS, 2 havale hesabı, 6 kargo firması; kargo ücretsiz sınırı 5.000 ₺, kargo 250 ₺, stok geçerlilik süresi 3 gün |
 
-- Veritabanı modunda site formları `apps/zenweld-web/src/app/api/formlar/[tur]/route.ts`
-  ucundan kaydeder ve okur; giriş yapmışsa üye oturum çerezinden bulunur.
-  - `POST /api/formlar/teklif`: `quotes` + `quote_items` (`createQuote`);
-    ürün adı, kodu ve seçenek adı katalogdan; numara `TKL-<yıl>-<4 hane>`.
-  - `POST /api/formlar/servis`: `service_requests` (`createServiceRequest`);
-    model adı katalogdan; numara `SRV-<yıl>-<4 hane>`.
-  - `POST /api/formlar/garanti`: `warranties` (`registerWarranty`); aynı
-    seri numarası (büyük harfe çevrilerek) ikinci kez yazılmaz; bitiş
-    Türkiye gününe göre.
-  - `POST /api/formlar/yorum`: `reviews` (`createReview`); onaysız. Fotoğraf
-    ve videolar dosya deposu gelene kadar (Aşama 6) `media`'da veri olarak
-    (`data:` adresi) durur.
-  - `GET /api/formlar/garanti?seri=…`: garanti sorgulama (`findWarranty`);
-    yalnızca sorgulama kartındaki alanlar döner.
-  - `GET /api/formlar/teklifler`, `GET /api/formlar/garantiler`: üyenin
-    teklifleri (`user_id`) ve garantileri (e-posta).
-- Yalnızca e-postaya giden formlar da kendi tablolarına yazılır:
-  `/api/bayilik` → `dealer_applications`, `/api/destek` → `support_messages`
-  (`urun-destek`; ürün koduna göre `product_id`), `/api/bildirim` iletişim →
-  `support_messages` (`iletisim`), Welders Club → `welders_club_signups`.
-  Yanıtta `saved: true` döner; e-posta gitmese de form ulaşmış sayılır.
-- **E-posta kaydı:** sunucunun gönderdiği her e-posta (`lib/server/mail.ts`)
-  `email_log`'a yazılır (`logEmail`): tür, sayfa (`Referer`'dan, aynı
-  siteden geliyorsa), bağlı kayıt, alıcı, yanıt adresi, konu, sonuç
-  (`sent`; servis hatasında `failed`; anahtar yoksa ya da bot tuzağında
-  `skipped`), servisin verdiği numara ve hata. Metin yazılmaz. Kayıt
-  yazılamazsa e-posta yine gider.
-- Bot tuzağı doluysa kayıt yapılmaz; `email_log`'a `skipped` yazılır.
-- Panelin Teklifler, Servis Talepleri, Garantiler, Yorumlar, Bayilik
-  Başvuruları, Mesajlar ve Welders Club ekranları veritabanıyla çalışır
-  (aşağıda "Panel › Talepler").
-- Test: `tests/db/formlar.test.ts` (teklif kuralları ve katalogdan alınan
-  ürün bilgisi, servis talebi, garanti kaydı, tekrar eden seri no, Türkiye
-  gününe göre bitiş, sorgulama, yorum, e-postaya giden formların kaydı,
-  e-posta kaydı ve türleri); `tests/e2e-db/formlar.spec.ts` (tarayıcıda:
-  ziyaretçi ve üye teklifi, Tekliflerim, servis, garanti, sorgulama,
-  Garantilerim, yorum, iletişim, Welders Club, bot tuzağı).
+- Son 90 güne yayılmış örnek üye, sipariş, teklif, servis talebi ve garanti
+  kayıtları `sample-activity.seed.ts`'ten gelir (panel grafikleri için);
+  canlıya ve denemeye yüklenmez (`db:yukle`, K-91).
+- Mağaza ayarları (kargo, POS, IBAN), bayiler, satıcılar, yasal metinler ve
+  örnek blog yazıları örnektir; gerçekleriyle değiştirilmelidir.
+- Demo hesaplarının giriş bilgileri yalnızca [README](../README.md)'dedir.
 
-**Panel › Satış (Aşama 5, 1. alan; KARARLAR K-99; `src/admin-sales.ts`, `src/audit.ts`):**
+---
 
-- **Okuma:** Panelin her sayfası verisini kendi sunucu bileşeninde okur
-  (`app/yonetim/(panel)/siparisler/page.tsx` vb.); sayfa her açılışta ve
-  her kayıttan sonra (`router.refresh`) yeniden okunur. Önce geçerli
-  yönetici oturumu denetlenir.
-  - `readOrdersPanel`: siparişler (detayda yalnızca o sipariş ve SAP
-    aktarım durumu, `sap_order_exports`) ve mağaza ayarları; önce süresi
-    dolan havaleler iptal edilir (bir işlem içinde).
-  - `readReturnsPanel`: iade talepleri.
-  - `readCouponsPanel`: kuponlar ve kullanımları; düzenlemede yalnızca o
-    kupon, kullanıldığı siparişler ve üyeler (`readPanelMembers`: yönetici
-    hariç, şifre özeti boş). Kupon formunun ürün ve kategorileri sitenin
-    önbellekteki katalogundan.
-- **Yazma:** `POST /api/yonetim/satis/<işlem>`
-  (`apps/zenweld-web/src/app/api/yonetim/satis/[islem]/route.ts`):
-  `odeme-alindi`, `kargo`, `teslim`, `iptal`, `siparis-notu`,
-  `sap-yeniden` (başarısız SAP aktarımını yeniden sıraya alır; 14 › SAP
-  sipariş aktarımı), `iade-talebi`, `kupon` (oluşturma ve düzenleme), `kupon-durum`,
-  `kupon-sil`. Yalnızca geçerli panel oturumu olan yönetici yazar
-  (yoksa 401); başka siteden gelen istek reddedilir (403). Her işlem tek
-  işlemdir (transaction).
-- **Aynı kaydı iki kişi düzenlerse:** İstek, ekranın gördüğü `updated_at`'i
-  taşır. Kayıt satırı kilitlenir (FOR UPDATE); `updated_at` değişmişse
-  kaydedilmez, 409 "Bu kayıt siz açtıktan sonra değişti; sayfayı
-  yenileyin." Aynı anda gelen ikinci istek birincinin bitmesini bekler ve
-  reddedilir. Başarılı yazma yeni `updated_at`'i döndürür; ekran sayfa
-  yenilenmeden aynı kaydı yeniden kaydederse onu gönderir (yöneticinin
-  kendi kaydı reddedilmez). Ortak kurallar: `src/panel.ts`; ortak uç akışı:
-  `apps/zenweld-web/src/lib/server/admin.ts` (`runPanelAction`); tarayıcı:
-  `apps/zenweld-web/src/lib/admin-panel.ts`.
-- **Siparişte yazılanlar:** Durum değişince `order_status_history`'ye yeni
-  satır, `changed_by` = yönetici. Ödeme alındı: `paid_at` ve SAP aktarım
-  sırası (`sap_order_exports`); süresi dolmuşsa onaylanmaz, "Ödeme süresi
-  doldu" notuyla iptal edilir. Kargo: `shipments`
-  (giden gönderi; firma `carriers`'tan adla bulunur, listeden çıkarılmış
-  kayıtlı firma korunur; takip no düzeltilince `shipped_at` değişmez).
-  Teslim: `shipments.delivered_at`. İptal: kupon kullanımı geri verilir
-  (`coupon_redemptions.released_at`).
-- **Kupon:** Biçim ve kurallar demo moduyla aynı (`packages/data` ›
-  `normalizeCouponDraft`, `validateCoupon`); `coupon_targets` ve
-  `coupon_customers` baştan yazılır; seçilen ürün ve kategoriler var
-  olmalı; kod tekrarı denetlenir (kupon kayıtları aynı anda iki aynı kodu
-  yazmasın diye sırayla yapılır). Kullanılmış kupon silinmez.
-- **İşlem kaydı (`audit_log`):** Her değişiklik aynı işlemde yazılır
-  (`writeAudit`): yönetici kimliği, adı ve IP adresi, işlem, tablo, kayıt
-  kimliği, okunur ad (sipariş no, iade no, kupon kodu) ve `changes`.
-  Güncellemede yalnızca değişen alanlar (`{ alan: [eski, yeni] }`;
-  `changedFields`), oluşturmada kaydın ilk hali, silmede son hali.
-  Değişiklik yoksa hiçbir şey yazılmaz. Panel girişi ve çıkışı da yazılır
-  (`login`/`logout`, `users`, okunur ad yöneticinin e-postası). Sistemin
-  yaptığı iptal (süresi dolan havale) yazılmaz.
-- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-sales.ts`
-  (`useSalesActions`); demo modunda aynı işlemler tarayıcıdaki veriye
-  yazılır.
-- Test: `tests/db/panel-satis.test.ts` (ödeme, kargo, takip no düzeltme,
-  teslim, geçmişte yönetici, işlem kaydı; süresi dolan havale, iptal ve
-  kupon hakkı, iç not; okurken iptal; iade talebi; kupon oluşturma, biçim,
-  kod tekrarı, olmayan ürün, hatalı alan, düzenleme, aktif/pasif, silme,
-  kullanılmış kupon; aynı anda iki yönetici); `tests/e2e-db/panel-satis.spec.ts`
-  (tarayıcıda: oturumsuz ve başka siteden istek, kargoya verme ve teslim,
-  "kayıt değişti" uyarısı, iade talebi, kupon oluşturma, kod tekrarı,
-  pasife alma, silme, giriş ve çıkış kaydı).
+## 19. Kullanılmayan alanlar
 
-**Panel › Talepler (Aşama 5, 2. alan; KARARLAR K-99, K-100; `src/admin-requests.ts`):**
+Kayıtta ve tabloda bulunan ama bugün sitede de panelde de kullanılmayan
+alanlar.
 
-- **Okuma** (her sayfa kendi sunucu bileşeninde; yönetici oturumu
-  denetlenir): `readQuotesPanel`, `readServicePanel`, `readWarrantiesPanel`
-  (garantiler son değişiklik anıyla, üyeler), `readReviewsPanel` (bütün
-  yorumlar, onay bekleyenler dahil, son değişiklik anıyla),
-  `readDealerApplications`, `readSupportMessages`, `readWeldersClub`.
-  Ürün ve kategori adları sitenin önbellekteki katalogundan.
-- **Yazma:** `POST /api/yonetim/talepler/<işlem>`
-  (`apps/zenweld-web/src/app/api/yonetim/talepler/[islem]/route.ts`):
-  `teklif` (durum, atanan temsilci ya da iç not; istekte olmayan alan
-  değişmez), `teklif-sil` (satırlarıyla), `servis`, `garanti` (bitiş tarihi
-  ya da uzatılmış garanti; +12 ay kayıttaki güncel tarihten), `garanti-sil`,
-  `yorum-onay` (kaldırılan yorumun `featured`'ı da kalkar), `yorum-anasayfa`,
-  `yorum-sil`, `basvuru`, `mesaj`, `welders-club` (`left_at` doldurulur ya da
-  boşaltılır). Kurallar Satış ile aynı: oturum, kilit, `updated_at`
-  denetimi, `audit_log`.
-- **Anasayfa yorum sınırı:** İşaretleme sırayla yapılır (kilit); onaylı,
-  `featured` ve ürünü yayında yorumlar sayılır, 10'a ulaşınca reddedilir.
-- **Site önbelleği:** Yorum işlemleri başarılı olunca `refreshSite(["yorumlar"])`
-  çağrılır; ürün sayfası ve anasayfa şeridi hemen yenilenir. Teklif,
-  garanti ve servis kayıtları sitede önbelleksiz okunduğu için yenileme
-  gerekmez.
-- **Silinmeyen kayıtlar:** `dealer_applications`, `support_messages`,
-  `welders_club_signups` için silme işlemi yoktur (K-100).
-- **İşlem kaydı:** Yorum silinirken fotoğraf ve videolar `changes`'e
-  yazılmaz, yalnızca sayıları ("2 dosya").
-- Test: `tests/db/panel-talepler.test.ts` (teklifin alan alan kaydı ve
-  kendi kaydının ardından yeni anla ikinci kayıt, silme; servis; garanti
-  tarihi, geçersiz tarih, +12 ay, silme; yorum onayı, onaysız yorumun
-  anasayfaya alınmaması, anasayfa sınırı, silme; başvuru ve mesaj durumu;
-  Welders Club pasif/aktif); `tests/e2e-db/panel-talepler.spec.ts`
-  (tarayıcıda: menüdeki yeni ekranlar, teklif durumu ve hemen ardından not,
-  onaylanan yorumun ürün sayfasında hemen görünmesi, sitedeki bayilik
-  başvurusu ve ürün sorusunun panelde görünmesi, Welders Club, oturumsuz
-  istek).
+**Karar (2026-10-22, KARARLAR K-60):** Bu alanlar ileride kullanılmak üzere
+bırakıldı; silinmez.
 
-**Panel › Katalog, adım 3.1 ve 3.2 (Aşama 5, 3. alan; KARARLAR K-99, K-101; `src/admin-catalog.ts`):**
-
-- **Okuma:** `readCatalogPanel` katalogu önbelleksiz okur (panel her zaman
-  güncel kaydı görür): gruplar, kategoriler ve seçenek tanımları son
-  değişiklik anıyla, ürünler. Seçenek Tanımları, Kategoriler (liste,
-  kategori ve grup formları) ve Ürünler (liste, ürün formu) sayfaları bunu
-  kendi sunucu bileşeninde okur; Ürünler listesi Zenweld depo stoğunu da
-  (`readWarehouseStock`) okur. Yönetici oturumu denetlenir.
-- **Yazma:** `POST /api/yonetim/katalog/<işlem>`
-  (`apps/zenweld-web/src/app/api/yonetim/katalog/[islem]/route.ts`):
-  `secenek` (oluşturma ve düzenleme), `secenek-sil`, `kategori` (oluşturma
-  ve düzenleme), `kategori-sil`, `kategori-sira`, `grup` (oluşturma ve
-  düzenleme), `grup-sil`, `grup-sira`, `urun` (oluşturma ve düzenleme),
-  `urun-yayin`, `urun-sil`. Kurallar Satış ile aynı: oturum, kilit,
-  `updated_at` denetimi, `audit_log`. Başarılı her işlemden sonra
-  `refreshSite(["katalog"])` çağrılır; ürün işlemlerinde `stok` ve
-  `yorumlar` da (kaldırılan kombinasyonun stok satırları silinir; anasayfa
-  yorum şeridi yalnızca yayındaki ürünlerin yorumlarını gösterir).
-- **Kurallar demo moduyla aynı** (`packages/data` › `catalog-rules.ts`,
-  `filters.ts`): tanım adı tekil, değer adları tanımda tekil; üründe
-  kullanılan değer (`product_variant_values`) kaldırılamaz, tanım
-  (`product_options`) silinemez. Kategori linki sitede, grup linki
-  bölümünde tekil; ürünü olan kategori ve kategorisi olan grup silinemez.
-  Tekillik denetimi gerektiren kayıtlar (tanım, kategori, grup) sırayla
-  yapılır (`pg_advisory_xact_lock`). Ad ya da değerler yer değiştirirken
-  tekil indekse takılmamak için önce geçici adlar yazılır.
-- **Link değişince:** Kayıtlar kimlikle bağlı olduğu için yalnızca
-  `redirects`'e eski adres yazılır; kategori grubu değişince de. Grubun
-  linki değişince gruptaki her kategorinin eski adresi de yazılır. Yeni
-  adres başka bir kaydın eski adresiyse o satır silinir. Silinen kategori
-  ve grubun satırları da silinir.
-- **Filtreler:** Kayıtlı halle yeni hal karşılaştırılır; yalnızca
-  kaldırılan filtre ve değerler silinir (`product_filter_values` bağlantı
-  kuralıyla ürünlerden de kalkar), diğerleri güncellenir. Değeri kalkan
-  ürünlerin `updated_at`'i değişir. Eşleme tablosundan gelen ürünler
-  kilitlenir ve her birinin `updated_at`'i denetlenir; değişen ürünün
-  değerleri yazılır, işlem kaydına ayrı satır düşer. Değerlerin sırası
-  karşılaştırmada önemsizdir.
-- **Seçenek tanımı silinince** onu listeleyen kategorilerin `updated_at`'i
-  değişir (açık kategori formu silinen tanımı geri yazamaz).
-- **Sıra okları** `position`'ı 1, 2, 3… yapar; `updated_at` değişmez (sıra
-  kaydın içeriği sayılmaz). Değişen her satır işlem kaydına yazılır.
-- **Ürün kaydı:** Kurallar `packages/data` › `catalog-rules.ts`
-  (`productCodeError`, `optionsError`, `tidyOptions`) ve `discount.ts`
-  (`validateDiscount`). Ürün kayıtları sırayla yapılır (kilit): kod
-  (`sku_codes`) ve link tekilliği önce denetlenir. Düzenlemede ürünün
-  kombinasyonları ve seçenekleri silinip yeniden yazılır; böylece ürün ve
-  kombinasyon kodları yer değiştirebilir (tetikleyici kod havuzunu
-  günceller). Kombinasyonun silinmesi onun eski ayrı ürün linklerini de
-  sildiği için kalan kombinasyonlarınki kayıtlı halden geri yazılır. Link
-  değişince `/urun/<eski>` yeni adrese yönlenir. Filtre değerleri ürünün
-  (yeni) kategorisinin filtrelerine göre baştan yazılır. Kaldırılan
-  kombinasyonların (seçenek listesi değiştiyse hepsinin) `dealer_stock`,
-  `retailer_stock` ve `sku_aliases` satırları silinir; `variant_id` boş
-  olanlar kalır. Yeni ürün kategorisinin sonuna eklenir (Sıra boşsa).
-  Değişiklik yoksa hiçbir şey yazılmaz.
-- **Ürün silme:** Bağlı satırlar tablo kurallarıyla temizlenir
-  (`ON DELETE CASCADE` / `SET NULL`, yönlendirme tetikleyicisi). İşlem
-  kaydına ürünün son hali yazılır.
-- **Görsel:** Ürün görsellerinde ve kart görselinde tarayıcıda tutulan
-  dosya (`data:` adresi) reddedilir. Dosya deposu ayarlıysa panel görseli
-  önce depoya yükler, kayda `/dosya/gorsel/…` adresi gelir (K-108); değilse
-  adres girilir (K-101).
-- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-catalog.ts`
-  (`useCatalogActions`); demo modunda aynı işlemler tarayıcıdaki veriye
-  yazılır.
-- Test: `tests/db/panel-katalog.test.ts` (tanım oluşturma, ad tekrarı,
-  kullanılan değer, adların yer değiştirmesi, eski ekran; kullanılan tanımın
-  silinmemesi, silinen tanımın kategorilerden kalkması; yeni kategori, link
-  tekrarı, yüklenmiş görsel, olmayan grup ve tanım; link ve grup
-  değişince yönlendirme, kaldırılan filtre değeri, eşleme tablosu ve eski
-  ürün; değişmeyen ürünün kayıt anının korunması; silme engelleri, sıra;
-  grup linki değişince kategorilerin yönlendirmesi, bölümün değişmemesi,
-  grup silme ve sıra; yeni ürün, kod ve link tekrarı, yüklenmiş görsel,
-  olmayan kategori, hatalı kampanya ve fiyat; link değişince yönlendirme,
-  ürün ve kombinasyon kodlarının yer değiştirmesi, kaldırılan kombinasyonun
-  stoğu, eski ekran, değişmeyen kayıt; seçenek listesi ve kategori
-  değişince stok ve filtre değerleri; yayından kaldırma, silme ve bağlı
-  kayıtlar); `tests/e2e-db/panel-katalog.spec.ts` (tarayıcıda:
-  seçenek tanımı ekleme, hemen ardından düzenleme ve silme; kategori linki
-  değişince sitede eski adresin yönlenmesi ve yeni adın görünmesi, kapalı
-  görsel yükleme; grup ekleme ve silme, silme engeli, kategori silme; ürün
-  oluşturma, hemen ardından fiyat ve link değişikliği, sitede yeni fiyat ve
-  eski linkin yönlenmesi, yayından kaldırma, silme; oturumsuz istek).
-
-**Panel › Bayi ağı, adım 4.1 (Aşama 5, 4. alan; KARARLAR K-99, K-103; `src/admin-network.ts`):**
-
-- **Okuma** (her sayfa kendi sunucu bileşeninde; yönetici oturumu
-  denetlenir): `readDealersPanel` (bayiler son değişiklik anıyla, mağaza
-  seçimi için satıcılar), `readRetailersPanel` (satıcılar son değişiklik
-  anıyla, bayiler, ayarlar ve "N ürün sayfasında" sayısı için yalnızca
-  sitede görünebilecek stok satırları: adedi olan ve linkli; bayide yalnızca
-  online mağazası olanlar), `readSalesRepsPanel` (pasifler dahil, sırasıyla).
-- **Yazma:** `POST /api/yonetim/bayi-agi/<işlem>`
-  (`apps/zenweld-web/src/app/api/yonetim/bayi-agi/[islem]/route.ts`):
-  `bayi`, `bayi-sil`, `satici`, `satici-sil`, `temsilci`, `temsilci-durum`,
-  `temsilci-sira`, `temsilci-sil`. Kurallar Satış ile aynı: oturum, kilit,
-  `updated_at` denetimi, `audit_log`. Bayi ve satıcı işlemlerinden sonra
-  `refreshSite(["bayiler", "stok"])`, temsilci işlemlerinden sonra
-  `refreshSite(["icerik"])` çağrılır.
-- **Kurallar demo moduyla aynı** (`packages/data` › `network-rules.ts`):
-  bayi adı, şehri ve türü zorunlu; satıcı adı ve site adresi zorunlu;
-  temsilcide telefon en az 10 rakam, e-posta geçerli. Bayi kayıtları sırayla
-  yapılır (kilit); `dealers.retailer_id` tekilliği önce denetlenir.
-- **Silme:** Bayi ya da satıcı silinince stok satırları tablo kuralıyla,
-  `stock_imports` (kaynağın geçmişi) ve `sku_aliases` (kaynağın kod
-  eşleştirmeleri) sunucuda silinir. Satıcı silinince bağlı bayinin
-  `retailer_id`'si boşalır ve `updated_at`'i değişir. Silinen bayinin
-  `dealer_applications.dealer_id`'si tablo kuralıyla boşalır. İşlem kaydına
-  kaydın son hali ve silinen stok satırı sayısı yazılır.
-- **Temsilci:** Yeni temsilci listenin sonuna eklenir; sıra okları
-  `position`'ı 1, 2, 3… yapar, `updated_at` değişmez. Fotoğrafta yüklenmiş
-  dosya (`data:`) reddedilir (K-101).
-- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-network.ts`
-  (`useNetworkActions`); demo modunda aynı işlemler tarayıcıdaki veriye
-  yazılır.
-- Test: `tests/db/panel-bayi-agi.test.ts` (bayi kuralları, mağaza
-  tekilliği, olmayan mağaza, eski ekran, değişmeyen kayıt; bayi silinince
-  stok, geçmiş, eşleştirme ve başvuru bağlantısı; satıcı ekleme ve
-  düzenleme, ekranın okuduğu stok satırları ve ayar; satıcı silinince
-  bağlı bayi; temsilci kuralları, yüklenmiş fotoğraf, sitede göster/gizle,
-  sıra, silme); `tests/e2e-db/panel-bayi-agi.spec.ts` (tarayıcıda: bayi
-  ekleme, Bayi Bul'da hemen görünmesi, ad değişikliği, silme; satıcı ekleme
-  ve silme; temsilci fotoğrafında kapalı yükleme, sitede görünme ve
-  gizlenme, silme; oturumsuz istek).
-
-**Panel › Stok Matrisi, adım 4.2 ve 4.3 (Aşama 5, 4. alan; KARARLAR K-99, K-103; `src/admin-stock.ts`):**
-
-- **Okuma:** `readStockPanel(db, görünüm)` — sayfanın sunucu bileşeni
-  adresten görünümü seçer (`?kaynak=dealer:<id>`, `?sekme=urun`, liste);
-  yönetici oturumu denetlenir. Her görünümde bayiler, satıcılar, ayarlar
-  (stok ayarının `updated_at`'iyle), ürünler ve seçenek tanımları; ayrıca:
-  - liste: kaynak başına `count(*)`, adedi 0'dan büyük satır sayısı ve
-    `max(updated_at)` (satırların kendisi gönderilmez);
-  - kaynak sayfası: o kaynağın satırları, son 30 `stock_imports` kaydı
-    (geri alma kopyası `previous` gönderilmez, yalnızca var olduğu) ve
-    `sku_aliases`'ı;
-  - Ürün Bazında: aktif bayilerin ve bir bayiye bağlı olmayan aktif
-    satıcıların adedi 0'dan büyük satırları.
-- **Yazma:** `POST /api/yonetim/stok/<işlem>`
-  (`apps/zenweld-web/src/app/api/yonetim/stok/[islem]/route.ts`): `satir`
-  (elle düzeltme ya da satır ekleme), `satir-sil`, `ayar`, `dosya` (dosya
-  uygulama), `geri-al` (son yüklemeyi geri alma), `eslestir` (kod
-  eşleştirme). Kurallar Satış ile aynı: oturum, satır kilidi (FOR UPDATE),
-  `updated_at` denetimi, `audit_log` (`entity_type` = `dealer_stock` /
-  `retailer_stock`, `entity_id` = `<kaynak>/<ürün>|<seçenek>`; ayarda
-  `settings` / `stock`; dosya ve geri almada `stock_imports` / kayıt no;
-  eşleştirmede `sku_aliases` / `<kaynak>/<kod>`).
-  Başarılı işlemden sonra `refreshSite(["stok"])`; ayarda
-  `refreshSite(["katalog", "stok"])`.
-- **Elle düzeltme:** Demo ile aynı (`packages/store` › `setStockLevel`,
-  `deleteStockLevel`): adet tam sayı ve 0 ya da artı, fiyat 0 ya da artı
-  (iki ondalık), link `http(s)://` ile başlar ya da boş. Yeni satırın kodu
-  seçeneğin ya da ürünün kodudur. Her düzeltme `stock_imports`'a `manual`
-  kaydı (not, özet, yönetici adı) yazar; değişiklik yoksa hiçbir şey
-  yazılmaz. Bir bayiye bağlı online satıcı ayrı kaynak değildir; satırı
-  bayinin listesindedir.
-- **Ayar:** `settings` (`stock`) → `{ staleDays }`, 0–365.
-- **Dosya (`dosya`):** Dosyayı tarayıcı okur (CSV/XLSX) ve önizler; sunucuya
-  okunan tablo gider (satır × hücre; en fazla 20.000 satır, satırda 100
-  hücre, hücre metin/sayı/boş). Sunucu tabloyu aynı kurallarla
-  (`packages/data` › `readStockSheet`, `matchStockRows`, `diffStock`,
-  `looksTruncated`) veritabanındaki ürün ve seçenek kodları ve kaynağın
-  `sku_aliases`'ıyla yeniden eşleştirir. Dosyanın kendisi saklanmaz (dosya
-  deposu Aşama 6).
-  - Kaynak başına kilit (`pg_advisory_xact_lock`, `stock:<tür>:<id>`): aynı
-    kaynağa iki dosya aynı anda uygulanmaz.
-  - Eski ekran denetimi kaynak başınadır: tarayıcı önizlemenin dayandığı
-    stoğun anahtarını gönderir (`stockVersion`: son `stock_imports` kaydı,
-    satır sayısı, en yeni satırın `updated_at`'i); sunucu aynı anahtarı
-    tablodan hesaplar, farklıysa 409.
-  - Başlık yok, eşleşen ürün yok ya da `looksTruncated` ve onay yoksa 400
-    (ekrandaki metinlerle).
-  - Uygulama: `stock_imports`'a `file` kaydı (dosya adı, özet, yönetici
-    adı, `previous` = önceki satırlar), kaynağın satırları silinip
-    dosyadakiler yazılır (`import_id` = kayıt). Ardından son 5 dosya
-    yüklemesi dışındakilerin `previous`'ı boşaltılır; kayıtlar silinmez
-    (K-103).
-- **Geri alma (`geri-al`):** Yalnızca kaynağın en son kaydı olan, geri
-  alınmamış, `previous`'ı saklı `file` kaydı; değilse 409. Satırlar
-  `previous`'tan ilk `updated_at`'leriyle geri yazılır (`import_id` boş),
-  kayda `reverted_at` yazılır, `revert` kaydı ("<dosya> yüklemesi geri
-  alındı") eklenir.
-- **Kod eşleştirme (`eslestir`):** Kod boşluksuz ve büyük harfe çevrilir;
-  ürün ve seçenek var olmalı (yoksa 404). `sku_aliases`'a yazılır ya da
-  güncellenir; değişmediyse yazılmaz. Stok satırlarına dokunmaz.
-- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-stock.ts`
-  (`useStockActions`).
-- Test: `tests/db/panel-stok.test.ts` (görünümlerin okuduğu satırlar ve
-  özet sayılar, geri alma kopyasının gönderilmemesi; satır ekleme,
-  düzeltme, eski ekran, değişmeyen kayıt, geçersiz değer, bayiye bağlı
-  satıcı, olmayan seçenek, geçmiş notları; satır silme; stok ayarı; dosya:
-  sunucunun kendi eşleştirmesi, tam liste, önceki halin kaydı, işlem
-  kaydı, aynı önizlemeyle ikinci uygulama, başlıksız, eşleşmeyen, eski
-  ekran, geçersiz kaynak ve tablo, 20.000 satır sınırı, çok kısa dosya
-  onaysız ve onaylı, son 5 kopya; geri alma: yalnızca son yükleme, ilk
-  satır anları, geri alma kaydı, ikinci kez geri alma, kopyası olmayan ve
-  bulunmayan kayıt; kod eşleştirme: biçim, değişmeyen, güncelleme,
-  olmayan ürün/seçenek, sonraki dosyada tanınma);
-  `tests/e2e-db/panel-stok.spec.ts` (tarayıcıda: listede özet sayılar,
-  adet düzeltme ve hemen ardından geri alma, satır ekleme ve silme, stok
-  geçerlilik süresi, Ürün Bazında, oturumsuz istek);
-  `tests/e2e-db/panel-stok-dosya.spec.ts` (tarayıcıda: dosya önizleme,
-  tanınmayan kodu eşleştirme, uygulama, geri alma ve stoğun ilk haline
-  dönmesi; oturumsuz istek).
-
-**Panel › Mağaza Ayarları, adım 5.1 (Aşama 5, 5. alan; KARARLAR K-99, K-104; `src/admin-settings.ts`):**
-
-- **Okuma:** `readShopPanel(db)`: ayarlar (`readSettings`; mağaza ve
-  şirket ayarlarının `settings('shop'|'company').updated_at`'iyle; şirket
-  satırı yoksa başlangıç değerleri) ve `email_recipients`. Yönetici
-  oturumu denetlenir.
-- **Yazma:** `POST /api/yonetim/ayarlar/<işlem>`
-  (`apps/zenweld-web/src/app/api/yonetim/ayarlar/[islem]/route.ts`):
-  `magaza` (Kargo ve Ödeme sekmesi), `eposta-alicilari`, `sirket` (Şirket
-  ve İletişim sekmesi, adım 5.3).
-- **Kargo ve Ödeme:** Tek kayıt gibi kaydedilir; eski ekran denetimi
-  `settings('shop').updated_at`'iyle (her kayıtta güncellenir), aynı anda
-  iki kayıt `pg_advisory_xact_lock('settings:shop')` ile sıraya girer.
-  Kurallar tarayıcıyla ortak (`packages/data` › `settings-rules.ts` ›
-  `parseShopSettings`): tutarlar 0 ya da artı, ödeme süresi en az 1 tam
-  gün, en az bir kargo firması, hesapta banka adı ve IBAN, POS'ta etiket
-  ve ad, bilinen kart programı, taksit 2/3/6/9/12 (firma oranında ayrıca
-  tek çekim), oranlar 0 ya da artı, tek varsayılan POS; her listede en
-  fazla 50 kayıt. Değişmeyen hiçbir şey yazılmaz.
-  - `settings('shop')`: kargo sınırı ve ücreti, taksit alt sınırı, ödeme
-    süresi.
-  - `payment_pos`, `bank_accounts`: kimliğe göre; değişen satır yazılır,
-    listeden çıkan silinir (`orders.pos_id` boşalır, sipariş `pos_name` ve
-    komisyon kopyasını tutar). Varsayılan POS değişirken önce eskisinin
-    işareti kalkar (`payment_pos_one_default`).
-  - `carriers`: ada göre; kalan firmanın kimliği korunur, sırası ve
-    `tracking_url`'i ekrandaki gibi yazılır (adım 5.3, K-105); yeni ad
-    eklenir, çıkan silinir (`shipments.carrier_id` boşalır,
-    `carrier_name` kopyası kalır).
-  - `audit_log`: `settings` / `shop`; değişen alanlar (listelerde eski ve
-    yeni liste). Ardından `refreshSite(["katalog"])` (ayarlar katalogla
-    birlikte önbellektedir).
-- **Şirket ve İletişim (adım 5.3, K-105):** `settings('company')` tek
-  satır; yoksa eklenir. Eski ekran denetimi satırın `updated_at`'iyle (satır
-  yokken ekranın gördüğü an boş olmalı), sıra
-  `pg_advisory_xact_lock('settings:company')` ile. Kurallar tarayıcıyla
-  ortak (`parseCompanySettings`). Ofisler ve sosyal medya alan sırasından
-  bağımsız karşılaştırılır; değişmeyen kayıt yazılmaz. `audit_log`:
-  `settings` / `company`. Ardından `refreshSite(["katalog"])` (alt bilgi,
-  İletişim, sözleşmeler ayarları katalogla birlikte okur).
-- **E-posta Alıcıları:** `email_recipients`; tür başına en fazla 10 adres
-  (küçük harf, tekrarsız; `parseRecipients`). Eski ekran denetimi listenin
-  hali üzerinden (`recipientsVersion`: satır sayısı ve en son
-  `updated_at`), sıra `pg_advisory_xact_lock('email_recipients')` ile.
-  Alıcısı boşalan türün satırı silinir. `audit_log`: `email_recipients` /
-  `<tür>`, `{ recipients: [eski, yeni] }`. Önbelleğe girmez.
-- **E-posta gönderimi:** `apps/zenweld-web/src/lib/server/mail.ts` ›
-  `recipientsFor`: veritabanı modunda her e-postada türün satırı okunur
-  (`emailRecipientsFor`); satır yoksa ya da okunamazsa `SUPPORT_EMAIL`.
-  `email_log.recipients` gerçek alıcılardır.
-- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-settings.ts`
-  (`useSettingsActions`).
-- Test: `tests/db/panel-ayarlar.test.ts` (okuma; kaydetme: varsayılan
-  POS'un silinen ve kalan POS'a geçmesi, hesap ekleme/çıkarma, kargo
-  firmalarının ad eşleşmesi, takip adresinin korunması, girilmesi,
-  silinmesi ve kuralı, işlem kaydı; eski ekran, değişmeyen kayıt, kural
-  ihlalleri; e-posta alıcıları: türlerin şemayla aynı olması, ekleme,
-  değiştirme, boşaltma, e-postada okunma, eski ekran, geçersiz adres ve
-  tür; şirket ve iletişim: satır yokken başlangıç değerleri, ilk kayıt,
-  değişiklik, ofis sırası, eski ekran, değişmeyen kayıt, kural ihlali);
-  `tests/unit/magaza-ayarlari.test.ts` (kurallar, takip bağlantısı);
-  `tests/e2e-db/panel-ayarlar.spec.ts` (tarayıcıda: kargo ücretinin sitede
-  hemen geçerli olması ve geri alınması, Welders Club alıcısının e-posta
-  kaydına yazılması, oturumsuz istek); `tests/e2e-db/panel-sirket.spec.ts`
-  (MERSİS no sözleşmede ve telefon alt bilgide hemen görünür; kargo takip
-  adresi girilince müşteri ve panel sipariş detayında bağlantı; oturumsuz
-  istek).
-
-**Panel › İçerik, adım 5.2 (Aşama 5, 5. alan; KARARLAR K-99, K-101; `src/admin-content.ts`):**
-
-- **Okuma:** `readContentPanel(db)`: blog, haber, etkinlik ve SSS
-  (`updated_at`'leriyle) ve Hakkımızda. Haber, etkinlik ve blog
-  sayfalarının (liste, yeni, düzenleme) ve SSS ile Hakkımızda'nın sunucu
-  bileşeni okur (`apps/zenweld-web/src/components/admin/ContentPanelData.tsx`);
-  yönetici oturumu denetlenir.
-- **Yazma:** `POST /api/yonetim/icerik/<işlem>`
-  (`apps/zenweld-web/src/app/api/yonetim/icerik/[islem]/route.ts`):
-  `haber`, `haber-yayin`, `haber-sil`, `etkinlik`, `etkinlik-yayin`,
-  `etkinlik-sil`, `blog`, `blog-yayin`, `blog-sil`, `sss`, `sss-sil`,
-  `sss-sira`, `hakkimizda`. Kurallar Satış ile aynı: oturum, satır kilidi
-  (FOR UPDATE), `updated_at` denetimi, `audit_log` (`news`, `events`,
-  `blog_posts`, `faqs`, `about_page`). Başarılı işlemden sonra
-  `refreshSite(["icerik"])`.
-- **Haber, etkinlik, blog:** Kurallar tarayıcıyla ortak
-  (`packages/data` › `content-rules.ts`): başlık zorunlu; link bossa
-  başlıktan (`slugify`), boş kalırsa kaydedilmez; aynı link aynı türde iki
-  kayda verilmez (`pg_advisory_xact_lock('<tür>:slug')`); etkinlikte
-  bitiş başlangıçtan önce olamaz, tarihler `YYYY-AA-GG`; blogda yazar
-  boşsa "Zenweld". Link değişince `redirects`'e eski adres yazılır
-  (`src/links.ts` › `movePath`; yeni adres başka kaydın eski adresiyse o
-  yönlendirme kalkar); kayıt silinince yönlendirmelerini veritabanı siler
-  (`zw_delete_redirects`). Yüklenmiş görsel (`data:`) olan kayıt
-  reddedilir (K-101). Değişmeyen kayıt yazılmaz (SEO alanları aynı
-  biçimde karşılaştırılır).
-- **SSS:** Yeni soru listenin sonuna (`max(position) + 1`); konu `genel`,
-  `siparis`, `garanti`, `teknik`; sıra okları yalnızca `position`'ı
-  değiştirir, `updated_at`'e dokunmaz (`pg_advisory_xact_lock('faqs')`).
-- **Hakkımızda:** Tek satır (`about_page`, id 1); yoksa eklenir. Değeri
-  boş rakam kutusu yazılmaz; bölüm kimlikleri tekrarsız. JSON alanları
-  (`stats`, `sections`) formdaki alan sırasıyla karşılaştırılır.
-- Ortak link ve SEO kuralları katalogla aynı dosyada: `src/links.ts`
-  (`parseSeo`, `validSlug`, `movePath`, `releasePath`).
-- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-content.ts`
-  (`useContentActions`).
-- Test: `tests/db/panel-icerik.test.ts` (okuma; haber ekleme, link
-  çakışması, boş link, başlıksız; link değişince yönlendirme ve eski
-  adresin başka kayda verilmesi, eski ekran, değişmeyen kayıt; yüklenmiş
-  görsel, yayından kaldırma, silme ve yönlendirmenin kalkması; etkinlik
-  tarih kuralları ve boş site adresi; blog yazarı ve yönlendirme; SSS
-  ekleme, düzeltme, eski ekran, konu, silme, sıra; Hakkımızda: eski ekran,
-  başlıksız, yüklenmiş görsel, boş rakam kutusu, değişmeyen kayıt);
-  `tests/e2e-db/panel-icerik.spec.ts` (tarayıcıda: haber ekleme ve sitede
-  görünmesi, kapalı görsel yükleme, link değişince eski adresin yönlenmesi,
-  silme; SSS ekleme, sitede görünme, sıra, silme; Hakkımızda kaydı ve
-  hemen ardından geri alma; oturumsuz istek).
-
-**Panel › Yasal Metinler, Belgeler, Sayfa SEO ve Görünüm, adım 5.3 (Aşama 5, 5. alan; KARARLAR K-99, K-104; `src/admin-pages.ts`, `src/admin-settings.ts`):**
-
-- **Okuma:** `readPagesPanel(db)`: yasal metinler, belge sayfaları,
-  belgeler ve `page_seo` (`updated_at`'leriyle). Yasal Metinler (liste ve
-  düzenleme), Belgeler ve Sayfa SEO'nun sunucu bileşeni okur
-  (`apps/zenweld-web/src/components/admin/PagesPanelData.tsx`).
-  `readAppearancePanel(db)`: ayarlar, `rich_text` satırının
-  `updated_at`'iyle (Görünüm sayfası). Yönetici oturumu denetlenir.
-- **Yazma:** `POST /api/yonetim/icerik/<işlem>`: `yasal-metin`,
-  `sayfa-seo`, `belge-sayfasi`, `belge`, `belge-yayin`, `belge-sil`,
-  `belge-sira`; ardından `refreshSite(["icerik"])`.
-  `POST /api/yonetim/ayarlar/gorunum`; ardından `refreshSite(["katalog"])`
-  (ayarlar katalogla birlikte önbellektedir). Kurallar Satış ile aynı;
-  `audit_log`: `legal_pages`, `page_seo`, `document_pages`, `documents`,
-  `settings` / `rich_text`.
-- **Yasal metin:** Yalnızca var olan satır güncellenir (liste sabit);
-  başlık ve metin zorunlu (`content-rules.ts` › `legalDraftError`).
-- **Sayfa SEO:** Yalnızca Sayfa SEO ekranındaki (aramaya açık) sabit
-  sayfalar kaydedilir; liste sitenin sayfa tablosundan gelir
-  (`apps/zenweld-web/src/lib/page-meta.ts` › `isIndexablePage`, uç verir).
-  Satırı olmayan sayfada ekranın gördüğü an boş olmalı; iki alan da boşsa
-  satır silinir. Başlık en çok 200, açıklama 500 karakter. Sıra
-  `pg_advisory_xact_lock('page_seo:<yol>')` ile.
-- **Belge sayfası:** Satırı yoksa eklenir; başlık zorunlu.
-- **Belgeler:** Dosya yüklenmez, adres girilir (K-104): adres
-  `file_key`'e yazılır; `file_name` ve `mime_type` adresin son
-  parçasından (`documentFileFromAddress`), `size_bytes` 0. Yeni belgede
-  adres zorunlu; düzenlemede boşsa dosya alanları değişmez; bölüm
-  değişmez. Seçilen ürün `products`'ta olmalı; `lot_number` yalnızca
-  `parti-sertifikalari`'nda yazılır. Yeni belge `max(position) + 1`;
-  sıra okları yalnızca aynı bölümdeki belgeler arasında `position`'ı
-  değiştirir, `updated_at`'e dokunmaz (`pg_advisory_xact_lock('documents')`).
-- **Görünüm:** `settings` / `rich_text`; yalnızca bilinen dokuz alan
-  yazılır; renkler `#RRGGBB`, puntolar Görünüm ekranının aralığında
-  (`content-rules.ts` › `richTextStyleError`). Değişmeyen kayıt yazılmaz.
-- Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-pages.ts`
-  (`usePagesActions`), `admin-settings.ts` (`saveRichText`).
-- Test: `tests/db/panel-sayfalar.test.ts` (okuma; yasal metin: zorunlu
-  alanlar, eski ekran, değişmeyen kayıt, olmayan metin; sayfa SEO: ekleme,
-  değiştirme, boşalınca silinme, listede olmayan sayfa, silinmiş satıra
-  eski ekran; belge sayfası; belge: adresle ekleme, yanlış adres, `data:`
-  adresi, olmayan ürün, parti numarası, düzenleme, bölümün değişmemesi,
-  yayından kaldırma, silme, eski ekran, bölüm içinde sıra; Görünüm:
-  renk, punto, alan türleri, fazla alan, eski ekran);
-  `tests/unit/icerik-ve-belgeler.test.ts` (kurallar);
-  `tests/e2e-db/panel-sayfalar.spec.ts` (tarayıcıda: yasal metin ve sitede
-  görünmesi, sayfa başlığı ve varsayılana dönme, depoya yüklenen belge,
-  sitede görünme ve açılma, yayından kaldırma, silme; belge sayfası
-  açıklaması; Görünüm; oturumsuz istek).
-
-**Panel › Üyeler, adım 6.1 (Aşama 5, 6. alan; KARARLAR K-35, K-36, K-99; `src/admin-members.ts`):**
-
-- **Okuma:** `readMembersPanel`: `users`'ın bütün satırları (yöneticiler
-  dahil), en yeni kayıt önce; `password_hash` boş gönderilir, `updated_at`
-  ekranın gördüğü son değişiklik anıdır.
-- **Yazma:** `POST /api/yonetim/uyeler/<işlem>`
-  (`apps/zenweld-web/src/app/api/yonetim/uyeler/[islem]/route.ts`): `uye`
-  (`role`, `status`), `uye-sil`. Ortak akış ve eski ekran denetimi
-  Satış'takiyle aynı.
-- **Kurallar:** Yönetici kendi rolünü ve durumunu değiştiremez (400). Son
-  aktif yöneticinin rolü düşürülemez, askıya alınamaz (409). Yöneticiyle
-  ilgili değişiklikler sırayla yapılır: satır kilidinden önce
-  `pg_advisory_xact_lock(hashtext('users:admins'))` alınır; iki yönetici
-  aynı anda birbirini askıya alamaz. Yönetici hesabı silinmez (400).
-- **Silme:** `users` satırı silinir; `addresses`, `sessions`,
-  `favourites`, `password_reset_tokens` tablo kurallarıyla silinir;
-  `orders`, `quotes`, `service_requests`, `return_requests`, `warranties`,
-  `reviews`'daki `user_id` boşalır. `audit_log`'a üyenin son hali yazılır
-  (şifre özeti yazılmaz).
-- Rol ya da durum değişince oturum bir sonraki istekte geçersiz olur
-  (`readSession` her istekte rol ve durumu denetler).
-- Test: `tests/db/panel-uyeler.test.ts` (okuma, rol ve durum, değişmeyen
-  kayıt, eski ekran, kendi hesabı, son yönetici, silme ve kalan kayıtlar,
-  aynı anda iki yönetici); `tests/e2e-db/panel-uyeler.spec.ts` (rol, askıya
-  alma ve sitede giriş, aktifleştirme, silme, kendi satırı, oturumsuz
-  istek).
-
-**Panel › İşlem Kaydı ve E-posta Kaydı, adım 6.2 (Aşama 5, 6. alan; KARARLAR K-81, K-98, K-99; `src/admin-logs.ts`):**
-
-- Yalnızca okur: `readAuditLog` (`audit_log`), `auditLogFacets` (kayıtta
-  geçen türler ve yöneticiler; yöneticinin son kayıttaki adı),
-  `readEmailLog` (`email_log`). Sunucu sayfaları
-  (`app/yonetim/(panel)/islem-kaydi/page.tsx`, `e-posta-kaydi/page.tsx`)
-  süzgeçleri adresten okur (`tur`, `yonetici`, `islem`, `durum`,
-  `baslangic`, `bitis`, `ara`, `once`); geçerli panel oturumu yoksa sayfa
-  gönderilmez.
-- En yeni önce (`id` azalan), sayfa başına 50; bir fazlası okunup "daha
-  eski var mı" bulunur. Sonraki sayfa: `id < once`.
-- Tarih süzgeci Türkiye günüdür (UTC+3): başlangıç gününün 00:00'ından
-  bitiş gününün ertesi 00:00'ına kadar. Geçersiz tarih yok sayılır.
-- Metin araması `ILIKE` ile; `%` ve `_` harfiyen aranır. İşlem kaydında
-  kaydın adı, numarası ve yöneticinin adında; e-posta kaydında alıcılar,
-  yanıt adresi, konu ve kayıt numarasında.
-- Dizinler: `audit_log_at`, `audit_log_entity`, `email_log_type`.
-- Test: `tests/db/panel-kayitlar.test.ts` (sıra, süzgeçler, Türkiye günü,
-  `%`/`_`, sayfalama, süzgeç seçenekleri);
-  `tests/e2e-db/panel-kayitlar.spec.ts` (menü, girişin kayıtta görünmesi,
-  süzgeç adreste, e-posta kaydı satırı, oturumsuz açılmama).
-
-**Panel ana sayfası, adım 6.3 (Aşama 5, 6. alan; KARARLAR K-99; `src/admin-dashboard.ts`):**
-
-- `readDashboardPanel`: önce süresi dolan havale siparişleri iptal edilir
-  (`cancelExpiredTransfers`), sonra ana sayfanın verisi okunur: katalog
-  (ürün, kategori, grup), online satış stoğu (`readRetailersPanel`:
-  satıcılar, bağlı bayiler, sitede görünebilecek stok satırları, ayarlar),
-  `orders`, `quotes`, `users` (şifre özeti boş; adresler gönderilmez),
-  `service_requests`, `warranties`, haber ve etkinlikler. Sunucu sayfası
-  (`app/yonetim/(panel)/page.tsx`) veriyi ekrana verir; özet ve grafikler
-  tarayıcıda demo modundakiyle aynı kurallarla hesaplanır
-  (`apps/zenweld-web/src/lib/admin-stats.ts`).
-- Bugün kayıtların tamamı gönderilir; sipariş ve teklif sayısı büyüyünce
-  özetin sunucuda hesaplanması gerekir (YAPILACAKLAR).
-- Test: `tests/db/panel-ana-sayfa.test.ts` (okunan veri, süresi dolan
-  havale, şifre özeti); `tests/e2e-db/panel-ana-sayfa.spec.ts` (genel
-  durum kutularının veritabanı sayıları, yeni teklifin sayılması).
-
-**Okuma katmanı (`src/read.ts`):** Tablolardaki kayıtları sitenin bugün
-kullandığı kayıt yapısına (`packages/data` › `types.ts`) çevirir; örnek
-veriyi yazan `seed.ts`'in tersidir. Site ve panel böylece kendi kurallarını
-(`packages/data`, `packages/store`) değiştirmeden veritabanındaki veriyle
-çalışır.
-
-- Her kayıt türü ayrı fonksiyonla okunur: katalog (gruplar, kategoriler,
-  seçenekler, ürünler), bayiler, satıcılar, stok, depo stoğu, ayarlar,
-  üyeler, teklifler, siparişler, iadeler, kuponlar, servis/garanti/yorum,
-  içerik, kayıt numaraları. Site sayfaları yalnızca gerekenleri okur;
-  `readDatabase` hepsini birleştirir (panel ve test için).
-- Boş kolon alana yazılmaz; tarih-saatler ISO metin (UTC) olarak döner.
-- Silinmiş ürüne ya da üyeye bağlı kopya kayıtlarda (sipariş ve teklif
-  satırı, yorum, servis, garanti) kimlik boş metin (`""`) olur; ad ve kod
-  kopyası durur.
-- Kayıt verisinin bilerek farklı tutulduğu iki yer: eski blog yazısında
-  "yayında" alanı yoksa yayında sayılır; kupon kullanımının kimliği
-  veritabanında sıra numarasıdır.
-- Sorgular sırayla çalışır (işlem içinde tek bağlantı kullanılır).
-- Sitenin sayfaya özel okumaları: `readProductStock` (bir ürünün adedi
-  0'dan büyük bayi ve satıcı stok satırları; `dealer_stock_product` ve
-  `retailer_stock_product` dizinlerini kullanır) ve `readPublishedReviews`
-  (onaylı yorumlar: bir ürünün ya da anasayfada öne çıkanlar; onay
-  bekleyen siteye gitmez).
-- **Sitede kullanımı:** `apps/zenweld-web/src/lib/server/catalog.ts`.
-  Veritabanı modunda (`DATA_SOURCE=database`, KARARLAR K-88) katalog, depo
-  stoğu ve mağaza ayarları her sayfaya; bayiler, bayi ve satıcı stoğu ve
-  yorumlar yalnızca gereken sayfaya (ürün sayfası, Bayi Bul, anasayfa)
-  gider. Okunan veri 30 saniye önbellekte tutulur ve sayfalar 30 saniyede
-  bir yeniden hazırlanır (değişiklik en geç bir dakikada görünür). Pasif
-  bayi ve satıcılar ile satıcıların fiyatı tarayıcıya gönderilmez. Sayfanın
-  başlığı, yapısal verisi, site haritası ve derlemede hazırlanan sayfa
-  listesi de katalogdan üretilir. Tek önbellek kaydı en fazla 2 MB tutar;
-  bugün katalogun tamamı ~110 KB.
-- **Tarayıcıdaki kopya (Aşama 5.6):** Veritabanı modunda tarayıcının veri
-  kopyası (`packages/store/src/database.ts`) boş başlar; bütün kayıtlar
-  sunucudan gelir. Kopya tarayıcı deposuna (`zenweld.db.v1`) yazılmaz,
-  aynı adreste daha önce çalışmış demodan kalan kopya silinir. Ayar
-  derlemede tarayıcı paketine de yazılır (`NEXT_PUBLIC_DATA_SOURCE`,
-  `next.config.mjs`); örnek veri (`packages/data/src/seed/`) pakete girmez.
-  `@zenweld/data` paketi yan etkisiz işaretlidir (`"sideEffects": false`):
-  kullanılmayan örnek veri dosyaları derlemede atılır.
-- İçerik (`readContent`; `apps/zenweld-web/src/lib/server/content.ts`):
-  blog, haber, etkinlik, SSS, yasal metinler, Hakkımızda, satış
-  temsilcileri, belge sayfaları ve `page_seo`. Her sayfada kullanılan
-  kısım (alt bilgideki yasal linkler, aramadaki blog/haber/etkinlik, SSS,
-  sayfa başlıkları) sayfa çerçevesiyle gider; yasal metnin ve blog
-  yazısının gövdesi, Hakkımızda, temsilciler, belgeler ve sipariş
-  sözleşmeleri yalnızca kendi sayfasına. Yayından kaldırılan kayıtlar ve
-  pasif temsilciler tarayıcıya gitmez. Sabit sayfaların başlığı
-  `lib/server/page-metadata.ts` ile `page_seo`'dan okunur.
-- **Yenileme:** Okunan her veri bir önbellek etiketiyle saklanır
-  (`lib/server/tags.ts`: katalog, depo-stogu, stok, bayiler, yorumlar,
-  icerik). Bir kayıt değişince `lib/server/refresh.ts` › `refreshSite`
-  ilgili etiketi geçersiz kılar; o veriyi kullanan sayfalar bir sonraki
-  ziyarette veritabanından yeniden hazırlanır. Bugün `/api/yenile` ucu ve
-  `npm run site:yenile` kullanır (`REVALIDATE_SECRET`); ileride panel
-  kaydı ve SAP stok okuma işi. Veritabanına ulaşılamazsa hata mesajı
-  hangi okumanın başarısız olduğunu söyler; yayındaki sayfalar son
-  hazırlanmış haliyle gösterilmeye devam eder.
-- Test (`tests/db/okuma.test.ts`): örnek veri yazılıp geri okununca, kayıt
-  türü başına birebir aynı çıkar (gidiş-dönüş); katalog ve mağaza ayarları
-  tek başına da okunur; ürün stoğu yalnızca o ürünün stoktaki satırlarını,
-  yorumlar yalnızca onaylıları döndürür.
+| Alan | Durum |
+|---|---|
+| `categories.code`, `category_groups.code` | Örnek veride kategori tablosundaki numara ("1.2.3"); ekranda yok |
+| `categories.icon` | Hiçbir kayıtta dolu değil |
+| `dealers.email` | Örnek veride dolu; sitede gösterilmiyor, panelde girilemiyor |
+| `retailers.logo_url` | Logo yerine `logo_text` kullanılıyor |
+| `quote_items.note` | Satır notu; ekranda yok |
+| `products.processes` | Kullanılıyor (Ürün Seçici, arama) ama panelde girilemiyor; bkz. [WEBSITE-KULLANIM.md › Bilinen durumlar](WEBSITE-KULLANIM.md#25-bilinen-durumlar) |

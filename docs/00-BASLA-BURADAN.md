@@ -82,15 +82,14 @@ Diğer temel bilgiler:
 | 1 | **00-BASLA-BURADAN.md** (bu dosya) | Genel bakış, sözlük, okuma sırası |
 | 2 | [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md) | Sitenin her sayfası ve özelliği |
 | 3 | [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md) | Yönetim panelinin her ekranı |
-| 4 | [VERI-MODELI.md](VERI-MODELI.md) | Saklanan bütün kayıtlar, alanları, birbirleriyle bağlantıları ve silme kuralları |
-| 5 | [VERITABANI.md](VERITABANI.md) | Sunucu veritabanının (PostgreSQL) tabloları ve kolonları |
-| 6 | [IS-KURALLARI.md](IS-KURALLARI.md) | Hesaplar ve kurallar: fiyat, KDV, kampanya, taksit, stok, ürün kodları, linkler, durum akışları, e-postalar |
-| 7 | [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) | Dış sistemler: ödeme, e-posta, harita, barındırma, çerez onayı, güvenlik başlıkları; gerekli ayarların adları |
-| 8 | [STOK.md](STOK.md) | Bayi ve satıcı stok dosyalarının biçimi, eşleşme kuralları, backend'e geçiş |
-| 9 | [KARARLAR.md](KARARLAR.md) | Alınan kararlar ve nedenleri |
-| 10 | [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) | Bir özelliğin doğru çalıştığını doğrulamak için madde madde test listesi |
-| 11 | [YAPILACAKLAR.md](YAPILACAKLAR.md) | Sonraya bırakılan işler ve backend'e geçiş notları |
-| 12 | [CANLIYA-CIKIS-SORULARI.md](CANLIYA-CIKIS-SORULARI.md) | Canlıya çıkmadan şirketteki kişilere (BT, SAP danışmanı, muhasebe, hukuk, kargo, ödeme kuruluşu) sorulacaklar |
+| 4 | [VERITABANI.md](VERITABANI.md) | Saklanan bütün kayıtlar: tablolar, alanlar, birbirleriyle bağlantıları, benzersiz alanlar ve silme kuralları |
+| 5 | [IS-KURALLARI.md](IS-KURALLARI.md) | Hesaplar ve kurallar: fiyat, KDV, kampanya, taksit, stok, ürün kodları, linkler, durum akışları, e-postalar |
+| 6 | [SUNUCU.md](SUNUCU.md) | Sunucunun işleyişi ve dış bağlantılar: ödeme, e-posta, SAP, dosya deposu, harita, barındırma, güvenlik başlıkları, ortam değişkenleri, panel işlemleri, komutlar |
+| 7 | [STOK.md](STOK.md) | Bayi ve satıcı stok dosyalarının biçimi, eşleşme kuralları, backend'e geçiş |
+| 8 | [KARARLAR.md](KARARLAR.md) | Alınan kararlar ve nedenleri |
+| 9 | [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) | Bir özelliğin doğru çalıştığını doğrulamak için madde madde test listesi |
+| 10 | [YAPILACAKLAR.md](YAPILACAKLAR.md) | Sonraya bırakılan işler ve backend'e geçiş notları |
+| 11 | [CANLIYA-CIKIS-SORULARI.md](CANLIYA-CIKIS-SORULARI.md) | Canlıya çıkmadan şirketteki kişilere (BT, SAP danışmanı, muhasebe, hukuk, kargo, ödeme kuruluşu) sorulacaklar |
 | — | [README.md](../README.md) (proje kökünde) | Teknik başlangıç: kurulum, çalıştırma, demo hesaplar, proje yapısı |
 | — | [CLAUDE.md](../CLAUDE.md) (proje kökünde) | Bu projede çalışan Claude oturumları için çalışma kuralları |
 
@@ -139,7 +138,7 @@ IS-KURALLARI'nda yazar.
 Bu bölüm, siteyi yeniden kuracak yazılım projesine (ör. Claude Code) verilecek
 talimattır.
 
-1. **Okuma:** Dosyaları yukarıdaki sırayla okuyun. Önce VERI-MODELI ve
+1. **Okuma:** Dosyaları yukarıdaki sırayla okuyun. Önce VERITABANI ve
    IS-KURALLARI'nı anlamadan ekran yapmaya başlamayın; ekranlar bu kurallara
    dayanır.
 2. **Tasarım bağlayıcı değildir:** Renk, yerleşim ve yazı tipi serbesttir.
@@ -154,7 +153,7 @@ talimattır.
 5. **Demo ile canlı ayrımına dikkat:** Dosyalarda "Demo notu" ile işaretli
    yerler bugünkü demonun sınırlarıdır (ör. verinin tarayıcıda durması).
    Yeni kurulum gerçek bir backend ile yapılacaksa
-   [YAPILACAKLAR.md](YAPILACAKLAR.md) ve [VERI-MODELI.md](VERI-MODELI.md)'deki
+   [YAPILACAKLAR.md](YAPILACAKLAR.md) ve [SUNUCU.md](SUNUCU.md)'deki
    backend notları esas alınır.
 6. **Örnek içerik gerçek değildir:** Lorem ipsum metinler, "doğrulanmalı"
    diye işaretli ürün teknik bilgileri, demo bayi ve satıcılar örnektir.

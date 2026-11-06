@@ -5,7 +5,7 @@ import { database, usesDatabase } from "@/lib/server/db";
 
 /**
  * SIPARISLERIN SAP'A AKTARIM UCU (KARARLAR K-84, K-108;
- * docs/ENTEGRASYONLAR.md › 9 › Zamanlanmis isler)
+ * docs/SUNUCU.md › 3 › Zamanlanmis isler)
  *
  * Sunucunun zamanlayicisi birkac dakikada bir POST ile cagirir; npm run
  * sap:siparis elle cagirir. Yalnizca sunucudaki gizli anahtarla

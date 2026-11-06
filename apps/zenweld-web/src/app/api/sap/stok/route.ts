@@ -5,7 +5,7 @@ import { database, usesDatabase } from "@/lib/server/db";
 import { refreshSite } from "@/lib/server/refresh";
 
 /**
- * SAP DEPO STOGU OKUMA UCU (KARARLAR K-84; docs/ENTEGRASYONLAR.md › 9 ›
+ * SAP DEPO STOGU OKUMA UCU (KARARLAR K-84; docs/SUNUCU.md › 3 ›
  * Zamanlanmis isler)
  *
  * Sunucunun zamanlayicisi 15 dakikada bir POST ile cagirir; npm run

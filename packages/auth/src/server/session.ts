@@ -5,7 +5,7 @@ import type { PgDatabase } from "drizzle-orm/pg-core";
 import { schema } from "@zenweld/db";
 
 /**
- * OTURUMLAR (yalnizca sunucu; KARARLAR K-94, docs/VERITABANI.md › 14 ›
+ * OTURUMLAR (yalnizca sunucu; KARARLAR K-94, docs/SUNUCU.md › 7 ›
  * Sifre ve oturum)
  *
  * - Oturum anahtari 32 rastgele bayttir; tarayiciya yalnizca sunucunun

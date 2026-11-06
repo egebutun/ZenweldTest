@@ -23,7 +23,7 @@ import { closePool, inTransaction, user } from "./ortak";
 
 /*
  * Sifre ozeti, oturumlar ve uyelik islemleri (packages/auth/src/server;
- * KARARLAR K-94, docs/VERITABANI.md › 14 › Sifre ve oturum). Her test kendi isleminde
+ * KARARLAR K-94, docs/SUNUCU.md › 7 › Sifre ve oturum). Her test kendi isleminde
  * calisir ve sonunda geri alinir.
  */
 

@@ -33,7 +33,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 10. [Teklif Al](#10-teklif-al)
 11. [Formlar ve e-posta](#11-formlar-ve-e-posta)
 12. [Garanti](#12-garanti)
-13. [İçerik sayfaları, belgeler ve yasal metinler](#13-içerik-sayfaları-belgeler-ve-yasal-metinler)
+13. [İçerik sayfaları, belgeler ve yasal metinler](#13-i̇çerik-sayfaları-belgeler-ve-yasal-metinler)
 14. [Arama motorları ve adresler](#14-arama-motorları-ve-adresler)
 15. [Panel: giriş ve çerçeve](#15-panel-giriş-ve-çerçeve)
 16. [Panel: satış](#16-panel-satış)

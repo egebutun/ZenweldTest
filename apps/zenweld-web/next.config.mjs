@@ -8,7 +8,7 @@ const isDev = process.env.NODE_ENV === "development";
  * Tarayiciya sayfanin hangi kaynaklardan kod, gorsel, cerceve
  * yukleyebilecegini soyler. Siteye yeni bir dis servis (analiz kodu,
  * video, harita, odeme sayfasi) eklenirse adresi buraya da yazilmalidir;
- * yazilmazsa tarayici o servisi engeller (bkz. docs/ENTEGRASYONLAR.md).
+ * yazilmazsa tarayici o servisi engeller (bkz. docs/SUNUCU.md).
  *
  * - script-src: Next.js sayfa verisini satir ici <script> ile yazar;
  *   sayfalar onceden uretildigi (SSG) icin her istege ozel anahtar (nonce)

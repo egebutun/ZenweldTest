@@ -7,7 +7,7 @@ import { TEMSILI_ODEME, type PaymentProvider } from "@zenweld/db";
  * ayari belirler (bos: "temsili"). Odeme kurulusu secilince onun parcasi
  * packages/db/src/payment.ts'teki arayuzle yazilip asagidaki listeye
  * eklenir; kurulusun anahtarlari yalnizca sunucuda ortam degiskeni olur
- * (docs/ENTEGRASYONLAR.md › 3).
+ * (docs/SUNUCU.md › 8 › Kartla odeme).
  */
 const PROVIDERS: Record<string, PaymentProvider> = {
   temsili: TEMSILI_ODEME,
