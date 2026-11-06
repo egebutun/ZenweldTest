@@ -1,15 +1,18 @@
 "use client";
 
 import {
-  defaultSettings,
   diffStock,
+  isDealerStore,
   isInStock,
   normalizeCode,
+  onlineStock,
   stockKey,
+  stockSettingsOf,
   stockSourceStatus,
   summarizeImport,
   type MatchedStockFile,
   type Retailer,
+  type RetailerInStock,
   type SkuAlias,
   type StockImport,
   type StockImportSummary,
@@ -63,15 +66,12 @@ function replaceStock(db: ZenweldDatabase, type: StockSourceType, id: string, ro
   }
 }
 
-/** Online saticisi bir bayiye bagli mi (stogu bayinin dosyasindan gelir) */
-const isDealerStore = (retailerId: string, db: ZenweldDatabase) => db.dealers.some((d) => d.retailerId === retailerId);
-
 /* ------------------------------------------------------------------ */
 /* Ayar                                                                */
 /* ------------------------------------------------------------------ */
 
 export function getStockSettings(db: ZenweldDatabase = getSnapshot()): StockSettings {
-  return { ...defaultSettings.stock, ...(db.settings?.stock ?? {}) };
+  return stockSettingsOf(db);
 }
 
 export function saveStockSettings(stock: StockSettings): void {
@@ -83,44 +83,6 @@ export function saveStockSettings(stock: StockSettings): void {
 /* ------------------------------------------------------------------ */
 /* Site: urun sayfasi                                                  */
 /* ------------------------------------------------------------------ */
-
-export interface RetailerInStock {
-  retailer: Retailer;
-  stock: StockRow;
-}
-
-/**
- * Sitede online satici kartinda gorunen satirlar: adet > 0, guncel ve
- * linki olan. Saticinin kendi listesinden ya da online magazasi olan
- * bayinin listesinden gelir.
- */
-function onlineStock(
-  db: ZenweldDatabase,
-  now: number,
-  filter: { productId?: string; retailerId?: string },
-): RetailerInStock[] {
-  const { staleDays } = getStockSettings(db);
-  const visible = (row: StockRow) =>
-    (!filter.productId || row.productId === filter.productId) && Boolean(row.url) && isInStock(row, staleDays, now);
-  const activeRetailer = (id?: string) => db.retailers.find((r) => r.id === id && r.active);
-
-  const result: RetailerInStock[] = [];
-  db.retailerStock.forEach((row) => {
-    if (!visible(row) || isDealerStore(row.retailerId, db)) return;
-    const retailer = activeRetailer(row.retailerId);
-    if (retailer) result.push({ retailer, stock: row });
-  });
-  db.dealers
-    .filter((d) => d.active && d.retailerId)
-    .forEach((dealer) => {
-      const retailer = activeRetailer(dealer.retailerId);
-      if (!retailer) return;
-      db.dealerStock.forEach((row) => {
-        if (row.dealerId === dealer.id && visible(row)) result.push({ retailer, stock: row });
-      });
-    });
-  return filter.retailerId ? result.filter((r) => r.retailer.id === filter.retailerId) : result;
-}
 
 /**
  * Urunu stokta tutan (adet > 0, guncel, linkli) aktif online saticilar;
@@ -281,11 +243,6 @@ export function stockHistory(type: StockSourceType, id: string, db: ZenweldDatab
 export function revertableImport(type: StockSourceType, id: string, db: ZenweldDatabase = getSnapshot()) {
   const last = stockHistory(type, id, db)[0];
   return last && last.kind === "file" && !last.revertedAt && last.previous ? last : undefined;
-}
-
-/** Hicbir online saticida stokta (adet > 0, guncel) gorunmeyen aktif urunler. */
-export function productsWithoutOnlineStock(db: ZenweldDatabase = getSnapshot(), now: number = Date.now()) {
-  return db.products.filter((p) => p.active && retailersInStockFor(p.id, db, now).length === 0);
 }
 
 export interface SourcedStockRow extends StockRow {

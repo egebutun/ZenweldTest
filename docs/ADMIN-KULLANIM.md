@@ -292,6 +292,7 @@ Adres: `/yonetim`. Başlık: "Panel — Satış, teklif ve müşteri özetleri."
 - Seçenekler: Bugün / Son 7 gün / Son 30 gün (varsayılan) / Son 90 gün.
 - Seçim tarayıcıda hatırlanır ve bütün grafikleri sınırlar.
 - Kırılım: Bugün saatlik, 7 ve 30 gün günlük, 90 gün haftalık.
+- Günler Türkiye saatiyle 00:00'da başlar.
 - Değişim yüzdeleri bir önceki eşit dönemle karşılaştırılır; önceki dönemin
   yalnızca **aynı saatine kadarki** kısmı sayılır. Örneğin bugün 09:00'da
   "Bugün" seçiliyse dünün 00:00–09:00 arası alınır; süren gün tam bir günle
@@ -364,14 +365,14 @@ yalnızca ana sitenin kayıtlarıdır; bayi kayıtları sayılmaz.
   yalnızca demo modunda ve `db:seed` ile kurulan bilgisayar veritabanında
   vardır; canlıya ve deneme veritabanına hiç yüklenmez (KARARLAR K-91).
 
-**Veritabanı modunda:** Ana sayfa her açılışta veriyi sunucudan okur:
-siparişler, teklifler, üyeler (yöneticiler sayılmaz; şifre bilgisi
-gelmez), servis talepleri, garanti kayıtları, ürünler ve kategoriler,
-online satış stoğu, haber ve etkinlikler (KARARLAR K-99). Okumadan önce
-ödeme süresi dolan havale siparişleri sunucuda iptal edilir. Kutular,
-grafikler ve listeler demo modundakiyle aynı kurallarla hesaplanır; sitede
-verilen yeni sipariş, teklif ya da açılan üyelik sayfa yenilenince
-sayılara eklenir. Dönem seçimi yine bu tarayıcıda hatırlanır.
+**Veritabanı modunda:** Kutular, grafikler ve listeler her açılışta
+sunucuda, demo modundakiyle aynı kurallarla hesaplanır; tarayıcıya
+yalnızca ekranda görünen sonuç gelir (siparişlerin, üyelerin kendileri
+gelmez). Hesaptan önce ödeme süresi dolan havale siparişleri sunucuda
+iptal edilir. Dönem değişince sunucu yeniden hesaplar; sonuç gelene kadar
+grafikler soluk görünür. Sitede verilen yeni sipariş, teklif ya da açılan
+üyelik sayfa yenilenince sayılara eklenir. Dönem seçimi yine bu tarayıcıda
+hatırlanır.
 
 ---
 

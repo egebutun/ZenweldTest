@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
-import { useDatabase, useNow } from "@zenweld/store";
 import { formatPrice } from "@zenweld/utils";
-import { RANGES, dashboardStats, makeRange, type RangeKey } from "@/lib/admin-stats";
+import { RANGES, type DashboardSummary, type RangeKey } from "@/lib/admin-stats";
 import {
   BarList,
   ChartCard,
@@ -19,43 +17,28 @@ import {
   formatPercent,
 } from "./charts";
 
-const RANGE_KEY = "zenweld.admin.range";
-
 /**
  * PANEL ANA SAYFASI — SATIS VE MUSTERI GRAFIKLERI
  *
- * Ustteki tarih secimi asagidaki her seyi ayni donemle sinirlar.
- * Secim bu tarayicida hatirlanir.
+ * Ustteki tarih secimi asagidaki her seyi ayni donemle sinirlar. Hesap
+ * lib/admin-stats.ts'te yapilir (veritabani modunda sunucuda); bu bilesen
+ * yalnizca sonucu cizer. pending: yeni secimin sonucu bekleniyor.
  */
-export function DashboardCharts() {
-  const db = useDatabase();
-  const now = useNow();
-  const [rangeKey, setRangeKey] = useState<RangeKey>("30");
-
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(RANGE_KEY) as RangeKey | null;
-      if (saved && RANGES.some((r) => r.key === saved)) setRangeKey(saved);
-    } catch {
-      /* depolama kapali: varsayilan 30 gun */
-    }
-  }, []);
-
-  const choose = (key: RangeKey) => {
-    setRangeKey(key);
-    try {
-      window.localStorage.setItem(RANGE_KEY, key);
-    } catch {
-      /* yok sayilir */
-    }
-  };
-
-  const range = useMemo(() => makeRange(rangeKey, now), [rangeKey, now]);
-  const s = useMemo(() => dashboardStats(db, range), [db, range]);
+export function DashboardCharts({
+  summary,
+  onChoose,
+  pending = false,
+}: {
+  summary: Pick<DashboardSummary, "range" | "charts">;
+  onChoose: (key: RangeKey) => void;
+  pending?: boolean;
+}) {
+  const { range, charts: s } = summary;
+  const rangeKey = range.key;
   const { bins } = range;
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 transition-opacity ${pending ? "opacity-60" : ""}`} aria-busy={pending}>
       {/* Tarih secimi: asagidaki tum grafikleri kapsar */}
       <div className="flex flex-wrap items-center gap-2">
         <div role="radiogroup" aria-label="Tarih aralığı" className="grid w-full grid-cols-4 rounded-[4px] border border-zw-grey-300 bg-white p-0.5 sm:inline-flex sm:w-auto">
@@ -64,7 +47,7 @@ export function DashboardCharts() {
               key={r.key}
               role="radio"
               aria-checked={rangeKey === r.key}
-              onClick={() => choose(r.key)}
+              onClick={() => onChoose(r.key)}
               className={`whitespace-nowrap rounded-[3px] px-2 py-1.5 text-sm font-semibold transition-colors sm:px-3 ${
                 rangeKey === r.key ? "bg-zw-ink text-white" : "text-zw-grey-600 hover:bg-zw-grey-100 hover:text-zw-ink"
               }`}

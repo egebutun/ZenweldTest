@@ -1356,15 +1356,25 @@ ekranlar boştur (K-109).
   (ürün, kategori, grup), online satış stoğu (`readRetailersPanel`:
   satıcılar, bağlı bayiler, sitede görünebilecek stok satırları, ayarlar),
   `orders`, `quotes`, `users` (şifre özeti boş; adresler gönderilmez),
-  `service_requests`, `warranties`, haber ve etkinlikler. Sunucu sayfası
-  (`app/yonetim/(panel)/page.tsx`) veriyi ekrana verir; özet ve grafikler
-  tarayıcıda demo modundakiyle aynı kurallarla hesaplanır
-  (`apps/zenweld-web/src/lib/admin-stats.ts`).
-- Bugün kayıtların tamamı gönderilir; sipariş ve teklif sayısı büyüyünce
-  özetin sunucuda hesaplanması gerekir ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
-- Test: `tests/db/panel-ana-sayfa.test.ts` (okunan veri, süresi dolan
-  havale, şifre özeti); `tests/e2e-db/panel-ana-sayfa.spec.ts` (genel
-  durum kutularının veritabanı sayıları, yeni teklifin sayılması).
+  `service_requests`, `warranties`, haber ve etkinlikler. Bu kayıtlar
+  tarayıcıya gitmez.
+- Sunucu sayfası (`app/yonetim/(panel)/page.tsx`) dönemi `zw_panel_aralik`
+  çerezinden okur (yoksa 30 gün) ve özeti, grafikleri, listeleri sunucuda
+  hesaplar: `dashboardSummary` (`apps/zenweld-web/src/lib/admin-stats.ts`).
+  Demo modunda aynı fonksiyon tarayıcıda çalışır. Günler Türkiye saatiyle
+  başlar (sunucu UTC'de çalışsa da). Tarayıcıya yalnızca sonuç gider:
+  sayılar, grafik noktaları, stoğu olmayan ilk 12 ürünün adı, son 5 teklif
+  (kod, firma ya da yetkili, tarih) ve son 5 sipariş (kod, müşteri adı,
+  tutar).
+- Dönem değişince tarayıcı çerezi yazar ve sayfayı sunucuda yeniden
+  hesaplatır (`router.refresh`).
+- Test: `tests/unit/panel-ozeti.test.ts` (Türkiye günü, sonuçta e-posta,
+  telefon, adres olmaması); `tests/db/panel-ana-sayfa.test.ts` (okunan
+  veri, süresi dolan havale, şifre özeti);
+  `tests/e2e-db/panel-ana-sayfa.spec.ts` (genel durum kutularının
+  veritabanı sayıları, yeni teklifin sayılması, dönem değişince sunucunun
+  yeniden hesaplaması, sayfada sipariş ve üye listesinin olmaması);
+  demo modunda `tests/e2e/panel-ana-sayfa.spec.ts` (dönem seçimi).
 
 ---
 

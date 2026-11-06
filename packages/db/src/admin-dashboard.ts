@@ -4,20 +4,35 @@ import { readRetailersPanel } from "./admin-network";
 import { cancelExpiredTransfers } from "./orders";
 import { readCatalog, readContent, readOrders, readQuotes, readServiceRequests, readUsers, readWarranties } from "./read";
 
+export type DashboardRecords = Pick<
+  ZenweldDatabase,
+  | "products"
+  | "categories"
+  | "categoryGroups"
+  | "retailers"
+  | "dealers"
+  | "retailerStock"
+  | "dealerStock"
+  | "settings"
+  | "orders"
+  | "quotes"
+  | "users"
+  | "serviceRequests"
+  | "warranties"
+  | "events"
+  | "news"
+>;
+
 /**
- * PANEL ANA SAYFASI SUNUCUDA (veritabani modu; Asama 5, 6. alan, adim 6.3;
- * KARARLAR K-99)
+ * PANEL ANA SAYFASI SUNUCUDA (veritabani modu; KARARLAR K-99)
  *
- * Ana sayfanin ozet kutulari, listeleri ve grafikleri demo modundakiyle
- * ayni kurallarla tarayicida hesaplanir (apps/zenweld-web › lib/admin-stats.ts);
- * veriyi buradan alir. Once suresi dolan havale siparisleri iptal edilir
- * (ciroda ve "islem bekliyor"da sayilmasin). Uyelerin sifre ozeti ve
- * adresleri gonderilmez.
- *
- * Bugun siparis, teklif, uye, servis ve garanti kayitlarinin tamami gider;
- * kayit sayisi buyuyunce ozet sunucuda hesaplanmali (YAPILACAKLAR).
+ * Ana sayfanin hesabinda kullanilan kayitlar. Ozet, grafikler ve listeler
+ * sunucuda hesaplanir (apps/zenweld-web › lib/admin-stats.ts ›
+ * dashboardSummary); bu kayitlar tarayiciya gitmez, yalnizca sonuc gider.
+ * Once suresi dolan havale siparisleri iptal edilir (ciroda ve "islem
+ * bekliyor"da sayilmasin).
  */
-export async function readDashboardPanel(db: AuditDb, at: Date): Promise<Partial<ZenweldDatabase>> {
+export async function readDashboardPanel(db: AuditDb, at: Date): Promise<DashboardRecords> {
   await cancelExpiredTransfers(db, at);
   const catalog = await readCatalog(db);
   const network = await readRetailersPanel(db);
@@ -35,6 +50,7 @@ export async function readDashboardPanel(db: AuditDb, at: Date): Promise<Partial
     settings: network.settings,
     orders: await readOrders(db),
     quotes: await readQuotes(db),
+    // Sifre ozeti hesapta kullanilmaz.
     users: users.map((u) => ({ ...u, passwordHash: "" })),
     serviceRequests: await readServiceRequests(db),
     warranties: await readWarranties(db),

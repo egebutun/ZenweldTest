@@ -1631,7 +1631,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 | `zenweld.quotelist.v1` | localStorage | Teklif listesi: `[{ productId, variantId?, productName, quantity }]` | Tarayıcıda kalır |
 | `zenweld.favourites.v1` | localStorage | Favori ürün kimlikleri (giriş yapmamış ziyaretçi ve demo modu) | Giriş yapmış üyenin favorileri `favourites` tablosunda; girişte bu liste hesaba eklenir ve boşaltılır (K-96) |
 | `zenweld.cookie-consent.v1` | localStorage | Çerez tercihi: `{ choice: "all" | "necessary", at }` | Tarayıcıda kalır |
-| `zenweld.admin.range` | localStorage | Panel ana sayfasındaki dönem seçimi | Tarayıcıda kalır |
+| `zw_panel_aralik` | çerez (`/yonetim`) | Panel ana sayfasındaki dönem seçimi (`today`, `7`, `30`, `90`) | Sunucu da okur: özet sunucuda hesaplanır |
 | `zenweld.welcome.seen` | sessionStorage | Karşılama penceresi bu oturumda gösterildi | Tarayıcıda kalır |
 | `zenweld.files.v1` | IndexedDB (`files`) | Belgelerin dosyaları (demo modu) | Dosya deposu |
 

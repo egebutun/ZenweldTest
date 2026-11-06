@@ -644,6 +644,9 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 
 - [ ] Dönem seçimi (Bugün / 7 / 30 / 90 gün) bütün grafikleri değiştirir ve
       hatırlanır.
+- [ ] Veritabanı modunda dönem değişince grafikler kısa süre soluklaşır ve
+      sunucudan gelen yeni sonuçla çizilir; sayfa kaynağında siparişlerin
+      ve üyelerin e-posta ve telefonları yoktur.
 - [ ] Değişim yüzdesi önceki dönemin aynı saatine kadarki kısmıyla
       karşılaştırılır (sabah saatlerinde anlamsız "−%70" çıkmaz).
 - [ ] Üye sayısı yöneticiyi saymaz; "onay bekliyor" yazısı yoktur.

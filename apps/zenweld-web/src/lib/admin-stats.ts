@@ -1,4 +1,4 @@
-import type { Order, OrderStatus, ZenweldDatabase } from "@zenweld/data";
+import { productsWithoutOnlineStock, type Order, type OrderStatus, type ZenweldDatabase } from "@zenweld/data";
 
 /**
  * YONETIM PANELI ANA SAYFASI — HESAPLAR
@@ -8,9 +8,21 @@ import type { Order, OrderStatus, ZenweldDatabase } from "@zenweld/data";
  *
  * Ciro: iptal edilmeyen siparislerin musteriden tahsil edilen toplami
  * (KDV ve vade farki dahil). Siparisin tarihi: olusturuldugu an.
+ *
+ * Hesap tek yerdedir (dashboardSummary): demo modunda tarayicida, veritabani
+ * modunda sunucuda calisir; tarayiciya yalnizca sonuc gider. Gunler Turkiye
+ * saatiyle baslar; sunucu (UTC) ile tarayici ayni sonucu verir.
  */
 
 export type RangeKey = "today" | "7" | "30" | "90";
+
+/** Secimin hatirlandigi cerez: sunucu da okur (veritabani modunda hesap orada). */
+export const RANGE_COOKIE = "zw_panel_aralik";
+export const DEFAULT_RANGE: RangeKey = "30";
+
+export function parseRange(value: string | undefined): RangeKey {
+  return value === "today" || value === "7" || value === "30" || value === "90" ? value : DEFAULT_RANGE;
+}
 
 export const RANGES: { key: RangeKey; label: string }[] = [
   { key: "today", label: "Bugün" },
@@ -46,15 +58,25 @@ export interface DateRange {
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
-const dayFmt = new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short" });
-const longDayFmt = new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+const TIME_ZONE = "Europe/Istanbul";
+const dayFmt = new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short", timeZone: TIME_ZONE });
+const longDayFmt = new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "long", year: "numeric", timeZone: TIME_ZONE });
+const dateKeyFmt = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: TIME_ZONE });
+
+/** Turkiye saatiyle bugunun tarihi: "YYYY-AA-GG". */
+export const istanbulDateKey = (at: Date | number) => dateKeyFmt.format(at);
+
+/**
+ * Turkiye saatiyle gunun 00:00'i. Turkiye 2016'dan beri yaz-kis saati
+ * uygulamaz (her zaman UTC+3).
+ */
+const istanbulDayStart = (at: Date) => Date.parse(`${istanbulDateKey(at)}T00:00:00+03:00`);
 
 export function makeRange(key: RangeKey, now: Date): DateRange {
-  const today = new Date(now);
-  today.setHours(0, 0, 0, 0);
+  const today = istanbulDayStart(now);
   const days = key === "today" ? 1 : Number(key);
-  const start = today.getTime() - (days - 1) * DAY;
-  const end = today.getTime() + DAY;
+  const start = today - (days - 1) * DAY;
+  const end = today + DAY;
   const prevStart = start - days * DAY;
   const prevEnd = prevStart + (Math.min(now.getTime(), end) - start);
 
@@ -109,7 +131,7 @@ const sum = (xs: number[]) => xs.reduce((s, x) => s + x, 0);
 const top = <T>(entries: [string, T][], by: (v: T) => number, n: number) =>
   entries.sort((a, b) => by(b[1]) - by(a[1])).slice(0, n);
 
-export function dashboardStats(db: ZenweldDatabase, range: DateRange) {
+export function dashboardStats(db: DashboardData, range: DateRange) {
   const { start, end, prevStart, prevEnd, bins } = range;
   const sold = (o: Order) => o.status !== "cancelled";
 
@@ -253,3 +275,75 @@ export function dashboardStats(db: ZenweldDatabase, range: DateRange) {
 }
 
 export type DashboardStats = ReturnType<typeof dashboardStats>;
+
+/* ------------------------------------------------------------------ */
+/* Sayfanin tamami                                                     */
+/* ------------------------------------------------------------------ */
+
+/** Ana sayfanin hesabinda kullanilan kayitlar. */
+export type DashboardData = Pick<
+  ZenweldDatabase,
+  | "products"
+  | "categories"
+  | "categoryGroups"
+  | "retailers"
+  | "dealers"
+  | "retailerStock"
+  | "dealerStock"
+  | "settings"
+  | "orders"
+  | "quotes"
+  | "users"
+  | "serviceRequests"
+  | "warranties"
+  | "events"
+  | "news"
+>;
+
+const newestFirst = <T extends { createdAt: string }>(xs: T[]) => [...xs].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+/**
+ * Ana sayfanin tamami: grafikler, genel durum kutulari, online saticida
+ * stogu olmayan urunler, son 5 teklif ve siparis. Yalnizca ekranda
+ * gorunenler doner; uyelerin ve musterilerin diger bilgileri donmez.
+ */
+export function dashboardSummary(data: DashboardData, rangeKey: RangeKey, now: Date) {
+  const range = makeRange(rangeKey, now);
+  const members = data.users.filter((u) => u.role !== "admin");
+  const quotes = newestFirst(data.quotes);
+  const orders = newestFirst(data.orders);
+  const today = istanbulDateKey(now);
+  const noOnlineStock = productsWithoutOnlineStock(data, now.getTime());
+  return {
+    range,
+    charts: dashboardStats(data, range),
+    overview: {
+      products: data.products.filter((p) => p.active).length,
+      // Uyeler: yonetici hesaplari haric (uye grafigiyle ayni).
+      users: members.length,
+      retailers: data.retailers.filter((r) => r.active).length,
+      quotes: quotes.length,
+      newQuotes: quotes.filter((q) => q.status === "new").length,
+      orders: orders.length,
+      // Islem bekleyen: havale onayi veya kargoya verilecek.
+      openOrders: orders.filter((o) => o.status === "awaiting_payment" || o.status === "preparing").length,
+      warranties: data.warranties.length,
+      events: data.events.filter((e) => e.active).length,
+      upcomingEvents: data.events.filter((e) => e.active && e.endDate >= today).length,
+      news: data.news.filter((n) => n.active).length,
+    },
+    noOnlineStock: {
+      count: noOnlineStock.length,
+      first: noOnlineStock.slice(0, 12).map((p) => ({ id: p.id, name: p.name })),
+    },
+    recentQuotes: quotes.slice(0, 5).map((q) => ({
+      id: q.id,
+      code: q.code,
+      name: q.companyName || q.contactName,
+      createdAt: q.createdAt,
+    })),
+    recentOrders: orders.slice(0, 5).map((o) => ({ id: o.id, code: o.code, customerName: o.customerName, total: o.total })),
+  };
+}
+
+export type DashboardSummary = ReturnType<typeof dashboardSummary>;

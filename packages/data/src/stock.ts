@@ -1,4 +1,16 @@
-import type { OptionDefinition, Product, SkuAlias, StockImport, StockImportSummary, StockRow, StockSourceType } from "./types";
+import { defaultSettings } from "./seed/settings.seed";
+import type {
+  OptionDefinition,
+  Product,
+  Retailer,
+  SkuAlias,
+  StockImport,
+  StockImportSummary,
+  StockRow,
+  StockSettings,
+  StockSourceType,
+  ZenweldDatabase,
+} from "./types";
 import { productOptionsView } from "./variants";
 
 /**
@@ -59,6 +71,65 @@ export function stockSourceStatus(summary: Pick<StockSourceSummary, "rows" | "in
 /** Sitede "stokta" sayilir mi: adet > 0 ve guncel. */
 export const isInStock = (row: StockRow, staleDays: number, now?: number) =>
   row.quantity > 0 && isStockFresh(row.updatedAt, staleDays, now);
+
+/* ------------------------------------------------------------------ */
+/* Online saticilarda stok (urun sayfasindaki kartlar, panel ozeti)    */
+/* ------------------------------------------------------------------ */
+
+/** Stok ayari: kaydedilmeyen alanlar varsayilandir. */
+export function stockSettingsOf(data: Pick<ZenweldDatabase, "settings">): StockSettings {
+  return { ...defaultSettings.stock, ...(data.settings?.stock ?? {}) };
+}
+
+/** Online saticisi bir bayiye bagli mi (stogu bayinin dosyasindan gelir) */
+export const isDealerStore = (retailerId: string, data: Pick<ZenweldDatabase, "dealers">) =>
+  data.dealers.some((d) => d.retailerId === retailerId);
+
+export interface RetailerInStock {
+  retailer: Retailer;
+  stock: StockRow;
+}
+
+export type OnlineStockData = Pick<ZenweldDatabase, "retailers" | "dealers" | "retailerStock" | "dealerStock" | "settings">;
+
+/**
+ * Sitede gosterilen online satici satirlari: aktif satici, adet > 0, guncel,
+ * linki olan. Saticinin kendi listesinden ya da online magazasi olan
+ * bayinin listesinden gelir.
+ */
+export function onlineStock(
+  data: OnlineStockData,
+  now: number,
+  filter: { productId?: string; retailerId?: string } = {},
+): RetailerInStock[] {
+  const { staleDays } = stockSettingsOf(data);
+  const visible = (row: StockRow) =>
+    (!filter.productId || row.productId === filter.productId) && Boolean(row.url) && isInStock(row, staleDays, now);
+  const activeRetailer = (id?: string) => data.retailers.find((r) => r.id === id && r.active);
+
+  const result: RetailerInStock[] = [];
+  data.retailerStock.forEach((row) => {
+    if (!visible(row) || isDealerStore(row.retailerId, data)) return;
+    const retailer = activeRetailer(row.retailerId);
+    if (retailer) result.push({ retailer, stock: row });
+  });
+  data.dealers
+    .filter((d) => d.active && d.retailerId)
+    .forEach((dealer) => {
+      const retailer = activeRetailer(dealer.retailerId);
+      if (!retailer) return;
+      data.dealerStock.forEach((row) => {
+        if (row.dealerId === dealer.id && visible(row)) result.push({ retailer, stock: row });
+      });
+    });
+  return filter.retailerId ? result.filter((r) => r.retailer.id === filter.retailerId) : result;
+}
+
+/** Hicbir online saticida stokta (adet > 0, guncel, linkli) gorunmeyen aktif urunler. */
+export function productsWithoutOnlineStock(data: OnlineStockData & Pick<ZenweldDatabase, "products">, now: number): Product[] {
+  const inStock = new Set(onlineStock(data, now).map((r) => r.stock.productId));
+  return data.products.filter((p) => p.active && !inStock.has(p.id));
+}
 
 /**
  * Turkce ve Ingilizce sayi bicimleri: "12", "1.234", "1.234,50", "12,5",

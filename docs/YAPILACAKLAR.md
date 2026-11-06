@@ -443,28 +443,25 @@ kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
 Veritabanı modu bütün kayıtlar için hazır ([VERITABANI.md](VERITABANI.md),
 [SUNUCU.md](SUNUCU.md)). Kayıt sayısı büyüyünce ve canlıdan önce:
 
-1. **Panel ana sayfası** siparişlerin, tekliflerin ve üyelerin tamamını
-   tarayıcıya gönderir; kayıt sayısı büyüyünce (ör. binlerce sipariş) özet
-   ve grafikler sunucuda hesaplanmalı.
-2. **Uzun listeler:** Panel siparişleri, üyeleri ve yorumları sayfalamadan,
+1. **Uzun listeler:** Panel siparişleri, üyeleri ve yorumları sayfalamadan,
    hepsini birden okur; sayılar binleri bulunca sunucuda süzme, arama ve
    sayfalama gerekir ([Görseller ve uzun listeler](#görseller-ve-uzun-listeler-a5--önerilen-zorunlu-değil)).
    Panelin Yorumlar ekranı bütün yorumları fotoğraf ve videolarıyla okur;
    yorum sayısı artınca yavaşlar.
-3. **Katalog önbelleği:** Katalog (bugün ~110 KB, sıkıştırılmış ~17 KB) her
+2. **Katalog önbelleği:** Katalog (bugün ~110 KB, sıkıştırılmış ~17 KB) her
    sayfaya gelir. Next'in önbelleği tek kayıtta en fazla 2 MB tutar;
    katalog ~1.000 üründe bu sınıra yaklaşır (aşılırsa önbelleğe alınmaz,
    her yenilemede veritabanı okunur). Ürün sayısı bu düzeye gelmeden ürünler
    parça parça (ör. bölüm başına) önbelleğe alınmalı. Stok ve yorumlar ürün
    başına okunduğu için sınıra takılmaz (bayi stoğu bugün 2.754 satır,
    ~500 KB; ürün sayfasına yalnızca o ürünün stoktaki satırları gider).
-4. **Süreye bağlı yenileme:** Değişiklik panel kaydında hemen görünür
+3. **Süreye bağlı yenileme:** Değişiklik panel kaydında hemen görünür
    (`refreshSite`); sayfaların 30 saniyede bir yeniden hazırlanması yalnızca
    yedektir. Sürenin uzatılıp uzatılmayacağı sahibine sorulur (K-88).
-5. **Form kayıtlarının saklama süresi:** bayilik başvurusu, mesaj ve
+4. **Form kayıtlarının saklama süresi:** bayilik başvurusu, mesaj ve
    Welders Club kayıtlarının ne kadar tutulacağı ve silinmesi KVKK kararıyla
    belirlenecek (K-100; [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama)).
-6. **"Doğrulanmış alıcı":** Giriş yapmış üyenin ürün değerlendirmesi bugün
+5. **"Doğrulanmış alıcı":** Giriş yapmış üyenin ürün değerlendirmesi bugün
    iki modda da "Doğrulanmış alıcı" sayılıyor; üyenin o ürünü gerçekten
    satın almış olmasıyla (teslim edilmiş sipariş) eşleştirilmeli.
 

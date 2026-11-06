@@ -56,3 +56,42 @@ test("genel durum kutuları veritabanındaki sayıları gösterir", async ({ pag
     await sql("DELETE FROM quotes WHERE id = $1", [`q-ana-${stamp}`]);
   }
 });
+
+test("özet sunucuda hesaplanır: sayfaya kayıtların kendisi gelmez, dönem değişince yeniden hesaplanır", async ({ page }) => {
+  await panelLogin(page);
+  const response = await page.goto("/yonetim");
+  await expect(page.getByRole("heading", { name: "Genel durum" })).toBeVisible();
+
+  // Sayfanin HTML'i (sunucunun gonderdigi veri dahil) uyelerin ve
+  // musterilerin e-posta ve telefonlarini tasimaz; yalnizca sonuc gelir.
+  const html = await response!.text();
+  const members = await sql<{ email: string; phone: string }>("SELECT email, phone FROM users WHERE role <> 'admin' LIMIT 5");
+  const orders = await sql<{ email: string }>("SELECT email FROM orders LIMIT 5");
+  expect(members.length).toBeGreaterThan(0);
+  for (const { email, phone } of members) {
+    expect(html).not.toContain(email);
+    expect(html).not.toContain(phone);
+  }
+  for (const { email } of orders) expect(html).not.toContain(email);
+
+  // Donem degisince sunucu yeniden hesaplar: "Bugun" saatlik kirilimdir.
+  const today = page.getByRole("radio", { name: "Bugün" });
+  await today.click();
+  await expect(today).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByText("Saatlik ciro", { exact: false })).toBeVisible();
+  expect((await page.context().cookies()).find((c) => c.name === "zw_panel_aralik")?.value).toBe("today");
+
+  // Bugunun siparis sayisi (iptal haric, Turkiye gunu) veritabanindakiyle ayni.
+  const n = await count(
+    `SELECT count(*) AS n FROM orders WHERE status <> 'cancelled'
+       AND created_at >= (date_trunc('day', now() AT TIME ZONE 'Europe/Istanbul') AT TIME ZONE 'Europe/Istanbul')`,
+  );
+  // Ozet kutusu: etiketin hemen altinda deger (grafikler genel durumdan once gelir).
+  const value = page.getByText("Sipariş", { exact: true }).first().locator("xpath=following-sibling::div[1]");
+  await expect(value).toHaveText(String(n));
+
+  // Secim hatirlanir: sayfa yeniden acilinca sunucu ayni donemle hesaplar.
+  await page.reload();
+  await expect(page.getByRole("radio", { name: "Bugün" })).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByText("Saatlik ciro", { exact: false })).toBeVisible();
+});
