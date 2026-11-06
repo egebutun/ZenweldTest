@@ -464,6 +464,25 @@ Veritabanı modu bütün kayıtlar için hazır ([VERITABANI.md](VERITABANI.md),
 5. **"Doğrulanmış alıcı":** Giriş yapmış üyenin ürün değerlendirmesi bugün
    iki modda da "Doğrulanmış alıcı" sayılıyor; üyenin o ürünü gerçekten
    satın almış olmasıyla (teslim edilmiş sipariş) eşleştirilmeli.
+6. **Panel ana sayfasının okuması:** Özet sunucuda hesaplanıyor ve
+   tarayıcıya yalnızca sonuç gidiyor; ama sunucu hesap için siparişlerin,
+   tekliflerin, üyelerin, servis ve garanti kayıtlarının tamamını her
+   açılışta veritabanından okuyor (`readDashboardPanel`). Kayıt sayısı
+   büyüdükçe (on binlerce sipariş) sayfa geç açılır ve veritabanına yük
+   biner. Canlıdan önce:
+   - Yalnızca seçilen dönemin ve karşılaştırılan önceki dönemin kayıtları
+     okunsun (en çok 180 gün).
+   - Toplam sayılar (sipariş, işlem bekleyen, üye, teklif, yeni teklif,
+     garanti) veritabanında sayılsın (`count`); kayıtlar okunmasın.
+   - Son 5 teklif ve son 5 sipariş yalnızca 5 kayıt olarak okunsun.
+   - `users.created_at` ve `warranties.registered_at` kolonlarına dizin
+     eklensin (siparişte, teklifte ve serviste zaten var).
+   - Deneme veritabanına çok sayıda örnek kayıt (ör. 50.000 sipariş)
+     yüklenip açılış süresi ölçülsün; hedef 1 saniyenin altı. Yavaşsa ciro,
+     sipariş ve üye toplamları da veritabanında gün ve saat gruplarıyla
+     (Türkiye günü) hesaplansın; o zaman hiç kayıt okunmaz.
+   - Ekrandaki sayılar değişmemeli: `tests/unit/panel-ozeti.test.ts` ve
+     `tests/e2e-db/panel-ana-sayfa.spec.ts` bunu dener.
 
 ## Ölçüm (hız)
 
