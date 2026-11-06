@@ -1629,7 +1629,9 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   olarak bildirir. WhatsApp, LinkedIn ve X'te paylaşınca başlık, açıklama ve
   görselle önizleme çıkar.
 - **Yapısal veri:** Anasayfada şirket bilgisi ve sık sorulan sorular; ürün
-  sayfasında ürün; katalog ve ürünlerde konum satırı Google'a bildirilir.
+  sayfasında ürün; haber ve etkinlik sayfalarında haber ve etkinlik; katalog
+  ve ürünlerde konum satırı Google'a bildirilir (schema.org: `Organization`,
+  `FAQPage`, `Product`, `NewsArticle`, `Event`, `BreadcrumbList`).
 - **Demo notu:** Panelde yapılan değişiklikleri (yeni ürün, değişen başlık,
   yeni link) sunucu bugün göremez:
   - Site haritası ve arama motorunun gördüğü başlıklar koddaki örnek veriden

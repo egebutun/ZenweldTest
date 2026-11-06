@@ -2404,8 +2404,8 @@ veritabanına bağlandığında burada listelenir." yazar.
     form ulaşmış sayılır.
   - Her formda botlar için görünmez bir tuzak alanı vardır; onu dolduran
     gönderim e-posta olarak gelmez.
-  - E-posta için sunucuda e-posta servisinin anahtarı tanımlı olmalıdır (bkz.
-    README). Demo adresinde anahtar yoksa formlar başarılı görünür ama
+  - E-posta için sunucuda e-posta servisinin anahtarı tanımlı olmalıdır
+    ([SUNUCU.md](SUNUCU.md) › 2). Demo adresinde anahtar yoksa formlar başarılı görünür ama
     e-posta gitmez.
   - Ayrıntı: [SUNUCU.md](SUNUCU.md) › 9.
 - Panelden müşteriye e-posta gitmez.

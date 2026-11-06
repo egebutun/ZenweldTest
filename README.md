@@ -1,101 +1,88 @@
 # ZENWELD — Kurumsal Site ve Online Mağaza
 
 Zenweld kaynak makineleri ve ekipmanları için kurumsal site, online mağaza ve
-yönetim paneli (`/yonetim`). Site iki modda çalışır:
+yönetim paneli (`/yonetim`). Next.js ile yazılmış tek bir uygulamadır
+(`apps/zenweld-web`); ortak kod `packages/` altındadır.
+
+Site iki modda çalışır; ekranlar ve kurallar ikisinde de aynıdır:
 
 - **Demo modu** (varsayılan; yayındaki `vercel.app` adresi bu moddadır):
-  veriler tarayıcıda (localStorage) tutulur ve yalnızca o tarayıcıda görünür.
-  Sunucu yalnızca e-postaları gönderir (`app/api`: bildirim, bayilik, destek).
-  Üyelik ve panel girişi gerçek güvenlik sağlamaz.
+  veriler tarayıcıda tutulur ve yalnızca o tarayıcıda görünür. Üyelik ve panel
+  girişi gerçek güvenlik sağlamaz.
 - **Veritabanı modu** (`DATA_SOURCE=database`): bütün veri sunucudaki
-  PostgreSQL veritabanındadır. Üyelik, sipariş, formlar ve panelin bütün
-  ekranları sunucu üzerinden çalışır (Aşama 3–5). Kod hazırdır ve kendi
-  testleriyle denenir (`npm run test:e2e:db`); canlı sunucu kurulunca site
-  bu modda yayına alınır (KARARLAR K-92).
+  PostgreSQL'dedir; üyelik, sipariş, formlar ve panelin bütün işlemleri
+  sunucudadır. Kod hazırdır; canlı sunucu kurulunca site bu modda yayına
+  alınır (KARARLAR K-92).
 
-İki modun farkları: [Demo ve veritabanı modu](#demo-ve-veritabanı-modu).
-
-> ⚠️ Canlıya çıkmadan önce [Canlıya Çıkış](#canlıya-çıkış-notları) bölümünü
-> okuyun.
+Farkların listesi: [Demo ve veritabanı modu](#demo-ve-veritabanı-modu).
 
 ## Yayındaki adresler
 
 | Site | Adres |
 |---|---|
-| Ana Zenweld sitesi | https://zenweld-test-zenweld-web.vercel.app |
-| Zenweld yönetim paneli | https://zenweld-test-zenweld-web.vercel.app/yonetim |
+| Site | https://zenweld-test-zenweld-web.vercel.app |
+| Yönetim paneli | https://zenweld-test-zenweld-web.vercel.app/yonetim |
 
-Her gönderimde (push) Vercel siteyi yeniden derleyip yayınlar. Sonuç
-GitHub'da commit'in yanında görünür (Vercel ✓ ya da ✗); ✗ ise site önceki
+Her gönderimde (push) Vercel siteyi yeniden derleyip yayınlar; sonuç
+GitHub'da commit'in yanında görünür (Vercel ✓ ya da ✗). ✗ ise site önceki
 başarılı halinde kalır. Vercel paketleri uygulama klasöründen
-(`apps/zenweld-web`) kurar, kod denetimini (ESLint) çalıştırmaz; denetim
+(`apps/zenweld-web`) kurar ve kod denetimini (ESLint) çalıştırmaz; denetim
 bilgisayarda `npm run build` ile yapılır.
-
----
 
 ## Belgeler
 
-Sitenin ve panelin bütün özellikleri, kuralları ve kararları `docs/`
-klasöründedir. Başlangıç noktası:
-[docs/00-BASLA-BURADAN.md](docs/00-BASLA-BURADAN.md). Bu projede çalışan Claude
-oturumları için kurallar: [CLAUDE.md](CLAUDE.md).
+Sitenin ve panelin bütün özellikleri, kuralları, kararları ve kalan işler
+`docs/` klasöründedir. Başlangıç noktası ve belge haritası:
+[docs/00-BASLA-BURADAN.md](docs/00-BASLA-BURADAN.md). Bu projede çalışan
+Claude oturumlarının kuralları: [CLAUDE.md](CLAUDE.md).
+
+Canlıya çıkmadan yapılacaklar ve kimi beklediği:
+[docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Canlıya giden yol.
 
 ---
 
-## İçindekiler
-
-- [Belgeler](#belgeler)
-- [Hızlı Başlangıç](#hızlı-başlangıç)
-- [Demo Hesaplar](#demo-hesaplar)
-- [Site](#site)
-- [Öne Çıkan Özellikler](#öne-çıkan-özellikler)
-- [Proje Yapısı](#proje-yapısı)
-- [Veriler Nerede Saklanıyor?](#veriler-nerede-saklanıyor)
-- [Günlük Stok Güncelleme Akışı](#günlük-stok-güncelleme-akışı)
-- [Görseller](#görseller)
-- [Canlıya Çıkış Notları](#canlıya-çıkış-notları)
-
----
-
-## Hızlı Başlangıç
+## Hızlı başlangıç
 
 ```bash
 # Gereksinim: Node.js 20.9+ (proje Node 22 ile geliştirildi)
 npm install
 
-# İsteğe bağlı: e-posta ve site adresi ayarları (boşken de çalışır)
+# İsteğe bağlı ayarlar (boşken de çalışır); değişkenler .env.example'da anlatılır
 cp apps/zenweld-web/.env.example apps/zenweld-web/.env.local
 
-# Ana Zenweld sitesi → http://localhost:3000
-# Zenweld yönetim paneli de bu uygulamanın içinde → http://localhost:3000/yonetim
+# Site → http://localhost:3000, panel → http://localhost:3000/yonetim
 npm run dev:web
 ```
 
-Yönetim paneli sitenin içindedir (`/yonetim`); ayrı bir adresi veya ayrı bir
-Vercel projesi yoktur. Panelin kendi giriş ekranı ve sitedeki müşteri
-oturumundan ayrı kendi oturumu vardır.
+Panelin ayrı bir adresi yoktur; kendi giriş ekranı ve siteden ayrı oturumu
+vardır. Ortam değişkenlerinin tamamı:
+[docs/SUNUCU.md](docs/SUNUCU.md) › 2.
 
-Diğer komutlar:
+## Komutlar
 
 ```bash
-npm run build       # ana sitenin üretim derlemesi (kod denetimini de çalıştırır)
+npm run dev:web     # geliştirme sunucusu (http://localhost:3000)
+npm run build       # üretim derlemesi (kod denetimini de çalıştırır)
 npm run typecheck   # TypeScript kontrolü
 npm run lint        # kod denetimi (ESLint)
-npm test            # iş kuralları testleri (fiyat, kampanya, taksit, stok, garanti…)
-npm run test:e2e    # tarayıcı testleri (önce npm run build; sunucuyu kendisi açar)
-npm run test:db     # veritabanı testleri (çalışan PostgreSQL gerekir; aşağıda)
-npm run test:e2e:db # sitenin veritabanı modunda tarayıcı testleri (aşağıda)
-npm run db:migrate  # veritabanı tablolarını kurar / günceller
+npm test            # iş kuralları testleri (tests/unit)
+npm run test:e2e    # tarayıcı testleri (tests/e2e; önce npm run build)
+npm run test:db     # veritabanı testleri (tests/db; PostgreSQL gerekir)
+npm run test:e2e:db # sitenin veritabanı modunda tarayıcı testleri (tests/e2e-db)
+npm run db:migrate  # tabloları kurar / günceller
 npm run db:reset    # bilgisayardaki veritabanını silip tabloları baştan kurar
-npm run db:seed     # sitenin örnek verisini boş veritabanına yükler
-npm run db:yukle    # bugünkü veriyi canlı ya da deneme veritabanına yükler (aşağıda)
-npm run yonetici:olustur # veritabanında yönetici hesabı açar / şifresini değiştirir (aşağıda)
+npm run db:seed     # örnek veriyi boş veritabanına yükler (yalnızca bilgisayarda)
+npm run db:yukle    # bugünkü veriyi canlı ya da deneme veritabanına yükler
 npm run db:generate # şema değişince yeni geçiş betiği üretir
 npm run db:studio   # tabloları tarayıcıda gösterir
-npm run site:yenile # veritabanındaki değişikliği sitede o anda gösterir (aşağıda)
-npm run sap:stok    # SAP depo stoğunu beklemeden bir kez okutur (aşağıda)
-npm run sap:siparis # sıradaki siparişleri beklemeden SAP'a gönderir (aşağıda)
+npm run yonetici:olustur # veritabanında yönetici hesabı açar / şifresini değiştirir
+npm run site:yenile # veritabanındaki değişikliği sitede o anda gösterir
+npm run sap:stok    # SAP depo stoğunu beklemeden bir kez okutur
+npm run sap:siparis # sıradaki siparişleri beklemeden SAP'a gönderir
 ```
+
+Veritabanı gerektiren komutların kurulumu aşağıda
+[Veritabanı](#veritabanı) bölümündedir.
 
 ---
 
@@ -103,281 +90,36 @@ npm run sap:siparis # sıradaki siparişleri beklemeden SAP'a gönderir (aşağ�
 
 | Rol | E-posta | Şifre | Neler görebilir |
 |---|---|---|---|
-| **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca Zenweld yönetim paneli (ana site `/yonetim`) |
-| **Bireysel** | `bireysel@demo.com` | `demo123` | Ana site: online alışveriş, sipariş takibi, teklif talepleri, favoriler, garanti kayıtları |
+| **Yönetici** | `admin@zenweld.com` | `admin123` | Yalnızca yönetim paneli (`/yonetim`) |
+| **Bireysel** | `bireysel@demo.com` | `demo123` | Site: online alışveriş, sipariş takibi, teklif talepleri, favoriler, garanti kayıtları |
 | **Kurumsal** | `kurumsal@demo.com` | `demo123` | Bireysel ile aynı; ödemede kurumsal fatura önceden seçili gelir |
 
-Tarayıcı testleri (`npm run test:e2e`) giriş bilgilerini bu tablodan okur;
-bilgiler başka dosyada tutulmaz. Tablonun biçimi değişirse
-`tests/e2e/yardimci.ts` › `demoAccount` da güncellenmelidir.
-
-**Test kartı (ödeme ekranı):** `4111 1111 1111 1111`. Son kullanma tarihi
-gelecekte bir ay (örnek `12/30`), CVC herhangi 3 hane, kart üzerindeki isim
-herhangi bir ad olabilir. Ödeme demo modundadır, para çekilmez; gerçek kart
-bilgisi girmeyin.
-
-Ana site yalnızca bireysel ve kurumsal üyeleri kabul eder. Bayiler ana sitenin
-müşterisi değildir; bayi olmak isteyenler **Bayilik Başvurusu** formunu doldurur.
+- Tarayıcı testleri giriş bilgilerini bu tablodan okur; bilgiler başka
+  dosyada tutulmaz. Tablonun biçimi değişirse `tests/e2e/yardimci.ts` ›
+  `demoAccount` da güncellenmelidir.
+- **Test kartı (ödeme ekranı):** `4111 1111 1111 1111`. Son kullanma
+  gelecekte bir ay (ör. `12/30`), CVC herhangi 3 hane, kart üzerindeki isim
+  herhangi bir ad. Para çekilmez; gerçek kart bilgisi girmeyin.
+- Bu hesaplar canlı veritabanına hiç yüklenmez (KARARLAR K-91); canlıda ilk
+  yönetici `npm run yonetici:olustur` ile açılır.
 
 ---
 
-## Site
+## Demo ve veritabanı modu
 
-### `apps/zenweld-web` — Ana Zenweld Sitesi (port 3000)
+**Demo modunda** uygulama açılınca `packages/data` içindeki örnek veri
+tarayıcıya (`localStorage`, belgeler için IndexedDB) yüklenir; panelde ve
+sitede yapılan her değişiklik oraya yazılır ve yalnızca o tarayıcıda görünür.
+Herkesin göreceği bir değişiklik için örnek veri dosyaları
+(`packages/data/src/seed/`) değiştirilir. Örnek veri ya da kayıtların şekli
+değişince `packages/data/src/index.ts` › `DB_VERSION` bir artırılır;
+artırılınca tarayıcılardaki veri (paneldeki değişiklikler dahil) silinip
+yeniden kurulur.
 
-Marka sitesi ve **online mağazadır**. Ziyaretçi ürünü şu yollardan alır:
-
-1. **Sepete Ekle** → üye girişiyle sitede satın alır (aşağıda *Online mağaza*)
-2. **Stoktaki Bayileri Gör** → haritada o ürünü **stokta tutan** en yakın bayiyi bulur
-3. **Ayrıca online alışveriş olarak şurada da mevcuttur** → o üründe **stoğu olan**
-   online satıcılara yönlendirilir
-4. **Teklif Al** sayfası (`/teklif-al`) → vadeli ödeme / çek isteyen kurumsal
-   müşteriler için satış ekibi iletişime geçer. Ürün sayfasında teklif düğmesi
-   yoktur; ürünler Teklif Al sayfasındaki listeden seçilir.
-
-### Online mağaza
-
-- Zenweld deposunun stoğu SAP'tan okunur; stokta olmayan ürün sepete eklenmez
-  (KARARLAR K-82). Bayi ve online satıcı stokları ürün sayfasında ayrıca gösterilir.
-- **Sepet** tarayıcıda tutulur; fiyat her zaman ürünün güncel (kampanyalı) fiyatıdır.
-  Sepet tutarı **5.000 ₺** ve üzerindeyse kargo ücretsiz (Mağaza Ayarları'ndan değişir).
-- **Ödeme** (`/odeme`) yalnızca üyelere açıktır: teslimat adresi, fatura bilgisi
-  (bireysel: T.C. kimlik no · kurumsal: unvan, vergi dairesi, VKN), ödeme yöntemi ve
-  Ön Bilgilendirme Formu + Mesafeli Satış Sözleşmesi onayı.
-- **Kartla ödeme + taksit**: kart numarası girilince kart programı ve taksit
-  tablosu (tek çekim, 2–12 taksit, vade farkı) çıkar. *Para çekilmez:*
-  gerçek ödeme kuruluşu (iyzico / PayTR / banka sanal POS) henüz bağlanmadı;
-  bağlanacağı parça hazırdır (KARARLAR K-108).
-- **Havale / EFT**: sipariş "Ödeme Bekleniyor" olarak açılır, IBAN'lar gösterilir;
-  yönetici "Ödeme Alındı" deyince hazırlanmaya geçer. Süre dolarsa iptal edilir.
-- **Sipariş takibi**: Hesabım › Siparişlerim — durum çizelgesi
-  (Ödeme Bekleniyor → Hazırlanıyor → Kargoya Verildi → Teslim Edildi), kargo firması
-  ve takip numarası, sözleşmelerin siparişe özel kopyası.
-
----
-
-## Öne Çıkan Özellikler
-
-### Ürüne özel online satıcı listesi
-
-Her ürünün her bayideki ve online satıcıdaki stoğu ayrı tutulur. Ürün sayfasında
-**yalnızca stokta olan online satıcılar** (kart, ürünün o sitedeki sayfasına gider)
-ve "Stoktaki Bayileri Gör" haritasında yalnızca stokta olan bayiler görünür. Online
-mağazası olan bayi her ikisinde de görünür. Adet ve fiyat sitede gösterilmez.
-Hiçbir online satıcıda yoksa "en yakın bayiden temin edebilirsiniz" mesajı çıkar.
-
-Stok, bayi ve satıcıların gönderdiği CSV/XLSX dosyalarıyla panelden güncellenir:
-`/yonetim/stok`. Ayrıntılar: [docs/STOK.md](docs/STOK.md).
-
-### Arama
-
-Gerçek Elasticsearch sunucu gerektirdiği için tarayıcıda çalışan **MiniSearch**
-kullanıldı — Elasticsearch ile aynı **BM25** skorlamasını uygular. Üzerine eklenenler:
-
-- Yazım hatası toleransı: *"kanak makinesi"* → **Kaynak Makinesi**
-- Ön-ek eşleşmesi: *"pla"* → **Plazma Kesme**
-- Türkçe karakter normalizasyonu: *"ortulu"* ≈ *"örtülü"*
-- Eşanlamlı sözlüğü: `mig↔gazaltı`, `tig↔argon`, `mma↔örtülü elektrot`, `plazma↔kesme`…
-- Alan ağırlıklandırma: ürün adı ×4, SKU ×3, kategori ×2, açıklama ×1
-- `⌘K` / `Ctrl+K` ile anlık arama paneli
-
-`apps/zenweld-web/src/lib/search/search-client.ts` içindeki `search()` imzası
-korunarak gövdesi gerçek bir Elasticsearch/Typesense/Algolia çağrısıyla
-değiştirilebilir.
-
-### Bayi bulucu
-
-Leaflet + OpenStreetMap (API anahtarı gerekmez). Tarayıcı konum izniyle
-Haversine mesafesine göre sıralama, şehir ve Yetkili Servis filtreleri, yol
-tarifi ve WhatsApp bağlantıları. Ürün sayfasındaki **Stoktaki Bayileri Gör**
-penceresinde yalnızca o ürünü stokta tutan bayiler listelenir.
-
-### Üyelik ve roller
-
-| Rol | Yetkiler |
-|---|---|
-| Bireysel ve Kurumsal | Ana site: online alışveriş, sipariş takibi, teklif talebi ve geçmişi, garanti kayıtları, adresler. İki tür aynı şeyleri yapar; kurumsal üyede kayıtta firma ünvanı zorunludur ve ödemede kurumsal fatura önceden seçili gelir. |
-| Yönetici | Zenweld yönetim panelinin tamamı (ana site `/yonetim`); sitede giriş yapamaz |
-
-Favoriler, garanti kaydı ve Teklif Al üye olmadan da kullanılabilir. Ana sitede
-bayi hesabı açılmaz; bayi olmak isteyenler **Bayilik Başvurusu** formunu
-doldurur.
-
-### Yönetim paneli (yalnızca Türkçe)
-
-`/yonetim` — ana sayfada ciro, sipariş, teklif, üye, servis ve garanti
-grafikleri; menüde:
-
-- **Satış:** Siparişler (havale onayı, kargo takip no, teslim, iptal), Teklifler,
-  İade Talepleri, Kuponlar (indirim kodları ve kullanımları), Mağaza Ayarları
-  (kargo, POS ve taksitler, havale hesapları)
-- **Ürünler:** Ürünler (seçenekler ve SEO dahil), Kategoriler, Seçenek
-  Tanımları, Stok Matrisi (bayi ve satıcıların CSV/XLSX stok dosyaları), Yorumlar
-- **Bayi ve Satış Ağı:** Bayiler, Online Satıcılar, Satış Temsilcileri
-- **Müşteriler ve Servis:** Üyeler (rol değiştirme, askıya alma ve
-  aktifleştirme, CSV dışa aktarma), Servis Talepleri, Garantiler
-- **İçerik:** Haberler, Etkinlikler, Blog, Hakkımızda, Sık Sorulan Sorular,
-  Belgeler (MSDS, kaynak rehberi, parti sertifikaları), Yasal Metinler, Sayfa SEO
-- **Ayarlar:** Görünüm
-
-Ekran ekran anlatım: [docs/ADMIN-KULLANIM.md](docs/ADMIN-KULLANIM.md).
-
-### Dil
-
-Site ve yönetim paneli yalnızca Türkçedir. Adreslerde dil ön eki yoktur
-(`/urun/...`, `/ekipmanlar/...`).
-
----
-
-## Proje Yapısı
-
-```
-ZenweldTest/
-├── package.json                    npm workspaces kökü
-├── eslint.config.mjs               Kod denetimi ayarları
-├── vitest.config.mts               İş kuralları testlerinin ayarları
-├── playwright.config.ts            Tarayıcı testlerinin ayarları
-├── vitest.db.config.mts            Veritabanı testlerinin ayarları
-├── docker-compose.yml              Bilgisayarda PostgreSQL 18
-├── tests/
-│   ├── unit/                       İş kuralları testleri (npm test)
-│   ├── e2e/                        Tarayıcı testleri (npm run test:e2e)
-│   └── db/                         Veritabanı testleri (npm run test:db)
-│
-├── packages/
-│   ├── data/                       Paylaşılan veri modeli ve başlangıç verisi
-│   │   └── src/
-│   │       ├── index.ts            DB_VERSION (veri sürümü) ve dışa açılanlar
-│   │       ├── types.ts            Product, Dealer, Retailer, DealerStock, RetailerStock, User…
-│   │       ├── checkout.ts · discount.ts · variants.ts · stock.ts   Ortak hesaplar
-│   │       ├── catalog.ts · legal.ts · highlights.ts
-│   │       └── seed/
-│   │           ├── products.seed.ts    40 ekipman (17'si seçenekli)
-│   │           ├── options.seed.ts     Seçenek tanımları (Soğutma, Torç Uzunluğu…)
-│   │           ├── categories.seed.ts  Bölüm / grup / kategori ağacı
-│   │           ├── dealers.seed.ts     29 bayi (TR koordinatlı)
-│   │           ├── retailers.seed.ts   Online satıcılar (Başak Hırdavat vb.)
-│   │           ├── stock.seed.ts       Bayi ve satıcıların örnek stok listeleri
-│   │           ├── users.seed.ts       Demo hesaplar
-│   │           ├── orders.seed.ts      Örnek siparişler
-│   │           ├── sample-activity.seed.ts  90 günlük örnek satış hareketi (canlıda kaldırılır)
-│   │           ├── content.seed.ts     Blog, SSS, teklif, garanti
-│   │           ├── events.seed.ts · company.seed.ts · reviews.seed.ts
-│   │           ├── documents.seed.ts · legal.seed.ts · settings.seed.ts
-│   │           └── images.ts           Unsplash görsel havuzu (blog, haber, etkinlik…)
-│   │
-│   ├── db/                         Sunucu veritabanı (PostgreSQL): şema, geçiş betikleri, komutlar
-│   │   ├── src/schema/             Tablolar (docs/VERITABANI.md ile aynı)
-│   │   ├── migrations/             Geçiş betikleri (0000 üretilen, 0001 elle yazılan kurallar)
-│   │   └── scripts/                npm run db:migrate / db:reset / db:seed / db:yukle
-│   │
-│   ├── store/                      Tarayıcıdaki veri katmanı (demo modunda bütün veri)
-│   │   └── src/
-│   │       ├── database.ts         localStorage motoru + abonelik
-│   │       ├── repo/               Veri işlemleri, konuya göre (ürün, stok, bayi, içerik…)
-│   │       ├── hooks.ts            useDatabase() — değişiklikler anında yansır
-│   │       ├── files.ts            Belge dosyaları (IndexedDB)
-│   │       └── export-import.ts    CSV indirme
-│   │
-│   ├── auth/                       Üyelik ve panel girişi (demo: tarayıcıda; veritabanı modu: sunucuda)
-│   │   └── src/ auth-context.tsx · roles.ts · hash.ts
-│   │
-│   ├── i18n/                       tr.ts — sitenin arayüz metinleri (düğme, başlık, uyarı…)
-│   │
-│   ├── utils/                      Biçimlendirme, link (slug) üretimi, görsel küçültme
-│   │
-│   └── ui/                         Ortak tasarım sistemi
-│       └── src/ theme.css · components/ (Button, Modal, Badge, Field…)
-│
-└── apps/
-    └── zenweld-web/                ANA SİTE (port 3000)
-        ├── next.config.mjs             Güvenlik başlıkları (CSP …), görsel izinleri
-        ├── .env.example                Ortam değişkenleri örneği
-        └── src/
-            ├── app/(site)/                     Sitenin sayfaları (adreste görünmez)
-            │   ├── page.tsx                    Anasayfa
-            │   ├── ekipmanlar|guvenlik|aksesuarlar|dolgu-metalleri/
-            │   │   ├── page.tsx                Bölüm: grupların resimli kartları
-            │   │   ├── [grup]/page.tsx         Grup: kategori kartları
-            │   │   └── [grup]/[kategori]/      Kategori: ürün listesi
-            │   ├── urun/[slug]/page.tsx        ÜRÜN DETAY
-            │   ├── arama/page.tsx
-            │   ├── yetkili-bayi-ve-servis-agi/ Bayi bulucu (harita)
-            │   ├── teklif-al/page.tsx          4 adımlı teklif formu
-            │   ├── giris | kayit | cikis | sifremi-unuttum/
-            │   ├── hesabim/                    Müşteri hesabı (bireysel / kurumsal)
-            │   │   └── profil · tekliflerim · siparislerim · favorilerim
-            │   │      · garantilerim · adreslerim
-            │   ├── garanti/                    Garanti seçimi · kayit · sorgulama · kosullar
-            │   ├── bayilik-basvurusu/          Bayimiz Olun formu
-            │   ├── hakkimizda · satis-temsilcilerimiz · iletisim
-            │   ├── haberler · etkinlikler · blog · welders-club
-            │   ├── sss · urun-secici · kaynak-rehberi · msds · parti-sertifikalari
-            │   ├── servis-talebi/              Servis talep formu (Destek ve Garanti menüsü)
-            │   ├── sepet/ · odeme/             Sepet ve ödeme (yalnızca üyeler)
-            │   ├── hesabim/siparislerim/[code] Sipariş detayı ve kargo takibi
-            │   ├── yasal/                      Politikalar & Yasal sayfaları (metinler panelden
-            │   │                               düzenlenir; adresler packages/data/src/legal.ts)
-            │   │   (Adresler menüye bağlı değildir; menü değişse de adres değişmez.)
-            ├── app/yonetim/                    ZENWELD YÖNETİM PANELİ
-            │   └── siparisler · teklifler · iade-talepleri · magaza · urunler · kategoriler · secenekler
-            │      · stok · yorumlar · bayiler · saticilar · satis-temsilcileri · uyeler
-            │      · servis-talepleri · garantiler · haberler · etkinlikler · blog
-            │      · hakkimizda · sss · belgeler · yasal-metinler · sayfa-seo · gorunum
-            ├── app/api/                        bildirim · bayilik · destek (form e-postaları)
-            ├── components/
-            │   ├── layout/    Header · MegaMenu · MobileDrawer · Footer · CookieBanner
-            │   ├── search/    SearchOverlay
-            │   ├── product/   ProductCard · OnlineRetailers · ProductDetailParts
-            │   ├── shop/      OrderSummary · CardPayment · BankAccounts · OrderParts
-            │   │              · LegalDocument (ön bilgilendirme / mesafeli satış)
-            │   ├── dealers/   DealerFinder · DealerMap
-            │   ├── account/   AccountShell
-            │   ├── admin/     AdminShell · content-form (haber/blog/etkinlik ortak) · ProductForm + product/ (sekmeler)
-            │   └── common/    PageShell · JsonLd
-            └── lib/
-                ├── search/    search-client · tr-normalize · synonyms · use-search
-                ├── page-meta.ts      Sabit sayfaların arama başlıkları (tek tablo)
-                ├── section-routes.tsx Ürün bölümü/grup/kategori sayfalarının ortak kodu
-                ├── catalog.ts        Katalog seviyeleri (bölüm › grup › kategori) ve konum satırı
-                ├── i18n-client.tsx · seo.ts · geo.ts · menu.ts
-                ├── quote-list.tsx · favourites.tsx · cart.tsx
-                └── server/mail.ts    Resend ile e-posta gönderimi (yalnızca sunucuda)
-```
-
----
-
-## Veriler Nerede Saklanıyor?
-
-Demo modunda (varsayılan, yayındaki adres):
-
-1. Uygulama açıldığında `packages/data` içindeki **başlangıç verisi** tarayıcının
-   `localStorage`'ına yüklenir.
-2. Yönetim panelinde yapılan her değişiklik ve sitede verilen sipariş, teklif,
-   yorum, form gibi kayıtlar `localStorage`'a yazılır; sayfalar anında güncellenir.
-3. Değişiklikler **yalnızca o tarayıcıda** görünür. Başka bilgisayarda görünmez.
-4. Panelden yüklenen belge dosyaları (MSDS, sertifikalar…) tarayıcının ayrı
-   dosya deposunda (IndexedDB) durur.
-
-Bu yüzden demoda herkesin göreceği kalıcı bir değişiklik için başlangıç
-(seed) dosyaları güncellenir. Veritabanı modunda (`DATA_SOURCE=database`,
-aşağıda) bunların hiçbiri olmaz: kayıtlar sunucudadır, panelde yapılan
-değişikliği bütün ziyaretçiler görür; tarayıcıya örnek veri gönderilmez,
-`localStorage`'a veri yazılmaz (Aşama 5.6).
-
-**Veri sürümü (`DB_VERSION`):** `packages/data/src/index.ts`'tedir. Başlangıç
-verisi ya da kayıtların yapısı değişince bir artırılır; artırılmazsa
-tarayıcılarda eski veri kalır. Artırılınca tarayıcılardaki veri silinir ve
-başlangıç verisiyle yeniden kurulur, yani panelde yapılmış değişiklikler de
-gider.
-
-Bütün kayıt türleri, alanları ve tabloları: [docs/VERITABANI.md](docs/VERITABANI.md).
-Sunucu veritabanının (PostgreSQL) tabloları ve kolonları:
-[docs/VERITABANI.md](docs/VERITABANI.md).
-
-### Demo ve veritabanı modu
-
-Ekranlar ve kurallar iki modda aynıdır. Farklar:
+**Veritabanı modunda** kayıtlar sunucudadır; panelde kaydedilen değişikliği
+herkes görür, tarayıcıya örnek veri gönderilmez. Tablolar:
+[docs/VERITABANI.md](docs/VERITABANI.md); sunucunun işleyişi:
+[docs/SUNUCU.md](docs/SUNUCU.md).
 
 | Konu | Demo modu | Veritabanı modu |
 |---|---|---|
@@ -393,377 +135,155 @@ Ekranlar ve kurallar iki modda aynıdır. Farklar:
 | Favoriler, adresler | Yalnızca o tarayıcıda (favoriler üyeye değil tarayıcıya bağlı) | Üyeye bağlı; başka cihazda da aynısı görünür |
 | SAP depo stoğu okuma | Yoktur; depo stoğu örnek veridir | Zamanlayıcıyla okunur (bugün deneme dosyasından) |
 
-### Veritabanı (PostgreSQL)
+---
 
-Sunucu veritabanının tabloları `packages/db`'dedir (KARARLAR K-81). Site
-varsayılan olarak demo modunda (yukarıdaki tarayıcı verisiyle) çalışır;
-`DATA_SOURCE=database` ayarıyla bütün veriyi veritabanından okur ve yazar
-(aşağıda 5. adım). Tabloları bilgisayarda kurmak ve denemek için:
+## Veritabanı
+
+Bilgisayarda PostgreSQL 18 kurup siteyi veritabanı modunda açmak için:
 
 ```bash
 # 1. PostgreSQL 18'i başlatın. Docker ile:
 docker compose up -d
-#    Bilgisayarda PostgreSQL 18 zaten kuruluysa (Postgres.app, Homebrew)
-#    Docker yerine bir kez şunları çalıştırın:
+#    PostgreSQL 18 bilgisayarda zaten kuruluysa (Postgres.app, Homebrew)
+#    Docker yerine bir kez:
 #    psql -d postgres -c "CREATE ROLE zenweld LOGIN PASSWORD 'zenweld' CREATEDB"
 #    psql -d postgres -c "CREATE DATABASE zenweld OWNER zenweld"
 #    psql -d postgres -c "CREATE DATABASE zenweld_test OWNER zenweld"
 
-# 2. Bağlantı adreslerini apps/zenweld-web/.env.local'a yazın
-#    (örnekleri .env.example'da):
+# 2. Bağlantı adreslerini apps/zenweld-web/.env.local'a yazın:
 #    DATABASE_URL=postgres://zenweld:zenweld@localhost:5432/zenweld
 #    TEST_DATABASE_URL=postgres://zenweld:zenweld@localhost:5432/zenweld_test
 
-# 3. Tabloları kurun, örnek veriyi yükleyin ve testleri çalıştırın
+# 3. Tabloları kurun, örnek veriyi yükleyin, testleri çalıştırın
 npm run db:migrate
 npm run db:seed
 npm run test:db
 
-# 4. Tablolara bakmak için (tarayıcıda açılır)
-npm run db:studio
-
-# 5. Siteyi veritabanıyla açmak için apps/zenweld-web/.env.local'a ekleyin:
-#    DATA_SOURCE=database
-#    sonra derleyip başlatın (ya da npm run dev:web)
+# 4. Siteyi veritabanıyla açmak için .env.local'a DATA_SOURCE=database ekleyin
+#    (derleme sırasında veritabanı çalışıyor olmalı)
 npm run build
 npm run start --workspace apps/zenweld-web
 ```
 
-- **Veritabanı modu (`DATA_SOURCE=database`, KARARLAR K-88):** Ürünler,
-  kategoriler, seçenekler, Zenweld depo stoğu ve mağaza ayarları tablolardan
-  okunur; menü, sepet, arama ve Teklif Al da bunları kullanır. Bayiler, bayi
-  ve satıcı stokları ve yorumlar da tablolardan gelir, ama yalnızca gereken
-  sayfaya: ürün sayfası, Bayi Bul ve anasayfa. İçerik (blog, haberler,
-  etkinlikler, SSS, yasal metinler, Hakkımızda, satış temsilcileri, belge
-  sayfaları ve Sayfa SEO başlıkları) da tablolardan gelir; yasal metnin ve
-  blog yazısının gövdesi yalnızca kendi sayfasına gider.
-  - `db:studio`'da bir ürünün fiyatını değiştirin: en geç bir dakika sonra
-    sayfa açılınca yeni fiyat görünür (gerekirse sayfayı bir kez daha
-    yenileyin; sayfa arka planda yeniden hazırlanır).
-  - Beklemeden görmek için: `.env.local`'a `REVALIDATE_SECRET=<uzun bir
-    değer>` yazıp siteyi başlatın; değişiklikten sonra
-    `npm run site:yenile` çalıştırın, sayfa bir sonraki açılışta yenidir.
-    Yalnızca bir türü yenilemek için: `npm run site:yenile -- katalog`
-    (türler: katalog, depo-stogu, stok, bayiler, yorumlar, icerik).
-  - **Üyelik sunucuda (Aşama 4):** kayıt, giriş, çıkış, profil, şifre
-    değiştirme, hesap silme ve şifre sıfırlama (e-posta Resend kurulunca
-    gider) veritabanından yapılır; oturum güvenli bir
-    çerezde durur. Demo hesaplarıyla (`db:seed`) girilir; ilk girişte
-    şifreleri güçlü özete çevrilir.
-  - **Adresler ve favoriler sunucuda (Aşama 5.1):** giriş yapmış üyenin
-    adresleri ve favorileri veritabanındadır; başka tarayıcıda da aynısı
-    görünür. Giriş yapmadan eklenen favoriler girişte hesaba eklenir.
-  - **Siparişler sunucuda (Aşama 5.2):** sipariş veritabanına yazılır;
-    tutar, stok ve kupon sunucuda yeniden hesaplanır (fiyat bu arada
-    değiştiyse sipariş alınmaz). Kartlı ödeme gerçek POS bağlanana kadar
-    temsilidir. Siparişlerim ve iade talepleri de sunucudadır.
-  - **Formlar sunucuda (Aşama 5.3):** Teklif Al, servis talebi, garanti
-    kaydı ve sorgulama, ürün yorumu, iletişim, bayilik başvurusu, ürün
-    destek sorusu ve Welders Club veritabanına yazılır; gönderilen her
-    e-posta `email_log`'a kaydedilir. Tekliflerim ve Garantilerim
-    sunucudan okunur. Panel bu kayıtları gösterir ve yönetir (Talepler).
-  - **Panel girişi sunucuda (Aşama 4.3):** `/yonetim` yönetici oturumu
-    olmadan açılmaz; oturum 8 saat sürer. Bilgisayarda `db:seed`'in demo
-    yöneticisiyle, canlıda `npm run yonetici:olustur` ile açılan hesapla
-    girilir. Giriş ve çıkış `audit_log`'a yazılır.
-  - **Panelin bütün ekranları veritabanında (Aşama 5, KARARLAR K-99):**
-    Panel ana sayfası, Satış (Siparişler, İade Talepleri, Kuponlar),
-    Talepler (Teklifler, Servis Talepleri, Garantiler, Yorumlar, Bayilik
-    Başvuruları, Mesajlar, Welders Club), Üyeler, Katalog (Seçenek
-    Tanımları, Kategoriler ve gruplar, Ürünler), Bayiler, Online
-    Satıcılar, Satış Temsilcileri ve Stok Matrisi (elle düzeltme, dosya
-    yükleme, kod eşleştirme, geri alma), Mağaza Ayarları (Kargo ve Ödeme,
-    E-posta Alıcıları, Şirket ve İletişim), Görünüm ve İçerik (Haberler,
-    Etkinlikler, Blog, Hakkımızda, SSS, Belgeler, Yasal Metinler, Sayfa
-    SEO) ekranları veritabanından okur ve yazar; aynı kaydı iki yönetici
-    düzenlerse sonraki kaydetmez ("sayfayı yenileyin"); her değişiklik
-    `audit_log`'a yazılır. İşlem Kaydı ve E-posta Kaydı ekranları
-    (Ayarlar) bu kayıtları gösterir (demo modunda kayıt tutulmaz, tablo
-    boştur; K-109). Görsel ve belge
-    dosyası `DOSYA_KLASORU` tanımlıysa yüklenir, değilse adresi girilir
-    (aşağıda › Panelden dosya yükleme).
-  - Ayar derlemede de okunur: ekleyip kaldırınca site yeniden derlenir.
-    Derleme sırasında veritabanı çalışıyor olmalı.
-  - Ayar yoksa site bugünkü gibi çalışır.
-  - **Veritabanı modunun testleri:** `npm run test:e2e:db` test veritabanını
-    (`TEST_DATABASE_URL`) sıfırlayıp örnek veriyi yükler, siteyi veritabanı
-    moduyla ayrı bir klasöre (`.next-db`) derler ve 3100 portunda açıp
-    dener: bütün sayfalar, fiyat ve stok, değişikliğin hemen görünmesi,
-    ağır verinin yalnızca gereken sayfaya gitmesi, kartla satın alma,
-    panelin Satış, Talepler, Katalog (seçenek, kategori, grup, ürün), bayi
-    ağı (bayi, satıcı, temsilci), Stok Matrisi, Mağaza Ayarları ve İçerik
-    (haber, SSS, Hakkımızda, belgeler) ekranları, panelden dosya yükleme ve
-    SAP'a sipariş aktarımı. Demo
-    derlemesi (`.next`) etkilenmez. `test:db` ile aynı anda çalıştırılmaz.
-  - **SAP stok okuma (deneme dosyasıyla):** SAP bağlanana kadar depo
-    stoğu bir CSV dosyasından okunur. `.env.local`'a
-    `CRON_SECRET=<uzun bir değer>` ve
-    `SAP_STOK_DOSYASI=../../packages/db/deneme/sap-stok.csv` yazıp siteyi
-    başlatın; `npm run sap:stok` dosyayı okutur ve kaç kalemin değiştiğini
-    yazar. Dosyada bir kalemin miktarını 0 yapıp komutu tekrar çalıştırın:
-    o ürün sayfada hemen STOKTA YOK olur. Dosyada olmayan kalem stoktan
-    çıkar; hatalı dosyada son stok kalır. Sunucuda bu iş 15 dakikada bir
-    zamanlayıcıyla çalışır (docs/SUNUCU.md › 3).
-  - **SAP sipariş aktarımı (deneme dosyasıyla):** SAP bağlanana kadar SAP'a
-    aktarılan siparişler bir dosyaya yazılır. `.env.local`'a
-    `CRON_SECRET=<uzun bir değer>` ve
-    `SAP_SIPARIS_DOSYASI=/tmp/zenweld-sap-siparisler.jsonl` (depo dışında
-    bir yol) yazıp siteyi başlatın. Kartla bir sipariş verin ya da panelde
-    havale siparişine **Ödeme Alındı** deyin; `npm run sap:siparis`
-    siparişi dosyaya bir satır olarak yazar ve panelde sipariş detayındaki
-    SAP Aktarımı kutusu "Aktarıldı" olur. Sunucuda bu iş birkaç dakikada
-    bir zamanlayıcıyla çalışır (docs/SUNUCU.md › 3).
-  - **Panelden dosya yükleme (dosya deposu):** Veritabanı modunda panelde
-    görsel ve belge yüklemek için `.env.local`'a
-    `DOSYA_KLASORU=/tmp/zenweld-dosyalar` (depo dışında bir klasör) yazıp
-    siteyi başlatın. Yüklenen dosyalar o klasöre yazılır ve sitede
-    `/dosya/…` adresinden açılır. Tanımlı değilse panelde dosya yerine
-    adres girilir (docs/IS-KURALLARI.md › 23).
-  - **Sayfa boyutu ve hız ölçümü:** site açıkken
-    `node scripts/sayfa-olcumu.mjs http://localhost:3000` (birden fazla
-    adres yan yana ölçülür). Sonuçlar: docs/YAPILACAKLAR.md › Ölçüm.
-
-- **Hedef sürüm PostgreSQL 18**; kodun ve betiklerin 16 ve 17'de de
-  çalışması beklenir ama testler 18'de yapılır (KARARLAR K-81).
-- **Tabloları görmek:** `npm run db:studio` tabloları tarayıcıda Excel
-  gibi gösterir (https://local.drizzle.studio). Sayfa bu adresten açılır ama
-  veriler bilgisayardaki veritabanından gelir, internete gitmez. İsteyen
-  TablePlus, Postico ya da DBeaver gibi bir programla da bağlanabilir
-  (adres, kullanıcı ve şifre `DATABASE_URL`'deki).
-
-- **Örnek veri:** `npm run db:seed` sitenin örnek verisini (ürünler,
-  bayiler, üyeler, siparişler, kuponlar…) boş veritabanına yükler; yalnızca
-  bilgisayarda çalışır. Baştan yüklemek için: `npm run db:reset` sonra
-  `npm run db:seed`.
-- **Canlı ve deneme veritabanına veri yükleme (KARARLAR K-91):**
-  `DATABASE_URL` o veritabanını gösterirken, önce `npm run db:migrate`,
-  sonra:
-  - `npm run db:yukle canli`: katalog, içerik, mağaza ayarları, bayiler,
-    satıcılar ve depo stoğu.
-  - `npm run db:yukle deneme`: bunlara ek olarak örnek yorumlar, kuponlar
-    ve bayi stok listeleri.
-  - Varsayılan olarak yalnızca veritabanında olmayan kayıtlar eklenir; var
-    olana (panelde değiştirilen kayıt dahil) dokunulmaz.
-  - Sona `guncelle` eklenirse (`npm run db:yukle canli guncelle`) veriden
-    farklı olan kayıtlar da bugünkü veriyle değiştirilir; panelde yapılan
-    değişiklikler kaybolur.
-  - Üyeler, siparişler, teklifler, iadeler, servis talepleri ve garantiler
-    hiç yüklenmez; hiçbir kayıt silinmez; tekrar çalıştırılabilir. Ne
-    yapıldığı tablo tablo ekrana basılır.
-  - Bilgisayar dışındaki bir veritabanına yüklemeden önce veritabanının
-    adı yazılarak onay verilir.
-  - Ayrıntılar: docs/SUNUCU.md › 5.
-- **Yönetici hesabı (veritabanında):** Canlıya hiç hesap yüklenmediği için
-  ilk yönetici `npm run yonetici:olustur` ile açılır: e-posta, ad, soyad,
-  telefon ve şifre sorar (şifre ekranda görünmez, en az 8 karakter). Aynı
-  komut var olan yöneticinin şifresini değiştirir. Veritabanı modunda panel
-  bu hesaplarla açılır.
-- Geçiş betikleri `packages/db/migrations/`'dadır ve sırayla, bir kez
-  çalışır; aynı betikler sunucuda da çalıştırılır. Çalışmış bir betik
-  değiştirilmez; şema değişince `npm run db:generate` yeni betik üretir.
+- **Giriş:** `db:seed` demo hesaplarını da yükler; yukarıdaki tablodaki
+  bilgilerle girilir (ilk girişte şifre güçlü özete çevrilir).
+- **Tablolara bakmak:** `npm run db:studio` tabloları tarayıcıda Excel gibi
+  gösterir (https://local.drizzle.studio; veri bilgisayardan çıkmaz).
+  TablePlus, Postico ya da DBeaver ile de bağlanılabilir (`DATABASE_URL`'deki
+  bilgilerle).
+- **Değişikliği beklemeden görmek:** Panel kaydı sayfaları kendisi yeniler.
+  Veritabanında elle (ör. `db:studio`'da) yapılan değişiklik en geç bir
+  dakikada görünür. Beklemeden görmek için `.env.local`'a
+  `REVALIDATE_SECRET=<uzun bir değer>` yazıp siteyi başlatın, değişiklikten
+  sonra `npm run site:yenile` çalıştırın. Yalnızca bir türü yenilemek için:
+  `npm run site:yenile -- katalog` (türler: katalog, depo-stogu, stok,
+  bayiler, yorumlar, icerik).
+- **Baştan yüklemek:** `npm run db:reset`, sonra `npm run db:seed`.
+- **Veritabanı modunun tarayıcı testleri:** `npm run test:e2e:db` test
+  veritabanını (`TEST_DATABASE_URL`) sıfırlayıp örnek veriyi yükler, siteyi
+  ayrı bir klasöre (`.next-db`) derler, 3100 portunda açıp sayfaları, satın
+  almayı ve panelin ekranlarını dener. Demo derlemesi (`.next`) etkilenmez.
+  `test:db` ile aynı anda çalıştırılmaz.
+- **Şema değişince:** tablolar `packages/db/src/schema/`'dadır;
+  `npm run db:generate` yeni geçiş betiği üretir
+  (`packages/db/migrations/`). Çalışmış betik değiştirilmez.
+- **Sürüm:** Hedef PostgreSQL 18 (testler 18'de); 16 ve 17'de de çalışması
+  beklenir (KARARLAR K-81).
 - `docker-compose.yml`'deki kullanıcı adı ve şifre yalnızca bilgisayardaki
-  veritabanı içindir. Sunucunun bağlantı adresi yalnızca sunucuda ortam
+  veritabanı içindir; sunucunun bağlantı adresi yalnızca sunucuda ortam
   değişkeni olarak durur.
 
+### Canlı ve deneme veritabanına veri yükleme
+
+`DATABASE_URL` o veritabanını gösterirken önce `npm run db:migrate`, sonra
+`npm run db:yukle canli` (ya da `deneme`). Varsayılan olarak yalnızca eksik
+kayıtlar eklenir; `guncelle` eklenirse paneldeki değişikliklerin üzerine
+yazılır. Üyeler ve satış hareketleri hiç yüklenmez, hiçbir kayıt silinmez;
+bilgisayar dışındaki veritabanına yüklemeden önce adı yazılarak onay verilir.
+Neyin nereye yüklendiği: KARARLAR K-91 ve
+[docs/SUNUCU.md](docs/SUNUCU.md) › 5.
+
+### Yönetici hesabı
+
+`npm run yonetici:olustur` veritabanında yönetici hesabı açar: e-posta, ad,
+soyad, telefon ve şifre sorar (şifre ekranda görünmez, en az 8 karakter).
+Aynı komut var olan yöneticinin şifresini değiştirir.
+
+### SAP stok okuma
+
+SAP bağlanana kadar depo stoğu bir CSV dosyasından okunur. `.env.local`'a
+`CRON_SECRET=<uzun bir değer>` ve
+`SAP_STOK_DOSYASI=../../packages/db/deneme/sap-stok.csv` yazıp siteyi
+başlatın; `npm run sap:stok` dosyayı okutur ve kaç kalemin değiştiğini yazar.
+Dosyada bir kalemin miktarını 0 yapıp komutu tekrar çalıştırın: o ürün
+sayfada hemen STOKTA YOK olur. Dosyada olmayan kalem stoktan çıkar; hatalı
+dosyada son stok kalır. Sunucuda bu iş 15 dakikada bir zamanlayıcıyla
+çalışır ([docs/SUNUCU.md](docs/SUNUCU.md) › 3).
+
+### SAP sipariş aktarımı
+
+SAP bağlanana kadar SAP'a aktarılan siparişler bir dosyaya yazılır.
+`.env.local`'a `CRON_SECRET=<uzun bir değer>` ve
+`SAP_SIPARIS_DOSYASI=/tmp/zenweld-sap-siparisler.jsonl` (depo dışında bir
+yol) yazıp siteyi başlatın. Kartla bir sipariş verin ya da panelde havale
+siparişine **Ödeme Alındı** deyin; `npm run sap:siparis` siparişi dosyaya bir
+satır olarak yazar ve panelde sipariş detayındaki SAP Aktarımı kutusu
+"Aktarıldı" olur. Sunucuda bu iş birkaç dakikada bir çalışır.
+
+### Panelden dosya yükleme
+
+Veritabanı modunda panelde görsel ve belge yüklemek için `.env.local`'a
+`DOSYA_KLASORU=/tmp/zenweld-dosyalar` (depo dışında bir klasör) yazıp siteyi
+başlatın. Yüklenen dosyalar o klasöre yazılır ve sitede `/dosya/…`
+adresinden açılır. Tanımlı değilse panelde dosya yerine adres girilir
+([docs/IS-KURALLARI.md](docs/IS-KURALLARI.md) › 23).
+
 ---
 
-## Günlük Stok Güncelleme Akışı
+## Proje yapısı
 
-1. `admin@zenweld.com` ile giriş → `Yönetim Paneli → Stok Matrisi`
-2. Dosyayı gönderen bayiyi/satıcıyı seçin → **Dosya Yükle (CSV / XLSX)**
-3. Önizlemeyi kontrol edin (tanınmayan kodları eşleştirin) → **Stoğu Güncelle**
-
-Her dosya kaynağın tam listesidir; hatalı yükleme geri alınabilir. Son 3 gün
-(panelden değiştirilir) içinde güncellenmeyen stok sitede gösterilmez.
-
-```csv
-SKU;Ürün Adı;Adet;Fiyat;Link
-ZW30100000024-3M;Ultimate 250 MTC MIG Gazaltı Kaynak Makinesi (3 m);4;1.185.000,00;https://www.satici.com/urun/ultimate-250-mtc
-ZW30100000072;ForceArc 200 MMA Elektrod Kaynak Makinesi;12;1.150.000,00;https://www.satici.com/urun/forcearc-200-mma
+```
+ZenweldTest/
+├── apps/zenweld-web/      Site ve panel (Next.js)
+│   ├── src/app/(site)/    Sitenin sayfaları
+│   ├── src/app/yonetim/   Yönetim paneli
+│   ├── src/app/api/       Sunucu uçları (formlar, sipariş, panel işlemleri, SAP)
+│   ├── src/components/    Ekran parçaları
+│   ├── src/lib/           Sayfa kodları; lib/server/ yalnızca sunucuda çalışır
+│   └── public/images/     Ürün fotoğrafları (products/), kategori ve grup kartları (categories/), logo (brand/)
+├── packages/
+│   ├── data/              Kayıt tipleri, ortak kurallar (fiyat, kupon, stok…), örnek veri (seed/)
+│   ├── db/                Veritabanı: şema, geçiş betikleri, sunucu işlemleri, komutlar
+│   ├── store/             Demo modunda tarayıcıdaki veri (localStorage)
+│   ├── auth/              Üyelik ve panel girişi (demo: tarayıcı; veritabanı modu: sunucu)
+│   ├── i18n/              Arayüz metinleri (tr.ts)
+│   ├── utils/             Biçimlendirme, link üretimi, görsel küçültme
+│   └── ui/                Ortak düğme, pencere, form parçaları ve tema
+├── tests/                 unit · e2e · db · e2e-db
+├── scripts/               Komutların betikleri, sayfa ölçümü, ikon üretimi
+├── docs/                  Belgeler
+└── docker-compose.yml     Bilgisayarda PostgreSQL 18
 ```
 
-Link sütunu yalnızca online satıcılarda ve online mağazası olan bayilerde okunur.
+## Diğer araçlar
 
-Dosya biçimi ve kurallar: [docs/STOK.md](docs/STOK.md).
-
----
-
-## Görseller
-
-- **Ürünler:** Ekipmanların fotoğrafları sahibinden gelir
-  (`apps/zenweld-web/public/images/products/<ürün linki>.webp`; soğutmalı
-  üründe `-hava-sogutmali` / `-su-sogutmali` ekli). Fotoğrafı henüz olmayan
-  ekipman, alt kategorisinin kart çizimini gösterir (Force serisinin 9 ürünü
-  ortak geçici bir fotoğrafı: `force-serisi-gecici.webp`); eksikler
-  [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Ürün fotoğrafları.
-  Güvenlik, Aksesuarlar ve Dolgu Metalleri'nde bugün ürün yok. Her ürünün
-  fotoğrafı panelden de değiştirilebilir.
-- **Blog, haber, etkinlik, Hakkımızda, Welders Club:** Unsplash bağlantıları
-  (`packages/data/src/seed/images.ts`). Bunlar **gerçek Zenweld fotoğrafları
-  değildir**, genel kaynak/sanayi fotoğraflarıdır.
-- **Kategori ve grup kartları:** `apps/zenweld-web/public/images/categories/`.
-
-`ProductImage` bileşeni, bir görsel yüklenemezse otomatik olarak **markalı SVG
-placeholder**'a düşer — sitede hiçbir zaman kırık görsel görünmez.
-
-Gerçek ürün fotoğraflarını eklemek için: `Yönetim Paneli → Ürünler → Düzenle →
-Görseller` sekmesinden URL girin veya dosya yükleyin. Yüklenen görsel panelde
-otomatik olarak küçültülür (en fazla 1,5 MB, gerekirse WebP); boyutla uğraşmanız
-gerekmez.
-
----
-
-## Canlıya Çıkış Notları
-
-Yayındaki site bugün demo modundadır. Gerçek kullanıma almadan önce:
-
-1. **Site veritabanı modunda çalışmalı** (`DATA_SOURCE=database`). Demo
-   modunda şifre tarayıcıda karşılaştırılır ve `/yonetim` paneli tarayıcıda
-   korunur; bu gerçek bir güvenlik değildir. Veritabanı modunda üyelik ve
-   panel girişi sunucudadır (Aşama 4): şifreler argon2id ile özetlenir,
-   oturum yalnızca sunucunun okuyabildiği çerezde durur, yanlış şifre sınırı
-   ve şifre sıfırlama vardır. Panelin bütün ekranlarının işlemleri de
-   sunucuda, yönetici oturumuyla yapılır ve işlem kaydına yazılır (Aşama 5).
-2. **Canlı veritabanı kurulmalı ve veri yüklenmeli.** Sunucu veritabanı
-   PostgreSQL'dir (KARARLAR K-81; tablolar `packages/db`,
-   [docs/VERITABANI.md](docs/VERITABANI.md)). Veritabanı modunun kodu
-   tamamdır: katalog, stok, içerik ve ayarlar veritabanından okunur
-   (Aşama 3); üyelik, adresler ve favoriler, siparişler, iade talepleri,
-   formlar ve panelin bütün ekranları veritabanına yazar (Aşama 4–5, K-99).
-   Kalan: canlı sunucunun ve veritabanının kurulması, tabloların
-   (`db:migrate`) ve verinin (`db:yukle canli`, K-91) yüklenmesi, ilk
-   yöneticinin açılması (`yonetici:olustur`)
-   ([docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Canlıya giden yol).
-3. **Ürün içeriği ve fiyatlar girilmeli.** Ekipmanlar'daki ürünlerin adı, kodu,
-   alt grubu, garantisi ve seçenekleri gerçektir; Force serisi 9 ürün dışında
-   açıklama, teknik özellikler ve kutu içeriği örnektir; fotoğraflar örnektir,
-   fiyatlar temsilidir (999.999 ₺ + KDV), 5 ürünün kodu geçicidir
-   (`ZW-GECICI-…`).
-   Aksesuar kalemleri de örnektir (`products.seed.ts` içinde `ORNEK`,
-   `TEMSILI`, `DOGRULANMALI` notları). Ayrıntı:
-   [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Ürün içeriği.
-4. **Yasal metinler** (KVKK, gizlilik, iade, sözleşmeler…) şu an başlıkları
-   hazır **taslaklardır**; hukuk danışmanının metinleriyle değiştirilmelidir.
-5. **Örnek satış hareketleri canlıya gitmez:** Panel grafikleri için
-   üretilen örnek üye, sipariş, teklif, servis ve garanti kayıtları
-   (`packages/data/src/seed/sample-activity.seed.ts`) yalnızca demodadır;
-   `db:yukle` bunları hiç yüklemez (K-91), veritabanı modunda tarayıcıya da
-   gönderilmez (Aşama 5.6). Örnek verinin koddan kaldırılması:
-   [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Canlıya giden yol 11.
-6. **Gerçek değerler girilmeli:** Kargo ücreti, banka POS'ları ve vade farkı
-   oranları, IBAN'lar (Mağaza Ayarları'ndaki değerler örnektir).
-7. **Ödeme kuruluşu bağlanmalı** (iyzico, PayTR ya da bankanın sanal POS'u);
-   POS anahtarları yalnızca sunucuda tutulur.
-8. **E-posta servisi tanımlanmalı:** sunucuda `RESEND_API_KEY` ve
-   `SUPPORT_FROM` (bkz. *Form e-postaları*).
-
-Tam liste ve backend notları: [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md).
-
----
-
-## SEO
-
-Sitede aşağıdakiler hazırdır:
-
-- **Sayfa başlıkları ve açıklamaları** — ürün, kategori, blog ve içerik sayfalarının
-  her biri kendi başlığını ve açıklamasını üretir
-- **Dört seviyeli katalog** — Bölüm (`/ekipmanlar`, grup kartları) › Grup
-  (`/ekipmanlar/kaynak-makineleri`, kategori kartları) › Kategori
-  (`/ekipmanlar/kaynak-makineleri/mig-gazalti-...`, ürünler) › Ürün
-  (`/urun/ultimate-250-mtc`). Katalog adresi menüdeki yolu izler; ürün adresi
-  kısa ve kalıcıdır, ürün başka kategoriye taşınsa da değişmez. Her seviyede
-  görünür konum satırı ve `BreadcrumbList` yapısal verisi var. Kart görselleri
-  `public/images/categories/` klasöründedir (kategori/grup kaydındaki `image`);
-  görseli olmayan kartta ilk ürünün fotoğrafı gösterilir. Gruplar ve
-  kategoriler panelden yönetilir (Ürünler → Kategoriler): ad, sıra, kart görseli,
-  sayfanın altındaki tanıtım metni ve SEO alanları.
-- **`/sitemap.xml`** — aramada görünmesi istenen bütün sayfalar: ürün, bölüm,
-  grup, kategori, blog, haber, etkinlik, kurumsal ve destek sayfaları. `packages/data`
-  içindeki veriden otomatik üretilir. Son değişiklik tarihi yalnızca gerçek tarihi
-  bilinen sayfalarda yazılır (ürün, blog, haber)
-- **`/robots.txt`** — site haritasını bildirir (site aramaya açıkken); bkz. aşağıdaki *Arama motorlarına açık / kapalı*
-- **`canonical`** — her sayfa kendi adresini asıl adres olarak bildirir
-- **Open Graph / Twitter Card** — WhatsApp, LinkedIn ve X'te paylaşınca başlık,
-  açıklama ve görselle düzgün önizleme çıkar
-- **Yapısal veri (schema.org JSON-LD)** — `Product` (fiyat, SKU, stok durumu, marka,
-  teknik özellikler), `BreadcrumbList`, `Organization`
-
-### Site adresi
-
-Adres sırasıyla `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik değişkeni (yalnızca
-demo) → `localhost` olarak çözülür. Canlı site kendi sunucumuzda çalışır
-(KARARLAR K-92); orada `NEXT_PUBLIC_SITE_URL` tanımlanır. Bu adres aynı zamanda
-sitenin aramaya açılıp açılmayacağını belirler (aşağıya bakın).
-
-### Form e-postaları
-
-Sitedeki formlar (iletişim, bayilik, teklif, servis, garanti, yorum, üyelik,
-sipariş, iade talebi, Welders Club, ürün destek sorusu) **info@zenweld.com**'a Resend
-üzerinden e-posta gönderir (`apps/zenweld-web/src/lib/server/mail.ts`,
-`app/api/bildirim`). Sunucuda tanımlanacak değişkenler:
-
-| Değişken | Açıklama |
-|---|---|
-| `RESEND_API_KEY` | resend.com anahtarı; yoksa e-posta gönderilmez |
-| `SUPPORT_EMAIL` | (isteğe bağlı) varsayılan alıcı, yoksa info@zenweld.com; veritabanı modunda tür başına panelden değişir |
-| `SUPPORT_FROM` | (isteğe bağlı) doğrulanmış gönderici adresi |
-
-Anahtar yoksa demo adresinde formlar başarılı görünür; canlıda yalnızca
-e-postayla giden formlar ziyaretçiye hata gösterir.
-
-### Arama motorlarına açık / kapalı
-
-Site **varsayılan olarak arama motorlarına kapalıdır.** Yalnızca gerçek alan
-adında (`zenweld.com` veya `www.zenweld.com`) yayındayken açılır; bunun için
-ayrıca bir ayar yapmak gerekmez. Demo `vercel.app` adresi, Vercel önizleme
-sürümleri ve `localhost` her zaman kapalıdır. Liste `apps/zenweld-web/src/lib/seo.ts`
-içindeki `INDEXABLE_HOSTS`'tadır; gerçek alan adı farklıysa (örn. `zenweld.com.tr`)
-oraya eklenmelidir.
-
-Kapalıyken her sayfaya `<meta name="robots" content="noindex, nofollow">`
-eklenir ve site haritası `robots.txt`'de bildirilmez.
-
-`robots.txt` gizli sayfaları **engellemez**, bilerek: Google sayfayı tarayamazsa
-`noindex` etiketini de göremez ve adresi başka kaynaktan bulursa yine
-indeksleyebilir. Bu yüzden yalnızca `/api/` kapalıdır.
-
-Site açıkken de her zaman `noindex` olan sayfalar: yönetim paneli (etiket +
-`X-Robots-Tag` başlığı), giriş, kayıt, şifremi unuttum, hesabım, arama, çıkış,
-sepet, ödeme ve yasal metinler (taslak oldukları için). Bu sayfalar site
-haritasına da girmez.
-
----
-
-## Marka varlıkları
-
-| Varlık | Yer |
-|---|---|
-| Logo (kırmızı / beyaz) | `apps/zenweld-web/public/images/brand/` |
-| Kare marka işareti | `assets/brand-mark.svg` |
-| Favicon ve uygulama ikonları | `apps/zenweld-web/src/app/` (favicon.ico, icon.png, apple-icon.png) |
-| Android ikonları | `apps/zenweld-web/public/icons/` (icon-192.png, icon-512.png) |
-| Web app manifest | `apps/zenweld-web/src/app/manifest.ts` |
-
-### Platform kapsamı
-
-| Platform | Hangi dosya |
-|---|---|
-| Tüm tarayıcı sekmeleri (Android, iOS, masaüstü) | `favicon.ico` + `icon.png` |
-| Android — ana ekrana ekle, uygulama geçiş ekranı, splash | `manifest.ts` + `icons/icon-192.png`, `icon-512.png` |
-| iOS — ana ekrana ekle | `apple-icon.png` |
-| Android Chrome tarayıcı çubuğu rengi | `viewport.themeColor` (layout.tsx) |
-
-**Marka rengi:** `#B82429` — `packages/ui/src/theme.css` içindeki `--color-zw-red-600`.
-Tüm buton, vurgu ve rozet renkleri bu tondan türetilir.
-
-**İkonları yeniden üretmek:** `assets/brand-mark.svg` dosyasını değiştirip
-`node scripts/generate-icons.mjs` çalıştırın; favicon.ico (16/32/48 px),
-icon.png ve apple-icon.png yeniden oluşturulur.
-
----
+- **Sayfa boyutu ve hız ölçümü:** site açıkken
+  `node scripts/sayfa-olcumu.mjs http://localhost:3000` (birden fazla adres
+  yan yana ölçülür). Son sonuçlar: [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md)
+  › Ölçüm.
+- **Marka varlıkları:** logo `apps/zenweld-web/public/images/brand/`; kare
+  marka işareti `assets/brand-mark.svg`; favicon ve uygulama ikonları
+  `apps/zenweld-web/src/app/` (`favicon.ico`, `icon.png`, `apple-icon.png`)
+  ve `public/icons/` (`icon-192.png`, `icon-512.png`); manifest
+  `src/app/manifest.ts`; Android tarayıcı çubuğu rengi `viewport.themeColor`
+  (`src/app/(site)/layout.tsx`, `src/app/yonetim/layout.tsx`). Marka rengi `#B82429`
+  (`packages/ui/src/theme.css` › `--color-zw-red-600`). İkonları yeniden
+  üretmek için `assets/brand-mark.svg`'yi değiştirip
+  `node scripts/generate-icons.mjs` (favicon 16/32/48 px, `icon.png`,
+  `apple-icon.png`).
 
 ## Teknoloji
 
 Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind CSS v4 ·
-MiniSearch · Leaflet + OpenStreetMap · lucide-react · ESLint · Vitest · Playwright · npm workspaces ·
-PostgreSQL 18 + Drizzle ORM (hazırlanıyor)
+PostgreSQL 18 + Drizzle ORM · MiniSearch · Leaflet + OpenStreetMap ·
+lucide-react · ESLint · Vitest · Playwright · npm workspaces.

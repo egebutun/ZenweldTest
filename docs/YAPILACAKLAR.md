@@ -926,8 +926,8 @@ sözleşmelerdeki MERSİS alanı boş ("[—]"). Kalanlar:
 Ekipmanlar'daki 35 ürün sahibinin listesinden (2026-10-27) girildi: ad, ürün
 kodu (SAP kodu), alt grup, garanti ve seçenekler gerçektir (KARARLAR K-71,
 K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler ›
-ürün; örnek veride `packages/data/src/seed/products.seed.ts` ("ORNEK" ve
-"TEMSILI" notları) (KARARLAR K-73).
+ürün; örnek veride `packages/data/src/seed/products.seed.ts` ("ORNEK", "TEMSILI" ve
+"DOGRULANMALI" notları) (KARARLAR K-73).
 
 1. **Fotoğraflar:** Bkz. [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler).
 2. **Ekipmanların içeriği (örnek):** Force serisi 9 üründe (ForceArc 200 /
