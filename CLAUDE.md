@@ -113,8 +113,8 @@ ilgili belge **aynı commit'te** güncellenir:
 - Demo hesapların giriş bilgileri ve test kartı **yalnızca README'de** yazar;
   başka dosyaya eklenmez.
 - Demo modunda panel ve üyelik girişi gerçek güvenlik sağlamaz. Veritabanı
-  modunda giriş, oturum ve panelin bütün işlemleri sunucudadır (Aşama 4 ve
-  5): her işlem yönetici oturumuyla denetlenir ve işlem kaydına yazılır.
+  modunda giriş, oturum ve panelin bütün işlemleri sunucudadır: her işlem
+  yönetici oturumuyla denetlenir ve işlem kaydına yazılır.
   Canlıya çıkmadan `docs/YAPILACAKLAR.md` › Canlıya giden yol'daki işler
   yapılmalıdır.
 

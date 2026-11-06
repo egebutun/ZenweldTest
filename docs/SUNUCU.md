@@ -9,7 +9,7 @@ betikler ve komutlar.
   `/api/bayilik`, `/api/destek`); bütün veri tarayıcıdadır.
 - **Veritabanı modunda** (`DATA_SOURCE=database`, KARARLAR K-88) site,
   üyelik, siparişler, formlar ve panelin bütün işlemleri sunucudan,
-  veritabanından yapılır (Aşama 3–5). İki modun farkları:
+  veritabanından yapılır. İki modun farkları:
   [README](../README.md) › Demo ve veritabanı modu.
 
 **Güvenlik kuralı:** Bütün anahtarlar ve şifreler (e-posta servisi, ödeme
@@ -83,7 +83,7 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `NEXT_PUBLIC_MAIN_SITE_URL` | Yönetici (isteğe bağlı) | Panel ileride ayrı bir adrese (ör. `admin.zenweld.com`) taşınırsa ana sitenin adresi; paneldeki "Sayfayı gör" bağlantıları bunu kullanır. Bugün gerekmez |
 | `DATABASE_URL` | Yönetici (gizli) | Veritabanı (PostgreSQL) bağlantı adresi. `npm run db:*` komutları ve `DATA_SOURCE=database` ise site kullanır |
 | `DATA_SOURCE` | Yönetici | Sitenin veri kaynağı (KARARLAR K-88). Boşsa demo modu (veri tarayıcıda). `database` ise veritabanı modu: site, üyelik, siparişler, formlar ve panel veritabanından okur ve yazar ([6](#6-okuma-ve-önbellek)). Derlemede de okunur: değiştirince yeniden derlenir, derleme sırasında veritabanına erişilebilmelidir. Ayar tarayıcı paketine de yazılır (`NEXT_PUBLIC_DATA_SOURCE`, elle tanımlanmaz) |
-| `REVALIDATE_SECRET` | Yönetici (gizli) | Siteyi beklemeden yenileme anahtarı (Aşama 3.6). Tanımlıysa `/api/yenile` ucu açılır; `npm run site:yenile` aynı anahtarla siteyi o anda yeniler. Boşsa uç kapalıdır. Panel ve SAP stok okuma işi siteyi kendi içinden yeniler, bu anahtara ihtiyaç duymaz |
+| `REVALIDATE_SECRET` | Yönetici (gizli) | Siteyi beklemeden yenileme anahtarı. Tanımlıysa `/api/yenile` ucu açılır; `npm run site:yenile` aynı anahtarla siteyi o anda yeniler. Boşsa uç kapalıdır. Panel ve SAP stok okuma işi siteyi kendi içinden yeniler, bu anahtara ihtiyaç duymaz |
 | `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma (`/api/sap/stok`) ve SAP sipariş aktarımı (`/api/sap/siparis`) uçları açılır; zamanlayıcı, `npm run sap:stok` ve `npm run sap:siparis` bu anahtarla çağırır. Boşsa uçlar kapalıdır |
 | `ODEME_SAGLAYICI` | Yönetici | Kartla ödemenin sağlayıcısı (K-108). Boşsa `temsili` (para çekilmez, sipariş ödenmiş sayılır; K-97). Ödeme kuruluşu bağlanınca onun adı yazılır (ör. `iyzico`); bilinmeyen ad yazılırsa sipariş alınmaz ve sunucu hata verir. Kuruluşun anahtarları ayrı değişkenlerde, yalnızca sunucuda durur |
 | `DOSYA_KLASORU` | Yönetici | Panelde yüklenen görsel ve belgelerin yazıldığı klasör (dosya deposu, K-108). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir; sunucunun yedeğine eklenmeli. Boşsa veritabanı modunda panelde dosya yüklenmez, adres girilir |
@@ -213,7 +213,7 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `0004_kupon-satir-payi.sql` | Sipariş satırına kupon payı (`order_items.coupon_discount`) |
 | `0005_kisiye-ozel-kupon.sql` | Kişiye özel kupon: `coupons.audience` ve `coupon_customers` |
 | `0006_giris-deneme-siniri.sql` | Yanlış şifre sınırı: `users.failed_login_count`, `failed_login_since`, `login_locked_until` (K-94) |
-| `0007_e-posta-turu-sifre-sifirlama.sql` | `email_log.type` müşteriye giden şifre sıfırlama e-postasını da kabul eder (`sifre-sifirlama`; Aşama 5.3) |
+| `0007_e-posta-turu-sifre-sifirlama.sql` | `email_log.type` müşteriye giden şifre sıfırlama e-postasını da kabul eder (`sifre-sifirlama`) |
 | `0008_welders-club-pasif.sql` | `welders_club_signups`'a `left_at` (pasife alınma) ve `updated_at` (panelde aynı kayıt koruması; K-100) |
 | `0009_ayar-sirket-bilgileri.sql` | `settings.key` `company` değerini de kabul eder (Şirket ve İletişim, K-105) |
 | `0010_sap-siparis-aktarimi.sql` | `sap_order_exports`: SAP'a sipariş aktarım sırası (K-108) |
@@ -302,8 +302,8 @@ kurulmamışsa komut bunu söyler. Bağlantı `DATABASE_URL`'dir.
 - **Tekrar çalıştırılabilir:** Kayıt birincil anahtarıyla eşleşir.
   Varsayılan olarak yalnızca olmayan kayıt eklenir; kimliği ya da benzersiz
   bir alanı (kod, ad, link) var olan satır atlanır ("zaten var"). Panel
-  veritabanına yazdığı için (Aşama 5) paneldeki değişikliklerin üzerine
-  yazılmasın diye varsayılan budur (Aşama 5.6).
+  veritabanına yazdığı için paneldeki değişikliklerin üzerine
+  yazılmasın diye varsayılan budur.
 - **Hiçbir kayıt silinmez:** Veriden çıkarılmış ya da veritabanına başka
   yoldan eklenmiş kayıt (üye, sipariş, panelden eklenen içerik) olduğu gibi
   kalır. Ürün başka kategoriye taşınırsa eski kategorinin filtre değerlerini
@@ -398,7 +398,7 @@ bunu kendi içinden çağırır; dışarıdan `/api/yenile` ucu ve
 mesajı hangi okumanın başarısız olduğunu söyler; yayındaki sayfalar son
 hazırlanmış haliyle gösterilmeye devam eder.
 
-**Tarayıcıdaki kopya (Aşama 5.6):** Veritabanı modunda tarayıcının veri
+**Tarayıcıdaki kopya:** Veritabanı modunda tarayıcının veri
 kopyası (`packages/store/src/database.ts`) boş başlar; bütün kayıtlar
 sunucudan gelir. Kopya tarayıcı deposuna (`zenweld.db.v1`) yazılmaz, aynı
 adreste daha önce çalışmış demodan kalan kopya silinir. Ayar derlemede
@@ -431,7 +431,7 @@ dosyaları derlemede atılır.
 - **Kapatma:** Çıkışta oturum silinir; şifre değişince üyenin diğer
   oturumları silinir; yeni girişte üyenin süresi dolmuş oturumları
   temizlenir.
-- **Site üyeliği (Aşama 4.2):** Veritabanı modunda sitenin kayıt, giriş,
+- **Site üyeliği:** Veritabanı modunda sitenin kayıt, giriş,
   çıkış, profil, şifre değiştirme ve hesap silme işlemleri
   `apps/zenweld-web/src/app/api/uyelik/[islem]/route.ts` ucundan,
   `packages/auth/src/server/accounts.ts` kurallarıyla yapılır; tarayıcı
@@ -441,14 +441,14 @@ dosyaları derlemede atılır.
   farklı) reddedilir. Girişte üye satırı kilitlenir: aynı anda gelen yanlış
   denemeler de doğru sayılır (`failed_login_*`, `login_locked_until`).
   Tarayıcıya giden üye kaydında şifre özeti boştur.
-- **Panel girişi (Aşama 4.3):** Veritabanı modunda panelin girişi ve çıkışı
+- **Panel girişi:** Veritabanı modunda panelin girişi ve çıkışı
   `apps/zenweld-web/src/app/api/yonetim/oturum/[islem]/route.ts` ucundan
   (`ben`, `giris`, `cikis`); oturum çerezi `zw_panel` (sitenin çerezinden
   ayrı). Panel düzeni (`app/yonetim/(panel)/layout.tsx`) her istekte
   oturumu sunucuda okur; geçerli yönetici oturumu yoksa sayfa gönderilmez,
   giriş ekranına yönlendirilir. Çerez ve istek denetimi iki uçta ortak:
   `lib/server/session-cookie.ts`.
-- **Şifre sıfırlama (Aşama 4.4, K-95; `packages/auth/src/server/password-reset.ts`):**
+- **Şifre sıfırlama (K-95; `packages/auth/src/server/password-reset.ts`):**
   `POST /api/uyelik/sifre-unuttum` hesap olsa da olmasa da aynı yanıtı
   verir; hesap aktif bir üyeyse 32 baytlık anahtar üretilir, özeti
   `password_reset_tokens`'a yazılır (üyenin eski bağlantıları silinir) ve
@@ -480,7 +480,7 @@ dosyaları derlemede atılır.
 
 ### Üyenin adresleri ve favorileri
 
-Aşama 5.1, KARARLAR K-96; `packages/auth/src/server/account-data.ts`.
+KARARLAR K-96; `packages/auth/src/server/account-data.ts`.
 
 - Veritabanı modunda giriş yapmış üye adreslerini ve favorilerini
   `/api/uyelik/[islem]` ucundan okur ve değiştirir; üye oturum çerezinden
@@ -517,7 +517,7 @@ Aşama 5.1, KARARLAR K-96; `packages/auth/src/server/account-data.ts`.
 
 ### Siparişler
 
-Aşama 5.2, KARARLAR K-97; `src/orders.ts`.
+KARARLAR K-97; `src/orders.ts`.
 
 - Veritabanı modunda site siparişi `apps/zenweld-web/src/app/api/siparis/[islem]/route.ts`
   ucundan verir ve okur; üye oturum çerezinden bulunur.
@@ -611,8 +611,8 @@ Kurallar (taksit, komisyon, kart programı):
    benzeri gizli bilgiler yalnızca sunucuda** ortam değişkeni olarak durmalı
    (ör. POS kimliğine göre adlandırılmış değişkenler). Bugün böyle bir
    değişken yoktur.
-5. **Tutarlar sunucuda yeniden hesaplanır:** Veritabanı modunda yapıldı
-   (Aşama 5.2): ürün fiyatı, kampanya, kupon, kargo ve vade farkı sunucuda
+5. **Tutarlar sunucuda yeniden hesaplanır:** Veritabanı modunda yapıldı:
+   ürün fiyatı, kampanya, kupon, kargo ve vade farkı sunucuda
    [IS-KURALLARI.md](IS-KURALLARI.md)'deki kurallarla hesaplanır, sipariş
    numarasını sunucu verir (`packages/db/src/orders.ts`). Sağlayıcıya
    çekilecek tutar bu hesaptan gider; sonuç `payment_transactions`'a
@@ -656,7 +656,7 @@ sunucu: `packages/db/src/payment.ts`, `packages/db/src/orders.ts`,
 
 ### Formlar
 
-Aşama 5.3, KARARLAR K-81; `src/forms.ts`.
+KARARLAR K-81; `src/forms.ts`.
 
 - Veritabanı modunda site formları `apps/zenweld-web/src/app/api/formlar/[tur]/route.ts`
   ucundan kaydeder ve okur; giriş yapmışsa üye oturum çerezinden bulunur.
@@ -715,7 +715,7 @@ girilir ([2](#2-ortam-değişkenleri)).
   - `POST /api/destek` — ürün sayfasındaki destek sorusu.
   - Veritabanı modunda sipariş, iade talebi, teklif, servis talebi, garanti
     kaydı ve yorumun bildirimini, kaydı yapan sunucu kendisi gönderir
-    (`/api/siparis`, `/api/formlar`; Aşama 5.2–5.3); tarayıcı `/api/bildirim`'e
+    (`/api/siparis`, `/api/formlar`); tarayıcı `/api/bildirim`'e
     bu türleri göndermez. Şablonlar tek yerde:
     `apps/zenweld-web/src/lib/server/notify.ts`.
 - Sunucu e-postayı Resend'in API'sine (`https://api.resend.com/emails`)
@@ -768,7 +768,7 @@ girilir ([2](#2-ortam-değişkenleri)).
   - Bot koruması (Cloudflare Turnstile ya da görünmez reCAPTCHA), doğrulama
     sunucuda.
   - Kayıt tutan formlar sunucuda veritabanına yazılır ve e-posta bu
-    kayıttan gider (veritabanı modunda böyle, Aşama 5.2–5.3; demo modunda
+    kayıttan gider (veritabanı modunda böyle; demo modunda
     tarayıcı kaydı kendisi oluşturup e-posta ucuna haber veriyor). Sipariş
     e-postası ödeme kuruluşunun onayından sonra gitmeli.
   - Sepet kuponunu deneyen uç (`/api/siparis/kupon`) ve garanti sorgulama
@@ -786,7 +786,7 @@ Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
 ## 10. Panel
 
 Veritabanı modunda panelin bütün ekranları veritabanından okur ve yazar
-(Aşama 5, KARARLAR K-99). Demo modunda aynı işlemler tarayıcıdaki veriye
+(KARARLAR K-99). Demo modunda aynı işlemler tarayıcıdaki veriye
 yazılır. Kuralların yöneticinin gördüğü hali:
 [IS-KURALLARI.md › 22](IS-KURALLARI.md#22-panelde-kayıt-düzenleme).
 

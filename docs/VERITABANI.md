@@ -9,9 +9,8 @@ olduğu ve bir kayıt silinince ne olduğu.
 
 - **Veritabanı modunda** (`DATA_SOURCE=database`, KARARLAR K-88) bütün
   kayıtlar sunucudaki PostgreSQL tablolarındadır. Site, üyelik, formlar ve
-  panelin bütün ekranları bu tablolardan okur ve yazar (Aşama 3–5).
-  Tarayıcıya örnek veri gönderilmez, tarayıcı deposuna veri yazılmaz
-  (Aşama 5.6).
+  panelin bütün ekranları bu tablolardan okur ve yazar.
+  Tarayıcıya örnek veri gönderilmez, tarayıcı deposuna veri yazılmaz.
 - **Demo modunda** bütün veri tarayıcıda tek bir JSON nesnesidir
   (`zenweld.db.v1`). Şekli `packages/data/src/types.ts` › `ZenweldDatabase`
   tipidir; her dizisi bir tabloya karşılık gelir. Tablolardan farkları:
@@ -701,7 +700,7 @@ iade, garanti ve yorumlardaki bağ boşalır. Son aktif yönetici silinemez.
   adres varsayılan olur.
 - Adresi yalnızca sahibi değiştirebilir.
 - Üye başına en fazla 20 adres (K-96). Veritabanı modunda adresler
-  sunucudadır (Aşama 5.1).
+  sunucudadır.
 
 ### `sessions` — oturumlar (yeni)
 
@@ -719,7 +718,7 @@ burada ([SUNUCU.md › Şifre ve oturum](SUNUCU.md#şifre-ve-oturum)).
 
 ### `password_reset_tokens` — şifre sıfırlama (yeni)
 
-Veritabanı modunda kullanılır (Aşama 4.4, KARARLAR K-95): `token_hash`
+Veritabanı modunda kullanılır (KARARLAR K-95): `token_hash`
 bağlantıdaki anahtarın sha256 özetidir; anahtarın kendisi yalnızca
 e-postadadır. Üye başına en fazla bir geçerli bağlantı durur.
 
@@ -732,8 +731,7 @@ e-postadadır. Üye başına en fazla bir geçerli bağlantı durur.
 
 ### `favourites` — favoriler (yeni)
 
-Veritabanı modunda giriş yapmış üyenin favorileri burada (Aşama 5.1,
-KARARLAR K-96); giriş yapmamış ziyaretçinin ve demo modunun favorileri
+Veritabanı modunda giriş yapmış üyenin favorileri burada (KARARLAR K-96); giriş yapmamış ziyaretçinin ve demo modunun favorileri
 tarayıcıda (`zenweld.favourites.v1`).
 
 | Kolon | Tür | Kural |
@@ -1302,8 +1300,8 @@ başvurusu ve Welders Club katılımı e-postayla birlikte kayıt olarak da
 saklanır.
 
 - **Veritabanı modunda** kayıt bu tablolara yazılır; e-posta gitmese de
-  kayıt alınır, gidip gitmediği `email_log`'dadır (Aşama 5.3;
-  [SUNUCU.md › Formlar](SUNUCU.md#formlar)).
+  kayıt alınır, gidip gitmediği `email_log`'dadır
+  ([SUNUCU.md › Formlar](SUNUCU.md#formlar)).
 - **Demo modunda** kayıt, e-posta gidince tarayıcıdaki verinin isteğe bağlı
   listelerine yazılır (`dealerApplications`, `supportMessages`,
   `weldersClub`; K-109) ve yalnızca formu gönderen tarayıcıda görünür.
@@ -1457,7 +1455,7 @@ Koddaki: `recordCounters` (ön ek → sayı, ör. `"TKL-2026-": 49`).
   (K-64; [IS-KURALLARI.md › 17](IS-KURALLARI.md#17-kayıt-numaraları)).
 - Numara kayıt anında, tek bir işlemde artırılıp okunur; aynı anda gelen
   iki kayıt aynı numarayı alamaz.
-- Sipariş ve iade talebi numarasını veren sunucu (Aşama 5.2) sayaç yoksa ya
+- Sipariş ve iade talebi numarasını veren sunucu sayaç yoksa ya
   da tablodaki en büyük numaranın gerisindeyse o numaradan devam eder
   (örnek veriyle yüklenen siparişlerde sayaç boştur).
 
@@ -1625,7 +1623,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 | Anahtar | Yer | İçerik | Veritabanı modunda |
 |---|---|---|---|
-| `zenweld.db.v1` | localStorage | Bütün veri (`ZenweldDatabase`, `version` alanıyla) | Yazılmaz; demodan kalan silinir (Aşama 5.6) |
+| `zenweld.db.v1` | localStorage | Bütün veri (`ZenweldDatabase`, `version` alanıyla) | Yazılmaz; demodan kalan silinir |
 | `zenweld.session.v1` | localStorage | Site oturumu: üyenin kimliği | Sunucu oturumu (`sessions`, çerez) |
 | `zenweld.admin.session.v1` | localStorage | Panel oturumu: yöneticinin kimliği | Sunucu oturumu (`sessions`, çerez) |
 | `zenweld.cart.v1` | localStorage | Sepet: `[{ productId, variantId?, quantity }]` (eski `selection` biçimli satırlar tek seçenekte okunur) | Tarayıcıda kalır; fiyat her açılışta üründen hesaplanır |

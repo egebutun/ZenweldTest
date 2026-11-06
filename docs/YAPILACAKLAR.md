@@ -68,7 +68,7 @@ siparişi olarak yazılır; site hızlı ve hatasız çalışır.
 **Bugün:** Yayındaki site demo modundadır: her ziyaretçinin tarayıcısı
 verinin kendi kopyasını tutar; panelde yapılan değişiklik yalnızca o
 tarayıcıda görünür. Veritabanı modunun kodu hazırdır (`DATA_SOURCE=database`,
-KARARLAR K-88; Aşama 3–5): sitenin ve panelin bütün okuma ve yazmaları
+KARARLAR K-88): sitenin ve panelin bütün okuma ve yazmaları
 sunucudan, veritabanından yapılır; üyelik ve oturum sunucudadır; ödeme
 sağlayıcısı, SAP sipariş aktarımı ve dosya deposu değiştirilebilir parça
 olarak hazırdır (K-108). Nasıl çalıştıkları: [SUNUCU.md](SUNUCU.md). Canlı
@@ -402,7 +402,7 @@ kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
   Birden fazla sunucu çalışırsa önbellek ortak bir yerde (ör. Redis)
   tutulmalı; yoksa yenileme yalnızca isteği alan sunucuda olur.
 - **Derleme sırasında veritabanına erişilmelidir** (sayfalar derlemede
-  hazırlanır). Bilerek böyle bırakıldı (Aşama 3.6): derlemeyi
+  hazırlanır). Bilerek böyle bırakıldı: derlemeyi
   veritabanından bağımsız yapmak, sayfaları önceden hazırlamak yerine her
   ziyarette yeniden üretmek demek; site yavaşlar. Kendi sunucumuzda (K-92)
   derleme veritabanına erişebilir.
@@ -440,7 +440,7 @@ kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
 
 ## Veritabanı — kalanlar
 
-Veritabanı modu bütün kayıtlar için hazır (Aşama 3–5; [VERITABANI.md](VERITABANI.md),
+Veritabanı modu bütün kayıtlar için hazır ([VERITABANI.md](VERITABANI.md),
 [SUNUCU.md](SUNUCU.md)). Kayıt sayısı büyüyünce ve canlıdan önce:
 
 1. **Panel ana sayfası** siparişlerin, tekliflerin ve üyelerin tamamını
@@ -470,7 +470,7 @@ Veritabanı modu bütün kayıtlar için hazır (Aşama 3–5; [VERITABANI.md](V
 
 ## Ölçüm (hız)
 
-Aşama 3.7, 2026-11-04. `node scripts/sayfa-olcumu.mjs <adres…>`. Koşullar
+2026-11-04. `node scripts/sayfa-olcumu.mjs <adres…>`. Koşullar
 Google'ın mobil ölçümündeki gibi: yavaş 4G (1,6 Mbit/sn) ve 4 kat
 yavaşlatılmış işlemci; her sayfa boş önbellekle 3 kez, ortanca değer.
 Boyutlar sıkıştırılmış (ağdan inen) boyuttur. Ölçüm bilgisayarda yapıldı;
@@ -491,7 +491,7 @@ Boyutlar sıkıştırılmış (ağdan inen) boyuttur. Ölçüm bilgisayarda yap�
   içinde geliyor (sayfa geçişlerinde tekrar inmez). Toplam indirme ve
   açılış süresi iki modda neredeyse aynı.
 - Her sayfada ~300 KB JavaScript iniyor. Ölçümde bunun ~47 KB'ı tarayıcıya
-  giden örnek veriydi. Aşama 5.6'dan beri veritabanı modunda örnek veri
+  giden örnek veriydi. Bugün veritabanı modunda örnek veri
   tarayıcı paketine girmez (`npm run test:e2e:db` dener); demo modunda
   girer. Sayfa tamamen yüklendikten sonra sayılınca veritabanı modunda her
   sayfa ~28 KB (sıkıştırılmış) daha az JavaScript indirir: anasayfa
@@ -622,7 +622,7 @@ kararlaştırılacak. Form uçlarındaki istek sınırı ve bot koruması:
 ## Online satış — canlıya çıkmadan önce
 
 Veritabanı modunda sipariş sunucuda kaydediliyor; tutar, kupon ve stok
-sunucuda yeniden hesaplanıyor (Aşama 5.2, [SUNUCU.md](SUNUCU.md) › 8); ödeme
+sunucuda yeniden hesaplanıyor ([SUNUCU.md](SUNUCU.md) › 8); ödeme
 temsili. Canlı için:
 
 1. **Ödeme kuruluşu** (iyzico, PayTR veya bankanın sanal POS'u): 3D Secure,
@@ -711,8 +711,7 @@ deneme dosyalarıyla çalışıyor ([SUNUCU.md](SUNUCU.md) › 11).
 
 Kupon özelliği sitede ve panelde var (KARARLAR K-85,
 [IS-KURALLARI.md › 21](IS-KURALLARI.md#21-kuponlar)); veritabanı modunda
-indirim, kullanım sınırı ve iptal sunucuda (Aşama 5.2,
-[SUNUCU.md](SUNUCU.md) › 8). Kalanlar:
+indirim, kullanım sınırı ve iptal sunucuda ([SUNUCU.md](SUNUCU.md) › 8). Kalanlar:
 
 1. **Kaba deneme:** Sepette art arda yanlış kod denemesi sınırlanır (ör.
    dakikada 10; [Formlar — güvenlik](#formlar--güvenlik) 4).
@@ -808,7 +807,7 @@ K-106): panelde salt okunur bir "Bağlantılar" ekranı.
 ## Üyelik, oturum ve şifre
 
 Veritabanı modunda üyelik, panel girişi ve şifre sıfırlama sunucuda
-(Aşama 4; [SUNUCU.md](SUNUCU.md) › 7). Hesap silinince kalan veriler:
+([SUNUCU.md](SUNUCU.md) › 7). Hesap silinince kalan veriler:
 [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama).
 
 1. **Şifre sıfırlama e-postası — konuşulacak (KARARLAR K-105):** Bugünkü

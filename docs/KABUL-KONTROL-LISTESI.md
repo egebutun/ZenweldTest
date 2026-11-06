@@ -13,6 +13,10 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
   kayıtla denenir; kural aynıdır.
 - Denemeye **temiz tarayıcı verisiyle** başlanır (gizli pencere ya da site
   verisi silinmiş tarayıcı); panelde yapılan denemeler örnek veriyi değiştirir.
+- Maddeler aksi yazmadıkça **iki modda da** (demo ve veritabanı) denenir
+  (KARARLAR K-110); "veritabanı modunda" yazan maddeler yalnızca o modda
+  denenir. Veritabanı modunu bilgisayarda açmak: [README](../README.md) ›
+  Veritabanı.
 - Demo hesapların giriş bilgileri ve test kartı [README](../README.md)'dedir.
 - Ayrıntılı davranış için: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md), [IS-KURALLARI.md](IS-KURALLARI.md).
@@ -49,8 +53,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 
 - [ ] `npm install` ve `npm run build` hatasız biter.
 - [ ] `npm start` ile site açılır; anasayfa 200 döner.
-- [ ] Tip kontrolü (`npx tsc --noEmit -p apps/zenweld-web/tsconfig.json`)
-      hatasız geçer.
+- [ ] Tip kontrolü (`npm run typecheck`) hatasız geçer.
 - [ ] Kod denetimi (`npm run lint`) hata ve uyarı vermez.
 - [ ] `npm audit --omit=dev` (siteye giden kütüphaneler) açık göstermez.
 - [ ] İş kuralları testleri (`npm test`) geçer.
@@ -65,7 +68,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       geçersiz kalan kuponla ödeme engeli, kuponlu sipariş ve kişi başı
       sınır, kişiye özel kupon panelde ve sepette).
 - [ ] Veritabanı: boş bir PostgreSQL'de `npm run db:migrate` hatasız biter
-      ve 64 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
+      ve 65 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
       `npm run db:generate` "No schema changes" der.
 - [ ] `npm run db:seed` boş veritabanına örnek veriyi yükler ve tablo
       tablo satır sayılarını yazar (ör. products 40, orders 133); ikinci
@@ -428,7 +431,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       Gönderilen talep `IAD-<yıl>-<4 hane>` numarası ve "Yeni" durumuyla
       görünür; açık talep varken düğme görünmez.
 - [ ] Site ve panel oturumu ayrıdır; birinden çıkış diğerini etkilemez.
-- [ ] Veritabanı modunda üyelik (Aşama 4.2): üye olunca `db:studio`'da
+- [ ] Veritabanı modunda üyelik: üye olunca `db:studio`'da
       `users`'ta görünür, şifre özeti `$argon2id$` ile başlar. Tarayıcının
       geliştirici araçlarında `zw_oturum` çerezi HttpOnly'dir; sayfa
       yenilense de oturum açık kalır. Çıkışta `sessions`'taki satır silinir.
@@ -445,7 +448,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       sayfasında "Şifreniz değiştirildi…" yazar, diğer cihazdaki oturum
       kapanır. Aynı bağlantı ikinci kez ve 1 saatten sonra "Bağlantı geçersiz
       ya da süresi dolmuş." der; `/sifre-sifirla` bağlantısız açılınca da.
-- [ ] Adresler ve favoriler (veritabanı modu, Aşama 5.1, K-96): Adreslerim'de
+- [ ] Adresler ve favoriler (veritabanı modu, K-96): Adreslerim'de
       eklenen adres `addresses`'ta görünür; varsayılan değiştirilince ve
       varsayılan silinince kalan ilk adres varsayılan olur. Başka tarayıcıda
       aynı üyeyle girilince aynı adresler görünür; ödeme sayfasında
@@ -455,7 +458,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       Başka tarayıcıda biri çıkarılınca ilk tarayıcıda sayfa yenilenince o da
       gider. Çıkış yapınca kalpler boş görünür; tekrar girişte favoriler
       geri gelir.
-- [ ] Siparişler (veritabanı modu, Aşama 5.2, K-97): sepette veritabanına
+- [ ] Siparişler (veritabanı modu, K-97): sepette veritabanına
       eklenen bir kuponun kodu uygulanır, olmayan kod "Bu kupon kodu geçerli
       değil." der. Kartla verilen sipariş `orders`'ta "preparing" durumunda,
       sunucunun hesapladığı tutarla görünür; `card_last4` son 4 hanedir, kart
@@ -478,7 +481,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       sıraya al** gösterir; basınca "Sırada" olur ve `audit_log`'a yazılır.
       Ödenip gönderilmeden iptal edilen sipariş "Aktarılmadı" olur.
       Anahtarsız ya da yanlış anahtarla `/api/sap/siparis` çalışmaz.
-- [ ] Formlar (veritabanı modu, Aşama 5.3, K-98): ziyaretçi olarak gönderilen
+- [ ] Formlar (veritabanı modu, K-98): ziyaretçi olarak gönderilen
       teklif `quotes`'ta `TKL-…` numarasıyla görünür; üyenin teklifi
       Tekliflerim'de görünür. Servis talebi `service_requests`'te, garanti
       kaydı `warranties`'te görünür; aynı seri numarası küçük harfle
@@ -489,7 +492,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       `welders_club_signups`'ta, bayilik başvurusu `dealer_applications`'ta
       görünür. Her form için `email_log`'da bir satır vardır (Resend
       tanımlı değilse durumu `skipped`).
-- [ ] Veritabanı modunda panel (Aşama 4.3): oturumsuz `/yonetim/urunler`
+- [ ] Veritabanı modunda panel: oturumsuz `/yonetim/urunler`
       giriş ekranına (`?next=%2Fyonetim%2Furunler`) gider; yönetici girişinden
       sonra Ürünler açılır. `zw_panel` çerezi HttpOnly'dir; `sessions`'ta
       `admin` satırının bitişi girişten 8 saat sonradır. Sitede giriş yapmış
@@ -1106,8 +1109,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       silmez; diğer sekme güncel veriyi görür.
 - [ ] Örnek veri değiştirildiğinde `DB_VERSION` artırılmışsa tarayıcıdaki
       veri örnek veriyle yeniden kurulur.
-- [ ] `DATA_SOURCE` boşken site bugünkü gibi çalışır: panelde değiştirilen
-      ürün fiyatı sitede görünür.
+- [ ] `DATA_SOURCE` boşken site demo modunda çalışır: panelde değiştirilen
+      ürün fiyatı aynı tarayıcıda sitede görünür.
 - [ ] `DATA_SOURCE=database` ile derlenip açılan sitede (README ›
       Veritabanı) ürünler, kategoriler, seçenekler, depo stoğu ve mağaza
       ayarları veritabanından gelir: `db:studio`'da bir ürünün fiyatı
@@ -1135,7 +1138,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       kapalıdır (tarayıcı testi de dener).
 - [ ] Aynı modda veritabanı kapanırsa yayındaki sayfalar son hazırlanmış
       haliyle açılmaya devam eder; veritabanı açılınca güncel veri gelir.
-- [ ] Aynı modda tarayıcıda örnek veri yok (Aşama 5.6): sitede ve panelde
+- [ ] Aynı modda tarayıcıda örnek veri yok: sitede ve panelde
       gezildikten sonra tarayıcının geliştirici araçlarında (Application ›
       Local Storage) `zenweld.db.v1` yoktur; demodan kalmışsa ilk açılışta
       silinir. Sitenin JavaScript dosyalarında demo hesaplar, örnek
@@ -1148,7 +1151,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       satıcı fiyatı ve yasal metin gövdesi yalnızca gereken sayfadadır; üye
       kartla satın alabilir. (Yukarıdaki veritabanı modu maddelerinin
       çoğunu bu test dener.)
-- [ ] **Canlıya çıkmadan:** örnek satış hareketleri
-      (`sample-activity.seed.ts`) kaldırılmış, gerçek kargo/POS/IBAN değerleri
-      ve gerçek yasal metinler girilmiş, e-posta anahtarı tanımlanmıştır
-      ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
+- [ ] **Canlıya çıkmadan:** canlı veritabanında örnek üye, sipariş, teklif,
+      servis ve garanti kaydı yoktur (`db:yukle` bunları yüklemez, K-91);
+      gerçek kargo/POS/IBAN değerleri ve gerçek yasal metinler girilmiş,
+      e-posta anahtarı tanımlanmıştır ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›
+      Canlıya giden yol).
