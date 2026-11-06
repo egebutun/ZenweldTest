@@ -13,8 +13,11 @@ sitede ne değiştiği. Tasarım (renk, yerleşim) anlatılmaz.
 - Bayi ve online satıcı stoklarının ayrıntısı: [STOK.md](STOK.md)
 - Sunucu, ödeme, e-posta ve harita servisleri: [SUNUCU.md](SUNUCU.md)
 
-**Demo notu** ile işaretli yerler bugünkü demonun sınırlarıdır (verinin
-tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
+Ekranlar demo modunda da veritabanı modunda da aynıdır. **Demo notu** ile
+işaretli yerler yalnızca demo modunun sınırıdır (verinin tarayıcıda durması
+gibi); "Veritabanı modunda" diye başlayan maddeler sunucunun ek olarak ne
+yaptığını söyler. İki modun farkları: [README](../README.md) › Demo ve
+veritabanı modu.
 
 Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 
@@ -77,7 +80,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
   başlayan adreslere dönülür.
 - Zaten giriş yapılmışsa giriş ekranı doğrudan panele geçer.
 - Yöneticinin hesabı askıya alınırsa açık oturumu hemen kapanır.
-- **Veritabanı modunda** (`DATA_SOURCE=database`, Aşama 4.3):
+- **Veritabanı modunda** (`DATA_SOURCE=database`):
   - Giriş sunucuda yapılır. Oturum yalnızca sunucunun okuyabildiği bir
     çerezde durur ve girişten **8 saat** sonra biter; uzamaz (KARARLAR
     K-94).
@@ -155,10 +158,11 @@ dön** panelin ana ekranına götürür.
 
 **Demo notu:**
 
-- Yetki kontrolü yalnızca tarayıcıda yapılır; canlıya çıkmadan önce sunucu
-  tarafında kimlik doğrulama şarttır.
-- Panelde yapılan her değişiklik tarayıcının yerel deposuna yazılır.
-  Başlangıç verisi `packages/data` içindeki örnek verilerdir.
+- Demo modunda yetki kontrolü yalnızca tarayıcıda yapılır; gerçek güvenlik
+  değildir. Veritabanı modunda giriş ve bütün işlemler sunucuda yönetici
+  oturumuyla denetlenir (yukarıda).
+- Demo modunda panelde yapılan her değişiklik tarayıcının yerel deposuna
+  yazılır. Başlangıç verisi `packages/data` içindeki örnek verilerdir.
 
 ---
 
@@ -211,7 +215,8 @@ dön** panelin ana ekranına götürür.
 - Tek görsel alanlarında (temsilci fotoğrafı, Hakkımızda görselleri)
   yüklenen dosyanın adresi "(yüklenen dosya)" diye görünür ve elle
   değiştirilemez; **Kaldır** ya da yeni dosya ile değişir.
-- **Demo notu:** Yüklenen görsel veritabanının içine yazılır.
+- **Demo notu:** Demo modunda yüklenen görsel kaydın içine (`data:` adresi
+  olarak) yazılır.
 - Veritabanı modunda görsel küçültüldükten sonra sunucunun dosya deposuna
   yüklenir ve alana sitedeki adresi (`/dosya/gorsel/…`) gelir (KARARLAR
   K-108; kurallar [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar)).
@@ -346,14 +351,15 @@ yalnızca ana sitenin kayıtlarıdır; bayi kayıtları sayılmaz.
 - Son 5 sipariş (kod, tutar) sipariş detayına gider.
 - Boşsa "Henüz teklif yok." / "Henüz sipariş yok."
 
-**Demo notu:**
+**Notlar:**
 
-- Panel açılınca ödeme süresi dolan havale siparişleri iptal edilir (gerçek
-  sistemde zamanlanmış görev yapacak).
+- Panel açılınca ödeme süresi dolan havale siparişleri iptal edilir (iki
+  modda da); canlıda bunu ayrıca günlük zamanlanmış bir iş yapacak.
 - Grafiklerdeki örnek hareketler (son 90 güne yayılmış örnek üye, sipariş,
   teklif, servis talebi ve garanti kaydı)
-  `packages/data/src/seed/sample-activity.seed.ts` dosyasından gelir. Canlıya
-  çıkmadan önce silinmelidir.
+  `packages/data/src/seed/sample-activity.seed.ts` dosyasından gelir. Bunlar
+  yalnızca demo modunda ve `db:seed` ile kurulan bilgisayar veritabanında
+  vardır; canlıya ve deneme veritabanına hiç yüklenmez (KARARLAR K-91).
 
 **Veritabanı modunda:** Ana sayfa her açılışta veriyi sunucudan okur:
 siparişler, teklifler, üyeler (yöneticiler sayılmaz; şifre bilgisi
@@ -457,8 +463,8 @@ bulunamadı."
 - **Müşteri Notu:** Müşteri ödeme sayfasında not yazdıysa.
 - **İç Not:** "Yalnızca panelde görünür"; **Notu Kaydet** → "Kaydedildi".
 
-**Demo notu:** Kartla ödeme gerçek değildir; sipariş kaydı ve akış gösterim
-içindir.
+**Not (iki modda da):** Ödeme kuruluşu bağlanana kadar kartla ödeme
+temsilidir; para çekilmez (KARARLAR K-97).
 
 ### İade Talepleri (`/yonetim/iade-talepleri`)
 
@@ -1596,7 +1602,8 @@ her değişiklik işlem kaydına yazılır. Farklar:
   sunucu kodları veritabanındaki ürünler ve kod eşleştirmeleriyle yeniden
   eşleştirip uygular. Geçmişe "Dosya" kaydı yöneticinin adıyla düşer;
   ürün sayfalarındaki stoktaki bayiler ve online satıcı kartları hemen
-  değişir. Dosyanın kendisi saklanmaz (dosya deposu Aşama 6'da). Pencere
+  değişir. Dosyanın kendisi saklanmaz (dosya deposunda saklanması sonraya;
+[YAPILACAKLAR.md](YAPILACAKLAR.md) › Bayi ve satıcı stokları). Pencere
   açıkken:
   - Kaynağın stoğu bu arada değiştiyse (başka yönetici dosya yükledi,
     satır düzeltti ya da geri aldı) uygulanmaz: "Bu kayıt siz açtıktan
@@ -2197,7 +2204,8 @@ sayfaları. Yüklenen belgeler sitede bu listedeki sırayla görünür."
 **Demo notu:** Dosyanın kendisi tarayıcının dosya deposunda (IndexedDB),
 kaydı veritabanında durur. Başka bir tarayıcıda dosya bulunmaz: "<dosya> bu
 tarayıcıda bulunamadı; dosyayı yeniden yükleyin." Veritabanı modunda dosya
-yüklenmez, adresi girilir: [Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları).
+deposu ayarlıysa dosya sunucuya yüklenir, değilse adresi girilir:
+[Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları).
 
 ---
 
