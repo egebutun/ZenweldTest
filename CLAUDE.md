@@ -100,7 +100,9 @@ ilgili belge **aynı commit'te** güncellenir:
   görünen ekran, sekme ya da düğme sahibine söylenir (KARARLAR K-110).
 - **Yayın:** Gönderimden (push) sonra Vercel yayınının başarılı olduğu
   kontrol edilir (GitHub'da commit'in yanındaki Vercel durumu). Başarısızsa
-  iş bitmiş sayılmaz; neden bulunup düzeltilir.
+  iş bitmiş sayılmaz; neden bulunup düzeltilir. Yalnızca belgeler (`.md`)
+  değiştiyse Vercel sonucu beklenmez; kod değişen ilk gönderimde kontrol
+  edilir.
 
 ## Güvenlik
 
