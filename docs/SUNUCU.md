@@ -132,7 +132,7 @@ internete açılmadan okunur ve yazılır.
    başarısız görünür.
 2. **SAP'a sipariş aktarımı**, birkaç dakikada bir (KARARLAR K-108;
    [SAP sipariş aktarımı](#sap-sipariş-aktarımı)). Sıklığı SAP ekibiyle
-   kesinleşir ([CANLIYA-CIKIS-SORULARI.md](CANLIYA-CIKIS-SORULARI.md) › 2):
+   kesinleşir ([YAPILACAKLAR.md › Şirketten öğrenilecekler](YAPILACAKLAR.md#3-şirketten-öğrenilecekler-kişiye-göre) › SAP danışmanı):
 
    `*/5 * * * * curl -fsS -X POST -H "Authorization: Bearer <CRON_SECRET>" https://zenweld.com/api/sap/siparis`
 
@@ -227,7 +227,7 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `*_redirects` (tetikleyici), `zw_delete_redirects` | Ürün, kategori, grup, blog, haber ya da etkinlik silinince eski linklerini siler; varyant silinince ona yönlenen eski ürün linkini siler |
 | `product_filter_values_category`, `products_category_moved` (tetikleyici) | Ürüne yalnızca kendi kategorisinin filtre değeri işaretlenir; ürün başka kategoriye taşınınca eski değerler silinir |
 | `audit_log_guard`, `audit_log_no_truncate` (tetikleyici) | Değişiklik kaydı değiştirilemez ve silinemez |
-| `purge_audit_log()` | 2 yıldan eski değişiklik kayıtlarını siler; silinen sayıyı döndürür. Canlıda her gün çalıştırılmalı ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Veritabanı) |
+| `purge_audit_log()` | 2 yıldan eski değişiklik kayıtlarını siler; silinen sayıyı döndürür. Canlıda her gün çalıştırılmalı ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Veriyi canlıya taşıma) |
 | `next_record_number(önek)` | Kayıt numarasını tek işlemde artırıp döndürür (`next_record_number('TKL-2026-')` → 50) |
 
 **Kayıt katmanının sağladıkları** (veritabanında değil, sunucu kodunda):
@@ -1603,7 +1603,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 |---|---|---|
 | **Canlı sunucu ve veritabanı** | Veritabanı modu hazır, yayındaki site demo modunda | Sunucunun ve PostgreSQL'in kurulması, tabloların (`db:migrate`) ve verinin (`db:yukle canli`) yüklenmesi, ilk yönetici (`yonetici:olustur`) |
 | **SAP Business One (depo stoğu)** | Okuma işi hazır, SAP yerine deneme dosyasını okuyor (`/api/sap/stok`, `SAP_STOK_DOSYASI`) | SAP ekibinin hazırladığı "kullanılabilir stok" görünümünü (`AVAILABLE_STOCK`, ad kesinleşmedi) okuyan bağlantı parçası (KARARLAR K-82, K-84). Bağlantı yolu (Service Layer ya da veritabanına salt okunur kullanıcı) ve görünümün kolonları SAP ekibinden gelecek; bağlantı bilgileri yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması |
-| **SAP Business One (satış siparişi)** | Aktarım sırası ve iş hazır, SAP yerine deneme dosyasına yazıyor (`/api/sap/siparis`, `SAP_SIPARIS_DOSYASI`, `sap_order_exports`; K-108). Panelde sipariş detayında SAP Aktarımı kutusu | Siparişi SAP'a satış siparişi olarak yazan aktarıcı parça (KARARLAR K-84; `packages/db/src/sap-orders.ts` › `SapOrderExporter`). SAP'ın sipariş API'si (ör. `SALES_ORDER`), cari, KDV, kargo, kupon ve vade farkının SAP'ta nasıl yazılacağı ve bağlantı bilgileri SAP ekibinden gelecek ([CANLIYA-CIKIS-SORULARI.md](CANLIYA-CIKIS-SORULARI.md) › 2); bilgiler yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması. SAP'a geçmiş siparişin iptali ve iadesi ayrıca konuşulur |
+| **SAP Business One (satış siparişi)** | Aktarım sırası ve iş hazır, SAP yerine deneme dosyasına yazıyor (`/api/sap/siparis`, `SAP_SIPARIS_DOSYASI`, `sap_order_exports`; K-108). Panelde sipariş detayında SAP Aktarımı kutusu | Siparişi SAP'a satış siparişi olarak yazan aktarıcı parça (KARARLAR K-84; `packages/db/src/sap-orders.ts` › `SapOrderExporter`). SAP'ın sipariş API'si (ör. `SALES_ORDER`), cari, KDV, kargo, kupon ve vade farkının SAP'ta nasıl yazılacağı ve bağlantı bilgileri SAP ekibinden gelecek ([YAPILACAKLAR.md › Şirketten öğrenilecekler](YAPILACAKLAR.md#3-şirketten-öğrenilecekler-kişiye-göre) › SAP danışmanı); bilgiler yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması. SAP'a geçmiş siparişin iptali ve iadesi ayrıca konuşulur |
 | **Dosya deposu** | Demo modunda görseller kaydın içinde, belgeler tarayıcıda. Veritabanı modunda dosya deposu parçası hazır (K-108): `DOSYA_KLASORU` ayarlıysa panelde görsel ve belge sunucunun diskine yüklenir, `/dosya/…` adresinden sunulur; ayarlı değilse adres girilir (K-101, K-104) | Deponun yeri ve yedeği BT ile kesinleşir (sunucunun diski ya da S3 uyumlu nesne deposu). Nesne deposu seçilirse onun parçası eklenir (`packages/db/src/file-storage.ts` › `FileStorage`). Kullanılmayan dosyaların temizliği |
 | **Ödeme kuruluşu** | Temsili (para çekilmez) | [Kartla ödeme](#kartla-ödeme) › Canlı için gerekenler |
 | **E-posta servisi** | Kodu hazır; anahtar yok, hiçbir e-posta gitmiyor | Resend kurulumu ([9](#9-formlar-ve-e-posta)); şifre sıfırlama e-postası da buna bağlı |
@@ -1611,7 +1611,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | **Bülten** | Kayıt kutusu var, hiçbir yere gitmez | Bülten servisi seçilip bağlanmalı |
 | **Analitik** (ziyaret, dönüşüm, sepette bırakılan) | Yok | Google Analytics vb.; çerez onayına bağlı yüklenmeli ve adresleri güvenlik politikasına (CSP) eklenmeli. Çerez ayarları penceresine analiz/pazarlama kategorileri eklenmeli |
 | **e-Arşiv / e-Fatura** | Yok | Muhasebe yazılımı ya da entegratör |
-| **Kargo** | Takip numarası elle girilir; firmaya takip sayfasının adresi girilince müşteri ve panelde takip bağlantısı (`carriers.tracking_url`, KARARLAR K-105) | İsteğe bağlı, firma API verirse: etiket oluşturma, durum ve teslim bilgisinin firmadan okunması; firma başına sunucuda bağlantı parçası, anahtar ortam değişkeninde ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Online satış 9) |
+| **Kargo** | Takip numarası elle girilir; firmaya takip sayfasının adresi girilince müşteri ve panelde takip bağlantısı (`carriers.tracking_url`, KARARLAR K-105) | İsteğe bağlı, firma API verirse: etiket oluşturma, durum ve teslim bilgisinin firmadan okunması; firma başına sunucuda bağlantı parçası, anahtar ortam değişkeninde ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Online satış 8) |
 | **ETBİS ve MERSİS** | MERSİS no panelden girilir, sözleşmelere yazılır (K-105); ETBİS yok | Ticaret Bakanlığı kaydı; gerçek MERSİS no |
 | **Zamanlanmış görevler** | SAP işleri uçta hazır; havale iptali sayfa açılınca çalışıyor | Zamanlayıcının kurulması; havale süresi dolan siparişleri iptal; işlem kaydının 2 yıldan eskisini silme (`purge_audit_log()`); kampanya başlangıç/bitişinde ürün sayfasını yenileme |
 | **Bayi B2B uygulaması** | Yok | Ayrı uygulama ([YAPILACAKLAR.md](YAPILACAKLAR.md)) |

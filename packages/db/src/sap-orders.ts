@@ -26,9 +26,9 @@ import * as s from "./schema";
  *   siparisi almaz (SKIP LOCKED).
  *
  * Siparisin SAP'a nasil yazilacagi (cari, KDV, kargo, kupon, vade farki)
- * SAP danismaniyla netlesir (CANLIYA-CIKIS-SORULARI › 2); aktarici siparisin
- * butun bilgisini alir (SapOrderPayload) ve SAP'in istedigi bicime kendisi
- * cevirir.
+ * SAP danismaniyla netlesir (YAPILACAKLAR › Sirketten ogrenilecekler ›
+ * SAP danismani); aktarici siparisin butun bilgisini alir (SapOrderPayload)
+ * ve SAP'in istedigi bicime kendisi cevirir.
  */
 
 type Database = NodePgDatabase<typeof s>;

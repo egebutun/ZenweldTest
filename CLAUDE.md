@@ -113,7 +113,7 @@ ilgili belge **aynı commit'te** güncellenir:
 - Demo modunda panel ve üyelik girişi gerçek güvenlik sağlamaz. Veritabanı
   modunda giriş, oturum ve panelin bütün işlemleri sunucudadır (Aşama 4 ve
   5): her işlem yönetici oturumuyla denetlenir ve işlem kaydına yazılır.
-  Canlıya çıkmadan `docs/YAPILACAKLAR.md`'deki backend maddeleri
+  Canlıya çıkmadan `docs/YAPILACAKLAR.md` › Canlıya giden yol'daki işler
   yapılmalıdır.
 
 ## Git

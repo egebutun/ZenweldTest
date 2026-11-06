@@ -202,7 +202,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   kodu bir SAP kodu olsaydı, bayi dosyasında o kodla gelen stok ürünün bütün
   seçeneklerinde (ör. su soğutmalılarda da) görünürdü.
 - **Açık konu:** Üretilen kodların SAP'ta açılıp açılmayacağı:
-  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün seçenekleri 7.
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün seçenekleri 3.
 
 ### K-73 · Ekipmanlarda temsili fiyat ve örnek içerik
 - **Tarih:** 2026-10-28
@@ -1072,7 +1072,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   - **Kartlı ödeme:** Gerçek POS bağlanana kadar bugünkü gibi temsilidir;
     sipariş ödenmiş sayılır ve "Hazırlanıyor" olarak kaydedilir. Canlıya
     gerçek ödeme bağlanmadan çıkılmaz ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›
-    yol haritası 5).
+    Canlıya giden yol).
   - **İade talebi** sipariş detayında olduğu için siparişlerle aynı adımda
     sunucuya taşınır.
   - **Süresi dolan havale:** Siparişler okunurken sunucuda iptal edilir ve
@@ -1266,7 +1266,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   yüklenir; ayarlı değilse K-101 ve K-104'teki gibi adres girilir.
 - **Neden:** Sahibinin kararı (2026-11-05): "Bu üç işi şimdi bu sırayla
   yap, sonra panelin 6. alanını bitir." Teknik konularda şirketten gelecek
-  cevaplar (CANLIYA-CIKIS-SORULARI.md) yalnızca bağlantı parçasını
+  cevaplar (YAPILACAKLAR.md › Şirketten öğrenilecekler) yalnızca bağlantı parçasını
   değiştirsin, sitenin geri kalanını değil.
 
 ### K-109 · Demo modunda panel ekranları gizlenmez; form kayıtları tarayıcıda tutulur
@@ -1325,7 +1325,7 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
 - **Karar:** Tip kontrolü, kod denetimi, testler ve derleme her gönderimde
   GitHub'da kendiliğinden çalıştırılmaz; geliştirici elle çalıştırır
   (CLAUDE.md › Doğrulama). İleride kurulabilir
-  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Kod incelemesi bulguları 8).
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Kod incelemesi bulguları 6).
 
 ---
 

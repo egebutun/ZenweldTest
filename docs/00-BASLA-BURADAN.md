@@ -88,8 +88,7 @@ Diğer temel bilgiler:
 | 7 | [STOK.md](STOK.md) | Bayi ve satıcı stok dosyalarının biçimi, eşleşme kuralları, backend'e geçiş |
 | 8 | [KARARLAR.md](KARARLAR.md) | Alınan kararlar ve nedenleri |
 | 9 | [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) | Bir özelliğin doğru çalıştığını doğrulamak için madde madde test listesi |
-| 10 | [YAPILACAKLAR.md](YAPILACAKLAR.md) | Sonraya bırakılan işler ve backend'e geçiş notları |
-| 11 | [CANLIYA-CIKIS-SORULARI.md](CANLIYA-CIKIS-SORULARI.md) | Canlıya çıkmadan şirketteki kişilere (BT, SAP danışmanı, muhasebe, hukuk, kargo, ödeme kuruluşu) sorulacaklar |
+| 10 | [YAPILACAKLAR.md](YAPILACAKLAR.md) | Kalan işler ve kimi beklediği: canlıya giden yol, şirketteki kişilere (BT, SAP danışmanı, muhasebe, hukuk, kargo, ödeme kuruluşu) sorulacaklar, karar bekleyen işler |
 | — | [README.md](../README.md) (proje kökünde) | Teknik başlangıç: kurulum, çalıştırma, demo hesaplar, proje yapısı |
 | — | [CLAUDE.md](../CLAUDE.md) (proje kökünde) | Bu projede çalışan Claude oturumları için çalışma kuralları |
 

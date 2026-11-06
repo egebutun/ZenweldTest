@@ -9,7 +9,7 @@ import type { Carrier, OrderShipment } from "./types";
  * detayi) baglantiyi buradan alir.
  *
  * Kargo firmasinin API'si baglanirsa (etiket, durum ve teslim bilgisi;
- * YAPILACAKLAR > Online satis 9) o firmanin baglanti parcasi sunucuda yazilir
+ * YAPILACAKLAR > Online satis 8) o firmanin baglanti parcasi sunucuda yazilir
  * ve takip baglantisi da gerekirse buradan, tek yerden degisir.
  */
 

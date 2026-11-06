@@ -1049,7 +1049,7 @@ Sahibinin kararı (KARARLAR K-82, K-84). Kod: `packages/data/src/warehouse.ts`.
 bunu 15 dakikada bir okuyup kendi veritabanına yazar (`warehouse_stock`).
 Sayfa açılırken SAP'a gidilmez. Panelden değiştirilmez. Bugün demo
 verisinde örnek stok vardır (Demo notu); SAP bağlanana kadar okuma işi bir
-deneme dosyasını okur ([VERITABANI.md](VERITABANI.md) › 14 › SAP stok
+deneme dosyasını okur ([SUNUCU.md](SUNUCU.md) › 11 › SAP stok
 okuma).
 
 **SAP okuması** (`readSapStock`, `diffWarehouseStock`):

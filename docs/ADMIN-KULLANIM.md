@@ -701,7 +701,7 @@ kaybolmaz.
 - Örnek veride takip adresleri boştur; her firmanın takip sayfasının adresi
   firmadan öğrenilip girilir. Kargo firmasının API'si (etiket, durum,
   teslim bilgisi) ileride bağlanabilir ([YAPILACAKLAR.md](YAPILACAKLAR.md)
-  › Online satış 9).
+  › Online satış 8).
 
 **Kartla Taksit:**
 
