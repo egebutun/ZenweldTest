@@ -650,7 +650,7 @@ Yayındaki site bugün demo modundadır. Gerçek kullanıma almadan önce:
    `db:yukle` bunları hiç yüklemez (K-91), veritabanı modunda tarayıcıya da
    gönderilmez (Aşama 5.6). Örnek verinin koddan kaldırılması:
    [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md) › Canlıya giden yol ›
-   Kalan kod işleri 7.
+   Kalan kod işleri 6.
 6. **Gerçek değerler girilmeli:** Kargo ücreti, banka POS'ları ve vade farkı
    oranları, IBAN'lar (Mağaza Ayarları'ndaki değerler örnektir).
 7. **Ödeme kuruluşu bağlanmalı** (iyzico, PayTR ya da bankanın sanal POS'u);

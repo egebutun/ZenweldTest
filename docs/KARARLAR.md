@@ -1285,6 +1285,17 @@ yazar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   yapılan işin görünmesini istedi (2026-11-05, "evet": A1 ve A2 önerileri).
   Demoda boş ya da gizli ekran, ekranın hiç yapılmadığı izlenimini veriyor.
 
+### K-110 · Her özellik iki modda da denenir
+- **Tarih:** 2026-11-06
+- **Karar:** Bir özellik hem demo modunda hem veritabanı modunda denenir.
+  Yalnızca bir modda görünen ekran, sekme ya da düğme varsa bu sahibine
+  söylenir; sessizce gizlenmez. Kural CLAUDE.md › Teknik kurallar ›
+  Doğrulama'dadır; iki modun farkları README › Demo ve veritabanı modu'da.
+- **Neden:** Sahibi, yapıldığı söylenen İşlem Kaydı ve E-posta Kaydı
+  ekranlarını yayındaki (demo) sitede göremedi; ekranlar demo modunda
+  kendisine söylenmeden gizlenmişti (K-109). Sahibi kuralın CLAUDE.md'ye
+  eklenmesini onayladı (2026-11-06, "evet ikisini de yapalım").
+
 ### K-62 · Belgeler
 - **Tarih:** 2026-10-22
 - **Karar:**

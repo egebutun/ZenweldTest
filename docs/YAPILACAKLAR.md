@@ -21,7 +21,7 @@ ileride gelecek bağlantılara (API) açık ve genişletilebilir yapılır
 | **Kargo** (ücret, firmalar, takip, entegrasyon) | Sabit ücret ve ücretsiz kargo sınırı, firma listesi, takip numarası elle girilir; firmaya takip adresi girilince müşteri ve panelde takip bağlantısı (K-105); kargo firması API'si yok | [Online satış](#online-satış--canlıya-çıkmadan-önce) 9–10 |
 | **İade** | Bireysel üye 14 gün içinde talep açar; panelde durum; para iadesi elle | [İade talebi](#i̇ade-talebi--kurumsal-üyeler-ve-backend) 3–5 |
 | **SAP ayarları ve stok kontrolü** | Depo stoğu deneme dosyasından 15 dakikada bir okunur; stokta olmayan ürün sepete eklenmez; bayi stoğunda geçerlilik süresi | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend), [Bayi ve satıcı stokları](#bayi-ve-satıcı-stokları--backend) |
-| **SAP'a sipariş kaydı** | Veritabanı modunda aktarım sırası hazır (K-108): ödemesi kesinleşen sipariş sıraya girer, iş gönderir, başarısızsa yeniden dener, panelde durum ve **Yeniden sıraya al**; SAP yerine deneme dosyasına yazıyor | Yukarıda "Kalan kod işleri" 4, [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) |
+| **SAP'a sipariş kaydı** | Veritabanı modunda aktarım sırası hazır (K-108): ödemesi kesinleşen sipariş sıraya girer, iş gönderir, başarısızsa yeniden dener, panelde durum ve **Yeniden sıraya al**; SAP yerine deneme dosyasına yazıyor | Aşağıda "Kalan kod işleri" 3, [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap--backend) |
 | **API ayarları** (SAP, ödeme, e-posta, kargo bağlantıları) | Bağlantı bilgileri yalnızca sunucuda ortam değişkeni; panelde yok (güvenlik kuralı) | [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md), [Bağlantıların durumu](#bağlantıların-durumu-panelde--öneri) |
 | **Banka ve ödeme ayarları** | Mağaza Ayarları'nda POS tablosu, taksitler ve havale hesapları; ödeme temsili | [Online satış](#online-satış--canlıya-çıkmadan-önce) 1, 10; [ENTEGRASYONLAR.md](ENTEGRASYONLAR.md) › Kartla ödeme |
 | **E-postalar** (gönderen, metinler, müşteri bildirimleri) | Alıcılar panelde (K-104); servis kurulmadı, hiçbir e-posta gitmiyor | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre--backend) 3, [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı--backend) |
@@ -39,8 +39,8 @@ ziyaretçinin tarayıcısı verinin kendi kopyasını tutuyor; panelde yapılan
 değişiklik yalnızca o tarayıcıda görünür. Veritabanı modu
 (`DATA_SOURCE=database`, KARARLAR K-88) hazırdır: sitenin ve panelin bütün
 okuma ve yazmaları sunucudan, veritabanından yapılır (Aşama 3–5, aşağıda
-"Yapılanlar" ve "Kalan kod işleri" 1). Canlı sunucu ve veritabanı kurulunca
-site bu modda yayına alınır; ayar kapalıyken demo bugünkü gibi çalışır.
+"Yapılanlar"). Canlı sunucu ve veritabanı kurulunca site bu modda yayına
+alınır; ayar kapalıyken demo bugünkü gibi çalışır.
 İki modun farkları: [README](../README.md) › Demo ve veritabanı modu.
 
 ### Yapılanlar
@@ -70,20 +70,41 @@ site bu modda yayına alınır; ayar kapalıyken demo bugünkü gibi çalışır
    değiştirme, hesap silme ve şifre sıfırlama sunucuda; tek giriş hata
    mesajı, yanlış şifre sınırı; panel sayfaları yönetici oturumu olmadan
    gönderilmiyor; `npm run yonetici:olustur`.
-7. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
+7. Aşama 5 — Yazma (KARARLAR K-99; veritabanı modunda): sipariş, teklif,
+   form, garanti, servis, iade, yorum ve panelin bütün ekranları sunucu
+   üzerinden veritabanına yazar.
+   - 5.1 adresler ve favoriler; 5.2 siparişler ve iade talebi; 5.3 teklif,
+     servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta
+     kaydı.
+   - 5.4–5.5 (birleşti): panel alan alan veritabanından okur ve yazar;
+     değişiklik kaydı ve sayfa yenileme. 1) Satış; 2) Talepler; 3) Katalog
+     (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler); 4) Bayiler,
+     Online Satıcılar, Satış Temsilcileri ve Stok Matrisi (görüntüleme,
+     elle düzeltme, dosya yükleme, eşleştirme, geri alma; K-103); 5) İçerik
+     ve ayarlar (Mağaza Ayarları ve E-posta Alıcıları, K-104; Haberler,
+     Etkinlikler, Blog, Hakkımızda, SSS; yasal metinler, belgeler, Sayfa
+     SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip
+     bağlantısı, K-105); 6) Üyeler, İşlem Kaydı, E-posta Kaydı ve panel ana
+     sayfası.
+   - 5.6 örnek veri tarayıcıya gönderilmez; `db:yukle` varsayılan olarak
+     yalnızca eksik kayıtları ekler, `guncelle` yazılmadıkça panelde yapılan
+     değişikliklerin üzerine yazmaz (K-91).
+   - Tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt
+     anında ilgili sayfalar yenilenir. Kalanlar aşağıda "Veritabanı —
+     bütün kayıtlar" bölümünde.
+8. Next.js 16, güvenlik başlıkları, hata sayfaları; birim, veritabanı ve
    tarayıcı testleri.
 
 ### Kalan kod işleri (önerilen sırayla)
 
 | # | İş | Bağlı olduğu |
 |---|---|---|
-| 1 | **Aşama 5 — Yazma:** sipariş, teklif, form, garanti, servis, iade, yorum ve bütün panel ekranları sunucu üzerinden veritabanına yazar (sıra: 5.1 adresler ve favoriler — bitti; 5.2 siparişler ve iade talebi — bitti; 5.3 teklif, servis, garanti ve yorum formları, e-posta formlarının kaydı ve e-posta kaydı — bitti; 5.4–5.5 birleşti, panel alan alan veritabanından okur ve yazar, değişiklik kaydı ve sayfa yenileme (K-99): 1) Satış — bitti, 2) Talepler — bitti, 3) Katalog (Seçenek Tanımları, Kategoriler ve gruplar, Ürünler) — bitti, 4) Bayiler, satıcılar ve stok (4.1 Bayiler, Online Satıcılar, Satış Temsilcileri — bitti; 4.2 Stok Matrisi görüntüleme ve elle düzeltme — bitti; 4.3 dosya yükleme, eşleştirme, geri alma — bitti; K-103) — bitti, 5) İçerik ve ayarlar (5.1 Mağaza Ayarları ve E-posta Alıcıları — bitti, K-104; 5.2 içerik (Haberler, Etkinlikler, Blog, Hakkımızda, SSS) — bitti; 5.3 yasal metinler, belgeler, Sayfa SEO, Görünüm, şirket ve iletişim bilgileri ile MERSİS no, kargo takip bağlantısı — bitti, K-105) — bitti, 6) Üyeler, işlem kaydı ve e-posta kaydı ekranları, en son panel ana sayfası (6.1 Üyeler; 6.2 İşlem Kaydı ve E-posta Kaydı; 6.3 panel ana sayfası) — bitti; 5.6 örnek veri tarayıcıya gönderilmez, `db:yukle` varsayılanı `eksikler` — bitti); tutar, kupon ve stok ödeme anında sunucuda yeniden hesaplanır; kayıt anında ilgili sayfalar yenilenir. Aşama 5 bitti; kalanlar aşağıda "Veritabanı — bütün kayıtlar" bölümünde. Veri yükleme komutu artık varsayılan olarak yalnızca eksik kayıtları ekler (K-91): `guncelle` yazılmadıkça panelde yapılan değişikliklerin üzerine yazılmaz | — |
-| 2 | **Aşama 6 — Dosya deposu:** panelden görsel ve belge yükleme hazır (K-108; sunucunun diski, `DOSYA_KLASORU`). Kalan: deponun yeri ve yedeği, istenirse S3 uyumlu depo parçası, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları | Depo seçimi (BT) |
-| 3 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
-| 4 | **SAP satış siparişi aktarımı:** aktarım sırası, iş (`/api/sap/siparis`), yeniden deneme ve panel kutusu hazır (K-108; bugün deneme dosyasına yazıyor). Kalan: siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si ve bağlantı bilgileri; cari ve KDV kararları (CANLIYA-CIKIS-SORULARI › 2) |
-| 5 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez. Ödeme sağlayıcısı parçası hazır (`packages/db/src/payment.ts`, K-108): kuruluşun parçası eklenir, 3D Secure için ödeme iki adıma ayrılır, ödeme sayfası kart programını sunucudan alır | Ödeme kuruluşu anlaşması |
-| 6 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
-| 7 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
+| 1 | **Aşama 6 — Dosya deposu:** panelden görsel ve belge yükleme hazır (K-108; sunucunun diski, `DOSYA_KLASORU`). Kalan: deponun yeri ve yedeği, istenirse S3 uyumlu depo parçası, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları | Depo seçimi (BT) |
+| 2 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (Service Layer ya da salt okunur veritabanı kullanıcısı; bugün deneme dosyası okunuyor); zamanlayıcının seçilen sunucuda kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP bağlantı bilgileri; canlı sunucunun kurulması |
+| 3 | **SAP satış siparişi aktarımı:** aktarım sırası, iş (`/api/sap/siparis`), yeniden deneme ve panel kutusu hazır (K-108; bugün deneme dosyasına yazıyor). Kalan: siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si ve bağlantı bilgileri; cari ve KDV kararları (CANLIYA-CIKIS-SORULARI › 2) |
+| 4 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez. Ödeme sağlayıcısı parçası hazır (`packages/db/src/payment.ts`, K-108): kuruluşun parçası eklenir, 3D Secure için ödeme iki adıma ayrılır, ödeme sayfası kart programını sunucudan alır | Ödeme kuruluşu anlaşması |
+| 5 | **E-postalar:** form e-postalarının gerçekten gitmesi, müşteriye sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi | Resend hesabı ve `zenweld.com` DNS doğrulaması |
+| 6 | **Canlıya hazırlık:** form koruması (bot ve istek sınırı), zamanlanmış işler, hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, deneme ortamı, örnek verinin kaldırılması | Sunucu kararı |
 
 ### Kodla çözülmeyen, şimdiden başlatılması gerekenler
 
