@@ -1,11 +1,74 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { ProductImage } from "@zenweld/ui";
 import Link from "next/link";
+import { SupportIcon } from "@/components/support/SupportIcons";
 import { useT } from "@/lib/i18n-client";
 import type { TopMenu } from "@/lib/menu";
+
+/**
+ * MENU PANELI (butun ust menuler)
+ *
+ * Acilinca panel basliklarin altindan asagi dogru acilir, icerik hafif
+ * gecikmeyle belirir; menu degisince panelin yuksekligi yumusakca degisir
+ * ve icerik yeniden belirir. Kapanirken yukari toplanir. Arkadaki sayfa
+ * buzlu cam gibi bulaniklasir (MegaBackdrop). Efektler globals.css ›
+ * zw-mega; hareket azaltma tercihinde aninda acilir.
+ *
+ * closing: kapanma efekti suruyor; bitince onClosed cagrilir.
+ */
+export function MegaPanel({
+  menu,
+  closing,
+  onClosed,
+  onNavigate,
+}: {
+  menu: TopMenu;
+  closing: boolean;
+  onClosed: () => void;
+  onNavigate: () => void;
+}) {
+  const content = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number>();
+
+  useEffect(() => {
+    const el = content.current;
+    if (!el) return;
+    const observer = new ResizeObserver(() => setHeight(el.offsetHeight));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      className="zw-mega absolute left-0 right-0 top-full hidden overflow-hidden border-t border-zw-grey-200 bg-white shadow-xl lg:block"
+      data-state={closing ? "closing" : "open"}
+      style={{ height }}
+      onAnimationEnd={(e) => {
+        if (e.target === e.currentTarget && closing) onClosed();
+      }}
+    >
+      <div ref={content}>
+        {/* key: menu degisince secili grup/kategori sifirlanir ve icerik yeniden belirir. */}
+        <MegaMenu key={menu.id} menu={menu} onNavigate={onNavigate} />
+      </div>
+    </div>
+  );
+}
+
+/** Menu acikken sayfanin uzerindeki buzlu cam; tiklayinca menu kapanir. */
+export function MegaBackdrop({ closing, onClose }: { closing: boolean; onClose: () => void }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="zw-mega-backdrop fixed inset-0 z-[90] hidden lg:block"
+      data-state={closing ? "closing" : "open"}
+      onClick={onClose}
+    />
+  );
+}
 
 /**
  * MEGA MENU
@@ -17,7 +80,7 @@ import type { TopMenu } from "@/lib/menu";
  *
  * Alt basligi olmayan menulerde (tek, basliksiz kolon) sol bolme gosterilmez.
  */
-export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => void }) {
+function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => void }) {
   const t = useT();
   const [activeColumn, setActiveColumn] = useState(0);
   const [activeLink, setActiveLink] = useState(0);
@@ -32,8 +95,10 @@ export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () =
     setActiveLink(0);
   };
 
+  if (menu.intro) return <SupportMenu menu={menu} onNavigate={onNavigate} />;
+
   return (
-    <div className="absolute left-0 right-0 top-full hidden border-t border-zw-grey-200 bg-white shadow-xl lg:block">
+    <div className="zw-mega-content">
       <div
         className={`zw-container grid gap-8 py-8 ${
           hasProducts
@@ -188,6 +253,68 @@ export function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () =
             )}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * DESTEK VE GARANTI MENUSU
+ *
+ * Solda baslik, kisa aciklama ve "Tumunu Gor" (/destek); sagda iki kolonda
+ * sembollu baglantilar (Destek, Garanti).
+ */
+function SupportMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => void }) {
+  const t = useT();
+  return (
+    <div className="zw-mega-content">
+      <div className="zw-container grid grid-cols-[minmax(220px,300px)_1fr] gap-12 py-10 xl:gap-20">
+        <div>
+          <div className="font-display text-[34px] font-bold leading-none text-zw-ink">{menu.label}</div>
+          <p className="mt-4 max-w-[260px] text-sm leading-relaxed text-zw-grey-600">{menu.intro}</p>
+          {menu.href && (
+            <Link
+              href={menu.href}
+              onClick={onNavigate}
+              className="group mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-zw-ink hover:text-zw-red-600"
+            >
+              {t.nav.seeAll}
+              <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-x-10 xl:gap-x-14">
+          {menu.columns.map((col) => (
+            <ul key={col.label}>
+              {col.links.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={onNavigate}
+                    className="group flex items-center gap-4 border-b border-zw-grey-200 py-3.5"
+                  >
+                    {link.icon && (
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[6px] bg-zw-grey-100 text-zw-red-600 transition-colors group-hover:bg-zw-red-600 group-hover:text-white">
+                        <SupportIcon name={link.icon} size={22} />
+                      </span>
+                    )}
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[15px] font-semibold text-zw-ink">{link.label}</span>
+                      {link.description && (
+                        <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-zw-grey-500">{link.description}</span>
+                      )}
+                    </span>
+                    <ChevronRight
+                      size={17}
+                      className="shrink-0 text-zw-grey-400 transition-transform group-hover:translate-x-0.5 group-hover:text-zw-ink"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
       </div>
     </div>
   );

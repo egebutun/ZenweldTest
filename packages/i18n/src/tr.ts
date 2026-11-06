@@ -42,6 +42,11 @@ export const tr = {
     corporate: "Kurumsal",
     support: "Destek",
     supportWarranty: "Destek ve Garanti",
+    /** Destek ve Garanti menusunun solundaki kisa aciklama */
+    supportWarrantyIntro:
+      "Sorularınızın cevapları, servis ve iade işlemleri, garanti kaydı ve sorgulama tek yerde.",
+    returnsExchange: "İade ve Değişim",
+    returnsExchangeDesc: "Cayma hakkı, iade süresi ve değişim koşulları",
     updates: "Güncel",
     other: "Diğer",
     warrantyRegister: "Garanti Kaydı",
@@ -521,6 +526,24 @@ export const tr = {
     officesSubtitle:
       "İstanbul ve İzmir ofislerimizi ziyaret edebilirsiniz. Harita üzerine tıklayarak yol tarifi alabilirsiniz.",
     directions: "Yol tarifi al",
+  },
+  /** /destek: Destek ve Garanti sayfasi */
+  supportHub: {
+    brand: "Zenweld",
+    heroText:
+      "Kurulumdan bakıma, servis talebinden garanti işlemlerine kadar makineniz için ihtiyacınız olan her şey burada.",
+    tasksTitle: "Size nasıl yardımcı olabiliriz?",
+    tasksText: "Yapmak istediğiniz işi seçin; sizi doğru sayfaya götürelim.",
+    ctaFaq: "Soruları inceleyin",
+    ctaDealer: "Haritada bulun",
+    ctaService: "Talep oluşturun",
+    ctaReturns: "Koşulları inceleyin",
+    ctaWarrantyRegister: "Ürününüzü kaydedin",
+    ctaWarrantyCheck: "Garantinizi sorgulayın",
+    ctaWarrantyTerms: "Koşulları okuyun",
+    contactTitle: "Destek ekibimize ulaşın",
+    contactText: "Aradığınızı bulamadıysanız bize telefonla ya da e-postayla ulaşın.",
+    contactEmail: "E-posta",
   },
   search: {
     title: "Arama Sonuçları",

@@ -2302,7 +2302,7 @@ sayfalarla aynı listedir.
 |---|---|
 | Ana sayfa ve ürün bölümleri | Ana Sayfa, Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri, Teklif Al |
 | Keşfet | Hakkımızda, Satış Temsilcilerimiz, Bayilik Başvurusu, İletişim, Haberler, Etkinlikler, Blog, Welders Club, Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları |
-| Destek ve Garanti | Sık Sorulan Sorular, Yetkili Bayi ve Servis Ağı, Servis Talebi, Garanti, Garanti Kaydı, Garanti Sorgulama |
+| Destek ve Garanti | Destek ve Garanti, Sık Sorulan Sorular, Yetkili Bayi ve Servis Ağı, Servis Talebi, Garanti, Garanti Kaydı, Garanti Sorgulama |
 
 - Giriş Yap, Üye Ol, Şifremi Unuttum ve Arama sayfaları aramaya kapalıdır;
   listede yoktur.

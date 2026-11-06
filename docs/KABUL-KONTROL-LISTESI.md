@@ -159,8 +159,19 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       Keşfet · Destek ve Garanti.
 - [ ] Bölüm menüsünde grup başlığı grup sayfasına, kategori kategori
       sayfasına gider; bölüm adına tıklanınca bölüm sayfası açılır.
-- [ ] Mobil menüde her bölümde **Tümünü Gör** vardır; **Teklif Al bağlantısı
-      yoktur** (masaüstüyle aynı).
+- [ ] Destek ve Garanti menüsü: solda başlık, açıklama ve **Tümünü Gör**;
+      sağda sembolleriyle yedi bağlantı (Sık Sorulan Sorular, Yetkili Bayi
+      ve Servis Bul, Servis Talebi, İade ve Değişim, Garanti Kaydı, Garanti
+      Sorgulama, Garanti Koşulları). **Tümünü Gör** ve **Destek ve Garanti**
+      başlığı `/destek`'i açar (`tests/e2e/destek.spec.ts`).
+- [ ] Bir menü açıkken arkadaki sayfa bulanık görünür; bulanık alana
+      tıklayınca ya da **Esc** ile menü kapanır.
+- [ ] `/destek`: yedi kart menüdeki sayfalara gider; "Destek ekibimize
+      ulaşın"da e-posta, iki ofisin adresi ve telefonları Mağaza Ayarları ›
+      Şirket ve İletişim'dekilerle aynıdır (iki modda;
+      `tests/e2e-db/destek.spec.ts`).
+- [ ] Mobil menüde her bölümde ve Destek ve Garanti'de **Tümünü Gör** vardır;
+      **Teklif Al bağlantısı yoktur** (masaüstüyle aynı).
 - [ ] Sağ üstteki kullanıcı menüsünde Hesabım ve Siparişlerim vardır,
       **Tekliflerim yoktur**.
 - [ ] Alt bilgide Politikalar & Yasal altında 11 yasal metin vardır.

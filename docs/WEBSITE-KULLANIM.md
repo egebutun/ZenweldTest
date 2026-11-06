@@ -116,13 +116,18 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
 | Logo | Anasayfaya gider. |
 | **Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri** | Başlığa tıklayınca bölüm sayfası açılır; üzerine gelince mega menü açılır. |
 | **Keşfet** | Mega menü: **Kurumsal** (Hakkımızda, Satış Temsilcilerimiz, Bayimiz Olun, İletişim), **Güncel** (Haberler, Etkinlikler, Blog, Welders Club), **Diğer** (Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları). Her bağlantının kısa açıklaması vardır. |
-| **Destek ve Garanti** | Mega menü: **Destek** (Sık Sorulan Sorular, Yetkili Bayi ve Servis Bul, Servis Talebi), **Garanti** (Garanti Kaydı, Garanti Sorgulama, Garanti Koşulları). |
+| **Destek ve Garanti** | Başlığa tıklayınca [Destek ve Garanti sayfası](#destek-ve-garanti-destek) (`/destek`) açılır. Üzerine gelince menü açılır: solda başlık, kısa açıklama ve **Tümünü Gör** (`/destek`); sağda sembolleriyle ve kısa açıklamalarıyla Sık Sorulan Sorular, Yetkili Bayi ve Servis Bul, Servis Talebi, İade ve Değişim (`/yasal/iade`), Garanti Kaydı, Garanti Sorgulama, Garanti Koşulları. |
 | **Ara** kutusu | Arama penceresini açar. Klavyede **⌘K / Ctrl+K** ile de açılır. |
 | Konum simgesi | Yetkili Bayi ve Servis Ağı sayfasına gider. |
 | Sepet simgesi | Sepete gider; sepetteki toplam adet rozetle yazar (99'dan fazlaysa "99+"). |
 | Hesap simgesi | Girişliyse: ad soyad, e-posta, **Hesabım**, **Siparişlerim**, **Çıkış Yap** (çıkınca anasayfa). Girişsizse: **Giriş Yap**, **Üye Ol**. |
 
 Sayfa değişince açık menüler kapanır.
+
+**Menü açıkken** (bütün üst menüler) sayfanın geri kalanı bulanık ve
+soluk görünür. Fare menüden ve başlıklardan çıkınca, bulanık alana
+tıklanınca ya da **Esc** tuşuna basılınca menü kapanır. Bir başlıktan
+diğerine geçince menü kapanmadan içeriği değişir.
 
 **Ürün mega menüsü** (bölüm başlığının üzerine gelince):
 
@@ -137,13 +142,14 @@ Sayfa değişince açık menüler kapanır.
   kayıt sırasıyla gelir; Sıra numarası menüde kullanılmaz.
 
 **Mobil menü:** Telefonda menü simgesinden yandan açılan çekmecedir. Aynı
-menüler açılıp kapanır; bölümlerde "Tümünü Gör" ve tıklanabilir grup
-başlıkları vardır.
+menüler açılıp kapanır; bölümlerde ve Destek ve Garanti'de (`/destek`)
+"Tümünü Gör", bölümlerde tıklanabilir grup başlıkları vardır.
 
 ### Alt bilgi (her sayfada)
 
 - **Altı sütun:** Kurumsal, Güncel, Diğer, Destek, Garanti (üst menüdekiyle
-  aynı bağlantılar) ve **Politikalar & Yasal**. Yasal sütundaki adlar panelden
+  aynı bağlantılar; İade ve Değişim yalnızca Politikalar & Yasal'da) ve
+  **Politikalar & Yasal**. Yasal sütundaki adlar panelden
   değişebildiği için kayıtlı başlıklardan okunur; sırası
   [21. bölümdeki](#21-yasal-metinler) gibidir.
 - **İletişim:** Logo, merkez ofisin adresi, telefon ve e-posta (örnek veride
@@ -1495,6 +1501,22 @@ Panelde kayıt yoksa varsayılan içerik gösterilir.
 - **Boş bölge:** "Bu bölgede satış temsilcimiz bulunmuyor."
 - Liste panelden yönetilir.
 
+### Destek ve Garanti (`/destek`)
+
+Üst menüdeki **Destek ve Garanti** başlığı ve menüdeki **Tümünü Gör** bu
+sayfayı açar.
+
+- **Üst kısım:** "Zenweld", altında "Destek ve Garanti" ve kısa açıklama;
+  arkada ürün görseli (bugün geçici olarak Evomig 205 P).
+- **Size nasıl yardımcı olabiliriz?** Menüdeki yedi bağlantı kart olarak:
+  sembol, başlık, kısa açıklama ve bağlantı metni (ör. "Soruları
+  inceleyin →"). Kartın tamamı tıklanır. Telefonda kartlar iki sütundur ve
+  açıklama gösterilmez.
+- **Destek ekibimize ulaşın:** İletişim sayfasındaki bilgiler: e-posta
+  (iki ofis için ortak) ve her ofisin adresi, telefonları ve **Yol tarifi
+  al** (Google Haritalar, yeni sekme). Bilgiler panelden (Mağaza Ayarları ›
+  Şirket ve İletişim) değişir.
+
 ### Sık Sorulan Sorular (`/sss`)
 
 - **Konu düğmeleri:** Tümü, Genel, Sipariş & Teklif, Garanti, Teknik.
@@ -1677,6 +1699,7 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 | `/welders-club` | Welders Club |
 | `/garanti`, `/garanti/kayit`, `/garanti/sorgulama`, `/garanti/kosullar` | Garanti |
 | `/msds`, `/kaynak-rehberi`, `/parti-sertifikalari` | Belgeler |
+| `/destek` | Destek ve Garanti |
 | `/hakkimizda`, `/satis-temsilcilerimiz`, `/sss` | Kurumsal ve destek |
 | `/blog`, `/blog/<link>` | Blog |
 | `/haberler`, `/haberler/<link>` | Haberler |

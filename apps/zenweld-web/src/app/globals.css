@@ -3,3 +3,159 @@
 
 @source "../../../../packages/ui/src";
 @source "../../src";
+
+/* ==================================================================== */
+/* UST MENU PANELI (components/layout/MegaMenu.tsx)                      */
+/*                                                                      */
+/* Panel basliklarin altindan asagi dogru acilir, icerik hafif gecikmeyle */
+/* belirir; menu degisince yukseklik yumusakca degisir. Arkadaki sayfa   */
+/* buzlu cam gibi bulaniklasir.                                          */
+/* ==================================================================== */
+
+@keyframes zw-mega-in {
+  from { clip-path: inset(0 0 100% 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes zw-mega-out {
+  from { clip-path: inset(0 0 0 0); opacity: 1; }
+  to   { clip-path: inset(0 0 100% 0); opacity: 0.6; }
+}
+
+@keyframes zw-mega-content-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes zw-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes zw-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.zw-mega {
+  transition: height 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.zw-mega[data-state="open"] {
+  animation: zw-mega-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.zw-mega[data-state="closing"] {
+  animation: zw-mega-out 220ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+.zw-mega-content {
+  animation: zw-mega-content-in 380ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
+}
+
+.zw-mega-backdrop {
+  background: rgb(110 116 124 / 0.28);
+  -webkit-backdrop-filter: blur(14px) saturate(0.85);
+  backdrop-filter: blur(14px) saturate(0.85);
+}
+.zw-mega-backdrop[data-state="open"] {
+  animation: zw-fade-in 380ms ease-out both;
+}
+.zw-mega-backdrop[data-state="closing"] {
+  animation: zw-fade-out 220ms ease-in both;
+}
+
+/* Hareket azaltma tercihinde aninda acilir (kapanma bitisi yine bildirilir). */
+@media (prefers-reduced-motion: reduce) {
+  .zw-mega,
+  .zw-mega-content,
+  .zw-mega-backdrop {
+    transition: none;
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+/* ==================================================================== */
+/* DESTEK VE GARANTI SAYFASI (components/support/SupportHub.tsx)         */
+/*                                                                      */
+/* Urun gorseli sagdan hafifce yakinlasarak gelir; sola dogru buzlu cam  */
+/* gibi bulaniklasip acik griye karisir. Arkasinda kaynak arkini         */
+/* andiran yumusak, yavas nefes alan sicak bir isik var.                 */
+/* ==================================================================== */
+
+.zw-support-hero-image {
+  object-position: 50% 40%;
+  transform-origin: 60% 45%;
+  transform: scale(1.45);
+}
+
+.zw-support-hero-glow {
+  background:
+    radial-gradient(ellipse 34% 52% at 58% 52%, rgb(184 36 41 / 0.16), transparent 70%),
+    radial-gradient(ellipse 60% 80% at 62% 50%, rgb(255 255 255 / 0.9), transparent 75%);
+}
+
+.zw-support-hero-frost {
+  background: linear-gradient(
+    90deg,
+    var(--color-zw-grey-100) 0%,
+    rgb(241 242 244 / 0.94) 30%,
+    rgb(241 242 244 / 0.6) 48%,
+    rgb(241 242 244 / 0) 70%
+  );
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  -webkit-mask-image: linear-gradient(90deg, #000 38%, transparent 72%);
+  mask-image: linear-gradient(90deg, #000 38%, transparent 72%);
+}
+
+/* Telefonda gorsel yazinin altindadir; ustten asagi dogru belirir. */
+@media (max-width: 767px) {
+  .zw-support-hero-frost {
+    background: linear-gradient(
+      180deg,
+      var(--color-zw-grey-100) 0%,
+      var(--color-zw-grey-100) 42%,
+      rgb(241 242 244 / 0.55) 56%,
+      rgb(241 242 244 / 0) 74%
+    );
+    -webkit-mask-image: linear-gradient(180deg, #000 48%, transparent 76%);
+    mask-image: linear-gradient(180deg, #000 48%, transparent 76%);
+  }
+}
+
+/* Kartlardaki ve iletisim alanindaki ince doku */
+.zw-support-contact::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% -20%, rgb(255 255 255 / 0.18), transparent 55%),
+    repeating-linear-gradient(135deg, rgb(255 255 255 / 0.035) 0 2px, transparent 2px 14px);
+  pointer-events: none;
+}
+
+@keyframes zw-support-zoom {
+  from { transform: scale(1.62) translateX(3%); opacity: 0; }
+  to   { transform: scale(1.45) translateX(0); opacity: 1; }
+}
+
+@keyframes zw-support-glow {
+  0%, 100% { opacity: 0.75; }
+  50%      { opacity: 1; }
+}
+
+@keyframes zw-rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .zw-support-hero-image {
+    animation: zw-support-zoom 1.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .zw-support-hero-glow {
+    animation: zw-support-glow 5s ease-in-out infinite;
+  }
+  .zw-support-hero-text {
+    animation: zw-rise-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}

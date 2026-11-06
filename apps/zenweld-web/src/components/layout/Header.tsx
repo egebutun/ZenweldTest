@@ -18,7 +18,7 @@ import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { useMainMenu } from "@/lib/menu";
 import { useCart } from "@/lib/cart";
-import { MegaMenu } from "./MegaMenu";
+import { MegaBackdrop, MegaPanel } from "./MegaMenu";
 import { MobileDrawer } from "./MobileDrawer";
 
 // Arama penceresi ve arama kutuphanesi yalnizca ilk acilista yuklenir.
@@ -36,6 +36,12 @@ export function Header() {
   const cart = useCart();
 
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  // Panelde gosterilen menu: kapanma efekti bitene kadar son acilan menu kalir.
+  const [shownMenu, setShownMenu] = useState<string | null>(null);
+  const showMenu = (id: string | null) => {
+    setOpenMenu(id);
+    if (id) setShownMenu(id);
+  };
   const [searchOpen, setSearchOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -52,6 +58,7 @@ export function Header() {
         e.preventDefault();
         setSearchOpen(true);
       }
+      if (e.key === "Escape") setOpenMenu(null);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -100,7 +107,7 @@ export function Header() {
                 <Link
                   key={menu.id}
                   href={menu.href}
-                  onMouseEnter={() => setOpenMenu(menu.id)}
+                  onMouseEnter={() => showMenu(menu.id)}
                   onClick={() => setOpenMenu(null)}
                   className={className}
                 >
@@ -109,8 +116,8 @@ export function Header() {
               ) : (
                 <button
                   key={menu.id}
-                  onMouseEnter={() => setOpenMenu(menu.id)}
-                  onClick={() => setOpenMenu(openMenu === menu.id ? null : menu.id)}
+                  onMouseEnter={() => showMenu(menu.id)}
+                  onClick={() => showMenu(openMenu === menu.id ? null : menu.id)}
                   className={className}
                 >
                   {content}
@@ -228,15 +235,17 @@ export function Header() {
           </div>
         </div>
 
-        {openMenu && (
-          // key: menu degisince secili grup/kategori sifirlanir.
-          <MegaMenu
-            key={openMenu}
-            menu={menus.find((m) => m.id === openMenu)!}
+        {shownMenu && (
+          <MegaPanel
+            menu={menus.find((m) => m.id === shownMenu)!}
+            closing={openMenu === null}
+            onClosed={() => setShownMenu(null)}
             onNavigate={() => setOpenMenu(null)}
           />
         )}
       </header>
+
+      {shownMenu && <MegaBackdrop closing={openMenu === null} onClose={() => setOpenMenu(null)} />}
 
       {drawerOpen && <MobileDrawer menus={menus} onClose={() => setDrawerOpen(false)} />}
       {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}

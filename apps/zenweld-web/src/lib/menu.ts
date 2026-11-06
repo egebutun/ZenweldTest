@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { getCompany, listLegalPages, listProducts, useDatabase } from "@zenweld/store";
 import { legalPath, productHighlights, type LegalPageId, type TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
+import type { SupportIconName } from "@/components/support/SupportIcons";
 import { useT } from "./i18n-client";
 import { categoryHref, groupHref } from "./catalog";
 
@@ -30,6 +31,10 @@ export interface MenuLink {
   products?: MenuProduct[];
   /** Kategorideki toplam urun sayisi (6'dan fazlaysa "tumunu gor" onemli) */
   productCount?: number;
+  /** Destek ve Garanti: menude ve /destek kartlarinda sembol */
+  icon?: SupportIconName;
+  /** Destek ve Garanti: /destek kartindaki baglanti metni */
+  cta?: string;
 }
 
 /** Mega menude gosterilecek en fazla urun sayisi (3 sutun x 2 satir). */
@@ -46,9 +51,11 @@ export interface MenuColumn {
 export interface TopMenu {
   id: string;
   label: string;
-  /** Urun menulerinde bolum sayfasi: /ekipmanlar */
+  /** Bolum ya da tanitim sayfasi: /ekipmanlar, /destek */
   href?: string;
   columns: MenuColumn[];
+  /** Menunun solunda baslik, kisa aciklama ve "Tumunu Gor" (Destek ve Garanti) */
+  intro?: string;
 }
 
 const SECTIONS: { id: TopLevelSection; labelKey: keyof Dictionary["nav"] }[] = [
@@ -107,13 +114,13 @@ export function useMainMenu(): TopMenu[] {
       columns: exploreColumns(t),
     };
 
+    // Basligi /destek sayfasina gider; menude solda tanitim, sagda sembollu baglantilar.
     const supportWarranty: TopMenu = {
       id: "destek-garanti",
       label: t.nav.supportWarranty,
-      columns: [
-        { label: t.nav.support, links: supportLinks(t) },
-        { label: t.nav.warranty, links: warrantyLinks(t) },
-      ],
+      href: "/destek",
+      intro: t.nav.supportWarrantyIntro,
+      columns: supportWarrantyColumns(t),
     };
 
     return [...productMenus, explore, supportWarranty];
@@ -158,19 +165,39 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
 
 /** Destek ve Garanti > Garanti */
 function warrantyLinks(t: Dictionary): MenuLink[] {
+  const s = t.supportHub;
   return [
-    { label: t.nav.warrantyRegister, description: t.explore.registerWarrantyDesc, href: "/garanti/kayit" },
-    { label: t.nav.warrantyCheck, description: t.explore.checkWarrantyDesc, href: "/garanti/sorgulama" },
-    { label: t.nav.warrantyTerms, description: t.nav.warrantyTermsDesc, href: "/garanti/kosullar" },
+    { label: t.nav.warrantyRegister, description: t.explore.registerWarrantyDesc, href: "/garanti/kayit", icon: "garanti-kayit", cta: s.ctaWarrantyRegister },
+    { label: t.nav.warrantyCheck, description: t.explore.checkWarrantyDesc, href: "/garanti/sorgulama", icon: "garanti-sorgulama", cta: s.ctaWarrantyCheck },
+    { label: t.nav.warrantyTerms, description: t.nav.warrantyTermsDesc, href: "/garanti/kosullar", icon: "garanti-kosullari", cta: s.ctaWarrantyTerms },
   ];
 }
 
 /** Destek ve Garanti > Destek */
 function supportLinks(t: Dictionary): MenuLink[] {
+  const s = t.supportHub;
   return [
-    { label: t.support.faqTitle, description: t.support.faqCardText, href: "/sss" },
-    { label: t.nav.findDealerService, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi" },
-    { label: t.service.title, description: t.service.menuText, href: "/servis-talebi" },
+    { label: t.support.faqTitle, description: t.support.faqCardText, href: "/sss", icon: "sss", cta: s.ctaFaq },
+    { label: t.nav.findDealerService, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi", icon: "bayi-servis", cta: s.ctaDealer },
+    { label: t.service.title, description: t.service.menuText, href: "/servis-talebi", icon: "servis-talebi", cta: s.ctaService },
+  ];
+}
+
+/**
+ * Ust menudeki Destek ve Garanti ile /destek sayfasi: Destek'in sonunda
+ * Iade ve Degisim de var. (Alt bilgide Iade ve Degisim, Politikalar &
+ * Yasal'da durdugu icin orada tekrar edilmez.)
+ */
+export function supportWarrantyColumns(t: Dictionary): MenuColumn[] {
+  return [
+    {
+      label: t.nav.support,
+      links: [
+        ...supportLinks(t),
+        { label: t.nav.returnsExchange, description: t.nav.returnsExchangeDesc, href: legalPath("iade"), icon: "iade", cta: t.supportHub.ctaReturns },
+      ],
+    },
+    { label: t.nav.warranty, links: warrantyLinks(t) },
   ];
 }
 

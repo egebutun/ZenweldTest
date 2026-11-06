@@ -70,6 +70,7 @@ const PAGES = {
   "/msds": { name: "MSDS", title: "MSDS — Malzeme Güvenlik Bilgi Formları", description: "Zenweld ürünlerine ait malzeme güvenlik bilgi formlarını sorgulayın.", group: DISCOVER },
   "/parti-sertifikalari": { name: "Parti Sertifikaları", title: "Parti Sertifikaları", description: "Zenweld ürün uygunluk ve parti sertifikalarını indirin.", group: DISCOVER },
 
+  "/destek": { name: "Destek ve Garanti", title: "Destek ve Garanti", description: "Zenweld destek: sık sorulan sorular, yetkili bayi ve servis, servis talebi, iade ve değişim, garanti kaydı ve sorgulama.", group: SUPPORT },
   "/sss": { name: "Sık Sorulan Sorular", title: "Sık Sorulan Sorular", description: "Zenweld ürünleri, garanti, sipariş ve teknik konularda sık sorulan sorular.", group: SUPPORT },
   "/yetkili-bayi-ve-servis-agi": { name: "Yetkili Bayi ve Servis Ağı", title: "Yetkili Bayi ve Servis Ağı", description: "Size en yakın Zenweld yetkili bayisini haritada bulun; ürünleri yerinde inceleyin ve satın alın.", group: SUPPORT },
   "/servis-talebi": { name: "Servis Talebi", title: "Servis Talebi", description: "Zenweld makineniz için kurulum, bakım, onarım veya kullanım eğitimi talebi oluşturun.", group: SUPPORT },
