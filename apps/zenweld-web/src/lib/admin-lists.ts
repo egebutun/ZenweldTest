@@ -1,6 +1,17 @@
-import type { Order, OrderStatus, ReturnRequest } from "@zenweld/data";
-import type { OrderListFilter, OrderListPage, ReturnListPage } from "@zenweld/db";
-import { pageOf, searchMatches } from "@zenweld/utils";
+import type { Order, OrderStatus, ProductReview, Quote, QuoteStatus, ReturnRequest, ServiceRequest, User, WarrantyRecord } from "@zenweld/data";
+import type {
+  OrderListFilter,
+  OrderListPage,
+  QuoteListFilter,
+  ReturnListPage,
+  ReviewListFilter,
+  ReviewListPage,
+  ServiceListPage,
+  WarrantyListFilter,
+  WarrantyListPage,
+  WarrantyState,
+} from "@zenweld/db";
+import { pageOf, searchMatches, type ListPage } from "@zenweld/utils";
 
 /**
  * PANEL LISTELERI — ADRESTEKI SUZGECLER VE DEMO MODUNDA HESAP
@@ -29,9 +40,10 @@ export function pageParam(get: ParamReader): number {
   return Number.isSafeInteger(n) && n > 0 ? n : 1;
 }
 
-/** Yeniden eskiye; ayni anda olusanlar koda gore (sunucuyla ayni sira). */
-const newestFirst = <T extends { createdAt: string; code: string }>(rows: T[]) =>
-  [...rows].sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.code.localeCompare(a.code));
+/** Yeniden eskiye; ayni anda olusanlar koda (ya da kimlige) gore, sunucuyla ayni sira. */
+function newestFirst<T>(rows: T[], at: (row: T) => string, tie: (row: T) => string): T[] {
+  return [...rows].sort((a, b) => at(b).localeCompare(at(a)) || tie(b).localeCompare(tie(a)));
+}
 
 /* ------------------------------ Siparisler ------------------------------ */
 
@@ -49,7 +61,7 @@ export function orderListFilter(get: ParamReader): OrderListFilter {
 export function orderListPage(orders: Order[], filter: OrderListFilter): OrderListPage {
   const counts = Object.fromEntries(ORDER_STATUSES.map((s) => [s, 0])) as Record<OrderStatus, number>;
   orders.forEach((o) => counts[o.status]++);
-  const matching = newestFirst(orders).filter(
+  const matching = newestFirst(orders, (o) => o.createdAt, (o) => o.code).filter(
     (o) =>
       (!filter.status || o.status === filter.status) &&
       searchMatches(filter.q ?? "", [o.code, o.customerName, o.email, o.invoice.companyName]),
@@ -60,5 +72,82 @@ export function orderListPage(orders: Order[], filter: OrderListFilter): OrderLi
 /* ------------------------------ Iade talepleri ------------------------------ */
 
 export function returnListPage(requests: ReturnRequest[], page: number): ReturnListPage {
-  return { ...pageOf(newestFirst(requests), page), newCount: requests.filter((r) => r.status === "new").length };
+  return {
+    ...pageOf(newestFirst(requests, (r) => r.createdAt, (r) => r.code), page),
+    newCount: requests.filter((r) => r.status === "new").length,
+  };
+}
+
+/* ------------------------------ Teklifler ------------------------------ */
+
+const QUOTE_STATUSES: QuoteStatus[] = ["new", "reviewing", "sent", "won", "lost"];
+
+export function quoteListFilter(get: ParamReader): QuoteListFilter {
+  const status = get("durum") as QuoteStatus | undefined;
+  return { status: status && QUOTE_STATUSES.includes(status) ? status : undefined, page: pageParam(get) };
+}
+
+/** Suzgece uyan teklifler (CSV'nin tamami da budur). */
+export function matchingQuotes(quotes: Quote[], filter: Omit<QuoteListFilter, "page">): Quote[] {
+  return newestFirst(quotes, (q) => q.createdAt, (q) => q.code).filter((q) => !filter.status || q.status === filter.status);
+}
+
+export function quoteListPage(quotes: Quote[], filter: QuoteListFilter): ListPage<Quote> {
+  return pageOf(matchingQuotes(quotes, filter), filter.page);
+}
+
+/* ------------------------------ Servis talepleri ------------------------------ */
+
+export function serviceListPage(requests: ServiceRequest[], page: number): ServiceListPage {
+  return {
+    ...pageOf(newestFirst(requests, (r) => r.createdAt, (r) => r.code), page),
+    newCount: requests.filter((r) => r.status === "new").length,
+  };
+}
+
+/* ------------------------------ Garantiler ------------------------------ */
+
+const WARRANTY_STATES: WarrantyState[] = ["valid", "expired", "extended"];
+
+/** today: Turkiye gunu (lib/admin-stats.ts › istanbulDateKey). */
+export function warrantyListFilter(get: ParamReader, today: string): WarrantyListFilter {
+  const state = get("durum") as WarrantyState | undefined;
+  return { q: get("ara"), state: state && WARRANTY_STATES.includes(state) ? state : undefined, today, page: pageParam(get) };
+}
+
+/** Suzgece uyan garanti kayitlari (CSV'nin tamami da budur). */
+export function matchingWarranties(warranties: WarrantyRecord[], filter: Omit<WarrantyListFilter, "page">): WarrantyRecord[] {
+  return newestFirst(warranties, (w) => w.registeredAt, (w) => w.id).filter((w) => {
+    const expired = w.expiresAt < filter.today;
+    if (filter.state === "valid" && expired) return false;
+    if (filter.state === "expired" && !expired) return false;
+    if (filter.state === "extended" && !w.extended) return false;
+    return searchMatches(filter.q ?? "", [w.serialNumber, w.ownerName, w.email]);
+  });
+}
+
+export function warrantyListPage(warranties: WarrantyRecord[], users: User[], filter: WarrantyListFilter): WarrantyListPage {
+  const page = pageOf(matchingWarranties(warranties, filter), filter.page);
+  const memberEmails = new Set(users.filter((u) => u.role !== "admin").map((u) => u.email.toLowerCase()));
+  const shown = [...new Set(page.rows.map((w) => w.email.toLowerCase()))];
+  return {
+    ...page,
+    all: warranties.length,
+    valid: warranties.filter((w) => w.expiresAt >= filter.today).length,
+    members: shown.filter((e) => memberEmails.has(e)),
+  };
+}
+
+/* ------------------------------ Yorumlar ------------------------------ */
+
+export function reviewListFilter(get: ParamReader): ReviewListFilter {
+  return { q: get("ara"), pending: get("bekleyen") === "1", page: pageParam(get) };
+}
+
+/** featuredCount: anasayfada gorunebilen one cikarilmislar (packages/store › featuredReviewCount). */
+export function reviewListPage(reviews: ProductReview[], featuredCount: number, filter: ReviewListFilter): ReviewListPage {
+  const matching = newestFirst(reviews, (r) => r.createdAt, (r) => r.id).filter(
+    (r) => (!filter.pending || !r.approved) && searchMatches(filter.q ?? "", [r.authorName, r.body]),
+  );
+  return { ...pageOf(matching, filter.page), pendingCount: reviews.filter((r) => !r.approved).length, featuredCount };
 }

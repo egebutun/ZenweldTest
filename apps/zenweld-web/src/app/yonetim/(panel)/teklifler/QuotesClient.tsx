@@ -1,43 +1,51 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Download, Trash2 } from "lucide-react";
 import type { Quote, QuoteStatus } from "@zenweld/data";
-import { downloadCsv, listQuotes, useDatabase } from "@zenweld/store";
+import { listQuotes, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
+import { formatDateTime, type ListPage } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { ListPager, downloadListCsv, useListQuery } from "@/components/admin/ListControls";
+import { PAYMENT_LABEL, QUOTE_STATUS_LABEL, quoteCsvRows } from "@/lib/admin-csv";
+import { matchingQuotes, quoteListFilter, quoteListPage } from "@/lib/admin-lists";
 import { useRequestActions, type PanelAnswer } from "@/lib/admin-requests";
-import { formatDateTime } from "@zenweld/utils";
 
 const STATUS: { id: QuoteStatus; label: string; tone: "amber" | "grey" | "green" | "outline" }[] = [
-  { id: "new", label: "Yeni", tone: "amber" },
-  { id: "reviewing", label: "İnceleniyor", tone: "grey" },
-  { id: "sent", label: "Teklif Gönderildi", tone: "green" },
-  { id: "won", label: "Kazanıldı", tone: "green" },
-  { id: "lost", label: "Kapandı", tone: "outline" },
+  { id: "new", label: QUOTE_STATUS_LABEL.new, tone: "amber" },
+  { id: "reviewing", label: QUOTE_STATUS_LABEL.reviewing, tone: "grey" },
+  { id: "sent", label: QUOTE_STATUS_LABEL.sent, tone: "green" },
+  { id: "won", label: QUOTE_STATUS_LABEL.won, tone: "green" },
+  { id: "lost", label: QUOTE_STATUS_LABEL.lost, tone: "outline" },
 ];
 
-const PAYMENT_LABEL: Record<string, string> = {
-  vadeli: "Vadeli",
-  cek: "Çek",
-  havale: "Havale/EFT",
-  belirsiz: "Görüşülecek",
-};
-
-/** TEKLIFLER — Teklif Al formundan gelenler. Veritabani modunda islemler sunucuya yazilir (lib/admin-requests.ts). */
-export function QuotesClient() {
+/**
+ * TEKLIFLER — Teklif Al formundan gelenler. Veritabani modunda islemler
+ * sunucuya yazilir (lib/admin-requests.ts). Sayfa basina 50 teklif; durum ve
+ * sayfa adreste durur. Veritabani modunda sunucu yalnizca bu sayfayi okur
+ * (page prop); CSV suzgece uyan tekliflerin tamamini indirir.
+ */
+export function QuotesClient({ page }: { page?: ListPage<Quote> }) {
   const db = useDatabase();
   const actions = useRequestActions();
-  const [status, setStatus] = useState("");
+  const list = useListQuery();
+  const filter = quoteListFilter(list.get);
   const [open, setOpen] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const quotes = useMemo(
-    () =>
-      // Bayilerin teklifleri burada yok: Zenweld - bayi isleri ileride B2B uygulamasinda.
-      listQuotes(db).filter((q) => !status || q.status === status),
-    [db, status],
-  );
+  // Bayilerin teklifleri burada yok: Zenweld - bayi isleri ileride B2B uygulamasinda.
+  const data = page ?? quoteListPage(listQuotes(db), filter);
+  const quotes = data.rows;
+
+  const exportCsv = async () => {
+    setError(null);
+    const failed = await downloadListCsv(
+      "zenweld-teklifler.csv",
+      page ? { list: "teklifler", query: list.query } : { rows: quoteCsvRows(matchingQuotes(listQuotes(db), filter)) },
+    );
+    if (failed) setError(failed);
+  };
 
   const run = async (action: Promise<PanelAnswer>) => {
     setError(null);
@@ -51,32 +59,9 @@ export function QuotesClient() {
     <>
       <AdminPageHeader
         title="Teklifler"
-        description={`${quotes.length} teklif talebi`}
+        description={`${data.total} teklif talebi`}
         action={
-          <Button
-            variant="outline"
-            leftIcon={<Download size={16} />}
-            onClick={() =>
-              downloadCsv(
-                quotes.map((q) => ({
-                  kod: q.code,
-                  firma: q.companyName || q.contactName,
-                  yetkili: q.contactName,
-                  eposta: q.email,
-                  telefon: q.phone,
-                  sehir: q.city,
-                  odeme: PAYMENT_LABEL[q.paymentPreference],
-                  vade: q.termDays ?? "",
-                  urunler: q.items
-                    .map((i) => `${i.quantity}x ${i.productName}${i.variantLabel ? ` (${i.variantLabel})` : ""}`)
-                    .join(" | "),
-                  durum: STATUS.find((s) => s.id === q.status)?.label ?? q.status,
-                  tarih: q.createdAt,
-                })),
-                "zenweld-teklifler.csv",
-              )
-            }
-          >
+          <Button variant="outline" leftIcon={<Download size={16} />} onClick={() => void exportCsv()}>
             CSV İndir
           </Button>
         }
@@ -89,7 +74,7 @@ export function QuotesClient() {
       )}
 
       <div className="mb-4 sm:w-64">
-        <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+        <Select value={filter.status ?? ""} onChange={(e) => list.go({ durum: e.target.value || undefined })}>
           <option value="">Tüm durumlar</option>
           {STATUS.map((s) => (
             <option key={s.id} value={s.id}>
@@ -99,7 +84,7 @@ export function QuotesClient() {
         </Select>
       </div>
 
-      <div className="space-y-3">
+      <div className={`space-y-3 transition-opacity ${list.pending ? "opacity-60" : ""}`} aria-busy={list.pending}>
         {quotes.map((q) => {
           const expanded = open === q.id;
           const statusMeta = STATUS.find((s) => s.id === q.status);
@@ -233,6 +218,7 @@ export function QuotesClient() {
           );
         })}
       </div>
+      <ListPager page={data.page} total={data.total} hrefFor={(p) => list.hrefWith({ sayfa: p > 1 ? String(p) : undefined })} />
     </>
   );
 }

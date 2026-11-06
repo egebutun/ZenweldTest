@@ -884,11 +884,20 @@ yazılır. Kuralların yöneticinin gördüğü hali:
 
 2. alan; KARARLAR K-100; `src/admin-requests.ts`.
 
-- **Okuma:** `readQuotesPanel`, `readServicePanel`, `readWarrantiesPanel`
-  (garantiler son değişiklik anıyla, üyeler), `readReviewsPanel` (bütün
-  yorumlar, onay bekleyenler dahil, son değişiklik anıyla),
-  `readDealerApplications`, `readSupportMessages`, `readWeldersClub`.
-  Ürün ve kategori adları sitenin önbellekteki katalogundan.
+- **Okuma (sayfalı, 50; `panel-lists.ts`):** `readQuotesPage` (durum),
+  `readServicePage` (yeni talep sayısıyla), `readWarrantiesPage` (arama,
+  geçerli / süresi dolan / uzatılmış — Türkiye günüyle, son değişiklik anı,
+  toplam ve geçerli sayısı, yalnızca sayfadaki kayıtların üye olan
+  e-postaları; yöneticiler sayılmaz), `readReviewsPage` (arama, onay
+  bekleyenler; onay bekleyen ve anasayfa sayıları). CSV için süzgece uyan
+  kayıtların tamamı: `readQuotesForExport`, `readWarrantiesForExport`.
+  `readDealerApplications`, `readSupportMessages`, `readWeldersClub` bugün
+  hepsini okur. Ürün ve kategori adları sitenin önbellekteki katalogundan.
+- **CSV:** `GET /api/yonetim/csv/teklifler?durum=…` ve
+  `GET /api/yonetim/csv/garantiler?ara=…&durum=…`
+  (`apps/zenweld-web/src/app/api/yonetim/csv/[liste]/route.ts`): yönetici
+  oturumu yoksa 401. Satırları JSON olarak verir, dosyayı tarayıcı
+  oluşturur; sütunlar demo moduyla ortaktır (`lib/admin-csv.ts`).
 - **Yazma:** `POST /api/yonetim/talepler/<işlem>`
   (`apps/zenweld-web/src/app/api/yonetim/talepler/[islem]/route.ts`):
   `teklif` (durum, atanan temsilci ya da iç not; istekte olmayan alan

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import type { Page } from "@playwright/test";
 import { SESSION, expect, readDb, test } from "./yardimci";
 
 /**
@@ -49,5 +51,62 @@ test("iade talepleri: sayı ve yeni talep sayısı başlıkta; sayfa bilgisi alt
   const fresh = db.returnRequests.filter((r) => r.status === "new").length;
   await expect(page.getByText(`${total} talep · ${fresh} yeni`)).toBeVisible();
   if (total > 0) await expect(page.getByRole("navigation", { name: "Sayfalar" })).toContainText(`1–${Math.min(50, total)} / ${total}`);
+  expect(problems).toEqual([]);
+});
+
+/** Turkiye gunu (YYYY-AA-GG): garantinin suresi doldu mu. */
+const today = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Istanbul" }).format(new Date());
+
+async function csvOf(page: Page, button: string): Promise<string> {
+  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: button }).click()]);
+  return readFileSync((await download.path())!, "utf8");
+}
+
+test("garantiler 50'şer; CSV süzgece uyanların tamamını indirir; durum adreste", async ({ page, problems }) => {
+  await page.goto("/yonetim/garantiler");
+  const db = await readDb(page);
+  const total = db.warranties.length;
+  expect(total).toBeGreaterThan(50);
+  const pager = page.getByRole("navigation", { name: "Sayfalar" });
+  await expect(pager).toContainText(`1–50 / ${total}`);
+  await expect(page.locator("tbody tr")).toHaveCount(50);
+
+  // Sayfada 50 kayit gorunse de CSV'de hepsi var.
+  const csv = await csvOf(page, "CSV indir");
+  for (const w of db.warranties) expect(csv).toContain(w.serialNumber);
+
+  await page.locator("select").filter({ has: page.locator("option[value=expired]") }).selectOption("expired");
+  await expect(page).toHaveURL(/\?durum=expired$/);
+  const expired = db.warranties.filter((w) => w.expiresAt < today());
+  if (expired.length) await expect(pager).toContainText(`/ ${expired.length}`);
+  else await expect(page.getByText("Aramanıza uygun kayıt yok.")).toBeVisible();
+  expect(problems).toEqual([]);
+});
+
+test("teklifler: durum süzgeci adreste; CSV süzgece uyan tekliflerin tamamı", async ({ page, problems }) => {
+  await page.goto("/yonetim/teklifler");
+  const db = await readDb(page);
+  await expect(page.getByText(`${db.quotes.length} teklif talebi`)).toBeVisible();
+  const fresh = db.quotes.filter((q) => q.status === "new");
+  await page.locator("select").filter({ has: page.locator("option[value=won]") }).first().selectOption("new");
+  await expect(page).toHaveURL(/\?durum=new$/);
+  await expect(page.getByText(`${fresh.length} teklif talebi`)).toBeVisible();
+  const csv = await csvOf(page, "CSV İndir");
+  expect(csv.match(/TKL-\d{4}-\d+/g)?.length ?? 0).toBe(fresh.length);
+  for (const q of fresh) expect(csv).toContain(q.code);
+  expect(problems).toEqual([]);
+});
+
+test("yorumlar: onay bekleyenler adreste; servis talepleri: sayılar", async ({ page, problems }) => {
+  await page.goto("/yonetim/yorumlar");
+  const db = await readDb(page);
+  const pending = db.reviews.filter((r) => !r.approved).length;
+  await page.getByRole("button", { name: "Onay bekleyenler" }).click();
+  await expect(page).toHaveURL(/\?bekleyen=1$/);
+  await expect(page.getByText(`${pending} yorum · ${pending} onay bekliyor`)).toBeVisible();
+
+  await page.goto("/yonetim/servis-talepleri");
+  const fresh = db.serviceRequests.filter((r) => r.status === "new").length;
+  await expect(page.getByText(`${db.serviceRequests.length} talep · ${fresh} yeni`)).toBeVisible();
   expect(problems).toEqual([]);
 });

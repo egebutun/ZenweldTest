@@ -1,4 +1,4 @@
-import { and, count, eq, sql } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, lt, ne, sql, type SQL } from "drizzle-orm";
 import {
   FEATURED_REVIEW_LIMIT,
   featuredReviewLimitText,
@@ -11,15 +11,15 @@ import {
   type ServiceRequestStatus,
   type DealerApplication,
   type SupportMessage,
-  type User,
   type WarrantyRecord,
   type WeldersClubSignup,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
+import { pageWindow, type ListPage } from "@zenweld/utils";
 import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
 import { checkRow, fail, isFailure, saved, text, unchanged, type PanelResult, type Saved } from "./panel";
+import { countRows, searchLike } from "./panel-lists";
 import { readQuotes, readServiceRequests, readWarranties, reviewRecord } from "./read";
-import { readPanelMembers } from "./admin-sales";
 import * as s from "./schema";
 
 /**
@@ -55,29 +55,148 @@ export type WeldersClubRecord = WeldersClubSignup;
 
 /* ------------------------------ Okuma ------------------------------ */
 
-export async function readQuotesPanel(db: AuditDb): Promise<{ quotes: Quote[] }> {
-  return { quotes: await readQuotes(db) };
+/*
+ * Uzun listeler sayfa sayfa okunur (50; panel-lists.ts): sunucu yalnizca
+ * istenen sayfanin kayitlarini ve sayilari gonderir. CSV icin suzgece uyan
+ * kayitlarin tamami okunur (*ForExport).
+ */
+
+export interface QuoteListFilter {
+  status?: QuoteStatus;
+  page: number;
 }
 
-export async function readServicePanel(db: AuditDb): Promise<{ serviceRequests: ServiceRequest[] }> {
-  return { serviceRequests: await readServiceRequests(db) };
+const quoteWhere = (filter: Omit<QuoteListFilter, "page">) => (filter.status ? eq(s.quotes.status, filter.status) : undefined);
+
+/** Teklifler: suzgece uyan tekliflerin bir sayfasi (yeniden eskiye). */
+export async function readQuotesPage(db: AuditDb, filter: QuoteListFilter): Promise<ListPage<Quote>> {
+  const where = quoteWhere(filter);
+  const total = await countRows(db, s.quotes, where);
+  const w = pageWindow(total, filter.page);
+  return { rows: total ? await readQuotes(db, where, w) : [], total, page: w.page };
 }
 
-/** Garantiler (son degisiklik aniyla) ve uyeler ("Uye" rozeti). */
-export async function readWarrantiesPanel(db: AuditDb): Promise<{ warranties: WarrantyRecord[]; users: User[] }> {
-  const warranties = await readWarranties(db);
-  const stamps = await db.select({ id: s.warranties.id, updatedAt: s.warranties.updatedAt }).from(s.warranties);
-  const updatedAt = new Map(stamps.map((w) => [w.id, iso(w.updatedAt)]));
+/** Tekliflerin CSV'si: suzgece uyan tekliflerin tamami. */
+export async function readQuotesForExport(db: AuditDb, filter: Omit<QuoteListFilter, "page">): Promise<Quote[]> {
+  return readQuotes(db, quoteWhere(filter));
+}
+
+export interface ServiceListPage extends ListPage<ServiceRequest> {
+  /** Yeni (islenmemis) talepler */
+  newCount: number;
+}
+
+/** Servis talepleri: bir sayfa (yeniden eskiye) ve yeni talep sayisi. */
+export async function readServicePage(db: AuditDb, page: number): Promise<ServiceListPage> {
+  const t = s.serviceRequests;
+  const total = await countRows(db, t);
+  const w = pageWindow(total, page);
   return {
-    warranties: warranties.map((w) => ({ ...w, updatedAt: updatedAt.get(w.id) })),
-    users: await readPanelMembers(db),
+    rows: total ? await readServiceRequests(db, undefined, w) : [],
+    total,
+    page: w.page,
+    newCount: await countRows(db, t, eq(t.status, "new")),
   };
 }
 
-/** Butun yorumlar (onay bekleyenler dahil), yeniden eskiye. */
-export async function readReviewsPanel(db: AuditDb): Promise<{ reviews: ProductReview[] }> {
-  const rows = await db.select().from(s.reviews).orderBy(sql`${s.reviews.createdAt} DESC`);
-  return { reviews: rows.map((r) => ({ ...reviewRecord(r), updatedAt: iso(r.updatedAt) })) };
+export type WarrantyState = "valid" | "expired" | "extended";
+
+export interface WarrantyListFilter {
+  /** Seri no, sahibi, e-posta */
+  q?: string;
+  state?: WarrantyState;
+  /** Turkiye gunu (YYYY-AA-GG): bitisi bu gunden once olan "suresi doldu" */
+  today: string;
+  page: number;
+}
+
+export interface WarrantyListPage extends ListPage<WarrantyRecord> {
+  /** Butun kayitlar */
+  all: number;
+  /** Garantisi devam eden kayitlar (butun kayitlarda) */
+  valid: number;
+  /** Bu sayfadaki kayitlardan uye olanlarin e-postalari (kucuk harf; "Uye" rozeti) */
+  members: string[];
+}
+
+function warrantyWhere(filter: Omit<WarrantyListFilter, "page">): SQL | undefined {
+  const t = s.warranties;
+  return and(
+    filter.state === "valid" ? gte(t.expiresAt, filter.today) : undefined,
+    filter.state === "expired" ? lt(t.expiresAt, filter.today) : undefined,
+    filter.state === "extended" ? eq(t.extended, true) : undefined,
+    searchLike([t.serialNumber, t.ownerName, t.email], filter.q),
+  );
+}
+
+/** Garantiler: bir sayfa (son degisiklik aniyla), sayilar ve sayfadaki uyeler. */
+export async function readWarrantiesPage(db: AuditDb, filter: WarrantyListFilter): Promise<WarrantyListPage> {
+  const t = s.warranties;
+  const where = warrantyWhere(filter);
+  const total = await countRows(db, t, where);
+  const w = pageWindow(total, filter.page);
+  const rows = total ? await readWarranties(db, where, w) : [];
+  const ids = rows.map((r) => r.id);
+  const stamps = ids.length ? await db.select({ id: t.id, updatedAt: t.updatedAt }).from(t).where(inArray(t.id, ids)) : [];
+  const updatedAt = new Map(stamps.map((r) => [r.id, iso(r.updatedAt)]));
+  const emails = [...new Set(rows.map((r) => r.email.toLowerCase()))];
+  const members = emails.length
+    ? await db
+        .select({ email: sql<string>`lower(${s.users.email})` })
+        .from(s.users)
+        .where(and(ne(s.users.role, "admin"), inArray(sql`lower(${s.users.email})`, emails)))
+    : [];
+  return {
+    rows: rows.map((r) => ({ ...r, updatedAt: updatedAt.get(r.id) })),
+    total,
+    page: w.page,
+    all: await countRows(db, t),
+    valid: await countRows(db, t, gte(t.expiresAt, filter.today)),
+    members: members.map((m) => m.email),
+  };
+}
+
+/** Garantilerin CSV'si: suzgece uyan kayitlarin tamami. */
+export async function readWarrantiesForExport(db: AuditDb, filter: Omit<WarrantyListFilter, "page">): Promise<WarrantyRecord[]> {
+  return readWarranties(db, warrantyWhere(filter));
+}
+
+export interface ReviewListFilter {
+  /** Yazan kisi ve yorum metni */
+  q?: string;
+  /** Yalnizca onay bekleyenler */
+  pending?: boolean;
+  page: number;
+}
+
+export interface ReviewListPage extends ListPage<ProductReview> {
+  /** Onay bekleyen yorumlar (butun yorumlarda) */
+  pendingCount: number;
+  /** Anasayfada gorunebilen one cikarilmis yorumlar (onayli, urunu yayinda) */
+  featuredCount: number;
+}
+
+/** Yorumlar (onay bekleyenler dahil): bir sayfa (yeniden eskiye) ve sayilar. */
+export async function readReviewsPage(db: AuditDb, filter: ReviewListFilter): Promise<ReviewListPage> {
+  const t = s.reviews;
+  const where = and(filter.pending ? eq(t.approved, false) : undefined, searchLike([t.authorName, t.body], filter.q));
+  const total = await countRows(db, t, where);
+  const w = pageWindow(total, filter.page);
+  const rows = total
+    ? await db.select().from(t).where(where).orderBy(desc(t.createdAt), desc(t.id)).limit(w.limit).offset(w.offset)
+    : [];
+  const [featured] = await db
+    .select({ n: count() })
+    .from(t)
+    .innerJoin(s.products, eq(s.products.id, t.productId))
+    .where(and(eq(t.approved, true), eq(t.featured, true), eq(s.products.active, true)));
+  return {
+    rows: rows.map((r) => ({ ...reviewRecord(r), updatedAt: iso(r.updatedAt) })),
+    total,
+    page: w.page,
+    pendingCount: await countRows(db, t, eq(t.approved, false)),
+    featuredCount: featured?.n ?? 0,
+  };
 }
 
 export async function readDealerApplications(db: AuditDb): Promise<DealerApplicationRecord[]> {

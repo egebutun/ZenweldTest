@@ -4,8 +4,10 @@ import { useEffect, useEffectEvent, useRef, useState, useTransition } from "reac
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
+import { downloadCsv } from "@zenweld/store";
 import { Input } from "@zenweld/ui";
 import { PANEL_PAGE_SIZE, pageWindow } from "@zenweld/utils";
+import type { CsvRow } from "@/lib/admin-csv";
 import type { ParamReader } from "@/lib/admin-lists";
 
 /**
@@ -41,7 +43,29 @@ export function useListQuery() {
     startTransition(() => (replace ? router.replace(href, { scroll: false }) : router.push(href, { scroll: false })));
   };
 
-  return { get, hrefWith, go, pending };
+  return { get, hrefWith, go, pending, query: params.toString() };
+}
+
+/**
+ * CSV indir: suzgece uyan kayitlarin tamami. Veritabani modunda satirlar
+ * sunucudan gelir (GET /api/yonetim/csv/<liste>?<suzgecler>); demo modunda
+ * rows verilir. Basarisizsa hata metni doner.
+ */
+export async function downloadListCsv(
+  file: string,
+  source: { rows: CsvRow[] } | { list: string; query: string },
+): Promise<string | null> {
+  let rows: CsvRow[];
+  if ("rows" in source) rows = source.rows;
+  else {
+    const response = await fetch(`/api/yonetim/csv/${source.list}?${source.query}`).catch(() => null);
+    const body = response?.ok ? ((await response.json()) as { rows?: CsvRow[] }) : null;
+    if (!body?.rows) return "CSV hazırlanamadı. Sayfayı yenileyip tekrar deneyin.";
+    rows = body.rows;
+  }
+  // Kayit yoksa dosya inmez (onceki gibi).
+  downloadCsv(rows, file);
+  return null;
 }
 
 /** Arama kutusu: yazmayi birakinca (0,3 sn) adrese yazar. */
@@ -50,11 +74,14 @@ export function ListSearch({
   onSearch,
   placeholder,
   label,
+  className = "w-full sm:w-72",
 }: {
   value?: string;
   onSearch: (value: string | undefined) => void;
   placeholder: string;
   label: string;
+  /** Kutunun genisligi */
+  className?: string;
 }) {
   const [text, setText] = useState(value ?? "");
   // Adrese en son yazilan arama. Sunucunun yaniti gelirken yazmaya devam
@@ -80,7 +107,7 @@ export function ListSearch({
   }, [text]);
 
   return (
-    <div className="relative w-full sm:w-72">
+    <div className={`relative ${className}`}>
       <Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-zw-grey-400" />
       <Input
         type="search"

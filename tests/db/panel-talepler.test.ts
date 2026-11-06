@@ -16,10 +16,13 @@ import {
   adminSetReviewFeatured,
   adminSetWeldersClubActive,
   readDealerApplications,
-  readQuotesPanel,
-  readReviewsPanel,
+  readQuotesForExport,
+  readQuotesPage,
+  readReviewsPage,
+  readServicePage,
   readSupportMessages,
-  readWarrantiesPanel,
+  readWarrantiesForExport,
+  readWarrantiesPage,
   readWeldersClub,
   type Actor,
 } from "../../packages/db/src";
@@ -78,12 +81,12 @@ describe("teklifler", () => {
       // Eski anla gelen kayit reddedilir.
       expect(await adminSaveQuote(db, admin, { ...ref("q1", T1), adminNote: "Aranacak" }, T2)).toEqual(stale);
 
-      const [quote] = (await readQuotesPanel(db)).quotes;
+      const [quote] = (await readQuotesPage(db, { page: 1 })).rows;
       expect(quote).toMatchObject({ status: "sent", assignedTo: "Mehmet B.", updatedAt: T2.toISOString() });
       expect(quote.adminNote).toBeUndefined();
 
       expect(await adminDeleteQuote(db, admin, ref("q1", T2), T2)).toEqual({ ok: true });
-      expect((await readQuotesPanel(db)).quotes).toEqual([]);
+      expect((await readQuotesPage(db, { page: 1 })).rows).toEqual([]);
       expect((await client.query("SELECT count(*)::int AS n FROM quote_items")).rows[0].n).toBe(0);
       const rows = await audit(client);
       expect(rows.map((r) => [r.action, r.entity_type, r.entity_label])).toEqual([
@@ -142,19 +145,19 @@ describe("garantiler", () => {
       });
       expect(await adminSaveWarranty(db, admin, { ...ref("w1"), expiresAt: "2028-06-01" }, T1)).toEqual(saved(T1));
       expect(await adminSaveWarranty(db, admin, { ...ref("w1", T1), extended: true }, T2)).toEqual(saved(T2));
-      const first = await readWarrantiesPanel(db);
-      expect(first.warranties[0]).toMatchObject({ expiresAt: "2029-06-01", extended: true, updatedAt: T2.toISOString() });
-      // Uyeler ("Uye" rozeti): sifre ozeti gonderilmez.
-      expect(first.users.map((u) => [u.email, u.passwordHash])).toEqual([["a@ornek.com", ""]]);
+      const first = await readWarrantiesPage(db, { page: 1, today: "2026-03-11" });
+      expect(first.rows[0]).toMatchObject({ expiresAt: "2029-06-01", extended: true, updatedAt: T2.toISOString() });
+      // "Uye" rozeti: yalnizca sayfadaki kayitlarin uye olan e-postalari gider.
+      expect(first).toMatchObject({ members: ["a@ornek.com"], all: 1, valid: 1, total: 1 });
 
       const T3 = new Date("2026-03-12T09:00:00.000Z");
       expect(await adminSaveWarranty(db, admin, { ...ref("w1", T2), extended: false }, T3)).toEqual(saved(T3));
-      const { warranties } = await readWarrantiesPanel(db);
+      const { rows: warranties } = await readWarrantiesPage(db, { page: 1, today: "2026-03-11" });
       expect(warranties[0]).toMatchObject({ expiresAt: "2028-06-01", extended: false });
 
       expect(await adminDeleteWarranty(db, admin, ref("w1", T2), T3)).toEqual(stale);
       expect(await adminDeleteWarranty(db, admin, ref("w1", T3), T3)).toEqual({ ok: true });
-      expect((await readWarrantiesPanel(db)).warranties).toEqual([]);
+      expect((await readWarrantiesPage(db, { page: 1, today: "2026-03-11" })).rows).toEqual([]);
       expect((await audit(client)).map((r) => r.changes?.expiresAt ?? r.action)).toEqual([
         ["2028-03-10", "2028-06-01"],
         ["2028-06-01", "2029-06-01"],
@@ -190,11 +193,11 @@ describe("yorumlar", () => {
       expect(await adminSetReviewFeatured(db, admin, { ...ref("r0", T1), featured: true }, T2)).toEqual(saved(T2));
       const T3 = new Date("2026-03-12T09:00:00.000Z");
       expect(await adminSetReviewApproved(db, admin, { ...ref("r0", T2), approved: false }, T3)).toEqual(saved(T3));
-      const [review] = (await readReviewsPanel(db)).reviews;
+      const [review] = (await readReviewsPage(db, { page: 1 })).rows;
       expect(review).toMatchObject({ approved: false, featured: false, updatedAt: T3.toISOString() });
 
       expect(await adminDeleteReview(db, admin, ref("r0", T3), T3)).toEqual({ ok: true });
-      expect((await readReviewsPanel(db)).reviews).toEqual([]);
+      expect((await readReviewsPage(db, { page: 1 })).rows).toEqual([]);
       const rows = await audit(client);
       expect(rows.map((r) => r.changes)).toEqual([
         { approved: [false, true] },
@@ -267,6 +270,104 @@ describe("bayilik başvuruları, mesajlar, Welders Club", () => {
         { leftAt: [null, T1.toISOString()] },
         { leftAt: [T1.toISOString(), null] },
       ]);
+    });
+  });
+});
+
+describe("sayfalı listeler", () => {
+  it("teklifler: 50'şer, durum süzgeci; CSV süzgece uyanların tamamı", async () => {
+    await withPanel(async (db, client) => {
+      for (let i = 1; i <= 53; i++) {
+        await client.query(
+          `INSERT INTO quotes (id, code, status, company_name, contact_name, email, phone, city, payment_preference, created_at, updated_at)
+           VALUES ($1, $2, $3, 'Firma', 'Yetkili', 'a@ornek.com', '0555', 'Konya', 'havale', $4, $4)`,
+          [`q${i}`, `TKL-${String(i).padStart(2, "0")}`, i <= 51 ? "new" : "won", T0],
+        );
+      }
+      const first = await readQuotesPage(db, { page: 1 });
+      expect(first).toMatchObject({ total: 53, page: 1 });
+      expect(first.rows).toHaveLength(50);
+      expect(first.rows[0].code).toBe("TKL-53");
+      expect((await readQuotesPage(db, { page: 2 })).rows.map((q) => q.code)).toEqual(["TKL-03", "TKL-02", "TKL-01"]);
+      expect((await readQuotesPage(db, { page: 1, status: "won" })).total).toBe(2);
+      expect((await readQuotesForExport(db, { status: "new" })).length).toBe(51);
+    });
+  });
+
+  it("servis talepleri: sayfa ve yeni talep sayısı", async () => {
+    await withPanel(async (db, client) => {
+      for (const [id, status] of [["s1", "new"], ["s2", "done"], ["s3", "new"]]) {
+        await client.query(
+          `INSERT INTO service_requests (id, code, status, product_name, reasons, complaint, company_name, address, city, district,
+                                         email, phone, contact_name, contact_gsm, created_at, updated_at)
+           VALUES ($1, 'SRV-' || $1, $2, 'Makine', '{onarim}', 'x', 'Firma', 'Adres', 'Konya', 'Selçuklu', 'a@ornek.com', '0555', 'Y', '0555', $3, $3)`,
+          [id, status, T0],
+        );
+      }
+      const page = await readServicePage(db, 1);
+      expect(page).toMatchObject({ total: 3, newCount: 2, page: 1 });
+      expect(page.rows.map((r) => r.code)).toEqual(["SRV-s3", "SRV-s2", "SRV-s1"]);
+    });
+  });
+
+  it("garantiler: Türkçe arama, geçerli / süresi dolan / uzatılmış, sayfadaki üyeler; CSV", async () => {
+    await withPanel(async (db, client) => {
+      await client.query(
+        `INSERT INTO users (id, role, email, password_hash, first_name, last_name, phone)
+         VALUES ('u-y', 'admin', 'yonetici@ornek.com', 'ozet', 'Y', 'Y', '0555')`,
+      );
+      const rows: [string, string, string, string, boolean][] = [
+        ["w1", "IŞIK Kaynak", "a@ornek.com", "2026-03-10", false],
+        ["w2", "Deneme", "yonetici@ornek.com", "2026-03-11", true],
+        ["w3", "Başka", "b@ornek.com", "2028-01-01", false],
+      ];
+      for (const [id, owner, email, expires, extended] of rows) {
+        await client.query(
+          `INSERT INTO warranties (id, serial_number, owner_name, email, phone, city, postal_code, address, seller_tax_number,
+                                   registered_at, expires_at, extended, updated_at)
+           VALUES ($1, 'ZW-' || $1, $2, $3, '0555', 'Konya', '42000', 'Adres', '1234567890', $4, $5, $6, $4)`,
+          [id, owner, email, T0, expires, extended],
+        );
+      }
+      const today = "2026-03-11";
+      const all = await readWarrantiesPage(db, { page: 1, today });
+      // Yonetici "uye" sayilmaz; yalnizca sayfadaki kayitlarin e-postalari.
+      expect(all).toMatchObject({ total: 3, all: 3, valid: 2, members: ["a@ornek.com"] });
+      expect((await readWarrantiesPage(db, { page: 1, today, state: "expired" })).rows.map((w) => w.id)).toEqual(["w1"]);
+      expect((await readWarrantiesPage(db, { page: 1, today, state: "valid" })).total).toBe(2);
+      expect((await readWarrantiesPage(db, { page: 1, today, state: "extended" })).rows.map((w) => w.id)).toEqual(["w2"]);
+      for (const q of ["ışık", "IŞIK", "işık"]) {
+        expect((await readWarrantiesPage(db, { page: 1, today, q })).rows.map((w) => w.id), q).toEqual(["w1"]);
+      }
+      expect((await readWarrantiesPage(db, { page: 1, today, q: "zw-w3" })).rows.map((w) => w.id)).toEqual(["w3"]);
+      expect((await readWarrantiesForExport(db, { today, state: "valid" })).map((w) => w.id).sort()).toEqual(["w2", "w3"]);
+    });
+  });
+
+  it("yorumlar: onay bekleyenler, arama; anasayfa sayısı yalnızca yayındaki ürünlerin onaylı yorumları", async () => {
+    await withPanel(async (db, client) => {
+      await group(client);
+      await category(client);
+      await product(client, "p1", "ZW-P1");
+      await product(client, "p2", "ZW-P2");
+      await client.query("UPDATE products SET active = false WHERE id = 'p2'");
+      const rows: [string, string, string, boolean, boolean][] = [
+        ["r1", "p1", "Çok IŞIKLI ekran", true, true],
+        ["r2", "p2", "Güzel", true, true],
+        ["r3", "p1", "Bekliyor", false, false],
+      ];
+      for (const [id, productId, body, approved, featured] of rows) {
+        await client.query(
+          `INSERT INTO reviews (id, product_id, author_name, rating, body, media, approved, featured, created_at, updated_at)
+           VALUES ($1, $2, 'Kişi', 5, $3, '[]', $4, $5, $6, $6)`,
+          [id, productId, body, approved, featured, T0],
+        );
+      }
+      const all = await readReviewsPage(db, { page: 1 });
+      expect(all).toMatchObject({ total: 3, pendingCount: 1, featuredCount: 1 });
+      expect(all.rows.map((r) => r.id)).toEqual(["r3", "r2", "r1"]);
+      expect((await readReviewsPage(db, { page: 1, pending: true })).rows.map((r) => r.id)).toEqual(["r3"]);
+      expect((await readReviewsPage(db, { page: 1, q: "ışıklı" })).rows.map((r) => r.id)).toEqual(["r1"]);
     });
   });
 });

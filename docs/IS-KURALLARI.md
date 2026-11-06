@@ -1520,8 +1520,8 @@ Kod: `packages/data/src/file-rules.ts` (türler, boyut, adres),
 
 ## 24. Panel listeleri: sayfalama ve arama
 
-Uzun panel listeleri (bugün Siparişler ve İade Talepleri) iki modda aynı
-kurallarla sayfalanır. Veritabanı modunda sunucu yalnızca istenen sayfanın
+Uzun panel listeleri (bugün Siparişler, İade Talepleri, Teklifler, Servis
+Talepleri, Garantiler ve Yorumlar) iki modda aynı kurallarla sayfalanır. Veritabanı modunda sunucu yalnızca istenen sayfanın
 kayıtlarını okur ve gönderir; demo modunda aynı hesap tarayıcıda yapılır.
 
 - **Sayfa:** Sayfa başına 50 kayıt. Sayfa numarası adreste durur
@@ -1539,6 +1539,21 @@ kayıtlarını okur ve gönderir; demo modunda aynı hesap tarayıcıda yapılı
 - **Siparişler:** Arama sipariş no, müşteri adı, e-posta ve fatura firma
   adında yapılır. Sekmelerdeki durum sayıları aramadan bağımsızdır (bütün
   siparişler).
-- **İade Talepleri:** Başlıktaki "<n> talep · <n> yeni" bütün talepleri sayar.
-- Testler: `tests/unit/panel-listeleri.test.ts` (demo modu) ve
-  `tests/db/panel-satis.test.ts` (veritabanı) aynı örneği dener.
+- **İade Talepleri** ve **Servis Talepleri:** Başlıktaki "<n> talep · <n>
+  yeni" bütün talepleri sayar.
+- **Teklifler:** Durum süzgeci (`?durum=`); başlıktaki sayı süzgece uyan
+  teklifler.
+- **Garantiler:** Arama seri no, sahibi ve e-postada. Süzgeç (`?durum=`):
+  garantisi devam eden (bitiş bugün ya da sonra), süresi dolan (bitiş
+  bugünden önce), uzatılmış; "bugün" Türkiye günüdür. Başlıktaki toplam ve
+  "geçerli" bütün kayıtları sayar. "Üye" rozeti: e-posta bir üyede kayıtlı
+  (büyük-küçük harf fark etmez); yönetici hesapları sayılmaz.
+- **Yorumlar:** Arama yazar adı ve metinde; "Onay bekleyenler"
+  (`?bekleyen=1`). Başlıkta süzgece uyan yorum sayısı, bütün yorumlardaki
+  onay bekleyen sayısı ve anasayfada görünebilenler (onaylı, öne çıkarılmış,
+  ürünü yayında).
+- **CSV İndir** (Teklifler, Garantiler): seçili süzgece uyan kayıtların
+  tamamı, sıra listedeki gibi; görünen sayfa değil.
+- Testler: `tests/unit/panel-listeleri.test.ts` (demo modu) ile
+  `tests/db/panel-satis.test.ts` ve `tests/db/panel-talepler.test.ts`
+  (veritabanı) aynı örnekleri dener.

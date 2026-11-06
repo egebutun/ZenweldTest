@@ -480,13 +480,15 @@ export async function readUsers(db: ReadDb): Promise<Pick<ZenweldDatabase, "user
 /* ------------------------- Teklif, siparis, iade ------------------------- */
 
 /** Teklifler, yeniden eskiye; where verilirse yalnizca o teklifler (or. bir uyeninkiler; Asama 5.3). */
-export async function readQuotes(db: ReadDb, where?: SQL): Promise<Quote[]> {
-  const quotes = await db.select().from(s.quotes).where(where).orderBy(desc(s.quotes.createdAt), desc(s.quotes.code));
-  if (where && quotes.length === 0) return [];
+export async function readQuotes(db: ReadDb, where?: SQL, window?: RowWindow): Promise<Quote[]> {
+  const query = db.select().from(s.quotes).where(where).orderBy(desc(s.quotes.createdAt), desc(s.quotes.code));
+  const quotes = window ? await query.limit(window.limit).offset(window.offset) : await query;
+  const scoped = where !== undefined || window !== undefined;
+  if (scoped && quotes.length === 0) return [];
   const items = await db
     .select()
     .from(s.quoteItems)
-    .where(where ? inArray(s.quoteItems.quoteId, quotes.map((q) => q.id)) : undefined)
+    .where(scoped ? inArray(s.quoteItems.quoteId, quotes.map((q) => q.id)) : undefined)
     .orderBy(asc(s.quoteItems.line));
   const itemsByQuote = groupBy(items, (i) => i.quoteId);
   return quotes.map((q) => ({
@@ -724,9 +726,12 @@ export async function readSupport(
 }
 
 /** Servis talepleri, yeniden eskiye; where verilirse yalnizca o talepler (Asama 5.3). */
-export async function readServiceRequests(db: ReadDb, where?: SQL): Promise<ZenweldDatabase["serviceRequests"]> {
+export async function readServiceRequests(db: ReadDb, where?: SQL, window?: RowWindow): Promise<ZenweldDatabase["serviceRequests"]> {
   const [services, categories] = await serial(
-    () => db.select().from(s.serviceRequests).where(where).orderBy(desc(s.serviceRequests.createdAt)),
+    () => {
+      const query = db.select().from(s.serviceRequests).where(where).orderBy(desc(s.serviceRequests.createdAt), desc(s.serviceRequests.code));
+      return window ? query.limit(window.limit).offset(window.offset) : query;
+    },
     () => db.select({ id: s.categories.id, slug: s.categories.slug }).from(s.categories),
   );
   const slugOfCategory = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.slug ?? "") : "");
@@ -755,9 +760,12 @@ export async function readServiceRequests(db: ReadDb, where?: SQL): Promise<Zenw
 }
 
 /** Garanti kayitlari, yeniden eskiye; where verilirse yalnizca o kayitlar (or. bir e-postanin; Asama 5.3). */
-export async function readWarranties(db: ReadDb, where?: SQL): Promise<ZenweldDatabase["warranties"]> {
+export async function readWarranties(db: ReadDb, where?: SQL, window?: RowWindow): Promise<ZenweldDatabase["warranties"]> {
   const [rows, categories] = await serial(
-    () => db.select().from(s.warranties).where(where).orderBy(desc(s.warranties.registeredAt)),
+    () => {
+      const query = db.select().from(s.warranties).where(where).orderBy(desc(s.warranties.registeredAt), desc(s.warranties.id));
+      return window ? query.limit(window.limit).offset(window.offset) : query;
+    },
     () => db.select({ id: s.categories.id, slug: s.categories.slug }).from(s.categories),
   );
   const slugOfCategory = (id: string | null) => (id ? (categories.find((c) => c.id === id)?.slug ?? "") : "");

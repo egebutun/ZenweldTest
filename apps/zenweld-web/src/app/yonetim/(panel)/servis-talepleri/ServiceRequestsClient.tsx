@@ -3,10 +3,13 @@
 import { Fragment, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { ServiceReason, ServiceRequest, ServiceRequestStatus } from "@zenweld/data";
+import type { ServiceListPage } from "@zenweld/db";
 import { listServiceRequests, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Select, Textarea } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { ListPager, useListQuery } from "@/components/admin/ListControls";
+import { pageParam, serviceListPage } from "@/lib/admin-lists";
 import { useRequestActions } from "@/lib/admin-requests";
 
 const STATUS: Record<ServiceRequestStatus, { label: string; tone: "amber" | "grey" | "green" }> = {
@@ -22,10 +25,16 @@ const REASON: Record<ServiceReason, string> = {
   egitim: "Kullanım/Bakım Eğitimi",
 };
 
-/** SERVIS TALEPLERI — sitedeki Servis Talebi formundan gelenler. Veritabani modunda kayit sunucuya yazilir. */
-export function ServiceRequestsClient() {
+/**
+ * SERVIS TALEPLERI — sitedeki Servis Talebi formundan gelenler. Veritabani
+ * modunda kayit sunucuya yazilir. Sayfa basina 50 talep; veritabani modunda
+ * sunucu yalnizca bu sayfayi okur (page prop).
+ */
+export function ServiceRequestsClient({ page }: { page?: ServiceListPage }) {
   const db = useDatabase();
-  const requests = listServiceRequests(db);
+  const list = useListQuery();
+  const data = page ?? serviceListPage(listServiceRequests(db), pageParam(list.get));
+  const requests = data.rows;
   const [open, setOpen] = useState<string | null>(null);
   // Kayittan sonra detay yeniden kurulur (key: updatedAt); "Kaydedildi" bu yuzden burada tutulur.
   const [savedId, setSavedId] = useState<string | null>(null);
@@ -35,10 +44,13 @@ export function ServiceRequestsClient() {
     <>
       <AdminPageHeader
         title="Servis Talepleri"
-        description={`${requests.length} talep · ${requests.filter((r) => r.status === "new").length} yeni`}
+        description={`${data.total} talep · ${data.newCount} yeni`}
       />
 
-      <div className="overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white">
+      <div
+        className={`overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white transition-opacity ${list.pending ? "opacity-60" : ""}`}
+        aria-busy={list.pending}
+      >
         <table className="w-full text-sm">
           <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
             <tr>
@@ -101,6 +113,7 @@ export function ServiceRequestsClient() {
           </tbody>
         </table>
       </div>
+      <ListPager page={data.page} total={data.total} hrefFor={(p) => list.hrefWith({ sayfa: p > 1 ? String(p) : undefined })} />
     </>
   );
 }

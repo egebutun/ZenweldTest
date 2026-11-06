@@ -661,6 +661,11 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       araması "IŞIK" adlı müşteriyi bulur. Veritabanı modunda sayfa
       kaynağında 51. sipariş yoktur (`tests/e2e/panel-listeler.spec.ts`,
       `tests/e2e-db/panel-listeler.spec.ts`).
+- [ ] Teklifler, Servis Talepleri, Garantiler ve Yorumlar da 50'şer
+      sayfalanır; süzgeç ve arama adrese yazılır. Garantiler'de **CSV indir**
+      yalnızca görünen 50 kaydı değil, süzgece uyan kayıtların tamamını
+      indirir (örnek veride 54 kayıt). Oturumsuz
+      `/api/yonetim/csv/garantiler` 401 verir.
 - [ ] Havale siparişinde **Ödeme Alındı** → Hazırlanıyor.
 - [ ] Kargo firması ve takip numarası olmadan **Kargoya Ver** çalışmaz;
       girilince Kargoda; müşteri Siparişlerim'de takip numarasını görür.

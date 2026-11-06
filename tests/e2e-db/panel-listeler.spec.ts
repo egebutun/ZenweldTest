@@ -67,3 +67,47 @@ test("iade talepleri: başlıkta veritabanındaki sayılar", async ({ page, prob
   await expect(page.getByText(`${total} talep · ${fresh} yeni`)).toBeVisible();
   expect(problems).toEqual([]);
 });
+
+const istanbulToday = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Istanbul" }).format(new Date());
+
+test("garantiler: 1. sayfayla yalnızca 50 kayıt gelir; CSV sunucudan, süzgece uyanların tamamı; oturumsuz CSV yok", async ({ page, request, problems }) => {
+  expect((await request.get("/api/yonetim/csv/garantiler")).status()).toBe(401);
+  await panelLogin(page);
+  const rows = await sql<{ serial_number: string; expires_at: string }>(
+    "SELECT serial_number, expires_at::text FROM warranties ORDER BY registered_at DESC, id DESC",
+  );
+  expect(rows.length).toBeGreaterThan(50);
+  const html = await (await page.goto("/yonetim/garantiler"))!.text();
+  expect(html).toContain(rows[0].serial_number);
+  expect(html, "51. kayıt 1. sayfayla gelmez").not.toContain(rows[50].serial_number);
+  await expect(page.getByRole("navigation", { name: "Sayfalar" })).toContainText(`1–50 / ${rows.length}`);
+
+  const all = await (await page.request.get("/api/yonetim/csv/garantiler")).json();
+  expect(all.rows).toHaveLength(rows.length);
+  const today = istanbulToday();
+  const expired = rows.filter((r) => r.expires_at < today).length;
+  const some = await (await page.request.get("/api/yonetim/csv/garantiler?durum=expired")).json();
+  expect(some.rows).toHaveLength(expired);
+  const quotes = await sql<{ n: number }>("SELECT count(*)::int AS n FROM quotes WHERE status = 'new'");
+  expect((await (await page.request.get("/api/yonetim/csv/teklifler?durum=new")).json()).rows).toHaveLength(quotes[0].n);
+  expect(problems).toEqual([]);
+});
+
+test("yorumlar ve servis talepleri: sayılar ve süzgeç veritabanından", async ({ page, problems }) => {
+  await panelLogin(page);
+  const [{ total, pending }] = await sql<{ total: number; pending: number }>(
+    "SELECT count(*)::int AS total, count(*) FILTER (WHERE NOT approved)::int AS pending FROM reviews",
+  );
+  await page.goto("/yonetim/yorumlar?bekleyen=1");
+  await expect(page.getByText(`${pending} yorum · ${pending} onay bekliyor`)).toBeVisible();
+  await page.getByRole("button", { name: "Onay bekleyenler" }).click();
+  await expect(page).toHaveURL(/\/yonetim\/yorumlar$/);
+  await expect(page.getByText(`${total} yorum · ${pending} onay bekliyor`)).toBeVisible();
+
+  const [service] = await sql<{ total: number; fresh: number }>(
+    "SELECT count(*)::int AS total, count(*) FILTER (WHERE status = 'new')::int AS fresh FROM service_requests",
+  );
+  await page.goto("/yonetim/servis-talepleri");
+  await expect(page.getByText(`${service.total} talep · ${service.fresh} yeni`)).toBeVisible();
+  expect(problems).toEqual([]);
+});

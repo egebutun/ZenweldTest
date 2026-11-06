@@ -1,12 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Check, Search, Star, Trash2, X } from "lucide-react";
+import { useState } from "react";
+import { Check, Star, Trash2, X } from "lucide-react";
+import type { ReviewListPage } from "@zenweld/db";
 import { FEATURED_REVIEW_LIMIT, featuredReviewCount, listAllReviews, useDatabase } from "@zenweld/store";
-import { Alert, Badge, Button, Input, StarRating } from "@zenweld/ui";
-import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { useRequestActions, type PanelAnswer } from "@/lib/admin-requests";
+import { Alert, Badge, Button, StarRating } from "@zenweld/ui";
 import { formatDate } from "@zenweld/utils";
+import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { ListPager, ListSearch, useListQuery } from "@/components/admin/ListControls";
+import { reviewListFilter, reviewListPage } from "@/lib/admin-lists";
+import { useRequestActions, type PanelAnswer } from "@/lib/admin-requests";
 
 /**
  * YORUM YONETIMI
@@ -15,28 +18,20 @@ import { formatDate } from "@zenweld/utils";
  * "Anasayfada goster" isaretlenen en fazla 10 yorum anasayfadaki kayan
  * seritte cikar. Veritabani modunda degisiklik sunucuya yazilir ve sitenin
  * yorumlari hemen yenilenir (lib/admin-requests.ts).
+ *
+ * Sayfa basina 50 yorum; arama, "onay bekleyenler" ve sayfa adreste durur.
+ * Veritabani modunda sunucu yalnizca bu sayfayi (fotograf ve videolariyla)
+ * okur (page prop).
  */
-export function ReviewsClient() {
+export function ReviewsClient({ page }: { page?: ReviewListPage }) {
   const db = useDatabase();
   const actions = useRequestActions();
-  const [query, setQuery] = useState("");
-  const [onlyPending, setOnlyPending] = useState(false);
+  const list = useListQuery();
+  const filter = reviewListFilter(list.get);
   const [notice, setNotice] = useState<string | null>(null);
 
-  const reviews = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase("tr");
-    return listAllReviews(db).filter((r) => {
-      if (onlyPending && r.approved) return false;
-      if (!q) return true;
-      return (
-        r.authorName.toLocaleLowerCase("tr").includes(q) ||
-        r.body.toLocaleLowerCase("tr").includes(q)
-      );
-    });
-  }, [db, query, onlyPending]);
-
-  const featuredCount = featuredReviewCount(db);
-  const pendingCount = db.reviews.filter((r) => !r.approved).length;
+  const data = page ?? reviewListPage(listAllReviews(db), featuredReviewCount(db), filter);
+  const reviews = data.rows;
   const productName = (id: string) => db.products.find((p) => p.id === id)?.name ?? id;
   const run = async (action: Promise<PanelAnswer>) => {
     setNotice(null);
@@ -48,7 +43,7 @@ export function ReviewsClient() {
     <>
       <AdminPageHeader
         title="Yorumlar"
-        description={`${reviews.length} yorum · ${pendingCount} onay bekliyor · anasayfada ${featuredCount}/${FEATURED_REVIEW_LIMIT}`}
+        description={`${data.total} yorum · ${data.pendingCount} onay bekliyor · anasayfada ${data.featuredCount}/${FEATURED_REVIEW_LIMIT}`}
       />
 
       {notice && (
@@ -58,24 +53,23 @@ export function ReviewsClient() {
       )}
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-60">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zw-grey-400" />
-          <Input
-            className="pl-9"
-            placeholder="Yorum veya kişi ara…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
+        <ListSearch
+          className="min-w-60 flex-1"
+          value={filter.q}
+          onSearch={(q) => list.go({ ara: q }, true)}
+          placeholder="Yorum veya kişi ara…"
+          label="Yorumlarda ara"
+        />
         <Button
-          variant={onlyPending ? "primary" : "outline"}
-          onClick={() => setOnlyPending((v) => !v)}
+          variant={filter.pending ? "primary" : "outline"}
+          aria-pressed={filter.pending}
+          onClick={() => list.go({ bekleyen: filter.pending ? undefined : "1" })}
         >
           Onay bekleyenler
         </Button>
       </div>
 
-      <div className="space-y-3">
+      <div className={`space-y-3 transition-opacity ${list.pending ? "opacity-60" : ""}`} aria-busy={list.pending}>
         {reviews.map((r) => (
           <div
             key={r.id}
@@ -153,6 +147,7 @@ export function ReviewsClient() {
           </p>
         )}
       </div>
+      <ListPager page={data.page} total={data.total} hrefFor={(p) => list.hrefWith({ sayfa: p > 1 ? String(p) : undefined })} />
     </>
   );
 }

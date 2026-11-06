@@ -1,13 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Search, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Trash2 } from "lucide-react";
 import type { WarrantyRecord } from "@zenweld/data";
-import { downloadCsv, listUsers, useDatabase } from "@zenweld/store";
-import { Alert, Badge, Button, Input, Select } from "@zenweld/ui";
-import { formatDate, localDateKey } from "@zenweld/utils";
+import type { WarrantyListPage } from "@zenweld/db";
+import { listUsers, useDatabase } from "@zenweld/store";
+import { Alert, Badge, Button, Select } from "@zenweld/ui";
+import { formatDate } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { ListPager, ListSearch, downloadListCsv, useListQuery } from "@/components/admin/ListControls";
+import { warrantyCsvRows } from "@/lib/admin-csv";
+import { matchingWarranties, warrantyListFilter, warrantyListPage } from "@/lib/admin-lists";
 import { useRequestActions, type PanelAnswer } from "@/lib/admin-requests";
+import { istanbulDateKey } from "@/lib/admin-stats";
 
 /**
  * GARANTI KAYITLARI
@@ -16,8 +21,12 @@ import { useRequestActions, type PanelAnswer } from "@/lib/admin-requests";
  * yapilan degisiklikler musterinin "Hesabim > Garantilerim" sayfasina ve
  * sitedeki garanti sorgulamaya aninda yansir; ayni veriyi kullanirlar.
  * Veritabani modunda degisiklik sunucuya yazilir (lib/admin-requests.ts).
+ *
+ * Sayfa basina 50 kayit; arama, durum ve sayfa adreste durur. Veritabani
+ * modunda sunucu yalnizca bu sayfayi okur (page prop); CSV suzgece uyan
+ * kayitlarin tamamini indirir. Gunler Turkiye saatiyle (suresi doldu mu).
  */
-export function WarrantiesClient() {
+export function WarrantiesClient({ page }: { page?: WarrantyListPage }) {
   const db = useDatabase();
   const actions = useRequestActions();
   const [error, setError] = useState<string | null>(null);
@@ -26,34 +35,25 @@ export function WarrantiesClient() {
     const answer = await action;
     if (!answer.ok) setError(answer.error);
   };
-  const [query, setQuery] = useState("");
-  const [state, setState] = useState("");
-  const today = localDateKey();
-
-  const memberEmails = useMemo(
-    () => new Set(listUsers(db).map((u) => u.email.toLowerCase())),
-    [db],
-  );
-
-  const records = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase("tr");
-    return [...db.warranties]
-      .sort((a, b) => b.registeredAt.localeCompare(a.registeredAt))
-      .filter((w) => {
-        const expired = w.expiresAt < today;
-        if (state === "valid" && expired) return false;
-        if (state === "expired" && !expired) return false;
-        if (state === "extended" && !w.extended) return false;
-        if (!q) return true;
-        return (
-          w.serialNumber.toLocaleLowerCase("tr").includes(q) ||
-          w.ownerName.toLocaleLowerCase("tr").includes(q) ||
-          w.email.toLocaleLowerCase("tr").includes(q)
-        );
-      });
-  }, [db, query, state, today]);
+  const list = useListQuery();
+  const today = istanbulDateKey(new Date());
+  const filter = warrantyListFilter(list.get, today);
+  const data = page ?? warrantyListPage(db.warranties, listUsers(db), filter);
+  const records = data.rows;
+  const memberEmails = new Set(data.members);
 
   const productName = (id: string) => db.products.find((p) => p.id === id)?.name ?? id;
+
+  const exportCsv = async () => {
+    setError(null);
+    const failed = await downloadListCsv(
+      "garanti-kayitlari.csv",
+      page
+        ? { list: "garantiler", query: list.query }
+        : { rows: warrantyCsvRows(matchingWarranties(db.warranties, filter), productName) },
+    );
+    if (failed) setError(failed);
+  };
 
   /** Uzatilmis garanti acilip kapaninca bitis tarihine 12 ay eklenir/cikarilir; elle girilen tarih korunur. */
   const toggleExtended = (w: WarrantyRecord) => void run(actions.setWarrantyExtended(w, !w.extended));
@@ -62,33 +62,9 @@ export function WarrantiesClient() {
     <>
       <AdminPageHeader
         title="Garantiler"
-        description={`${db.warranties.length} garanti kaydı · ${
-          db.warranties.filter((w) => w.expiresAt >= today).length
-        } geçerli`}
+        description={`${data.all} garanti kaydı · ${data.valid} geçerli`}
         action={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              downloadCsv(
-                records.map((w) => ({
-                  seri_no: w.serialNumber,
-                  urun: productName(w.productId),
-                  sahibi: w.ownerName,
-                  eposta: w.email,
-                  telefon: w.phone,
-                  sehir: w.city,
-                  posta_kodu: w.postalCode,
-                  adres: w.address,
-                  satici_vkn: w.sellerTaxNumber,
-                  bitis: w.expiresAt,
-                  uzatilmis: w.extended ? "evet" : "hayır",
-                  kayit: w.registeredAt,
-                })),
-                "garanti-kayitlari.csv",
-              )
-            }
-          >
+          <Button variant="outline" size="sm" onClick={() => void exportCsv()}>
             CSV indir
           </Button>
         }
@@ -101,17 +77,15 @@ export function WarrantiesClient() {
       )}
 
       <div className="mb-4 flex flex-wrap gap-3">
-        <div className="relative min-w-60 flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zw-grey-400" />
-          <Input
-            className="pl-9"
-            placeholder="Seri no, isim veya e-posta ara…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </div>
+        <ListSearch
+          className="min-w-60 flex-1"
+          value={filter.q}
+          onSearch={(q) => list.go({ ara: q }, true)}
+          placeholder="Seri no, isim veya e-posta ara…"
+          label="Garantilerde ara"
+        />
         <div className="w-48">
-          <Select value={state} onChange={(e) => setState(e.target.value)}>
+          <Select value={filter.state ?? ""} onChange={(e) => list.go({ durum: e.target.value || undefined })}>
             <option value="">Tüm kayıtlar</option>
             <option value="valid">Garantisi devam eden</option>
             <option value="expired">Süresi dolan</option>
@@ -120,7 +94,10 @@ export function WarrantiesClient() {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white">
+      <div
+        className={`overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white transition-opacity ${list.pending ? "opacity-60" : ""}`}
+        aria-busy={list.pending}
+      >
         <table className="w-full min-w-[960px] text-sm">
           <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
             <tr>
@@ -213,7 +190,7 @@ export function WarrantiesClient() {
             {records.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-10 text-center text-zw-grey-500">
-                  {db.warranties.length === 0
+                  {data.all === 0
                     ? "Henüz garanti kaydı yok."
                     : "Aramanıza uygun kayıt yok."}
                 </td>
@@ -222,6 +199,8 @@ export function WarrantiesClient() {
           </tbody>
         </table>
       </div>
+
+      <ListPager page={data.page} total={data.total} hrefFor={(p) => list.hrefWith({ sayfa: p > 1 ? String(p) : undefined })} />
 
       <p className="mt-3 text-xs text-zw-grey-500">
         Bitiş tarihi ve uzatılmış garanti değişiklikleri müşterinin “Hesabım → Garantilerim”

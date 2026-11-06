@@ -204,7 +204,8 @@ alan seçilir, ekran okuyucu alanı etiketiyle okur.
 
 - Listede soluk görünür; sitede görünmez (adresi açılırsa 404).
 
-**Uzun listeler** (bugün Siparişler ve İade Talepleri; kurallar
+**Uzun listeler** (bugün Siparişler, İade Talepleri, Teklifler, Servis
+Talepleri, Garantiler ve Yorumlar; kurallar
 [IS-KURALLARI.md › 24](IS-KURALLARI.md#24-panel-listeleri-sayfalama-ve-arama)):
 
 - Sayfa başına 50 kayıt. Tablonun altında "1–50 / 133", **← Önceki**,
@@ -216,6 +217,10 @@ alan seçilir, ekran okuyucu alanı etiketiyle okur.
   harf sayılır.
 - Veritabanı modunda sunucu yalnızca o sayfanın kayıtlarını gönderir; yeni
   sayfa gelene kadar tablo soluk görünür.
+- **CSV İndir** (Teklifler, Garantiler) seçili süzgece uyan kayıtların
+  tamamını indirir, yalnızca görünen sayfayı değil. Veritabanı modunda
+  satırlar sunucudan alınır; alınamazsa "CSV hazırlanamadı. Sayfayı
+  yenileyip tekrar deneyin." yazar.
 
 **Görsel yükleme (tüm panel):**
 
@@ -652,8 +657,9 @@ satış ekibi tarafından hazırlanıp e-postayla gönderilir. Bayilerin teklifl
 burada değildir (ileride ayrı B2B uygulamasında).
 
 - **Durum süzgeci:** Tüm durumlar / Yeni / İnceleniyor / Teklif Gönderildi /
-  Kazanıldı / Kapandı.
-- **CSV İndir** (`zenweld-teklifler.csv`): kod, firma (yoksa yetkili),
+  Kazanıldı / Kapandı. Açıklamadaki sayı süzgece uyan tekliflerdir.
+- En yeni teklif önce; sayfa başına 50 (bkz. [Uzun listeler](#2-ortak-davranışlar)).
+- **CSV İndir** (`zenweld-teklifler.csv`; süzgece uyan tekliflerin tamamı): kod, firma (yoksa yetkili),
   yetkili, e-posta, telefon, şehir, ödeme tercihi, vade, ürünler ("2x Ad
   (seçenek) | …"), durum, tarih.
 - **Satır:** Kod, durum rozeti, ödeme tercihi rozeti (Vadeli / Çek /
@@ -1376,7 +1382,8 @@ kategori formu, grup formu) ve Ürünler (liste, ürün formu) veritabanıyla
 çalışır (KARARLAR K-99, K-101). Stok Matrisi henüz tarayıcıdaki veriyle
 çalışır (4. alan). Kurallar
 [Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
-ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
+ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur (Teklifler,
+Servis Talepleri, Garantiler ve Yorumlar'da yalnızca açılan sayfa); aynı
 kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
 sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 Ekranlar ve kurallar demo moduyla aynıdır; farklar:
@@ -1652,8 +1659,9 @@ sitede görünmez. Seçenekli üründe yorumlar ürün bazındadır; bütün se�
 aynı yorumları paylaşır.
 
 - **Arama:** "Yorum veya kişi ara…" (yazar adı ve metin).
-- **Onay bekleyenler** düğmesi listeyi süzer.
-- En yeni yorum önce gelir.
+- **Onay bekleyenler** düğmesi listeyi süzer (adreste `?bekleyen=1`).
+  Açıklamadaki ilk sayı süzgece uyan yorumlardır.
+- En yeni yorum önce gelir; sayfa başına 50 (bkz. [Uzun listeler](#2-ortak-davranışlar)).
 - **Kart** (onay bekleyen sarı):
   - Yıldızlar, yazar, ürün adı, tarih.
   - Rozetler: Onay bekliyor / Anasayfada / Doğrulanmış alıcı.
@@ -1898,7 +1906,8 @@ kayıttan sonra sunucudan okunur, şifre özeti tarayıcıya gönderilmez
 Adres: `/yonetim/servis-talepleri`. Açıklama: "<N> talep · <N> yeni".
 
 Sitedeki Servis Talebi formundan gelenler. Talep `SRV-<yıl>-<4 hane>`
-koduyla **Yeni** durumunda gelir. En yeni talep önce.
+koduyla **Yeni** durumunda gelir. En yeni talep önce; sayfa başına 50 (bkz.
+[Uzun listeler](#2-ortak-davranışlar)).
 
 - **Tablo:**
   - Talep: kod ve tarih-saat.
@@ -1933,17 +1942,17 @@ sitedeki garanti sorgulamaya anında yansır (aynı veri).
   başlar: kayıt tarihi + ürünün garanti süresi + (istendiyse) 12 ay.
 - Bitiş günü dahil garanti geçerlidir (site sorgulamasıyla aynı).
 
-- **CSV indir** (`garanti-kayitlari.csv`): seri no, ürün, sahibi, e-posta,
+- **CSV indir** (`garanti-kayitlari.csv`; süzgece uyan kayıtların tamamı): seri no, ürün, sahibi, e-posta,
   telefon, şehir, posta kodu, adres, satıcı VKN, bitiş, uzatılmış
   (evet/hayır), kayıt tarihi.
 - **Arama:** "Seri no, isim veya e-posta ara…".
 - **Süzgeç:** Tüm kayıtlar / Garantisi devam eden / Süresi dolan / Uzatılmış
-  garanti.
-- En yeni kayıt önce.
+  garanti. "Bugün" Türkiye günüdür.
+- En yeni kayıt önce; sayfa başına 50 (bkz. [Uzun listeler](#2-ortak-davranışlar)).
 - **Tablo:**
   - Ürün / Seri No.
   - Sahibi: ad, e-posta, telefon; "Üye" ya da "Üye değil" (e-posta bir
-    üyede kayıtlı mı).
+    üyede kayıtlı mı; yönetici hesapları üye sayılmaz).
   - Adres: adres, posta kodu, şehir.
   - Satıcı VKN / "Kayıt: <tarih>".
   - **Garanti Bitişi:** Tarih kutusu; değişince hemen kaydedilir. Altında
