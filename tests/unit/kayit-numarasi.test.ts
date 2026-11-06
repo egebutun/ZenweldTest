@@ -23,32 +23,32 @@ describe("Kayıt numaraları", () => {
 
   it("biçim: TKL-<yıl>-<4 hane>, SRV-<yıl>-<4 hane>", () => {
     const year = new Date().getFullYear();
-    expect(createQuote(quote).code).toMatch(new RegExp(`^TKL-${year}-\\d{4}$`));
-    expect(createServiceRequest(request).code).toMatch(new RegExp(`^SRV-${year}-\\d{4}$`));
+    expect(createQuote(quote)!.code).toMatch(new RegExp(`^TKL-${year}-\\d{4}$`));
+    expect(createServiceRequest(request)!.code).toMatch(new RegExp(`^SRV-${year}-\\d{4}$`));
   });
 
   it("numara bir öncekinin bir fazlasıdır", () => {
-    const first = createQuote(quote);
-    const second = createQuote(quote);
+    const first = createQuote(quote)!;
+    const second = createQuote(quote)!;
     expect(numberOf(second.code)).toBe(numberOf(first.code) + 1);
   });
 
   it("en son kayıt silinse de numarası yeniden verilmez", () => {
-    const latest = createQuote(quote);
+    const latest = createQuote(quote)!;
     deleteQuote(latest.id);
-    expect(numberOf(createQuote(quote).code)).toBe(numberOf(latest.code) + 1);
+    expect(numberOf(createQuote(quote)!.code)).toBe(numberOf(latest.code) + 1);
 
-    const service = createServiceRequest(request);
+    const service = createServiceRequest(request)!;
     mutate((db) => {
       db.serviceRequests = db.serviceRequests.filter((r) => r.id !== service.id);
     });
-    expect(numberOf(createServiceRequest(request).code)).toBe(numberOf(service.code) + 1);
+    expect(numberOf(createServiceRequest(request)!.code)).toBe(numberOf(service.code) + 1);
   });
 
   it("her yıl 1'den başlar", () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date(2099, 0, 1, 10, 0));
-    expect(createQuote(quote).code).toBe("TKL-2099-0001");
-    expect(createQuote(quote).code).toBe("TKL-2099-0002");
+    expect(createQuote(quote)!.code).toBe("TKL-2099-0001");
+    expect(createQuote(quote)!.code).toBe("TKL-2099-0002");
   });
 });

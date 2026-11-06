@@ -11,10 +11,11 @@ import { nowIso } from "./shared";
 /**
  * Garanti kaydi. E-posta kucuk harfe cevrilir (Garantilerim uyenin e-postasiyla
  * eslesir). Ayni seri numarasi ikinci kez kaydedilemez: false doner.
+ * Tarayici deposuna yazilamazsa (depo dolu) kayit yapilmaz: null doner.
  */
 export function registerWarranty(
   record: Omit<WarrantyRecord, "id" | "registeredAt" | "expiresAt">,
-): WarrantyRecord | false {
+): WarrantyRecord | false | null {
   if (findWarranty(record.serialNumber)) return false;
   const registeredAt = nowIso();
   const saved: WarrantyRecord = {
@@ -25,10 +26,10 @@ export function registerWarranty(
     registeredAt,
     expiresAt: warrantyExpiry(registeredAt, record.productId, record.extended),
   };
-  mutate((db) => {
+  const written = mutate((db) => {
     db.warranties.unshift(saved);
   });
-  return saved;
+  return written ? saved : null;
 }
 
 /** Uyenin garantileri: kayittaki e-posta buyuk/kucuk harf farki gozetmeden eslesir. */

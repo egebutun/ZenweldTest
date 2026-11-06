@@ -12,9 +12,10 @@ export function listServiceRequests(db: ZenweldDatabase = getSnapshot()): Servic
   return [...db.serviceRequests].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+/** Tarayici deposuna yazilamazsa (depo dolu) kayit yapilmaz ve null doner. */
 export function createServiceRequest(
   request: Omit<ServiceRequest, "id" | "code" | "status" | "createdAt" | "updatedAt">,
-): ServiceRequest {
+): ServiceRequest | null {
   const at = nowIso();
   const record: ServiceRequest = {
     ...request,
@@ -24,12 +25,12 @@ export function createServiceRequest(
     createdAt: at,
     updatedAt: at,
   };
-  mutate((draft) => {
+  const saved = mutate((draft) => {
     // Numara kayit aninda en guncel listeden verilir.
     record.code = nextCode(draft, draft.serviceRequests.map((r) => r.code), `SRV-${new Date().getFullYear()}-`, 4);
     draft.serviceRequests.unshift({ ...record });
   });
-  return record;
+  return saved ? record : null;
 }
 
 /** Tarayici deposuna yazilamazsa false. */

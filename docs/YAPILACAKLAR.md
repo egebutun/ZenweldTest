@@ -444,8 +444,10 @@ Veritabanı modu bütün kayıtlar için hazır ([VERITABANI.md](VERITABANI.md),
 [SUNUCU.md](SUNUCU.md)). Kayıt sayısı büyüyünce ve canlıdan önce:
 
 1. **Panel ana sayfası** siparişlerin, tekliflerin ve üyelerin tamamını
-   tarayıcıya gönderir; kayıt sayısı büyüyünce (ör. binlerce sipariş) özet
-   ve grafikler sunucuda hesaplanmalı.
+   tarayıcıya gönderir; özet ve grafikler tarayıcıda hesaplanır. Kayıt
+   sayısı büyüyünce (ör. binlerce sipariş) sunucuda hesaplanması
+   önerilir. **Karar bekliyor (K-111):** sunucuda ve tarayıcıda hesaplamanın
+   farkları sahibiyle konuşulup karar verilecek.
 2. **Uzun listeler:** Panel siparişleri, üyeleri ve yorumları sayfalamadan,
    hepsini birden okur; sayılar binleri bulunca sunucuda süzme, arama ve
    sayfalama gerekir ([Görseller ve uzun listeler](#görseller-ve-uzun-listeler-a5--önerilen-zorunlu-değil)).
@@ -605,19 +607,15 @@ Ayrıntılı inceleme sohbette yapıldı; düzeltme zamanı ayrıca
 kararlaştırılacak. Form uçlarındaki istek sınırı ve bot koruması:
 [Formlar — güvenlik](#formlar--güvenlik).
 
-1. Tarayıcı deposu dolunca değişiklik uygulanmıyor (demo modu); yönetim
-   paneli ve yorum formu uyarıyor, sitedeki diğer formlar (teklif, servis,
-   garanti, üyelik) uyarmıyor
-2. Arama dizini her sayfa açılışında kuruluyor
-3. Demo modunda her değişiklikte tüm veri (≈545 KB) tarayıcı deposuna
+1. Demo modunda her değişiklikte tüm veri (≈545 KB) tarayıcı deposuna
    yeniden yazılıyor
-4. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
-5. 8 dosyada hâlâ Lorem ipsum yer tutucu metin var: anasayfa, ürün sayfası,
+2. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
+3. 8 dosyada hâlâ Lorem ipsum yer tutucu metin var: anasayfa, ürün sayfası,
    Welders Club, Teklif Al formu, Adreslerim, `tr.ts` ve örnek veriler
-6. Otomatik kontrol (CI) yok; iş kuralları testleri (`npm test`) ve
+4. Otomatik kontrol (CI) yok; iş kuralları testleri (`npm test`) ve
    tarayıcı testleri (`npm run test:e2e`) var, elle çalıştırılıyor
    (KARARLAR K-67)
-7. Ürün formunda `isNew` ad karışıklığı; form etiketleri alanlara bağlı değil
+5. Form etiketleri alanlara bağlı değil ([Erişilebilirlik](#erişilebilirlik-a4--önerilen-zorunlu-değil) 4)
 
 ## Online satış — canlıya çıkmadan önce
 
@@ -1319,7 +1317,9 @@ birlikte netleşecek.
 ## Sitenin tasarımı — sahibi yapacak
 
 Tasarım (renk, yerleşim, yazı tipi, efektler) sahibi tarafından sonra
-yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
+yapılacak; bugünkü görünüm geçicidir. Sıra (KARARLAR K-111): önce küçük kod
+işleri ve uzun listelerin sayfalanması, sonra tasarım, en son SEO. Tasarım
+yapılırken:
 
 1. Bütün özellikler korunmalı (davranış: WEBSITE-KULLANIM ve
    ADMIN-KULLANIM). Menü düzeni, sayfalar ve metinler de sahibinin
@@ -1350,7 +1350,7 @@ teyit edilmeli). Yapılacaklar:
    denetlenmeli.
 4. **Form etiketleri alanlara bağlansın:** Birçok formda etiket alanla
    bağlı değil (Üye Ol, Teklif Al, panelde ürün formu — "Kod incelemesi
-   bulguları" 7); ekran okuyucu alanın adını okuyamaz. Tarayıcı testleri
+   bulguları" 5); ekran okuyucu alanın adını okuyamaz. Tarayıcı testleri
    de bu yüzden bazı alanları sırasıyla seçiyor.
 5. Renk karşıtlığı tasarım aşamasında ele alınacak.
 
@@ -1360,7 +1360,7 @@ teyit edilmeli). Yapılacaklar:
    yükleniyor (`ProductImage`, `<img loading="lazy">`). Next.js'in görsel
    bileşeni ekran boyuna uygun küçük sürüm ve WebP/AVIF üretir; sayfa daha
    hızlı açılır, görselin ölçüsü önceden bilindiği için sayfa kayması olmaz
-   ("Kod incelemesi bulguları" 4).
+   ("Kod incelemesi bulguları" 2).
    - Demo modunda panelden yüklenen görseller kaydın içinde (`data:`)
      durduğu için bu yoldan geçemez; veritabanı modunda dosya deposundaki
      görseller (`/dosya/…`) geçebilir.

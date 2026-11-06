@@ -87,6 +87,11 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
     tarayıcıya da yazılır ve aynı tarayıcının panelinde görünür (KARARLAR
     K-109). Veritabanı modunda bu formlar veritabanına kaydedilir; kayıt
     yapıldıysa e-posta gitmese de hata gösterilmez.
+  - **Demo notu:** Tarayıcının deposu doluysa Teklif Al, servis talebi,
+    garanti kaydı ve Üye Ol kaydedilmez ve e-posta gitmez; formda
+    "Gönderilemedi: tarayıcınızın deposu dolu, kayıt yapılmadı…" (Üye Ol'da
+    "Üyelik oluşturulamadı: tarayıcınızın deposu dolu…") yazar.
+    Değerlendirme formunun kendi mesajı vardır ([6](#6-ürün-sayfası)).
   - Veritabanı modunda teklif, servis talebi, garanti kaydı ve
     değerlendirmeyi sunucu kaydeder ve kuralları yeniden denetler; gönderilen
     her e-posta kayıt altına alınır (`email_log`).

@@ -297,7 +297,7 @@ function BrowserAuth({
         createdAt: new Date().toISOString(),
         newsletter: input.newsletter ?? false,
       };
-      addUser(newUser);
+      if (!addUser(newUser)) return { ok: false, error: AUTH_ERRORS.storageFull };
       remember(newUser.id);
       return { ok: true, user: newUser };
     },

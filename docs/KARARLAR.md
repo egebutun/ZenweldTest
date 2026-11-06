@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-110).
+  K-111).
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -34,7 +34,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
 12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108
-13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110
+13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110, K-111
 
 ---
 
@@ -1124,7 +1124,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   kendiliğinden çalışmaz; geliştirici elle çalıştırır (CLAUDE.md ›
   Doğrulama).
 - İleride kurulabilir ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Kod
-  incelemesi bulguları 6).
+  incelemesi bulguları 4).
 
 ### K-89 · `next dev`'in yazdığı AGENTS.md depoya girmez
 - Next.js 16'nın geliştirme sunucusu (`npm run dev:web`) her çalıştığında
@@ -1170,3 +1170,12 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   ekranlarını yayındaki (demo) sitede göremedi; ekranlar demo modunda
   kendisine söylenmeden gizlenmişti (K-109). Sahibi kuralın CLAUDE.md'ye
   eklenmesini onayladı.
+
+### K-111 · Sıra: önce küçük kod işleri ve sayfalama, sonra tasarım, en son SEO
+- Tasarımdan önce kod incelemesinin küçük bulguları ve uzun listelerin
+  sayfalanması yapılır.
+- Sonra tasarım; SEO'nun temeli ve ince ayarı tasarımdan sonra gelir.
+- Panel ana sayfasının özetinin ve grafiklerinin sunucuda mı tarayıcıda mı
+  hesaplanacağı, farkları sahibiyle konuşulduktan sonra kararlaştırılır
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Veritabanı — kalanlar 1).
+- **Neden:** Sahibinin kararı.

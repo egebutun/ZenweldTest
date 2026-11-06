@@ -119,6 +119,7 @@ export default function ServiceRequestPage() {
       reasons,
       userId: user?.id,
     });
+    if (!record) return setError(t.common.storageFull);
     // Talep panelde Servis Talepleri'ne duser; info@zenweld.com'a da haber verilir.
     void notifyZenweld("servis", serviceNotice(record, t), bot.website);
     setCode(record.code);

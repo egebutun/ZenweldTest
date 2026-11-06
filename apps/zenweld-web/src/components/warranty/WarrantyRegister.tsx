@@ -106,6 +106,7 @@ export function WarrantyRegister({ onCheck }: { onCheck: () => void }) {
       return;
     }
     const saved = registerWarranty(form);
+    if (saved === null) return setError(t.common.storageFull);
     if (!saved) return setError(t.warranty.duplicateSerial);
     // Kayit panelde Garantiler'e duser; info@zenweld.com'a da haber verilir.
     void notifyZenweld("garanti", warrantyNotice(saved, models.find((p) => p.id === saved.productId)?.name ?? ""), bot.website);

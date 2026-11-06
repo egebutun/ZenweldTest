@@ -18,8 +18,9 @@ export function findUserById(
   return db.users.find((u) => u.id === id);
 }
 
-export function addUser(user: User): void {
-  mutate((db) => {
+/** Tarayici deposuna yazilamazsa (depo dolu) uye eklenmez: false doner. */
+export function addUser(user: User): boolean {
+  return mutate((db) => {
     db.users.unshift(user);
   });
 }

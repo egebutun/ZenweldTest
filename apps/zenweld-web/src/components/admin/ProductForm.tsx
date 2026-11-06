@@ -45,7 +45,8 @@ export function ProductForm({ product }: { product?: Product }) {
   const db = useDatabase();
   const router = useRouter();
   const actions = useCatalogActions();
-  const isNew = !product;
+  // Yeni kayit mi (urunun "Yeni urun rozeti" alani draft.isNew'dur, karistirilmasin).
+  const creating = !product;
   const form = useContentForm<Product>(
     product ?? {
       id: "",
@@ -103,7 +104,7 @@ export function ProductForm({ product }: { product?: Product }) {
     const stored = product && db.products.find((p) => p.id === product.id);
     const answer = await actions.saveProduct(record, stored);
     if (!answer.ok) return form.fail(answer.error, errorTab(answer.error));
-    if (isNew && answer.id) router.push(`/yonetim/urunler/${answer.id}`);
+    if (creating && answer.id) router.push(`/yonetim/urunler/${answer.id}`);
     else form.flashSaved();
   };
 
@@ -113,7 +114,7 @@ export function ProductForm({ product }: { product?: Product }) {
       onSubmit={() => void submit()}
       pending={actions.pending}
       savedText="Ürün kaydedildi."
-      submitLabel={isNew ? "Ürünü Oluştur" : "Değişiklikleri Kaydet"}
+      submitLabel={creating ? "Ürünü Oluştur" : "Değişiklikleri Kaydet"}
       tabs={[
         { id: "temel", label: "Temel Bilgiler" },
         { id: "aciklama", label: "Açıklamalar" },
@@ -125,7 +126,7 @@ export function ProductForm({ product }: { product?: Product }) {
         { id: "seo", label: "SEO" },
       ]}
     >
-      {form.tab === "temel" && <BasicsTab {...tabProps} isNew={isNew} />}
+      {form.tab === "temel" && <BasicsTab {...tabProps} creating={creating} />}
       {form.tab === "aciklama" && <DescriptionTab {...tabProps} />}
       {form.tab === "gorseller" && <ImagesTab {...tabProps} onError={form.setError} uploadNote={actions.uploadNote} />}
       {form.tab === "teknik" && <SpecsTab {...tabProps} />}

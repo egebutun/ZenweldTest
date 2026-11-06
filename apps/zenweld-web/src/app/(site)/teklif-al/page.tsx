@@ -167,6 +167,10 @@ export default function QuotePage() {
       })),
       message: form.message,
     });
+    if (!quote) {
+      setError(t.common.storageFull);
+      return;
+    }
 
     // Teklif panelde Teklifler'e duser; info@zenweld.com'a da haber verilir.
     void notifyZenweld("teklif", quoteNotice(quote, t), bot.website);

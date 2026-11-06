@@ -1107,6 +1107,11 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Panelde yapılan değişiklik sayfa yenilenince korunur.
 - [ ] Panel bir sekmede, site başka sekmede açıkken değişiklikler birbirini
       silmez; diğer sekme güncel veriyi görür.
+- [ ] Demo modunda tarayıcı deposu doluyken (ör. geliştirici araçlarında
+      depo kotası düşürülerek) Teklif Al, servis talebi, garanti kaydı ve
+      Üye Ol "Gönderilemedi: tarayıcınızın deposu dolu…" (Üye Ol'da
+      "Üyelik oluşturulamadı…") yazar; kayıt oluşmaz, e-posta gitmez,
+      başarı ekranı açılmaz.
 - [ ] Örnek veri değiştirildiğinde `DB_VERSION` artırılmışsa tarayıcıdaki
       veri örnek veriyle yeniden kurulur.
 - [ ] `DATA_SOURCE` boşken site demo modunda çalışır: panelde değiştirilen

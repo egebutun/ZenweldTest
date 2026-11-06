@@ -28,6 +28,9 @@ export const tr = {
     viewCategories: "Kategorileri Gör",
     noResults: "Sonuç bulunamadı.",
     km: "km",
+    /** Tarayici deposuna yazilamadiginda (demo modu, depo dolu) formlarda */
+    storageFull:
+      "Gönderilemedi: tarayıcınızın deposu dolu, kayıt yapılmadı. Tarayıcının bu siteye ait verilerini temizleyip tekrar deneyin.",
   },
   nav: {
     equipment: "Ekipmanlar",
@@ -359,6 +362,8 @@ export const tr = {
     /** Uyelik hatalari; tarayicida ve sunucuda ayni (KARARLAR K-94) */
     errors: {
       invalidLogin: "E-posta ya da şifre hatalı.",
+      storageFull:
+        "Üyelik oluşturulamadı: tarayıcınızın deposu dolu. Tarayıcının bu siteye ait verilerini temizleyip tekrar deneyin.",
       tooManyAttempts: "Çok fazla deneme yapıldı. 15 dakika sonra tekrar deneyin.",
       suspended: "Hesabınız askıya alınmış. Lütfen bizimle iletişime geçin.",
       emailTaken: "Bu e-posta adresi zaten kayıtlı.",

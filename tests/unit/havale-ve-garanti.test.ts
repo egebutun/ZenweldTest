@@ -86,8 +86,8 @@ describe("Garanti kaydı", () => {
 
   it("seri numarası büyük harfe çevrilir ve boşlukları silinir; e-posta küçük harfle saklanır", () => {
     const saved = registerWarranty(form);
-    expect(saved).not.toBe(false);
-    if (saved === false) return;
+    expect(saved).toBeTruthy();
+    if (!saved) return;
     expect(saved.serialNumber).toBe("ZW-TEST-0001");
     expect(saved.email).toBe("ali.veli@ornek.com");
   });

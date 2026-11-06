@@ -16,7 +16,7 @@ const SECTIONS: { id: TopLevelSection; label: string }[] = [
 ];
 
 /** Temel Bilgiler sekmesi: ad, kodlar, marka, bolum/kategori, fiyat, kampanya, durum. */
-export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolean }) {
+export function BasicsTab({ creating, ...props }: ProductTabProps & { creating: boolean }) {
   const { draft, set, setDraft } = props;
   const db = useDatabase();
   const categories = db.categories.filter((c) => c.section === draft.section);
@@ -30,7 +30,7 @@ export function BasicsTab({ isNew, ...props }: ProductTabProps & { isNew: boolea
           value={draft.name}
           onChange={(e) => {
             set("name", e.target.value);
-            if (isNew) set("slug", slugify(e.target.value));
+            if (creating) set("slug", slugify(e.target.value));
           }}
         />
       </FormRow>

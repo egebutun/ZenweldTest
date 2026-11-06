@@ -20,15 +20,16 @@ export function quotesForUser(
   return listQuotes(db).filter((q) => q.userId === userId);
 }
 
-export function createQuote(quote: Omit<Quote, "id" | "code" | "createdAt" | "updatedAt">): Quote {
+/** Tarayici deposuna yazilamazsa (depo dolu) kayit yapilmaz ve null doner. */
+export function createQuote(quote: Omit<Quote, "id" | "code" | "createdAt" | "updatedAt">): Quote | null {
   const at = nowIso();
   const record: Quote = { ...quote, id: uid("q"), code: "", createdAt: at, updatedAt: at };
-  mutate((draft) => {
+  const saved = mutate((draft) => {
     // Numara kayit aninda en guncel listeden verilir.
     record.code = nextCode(draft, draft.quotes.map((q) => q.code), `TKL-${new Date().getFullYear()}-`, 4);
     draft.quotes.unshift({ ...record });
   });
-  return record;
+  return saved ? record : null;
 }
 
 export function saveQuote(quote: Quote): void {
