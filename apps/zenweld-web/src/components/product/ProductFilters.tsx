@@ -2,7 +2,7 @@
 
 import { byProductOrder, salePriceExVat, type FilterFacet, type Product } from "@zenweld/data";
 import { useT } from "@/lib/i18n-client";
-import { Select } from "@zenweld/ui";
+import { FormRow, Select } from "@zenweld/ui";
 
 export type SortKey = "featured" | "priceAsc" | "priceDesc" | "nameAsc" | "newest";
 
@@ -54,10 +54,7 @@ export function ProductFilters({
         </button>
       </div>
 
-      <div>
-        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-          {t.filters.sort}
-        </label>
+      <FormRow label={t.filters.sort}>
         <Select
           value={value.sort}
           onChange={(e) => onChange({ ...value, sort: e.target.value as SortKey })}
@@ -68,7 +65,7 @@ export function ProductFilters({
           <option value="nameAsc">{t.filters.sortNameAsc}</option>
           <option value="newest">{t.filters.sortNewest}</option>
         </Select>
-      </div>
+      </FormRow>
 
       {facets.map((f) => (
         <fieldset key={f.id}>

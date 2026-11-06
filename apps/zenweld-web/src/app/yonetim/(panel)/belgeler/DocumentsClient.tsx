@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { ArrowDown, ArrowUp, ExternalLink, Pencil, Plus, Trash2 } from "lucide-react";
 import {
   DOCUMENT_SECTIONS,
@@ -271,6 +271,7 @@ function DocumentForm({
   const [autoTitle, setAutoTitle] = useState(!doc?.title);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const fileInputId = useId();
   const products = [...db.products].sort((a, b) => a.name.localeCompare(b.name, "tr"));
 
   const save = async () => {
@@ -326,10 +327,12 @@ function DocumentForm({
         ) : (
           <FormRow
             label="Dosya"
+            htmlFor={fileInputId}
             required={!doc}
             hint={`PDF, Word, Excel, JPG, PNG veya ZIP · en fazla 25 MB${doc ? " · seçmezseniz mevcut dosya kalır" : ""}`}
           >
             <input
+              id={fileInputId}
               type="file"
               accept={DOCUMENT_EXTENSIONS.map((e) => `.${e}`).join(",")}
               onChange={(e) => {

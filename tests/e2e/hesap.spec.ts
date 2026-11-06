@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { expect, test } from "./yardimci";
+import { expect, field, test } from "./yardimci";
 
 /**
  * HESABIM › PROFIL: SIFRE DEGISTIRME VE HESABI SILME
@@ -21,14 +21,12 @@ test("üye şifresini değiştirir ve hesabını siler", async ({ page, problems
   const main = page.locator("main");
 
   await page.goto("/kayit");
-  // Alan sirasi: Ad, Soyad, E-posta, Telefon, Sehir, Sifre, Sifre (Tekrar)
-  const inputs = page.locator("main input");
-  await inputs.nth(0).fill("Deneme");
-  await inputs.nth(1).fill("Kişi");
-  await inputs.nth(2).fill(email);
-  await inputs.nth(3).fill("05551112233");
-  await inputs.nth(5).fill("ilksifre1");
-  await inputs.nth(6).fill("ilksifre1");
+  await field(main, "Ad").fill("Deneme");
+  await field(main, "Soyad").fill("Kişi");
+  await field(main, "E-posta").fill(email);
+  await field(main, "Telefon").fill("05551112233");
+  await field(main, "Şifre").fill("ilksifre1");
+  await field(main, "Şifre (Tekrar)").fill("ilksifre1");
   await page.locator('label:has-text("okudum ve kabul ediyorum") input[type=checkbox]').check();
   await page.getByRole("button", { name: "Hesap Oluştur" }).click();
   await expect(page).toHaveURL(/\/hesabim/);

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { test as base, expect, type Page } from "@playwright/test";
+import { test as base, expect, type Locator, type Page } from "@playwright/test";
 import type { ZenweldDatabase } from "@zenweld/data";
 
 /**
@@ -52,6 +52,15 @@ export const test = base.extend<{ problems: string[] }>({
 });
 
 export { expect };
+
+/**
+ * Formdaki alani etiketiyle bulur. Etiketler alanlara baglidir (FormRow);
+ * zorunlu alanin etiketinde "*" vardir. Ad tam eslesir: "Ad" Soyad'i bulmaz.
+ */
+export function field(scope: Page | Locator, label: string): Locator {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return scope.getByLabel(new RegExp(`^${escaped}\\s*\\*?$`));
+}
 
 /** Tarayicidaki veritabanini (localStorage) okur. */
 export async function readDb(page: Page): Promise<ZenweldDatabase> {

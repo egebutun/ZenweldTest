@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import type { Dealer } from "@zenweld/data";
 import { dealersWithProduct, listDealers, useDatabase, useNow } from "@zenweld/store";
-import { Badge, Button, Checkbox, Select, Skeleton } from "@zenweld/ui";
+import { Badge, Button, Checkbox, FormRow, Select, Skeleton } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { CITY_CENTERS, haversineKm } from "@/lib/geo";
 
@@ -177,23 +177,22 @@ export function DealerFinder({
 
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="flex-1">
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-            {t.dealers.selectCity}
-          </label>
-          <Select
-            value={city}
-            onChange={(e) => {
-              setCity(e.target.value);
-              setPosition(null);
-            }}
-          >
-            <option value="">{t.dealers.allCities}</option>
-            {cities.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </Select>
+          <FormRow label={t.dealers.selectCity}>
+            <Select
+              value={city}
+              onChange={(e) => {
+                setCity(e.target.value);
+                setPosition(null);
+              }}
+            >
+              <option value="">{t.dealers.allCities}</option>
+              {cities.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </Select>
+          </FormRow>
         </div>
         <div className="flex items-center sm:h-11">
           <Checkbox

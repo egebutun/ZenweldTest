@@ -168,6 +168,9 @@ dön** panelin ana ekranına götürür.
 
 ## 2. Ortak davranışlar
 
+**Form etiketleri:** Alanların etiketi alana bağlıdır; etikete tıklayınca
+alan seçilir, ekran okuyucu alanı etiketiyle okur.
+
 **Kaydetme:**
 
 - Formlu ekranlarda (ürün, kategori, grup, haber, etkinlik, blog, yasal

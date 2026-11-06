@@ -1,7 +1,7 @@
 "use client";
 
 import { ImagePlus, X } from "lucide-react";
-import { ProductImage } from "@zenweld/ui";
+import { ProductImage, useFieldId } from "@zenweld/ui";
 import { useUploads } from "@/lib/admin-files";
 
 /**
@@ -26,6 +26,8 @@ export function ImageField({
   uploadNote?: string;
 }) {
   const uploads = useUploads();
+  // FormRow icindeyse etiket adres kutusuna baglanir.
+  const id = useFieldId();
   const uploaded = value?.startsWith("data:");
   return (
     <div className="flex items-start gap-3">
@@ -43,6 +45,7 @@ export function ImageField({
       <div className="min-w-0 flex-1 space-y-2">
         {/* Yuklenen dosyanin adresi yazilarak degistirilemez: Kaldir ya da yeni dosya. */}
         <input
+          id={id}
           type="text"
           readOnly={uploaded}
           value={uploaded ? "(yüklenen dosya)" : (value ?? "")}

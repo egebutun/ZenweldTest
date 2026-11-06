@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { SESSION, TEST_PHOTO, addTestOptions, changeDb, expect, readDb, test } from "./yardimci";
+import { SESSION, TEST_PHOTO, addTestOptions, changeDb, expect, field, readDb, test } from "./yardimci";
 
 /**
  * TEKLIF AL VE KAYIT NUMARASI (docs/IS-KURALLARI.md › 8 ve 17, KARARLAR K-64, K-79)
@@ -11,11 +11,11 @@ test.use({ storageState: SESSION.admin });
 
 /** 1. adimi doldurup 2. adima (Urunler) gecer. */
 async function toProducts(page: Page): Promise<void> {
-  const inputs = page.locator("main input");
-  await inputs.nth(0).fill("Deneme Firma");
-  await inputs.nth(1).fill("Deneme Kişi");
-  await inputs.nth(3).fill("deneme@ornek.com");
-  await inputs.nth(4).fill("05551112233");
+  const main = page.locator("main");
+  await field(main, "Firma Ünvanı").fill("Deneme Firma");
+  await field(main, "Yetkili Kişi").fill("Deneme Kişi");
+  await field(main, "E-posta").fill("deneme@ornek.com");
+  await field(main, "Telefon").fill("05551112233");
   await page.getByRole("button", { name: "İleri" }).click();
 }
 

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Download, Trash2 } from "lucide-react";
 import type { Quote, QuoteStatus } from "@zenweld/data";
 import { downloadCsv, listQuotes, useDatabase } from "@zenweld/store";
-import { Alert, Badge, Button, Input, Select, Textarea } from "@zenweld/ui";
+import { Alert, Badge, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { useRequestActions, type PanelAnswer } from "@/lib/admin-requests";
 import { formatDateTime } from "@zenweld/utils";
@@ -180,12 +180,8 @@ export function QuotesClient() {
                     </div>
 
                     <div className="space-y-3">
-                      <div>
-                        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-                          Durum
-                        </label>
+                      <FormRow label="Durum">
                         <Select
-                          aria-label="Durum"
                           value={q.status}
                           disabled={actions.pending}
                           onChange={(e) =>
@@ -198,28 +194,21 @@ export function QuotesClient() {
                             </option>
                           ))}
                         </Select>
-                      </div>
-                      <div>
-                        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-                          Atanan Satış Temsilcisi
-                        </label>
+                      </FormRow>
+                      <FormRow label="Atanan Satış Temsilcisi">
                         {/* Her harfte tum veriyi yazmamak icin alandan cikinca kaydedilir. */}
                         <Input
                           defaultValue={q.assignedTo ?? ""}
                           onBlur={(e) => e.target.value !== (q.assignedTo ?? "") && update(q, { assignedTo: e.target.value })}
                           placeholder="Örn. Satış – Mehmet B."
                         />
-                      </div>
-                      <div>
-                        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-                          İç Not
-                        </label>
+                      </FormRow>
+                      <FormRow label="İç Not">
                         <Textarea
-                          aria-label="İç not"
                           defaultValue={q.adminNote ?? ""}
                           onBlur={(e) => e.target.value !== (q.adminNote ?? "") && update(q, { adminNote: e.target.value })}
                         />
-                      </div>
+                      </FormRow>
                       <div className="flex gap-2">
                         <a
                           href={`mailto:${q.email}?subject=${encodeURIComponent(`Zenweld Teklif ${q.code}`)}`}

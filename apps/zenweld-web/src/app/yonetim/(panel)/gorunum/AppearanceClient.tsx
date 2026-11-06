@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import { RICH_TEXT_LIMITS, defaultSettings, richTextStyleError, type RichTextStyle } from "@zenweld/data";
 import { getRichTextStyle, useDatabase } from "@zenweld/store";
@@ -202,9 +202,11 @@ function SizeRow({
   suffix?: string;
   onChange: (value: number) => void;
 }) {
+  const id = useId();
   return (
-    <FormRow label={`${label} — ${value}${suffix}`}>
+    <FormRow label={`${label} — ${value}${suffix}`} htmlFor={id}>
       <input
+        id={id}
         type="range"
         min={min}
         max={max}
@@ -231,6 +233,7 @@ function ColorRow({
       <div className="flex gap-2">
         <input
           type="color"
+          aria-label={label}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="h-11 w-14 shrink-0 cursor-pointer rounded-[4px] border border-zw-grey-300 bg-white p-1"

@@ -7,7 +7,7 @@ import { SESSION, expect, test } from "./yardimci";
  * Site haritasindaki her sayfa, haritada olmayan sayfalar, Hesabim ve panel
  * acilir; her birinde: hata kodu yok, "Sayfa bulunamadi" yok, JS hatasi ve
  * guvenlik politikasi ihlali yok, "demo" yazisi ve Ingilizce dil secenegi
- * yok (CLAUDE.md, KARARLAR K-01).
+ * yok (CLAUDE.md, KARARLAR K-01); her form etiketi bir alana bagli.
  */
 
 const OUTSIDE_SITEMAP = ["/giris", "/kayit", "/sifremi-unuttum", "/sifre-sifirla", "/arama?q=kaynak", "/sepet"];
@@ -76,6 +76,14 @@ async function scan(page: Page, problems: string[], paths: string[]) {
     expect.soft(text, `${path}: İngilizce dil seçeneği`).not.toMatch(/\b(English|İngilizce)\b/);
     const languageLinks = await page.locator('a[href^="/en"], a[href^="/tr/"], a[href="/tr"]').count();
     expect.soft(languageLinks, `${path}: /en ya da /tr bağlantısı`).toBe(0);
+    // Etiket alanina bagli (FormRow): tiklayinca alan secilir, ekran okuyucu
+    // alanin adini okur. Iki alan ayni kimligi tasimaz.
+    const labels = await page.locator("label").evaluateAll((list) =>
+      list.filter((l) => !(l as HTMLLabelElement).control).map((l) => l.textContent?.trim() ?? ""),
+    );
+    expect.soft(labels, `${path}: alana bağlı olmayan etiket`).toEqual([]);
+    const ids = await page.locator("input[id], select[id], textarea[id]").evaluateAll((list) => list.map((e) => e.id));
+    expect.soft(ids.filter((id, i) => ids.indexOf(id) !== i), `${path}: aynı kimliği taşıyan alanlar`).toEqual([]);
   }
 }
 

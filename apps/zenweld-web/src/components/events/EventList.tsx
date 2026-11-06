@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { CalendarDays } from "lucide-react";
 import { listEvents, useDatabase, useNow } from "@zenweld/store";
-import { Button, EmptyState, Select } from "@zenweld/ui";
+import { Button, EmptyState, FormRow, Select } from "@zenweld/ui";
 import { EventCard } from "./EventCard";
 import { eventWindow } from "./event-dates";
 import { useT } from "@/lib/i18n-client";
@@ -67,20 +67,14 @@ export function EventList() {
 
       {/* Filtreler */}
       <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-            {t.events.status}
-          </label>
+        <FormRow label={t.events.status}>
           <Select value={status} onChange={(e) => setStatus(e.target.value as StatusFilter)}>
             <option value="">{t.events.allStatus}</option>
             <option value="upcoming">{t.events.upcoming}</option>
             <option value="past">{t.events.past}</option>
           </Select>
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-            {t.events.country}
-          </label>
+        </FormRow>
+        <FormRow label={t.events.country}>
           <Select value={country} onChange={(e) => setCountry(e.target.value)}>
             <option value="">{t.events.allCountries}</option>
             {countries.map((c) => (
@@ -89,16 +83,13 @@ export function EventList() {
               </option>
             ))}
           </Select>
-        </div>
-        <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-zw-grey-600">
-            {t.events.sort}
-          </label>
+        </FormRow>
+        <FormRow label={t.events.sort}>
           <Select value={sort} onChange={(e) => setSort(e.target.value as "newest" | "oldest")}>
             <option value="newest">{t.events.sortNewest}</option>
             <option value="oldest">{t.events.sortOldest}</option>
           </Select>
-        </div>
+        </FormRow>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">

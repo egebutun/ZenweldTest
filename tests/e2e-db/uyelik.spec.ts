@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import type { APIRequestContext, Page } from "@playwright/test";
 import { demoHash } from "../../packages/auth/src/hash";
-import { demoAccount } from "../e2e/yardimci";
+import { demoAccount, field } from "../e2e/yardimci";
 import { closeDatabase, expect, memberLogin, sql, test } from "./yardimci";
 
 /**
@@ -21,14 +21,13 @@ const newEmail = (name: string) => `${name}-${Date.now()}@ornek.com`;
 
 async function registerViaForm(page: Page, email: string, password: string) {
   await page.goto("/kayit");
-  // Alan sirasi: Ad, Soyad, E-posta, Telefon, Sehir, Sifre, Sifre (Tekrar)
-  const inputs = page.locator("main input");
-  await inputs.nth(0).fill("Deneme");
-  await inputs.nth(1).fill("Üye");
-  await inputs.nth(2).fill(email);
-  await inputs.nth(3).fill("05551112233");
-  await inputs.nth(5).fill(password);
-  await inputs.nth(6).fill(password);
+  const main = page.locator("main");
+  await field(main, "Ad").fill("Deneme");
+  await field(main, "Soyad").fill("Üye");
+  await field(main, "E-posta").fill(email);
+  await field(main, "Telefon").fill("05551112233");
+  await field(main, "Şifre").fill(password);
+  await field(main, "Şifre (Tekrar)").fill(password);
   await page.locator('label:has-text("okudum ve kabul ediyorum") input[type=checkbox]').check();
   await page.getByRole("button", { name: "Hesap Oluştur" }).click();
 }
@@ -158,7 +157,7 @@ test("profil kaydedilir; hesap silinince üye veritabanından gider", async ({ p
   await registerViaApi(page.request, email, "uzun-sifre-1");
 
   await page.goto("/hesabim/profil");
-  const city = page.locator("main form").first().locator("input").nth(4);
+  const city = field(page.locator("main form").first(), "Şehir");
   await city.fill("Konya");
   await page.getByRole("button", { name: "Kaydet" }).first().click();
   await expect(page.locator("main")).toContainText("Profiliniz güncellendi.");

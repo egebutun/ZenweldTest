@@ -66,6 +66,9 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
   Bayilik Başvurusu, Servis Talebi, Garanti Kaydı, ürün değerlendirmesi ve
   ürün destek sohbetinde ad, e-posta, telefon, şehir ve firma bilgileri
   hesaptan doldurulur; değiştirilebilir.
+- **Form etiketleri alanlara bağlıdır:** Etikete tıklayınca alan seçilir;
+  ekran okuyucu alanı etiketiyle okur. Ödeme yöntemi gibi düğme
+  gruplarında etiket grubun adıdır.
 - **KVKK notu:** Kişisel veri alan her formda "Kişisel verileriniz KVKK
   Aydınlatma Metni kapsamında işlenir." yazar; bağlantı `/yasal/kvkk`'ya gider.
 - **Yasal bağlantılar yeni sekmede açılır:** Formlardaki yasal metin

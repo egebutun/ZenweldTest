@@ -133,7 +133,7 @@ function PageSeoForm({
 
   return (
     <div className="space-y-4">
-      <FormRow label="Sayfa Linki" hint="Link sabittir; menüye ve sayfalar arasındaki bağlantılara bağlı.">
+      <FormRow label="Sayfa Linki" group hint="Link sabittir; menüye ve sayfalar arasındaki bağlantılara bağlı.">
         <div className="flex items-center gap-2 rounded-[4px] border border-zw-grey-200 bg-zw-grey-100 px-3 py-2.5 text-sm text-zw-grey-600">
           <Lock size={14} className="shrink-0" />
           {path}

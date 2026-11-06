@@ -611,7 +611,6 @@ kararlaştırılacak. Form uçlarındaki istek sınırı ve bot koruması:
 3. Otomatik kontrol (CI) yok; iş kuralları testleri (`npm test`) ve
    tarayıcı testleri (`npm run test:e2e`) var, elle çalıştırılıyor
    (KARARLAR K-67)
-4. Form etiketleri alanlara bağlı değil ([Erişilebilirlik](#erişilebilirlik-a4--önerilen-zorunlu-değil) 4)
 
 ## Online satış — canlıya çıkmadan önce
 
@@ -1324,10 +1323,9 @@ yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
    isteğiyle değişebilir; bugünkü hepsi örnek (KARARLAR K-102). Değişen
    davranış belgelere ve testlere işlenir.
 2. Tasarımdan sonra tarayıcı testleri (`npm run test:e2e`) ve kabul kontrol
-   listesi çalıştırılmalı. Testler bazı form alanlarını ekrandaki sırasıyla
-   seçiyor (Üye Ol, Teklif Al); formların yapısı değişirse testler de
-   güncellenmeli.
-3. Renk karşıtlığı bu aşamada ele alınacak ("Erişilebilirlik (A4)" 5).
+   listesi çalıştırılmalı. Testler alanları etiketiyle bulur; etiket
+   metinleri değişirse testler de güncellenmeli.
+3. Renk karşıtlığı bu aşamada ele alınacak ("Erişilebilirlik (A4)" 4).
 4. Tasarım öncesi kodun yedeği GitHub'da `yedek/2026-10-22-tasarim-oncesi`
    dalında.
 
@@ -1346,11 +1344,7 @@ teyit edilmeli). Yapılacaklar:
 3. **Dokunma alanları:** Telefonda düğme ve bağlantılar en az 44 × 44 piksel
    olmalı; küçük simge düğmeler (sepetten çıkar, adet artır/azalt vb.)
    denetlenmeli.
-4. **Form etiketleri alanlara bağlansın:** Birçok formda etiket alanla
-   bağlı değil (Üye Ol, Teklif Al, panelde ürün formu — "Kod incelemesi
-   bulguları" 4); ekran okuyucu alanın adını okuyamaz. Tarayıcı testleri
-   de bu yüzden bazı alanları sırasıyla seçiyor.
-5. Renk karşıtlığı tasarım aşamasında ele alınacak.
+4. Renk karşıtlığı tasarım aşamasında ele alınacak.
 
 ## Görseller ve uzun listeler (A5) — önerilen, zorunlu değil
 

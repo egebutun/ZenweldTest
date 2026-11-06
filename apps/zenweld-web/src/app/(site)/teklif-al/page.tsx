@@ -322,7 +322,7 @@ export default function QuotePage() {
 
           {step === 3 && (
             <>
-              <FormRow label={t.quote.paymentPreference} required>
+              <FormRow label={t.quote.paymentPreference} required group>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {(
                     [

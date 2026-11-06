@@ -20,6 +20,7 @@ export {
   Select,
   FormRow,
   Checkbox,
+  useFieldId,
 } from "./components/Field";
 export { ProductImage, placeholderDataUri } from "./components/ProductImage";
 export { RichText } from "./components/RichText";

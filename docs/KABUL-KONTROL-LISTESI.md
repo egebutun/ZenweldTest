@@ -139,6 +139,10 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       görünür.
 - [ ] Yayında olmayan ürün, blog yazısı, haber ve etkinliğin adresi 404
       verir; listelerde ve aramada görünmez.
+- [ ] Formlarda etikete tıklayınca alan seçilir (ör. Üye Ol'da "E-posta",
+      panelde ürün formunda "Ürün Adı"). Sayfa taraması her sayfada her
+      etiketin bir alana bağlı olduğunu da dener
+      (`tests/e2e/tarama.spec.ts`).
 - [ ] Telefon genişliğinde menü, ürün sayfası, sepet, ödeme ve panel
       kullanılabilir.
 - [ ] Telefonda, tablette ve dizüstünde hiçbir sayfa yana taşmaz; sekmeler

@@ -1,4 +1,5 @@
 import type { Page } from "@playwright/test";
+import { field } from "../e2e/yardimci";
 import { closeDatabase, expect, registerMember, sql, test } from "./yardimci";
 
 /**
@@ -23,11 +24,11 @@ const mailLog = (entityType: string, entityId: string) =>
 
 async function sendQuote(page: Page): Promise<string> {
   await page.goto("/teklif-al");
-  const inputs = page.locator("main input");
-  await inputs.nth(0).fill("Deneme Firma");
-  await inputs.nth(1).fill("Deneme Kişi");
-  await inputs.nth(3).fill("deneme@ornek.com");
-  await inputs.nth(4).fill("05551112233");
+  const main = page.locator("main");
+  await field(main, "Firma Ünvanı").fill("Deneme Firma");
+  await field(main, "Yetkili Kişi").fill("Deneme Kişi");
+  await field(main, "E-posta").fill("deneme@ornek.com");
+  await field(main, "Telefon").fill("05551112233");
   await page.getByRole("button", { name: "İleri" }).click();
   await page.getByRole("tab", { name: /^Kaynak Makineleri/ }).click();
   await page.getByRole("button", { name: /^MMA/ }).click();
