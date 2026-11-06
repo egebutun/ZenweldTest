@@ -30,24 +30,19 @@ describe("tablolar belgeyle aynı", () => {
     });
   });
 
-  it("her kolon belgede yazılı (VERITABANI.md, stok tabloları STOK.md)", async () => {
-    const text = doc("VERITABANI.md") + doc("STOK.md");
+  it("her kolon VERITABANI.md'de yazılı", async () => {
+    const text = doc("VERITABANI.md");
     await inTransaction(async (db) => {
       const { rows } = await db.query(
         "SELECT table_name, column_name FROM information_schema.columns WHERE table_schema = 'public'",
       );
       const missing = rows
-        .filter((r) => !text.includes(`\`${r.column_name}\``) && !new RegExp(`\\b${r.column_name}\\b`).test(stockSql(text)))
+        .filter((r) => !text.includes(`\`${r.column_name}\``))
         .map((r) => `${r.table_name}.${r.column_name}`);
       expect(missing).toEqual([]);
     });
   });
 });
-
-/** STOK.md'deki SQL bloklari (kolonlar orada tirnaksiz yazili). */
-function stockSql(text: string): string {
-  return [...text.matchAll(/```sql([\s\S]*?)```/g)].map((m) => m[1]).join("\n");
-}
 
 describe("ürün ve varyant kodları tek havuzda", () => {
   it("aynı kod ikinci kez girilemez; boşluk ve büyük/küçük harf fark etmez", async () => {

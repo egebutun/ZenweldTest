@@ -24,15 +24,15 @@ import { nowIso } from "./shared";
 /**
  * STOK — BAYI VE ONLINE SATICI STOKLARI
  *
- * Iki tablo (bkz. docs/STOK.md):
+ * Iki tablo (bkz. docs/VERITABANI.md › Stok tablolari):
  *   dealerStock    (DB: dealer_stock)    bayiler -> haritadaki "stoktaki bayiler"
  *   retailerStock  (DB: retailer_stock)  bir bayiye bagli olmayan online saticilar
  * Online magazasi olan bayi (Dealer.retailerId) tek dosya gonderir: satirlar
  * dealerStock'a yazilir; linkli olanlar o magazanin online satici kartinda
  * da gorunur.
  *
- * Her fonksiyon ileride bir API ucuna karsilik gelir (bkz. docs/STOK.md).
- * Sayfalar stoga yalnizca bu fonksiyonlar uzerinden ulasir.
+ * Demo modunda sayfalar stoga yalnizca bu fonksiyonlar uzerinden ulasir;
+ * veritabani modundaki karsiliklari docs/SUNUCU.md › Stok Matrisi.
  */
 
 /** Geri alma icin onceki stok, her kaynagin son kac dosya yuklemesinde saklanir */

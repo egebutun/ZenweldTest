@@ -1409,10 +1409,10 @@ yükleyin."
 
 Bayiler ve online satıcılar ürün kodu + adet listesi gönderir; liste buradan
 yüklenir. Ürün sayfasındaki "Stoktaki bayiler" ve "online satıcılar" bu
-verilerden gelir. Zenweld'in kendi deposu burada yoktur (sitede her ürün her
-zaman satıştadır). Sitede adet ve fiyat gösterilmez; yalnızca stoğu olan
+verilerden gelir. Zenweld'in kendi deposu burada yoktur; onun stoğu SAP'tan
+gelir (KARARLAR K-82). Sitede adet ve fiyat gösterilmez; yalnızca stoğu olan
 bayiler ve online satıcılar listelenir. Seçenekli üründe seçilen seçeneğe göre
-listelenir. Dosya biçimi ve backend için ayrıntı: [STOK.md](STOK.md).
+listelenir. Dosya biçimi ve kurallar: [STOK.md](STOK.md).
 
 **Kaynaklar:**
 

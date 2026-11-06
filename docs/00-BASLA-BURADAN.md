@@ -85,7 +85,7 @@ Diğer temel bilgiler:
 | 4 | [VERITABANI.md](VERITABANI.md) | Saklanan bütün kayıtlar: tablolar, alanlar, birbirleriyle bağlantıları, benzersiz alanlar ve silme kuralları |
 | 5 | [IS-KURALLARI.md](IS-KURALLARI.md) | Hesaplar ve kurallar: fiyat, KDV, kampanya, taksit, stok, ürün kodları, linkler, durum akışları, e-postalar |
 | 6 | [SUNUCU.md](SUNUCU.md) | Sunucunun işleyişi ve dış bağlantılar: ödeme, e-posta, SAP, dosya deposu, harita, barındırma, güvenlik başlıkları, ortam değişkenleri, panel işlemleri, komutlar |
-| 7 | [STOK.md](STOK.md) | Bayi ve satıcı stok dosyalarının biçimi, eşleşme kuralları, backend'e geçiş |
+| 7 | [STOK.md](STOK.md) | Bayi ve satıcı stok dosyalarının akışı, biçimi ve eşleşme kuralları (bayilere de gönderilebilir) |
 | 8 | [KARARLAR.md](KARARLAR.md) | Alınan kararlar ve nedenleri |
 | 9 | [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) | Bir özelliğin doğru çalıştığını doğrulamak için madde madde test listesi |
 | 10 | [YAPILACAKLAR.md](YAPILACAKLAR.md) | Kalan işler ve kimi beklediği: canlıya giden yol, şirketteki kişilere (BT, SAP danışmanı, muhasebe, hukuk, kargo, ödeme kuruluşu) sorulacaklar, karar bekleyen işler |

@@ -5,8 +5,8 @@ import { money, oneOf, subsetOf, timestamps, tstz } from "./columns";
 import { products } from "./catalog";
 
 /**
- * BAYILER, ONLINE SATICILAR VE STOK (docs/VERITABANI.md › 4; stok
- * tablolari docs/STOK.md › Backend'e gecis ile ayni)
+ * BAYILER, ONLINE SATICILAR VE STOK (docs/VERITABANI.md › 4; stok dosyasi
+ * docs/STOK.md)
  */
 
 export const retailers = pgTable("retailers", {

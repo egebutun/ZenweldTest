@@ -29,7 +29,7 @@ Tabloların asıl tanımı koddadır (`packages/db/src/schema/`); bu dosya her
   [IS-KURALLARI.md](IS-KURALLARI.md)
 - Kayıtların ekranlarda nasıl girildiği: [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md)
-- Stok tablolarının SQL'i ve stok dosyası: [STOK.md](STOK.md)
+- Stok dosyasının biçimi: [STOK.md](STOK.md)
 
 ---
 
@@ -519,23 +519,72 @@ Bayiler sitenin üyesi değildir; sitede bayi girişi yoktur (K-03).
 | `active` | boolean | zorunlu | |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
-### Stok tabloları
+### Stok tabloları — `dealer_stock`, `retailer_stock`, `stock_imports`, `sku_aliases`
 
-Kolonlar, anahtarlar ve sorgular [STOK.md](STOK.md)'de SQL olarak yazılı;
-stok dosyasının biçimi ve kuralları da orada.
+Bayilerin ve online satıcıların panelden yüklenen stok listeleri. Stok
+dosyasının biçimi ve kuralları: [STOK.md](STOK.md); panelin bu tabloları
+nasıl okuyup yazdığı: [SUNUCU.md › Stok Matrisi](SUNUCU.md#stok-matrisi).
 
-| Tablo | Ne tutar | Alanlar (koddaki) | Anahtar |
+`dealer_stock` — bayinin ürün/varyant başına stoğu. Anahtar: (`dealer_id`,
+`product_id`, `variant_id`).
+
+| Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
-| `dealer_stock` | Bayinin ürün/varyant başına stoğu | `dealerId`, `productId`, `variantId?`, `sku` (dosyadaki kod), `quantity`, `price?` (KDV dahil, sitede gösterilmez), `url?` (online mağazalı bayide ürün linki), `updatedAt` | (`dealer_id`, `product_id`, `variant_id`) |
-| `retailer_stock` | Bayiye bağlı olmayan online satıcının aynı bilgileri | `retailerId` + bayi satırıyla aynı alanlar | (`retailer_id`, `product_id`, `variant_id`) |
-| `stock_imports` | Her dosya yükleme, elle düzeltme ve geri alma | `id`, `sourceType` (`dealer`/`retailer`), `sourceId`, `kind` (`file`/`manual`/`revert`), `fileName?`, `createdAt`, `createdBy?` (yönetici adı), `note?`, `summary` (`rows`, `matched`, `unmatched`, `invalid`, `added`, `changed`, `zeroed`), `previous?` (geri alma için önceki satırlar), `revertedAt?`; tabloda ayrıca orijinal dosyanın yolu | `id` |
-| `sku_aliases` | Bayinin kendi ürün kodu → bizim ürün/varyant | `sourceId`, `code` (büyük harf, boşluksuz), `productId`, `variantId?` | (`source_id`, `code`) |
+| `dealer_id` | text | zorunlu; → `dealers` (silinince satır da silinir) | |
+| `product_id` | text | zorunlu; → `products` (silinince satır da silinir) | |
+| `variant_id` | text | zorunlu; varsayılan boş metin | Boşsa satır ürünün bütün varyantları içindir (dosyada ürünün ana kodu geçti) |
+| `sku` | text | zorunlu | Dosyadaki kod |
+| `quantity` | integer | zorunlu; ≥ 0 | |
+| `price` | numeric(12,2) | | KDV dahil; sitede gösterilmez |
+| `url` | text | | Yalnızca online mağazası olan bayide: ürünün o mağazadaki sayfası |
+| `updated_at` | timestamptz | zorunlu | Stok geçerlilik süresi buna bakar |
+| `import_id` | text | → `stock_imports` (boşalır) | Satırı yazan yükleme |
 
-- `variant_id` boşsa (dosyada ürünün ana kodu geçtiyse) satır ürünün bütün
-  varyantları için geçerlidir.
+Dizin: adedi 0'dan büyük satırlarda (`product_id`, `updated_at`); ürün
+sayfası yalnızca bu satırları okur.
+
+`retailer_stock` — bir bayiye bağlı **olmayan** online satıcının stoğu.
+`dealer_id` yerine `retailer_id` (zorunlu; → `retailers`, silinince satır
+da silinir); diğer kolonlar, anahtar ve dizin `dealer_stock` ile aynı.
+`url` boşsa ürün online satıcı kartında görünmez. Online mağazası olan
+bayinin satırları `dealer_stock`'ta durur (`url` dolu); aynı veri iki
+tabloya yazılmaz.
+
+`stock_imports` — her dosya yükleme, elle düzeltme ve geri alma. Anahtar:
+`id`.
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `source_type` | text | zorunlu; `dealer` / `retailer` | |
+| `source_id` | text | zorunlu | Bayi ya da satıcı |
+| `kind` | text | zorunlu; `file` (dosya) / `manual` (elle) / `revert` (geri alma) | |
+| `file_name` | text | | Yüklenen dosyanın adı |
+| `file_key` | text | | Orijinal dosyanın depodaki yeri (denetim için); bugün dosya saklanmadığı için boş |
+| `note` | text | | Elle düzeltmenin açıklaması |
+| `created_at` | timestamptz | zorunlu | |
+| `created_by` | text | | İşlemi yapan yönetici |
+| `rows`, `matched`, `unmatched`, `invalid` | integer | zorunlu | Okunan, eşleşen, tanınmayan ve hatalı satır sayısı |
+| `added`, `changed`, `zeroed` | integer | zorunlu | Stoğa giren, değişen ve stoktan çıkan ürün sayısı |
+| `previous` | jsonb | | Geri alma için işlemden önceki stok satırları; yalnızca son 5 dosya yüklemesinde tutulur (K-103) |
+| `reverted_at` | timestamptz | | Geri alındığı an |
+
+Dizin: (`source_type`, `source_id`, `created_at` yeniden eskiye).
+
+`sku_aliases` — bayinin kendi ürün kodu → bizim ürün/varyant. Anahtar:
+(`source_id`, `code`).
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `source_id` | text | zorunlu | Bayi ya da satıcı |
+| `code` | text | zorunlu | Büyük harf, boşluksuz |
+| `product_id` | text | zorunlu; → `products` (silinince satır da silinir) | |
+| `variant_id` | text | zorunlu; varsayılan boş metin | Boşsa ürünün bütün varyantları |
+
 - Bir kaynakta aynı ürün ve varyant için tek satır olur.
 - Sitede "stokta" sayılmak için: adet > 0 ve satır, stok geçerlilik
   süresinden eski değil ([`settings` › `stock`](#settings--ayarlar)).
+- Bayinin online mağazası `dealers.retailer_id`'dir (yukarıda).
 
 Silme: bayi ya da satıcı silinince stok satırları, stok işlemleri ve kod
 eşleştirmeleri de silinir.
@@ -1494,7 +1543,7 @@ yazar.
 | Varyant (kombinasyon) | Seçenek değerleri | `options.variants[].values` | Ürünün her seçeneğinden bir değer; değer o tanımdan olmalı |
 | Ürün | Kategorisinin filtre değerleri | `filterValues` | Filtre başına bir ya da birden çok değer; yalnızca kendi kategorisinin filtreleri |
 | Bayi | Online satıcı | `retailerId` | Bire bir: bir mağaza en fazla bir bayiye bağlı |
-| Bayi stok satırı | Bayi, ürün, varyant | `dealerId`, `productId`, `variantId` | Ayrıntı: [STOK.md](STOK.md) |
+| Bayi stok satırı | Bayi, ürün, varyant | `dealerId`, `productId`, `variantId` | [Stok tabloları](#stok-tabloları--dealer_stock-retailer_stock-stock_imports-sku_aliases) |
 | Satıcı stok satırı | Satıcı, ürün, varyant | `retailerId`, `productId`, `variantId` | |
 | Stok işlemi | Bayi ya da satıcı | `sourceType` + `sourceId` | |
 | Kod eşleştirmesi | Bayi/satıcı, ürün, varyant | `sourceId`, `productId`, `variantId` | |

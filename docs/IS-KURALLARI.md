@@ -2,19 +2,22 @@
 
 Bu dosya sitenin ve panelin hesaplarını ve kurallarını anlatır: fiyat ve
 KDV, kampanya, seçenekli ürün, sepet ve kargo, kartla ödeme ve taksit,
-havale süresi, sipariş ve teklif durumları, iade talebi, garanti, stok, ürün kodları,
-linkler, yorumlar, üyelik, form e-postaları ve kategori filtreleri. Ekranların tarifi bu dosyada
-yoktur; yalnızca kurallar vardır.
+havale süresi, sipariş ve teklif durumları, iade talebi, garanti, stok,
+ürün kodları, linkler, yorumlar, üyelik, form e-postaları, kategori
+filtreleri, Zenweld depo stoğu, kuponlar, panelde kayıt düzenleme ve
+yüklenen dosyalar. Ekranların tarifi bu dosyada yoktur; yalnızca kurallar
+vardır.
 
 İlgili dosyalar:
 
 - Ekranlar: [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md)
 - Kayıtlar, alanlar ve tablolar: [VERITABANI.md](VERITABANI.md)
-- Stok dosyası ve stok kurallarının ayrıntısı: [STOK.md](STOK.md)
+- Bayi ve satıcı stok dosyasının biçimi: [STOK.md](STOK.md)
 - Sunucu, ödeme kuruluşu, e-posta ve harita servisleri:
   [SUNUCU.md](SUNUCU.md)
 
+Her bölüm bir **Kısaca** özetiyle başlar; ayrıntı ve örnekler altındadır.
 Kuralların koddaki yeri her bölümün sonunda yazar. Bir kural değişirse
 yalnızca o yer değişmeli; site, panel ve sipariş kaydı aynı yeri kullanır.
 
@@ -54,6 +57,9 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 
 ## 1. Fiyat ve KDV
 
+**Kısaca:** Fiyat KDV hariç saklanır; müşteriye KDV dahil, tam liraya
+yuvarlanmış gösterilir.
+
 - Üründe **normal fiyat KDV hariç** saklanır (`priceExVat`). Panelde girilen
   budur.
 - KDV oranı ürün başınadır (`vatRate`, ör. %20).
@@ -73,6 +79,9 @@ Kod: `packages/utils/src/format.ts` › `priceWithVat`.
 ---
 
 ## 2. Kampanya (indirim)
+
+**Kısaca:** Üründe bir indirim oranı ve isteğe bağlı başlangıç/bitiş olur;
+zamanı gelince fiyat kendiliğinden değişir. %25 ve üzeri "Flaş İndirim"dir.
 
 **Kayıt:** Üründe bir kampanya olur: oran (%), isteğe bağlı başlangıç ve
 bitiş.
@@ -120,6 +129,10 @@ Kod: `packages/data/src/discount.ts`.
 ---
 
 ## 3. Seçenekli ürün
+
+**Kısaca:** Bir ürün en fazla 3 seçenekle satılır. Seçilen kombinasyon
+(varyant) fiyatı, kodu, fotoğrafı ve stoktaki satıcıları değiştirir;
+yorumlar değişmez.
 
 Bir ürün tek sayfada seçenekleriyle satılabilir (ör. Soğutma: Hava / Su ve
 Torç Uzunluğu: 4 m / 8 m). Satılan her kombinasyon (ör. Su Soğutmalı · 8 m)
@@ -194,6 +207,10 @@ Kod: `apps/zenweld-web/src/lib/variants.ts`, `packages/data/src/variants.ts`.
 
 ## 4. Sepet ve kargo
 
+**Kısaca:** Toplam = ürünler − kupon + kargo. Kupon düşüldükten sonraki
+tutar ücretsiz kargo sınırına ulaşırsa kargo ücretsizdir. Veritabanı modunda
+sunucu tutarı siparişte yeniden hesaplar.
+
 **Satır:**
 
 - Birim fiyat (KDV hariç) = kampanya uygulanmış fiyat ([1](#1-fiyat-ve-kdv),
@@ -230,7 +247,7 @@ Kod: `apps/zenweld-web/src/lib/variants.ts`, `packages/data/src/variants.ts`.
 Aynı hesap sepet sayfası, ödeme sayfası ve sipariş kaydında kullanılır;
 müşterinin gördüğü tutar ile kaydedilen tutar hep aynıdır.
 
-**Sipariş anında sunucuda yeniden hesap** (veritabanı modu, Aşama 5.2,
+**Sipariş anında sunucuda yeniden hesap** (veritabanı modu,
 KARARLAR K-97):
 
 - Tarayıcı yalnızca sepetteki ürün, seçenek ve adedi, kupon kodunu, adres
@@ -256,6 +273,10 @@ Kod: `packages/data/src/cart.ts` (`priceCartLines`),
 ---
 
 ## 5. Kartla ödeme, taksit ve banka komisyonu
+
+**Kısaca:** Kart, programı eşleşen bankanın POS'undan onun taksitleriyle
+çekilir; eşleşmeyen kart tek çekim ödenir. Vade farkı toplamın üstüne
+eklenir. Kart bilgisi saklanmaz; bugün ödeme temsilidir.
 
 **Kart kontrolleri** (ödeme sayfasında):
 
@@ -336,6 +357,9 @@ Kod: `packages/data/src/checkout.ts` (`posForCard`, `cardInstallments`,
 
 ## 6. Havale / EFT
 
+**Kısaca:** Havale siparişi ödeme bekler; süre son ödeme gününün 23:59'unda
+(Türkiye saati) dolar, dolunca sipariş iptal olur.
+
 - Havaleyle verilen sipariş **Ödeme Bekleniyor** durumunda açılır.
 - **Son ödeme** = sipariş anı + Mağaza Ayarları'ndaki gün sayısı (örnek
   değer 3 gün).
@@ -362,6 +386,10 @@ Kod: `packages/data/src/orders.ts` (`isTransferExpired`),
 ---
 
 ## 7. Sipariş durumları
+
+**Kısaca:** Ödeme Bekleniyor → Hazırlanıyor → Kargoda → Teslim Edildi (ya da
+İptal). Ödemesi kesinleşen sipariş SAP'a aktarılmak üzere sıraya girer.
+Bireysel üye teslimden sonra 14 gün içinde iade talebi açar.
 
 Siparişi yalnızca **üye** verir.
 
@@ -400,7 +428,7 @@ Siparişi yalnızca **üye** verir.
   sipariş anındaki haliyle saklar ([VERITABANI.md](VERITABANI.md)).
 - Durum değişince müşteriye e-posta **gitmez**.
 - **Nerede çalışır:** Veritabanı modunda sipariş sunucuda kaydedilir ve
-  üyenin siparişleri sunucudan okunur (Aşama 5.2, K-97); başka üyenin
+  üyenin siparişleri sunucudan okunur (K-97); başka üyenin
   siparişi görünmez. Panelin Siparişler ekranı da veritabanından okur ve
   yazar (K-99); panel işlemleri [22](#22-panelde-kayıt-düzenleme)'deki
   kurallarla kaydedilir.
@@ -466,6 +494,10 @@ sunucu: `packages/db/src/orders.ts` (`createReturnRequest`).
 
 ## 8. Teklif
 
+**Kısaca:** Herkes, yalnızca Ekipmanlar'daki ürünler için teklif
+isteyebilir. Teklifte fiyat sistemde hesaplanmaz; satış ekibi ayrıca
+gönderir.
+
 **Kim:** Herkes (üye ya da ziyaretçi) teklif isteyebilir. Üye gönderirse
 teklif Hesabım › Tekliflerim'de görünür.
 
@@ -505,7 +537,7 @@ Kapandı.
 **Fiyat:** Teklifte fiyat sistemde hesaplanmaz; satış ekibi teklifi ayrıca
 hazırlayıp e-postayla gönderir.
 
-**Veritabanı modunda** (Aşama 5.3) teklifi sunucu kaydeder ve numarasını
+**Veritabanı modunda** teklifi sunucu kaydeder ve numarasını
 verir. Kurallar sunucuda yeniden denetlenir; ürün adı, kodu ve seçenek adı
 tarayıcıdan değil katalogdan alınır. Listedeki bir ürün ya da seçenek artık
 yoksa ya da Ekipmanlar dışındaysa teklif alınmaz: "Teklif listenizdeki bazı
@@ -520,6 +552,9 @@ sunucu: `packages/db/src/forms.ts` (`createQuote`).
 
 ## 9. Servis talebi
 
+**Kısaca:** Herkes servis talebi açabilir; bütün alanlar zorunludur. Durum
+panelde izlenir; müşteriye e-posta gitmez.
+
 - Herkes servis talebi oluşturabilir; üyede bilgiler hesaptan gelir.
 - Talep nedeni en az bir tanedir: Kurulum, Bakım, Onarım, Kullanım/Bakım
   Eğitimi.
@@ -530,7 +565,7 @@ sunucu: `packages/db/src/forms.ts` (`createQuote`).
   olmalıdır; açıklama en fazla 400 karakter; gizlilik sözleşmesi onayı
   zorunludur.
 - Veritabanı modunda talebi sunucu kaydeder, kuralları yeniden denetler ve
-  numarasını (`SRV-…`) verir (Aşama 5.3). Model adı katalogdan alınır.
+  numarasını (`SRV-…`) verir. Model adı katalogdan alınır.
 
 Kod: `apps/zenweld-web/src/app/(site)/servis-talebi/page.tsx`,
 `packages/store/src/repo/service.ts`; sunucu: `packages/db/src/forms.ts`
@@ -539,6 +574,9 @@ Kod: `apps/zenweld-web/src/app/(site)/servis-talebi/page.tsx`,
 ---
 
 ## 10. Garanti
+
+**Kısaca:** Aynı seri numarası bir kez kaydedilir. Garanti kayıt gününden
+başlar: ürünün garanti süresi + istenirse 12 ay uzatma.
 
 **Kayıt:**
 
@@ -577,7 +615,7 @@ Kod: `apps/zenweld-web/src/app/(site)/servis-talebi/page.tsx`,
   ("Geçerli bir tarih girin."). Kural: `packages/data/src/forms.ts`
   (`toggledWarrantyExpiry`, `isValidDateKey`).
 
-**Veritabanı modunda** (Aşama 5.3):
+**Veritabanı modunda:**
 
 - Kaydı sunucu yapar; posta kodu (5 hane), satıcı VKN (10 ya da 11 hane) ve
   zorunlu alanlar sunucuda yeniden denetlenir. Aynı seri numarası aynı anda
@@ -596,6 +634,10 @@ Kod: `packages/store/src/repo/warranties.ts`, `packages/data/src/forms.ts`
 
 ## 11. Bayi ve online satıcı stoğu
 
+**Kısaca:** Bayi ve satıcı listeleri panelden dosyayla yüklenir. Adedi 0'dan
+büyük ve süresi geçmemiş satır "stokta" sayılır. Sitede adet ve fiyat
+gösterilmez.
+
 Ayrıntı: [STOK.md](STOK.md). Özet:
 
 **Stokta sayılmak:**
@@ -603,8 +645,8 @@ Ayrıntı: [STOK.md](STOK.md). Özet:
 - Bir stok satırı sitede "stokta" sayılır: **adet > 0** ve satır, **stok
   geçerlilik süresinden** eski değil (Stok Matrisi'nde ayarlanır; örnek değer
   3 gün; 0 = süre sınırı yok).
-- Zenweld'in kendi deposu bu hesapta yoktur; sitede **her ürün her zaman
-  satıştadır** (stok sepete eklemeyi etkilemez).
+- Zenweld'in kendi deposu bu hesapta yoktur; onun stoğu SAP'tan gelir ve
+  stokta olmayan ürün sepete eklenmez ([20](#20-zenweld-depo-stoğu)).
 
 **Ürün sayfasında:**
 
@@ -636,6 +678,9 @@ Kod: `packages/data/src/stock.ts`, `packages/store/src/repo/stock.ts`.
 
 ## 12. Ürün kodları
 
+**Kısaca:** Ürün ve varyant kodları tek havuzdadır ve hepsi birbirinden
+farklıdır; boşluk ve büyük/küçük harf fark etmez.
+
 - Ürün kodu ve varyant (kombinasyon) kodları **tek havuzdadır** ve hepsi
   birbirinden farklı olmalıdır:
   - Ürün kodu başka bir ürünün ya da herhangi bir varyantın koduyla aynı
@@ -657,6 +702,9 @@ panel ve sunucu ortak). Veritabanında kod havuzu `sku_codes` tablosudur.
 ---
 
 ## 13. Linkler, yönlendirme ve arama motorları
+
+**Kısaca:** Link addan üretilir; link değişince eski adres yenisine
+yönlenir. Site yalnızca zenweld.com'da arama motorlarına açıktır.
 
 **Link (slug) üretimi:**
 
@@ -695,9 +743,10 @@ benzersizdir.
 - Yeni link başka bir kaydın eski linkiyse eski yönlendirme kalkar; link yeni
   kaydı açar.
 - Ürün, blog, haber ve etkinlikte yalnızca **yayındaki** kayda yönlendirilir.
-- **Demo notu:** Yönlendirme bugün tarayıcıda yapılıyor; gerçek sistemde
-  sunucuda **301 (kalıcı)** yönlendirme olmalı
-  ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
+- Yönlendirme bugün iki modda da tarayıcıda yapılıyor (sunucu 404 kodu
+  döndürür, sayfa tarayıcıda açılır). Canlıda sunucuda **301 (kalıcı)**
+  yönlendirme olmalı ([YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO alanları ve
+  link yönlendirme).
 
 **Sayfa başlığı ve açıklaması:**
 
@@ -745,6 +794,9 @@ Kod: `packages/utils/src/images.ts` › `slugify`,
 
 ## 14. Yayında olma
 
+**Kısaca:** Yayında olmayan kayıt sitede görünmez (adresi 404 verir) ama
+silinmez. Zamanlanmış yayın yoktur.
+
 - Panelde "yayında değil" yapılan ürün, blog yazısı, haber, etkinlik, belge,
   bayi, online satıcı ve satış temsilcisi sitede görünmez; adresi açılırsa
   404 çıkar. Kayıt silinmez.
@@ -760,6 +812,9 @@ Kod: `packages/utils/src/images.ts` › `slugify`,
 
 ## 15. Ürün yorumları
 
+**Kısaca:** Yorumu herkes yazar; panelde onaylanmadan görünmez. Ortalama
+puan yalnızca onaylı yorumlardan hesaplanır; anasayfada en fazla 10 yorum.
+
 - Yorumu herkes yazabilir; puan (1–5), ad ve yorum zorunludur.
 - Yeni yorum **onay bekler**; panelde onaylanmadan sitede görünmez.
 - Yorumlar ürüne bağlıdır; seçenekli üründe bütün seçenekler aynı yorumları
@@ -771,10 +826,11 @@ Kod: `packages/utils/src/images.ts` › `slugify`,
 - Video en fazla 2 MB; fotoğraflar otomatik küçültülür.
 - **Demo notu:** Giriş yapmış üyenin yorumu "Doğrulanmış alıcı" sayılır;
   gerçekte üyenin o ürünü satın almasıyla eşleşmeli.
-- **Veritabanı modunda** (Aşama 5.3) yorumu sunucu kaydeder; ürün yayında
-  olmalı, puan 1–5 tam sayı, ad ve yorum zorunlu, en fazla 10 dosya.
-  Fotoğraf ve videolar dosya deposu kurulana kadar (Aşama 6) yorumun
-  içinde veri olarak saklanır; bir dosya en fazla ~3 MB (2 MB video).
+- **Veritabanı modunda** yorumu sunucu kaydeder; ürün yayında olmalı, puan
+  1–5 tam sayı, ad ve yorum zorunlu, en fazla 10 dosya. Fotoğraf ve videolar
+  yorumun içinde veri olarak saklanır (dosya deposuna taşınması sonraya,
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Görseller ve yüklenen dosyalar); bir
+  dosya en fazla ~3 MB (2 MB video).
 
 - **Panelde (veritabanı modu):** Onay, yayından kaldırma, anasayfa ve silme
   sunucuda yapılır; sitedeki yorumlar hemen yenilenir. Anasayfa sınırı
@@ -787,6 +843,10 @@ panel `packages/db/src/admin-requests.ts`.
 ---
 
 ## 16. Üyelik ve oturum
+
+**Kısaca:** E-posta benzersiz, şifre en az 8 karakter, yeni üye hemen aktif.
+Girişte tek hata mesajı; veritabanı modunda 15 dakikada 10 yanlış denemede
+hesap 15 dakika kilitlenir. Site oturumu 30 gün, panel oturumu 8 saat.
 
 - **Roller:** Bireysel, Kurumsal, Yönetici.
   - Bireysel ve kurumsal üye sitede aynı işlemleri yapar; kurumsal üyede
@@ -858,9 +918,8 @@ panel `packages/db/src/admin-requests.ts`.
   - Silinen ürün favorilerden de çıkar; yayından kalkan ürün görünmez.
   - **Örnek:** Hesabında 499 favori olan üye, tarayıcıda 3 favoriyle giriş
     yapar: 1'i hesaba eklenir, 2'si eklenmez; tarayıcıdaki liste boşalır.
-- **Nerede çalışır:** Veritabanı modunda sitenin üyeliği sunucudadır (Aşama
-  4.2): şifre güçlü özetle (argon2id) saklanır, oturum sunucuda tutulur.
-  Panelin girişi de sunucudadır (Aşama 4.3): panel oturumu girişten 8 saat
+- **Nerede çalışır:** Veritabanı modunda sitenin üyeliği sunucudadır: şifre güçlü özetle (argon2id) saklanır, oturum sunucuda tutulur.
+  Panelin girişi de sunucudadır: panel oturumu girişten 8 saat
   sonra biter, uzamaz (K-94); geçerli yönetici oturumu olmadan panel
   sayfaları gönderilmez.
 - **Demo notu:** Demo modunda şifreler tarayıcıda basit bir özetle
@@ -875,6 +934,9 @@ favoriler: `account-data.ts`).
 
 ## 17. Kayıt numaraları
 
+**Kısaca:** Numara önek + yıl + sıradır (SIP-, TKL-, SRV-, IAD-); her yıl
+1'den başlar ve hiçbir numara tekrar verilmez.
+
 | Kayıt | Biçim | Örnek |
 |---|---|---|
 | Sipariş | `SIP-<yıl>-<5 hane>` | SIP-2026-00003 |
@@ -888,8 +950,8 @@ favoriler: `account-data.ts`).
   numarası bir sonraki kayda verilmez ([KARARLAR.md](KARARLAR.md) K-64).
 - Yıl, Türkiye saatine göredir.
 - Veritabanı modunda sipariş, iade talebi, teklif ve servis talebi
-  numarasını sunucu verir (Aşama 5.2–5.3): önek başına sayaç (`record_counters`) tek işlemde bir artar; aynı
-  anda gelen iki kayıt aynı numarayı alamaz. Sayaç yoksa ya da tablodaki en
+  numarasını sunucu verir: önek başına sayaç (`record_counters`) tek
+  işlemde bir artar; aynı anda gelen iki kayıt aynı numarayı alamaz. Sayaç yoksa ya da tablodaki en
   büyük numaranın gerisindeyse (ör. örnek veriyle yüklenmiş siparişler) o
   numaradan devam eder.
   - **Örnek:** Tabloda SIP-2026-00133 varken sayaç boşsa yeni sipariş
@@ -898,11 +960,15 @@ favoriler: `account-data.ts`).
 Kod: `packages/store/src/repo/shared.ts` › `nextCode` (sipariş, teklif,
 servis talebi ve iade talebi aynı yeri kullanır); sunucu:
 `packages/db/src/codes.ts` › `nextRecordCode` (veritabanı modunda dördü de
-sunucuda; Aşama 5.2–5.3).
+sunucuda).
 
 ---
 
 ## 18. Form e-postaları
+
+**Kısaca:** Formlar Zenweld'e e-posta gönderir (varsayılan info@zenweld.com;
+veritabanı modunda tür başına alıcı panelden). Bugün e-posta servisi kurulu
+olmadığı için hiçbir e-posta gitmez.
 
 Sitedeki formlar Zenweld'e e-posta gönderir. Servisin kurulumu ve demo
 davranışı: [SUNUCU.md](SUNUCU.md) › 9. Bugün servis kurulu
@@ -940,7 +1006,7 @@ olmadığı için hiçbir e-posta gitmez.
 - **Yalnızca e-postayla giden formlar** (iletişim, bayilik başvurusu,
   Welders Club, ürün destek sorusu) e-posta gidemezse ziyaretçiye hata
   gösterir; ziyaretçi tekrar deneyebilir. Veritabanı modunda bu formlar da
-  kendi tablolarına kaydedilir (KARARLAR K-81; Aşama 5.3); kayıt yapıldıysa
+  kendi tablolarına kaydedilir (KARARLAR K-81); kayıt yapıldıysa
   e-posta gitmese de form ulaşmış sayılır ve hata gösterilmez. Demo
   modunda form ulaşınca kayıt tarayıcıya da yazılır ve aynı tarayıcıda
   panelde (Mesajlar, Welders Club, Bayilik Başvuruları) görünür (KARARLAR
@@ -951,8 +1017,7 @@ olmadığı için hiçbir e-posta gitmez.
   biriyse alınır; Showroom ve Servis "evet" / "hayır" ise evet / hayır,
   seçilmediyse boş kalır.
 - **Veritabanı modunda** teklif, servis talebi, garanti kaydı, yorum,
-  sipariş ve iade talebinin kaydını ve bildirimini sunucu yapar (Aşama
-  5.2–5.3); bildirim kayıttan sonra gider.
+  sipariş ve iade talebinin kaydını ve bildirimini sunucu yapar; bildirim kayıttan sonra gider.
 - **E-posta kaydı** (veritabanı modu, K-81): gönderilen ya da
   gönderilemeyen her e-posta `email_log`'a yazılır: türü, formun sayfası,
   bağlı kayıt, alıcı, konu ve sonucu (gitti / hata / gönderilmedi). E-posta
@@ -992,6 +1057,9 @@ Kod: `apps/zenweld-web/src/app/api/bildirim/route.ts`,
 ---
 
 ## 19. Kategori filtreleri
+
+**Kısaca:** Aynı filtrede seçilen değerlerden biri yeter; farklı filtreler
+birlikte uygulanır. Hiçbir ürüne eşlenmemiş filtre sonucu daraltmaz.
 
 Alt kategori sayfasındaki filtreler (ör. MIG'de Model Serisi, Çalışma Modu,
 Fiziki Yapı). Filtreler ve değerleri kategoriye özeldir; ürünün değerleri
@@ -1041,6 +1109,10 @@ Kod: `packages/data/src/filters.ts`; sayfada
 ---
 
 ## 20. Zenweld depo stoğu
+
+**Kısaca:** Depo stoğu SAP'tan 15 dakikada bir okunur. Seçili seçeneğin SAP
+kaleminde stok yoksa STOKTA YOK yazar ve ürün sepete eklenmez. Bozuk ya da
+yarım okuma uygulanmaz.
 
 Sahibinin kararı (KARARLAR K-82, K-84). Kod: `packages/data/src/warehouse.ts`.
 
@@ -1122,11 +1194,15 @@ okuma).
 
 ## 21. Kuponlar
 
+**Kısaca:** Siparişte tek kupon kullanılır; kampanyalı fiyatın üstüne
+uygulanır, kargoya uygulanmaz, KDV indirimli tutardan hesaplanır. Kişiye
+özel kupon e-postaya bağlıdır.
+
 Sahibinin kararları (KARARLAR K-85, K-86). Kod: `packages/data/src/coupon.ts`,
 `packages/data/src/checkout.ts` › `cartTotals`,
 `packages/store/src/repo/coupons.ts`; sunucu: `packages/db/src/orders.ts`.
 
-**Veritabanı modunda** (Aşama 5.2): kupon sepette ve ödemede sunucuda
+**Veritabanı modunda** kupon sepette ve ödemede sunucuda
 değerlendirilir (`/api/siparis/kupon`); kuponlar ve kullanımları tarayıcıya
 gelmez, tarayıcıya yalnızca sonuç (indirim ya da neden) gider. Sipariş
 anında kupon yeniden denetlenir ve kupon kaydı kilitlenir: aynı kuponla aynı
@@ -1222,23 +1298,19 @@ saymaz.
 - Toplam 5.150 ₺, 6 taksit, vade farkı %4,5 → vade farkı 232 ₺, ödenecek
   5.382 ₺.
 
-**Canlıda:** Sipariş anında sunucu kuponu ve indirimi aynı kurallarla
-yeniden hesaplar; kullanım sınırı aynı anda gelen siparişlerde aşılmayacak
-şekilde denetlenir ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Kuponlar).
+Canlıdan önce kalanlar (yanlış kod denemesine sınır, e-posta değişince
+doğrulama): [YAPILACAKLAR.md](YAPILACAKLAR.md) › Kuponlar.
 
 ---
 
 ## 22. Panelde kayıt düzenleme
 
+**Kısaca:** Veritabanı modunda biri açtıktan sonra değişen kayıt kaydedilmez
+("sayfayı yenileyin"); her değişiklik işlem kaydına yazılır; kurallar demo
+moduyla aynıdır ve sunucuda da denetlenir.
+
 Veritabanı modunda panel kayıtları sunucuda değiştirir (KARARLAR K-99).
-Bugün Satış (Siparişler, İade Talepleri, Kuponlar), Talepler (Teklifler,
-Servis Talepleri, Garantiler, Yorumlar, Bayilik Başvuruları, Mesajlar,
-Welders Club), Katalog (Seçenek Tanımları, Kategoriler ve gruplar,
-Ürünler), Bayi ağı (Bayiler, Online Satıcılar, Satış Temsilcileri), Stok
-Matrisi, Mağaza Ayarları, Görünüm ve İçerik (Haberler, Etkinlikler, Blog,
-Hakkımızda, Sık Sorulan Sorular, Belgeler, Yasal Metinler, Sayfa SEO)
-ekranlarında geçerlidir; panelin diğer alanları
-veritabanına geçtikçe onlara da uygulanır.
+Aşağıdaki kurallar panelin bütün ekranlarında geçerlidir.
 
 - **Aynı kaydı iki kişi düzenlerse:** Ekran açıldığında kaydın son
   değiştirilme anı alınır. Kaydederken kayıt bu andan sonra değişmişse
@@ -1385,6 +1457,10 @@ Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
 ---
 
 ## 23. Yüklenen dosyalar
+
+**Kısaca:** Veritabanı modunda dosya deposu ayarlıysa görsel (en fazla 5 MB)
+ve belge (en fazla 25 MB) depoya yüklenir; tür dosyanın içeriğinden bulunur,
+SVG ve HTML yüklenmez.
 
 Veritabanı modunda panelde yüklenen görsel ve belgeler sunucunun **dosya
 deposuna** yazılır (KARARLAR K-108). Depo bugün sunucunun diskidir

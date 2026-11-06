@@ -5,7 +5,8 @@ panelinden **Stok Matrisi** ekranına yüklenir; ürün sayfalarındaki "Stoktak
 Bayileri Gör" haritası ve "Ayrıca online alışveriş olarak şurada da mevcuttur"
 listesi bu veriden gelir.
 
-Zenweld'in kendi deposu bu akışın dışındadır: sitede her ürün her zaman satıştadır.
+Zenweld'in kendi deposu bu akışın dışındadır; onun stoğu SAP'tan gelir
+([IS-KURALLARI.md › 20](IS-KURALLARI.md#20-zenweld-depo-stoğu)).
 
 | Kaynak | Dosyadaki sütunlar | Sitede nerede |
 |---|---|---|
@@ -71,7 +72,8 @@ okurdu).
 - **CSV:** `;`, `,` ya da sekme ayırıcı otomatik bulunur. UTF-8 değilse Türkçe Windows
   kodlaması (Excel'in eski CSV kaydı) denenir; Türkçe karakterler bozulmaz.
 - **Excel:** `.xlsx` okunur (ilk sayfa). Eski `.xls` okunmaz; Excel'de `.xlsx` ya da
-  `.csv` olarak kaydedilmesi istenir. En fazla 5 MB.
+  `.csv` olarak kaydedilmesi istenir. `.txt` uzantılı CSV de olur. En fazla 5 MB
+  (veritabanı modunda ayrıca en fazla 20.000 satır).
 - **Kod eşleşmesi:** ürün SKU'su, kombinasyon (varyant) SKU'su (3 m / 5 m torç,
   Su Soğutmalı · 8 m makine gibi) ya da kaynağa özel eşleştirme tablosu.
   Boşluklar ve büyük/küçük harf önemsizdir. Ürünün ana koduyla gelen satır
@@ -99,157 +101,12 @@ ZW30100000024-3M;6;1.185.000,00;https://www.satici.com/urun/ultimate-250-mtc
 
 ---
 
-## 3. Kod yapısı
+## 3. Nerede ne var
 
-| Katman | Dosya | Görev |
-|---|---|---|
-| Saf mantık | `packages/data/src/stock.ts` | `readStockSheet` (tablo → satırlar), `matchStockRows` (kod → ürün), `diffStock` (fark), `looksTruncated`, `isInStock` / `isStockFresh`, `stockTemplateRows`. Tarayıcıya ya da veritabanına bağlı değil; backend'de aynen kullanılır. |
-| Tipler | `packages/data/src/types.ts` | `DealerStock`, `RetailerStock` (ortak alanlar `StockRow`), `StockImport`, `SkuAlias`, `StockSettings`; bayinin online mağazası `Dealer.retailerId` |
-| Veri işlemleri | `packages/store/src/repo/stock.ts` | Okuma (`retailersInStockFor`, `dealersWithProduct`, `sourceStatus`, `onlineProductCount` …) ve yazma (`applyStockImport`, `revertStockImport`, `setStockLevel`, `deleteStockLevel`, `saveSkuAlias`, `saveStockSettings`). Her fonksiyon bir API ucuna karşılık gelir (aşağıda). |
-| Dosya okuma | `apps/zenweld-web/src/lib/stock-file.ts` | Tarayıcıda `.csv` / `.xlsx` → satır × hücre tablosu (`read-excel-file` 8.0.3) |
-| Panel | `apps/zenweld-web/src/components/admin/stock/` | Kaynak listesi, kaynak sayfası, yükleme önizlemesi, ürün bazında görünüm |
-| Örnek veri | `packages/data/src/seed/stock.seed.ts` | Her kaynak için yakın tarihli örnek liste (online mağazalı bayilerde linkli); bir bayi ve bir satıcı bilerek 5 gün eski |
-
----
-
-## 4. Backend'e geçiş
-
-Bugün veri tarayıcının yerel deposunda (localStorage) tutuluyor. Backend kurulurken
-aşağıdaki tablolar ve uçlar, mevcut fonksiyonların birebir karşılığıdır.
-
-### Tablolar (PostgreSQL)
-
-```sql
-CREATE TABLE stock_imports (
-  id           text PRIMARY KEY,
-  source_type  text NOT NULL CHECK (source_type IN ('dealer', 'retailer')),
-  source_id    text NOT NULL,
-  kind         text NOT NULL CHECK (kind IN ('file', 'manual', 'revert')),
-  file_name    text,
-  file_key     text,                 -- orijinal dosya (nesne deposu), denetim için
-  note         text,                 -- elle düzeltmenin açıklaması
-  created_at   timestamptz NOT NULL DEFAULT now(),
-  created_by   text,                 -- yönetici kullanıcı id
-  rows         int NOT NULL, matched int NOT NULL, unmatched int NOT NULL, invalid int NOT NULL,
-  added        int NOT NULL, changed int NOT NULL, zeroed int NOT NULL,
-  previous     jsonb,                -- geri alma için önceki stok (son 5 dosyada)
-  reverted_at  timestamptz
-);
-CREATE INDEX stock_imports_source ON stock_imports (source_type, source_id, created_at DESC);
-
-CREATE TABLE dealer_stock (
-  dealer_id    text NOT NULL REFERENCES dealers (id) ON DELETE CASCADE,
-  product_id   text NOT NULL REFERENCES products (id) ON DELETE CASCADE,
-  variant_id   text NOT NULL DEFAULT '',   -- '' = ürünün tüm varyantları (kombinasyonları)
-  sku          text NOT NULL,              -- dosyadaki kod
-  quantity     int  NOT NULL CHECK (quantity >= 0),
-  price        numeric(12, 2),             -- KDV dahil; sitede gösterilmez
-  url          text,                       -- yalnızca online mağazası olan bayi
-  updated_at   timestamptz NOT NULL,
-  import_id    text REFERENCES stock_imports (id),
-  PRIMARY KEY (dealer_id, product_id, variant_id)
-);
-CREATE INDEX dealer_stock_product ON dealer_stock (product_id, updated_at) WHERE quantity > 0;
-
-CREATE TABLE retailer_stock (
-  retailer_id  text NOT NULL REFERENCES retailers (id) ON DELETE CASCADE,
-  product_id   text NOT NULL REFERENCES products (id) ON DELETE CASCADE,
-  variant_id   text NOT NULL DEFAULT '',
-  sku          text NOT NULL,
-  quantity     int  NOT NULL CHECK (quantity >= 0),
-  price        numeric(12, 2),             -- KDV dahil; sitede gösterilmez
-  url          text,                       -- ürünün satıcının sitesindeki sayfası; yoksa kart gösterilmez
-  updated_at   timestamptz NOT NULL,
-  import_id    text REFERENCES stock_imports (id),
-  PRIMARY KEY (retailer_id, product_id, variant_id)
-);
-CREATE INDEX retailer_stock_product ON retailer_stock (product_id, updated_at) WHERE quantity > 0;
-
-CREATE TABLE sku_aliases (
-  source_id    text NOT NULL,
-  code         text NOT NULL,              -- büyük harf, boşluksuz
-  product_id   text NOT NULL REFERENCES products (id) ON DELETE CASCADE,
-  variant_id   text NOT NULL DEFAULT '',
-  PRIMARY KEY (source_id, code)
-);
-
--- Bayinin online mağazası (bire bir: bir mağaza tek bayiye bağlanır):
---   dealers.retailer_id text UNIQUE REFERENCES retailers (id) ON DELETE SET NULL
--- Ayar: site_settings.stock_stale_days int NOT NULL DEFAULT 3
-```
-
-`retailer_stock` yalnızca bir bayiye bağlı **olmayan** online satıcıların listesidir.
-Online mağazası olan bayinin satırları `dealer_stock`'ta durur (`url` dolu); aynı veri
-iki tabloya yazılmaz.
-
-Ürün sayfası sorguları (`$2` = stale_days, 0 = sınırsız):
-
-```sql
--- Stoktaki bayiler (harita); $3 = seçili varyant ya da ''
-SELECT ds.dealer_id FROM dealer_stock ds
-JOIN dealers d ON d.id = ds.dealer_id AND d.active
-WHERE ds.product_id = $1 AND ds.quantity > 0
-  AND ($3 = '' OR ds.variant_id IN ('', $3))
-  AND ($2 = 0 OR ds.updated_at > now() - make_interval(days => $2));
-
--- Online satıcı kartları: online satıcılar + online mağazası olan bayiler;
--- $3 = seçili varyant ya da ''
-SELECT rs.retailer_id, rs.variant_id, rs.url FROM retailer_stock rs
-JOIN retailers r ON r.id = rs.retailer_id AND r.active
-WHERE rs.product_id = $1 AND rs.quantity > 0 AND rs.url IS NOT NULL
-  AND ($3 = '' OR rs.variant_id IN ('', $3))
-  AND ($2 = 0 OR rs.updated_at > now() - make_interval(days => $2))
-  AND NOT EXISTS (SELECT 1 FROM dealers d WHERE d.retailer_id = rs.retailer_id)
-UNION ALL
-SELECT d.retailer_id, ds.variant_id, ds.url FROM dealer_stock ds
-JOIN dealers d ON d.id = ds.dealer_id AND d.active
-JOIN retailers r ON r.id = d.retailer_id AND r.active
-WHERE ds.product_id = $1 AND ds.quantity > 0 AND ds.url IS NOT NULL
-  AND ($3 = '' OR ds.variant_id IN ('', $3))
-  AND ($2 = 0 OR ds.updated_at > now() - make_interval(days => $2));
--- Aynı mağaza birden fazla satırda gelebilir (seçenekler); mağaza başına bir
--- kart. Kart, seçili seçeneğin kendi satırının linkine gider ('' satırı yedek).
-```
-
-### API uçları
-
-| Uç | Karşılığı (bugün) |
-|---|---|
-| `GET  /api/admin/stock/sources` | `listStockSources`, `sourceStatus` (`:type` = `dealer` → `dealer_stock`, `retailer` → `retailer_stock`). **Yapıldı:** Stok Matrisi sayfasının sunucu bileşeni kaynak başına özeti okur (`readStockPanel`) |
-| `GET  /api/admin/stock/:type/:id` | `stockOfSource`, `stockHistory`. **Yapıldı:** kaynak sayfası yalnızca o kaynağın satırlarını ve geçmişini okur |
-| `POST /api/admin/stock/:type/:id/preview` (dosya) | `readStockSheet` → `matchStockRows` → `diffStock`; **yazmaz**. **Yapıldı (başka biçimde):** önizlemeyi tarayıcı yapar, ayrı uç yok |
-| `POST /api/admin/stock/:type/:id/imports` (dosya + `confirmTruncated`) | `applyStockImport`. **Yapıldı** (veritabanı modu, panel 4.3): `POST /api/yonetim/stok/dosya` (okunan tablo + `confirmTruncated` + önizlemenin dayandığı stoğun anahtarı) |
-| `POST /api/admin/stock/imports/:importId/revert` | `revertStockImport`. **Yapıldı:** `POST /api/yonetim/stok/geri-al` |
-| `PATCH / DELETE /api/admin/stock/:type/:id/levels/:productId[/:variantId]` | `setStockLevel`, `deleteStockLevel`. **Yapıldı** (veritabanı modu, panel 4.2): `POST /api/yonetim/stok/satir` ve `satir-sil` |
-| `PUT / DELETE /api/admin/stock/aliases` | `saveSkuAlias`, `deleteSkuAlias`. **Yapıldı** (kaydetme): `POST /api/yonetim/stok/eslestir`; silme ekranı bugün yok |
-| `PUT  /api/admin/settings/stock` | `saveStockSettings`. **Yapıldı:** `POST /api/yonetim/stok/ayar` |
-| `GET  /api/admin/retailers` (kartta ürün sayısı) | `onlineProductCount` |
-| Ürün sayfası (sunucu bileşeni ya da `GET /api/products/:id/availability`) | `retailersInStockFor`, `dealersWithProduct`. Veritabanı modunda (KARARLAR K-88) ürün sayfasının sunucu bileşeni o ürünün stoktaki satırlarını okur (`readProductStock`) ve sayfaya verir; satıcının fiyatı gönderilmez |
-
-Notlar:
-
-- **İşlem bütünlüğü:** bir dosyanın uygulanması tek veritabanı işleminde (transaction)
-  yapılır: kaynağın satırları silinir, yeni satırlar ve içe aktarma kaydı yazılır.
-  Aynı kaynağa iki yükleme aynı anda gelmesin diye kaynak bazında kilit alınır.
-- **Doğrulama sunucuda (yapıldı, panel 4.3):** Dosyayı tarayıcı okur
-  (`apps/zenweld-web/src/lib/stock-file.ts`; yalnızca `.csv` / `.xlsx` /
-  `.txt`, en fazla 5 MB, makro çalıştırılmaz) ve sunucuya okunan tabloyu
-  gönderir (en fazla 20.000 satır). Uygulama ucu tabloyu aynı
-  fonksiyonlardan (`readStockSheet`, `matchStockRows`, `diffStock`,
-  `looksTruncated`) veritabanındaki kodlarla yeniden geçirir; önizleme
-  açıldıktan sonra kaynağın stoğu değiştiyse uygulamaz (`stockVersion`).
-  Excel sunucuda okunmaz. Yüklenen dosyanın kendisi saklanmaz; dosya
-  deposu (Aşama 6) gelince saklanması ayrıca kararlaştırılır.
-- **Geçmiş ve geri alma kopyası (KARARLAR K-103):** veritabanında bütün
-  `stock_imports` kayıtları kalır; önceki hal (`previous`) yalnızca son 5
-  dosya yüklemesinde tutulur; ekranda son 30 kayıt görünür.
-- **Önbellek ve hız:** stok günde bir değiştiği için ürün sayfaları önbellekte tutulur.
-  - Bugün (veritabanı modu) dosya uygulama, geri alma ve elle düzeltmeden sonra
-    `refreshSite(["stok"])` bütün ürün sayfalarının stok verisini yeniler. Yük
-    artarsa yalnızca etkilenen ürünlere (`diffStock` sonucundaki ürünler)
-    daraltılabilir.
-  - "Geçerlilik süresi" zamana bağlı olduğu için sayfalar ayrıca günde en az bir kez
-    yenilenmelidir.
-  - Sorgu indeksli ve küçüktür; performans sorunu beklenmez.
-- **Yetki:** tüm `/api/admin/stock/*` uçları yalnızca yönetici oturumuyla çalışır.
-  Bugünkü panel girişi tarayıcı tarafında, gerçek güvenlik değildir.
+- Stok kuralları (stokta sayılma, seçenekli ürün, sitede gösterim):
+  [IS-KURALLARI.md › 11](IS-KURALLARI.md#11-bayi-ve-online-satıcı-stoğu).
+- Tablolar ve kolonlar:
+  [VERITABANI.md › Stok tabloları](VERITABANI.md#stok-tabloları--dealer_stock-retailer_stock-stock_imports-sku_aliases).
+- Panelin stokları nasıl okuyup yazdığı (dosya, geri alma, kod eşleştirme)
+  ve kodun yeri: [SUNUCU.md › Stok Matrisi](SUNUCU.md#stok-matrisi).
+- Panel ekranı: [ADMIN-KULLANIM.md › Stok Matrisi](ADMIN-KULLANIM.md#10-stok-matrisi).

@@ -137,8 +137,8 @@ Marka sitesi ve **online mağazadır**. Ziyaretçi ürünü şu yollardan alır:
 
 ### Online mağaza
 
-- Her ürün her zaman satıştadır (Zenweld deposunda stok tükenmez); bayi ve online
-  satıcı stokları ürün sayfasında ayrıca gösterilir.
+- Zenweld deposunun stoğu SAP'tan okunur; stokta olmayan ürün sepete eklenmez
+  (KARARLAR K-82). Bayi ve online satıcı stokları ürün sayfasında ayrıca gösterilir.
 - **Sepet** tarayıcıda tutulur; fiyat her zaman ürünün güncel (kampanyalı) fiyatıdır.
   Sepet tutarı **5.000 ₺** ve üzerindeyse kargo ücretsiz (Mağaza Ayarları'ndan değişir).
 - **Ödeme** (`/odeme`) yalnızca üyelere açıktır: teslimat adresi, fatura bilgisi
@@ -584,7 +584,7 @@ ZW30100000072;ForceArc 200 MMA Elektrod Kaynak Makinesi;12;1.150.000,00;https://
 
 Link sütunu yalnızca online satıcılarda ve online mağazası olan bayilerde okunur.
 
-Dosya biçimi, kurallar ve backend'e geçiş (tablolar, API): [docs/STOK.md](docs/STOK.md).
+Dosya biçimi ve kurallar: [docs/STOK.md](docs/STOK.md).
 
 ---
 

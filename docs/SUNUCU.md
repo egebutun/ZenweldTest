@@ -246,7 +246,7 @@ varyantın ürünün her seçeneğinden tam bir değer alması.
 | `npm run db:yukle <canli\|deneme> [guncelle]` | Bugünkü veriyi canlı ya da deneme veritabanına yükler; varsayılan yalnızca eksik kayıtları ekler; bilgisayar dışındaki veritabanında onay ister ([Veri yükleme](#veri-yükleme)) |
 | `npm run db:generate` | Şema değişince yeni geçiş betiği üretir |
 | `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
-| `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar. Tablo listesinin ve kolonların VERITABANI.md (stok tabloları STOK.md) ile aynı olduğunu da dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer |
+| `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar. Tablo listesinin ve kolonların VERITABANI.md ile aynı olduğunu da dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer |
 | `npm run test:e2e:db` | Sitenin veritabanı modunda tarayıcı testleri (`tests/e2e-db`, `scripts/e2e-db.mts`): test veritabanını baştan kurup örnek veriyi yükler, siteyi `.next-db`'ye derler, testleri çalıştırır |
 | `npm run yonetici:olustur` | Panel için yönetici hesabı açar ya da var olan yöneticinin şifresini değiştirir ([7](#7-üyelik)) |
 | `npm run site:yenile [tür]` | Çalışan siteyi beklemeden yeniler (`REVALIDATE_SECRET`; türler: katalog, depo-stogu, stok, bayiler, yorumlar, icerik) |
@@ -1083,8 +1083,34 @@ eşleşme kuralları: [STOK.md](STOK.md).
 - **Kod eşleştirme (`eslestir`):** Kod boşluksuz ve büyük harfe çevrilir;
   ürün ve seçenek var olmalı (yoksa 404). `sku_aliases`'a yazılır ya da
   güncellenir; değişmediyse yazılmaz. Stok satırlarına dokunmaz.
+  Eşleştirmeyi silen ekran bugün yok.
 - Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-stock.ts`
   (`useStockActions`).
+- **Kodun yeri** (demo ve veritabanı modu ortak):
+  - Kurallar: `packages/data/src/stock.ts` — `readStockSheet` (tablo →
+    satırlar), `matchStockRows` (kod → ürün), `diffStock` (fark),
+    `looksTruncated`, `isInStock` / `isStockFresh`, `stockTemplateRows`.
+    Tarayıcıya ya da veritabanına bağlı değildir; sunucu da aynısını
+    kullanır.
+  - Tipler: `packages/data/src/types.ts` — `DealerStock`, `RetailerStock`
+    (ortak alanlar `StockRow`), `StockImport`, `SkuAlias`, `StockSettings`;
+    bayinin online mağazası `Dealer.retailerId`.
+  - Demo modunda okuma ve yazma: `packages/store/src/repo/stock.ts`
+    (okuma: `listStockSources`, `stockOfSource`, `stockHistory`,
+    `retailersInStockFor`, `dealersWithProduct`, `sourceStatus`,
+    `onlineProductCount`; yazma: `applyStockImport`, `revertStockImport`,
+    `setStockLevel`, `deleteStockLevel`, `saveSkuAlias`, `deleteSkuAlias`,
+    `saveStockSettings`).
+  - Dosya okuma (tarayıcıda): `apps/zenweld-web/src/lib/stock-file.ts`
+    (`.csv` / `.xlsx` / `.txt` → satır × hücre tablosu; `read-excel-file`
+    8.0.3; en fazla 5 MB; makro çalıştırılmaz). Excel sunucuda okunmaz.
+  - Panel ekranları: `apps/zenweld-web/src/components/admin/stock/`.
+  - Ürün sayfası (veritabanı modu): sunucu o ürünün stoktaki satırlarını
+    okur (`readProductStock`, [6](#6-okuma-ve-önbellek)); satıcının fiyatı
+    gönderilmez.
+  - Örnek veri: `packages/data/src/seed/stock.seed.ts` — her kaynak için
+    yakın tarihli liste (online mağazalı bayilerde linkli); bir bayi ve bir
+    satıcı bilerek 5 gün eski.
 - Test: `tests/db/panel-stok.test.ts` (görünümlerin okuduğu satırlar ve
   özet sayılar, geri alma kopyasının gönderilmemesi; satır ekleme,
   düzeltme, eski ekran, değişmeyen kayıt, geçersiz değer, bayiye bağlı
@@ -1482,7 +1508,8 @@ fazla 2 MB); dosya deposuna taşınması sonraya.
 
 **Stok dosyaları:** Panelde tarayıcıda okunur (en fazla 5 MB; CSV ya da
 XLSX). Orijinal dosya bugün saklanmaz; denetim için dosya deposuna
-yazılması sonraya ([STOK.md](STOK.md)).
+yazılması sonraya ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Bayi ve satıcı
+stokları).
 
 ### Dosya deposu
 
