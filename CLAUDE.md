@@ -36,7 +36,7 @@ ilgili belge **aynı commit'te** güncellenir:
 | Veri alanı, kayıt türü, veritabanı tablosu ya da kolonu | `docs/VERITABANI.md` |
 | Hesap ve kurallar (fiyat, taksit, stok, kod, link…) | `docs/IS-KURALLARI.md` |
 | Sunucunun işleyişi, dış servisler ve ortam değişkenleri | `docs/SUNUCU.md` |
-| Sahibin verdiği yeni karar | `docs/KARARLAR.md` (yeni K numarası ve tarihle) |
+| Sahibin verdiği yeni karar | `docs/KARARLAR.md` (yeni K numarasıyla, tarihsiz, kısa maddeler) |
 | Doğrulanabilir yeni davranış | `docs/KABUL-KONTROL-LISTESI.md` |
 | Stok dosyası biçimi | `docs/STOK.md` |
 | Sonraya kalan iş | `docs/YAPILACAKLAR.md` |
