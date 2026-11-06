@@ -12,8 +12,11 @@ eder: sayfada ne olduğu, hangi alanların zorunlu olduğu, hangi mesajların
   [IS-KURALLARI.md](IS-KURALLARI.md)
 - Sunucu, ödeme, e-posta ve harita servisleri: [SUNUCU.md](SUNUCU.md)
 
-**Demo notu** ile işaretli yerler bugünkü demonun sınırlarıdır (verinin
-tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
+Ekranlar ve kurallar demo modunda da veritabanı modunda da aynıdır.
+**Demo notu** ile işaretli yerler yalnızca demo modunun sınırıdır (verinin
+tarayıcıda durması gibi); "Veritabanı modunda" diye başlayan maddeler
+sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
+[README](../README.md) › Demo ve veritabanı modu.
 
 ---
 
@@ -82,17 +85,17 @@ tarayıcıda durması gibi); gerçek sistemde farklı çalışacaktır.
     sohbeti) demo modunda e-posta gidemezse ziyaretçiye hata gösterir ve
     `info@zenweld.com`'a doğrudan yazmasını söyler; e-posta gidince kayıt
     tarayıcıya da yazılır ve aynı tarayıcının panelinde görünür (KARARLAR
-    K-109). Veritabanı modunda bu formlar veritabanına kaydedilir (Aşama
-    5.3); kayıt yapıldıysa e-posta gitmese de hata gösterilmez.
+    K-109). Veritabanı modunda bu formlar veritabanına kaydedilir; kayıt
+    yapıldıysa e-posta gitmese de hata gösterilmez.
   - Veritabanı modunda teklif, servis talebi, garanti kaydı ve
-    değerlendirmeyi sunucu kaydeder ve kuralları yeniden denetler (Aşama
-    5.3); gönderilen her e-posta kayıt altına alınır (`email_log`).
-- **Tarayıcıda tutulanlar (Demo notu):** Sepet, favoriler, teklif listesi,
-  çerez seçimi, karşılama penceresinin görülmesi ve oturum ziyaretçinin
-  tarayıcısında tutulur. Bütün site verisi de (ürünler, siparişler, üyeler…)
-  şimdilik tarayıcıdadır. Veritabanı modunda oturum, giriş yapmış üyenin
-  adresleri, favorileri ve siparişleri sunucudadır (bkz.
-  [Hesabım](#14-hesabım)).
+    değerlendirmeyi sunucu kaydeder ve kuralları yeniden denetler; gönderilen
+    her e-posta kayıt altına alınır (`email_log`).
+- **Tarayıcıda tutulanlar:** Sepet, teklif listesi, çerez seçimi,
+  karşılama penceresinin görülmesi ve giriş yapmamış ziyaretçinin
+  favorileri ziyaretçinin tarayıcısında tutulur. **Demo notu:** Demo
+  modunda oturum ve bütün site verisi de (ürünler, siparişler, üyeler…)
+  tarayıcıdadır. Veritabanı modunda oturum, giriş yapmış üyenin adresleri,
+  favorileri ve siparişleri sunucudadır (bkz. [Hesabım](#14-hesabım)).
 
 ---
 
@@ -450,10 +453,10 @@ hiçbiri değilse 404 çıkar.
     edilecek." yazar.
   - Değerlendirme panelde onay bekler.
   - `info@zenweld.com`'a "Yeni ürün yorumu" e-postası gider.
-- **Demo notu:** Giriş yapmış üyenin değerlendirmesi "Doğrulanmış alıcı"
-  sayılır. Gerçek sistemde bu, üyenin o ürünü satın almış olmasıyla
-  eşleştirilmelidir.
-- **Veritabanı modunda** değerlendirmeyi sunucu kaydeder (Aşama 5.3); kurala
+- **Not (iki modda da):** Giriş yapmış üyenin değerlendirmesi "Doğrulanmış
+  alıcı" sayılır. Bunun üyenin o ürünü satın almış olmasıyla eşleştirilmesi
+  sonraya kaldı.
+- **Veritabanı modunda** değerlendirmeyi sunucu kaydeder; kurala
   uymayan gönderimde sunucunun mesajı formda görünür.
 - **Seçenekten bağımsız:** Değerlendirmeler ürüne bağlıdır; ürünün bütün
   seçeneklerinde aynı liste görünür.
@@ -484,7 +487,7 @@ Yalnızca ürün sayfalarında, sağ altta bir düğme olarak durur.
     yapacaktır. İyi günler dileriz."
   - Demo modunda soru tarayıcıya da kaydedilir ve aynı tarayıcıda panelin
     Mesajlar ekranında görünür (KARARLAR K-109). Veritabanı modunda soru
-    veritabanına kaydedilir (Aşama 5.3).
+    veritabanına kaydedilir.
   - E-posta gidemezse ayrıca "Mesajınız alındı. Acele bir durumsa
     info@zenweld.com adresine de yazabilirsiniz." yazar.
 - KVKK notu ve bot tuzağı vardır.
@@ -628,9 +631,9 @@ listelenir.
   - tel ↔ makara / bobin
   - paslanmaz ↔ inox / 304 / 316
   - ve benzerleri
-- **Demo notu:** Arama tarayıcıda çalışır (MiniSearch, Elasticsearch ile aynı
-  BM25 puanlaması). Gerçek sistemde aynı arayüzle bir arama sunucusuna
-  bağlanabilir.
+- **Not (iki modda da):** Arama tarayıcıda çalışır (MiniSearch,
+  Elasticsearch ile aynı BM25 puanlaması). İstenirse aynı arayüzle bir arama
+  sunucusuna bağlanabilir (`lib/search/search-client.ts` › `search()`).
 
 ---
 
@@ -718,7 +721,7 @@ Adres: `/sepet`. Sepet için giriş gerekmez; ödeme adımında istenir.
       yeniden uygulanır.
     - Kupon kodu sepetle birlikte tarayıcıda saklanır; sipariş verilince
       silinir. Hesap kuralları: [IS-KURALLARI.md](IS-KURALLARI.md#21-kuponlar).
-    - Veritabanı modunda kupon sunucuda denetlenir (Aşama 5.2); sepet
+    - Veritabanı modunda kupon sunucuda denetlenir; sepet
       değişince (adet, satır) sonuç sunucudan yeniden alınır. Kuponların
       kendisi tarayıcıya gelmez.
   - Tutarlar: Ara Toplam (KDV dahil), kupon (varsa), "KDV (fiyatlara dahil)"
@@ -754,7 +757,7 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
   dolmuş ya da kişiye özel kupon üyenin e-postasına tanımlı değil) indirim
   düşülmez ve sipariş verilmez; düğmeye basınca "Kupon
   uygulanamıyor: <neden> Kuponu kaldırarak devam edebilirsiniz." çıkar.
-- **Veritabanı modu** (Aşama 5.2, KARARLAR K-97): sipariş sunucuda
+- **Veritabanı modu** (KARARLAR K-97): sipariş sunucuda
   kaydedilir. Sunucu tutarı, stoğu ve kuponu güncel verilerle yeniden
   hesaplar; tarayıcıya kartın yalnızca ilk 6 ve son 4 hanesi gider. Düğmeye
   basınca sunucunun verebileceği ek mesajlar:
@@ -870,13 +873,12 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
 - **Sonrası:** Sepet boşalır ve müşteri sipariş detayına gider; bkz.
   [Siparişlerim](#siparişlerim-ve-sipariş-detayı).
 
-**Demo notu:**
+**Not (iki modda da, ödeme kuruluşu bağlanana kadar; K-97):**
 
 - Kartla ödemede 1,5 saniyelik "3D Secure doğrulanıyor…" beklemesinden sonra
-  ödeme onaylanmış sayılır; para çekilmez. Veritabanı modunda da gerçek POS
-  bağlanana kadar böyledir (K-97).
-- Kart programı, kartın ilk 6 hanesinden sabit bir kuralla seçilir. Gerçekte
-  ödeme kuruluşunun BIN sorgusundan gelecektir.
+  ödeme onaylanmış sayılır; para çekilmez.
+- Kart programı, kartın ilk 6 hanesinden sabit bir kuralla seçilir;
+  bağlanınca ödeme kuruluşunun kart (BIN) sorgusundan gelecek.
 - Siparişte karttan yalnızca marka, program, son 4 hane, taksit sayısı, banka
   adı ve komisyon oranı saklanır.
 
@@ -1000,17 +1002,17 @@ Yap** da aynı işi yapar.
 
 **Üyelik nerede çalışır:**
 
-- **Veritabanı modunda** (`DATA_SOURCE=database`, Aşama 4.2): kayıt, giriş,
+- **Veritabanı modunda** (`DATA_SOURCE=database`): kayıt, giriş,
   çıkış, profil, şifre değiştirme ve hesap silme sunucudan yapılır. Şifre
   güçlü özetle saklanır; oturum yalnızca sunucunun okuyabildiği bir çerezde
   durur ve 30 gün sürer (site kullanıldıkça uzar). Sayfa yenilense de oturum
   açık kalır.
 - **Demo modunda** şifreler tarayıcıda karşılaştırılır; bu gerçek bir
   güvenlik değildir.
-- Veritabanı modunda giriş yapmış üyenin adresleri, favorileri (Aşama 5.1),
-  siparişleri ve iade talepleri (Aşama 5.2) de sunucudadır; başka cihazda
+- Veritabanı modunda giriş yapmış üyenin adresleri, favorileri,
+  siparişleri ve iade talepleri de sunucudadır; başka cihazda
   giriş yapınca aynısı görünür. Teklifler, garantiler ve formlar da
-  sunucudadır (Aşama 5.3).
+  sunucudadır.
 
 ---
 
@@ -1066,7 +1068,7 @@ sayısı sunucudan gelir; gelene kadar "…" yazar.
 - **Durumlar:** Yeni, İnceleniyor, Teklif Gönderildi, Kazanıldı, Kapandı.
   Panelde durum değişince burada hemen görünür.
 - **Boşsa:** "Henüz teklif talebiniz yok."
-- Veritabanı modunda teklifler sunucudan okunur (Aşama 5.3).
+- Veritabanı modunda teklifler sunucudan okunur.
 
 ### Siparişlerim ve sipariş detayı
 
@@ -1124,7 +1126,7 @@ sayısı sunucudan gelir; gelene kadar "…" yazar.
   Veritabanı modunda bunu sunucu yapar ve kupon hakkını geri verir (K-97);
   canlıda ayrıca günlük zamanlanmış bir iş yapmalıdır.
 - **Nerede tutulur:** Veritabanı modunda siparişler ve iade talepleri
-  sunucudadır (Aşama 5.2); üye başka cihazda giriş yapınca da görür. Demo
+  sunucudadır; üye başka cihazda giriş yapınca da görür. Demo
   modunda tarayıcıdadır.
 
 ### Favorilerim
@@ -1151,7 +1153,7 @@ sayısı sunucudan gelir; gelene kadar "…" yazar.
   garantide "Uzatılmış garanti" rozeti.
 - **Yeni Garanti Kaydı** düğmesi kayıt formuna gider.
 - **Boşsa:** "Kayıtlı garanti bulunamadı." ve Garanti Kaydı.
-- Veritabanı modunda garantiler sunucudan okunur (Aşama 5.3).
+- Veritabanı modunda garantiler sunucudan okunur.
 
 ### Adreslerim
 
@@ -1242,7 +1244,7 @@ gelinir.
 **Gönderince:**
 
 - **Kayıt:** Teklif `TKL-<yıl>-<4 haneli sıra>` numarasıyla **Yeni**
-  durumunda kaydedilir. Veritabanı modunda kaydı sunucu yapar (Aşama 5.3);
+  durumunda kaydedilir. Veritabanı modunda kaydı sunucu yapar;
   listedeki bir ürün artık yoksa "Teklif listenizdeki bazı ürünler değişti
   ya da artık listelenmiyor. Listenizi kontrol edin." yazar.
   - Her satırda o anki ürün adı, seçenek adı ve ürün kodunun kopyası
@@ -1272,7 +1274,7 @@ gelinir.
     info@zenweld.com adresine e-posta gönderin."
 - **Kayıt:** Demo modunda e-posta gidince mesaj tarayıcıya da kaydedilir ve
   aynı tarayıcıda panelin Mesajlar ekranında görünür (KARARLAR K-109).
-  Veritabanı modunda mesaj veritabanına kaydedilir (Aşama 5.3); kayıt
+  Veritabanı modunda mesaj veritabanına kaydedilir; kayıt
   yapıldıysa e-posta gitmese de başarı mesajı çıkar.
 - **Ofislerimiz:** Panelde girilen ofislerin kartları, panelindeki sırayla
   (örnek veride İstanbul ve İzmir).
@@ -1297,7 +1299,7 @@ gelinir.
 - **Kayıt:** `info@zenweld.com`'a "Bayilik başvurusu — <firma>" e-postası
   gider. Demo modunda e-posta gidince başvuru tarayıcıya da kaydedilir ve
   aynı tarayıcıda panelin Bayilik Başvuruları ekranında görünür (KARARLAR
-  K-109). Veritabanı modunda başvuru veritabanına kaydedilir (Aşama 5.3);
+  K-109). Veritabanı modunda başvuru veritabanına kaydedilir;
   kayıt yapıldıysa e-posta gitmese de başarı ekranı çıkar.
 - **Sonuç:**
   - Başarı: Form yerine "Başvurunuz Alındı — İlginiz için teşekkür ederiz.
@@ -1332,8 +1334,7 @@ gelinir.
     kısa sürede sizinle iletişime geçecek." yazar.
   - **Yeni talep oluştur** düğmesi makine, model, şikayet, nedenler ve onayı
     temizler; iletişim bilgileri kalır.
-  - Veritabanı modunda talebi sunucu kaydeder ve kuralları yeniden denetler
-    (Aşama 5.3).
+  - Veritabanı modunda talebi sunucu kaydeder ve kuralları yeniden denetler.
 
 ### Welders Club (`/welders-club`)
 
@@ -1347,7 +1348,7 @@ gelinir.
 - **Kayıt:** `info@zenweld.com`'a "Welders Club katılım" e-postası gider.
   Demo modunda e-posta gidince katılım tarayıcıya da kaydedilir ve aynı
   tarayıcıda panelin Welders Club ekranında görünür (KARARLAR K-109).
-  Veritabanı modunda katılım veritabanına kaydedilir (Aşama 5.3); kayıt
+  Veritabanı modunda katılım veritabanına kaydedilir; kayıt
   yapıldıysa e-posta gitmese de başarı mesajı çıkar.
 - **Sonuç:**
   - Başarı: "Kulüp üyeliğiniz oluşturuldu!"
@@ -1407,8 +1408,8 @@ gelinir.
   (üyeyse) **Garantilerim** düğmeleri vardır.
 - Kayıt panelde Garantiler'e düşer; `info@zenweld.com`'a "Yeni garanti kaydı"
   e-postası gider.
-- Veritabanı modunda kaydı sunucu yapar ve kuralları yeniden denetler (Aşama
-  5.3); eksik alan varsa "Lütfen zorunlu alanları doldurun." yazar.
+- Veritabanı modunda kaydı sunucu yapar ve kuralları yeniden denetler; eksik
+  alan varsa "Lütfen zorunlu alanları doldurun." yazar.
 
 **Garanti Sorgulama:**
 
@@ -1421,7 +1422,7 @@ gelinir.
   - Rozetler: Uzatılmış garantide "Uzatılmış garanti".
   - Bitiş günü geçmişse "Süresi Doldu". Bitiş günü dahil garanti geçerli
     sayılır.
-- Veritabanı modunda sorgu sunucuya gider (Aşama 5.3) ve yalnızca bu kartta
+- Veritabanı modunda sorgu sunucuya gider ve yalnızca bu kartta
   görünen bilgiler döner; e-posta, telefon ve adres dönmez.
 
 ---
@@ -1632,16 +1633,14 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   sayfasında ürün; haber ve etkinlik sayfalarında haber ve etkinlik; katalog
   ve ürünlerde konum satırı Google'a bildirilir (schema.org: `Organization`,
   `FAQPage`, `Product`, `NewsArticle`, `Event`, `BreadcrumbList`).
-- **Demo notu:** Panelde yapılan değişiklikleri (yeni ürün, değişen başlık,
-  yeni link) sunucu bugün göremez:
-  - Site haritası ve arama motorunun gördüğü başlıklar koddaki örnek veriden
-    üretilir. Veri kaynağı veritabanıysa (`DATA_SOURCE=database`, KARARLAR
-    K-88) ürün, grup, kategori, blog, haber ve etkinliklerinki ile sabit
-    sayfaların Sayfa SEO başlıkları tablolardan gelir; veritabanındaki
-    değişiklik en geç bir dakikada görünür.
-  - Eski linkler tarayıcıda yönlenir; arama motoru için kalıcı (301)
-    yönlendirme backend ile yapılacak.
-  - Ayrıntı: [YAPILACAKLAR.md](YAPILACAKLAR.md).
+- **Panel değişiklikleri:** Veritabanı modunda site haritası ve arama
+  motorunun gördüğü başlıklar tablolardan gelir; panelde yapılan değişiklik
+  (yeni ürün, değişen başlık, yeni link) hemen görünür (KARARLAR K-88).
+  **Demo notu:** Demo modunda panel değişiklikleri yalnızca tarayıcıda
+  kaldığı için bunlar koddaki örnek veriden üretilir.
+- **Eski linkler** iki modda da tarayıcıda yönlenir; arama motoru için
+  kalıcı (301) yönlendirme sunucuda yapılacak
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO alanları ve link yönlendirme).
 
 ---
 
@@ -1698,8 +1697,8 @@ Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
   soğutmalı üründe bir soğutma halinin fotoğrafı eksik; bunlarda alt
   kategorinin kart çizimi görünür. Force serisinin 9 ürününde ortak geçici
   bir fotoğraf görünür (KARARLAR K-77,
-  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları). Diğer bölümlerin
-  ürünleri genel bir Zenweld fotoğrafını kullanır.
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları). Güvenlik,
+  Aksesuarlar ve Dolgu Metalleri'nde bugün ürün yoktur (KARARLAR K-78).
 - **Kategori filtreleri:** Şebeke Voltajı, Amper ve Güç (W) filtrelerinin
   değerleri yok; Model Serisi dışındaki filtreler ürünlere eşlenmedi
   (eşlenmemiş filtre sonucu daraltmaz). Değerler ürünler kesinleşince

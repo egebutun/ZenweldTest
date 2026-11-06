@@ -464,6 +464,9 @@ Veritabanı modu bütün kayıtlar için hazır (Aşama 3–5; [VERITABANI.md](V
 5. **Form kayıtlarının saklama süresi:** bayilik başvurusu, mesaj ve
    Welders Club kayıtlarının ne kadar tutulacağı ve silinmesi KVKK kararıyla
    belirlenecek (K-100; [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama)).
+6. **"Doğrulanmış alıcı":** Giriş yapmış üyenin ürün değerlendirmesi bugün
+   iki modda da "Doğrulanmış alıcı" sayılıyor; üyenin o ürünü gerçekten
+   satın almış olmasıyla (teslim edilmiş sipariş) eşleştirilmeli.
 
 ## Ölçüm (hız)
 

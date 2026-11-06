@@ -290,8 +290,9 @@ eklenir. Kart bilgisi saklanmaz; bugün ödeme temsilidir.
 
 - Taksit, kartın **programına** (Bonus, World, Maximum, Axess, CardFinans,
   Paraf, Advantage, BankkartCombo) göre yapılır.
-- **Demo notu:** Program bugün kartın ilk 6 hanesinden sabit bir kuralla
-  seçilir; gerçekte ödeme kuruluşunun kart (BIN) sorgusundan gelecek.
+- **Not (iki modda da):** Program bugün kartın ilk 6 hanesinden sabit bir
+  kuralla seçilir; ödeme kuruluşu bağlanınca onun kart (BIN) sorgusundan
+  gelecek.
 - **Ödeme sağlayıcısı (veritabanı modu, KARARLAR K-108):** Sunucuda kartın
   programını ve tahsilatı ödeme sağlayıcısı verir. Bugünkü sağlayıcı
   temsilidir (yukarıdaki sabit kural; para çekilmez, K-97). Sağlayıcı
@@ -824,8 +825,8 @@ puan yalnızca onaylı yorumlardan hesaplanır; anasayfada en fazla 10 yorum.
   yayında olan yorumlar; en yeniden eskiye, **en fazla 10**. Sınır dolunca
   yenisi eklenemez. Yayından kaldırılan yorum şeritten de çıkar.
 - Video en fazla 2 MB; fotoğraflar otomatik küçültülür.
-- **Demo notu:** Giriş yapmış üyenin yorumu "Doğrulanmış alıcı" sayılır;
-  gerçekte üyenin o ürünü satın almasıyla eşleşmeli.
+- **Not (iki modda da):** Giriş yapmış üyenin yorumu "Doğrulanmış alıcı"
+  sayılır; üyenin o ürünü satın almasıyla eşleştirilmesi sonraya kaldı.
 - **Veritabanı modunda** yorumu sunucu kaydeder; ürün yayında olmalı, puan
   1–5 tam sayı, ad ve yorum zorunlu, en fazla 10 dosya. Fotoğraf ve videolar
   yorumun içinde veri olarak saklanır (dosya deposuna taşınması sonraya,
