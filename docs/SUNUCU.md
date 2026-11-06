@@ -891,10 +891,14 @@ yazılır. Kuralların yöneticinin gördüğü hali:
   e-postaları; yöneticiler sayılmaz), `readReviewsPage` (arama, onay
   bekleyenler; onay bekleyen ve anasayfa sayıları). CSV için süzgece uyan
   kayıtların tamamı: `readQuotesForExport`, `readWarrantiesForExport`.
-  `readDealerApplications`, `readSupportMessages`, `readWeldersClub` bugün
-  hepsini okur. Ürün ve kategori adları sitenin önbellekteki katalogundan.
-- **CSV:** `GET /api/yonetim/csv/teklifler?durum=…` ve
-  `GET /api/yonetim/csv/garantiler?ara=…&durum=…`
+  `readDealerApplicationsPage` (toplam ve yeni başvuru sayısı),
+  `readMessagesPage` (tür; toplam ve yeni mesaj sayısı bütün mesajlardan),
+  `readWeldersClubPage` (arama ad, e-posta, şehir; aktif ve pasif sayısı
+  bütün kayıtlardan). Ürün ve kategori adları sitenin önbellekteki
+  katalogundan.
+- **CSV:** `GET /api/yonetim/csv/teklifler?durum=…`,
+  `GET /api/yonetim/csv/garantiler?ara=…&durum=…` ve
+  `GET /api/yonetim/csv/uyeler?ara=…&rol=…&durum=…`
   (`apps/zenweld-web/src/app/api/yonetim/csv/[liste]/route.ts`): yönetici
   oturumu yoksa 401. Satırları JSON olarak verir, dosyayı tarayıcı
   oluşturur; sütunlar demo moduyla ortaktır (`lib/admin-csv.ts`).
@@ -1320,9 +1324,13 @@ Yasal Metinler, Belgeler, Sayfa SEO ve Görünüm; 5. alan; KARARLAR K-104;
 
 6. alan; KARARLAR K-35, K-36; `src/admin-members.ts`.
 
-- **Okuma:** `readMembersPanel`: `users`'ın bütün satırları (yöneticiler
-  dahil), en yeni kayıt önce; `password_hash` boş gönderilir, `updated_at`
-  ekranın gördüğü son değişiklik anıdır.
+- **Okuma (sayfalı, 50; `panel-lists.ts`):** `readMembersPage`: `users`
+  (yöneticiler dahil); arama e-posta, ad soyad ve firmada, rol ve durum
+  süzgeci; en yeni kayıt önce, aynı anda açılanlar e-postaya göre.
+  `readMembersForExport` süzgece uyan hesapların tamamını CSV için okur
+  (`GET /api/yonetim/csv/uyeler`, bkz. [Talepler](#talepler)).
+  `password_hash` iki okumada da boş gönderilir, `updated_at` ekranın
+  gördüğü son değişiklik anıdır.
 - **Yazma:** `POST /api/yonetim/uyeler/<işlem>`
   (`apps/zenweld-web/src/app/api/yonetim/uyeler/[islem]/route.ts`): `uye`
   (`role`, `status`), `uye-sil`.

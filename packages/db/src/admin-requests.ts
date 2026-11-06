@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gte, inArray, lt, ne, sql, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, isNotNull, lt, ne, sql, type SQL } from "drizzle-orm";
 import {
   FEATURED_REVIEW_LIMIT,
   featuredReviewLimitText,
@@ -199,64 +199,124 @@ export async function readReviewsPage(db: AuditDb, filter: ReviewListFilter): Pr
   };
 }
 
-export async function readDealerApplications(db: AuditDb): Promise<DealerApplicationRecord[]> {
-  const rows = await db.select().from(s.dealerApplications).orderBy(sql`${s.dealerApplications.createdAt} DESC`);
-  return rows.map((r) => ({
-    id: r.id,
-    status: r.status as DealerApplicationRecord["status"],
-    companyName: r.companyName,
-    taxInfo: opt(r.taxInfo),
-    city: opt(r.city),
-    sector: opt(r.sector),
-    yearsInSector: opt(r.yearsInSector),
-    brands: opt(r.brands),
-    hasShowroom: opt(r.hasShowroom),
-    hasService: opt(r.hasService),
-    contactName: opt(r.contactName),
-    email: r.email,
-    phone: opt(r.phone),
-    message: opt(r.message),
-    userId: opt(r.userId),
-    adminNote: opt(r.adminNote),
-    createdAt: iso(r.createdAt),
-    updatedAt: iso(r.updatedAt),
-  }));
+type DealerApplicationRow = typeof s.dealerApplications.$inferSelect;
+type SupportMessageRow = typeof s.supportMessages.$inferSelect;
+type WeldersClubRow = typeof s.weldersClubSignups.$inferSelect;
+
+const dealerApplicationRecord = (r: DealerApplicationRow): DealerApplicationRecord => ({
+  id: r.id,
+  status: r.status as DealerApplicationRecord["status"],
+  companyName: r.companyName,
+  taxInfo: opt(r.taxInfo),
+  city: opt(r.city),
+  sector: opt(r.sector),
+  yearsInSector: opt(r.yearsInSector),
+  brands: opt(r.brands),
+  hasShowroom: opt(r.hasShowroom),
+  hasService: opt(r.hasService),
+  contactName: opt(r.contactName),
+  email: r.email,
+  phone: opt(r.phone),
+  message: opt(r.message),
+  userId: opt(r.userId),
+  adminNote: opt(r.adminNote),
+  createdAt: iso(r.createdAt),
+  updatedAt: iso(r.updatedAt),
+});
+
+const supportMessageRecord = (r: SupportMessageRow): SupportMessageRecord => ({
+  id: r.id,
+  type: r.type as SupportMessageRecord["type"],
+  status: r.status as SupportMessageRecord["status"],
+  name: opt(r.name),
+  email: opt(r.email),
+  phone: opt(r.phone),
+  subject: opt(r.subject),
+  message: r.message,
+  productId: opt(r.productId),
+  productName: opt(r.productName),
+  productSku: opt(r.productSku),
+  pageUrl: opt(r.pageUrl),
+  userId: opt(r.userId),
+  adminNote: opt(r.adminNote),
+  createdAt: iso(r.createdAt),
+  updatedAt: iso(r.updatedAt),
+});
+
+const weldersClubRecord = (r: WeldersClubRow): WeldersClubRecord => ({
+  id: r.id,
+  name: r.name,
+  email: r.email,
+  city: opt(r.city),
+  userId: opt(r.userId),
+  leftAt: r.leftAt ? iso(r.leftAt) : undefined,
+  createdAt: iso(r.createdAt),
+  updatedAt: iso(r.updatedAt),
+});
+
+export interface CountedListPage<T> extends ListPage<T> {
+  /** Butun kayitlar */
+  all: number;
+  /** Yeni (incelenmemis) kayitlar, butun kayitlarda */
+  newCount: number;
 }
 
-export async function readSupportMessages(db: AuditDb): Promise<SupportMessageRecord[]> {
-  const rows = await db.select().from(s.supportMessages).orderBy(sql`${s.supportMessages.createdAt} DESC`);
-  return rows.map((r) => ({
-    id: r.id,
-    type: r.type as SupportMessageRecord["type"],
-    status: r.status as SupportMessageRecord["status"],
-    name: opt(r.name),
-    email: opt(r.email),
-    phone: opt(r.phone),
-    subject: opt(r.subject),
-    message: r.message,
-    productId: opt(r.productId),
-    productName: opt(r.productName),
-    productSku: opt(r.productSku),
-    pageUrl: opt(r.pageUrl),
-    userId: opt(r.userId),
-    adminNote: opt(r.adminNote),
-    createdAt: iso(r.createdAt),
-    updatedAt: iso(r.updatedAt),
-  }));
+/** Bayilik basvurulari: bir sayfa (yeniden eskiye) ve sayilar. */
+export async function readDealerApplicationsPage(db: AuditDb, page: number): Promise<CountedListPage<DealerApplicationRecord>> {
+  const t = s.dealerApplications;
+  const total = await countRows(db, t);
+  const w = pageWindow(total, page);
+  const rows = total ? await db.select().from(t).orderBy(desc(t.createdAt), desc(t.id)).limit(w.limit).offset(w.offset) : [];
+  return { rows: rows.map(dealerApplicationRecord), total, page: w.page, all: total, newCount: await countRows(db, t, eq(t.status, "new")) };
 }
 
-export async function readWeldersClub(db: AuditDb): Promise<WeldersClubRecord[]> {
-  const rows = await db.select().from(s.weldersClubSignups).orderBy(sql`${s.weldersClubSignups.createdAt} DESC`);
-  return rows.map((r) => ({
-    id: r.id,
-    name: r.name,
-    email: r.email,
-    city: opt(r.city),
-    userId: opt(r.userId),
-    leftAt: r.leftAt ? iso(r.leftAt) : undefined,
-    createdAt: iso(r.createdAt),
-    updatedAt: iso(r.updatedAt),
-  }));
+export interface MessageListFilter {
+  type?: SupportMessageRecord["type"];
+  page: number;
+}
+
+/** Mesajlar: suzgece (tur) uyan mesajlarin bir sayfasi; sayilar butun mesajlarda. */
+export async function readMessagesPage(db: AuditDb, filter: MessageListFilter): Promise<CountedListPage<SupportMessageRecord>> {
+  const t = s.supportMessages;
+  const where = filter.type ? eq(t.type, filter.type) : undefined;
+  const total = await countRows(db, t, where);
+  const w = pageWindow(total, filter.page);
+  const rows = total
+    ? await db.select().from(t).where(where).orderBy(desc(t.createdAt), desc(t.id)).limit(w.limit).offset(w.offset)
+    : [];
+  return {
+    rows: rows.map(supportMessageRecord),
+    total,
+    page: w.page,
+    all: await countRows(db, t),
+    newCount: await countRows(db, t, eq(t.status, "new")),
+  };
+}
+
+export interface WeldersClubListFilter {
+  /** Ad, e-posta, sehir */
+  q?: string;
+  page: number;
+}
+
+export interface WeldersClubListPage extends ListPage<WeldersClubRecord> {
+  /** Butun kayitlarda aktif ve pasif (ayrilan) sayisi */
+  active: number;
+  passive: number;
+}
+
+/** Welders Club: aramaya uyan katilimlarin bir sayfasi; aktif / pasif sayilari butun kayitlarda. */
+export async function readWeldersClubPage(db: AuditDb, filter: WeldersClubListFilter): Promise<WeldersClubListPage> {
+  const t = s.weldersClubSignups;
+  const where = searchLike([t.name, t.email, t.city], filter.q);
+  const total = await countRows(db, t, where);
+  const w = pageWindow(total, filter.page);
+  const rows = total
+    ? await db.select().from(t).where(where).orderBy(desc(t.createdAt), desc(t.id)).limit(w.limit).offset(w.offset)
+    : [];
+  const all = await countRows(db, t);
+  const passive = await countRows(db, t, isNotNull(t.leftAt));
+  return { rows: rows.map(weldersClubRecord), total, page: w.page, active: all - passive, passive };
 }
 
 /* ------------------------------ Ortak ------------------------------ */

@@ -110,3 +110,40 @@ test("yorumlar: onay bekleyenler adreste; servis talepleri: sayılar", async ({ 
   await expect(page.getByText(`${db.serviceRequests.length} talep · ${fresh} yeni`)).toBeVisible();
   expect(problems).toEqual([]);
 });
+
+test("üyeler 50'şer; CSV süzgece uyan hesapların tamamı; rol süzgeci adreste", async ({ page, problems }) => {
+  await page.goto("/yonetim/uyeler");
+  const db = await readDb(page);
+  expect(db.users.length).toBeGreaterThan(50);
+  const pager = page.getByRole("navigation", { name: "Sayfalar" });
+  await expect(pager).toContainText(`1–50 / ${db.users.length}`);
+  await expect(page.getByText(`${db.users.length} üye listeleniyor`)).toBeVisible();
+
+  const csv = await csvOf(page, "CSV İndir");
+  for (const u of db.users) expect(csv).toContain(u.email);
+
+  const business = db.users.filter((u) => u.role === "business");
+  await page.locator("select").filter({ has: page.locator("option[value=business]") }).first().selectOption("business");
+  await expect(page).toHaveURL(/\?rol=business$/);
+  await expect(page.getByText(`${business.length} üye listeleniyor`)).toBeVisible();
+  expect(problems).toEqual([]);
+});
+
+test("mesajlar, Welders Club ve bayilik başvuruları: başlıktaki sayılar tarayıcıdaki kayıtlardan", async ({ page, problems }) => {
+  await page.goto("/yonetim/mesajlar");
+  const db = await readDb(page);
+  const messages = db.supportMessages ?? [];
+  await expect(page.getByText(`${messages.length} mesaj · ${messages.filter((m) => m.status === "new").length} yeni`)).toBeVisible();
+  await page.getByLabel("Tür").selectOption("urun-destek");
+  await expect(page).toHaveURL(/\?tur=urun-destek$/);
+
+  const club = db.weldersClub ?? [];
+  await page.goto("/yonetim/welders-club");
+  const passive = club.filter((m) => m.leftAt).length;
+  await expect(page.getByText(`${club.length - passive} aktif · ${passive} pasif`)).toBeVisible();
+
+  const apps = db.dealerApplications ?? [];
+  await page.goto("/yonetim/bayilik-basvurulari");
+  await expect(page.getByText(`${apps.length} başvuru · ${apps.filter((a) => a.status === "new").length} yeni`)).toBeVisible();
+  expect(problems).toEqual([]);
+});

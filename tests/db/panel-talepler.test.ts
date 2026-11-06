@@ -15,15 +15,15 @@ import {
   adminSetReviewApproved,
   adminSetReviewFeatured,
   adminSetWeldersClubActive,
-  readDealerApplications,
+  readDealerApplicationsPage,
+  readMessagesPage,
   readQuotesForExport,
   readQuotesPage,
   readReviewsPage,
   readServicePage,
-  readSupportMessages,
   readWarrantiesForExport,
   readWarrantiesPage,
-  readWeldersClub,
+  readWeldersClubPage,
   type Actor,
 } from "../../packages/db/src";
 import * as schema from "../../packages/db/src/schema";
@@ -242,9 +242,9 @@ describe("bayilik başvuruları, mesajlar, Welders Club", () => {
       expect(await adminSaveDealerApplication(db, admin, { ...ref("b1"), status: "approved" }, T2)).toEqual(stale);
       expect(await adminSaveSupportMessage(db, admin, { ...ref("m1"), status: "answered" }, T1)).toEqual(saved(T1));
 
-      const [application] = await readDealerApplications(db);
+      const [application] = (await readDealerApplicationsPage(db, 1)).rows;
       expect(application).toMatchObject({ status: "reviewing", adminNote: "Ziyaret", hasShowroom: true, updatedAt: T1.toISOString() });
-      const [message] = await readSupportMessages(db);
+      const [message] = (await readMessagesPage(db, { page: 1 })).rows;
       expect(message).toMatchObject({ type: "urun-destek", status: "answered", productSku: "ZW-1" });
       expect((await audit(client)).map((r) => [r.entity_type, r.entity_label])).toEqual([
         ["dealer_applications", "Kaynak Ltd"],
@@ -261,11 +261,11 @@ describe("bayilik başvuruları, mesajlar, Welders Club", () => {
         [T0],
       );
       expect(await adminSetWeldersClubActive(db, admin, { ...ref("wc1"), active: false }, T1)).toEqual(saved(T1));
-      expect((await readWeldersClub(db))[0]).toMatchObject({ leftAt: T1.toISOString(), updatedAt: T1.toISOString() });
+      expect((await readWeldersClubPage(db, { page: 1 })).rows[0]).toMatchObject({ leftAt: T1.toISOString(), updatedAt: T1.toISOString() });
       // Zaten pasif: hicbir sey yazilmaz.
       expect(await adminSetWeldersClubActive(db, admin, { ...ref("wc1", T1), active: false }, T2)).toEqual(saved(T1));
       expect(await adminSetWeldersClubActive(db, admin, { ...ref("wc1", T1), active: true }, T2)).toEqual(saved(T2));
-      expect((await readWeldersClub(db))[0].leftAt).toBeUndefined();
+      expect((await readWeldersClubPage(db, { page: 1 })).rows[0].leftAt).toBeUndefined();
       expect((await audit(client)).map((r) => r.changes)).toEqual([
         { leftAt: [null, T1.toISOString()] },
         { leftAt: [T1.toISOString(), null] },
@@ -368,6 +368,39 @@ describe("sayfalı listeler", () => {
       expect(all.rows.map((r) => r.id)).toEqual(["r3", "r2", "r1"]);
       expect((await readReviewsPage(db, { page: 1, pending: true })).rows.map((r) => r.id)).toEqual(["r3"]);
       expect((await readReviewsPage(db, { page: 1, q: "ışıklı" })).rows.map((r) => r.id)).toEqual(["r1"]);
+    });
+  });
+
+  it("mesajlar (tür), Welders Club (Türkçe arama, aktif / pasif) ve bayilik başvuruları: sayfa ve sayılar", async () => {
+    await withPanel(async (db, client) => {
+      for (const [id, type, status] of [["m1", "iletisim", "new"], ["m2", "urun-destek", "read"], ["m3", "iletisim", "new"]]) {
+        await client.query(
+          "INSERT INTO support_messages (id, type, status, name, message, created_at, updated_at) VALUES ($1, $2, $3, 'Ali', 'x', $4, $4)",
+          [id, type, status, T0],
+        );
+      }
+      const messages = await readMessagesPage(db, { page: 1, type: "iletisim" });
+      expect(messages).toMatchObject({ total: 2, all: 3, newCount: 2 });
+      expect(messages.rows.map((m) => m.id)).toEqual(["m3", "m1"]);
+
+      for (const [id, name, left] of [["c1", "IŞIK Usta", null], ["c2", "Deneme", T1], ["c3", "Başka", null]] as const) {
+        await client.query(
+          "INSERT INTO welders_club_signups (id, name, email, city, left_at, created_at, updated_at) VALUES ($1, $2, $1 || '@ornek.com', 'Isparta', $3, $4, $4)",
+          [id, name, left, T0],
+        );
+      }
+      const club = await readWeldersClubPage(db, { page: 1, q: "ışık" });
+      expect(club).toMatchObject({ total: 1, active: 2, passive: 1 });
+      expect(club.rows.map((m) => m.id)).toEqual(["c1"]);
+      expect((await readWeldersClubPage(db, { page: 1, q: "ısparta" })).total).toBe(3);
+
+      for (const [id, status] of [["b1", "new"], ["b2", "approved"]]) {
+        await client.query(
+          "INSERT INTO dealer_applications (id, status, company_name, email, created_at, updated_at) VALUES ($1, $2, 'Firma', 'b@ornek.com', $3, $3)",
+          [id, status, T0],
+        );
+      }
+      expect(await readDealerApplicationsPage(db, 1)).toMatchObject({ total: 2, all: 2, newCount: 1, rows: [{ id: "b2" }, { id: "b1" }] });
     });
   });
 });

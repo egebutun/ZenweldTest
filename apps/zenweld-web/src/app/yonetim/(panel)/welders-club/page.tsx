@@ -1,15 +1,30 @@
-import { readWeldersClub } from "@zenweld/db";
+import { Suspense } from "react";
+import { readWeldersClubPage } from "@zenweld/db";
+import { readerOf, weldersClubListFilter } from "@/lib/admin-lists";
 import { hasPanelSession } from "@/lib/server/admin";
 import { database, usesDatabase } from "@/lib/server/db";
 import { WeldersClubClient } from "./WeldersClubClient";
 
+type Params = Promise<Record<string, string | string[] | undefined>>;
+
 /**
- * Welders Club katilimlari. Kayitlar yalnizca veritabaninda tutulur; her
- * acilista ve her kayittan sonra sunucuda okunur (Asama 5, 2. alan;
- * KARARLAR K-100). Demo modunda tarayicidaki kayitlar gosterilir (K-109).
+ * Welders Club katilimlari. Veritabani modunda adresteki suzgecle (arama,
+ * sayfa) yalnizca bir sayfa her acilista ve her kayittan sonra sunucuda
+ * okunur (KARARLAR K-100). Demo modunda tarayicidaki kayitlar (K-109).
  */
-export default async function WeldersClubPage() {
-  if (!usesDatabase()) return <WeldersClubClient />;
+export default async function WeldersClubPage({ searchParams }: { searchParams: Params }) {
+  if (!usesDatabase()) {
+    return (
+      <Suspense>
+        <WeldersClubClient />
+      </Suspense>
+    );
+  }
   if (!(await hasPanelSession())) return null;
-  return <WeldersClubClient members={await readWeldersClub(database())} />;
+  const page = await readWeldersClubPage(database(), weldersClubListFilter(readerOf(await searchParams)));
+  return (
+    <Suspense>
+      <WeldersClubClient page={page} />
+    </Suspense>
+  );
 }

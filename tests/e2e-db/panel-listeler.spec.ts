@@ -111,3 +111,53 @@ test("yorumlar ve servis talepleri: sayılar ve süzgeç veritabanından", async
   await expect(page.getByText(`${service.total} talep · ${service.fresh} yeni`)).toBeVisible();
   expect(problems).toEqual([]);
 });
+
+test("üyeler: 1. sayfayla yalnızca 50 hesap gelir; CSV sunucudan, süzgece uyanların tamamı, şifre özeti yok", async ({ page, problems }) => {
+  await panelLogin(page);
+  const users = await sql<{ email: string; role: string; password_hash: string }>(
+    "SELECT email, role, password_hash FROM users ORDER BY created_at DESC, email ASC",
+  );
+  expect(users.length).toBeGreaterThan(50);
+  const html = await (await page.goto("/yonetim/uyeler"))!.text();
+  expect(html).toContain(users[0].email);
+  expect(html, "51. hesap 1. sayfayla gelmez").not.toContain(users[50].email);
+  await expect(page.getByRole("navigation", { name: "Sayfalar" })).toContainText(`1–50 / ${users.length}`);
+
+  const all = await (await page.request.get("/api/yonetim/csv/uyeler")).json();
+  expect(all.rows).toHaveLength(users.length);
+  expect(all.rows[0]).toMatchObject({ rol: expect.any(String), durum: expect.any(String) });
+  // Ornek musterilerin cogunun sifresi yok (bos); yalnizca sifresi olan hesaplar denetlenir.
+  const text = JSON.stringify(all.rows);
+  const hashed = users.filter((u) => u.password_hash);
+  expect(hashed.length).toBeGreaterThan(0);
+  for (const u of hashed) expect(text).not.toContain(u.password_hash);
+  const admins = await (await page.request.get("/api/yonetim/csv/uyeler?rol=admin")).json();
+  expect(admins.rows).toHaveLength(users.filter((u) => u.role === "admin").length);
+  expect(admins.rows.every((r: { rol: string }) => r.rol === "Yönetici")).toBe(true);
+  expect(problems).toEqual([]);
+});
+
+test("mesajlar, Welders Club ve bayilik başvuruları: sayılar ve süzgeç veritabanından", async ({ page, problems }) => {
+  await panelLogin(page);
+  const [m] = await sql<{ total: number; fresh: number; contact: number }>(
+    `SELECT count(*)::int AS total, count(*) FILTER (WHERE status = 'new')::int AS fresh,
+            count(*) FILTER (WHERE type = 'iletisim')::int AS contact FROM support_messages`,
+  );
+  await page.goto("/yonetim/mesajlar?tur=iletisim");
+  await expect(page.getByText(`${m.total} mesaj · ${m.fresh} yeni`)).toBeVisible();
+  await expect(page.getByLabel("Tür")).toHaveValue("iletisim");
+  if (m.contact === 0) await expect(page.getByText(m.total === 0 ? "Henüz mesaj yok." : "Bu türde mesaj yok.")).toBeVisible();
+
+  const [c] = await sql<{ active: number; passive: number }>(
+    "SELECT count(*) FILTER (WHERE left_at IS NULL)::int AS active, count(*) FILTER (WHERE left_at IS NOT NULL)::int AS passive FROM welders_club_signups",
+  );
+  await page.goto("/yonetim/welders-club");
+  await expect(page.getByText(`${c.active} aktif · ${c.passive} pasif`)).toBeVisible();
+
+  const [a] = await sql<{ total: number; fresh: number }>(
+    "SELECT count(*)::int AS total, count(*) FILTER (WHERE status = 'new')::int AS fresh FROM dealer_applications",
+  );
+  await page.goto("/yonetim/bayilik-basvurulari");
+  await expect(page.getByText(`${a.total} başvuru · ${a.fresh} yeni`)).toBeVisible();
+  expect(problems).toEqual([]);
+});

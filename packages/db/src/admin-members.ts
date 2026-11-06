@@ -1,8 +1,10 @@
-import { and, desc, eq, ne, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ne, sql, type SQL } from "drizzle-orm";
 import type { User, UserRole, UserStatus } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
+import { pageWindow, type ListPage } from "@zenweld/utils";
 import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
 import { checkRow, fail, isFailure, saved, text, unchanged, type PanelResult, type Saved } from "./panel";
+import { countRows, searchLike } from "./panel-lists";
 import { userRecord } from "./read";
 import * as s from "./schema";
 
@@ -10,7 +12,8 @@ import * as s from "./schema";
  * PANEL › UYELER SUNUCUDA (veritabani modu; Asama 5, 6. alan; KARARLAR K-34,
  * K-35, K-36, K-99)
  *
- * Ekran butun hesaplari (yoneticiler dahil) okur; sifre ozeti gonderilmez.
+ * Ekran hesaplari (yoneticiler dahil) sayfa sayfa okur (50; panel-lists.ts);
+ * sifre ozeti gonderilmez. CSV suzgece uyan hesaplarin tamamidir.
  * Yonetici bir uyenin rolunu ve durumunu (Aktif / Askida) degistirir ya da
  * uyeyi siler. Kurallar demo moduyla aynidir:
  * - Yonetici kendi rolunu degistiremez, kendini askiya alamaz (K-35).
@@ -28,10 +31,44 @@ import * as s from "./schema";
 const ROLES: UserRole[] = ["individual", "business", "admin"];
 const STATUSES: UserStatus[] = ["active", "suspended"];
 
-/** Uyeler ekrani: butun hesaplar, en yeni kayit once; sifre ozeti bos. */
-export async function readMembersPanel(db: AuditDb): Promise<User[]> {
-  const rows = await db.select().from(s.users).orderBy(desc(s.users.createdAt), s.users.email);
-  return rows.map((u) => ({ ...userRecord(u), passwordHash: "", updatedAt: u.updatedAt.toISOString() }));
+export interface MemberListFilter {
+  /** E-posta, ad soyad, firma */
+  q?: string;
+  role?: UserRole;
+  status?: UserStatus;
+  page: number;
+}
+
+function memberWhere(filter: Omit<MemberListFilter, "page">): SQL | undefined {
+  const t = s.users;
+  return and(
+    filter.role ? eq(t.role, filter.role) : undefined,
+    filter.status ? eq(t.status, filter.status) : undefined,
+    searchLike([t.email, sql`${t.firstName} || ' ' || ${t.lastName}`, t.companyName], filter.q),
+  );
+}
+
+const memberRecord = (u: typeof s.users.$inferSelect): User => ({
+  ...userRecord(u),
+  passwordHash: "",
+  updatedAt: u.updatedAt.toISOString(),
+});
+
+/** Uyeler ekrani: suzgece uyan hesaplarin bir sayfasi, en yeni kayit once; sifre ozeti bos. */
+export async function readMembersPage(db: AuditDb, filter: MemberListFilter): Promise<ListPage<User>> {
+  const where = memberWhere(filter);
+  const total = await countRows(db, s.users, where);
+  const w = pageWindow(total, filter.page);
+  const rows = total
+    ? await db.select().from(s.users).where(where).orderBy(desc(s.users.createdAt), asc(s.users.email)).limit(w.limit).offset(w.offset)
+    : [];
+  return { rows: rows.map(memberRecord), total, page: w.page };
+}
+
+/** Uyelerin CSV'si: suzgece uyan hesaplarin tamami (sifre ozeti bos). */
+export async function readMembersForExport(db: AuditDb, filter: Omit<MemberListFilter, "page">): Promise<User[]> {
+  const rows = await db.select().from(s.users).where(memberWhere(filter)).orderBy(desc(s.users.createdAt), asc(s.users.email));
+  return rows.map(memberRecord);
 }
 
 type UserRow = typeof s.users.$inferSelect;

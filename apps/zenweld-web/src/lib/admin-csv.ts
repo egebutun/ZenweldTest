@@ -1,4 +1,5 @@
-import type { Quote, WarrantyRecord } from "@zenweld/data";
+import { ROLE_LABELS } from "@zenweld/auth";
+import type { Quote, User, UserStatus, WarrantyRecord } from "@zenweld/data";
 
 /**
  * PANEL › CSV INDIR — SATIRLAR
@@ -56,5 +57,25 @@ export function warrantyCsvRows(warranties: WarrantyRecord[], productName: (id: 
     bitis: w.expiresAt,
     uzatilmis: w.extended ? "evet" : "hayır",
     kayit: w.registeredAt,
+  }));
+}
+
+export const MEMBER_STATUS_LABEL: Record<UserStatus, string> = {
+  active: "Aktif",
+  suspended: "Askıda",
+};
+
+export function memberCsvRows(users: User[]): CsvRow[] {
+  return users.map((u) => ({
+    ad: u.firstName,
+    soyad: u.lastName,
+    eposta: u.email,
+    rol: ROLE_LABELS[u.role],
+    durum: MEMBER_STATUS_LABEL[u.status],
+    firma: u.companyName ?? "",
+    vergiNo: u.taxNumber ?? "",
+    telefon: u.phone,
+    sehir: u.city ?? "",
+    kayitTarihi: u.createdAt,
   }));
 }

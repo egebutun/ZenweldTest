@@ -2,7 +2,7 @@ import { afterAll, describe, expect, it } from "vitest";
 import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Pool, type PoolClient } from "pg";
 import { tr } from "@zenweld/i18n";
-import { adminDeleteMember, adminSaveMember, readMembersPanel, type Actor } from "../../packages/db/src";
+import { adminDeleteMember, adminSaveMember, readMembersForExport, readMembersPage, type Actor } from "../../packages/db/src";
 import * as schema from "../../packages/db/src/schema";
 import { closePool, inTransaction, testDatabaseUrl } from "./ortak";
 
@@ -48,7 +48,7 @@ const audit = async (client: PoolClient) =>
 describe("üyeler", () => {
   it("bütün hesaplar okunur (yöneticiler dahil); şifre özeti gönderilmez", async () => {
     await withMembers(async (db) => {
-      const members = await readMembersPanel(db);
+      const members = (await readMembersPage(db, { page: 1 })).rows;
       const mine = members.filter((m) => ["y1", "y2", "u1"].includes(m.id));
       expect(mine.map((m) => [m.id, m.role, m.passwordHash, m.updatedAt])).toEqual([
         ["u1", "individual", "", T0.toISOString()],
@@ -56,6 +56,23 @@ describe("üyeler", () => {
         ["y2", "admin", "", T0.toISOString()],
       ]);
       expect(members.every((m) => m.passwordHash === "")).toBe(true);
+    });
+  });
+
+  it("sayfalı liste: rol, durum, Türkçe arama (ad soyad, e-posta, firma); CSV süzgece uyanların tamamı", async () => {
+    await withMembers(async (db, client) => {
+      await client.query("UPDATE users SET first_name = 'IŞIK', company_name = 'Isparta Ltd' WHERE id = 'u1'");
+      const ids = async (filter: Parameters<typeof readMembersPage>[1]) =>
+        (await readMembersPage(db, filter)).rows.map((m) => m.id).filter((id) => ["y1", "y2", "u1"].includes(id));
+      expect(await ids({ page: 1, role: "admin", status: "active" })).toEqual(["y1", "y2"]);
+      expect(await ids({ page: 1, role: "individual" })).toEqual(["u1"]);
+      for (const q of ["ışık u1", "IŞIK", "ısparta", "u1@ornek"]) expect(await ids({ page: 1, q }), q).toEqual(["u1"]);
+      const page = await readMembersPage(db, { page: 1, q: "işık" });
+      expect(page).toMatchObject({ total: 1, page: 1 });
+      expect(page.rows[0].passwordHash).toBe("");
+      const all = await readMembersForExport(db, { role: "admin", status: "active" });
+      expect(all.map((m) => m.id)).toEqual(["y1", "y2"]);
+      expect(all.every((m) => m.passwordHash === "")).toBe(true);
     });
   });
 

@@ -1520,14 +1520,17 @@ Kod: `packages/data/src/file-rules.ts` (türler, boyut, adres),
 
 ## 24. Panel listeleri: sayfalama ve arama
 
-Uzun panel listeleri (bugün Siparişler, İade Talepleri, Teklifler, Servis
-Talepleri, Garantiler ve Yorumlar) iki modda aynı kurallarla sayfalanır. Veritabanı modunda sunucu yalnızca istenen sayfanın
-kayıtlarını okur ve gönderir; demo modunda aynı hesap tarayıcıda yapılır.
+Uzun panel listeleri (Siparişler, İade Talepleri, Teklifler, Servis
+Talepleri, Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları, Mesajlar ve
+Welders Club) iki modda aynı kurallarla sayfalanır. Veritabanı modunda
+sunucu yalnızca istenen sayfanın kayıtlarını okur ve gönderir; demo modunda
+aynı hesap tarayıcıda yapılır.
 
 - **Sayfa:** Sayfa başına 50 kayıt. Sayfa numarası adreste durur
   (`?sayfa=2`). Son sayfadan büyük bir numara son sayfayı açar.
 - **Sıra:** Yeniden eskiye; aynı anda oluşanlar kayıt numarasına göre
-  (büyük numara önce).
+  (büyük numara önce). Üyelerde aynı anda açılan hesaplar e-postaya göre
+  (A'dan Z'ye).
 - **Süzgeç ve arama adreste:** Durum `?durum=`, arama `?ara=`. Süzgeç ya
   da arama değişince 1. sayfaya dönülür. Arama en çok 100 karakterdir.
 - **Türkçe arama:** Büyük-küçük harf fark etmez; I, İ, ı ve i aynı harf
@@ -1552,8 +1555,19 @@ kayıtlarını okur ve gönderir; demo modunda aynı hesap tarayıcıda yapılı
   (`?bekleyen=1`). Başlıkta süzgece uyan yorum sayısı, bütün yorumlardaki
   onay bekleyen sayısı ve anasayfada görünebilenler (onaylı, öne çıkarılmış,
   ürünü yayında).
-- **CSV İndir** (Teklifler, Garantiler): seçili süzgece uyan kayıtların
-  tamamı, sıra listedeki gibi; görünen sayfa değil.
+- **Üyeler:** Arama e-posta, ad soyad ve firma adında; rol (`?rol=`) ve
+  durum (`?durum=`) süzgeci. Başlıktaki sayı süzgece uyan hesaplar
+  (yöneticiler dahil).
+  - **Örnek:** "ışık u1" ve "IŞIK" aramaları adı "IŞIK", soyadı "u1" olan
+    üyeyi; "ısparta" firması "Isparta Ltd" olan üyeyi bulur.
+- **Mesajlar:** Tür süzgeci (`?tur=`: iletişim formu ya da ürün sorusu).
+  Başlıktaki "<n> mesaj · <n> yeni" bütün mesajları sayar.
+- **Welders Club:** Arama ad, e-posta ve şehirde. Başlıktaki "<n> aktif · <n>
+  pasif" bütün kayıtları sayar.
+- **Bayilik Başvuruları:** Başlıktaki "<n> başvuru · <n> yeni" bütün
+  başvuruları sayar.
+- **CSV İndir** (Teklifler, Garantiler, Üyeler): seçili süzgece uyan
+  kayıtların tamamı, sıra listedeki gibi; görünen sayfa değil.
 - Testler: `tests/unit/panel-listeleri.test.ts` (demo modu) ile
-  `tests/db/panel-satis.test.ts` ve `tests/db/panel-talepler.test.ts`
-  (veritabanı) aynı örnekleri dener.
+  `tests/db/panel-satis.test.ts`, `tests/db/panel-talepler.test.ts` ve
+  `tests/db/panel-uyeler.test.ts` (veritabanı) aynı örnekleri dener.

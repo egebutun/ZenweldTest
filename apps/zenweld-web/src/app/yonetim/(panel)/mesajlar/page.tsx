@@ -1,16 +1,31 @@
-import { readSupportMessages } from "@zenweld/db";
+import { Suspense } from "react";
+import { readMessagesPage } from "@zenweld/db";
+import { messageListFilter, readerOf } from "@/lib/admin-lists";
 import { hasPanelSession } from "@/lib/server/admin";
 import { database, usesDatabase } from "@/lib/server/db";
 import { MessagesClient } from "./MessagesClient";
 
+type Params = Promise<Record<string, string | string[] | undefined>>;
+
 /**
  * Mesajlar: sitedeki iletisim formu ve urun sayfasindaki destek sorulari.
- * Kayitlar yalnizca veritabaninda tutulur; her acilista ve her kayittan
- * sonra sunucuda okunur (Asama 5, 2. alan; KARARLAR K-100). Demo modunda
- * tarayicidaki kayitlar gosterilir (KARARLAR K-109).
+ * Veritabani modunda adresteki suzgecle (tur, sayfa) yalnizca bir sayfa her
+ * acilista ve her kayittan sonra sunucuda okunur (KARARLAR K-100). Demo
+ * modunda tarayicidaki kayitlar gosterilir (KARARLAR K-109).
  */
-export default async function MessagesPage() {
-  if (!usesDatabase()) return <MessagesClient />;
+export default async function MessagesPage({ searchParams }: { searchParams: Params }) {
+  if (!usesDatabase()) {
+    return (
+      <Suspense>
+        <MessagesClient />
+      </Suspense>
+    );
+  }
   if (!(await hasPanelSession())) return null;
-  return <MessagesClient messages={await readSupportMessages(database())} />;
+  const page = await readMessagesPage(database(), messageListFilter(readerOf(await searchParams)));
+  return (
+    <Suspense>
+      <MessagesClient page={page} />
+    </Suspense>
+  );
 }

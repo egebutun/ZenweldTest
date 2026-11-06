@@ -204,8 +204,9 @@ alan seçilir, ekran okuyucu alanı etiketiyle okur.
 
 - Listede soluk görünür; sitede görünmez (adresi açılırsa 404).
 
-**Uzun listeler** (bugün Siparişler, İade Talepleri, Teklifler, Servis
-Talepleri, Garantiler ve Yorumlar; kurallar
+**Uzun listeler** (Siparişler, İade Talepleri, Teklifler, Servis Talepleri,
+Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları, Mesajlar ve Welders
+Club; kurallar
 [IS-KURALLARI.md › 24](IS-KURALLARI.md#24-panel-listeleri-sayfalama-ve-arama)):
 
 - Sayfa başına 50 kayıt. Tablonun altında "1–50 / 133", **← Önceki**,
@@ -217,7 +218,7 @@ Talepleri, Garantiler ve Yorumlar; kurallar
   harf sayılır.
 - Veritabanı modunda sunucu yalnızca o sayfanın kayıtlarını gönderir; yeni
   sayfa gelene kadar tablo soluk görünür.
-- **CSV İndir** (Teklifler, Garantiler) seçili süzgece uyan kayıtların
+- **CSV İndir** (Teklifler, Garantiler, Üyeler) seçili süzgece uyan kayıtların
   tamamını indirir, yalnızca görünen sayfayı değil. Veritabanı modunda
   satırlar sunucudan alınır; alınamazsa "CSV hazırlanamadı. Sayfayı
   yenileyip tekrar deneyin." yazar.
@@ -1382,8 +1383,7 @@ kategori formu, grup formu) ve Ürünler (liste, ürün formu) veritabanıyla
 çalışır (KARARLAR K-99, K-101). Stok Matrisi henüz tarayıcıdaki veriyle
 çalışır (4. alan). Kurallar
 [Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
-ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur (Teklifler,
-Servis Talepleri, Garantiler ve Yorumlar'da yalnızca açılan sayfa); aynı
+ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
 kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
 sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 Ekranlar ve kurallar demo moduyla aynıdır; farklar:
@@ -1833,16 +1833,20 @@ Ekranlar ve kurallar demo moduyla aynıdır; farklar:
 
 ## 15. Üyeler
 
-Adres: `/yonetim/uyeler`. Açıklama: "<N> üye listeleniyor".
+Adres: `/yonetim/uyeler`. Açıklama: "<N> üye listeleniyor" (süzgece uyan
+hesaplar).
 
 Yalnızca ana sitenin üyeleri (bireysel, kurumsal) ve yönetici hesapları
 listelenir. Bayiler ana sitenin üyesi değildir.
 
-- **CSV İndir** (`zenweld-uyeler.csv`): ad, soyad, e-posta, rol, durum,
-  firma, vergi no, telefon, şehir, kayıt tarihi.
-- **Arama:** "İsim, e-posta veya firma ara…".
-- **Rol süzgeci:** Tüm roller / Bireysel / Kurumsal / Yönetici.
-- **Durum süzgeci:** Tüm durumlar / Aktif / Askıda.
+- **CSV İndir** (`zenweld-uyeler.csv`; süzgece uyan hesapların tamamı): ad,
+  soyad, e-posta, rol, durum, firma, vergi no, telefon, şehir, kayıt tarihi.
+- **Arama:** "İsim, e-posta veya firma ara…" (adreste `?ara=`).
+- **Rol süzgeci:** Tüm roller / Bireysel / Kurumsal / Yönetici (adreste
+  `?rol=`).
+- **Durum süzgeci:** Tüm durumlar / Aktif / Askıda (adreste `?durum=`).
+- En yeni hesap önce (aynı anda açılanlar e-postaya göre); sayfa başına 50
+  (bkz. [Uzun listeler](#2-ortak-davranışlar)).
 - **Tablo:**
   - Üye: ad soyad, e-posta, telefon.
   - Firma / Vergi No (yoksa —).
@@ -1875,8 +1879,9 @@ listelenir. Bayiler ana sitenin üyesi değildir.
 ### Veritabanı modunda Üyeler
 
 Veritabanı modunda (`DATA_SOURCE=database`) Üyeler ekranı veritabanındaki
-bütün hesapları (yöneticiler dahil) gösterir; ekran her açılışta ve her
-kayıttan sonra sunucudan okunur, şifre özeti tarayıcıya gönderilmez
+hesapları (yöneticiler dahil) gösterir; ekran her açılışta ve her kayıttan
+sonra sunucudan okunur, yalnızca açılan sayfanın hesapları gelir (arama ve
+süzgeç sunucuda yapılır), şifre özeti tarayıcıya ve CSV'ye gönderilmez
 (KARARLAR K-99). Ekran ve kurallar demo moduyla aynıdır; farklar:
 
 - Rol, **Askıya al** / **Aktifleştir** ve **Sil** sunucuya yazılır ve
@@ -2453,7 +2458,9 @@ Menüde Bayi ve Satış Ağı grubundadır (KARARLAR K-100). Sitedeki "Bayimiz
 Olun" formundan gelen başvurular. Başlık altı: "<n> başvuru · <n> yeni".
 
 - **Tablo:** Firma (ad, tarih-saat), Yetkili (ad, e-posta), Şehir, Durum.
-  En yeni başvuru üstte. Boşsa "Henüz bayilik başvurusu yok."
+  En yeni başvuru üstte; sayfa başına 50 (bkz.
+  [Uzun listeler](#2-ortak-davranışlar)). Boşsa "Henüz bayilik başvurusu
+  yok."
 - **Satıra tıklayınca:** Vergi dairesi / no, Faaliyet alanı, Sektördeki yıl,
   Çalıştığı markalar, Showroom var mı, Servis kabiliyeti, E-posta, Telefon
   ve Not.
@@ -2469,10 +2476,12 @@ Menüde Müşteriler ve Servis grubundadır. Sitedeki iletişim formundan ve
 ürün sayfasındaki destek sohbetinden gelen sorular. Başlık altı: "<n> mesaj
 · <n> yeni".
 
-- **Süzgeç:** Bütün mesajlar / İletişim formu / Ürün sorusu.
+- **Süzgeç:** Bütün mesajlar / İletişim formu / Ürün sorusu (adreste
+  `?tur=`). Başlık altındaki sayılar bütün mesajlardır.
 - **Tablo:** Kimden (ad ya da e-posta, tarih-saat), Tür, Konu / Ürün
   (iletişim formunda konu; ürün sorusunda ürün adı ve kodu), Durum. En yeni
-  mesaj üstte. Boşsa "Henüz mesaj yok." / "Bu türde mesaj yok."
+  mesaj üstte; sayfa başına 50 (bkz. [Uzun listeler](#2-ortak-davranışlar)).
+  Boşsa "Henüz mesaj yok." / "Bu türde mesaj yok."
 - **Satıra tıklayınca:** Mesajın tamamı, E-posta, Telefon, Sayfa (formun
   gönderildiği sayfa; tıklayınca yeni sekmede açılır).
   - **Durum** (Yeni, Okundu, Yanıtlandı) ve iç not; **Kaydet** →
@@ -2485,9 +2494,11 @@ Menüde Müşteriler ve Servis grubundadır. Sitedeki iletişim formundan ve
 Menüde Müşteriler ve Servis grubundadır. Sitedeki Welders Club formundan
 katılanlar. Başlık altı: "<n> aktif · <n> pasif".
 
-- **Arama:** "Ad, e-posta veya şehir ara…".
+- **Arama:** "Ad, e-posta veya şehir ara…" (adreste `?ara=`). Başlık
+  altındaki sayılar bütün kayıtlardır.
 - **Tablo:** Ad Soyad, E-posta, Şehir, Katılım tarihi, Durum ("Aktif" ya da
-  "Pasif · <tarih>"), İşlem. En yeni katılım üstte. Boşsa "Henüz Welders
+  "Pasif · <tarih>"), İşlem. En yeni katılım üstte; sayfa başına 50 (bkz.
+  [Uzun listeler](#2-ortak-davranışlar)). Boşsa "Henüz Welders
   Club katılımı yok." / "Aramanıza uygun kayıt yok."
 - **Pasife al:** Kulüpten ayrılmak isteyen kişi pasife alınır; satır soluk
   görünür. **Aktif yap** geri alır.
@@ -2500,9 +2511,10 @@ Veritabanı modunda Teklifler, Servis Talepleri, Garantiler, Yorumlar,
 Bayilik Başvuruları, Mesajlar ve Welders Club veritabanıyla çalışır
 (KARARLAR K-99, K-100). Kurallar
 [Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
-ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
-kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
-sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
+ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur (listelerde
+yalnızca açılan sayfa; arama ve süzgeç sunucuda yapılır); aynı kaydı iki
+kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan sonra değişti;
+sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 
 - Yöneticinin kendi kaydı uyarı vermez: örneğin teklifin durumu seçilip
   hemen ardından iç not yazılırsa ikisi de kaydedilir.

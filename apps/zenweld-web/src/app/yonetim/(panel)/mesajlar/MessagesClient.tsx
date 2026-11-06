@@ -2,11 +2,13 @@
 
 import { Fragment, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import type { SupportMessageRecord } from "@zenweld/db";
+import type { CountedListPage, SupportMessageRecord } from "@zenweld/db";
 import { listSupportMessages, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Select, Textarea } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { ListPager, useListQuery } from "@/components/admin/ListControls";
+import { messageListFilter, messageListPage } from "@/lib/admin-lists";
 import { useRequestActions } from "@/lib/admin-requests";
 
 type Status = SupportMessageRecord["status"];
@@ -29,32 +31,40 @@ const TYPE: Record<SupportMessageRecord["type"], string> = {
  * sorular. Durum ve ic not kaydedilir; yanit e-postayla ayrica verilir.
  * Mesaj silinmez.
  */
-/** messages: veritabani modunda sunucunun okudugu kayitlar; demo modunda verilmez, tarayicidaki kayitlar gosterilir (KARARLAR K-109). */
-export function MessagesClient({ messages: fromServer }: { messages?: SupportMessageRecord[] }) {
+/**
+ * page: veritabani modunda sunucunun okudugu sayfa (50); demo modunda
+ * verilmez, tarayicidaki kayitlar gosterilir (KARARLAR K-109). Tur ve sayfa
+ * adreste durur.
+ */
+export function MessagesClient({ page }: { page?: CountedListPage<SupportMessageRecord> }) {
   const db = useDatabase();
-  const messages = fromServer ?? listSupportMessages(db);
-  const [type, setType] = useState("");
+  const list = useListQuery();
+  const filter = messageListFilter(list.get);
+  const data = page ?? messageListPage(listSupportMessages(db), filter);
   const [open, setOpen] = useState<string | null>(null);
   // Kayittan sonra detay yeniden kurulur (key: updatedAt); "Kaydedildi" bu yuzden burada tutulur.
   const [savedId, setSavedId] = useState<string | null>(null);
-  const shown = messages.filter((m) => !type || m.type === type);
+  const shown = data.rows;
 
   return (
     <>
       <AdminPageHeader
         title="Mesajlar"
-        description={`${messages.length} mesaj · ${messages.filter((m) => m.status === "new").length} yeni`}
+        description={`${data.all} mesaj · ${data.newCount} yeni`}
       />
 
       <div className="mb-4 sm:w-64">
-        <Select aria-label="Tür" value={type} onChange={(e) => setType(e.target.value)}>
+        <Select aria-label="Tür" value={filter.type ?? ""} onChange={(e) => list.go({ tur: e.target.value || undefined })}>
           <option value="">Bütün mesajlar</option>
           <option value="iletisim">{TYPE.iletisim}</option>
           <option value="urun-destek">{TYPE["urun-destek"]}</option>
         </Select>
       </div>
 
-      <div className="overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white">
+      <div
+        className={`overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white transition-opacity ${list.pending ? "opacity-60" : ""}`}
+        aria-busy={list.pending}
+      >
         <table className="w-full text-sm">
           <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
             <tr>
@@ -109,13 +119,14 @@ export function MessagesClient({ messages: fromServer }: { messages?: SupportMes
             {shown.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-10 text-center text-zw-grey-500">
-                  {messages.length === 0 ? "Henüz mesaj yok." : "Bu türde mesaj yok."}
+                  {data.all === 0 ? "Henüz mesaj yok." : "Bu türde mesaj yok."}
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+      <ListPager page={data.page} total={data.total} hrefFor={(p) => list.hrefWith({ sayfa: p > 1 ? String(p) : undefined })} />
     </>
   );
 }

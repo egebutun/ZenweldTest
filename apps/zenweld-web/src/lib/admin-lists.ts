@@ -1,5 +1,21 @@
-import type { Order, OrderStatus, ProductReview, Quote, QuoteStatus, ReturnRequest, ServiceRequest, User, WarrantyRecord } from "@zenweld/data";
 import type {
+  Order,
+  OrderStatus,
+  ProductReview,
+  Quote,
+  QuoteStatus,
+  ReturnRequest,
+  ServiceRequest,
+  User,
+  UserRole,
+  UserStatus,
+  WarrantyRecord,
+} from "@zenweld/data";
+import type {
+  CountedListPage,
+  DealerApplicationRecord,
+  MemberListFilter,
+  MessageListFilter,
   OrderListFilter,
   OrderListPage,
   QuoteListFilter,
@@ -10,6 +26,10 @@ import type {
   WarrantyListFilter,
   WarrantyListPage,
   WarrantyState,
+  SupportMessageRecord,
+  WeldersClubListFilter,
+  WeldersClubListPage,
+  WeldersClubRecord,
 } from "@zenweld/db";
 import { pageOf, searchMatches, type ListPage } from "@zenweld/utils";
 
@@ -150,4 +170,74 @@ export function reviewListPage(reviews: ProductReview[], featuredCount: number, 
     (r) => (!filter.pending || !r.approved) && searchMatches(filter.q ?? "", [r.authorName, r.body]),
   );
   return { ...pageOf(matching, filter.page), pendingCount: reviews.filter((r) => !r.approved).length, featuredCount };
+}
+
+/* ------------------------------ Uyeler ------------------------------ */
+
+const ROLES: UserRole[] = ["individual", "business", "admin"];
+const STATUSES: UserStatus[] = ["active", "suspended"];
+
+export function memberListFilter(get: ParamReader): MemberListFilter {
+  const role = get("rol") as UserRole | undefined;
+  const status = get("durum") as UserStatus | undefined;
+  return {
+    q: get("ara"),
+    role: role && ROLES.includes(role) ? role : undefined,
+    status: status && STATUSES.includes(status) ? status : undefined,
+    page: pageParam(get),
+  };
+}
+
+/** Suzgece uyan hesaplar, en yeni once (ayni anda olusanlar e-postaya gore); CSV'nin tamami da budur. */
+export function matchingMembers(users: User[], filter: Omit<MemberListFilter, "page">): User[] {
+  return [...users]
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.email.localeCompare(b.email))
+    .filter(
+      (u) =>
+        (!filter.role || u.role === filter.role) &&
+        (!filter.status || u.status === filter.status) &&
+        searchMatches(filter.q ?? "", [u.email, `${u.firstName} ${u.lastName}`, u.companyName]),
+    );
+}
+
+export function memberListPage(users: User[], filter: MemberListFilter): ListPage<User> {
+  return pageOf(matchingMembers(users, filter), filter.page);
+}
+
+/* ------------------------------ Mesajlar ------------------------------ */
+
+const MESSAGE_TYPES: SupportMessageRecord["type"][] = ["iletisim", "urun-destek"];
+
+export function messageListFilter(get: ParamReader): MessageListFilter {
+  const type = get("tur") as SupportMessageRecord["type"] | undefined;
+  return { type: type && MESSAGE_TYPES.includes(type) ? type : undefined, page: pageParam(get) };
+}
+
+export function messageListPage(messages: SupportMessageRecord[], filter: MessageListFilter): CountedListPage<SupportMessageRecord> {
+  const matching = newestFirst(messages, (m) => m.createdAt, (m) => m.id).filter((m) => !filter.type || m.type === filter.type);
+  return { ...pageOf(matching, filter.page), all: messages.length, newCount: messages.filter((m) => m.status === "new").length };
+}
+
+/* ------------------------------ Welders Club ------------------------------ */
+
+export function weldersClubListFilter(get: ParamReader): WeldersClubListFilter {
+  return { q: get("ara"), page: pageParam(get) };
+}
+
+export function weldersClubListPage(members: WeldersClubRecord[], filter: WeldersClubListFilter): WeldersClubListPage {
+  const matching = newestFirst(members, (m) => m.createdAt, (m) => m.id).filter((m) =>
+    searchMatches(filter.q ?? "", [m.name, m.email, m.city]),
+  );
+  const passive = members.filter((m) => m.leftAt).length;
+  return { ...pageOf(matching, filter.page), active: members.length - passive, passive };
+}
+
+/* ------------------------------ Bayilik basvurulari ------------------------------ */
+
+export function dealerApplicationListPage(applications: DealerApplicationRecord[], page: number): CountedListPage<DealerApplicationRecord> {
+  return {
+    ...pageOf(newestFirst(applications, (a) => a.createdAt, (a) => a.id), page),
+    all: applications.length,
+    newCount: applications.filter((a) => a.status === "new").length,
+  };
 }

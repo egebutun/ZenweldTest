@@ -666,6 +666,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       yalnızca görünen 50 kaydı değil, süzgece uyan kayıtların tamamını
       indirir (örnek veride 54 kayıt). Oturumsuz
       `/api/yonetim/csv/garantiler` 401 verir.
+- [ ] Üyeler, Mesajlar, Welders Club ve Bayilik Başvuruları da 50'şer
+      sayfalanır. Üyeler'de rol süzgeci adrese yazılır (`?rol=business`)
+      ve açıklamadaki sayı süzgece uyan hesaplardır; **CSV İndir** bütün
+      sayfalardaki hesapları indirir, CSV'de şifre özeti yoktur. Mesajlar'da
+      tür süzgeci `?tur=` olur; başlıktaki "<n> mesaj · <n> yeni", Welders
+      Club'da "<n> aktif · <n> pasif" bütün kayıtları sayar.
 - [ ] Havale siparişinde **Ödeme Alındı** → Hazırlanıyor.
 - [ ] Kargo firması ve takip numarası olmadan **Kargoya Ver** çalışmaz;
       girilince Kargoda; müşteri Siparişlerim'de takip numarasını görür.

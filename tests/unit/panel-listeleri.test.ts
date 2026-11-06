@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
 import type { Order, ProductReview, Quote, ReturnRequest, ServiceRequest, User, WarrantyRecord } from "@zenweld/data";
 import { pageOf, pageWindow, searchFold, searchMatches } from "@zenweld/utils";
-import { quoteCsvRows } from "@/lib/admin-csv";
+import type { DealerApplicationRecord, SupportMessageRecord, WeldersClubRecord } from "@zenweld/db";
+import { memberCsvRows, quoteCsvRows } from "@/lib/admin-csv";
 import {
+  dealerApplicationListPage,
+  matchingMembers,
+  memberListFilter,
+  messageListFilter,
+  messageListPage,
+  weldersClubListPage,
   matchingQuotes,
   matchingWarranties,
   orderListFilter,
@@ -197,5 +204,72 @@ describe("Yorumlar listesi (demo modu)", () => {
     expect(all.rows.map((r) => r.id)).toEqual(["r3", "r2", "r1"]);
     expect(reviewListPage(reviews, 1, { page: 1, pending: true }).rows.map((r) => r.id)).toEqual(["r3"]);
     expect(reviewListPage(reviews, 1, { page: 1, q: "ışıklı" }).rows.map((r) => r.id)).toEqual(["r1"]);
+  });
+});
+
+/* tests/db/panel-uyeler.test.ts ve panel-talepler.test.ts ile ayni ornekler. */
+
+describe("Üyeler listesi (demo modu)", () => {
+  const user = (id: string, role: User["role"], extra: Partial<User> = {}) =>
+    ({ id, role, status: "active", email: `${id}@ornek.com`, firstName: "Ad", lastName: id, createdAt: T0, ...extra }) as User;
+  const users = [user("u1", "individual", { firstName: "IŞIK", companyName: "Isparta Ltd" }), user("y2", "admin"), user("y1", "admin")];
+
+  it("adresteki süzgeçler: ?ara=, ?rol=, ?durum=; bilinmeyen değer yok sayılır", () => {
+    expect(memberListFilter((n) => ({ ara: "x", rol: "admin", durum: "suspended" })[n])).toEqual({
+      q: "x",
+      role: "admin",
+      status: "suspended",
+      page: 1,
+    });
+    expect(memberListFilter((n) => ({ rol: "yok", durum: "yok" })[n])).toMatchObject({ role: undefined, status: undefined });
+  });
+
+  it("aynı anda açılanlar e-postaya göre; rol, durum, Türkçe arama; CSV", () => {
+    const ids = (filter: Parameters<typeof matchingMembers>[1]) => matchingMembers(users, filter).map((u) => u.id);
+    expect(ids({ role: "admin", status: "active" })).toEqual(["y1", "y2"]);
+    expect(ids({ role: "individual" })).toEqual(["u1"]);
+    for (const q of ["ışık u1", "IŞIK", "ısparta", "u1@ornek"]) expect(ids({ q }), q).toEqual(["u1"]);
+    expect(memberCsvRows([users[0]])[0]).toMatchObject({ ad: "IŞIK", rol: "Bireysel", durum: "Aktif", firma: "Isparta Ltd" });
+  });
+});
+
+describe("Mesajlar, Welders Club, Bayilik Başvuruları (demo modu)", () => {
+  it("mesajlar: ?tur=; sayılar bütün mesajlarda", () => {
+    expect(messageListFilter((n) => ({ tur: "urun-destek" })[n]).type).toBe("urun-destek");
+    expect(messageListFilter((n) => ({ tur: "yok" })[n]).type).toBeUndefined();
+    const messages = (
+      [
+        ["m1", "iletisim", "new"],
+        ["m2", "urun-destek", "read"],
+        ["m3", "iletisim", "new"],
+      ] as const
+    ).map(([id, type, status]) => ({ id, type, status, createdAt: T0 }) as SupportMessageRecord);
+    const page = messageListPage(messages, { page: 1, type: "iletisim" });
+    expect(page).toMatchObject({ total: 2, all: 3, newCount: 2 });
+    expect(page.rows.map((m) => m.id)).toEqual(["m3", "m1"]);
+  });
+
+  it("Welders Club: Türkçe arama (ad, e-posta, şehir); aktif / pasif bütün kayıtlarda", () => {
+    const club = (
+      [
+        ["c1", "IŞIK Usta", undefined],
+        ["c2", "Deneme", "2026-03-11T09:00:00Z"],
+        ["c3", "Başka", undefined],
+      ] as const
+    ).map(([id, name, leftAt]) => ({ id, name, email: `${id}@ornek.com`, city: "Isparta", leftAt, createdAt: T0 }) as WeldersClubRecord);
+    const page = weldersClubListPage(club, { page: 1, q: "ışık" });
+    expect(page).toMatchObject({ total: 1, active: 2, passive: 1 });
+    expect(page.rows.map((m) => m.id)).toEqual(["c1"]);
+    expect(weldersClubListPage(club, { page: 1, q: "ısparta" }).total).toBe(3);
+  });
+
+  it("bayilik başvuruları: sayfa ve yeni başvuru sayısı", () => {
+    const apps = (
+      [
+        ["b1", "new"],
+        ["b2", "approved"],
+      ] as const
+    ).map(([id, status]) => ({ id, status, createdAt: T0 }) as DealerApplicationRecord);
+    expect(dealerApplicationListPage(apps, 1)).toMatchObject({ total: 2, all: 2, newCount: 1, rows: [{ id: "b2" }, { id: "b1" }] });
   });
 });

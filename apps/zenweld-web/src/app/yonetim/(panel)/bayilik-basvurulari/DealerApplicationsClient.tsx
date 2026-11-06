@@ -2,11 +2,13 @@
 
 import { Fragment, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import type { DealerApplicationRecord } from "@zenweld/db";
+import type { CountedListPage, DealerApplicationRecord } from "@zenweld/db";
 import { listDealerApplications, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Select, Textarea } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { ListPager, useListQuery } from "@/components/admin/ListControls";
+import { dealerApplicationListPage, pageParam } from "@/lib/admin-lists";
 import { useRequestActions } from "@/lib/admin-requests";
 
 type Status = DealerApplicationRecord["status"];
@@ -27,10 +29,15 @@ const yesNo = (value?: boolean) => (value === undefined ? "—" : value ? "Evet"
  * basvuru silinmez. Onaylanan basvurunun bayi kaydi Bayiler ekranindan
  * ayrica acilir.
  */
-/** applications: veritabani modunda sunucunun okudugu kayitlar; demo modunda verilmez, tarayicidaki kayitlar gosterilir (KARARLAR K-109). */
-export function DealerApplicationsClient({ applications: fromServer }: { applications?: DealerApplicationRecord[] }) {
+/**
+ * page: veritabani modunda sunucunun okudugu sayfa (50); demo modunda
+ * verilmez, tarayicidaki kayitlar gosterilir (KARARLAR K-109).
+ */
+export function DealerApplicationsClient({ page }: { page?: CountedListPage<DealerApplicationRecord> }) {
   const db = useDatabase();
-  const applications = fromServer ?? listDealerApplications(db);
+  const list = useListQuery();
+  const data = page ?? dealerApplicationListPage(listDealerApplications(db), pageParam(list.get));
+  const applications = data.rows;
   const [open, setOpen] = useState<string | null>(null);
   // Kayittan sonra detay yeniden kurulur (key: updatedAt); "Kaydedildi" bu yuzden burada tutulur.
   const [savedId, setSavedId] = useState<string | null>(null);
@@ -39,10 +46,13 @@ export function DealerApplicationsClient({ applications: fromServer }: { applica
     <>
       <AdminPageHeader
         title="Bayilik Başvuruları"
-        description={`${applications.length} başvuru · ${applications.filter((a) => a.status === "new").length} yeni`}
+        description={`${data.all} başvuru · ${data.newCount} yeni`}
       />
 
-      <div className="overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white">
+      <div
+        className={`overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white transition-opacity ${list.pending ? "opacity-60" : ""}`}
+        aria-busy={list.pending}
+      >
         <table className="w-full text-sm">
           <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
             <tr>
@@ -98,6 +108,7 @@ export function DealerApplicationsClient({ applications: fromServer }: { applica
           </tbody>
         </table>
       </div>
+      <ListPager page={data.page} total={data.total} hrefFor={(p) => list.hrefWith({ sayfa: p > 1 ? String(p) : undefined })} />
     </>
   );
 }

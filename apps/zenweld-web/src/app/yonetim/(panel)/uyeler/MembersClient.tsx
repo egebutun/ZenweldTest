@@ -1,25 +1,26 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Download, Search, Trash2 } from "lucide-react";
-import { downloadCsv, listUsers, useDatabase } from "@zenweld/store";
-import type { User, UserRole, UserStatus } from "@zenweld/data";
-import { ROLE_LABELS, useAuth } from "@zenweld/auth";
-import { Alert, Badge, Button, Input, Select } from "@zenweld/ui";
+import { useState } from "react";
+import { Download, Trash2 } from "lucide-react";
+import { listUsers, useDatabase } from "@zenweld/store";
+import type { User, UserRole } from "@zenweld/data";
+import { useAuth } from "@zenweld/auth";
+import { Alert, Badge, Button, Select } from "@zenweld/ui";
+import { formatDate, type ListPage } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { ListPager, ListSearch, downloadListCsv, useListQuery } from "@/components/admin/ListControls";
+import { MEMBER_STATUS_LABEL as STATUS_LABEL, memberCsvRows } from "@/lib/admin-csv";
+import { matchingMembers, memberListFilter, memberListPage } from "@/lib/admin-lists";
 import { useMembersActions, type PanelAnswer } from "@/lib/admin-members";
-import { formatDate } from "@zenweld/utils";
-
-const STATUS_LABEL: Record<UserStatus, string> = {
-  active: "Aktif",
-  suspended: "Askıda",
-};
 
 /**
  * Uyeler: arama, rol ve durum filtresi, CSV; rol, durum ve silme.
  * Veritabani modunda islemler sunucuya yazilir (lib/admin-members.ts).
+ * Sayfa basina 50 hesap; suzgecler ve sayfa adreste durur. Veritabani
+ * modunda sunucu yalnizca bu sayfayi okur (page prop); CSV suzgece uyan
+ * hesaplarin tamamini indirir.
  */
-export function MembersClient() {
+export function MembersClient({ page }: { page?: ListPage<User> }) {
   const db = useDatabase();
   // Yonetici kendi rolunu degistiremez ve kendini askiya alamaz (panelden
   // atilir). Son yoneticiyi veri katmani ve sunucu da korur (K-35).
@@ -33,50 +34,27 @@ export function MembersClient() {
   };
   const save = (u: User, change: Partial<Pick<User, "role" | "status">>) =>
     void run(actions.save(u, { role: change.role ?? u.role, status: change.status ?? u.status }));
-  const [query, setQuery] = useState("");
-  const [role, setRole] = useState("");
-  const [status, setStatus] = useState("");
+  const list = useListQuery();
+  const filter = memberListFilter(list.get);
+  const data = page ?? memberListPage(listUsers(db), filter);
+  const users = data.rows;
 
-  const users = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase("tr");
-    return listUsers(db).filter(
-      (u) =>
-        (!role || u.role === role) &&
-        (!status || u.status === status) &&
-        (!q ||
-          u.email.toLocaleLowerCase("tr").includes(q) ||
-          `${u.firstName} ${u.lastName}`.toLocaleLowerCase("tr").includes(q) ||
-          (u.companyName ?? "").toLocaleLowerCase("tr").includes(q)),
+  const exportCsv = async () => {
+    setError(null);
+    const failed = await downloadListCsv(
+      "zenweld-uyeler.csv",
+      page ? { list: "uyeler", query: list.query } : { rows: memberCsvRows(matchingMembers(listUsers(db), filter)) },
     );
-  }, [db, query, role, status]);
+    if (failed) setError(failed);
+  };
 
   return (
     <>
       <AdminPageHeader
         title="Üyeler"
-        description={`${users.length} üye listeleniyor`}
+        description={`${data.total} üye listeleniyor`}
         action={
-          <Button
-            variant="outline"
-            leftIcon={<Download size={16} />}
-            onClick={() =>
-              downloadCsv(
-                users.map((u) => ({
-                  ad: u.firstName,
-                  soyad: u.lastName,
-                  eposta: u.email,
-                  rol: ROLE_LABELS[u.role],
-                  durum: STATUS_LABEL[u.status],
-                  firma: u.companyName ?? "",
-                  vergiNo: u.taxNumber ?? "",
-                  telefon: u.phone,
-                  sehir: u.city ?? "",
-                  kayitTarihi: u.createdAt,
-                })),
-                "zenweld-uyeler.csv",
-              )
-            }
-          >
+          <Button variant="outline" leftIcon={<Download size={16} />} onClick={() => void exportCsv()}>
             CSV İndir
           </Button>
         }
@@ -89,29 +67,30 @@ export function MembersClient() {
       )}
 
       <div className="mb-4 grid gap-3 sm:grid-cols-3">
-        <div className="relative">
-          <Search size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-zw-grey-400" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="İsim, e-posta veya firma ara…"
-            className="pl-9"
-          />
-        </div>
-        <Select value={role} onChange={(e) => setRole(e.target.value)}>
+        <ListSearch
+          className="w-full"
+          value={filter.q}
+          onSearch={(q) => list.go({ ara: q }, true)}
+          placeholder="İsim, e-posta veya firma ara…"
+          label="Üyelerde ara"
+        />
+        <Select value={filter.role ?? ""} onChange={(e) => list.go({ rol: e.target.value || undefined })}>
           <option value="">Tüm roller</option>
           <option value="individual">Bireysel</option>
           <option value="business">Kurumsal</option>
           <option value="admin">Yönetici</option>
         </Select>
-        <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+        <Select value={filter.status ?? ""} onChange={(e) => list.go({ durum: e.target.value || undefined })}>
           <option value="">Tüm durumlar</option>
           <option value="active">Aktif</option>
           <option value="suspended">Askıda</option>
         </Select>
       </div>
 
-      <div className="overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white">
+      <div
+        className={`overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white transition-opacity ${list.pending ? "opacity-60" : ""}`}
+        aria-busy={list.pending}
+      >
         <table className="w-full text-sm">
           <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
             <tr>
@@ -203,6 +182,7 @@ export function MembersClient() {
           </tbody>
         </table>
       </div>
+      <ListPager page={data.page} total={data.total} hrefFor={(p) => list.hrefWith({ sayfa: p > 1 ? String(p) : undefined })} />
     </>
   );
 }

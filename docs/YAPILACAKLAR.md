@@ -53,7 +53,7 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Zenweld – bayi B2B](#zenweld--bayi-b2b-uygulaması) ·
      [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) ·
      [Erişilebilirlik (A4)](#erişilebilirlik-a4--önerilen-zorunlu-değil) ·
-     [Görseller ve uzun listeler (A5)](#görseller-ve-uzun-listeler-a5--önerilen-zorunlu-değil)
+     [Görseller (A5)](#görseller-a5--önerilen-zorunlu-değil)
 
 ---
 
@@ -366,7 +366,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Kurumsal üyelerde iade talebi | Kurumsal alıcılara cayma hakkının uygulanıp uygulanmayacağı sorulup öğrenilecek | [İade talebi](#i̇ade-talebi) 1 |
 | KVKK başvuru formu (2b) | İleride düşünülecek; hesap silme için 2a (Hesabımı Sil) seçildi | [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) 10 |
 | Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | [Erişilebilirlik](#erişilebilirlik-a4--önerilen-zorunlu-değil) |
-| Görsel optimizasyonu ve sayfalama (A5) | Sahibin sıralaması; zorunlu değil. Görseller sahibi söyleyince; dosya deposu, gerçek fotoğraflar ve canlıya hazırlıkta hatırlatılır (KARARLAR K-102) | [Görseller ve uzun listeler](#görseller-ve-uzun-listeler-a5--önerilen-zorunlu-değil) |
+| Görsel optimizasyonu (A5) | Sahibin sıralaması; zorunlu değil. Görseller sahibi söyleyince; dosya deposu, gerçek fotoğraflar ve canlıya hazırlıkta hatırlatılır (KARARLAR K-102) | [Görseller](#görseller-a5--önerilen-zorunlu-değil) |
 | Ekipmanların eksik fotoğrafları (19 ürün ve 4 soğutma hali) ve diğer bölümlerin ürün fotoğrafları | Sahibinin bulup göndermesi | [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) |
 | Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi (Force serisi 9 ürün geldi) | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 2 |
 | Geçici ürün kodlarının (`ZW-GECICI-…`) SAP kodlarıyla değiştirilmesi | SAP kodlarının açılması | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 6 |
@@ -443,27 +443,23 @@ kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
 Veritabanı modu bütün kayıtlar için hazır ([VERITABANI.md](VERITABANI.md),
 [SUNUCU.md](SUNUCU.md)). Kayıt sayısı büyüyünce ve canlıdan önce:
 
-1. **Uzun listeler:** Siparişler, İade Talepleri, Teklifler, Servis
-   Talepleri, Garantiler ve Yorumlar sayfalanıyor (sunucu yalnızca o sayfayı
-   okur; IS-KURALLARI › 24). Üyeler, Mesajlar, Welders Club ve Bayilik
-   Başvuruları hâlâ hepsini birden okur; aynı yolla sayfalanacak.
-2. **Katalog önbelleği:** Katalog (bugün ~110 KB, sıkıştırılmış ~17 KB) her
+1. **Katalog önbelleği:** Katalog (bugün ~110 KB, sıkıştırılmış ~17 KB) her
    sayfaya gelir. Next'in önbelleği tek kayıtta en fazla 2 MB tutar;
    katalog ~1.000 üründe bu sınıra yaklaşır (aşılırsa önbelleğe alınmaz,
    her yenilemede veritabanı okunur). Ürün sayısı bu düzeye gelmeden ürünler
    parça parça (ör. bölüm başına) önbelleğe alınmalı. Stok ve yorumlar ürün
    başına okunduğu için sınıra takılmaz (bayi stoğu bugün 2.754 satır,
    ~500 KB; ürün sayfasına yalnızca o ürünün stoktaki satırları gider).
-3. **Süreye bağlı yenileme:** Değişiklik panel kaydında hemen görünür
+2. **Süreye bağlı yenileme:** Değişiklik panel kaydında hemen görünür
    (`refreshSite`); sayfaların 30 saniyede bir yeniden hazırlanması yalnızca
    yedektir. Sürenin uzatılıp uzatılmayacağı sahibine sorulur (K-88).
-4. **Form kayıtlarının saklama süresi:** bayilik başvurusu, mesaj ve
+3. **Form kayıtlarının saklama süresi:** bayilik başvurusu, mesaj ve
    Welders Club kayıtlarının ne kadar tutulacağı ve silinmesi KVKK kararıyla
    belirlenecek (K-100; [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama)).
-5. **"Doğrulanmış alıcı":** Giriş yapmış üyenin ürün değerlendirmesi bugün
+4. **"Doğrulanmış alıcı":** Giriş yapmış üyenin ürün değerlendirmesi bugün
    iki modda da "Doğrulanmış alıcı" sayılıyor; üyenin o ürünü gerçekten
    satın almış olmasıyla (teslim edilmiş sipariş) eşleştirilmeli.
-6. **Panel ana sayfasının okuması:** Özet sunucuda hesaplanıyor ve
+5. **Panel ana sayfasının okuması:** Özet sunucuda hesaplanıyor ve
    tarayıcıya yalnızca sonuç gidiyor; ama sunucu hesap için siparişlerin,
    tekliflerin, üyelerin, servis ve garanti kayıtlarının tamamını her
    açılışta veritabanından okuyor (`readDashboardPanel`). Kayıt sayısı
@@ -1361,7 +1357,7 @@ teyit edilmeli). Yapılacaklar:
    denetlenmeli.
 4. Renk karşıtlığı tasarım aşamasında ele alınacak.
 
-## Görseller ve uzun listeler (A5) — önerilen, zorunlu değil
+## Görseller (A5) — önerilen, zorunlu değil
 
 1. **Görsel optimizasyonu (`next/image`):** Bugün görseller olduğu gibi
    yükleniyor (`ProductImage`, `<img loading="lazy">`). Next.js'in görsel
@@ -1373,8 +1369,3 @@ teyit edilmeli). Yapılacaklar:
      görseller (`/dosya/…`) geçebilir.
    - `next.config.mjs` içindeki `images.remotePatterns` ve güvenlik
      politikasındaki görsel izni birlikte güncellenmeli.
-2. **Sayfalama:** Panelde Siparişler, İade Talepleri, Teklifler, Servis
-   Talepleri, Garantiler, Yorumlar, İşlem Kaydı ve E-posta Kaydı
-   sayfalanıyor; diğer uzun listeler
-   [Veritabanı — kalanlar](#veritabanı--kalanlar) 1'de. Sitedeki
-   listeler: [SEO](#seo-alanları-ve-link-yönlendirme) 5.

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
-import type { WeldersClubRecord } from "@zenweld/db";
+import type { WeldersClubListPage } from "@zenweld/db";
 import { listWeldersClub, useDatabase } from "@zenweld/store";
-import { Alert, Badge, Button, Input } from "@zenweld/ui";
+import { Alert, Badge, Button } from "@zenweld/ui";
 import { formatDate } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { ListPager, ListSearch, useListQuery } from "@/components/admin/ListControls";
+import { weldersClubListFilter, weldersClubListPage } from "@/lib/admin-lists";
 import { useRequestActions, type PanelAnswer } from "@/lib/admin-requests";
 
 /**
@@ -15,12 +16,17 @@ import { useRequestActions, type PanelAnswer } from "@/lib/admin-requests";
  * Sitedeki Welders Club formundan katilanlar. Kulupten ayrilmak isteyen
  * pasife alinir; kayit silinmez. Pasif kisi yeniden aktif yapilabilir.
  */
-/** members: veritabani modunda sunucunun okudugu kayitlar; demo modunda verilmez, tarayicidaki kayitlar gosterilir (KARARLAR K-109). */
-export function WeldersClubClient({ members: fromServer }: { members?: WeldersClubRecord[] }) {
+/**
+ * page: veritabani modunda sunucunun okudugu sayfa (50); demo modunda
+ * verilmez, tarayicidaki kayitlar gosterilir (KARARLAR K-109). Arama ve
+ * sayfa adreste durur.
+ */
+export function WeldersClubClient({ page }: { page?: WeldersClubListPage }) {
   const db = useDatabase();
-  const members = fromServer ?? listWeldersClub(db);
+  const list = useListQuery();
+  const filter = weldersClubListFilter(list.get);
+  const data = page ?? weldersClubListPage(listWeldersClub(db), filter);
   const actions = useRequestActions();
-  const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
   const run = async (action: Promise<PanelAnswer>) => {
     setError(null);
@@ -28,15 +34,11 @@ export function WeldersClubClient({ members: fromServer }: { members?: WeldersCl
     if (!answer.ok) setError(answer.error);
   };
 
-  const q = query.trim().toLocaleLowerCase("tr");
-  const shown = members.filter(
-    (m) => !q || [m.name, m.email, m.city ?? ""].some((v) => v.toLocaleLowerCase("tr").includes(q)),
-  );
-  const active = members.filter((m) => !m.leftAt).length;
+  const shown = data.rows;
 
   return (
     <>
-      <AdminPageHeader title="Welders Club" description={`${active} aktif · ${members.length - active} pasif`} />
+      <AdminPageHeader title="Welders Club" description={`${data.active} aktif · ${data.passive} pasif`} />
 
       {error && (
         <div className="mb-4">
@@ -44,12 +46,20 @@ export function WeldersClubClient({ members: fromServer }: { members?: WeldersCl
         </div>
       )}
 
-      <div className="relative mb-4 sm:w-80">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zw-grey-400" />
-        <Input className="pl-9" placeholder="Ad, e-posta veya şehir ara…" value={query} onChange={(e) => setQuery(e.target.value)} />
+      <div className="mb-4">
+        <ListSearch
+          className="w-full sm:w-80"
+          value={filter.q}
+          onSearch={(q) => list.go({ ara: q }, true)}
+          placeholder="Ad, e-posta veya şehir ara…"
+          label="Welders Club'da ara"
+        />
       </div>
 
-      <div className="overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white">
+      <div
+        className={`overflow-x-auto rounded-[4px] border border-zw-grey-200 bg-white transition-opacity ${list.pending ? "opacity-60" : ""}`}
+        aria-busy={list.pending}
+      >
         <table className="w-full text-sm">
           <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
             <tr>
@@ -90,13 +100,14 @@ export function WeldersClubClient({ members: fromServer }: { members?: WeldersCl
             {shown.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-4 py-10 text-center text-zw-grey-500">
-                  {members.length === 0 ? "Henüz Welders Club katılımı yok." : "Aramanıza uygun kayıt yok."}
+                  {data.active + data.passive === 0 ? "Henüz Welders Club katılımı yok." : "Aramanıza uygun kayıt yok."}
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+      <ListPager page={data.page} total={data.total} hrefFor={(p) => list.hrefWith({ sayfa: p > 1 ? String(p) : undefined })} />
       <p className="mt-3 text-xs text-zw-grey-500">
         Kulüpten ayrılmak isteyen kişi pasife alınır; kaydı silinmez.
       </p>
