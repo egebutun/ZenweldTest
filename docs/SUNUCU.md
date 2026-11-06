@@ -830,10 +830,22 @@ yazılır. Kuralların yöneticinin gördüğü hali:
 1. alan; `src/admin-sales.ts`.
 
 - **Okuma:**
-  - `readOrdersPanel`: siparişler (detayda yalnızca o sipariş ve SAP
-    aktarım durumu, `sap_order_exports`) ve mağaza ayarları; önce süresi
-    dolan havaleler iptal edilir (bir işlem içinde).
-  - `readReturnsPanel`: iade talepleri.
+  - `readOrdersPage`: sipariş listesi; adresteki süzgeçle (durum, arama,
+    sayfa) yalnızca bir sayfa (50) okunur, ayrıca toplam ve durum sayıları
+    (`count`, `GROUP BY status`). Önce süresi dolan havaleler iptal edilir
+    (bir işlem içinde).
+  - `readOrdersPanel`: sipariş detayı (o sipariş, SAP aktarım durumu
+    `sap_order_exports`, mağaza ayarları); önce süresi dolan havaleler
+    iptal edilir.
+  - `readReturnsPage`: iade taleplerinin bir sayfası, toplam ve yeni talep
+    sayısı.
+  - Ortak parçalar `src/panel-lists.ts`: `searchLike` aramayı
+    `translate(lower(alan), 'ı' + U+0307, 'i') LIKE '%…%'` ile yapar
+    (I / İ / ı / i aynı harf; veritabanının yerel ayarına bağlı değil;
+    IS-KURALLARI › 24), `countRows` sayar. Sayfa hesabı
+    `@zenweld/utils` › `paging.ts` (demo moduyla ortak). `readOrders` ve
+    `readReturnRequests` sayfa için `limit`/`offset` alır; ürün, geçmiş ve
+    gönderi satırları yalnızca o sayfanın kayıtları için okunur.
   - `readCouponsPanel`: kuponlar ve kullanımları; düzenlemede yalnızca o
     kupon, kullanıldığı siparişler ve üyeler (`readPanelMembers`: yönetici
     hariç, şifre özeti boş). Kupon formunun ürün ve kategorileri sitenin

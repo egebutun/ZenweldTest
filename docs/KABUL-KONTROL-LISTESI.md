@@ -655,6 +655,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 
 **Siparişler:**
 
+- [ ] Liste 50'şer sayfalanır: altta "1–50 / <toplam>", **Sonraki →** 2.
+      sayfayı açar (`?sayfa=2`). Durum sekmesi ya da arama 1. sayfaya
+      döner ve adrese yazılır; geri tuşu önceki listeye döner. "ışık"
+      araması "IŞIK" adlı müşteriyi bulur. Veritabanı modunda sayfa
+      kaynağında 51. sipariş yoktur (`tests/e2e/panel-listeler.spec.ts`,
+      `tests/e2e-db/panel-listeler.spec.ts`).
 - [ ] Havale siparişinde **Ödeme Alındı** → Hazırlanıyor.
 - [ ] Kargo firması ve takip numarası olmadan **Kargoya Ver** çalışmaz;
       girilince Kargoda; müşteri Siparişlerim'de takip numarasını görür.

@@ -52,6 +52,7 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 21. [Kuponlar](#21-kuponlar)
 22. [Panelde kayıt düzenleme](#22-panelde-kayıt-düzenleme)
 23. [Yüklenen dosyalar](#23-yüklenen-dosyalar)
+24. [Panel listeleri: sayfalama ve arama](#24-panel-listeleri-sayfalama-ve-arama)
 
 ---
 
@@ -1514,3 +1515,30 @@ Kod: `packages/data/src/file-rules.ts` (türler, boyut, adres),
 `apps/zenweld-web/src/app/api/yonetim/dosya/route.ts`, sunma
 `apps/zenweld-web/src/app/dosya/[...yol]/route.ts`, panel
 `apps/zenweld-web/src/lib/admin-files.ts`.
+
+---
+
+## 24. Panel listeleri: sayfalama ve arama
+
+Uzun panel listeleri (bugün Siparişler ve İade Talepleri) iki modda aynı
+kurallarla sayfalanır. Veritabanı modunda sunucu yalnızca istenen sayfanın
+kayıtlarını okur ve gönderir; demo modunda aynı hesap tarayıcıda yapılır.
+
+- **Sayfa:** Sayfa başına 50 kayıt. Sayfa numarası adreste durur
+  (`?sayfa=2`). Son sayfadan büyük bir numara son sayfayı açar.
+- **Sıra:** Yeniden eskiye; aynı anda oluşanlar kayıt numarasına göre
+  (büyük numara önce).
+- **Süzgeç ve arama adreste:** Durum `?durum=`, arama `?ara=`. Süzgeç ya
+  da arama değişince 1. sayfaya dönülür. Arama en çok 100 karakterdir.
+- **Türkçe arama:** Büyük-küçük harf fark etmez; I, İ, ı ve i aynı harf
+  sayılır. Diğer Türkçe harfler kendisidir (ş ile s farklıdır). `%` ve `_`
+  harfiyen aranır.
+  - **Örnek:** "ışık", "IŞIK" ve "işık" aramaları müşterisi "IŞIK Kaynak"
+    olan siparişi bulur; "isik" bulmaz. "isparta" ve "ısparta" fatura firması
+    "Isparta Ltd" olan siparişi bulur.
+- **Siparişler:** Arama sipariş no, müşteri adı, e-posta ve fatura firma
+  adında yapılır. Sekmelerdeki durum sayıları aramadan bağımsızdır (bütün
+  siparişler).
+- **İade Talepleri:** Başlıktaki "<n> talep · <n> yeni" bütün talepleri sayar.
+- Testler: `tests/unit/panel-listeleri.test.ts` (demo modu) ve
+  `tests/db/panel-satis.test.ts` (veritabanı) aynı örneği dener.

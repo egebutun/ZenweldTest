@@ -522,11 +522,19 @@ export async function readQuotes(db: ReadDb, where?: SQL): Promise<Quote[]> {
  * Siparisler, yeniden eskiye. where verilirse yalnizca o siparisler ve
  * onlarin satirlari (or. bir uyenin siparisleri; Asama 5.2).
  */
-export async function readOrders(db: ReadDb, where?: SQL): Promise<Order[]> {
-  const orders = await db.select().from(s.orders).where(where).orderBy(desc(s.orders.createdAt), desc(s.orders.code));
-  if (where && orders.length === 0) return [];
+/** Sayfali okuma: yalnizca bu kadar kayit (panel listeleri). */
+export interface RowWindow {
+  limit: number;
+  offset: number;
+}
+
+export async function readOrders(db: ReadDb, where?: SQL, window?: RowWindow): Promise<Order[]> {
+  const query = db.select().from(s.orders).where(where).orderBy(desc(s.orders.createdAt), desc(s.orders.code));
+  const orders = window ? await query.limit(window.limit).offset(window.offset) : await query;
+  const scoped = where !== undefined || window !== undefined;
+  if (scoped && orders.length === 0) return [];
   const ids = orders.map((o) => o.id);
-  const own = <T>(column: T) => (where ? inArray(column as never, ids) : undefined);
+  const own = <T>(column: T) => (scoped ? inArray(column as never, ids) : undefined);
   const [items, history, shipments, redemptions] = await serial(
     () => db.select().from(s.orderItems).where(own(s.orderItems.orderId)).orderBy(asc(s.orderItems.line)),
     () => db.select().from(s.orderStatusHistory).where(own(s.orderStatusHistory.orderId)).orderBy(asc(s.orderStatusHistory.seq)),
@@ -608,14 +616,16 @@ export async function readOrders(db: ReadDb, where?: SQL): Promise<Order[]> {
 }
 
 /** Iade talepleri, yeniden eskiye; where verilirse yalnizca o talepler. */
-export async function readReturnRequests(db: ReadDb, where?: SQL): Promise<ReturnRequest[]> {
-  const requests = await db.select().from(s.returnRequests).where(where).orderBy(desc(s.returnRequests.createdAt));
-  if (where && requests.length === 0) return [];
+export async function readReturnRequests(db: ReadDb, where?: SQL, window?: RowWindow): Promise<ReturnRequest[]> {
+  const query = db.select().from(s.returnRequests).where(where).orderBy(desc(s.returnRequests.createdAt), desc(s.returnRequests.code));
+  const requests = window ? await query.limit(window.limit).offset(window.offset) : await query;
+  const scoped = where !== undefined || window !== undefined;
+  if (scoped && requests.length === 0) return [];
   const ids = requests.map((r) => r.id);
   const items = await db
     .select()
     .from(s.returnRequestItems)
-    .where(where ? inArray(s.returnRequestItems.returnRequestId, ids) : undefined)
+    .where(scoped ? inArray(s.returnRequestItems.returnRequestId, ids) : undefined)
     .orderBy(asc(s.returnRequestItems.orderLine));
   const itemsByRequest = groupBy(items, (i) => i.returnRequestId);
   return requests.map((r) => ({

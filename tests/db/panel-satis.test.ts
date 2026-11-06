@@ -13,7 +13,9 @@ import {
   adminSetCouponActive,
   adminShipOrder,
   readCouponsPanel,
+  readOrdersPage,
   readOrdersPanel,
+  readReturnsPage,
   type Actor,
 } from "../../packages/db/src";
 import * as schema from "../../packages/db/src/schema";
@@ -161,7 +163,7 @@ describe("siparişler", () => {
       // Degisiklik yoksa yazilmaz; son degisiklik ani ayni kalir.
       expect(await adminSaveOrderNote(db, admin, { ...ref("o2", late), adminNote: "Müşteri aradı" }, new Date())).toEqual(saved(late));
 
-      const { orders } = await readOrdersPanel(db, late);
+      const { rows: orders } = await readOrdersPage(db, late, { page: 1 });
       const byId = Object.fromEntries(orders.map((o) => [o.id, o]));
       expect(byId.o1).toMatchObject({ status: "cancelled", history: [{}, { status: "cancelled", note: "Ödeme süresi doldu" }] });
       expect(byId.o1.payment.paidAt).toBeUndefined();
@@ -179,11 +181,60 @@ describe("siparişler", () => {
   it("panel okunurken süresi dolan havaleler iptal edilir; magaza ayarları (kargo firmaları) gelir", async () => {
     await withPanel(async (db, client) => {
       await order(client, "o1", "awaiting_payment", { dueAt: new Date("2026-03-11T09:00:00.000Z") });
-      const { orders, settings } = await readOrdersPanel(db, new Date("2026-03-12T09:00:00.000Z"));
+      const { orders, settings } = await readOrdersPanel(db, new Date("2026-03-12T09:00:00.000Z"), "o1");
       expect(orders[0].status).toBe("cancelled");
       expect(settings.shop.carriers).toEqual([{ name: "Yurtiçi Kargo" }]);
       // Sistemin yaptigi iptal yoneticinin degisikligi degildir.
       expect(await audit(client)).toEqual([]);
+    });
+  });
+});
+
+describe("sayfalı listeler", () => {
+  it("siparişler: 50'şer sayfa, durum süzgeci, Türkçe arama; durum sayıları aramadan bağımsız", async () => {
+    await withPanel(async (db, client) => {
+      // 55 siparis ayni anda: sira koda gore (o55 … o01).
+      for (let i = 1; i <= 55; i++) await order(client, `o${String(i).padStart(2, "0")}`, i <= 52 ? "preparing" : "delivered");
+      await client.query(`UPDATE orders SET customer_name = 'IŞIK Kaynak', invoice = '{"companyName":"Isparta Ltd"}' WHERE id = 'o07'`);
+
+      const first = await readOrdersPage(db, T0, { page: 1 });
+      expect(first).toMatchObject({ total: 55, page: 1, all: 55 });
+      expect(first.counts).toEqual({ awaiting_payment: 0, preparing: 52, shipped: 0, delivered: 3, cancelled: 0 });
+      expect(first.rows).toHaveLength(50);
+      expect(first.rows[0]).toMatchObject({ id: "o55", history: [{ status: "delivered" }] });
+
+      // Son sayfadan buyuk sayfa son sayfayi gosterir.
+      const last = await readOrdersPage(db, T0, { page: 9 });
+      expect(last.page).toBe(2);
+      expect(last.rows.map((o) => o.id)).toEqual(["o05", "o04", "o03", "o02", "o01"]);
+
+      expect((await readOrdersPage(db, T0, { page: 1, status: "delivered" })).total).toBe(3);
+      // I / İ / ı / i ayni harf; fatura firmasinda da aranir; % harfiyen aranir.
+      for (const q of ["ışık", "IŞIK", "işık", "ısparta", "ISPARTA", "isparta"]) {
+        const found = await readOrdersPage(db, T0, { page: 1, q });
+        expect(found.rows.map((o) => o.id), q).toEqual(["o07"]);
+        expect(found.counts.preparing, q).toBe(52);
+      }
+      expect((await readOrdersPage(db, T0, { page: 1, q: "%" })).total).toBe(0);
+    });
+  });
+
+  it("iade talepleri: sayfa ve yeni talep sayısı", async () => {
+    await withPanel(async (db, client) => {
+      await order(client, "o1", "delivered");
+      for (const [id, status, at] of [
+        ["r1", "new", "2026-03-11T09:00:00Z"],
+        ["r2", "approved", "2026-03-12T09:00:00Z"],
+      ]) {
+        await client.query(
+          `INSERT INTO return_requests (id, code, order_id, order_code, user_id, customer_name, email, phone, reason, status, created_at, updated_at)
+           VALUES ($1, 'IAD-' || $1, 'o1', 'SIP-o1', 'u-a', 'Ad Soyad', 'a@ornek.com', '0555', 'defective', $2, $3, $3)`,
+          [id, status, at],
+        );
+      }
+      const page = await readReturnsPage(db, 1);
+      expect(page).toMatchObject({ total: 2, page: 1, newCount: 1 });
+      expect(page.rows.map((r) => r.id)).toEqual(["r2", "r1"]);
     });
   });
 });

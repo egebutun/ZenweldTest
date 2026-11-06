@@ -443,9 +443,10 @@ kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
 Veritabanı modu bütün kayıtlar için hazır ([VERITABANI.md](VERITABANI.md),
 [SUNUCU.md](SUNUCU.md)). Kayıt sayısı büyüyünce ve canlıdan önce:
 
-1. **Uzun listeler:** Panel siparişleri, üyeleri ve yorumları sayfalamadan,
-   hepsini birden okur; sayılar binleri bulunca sunucuda süzme, arama ve
-   sayfalama gerekir ([Görseller ve uzun listeler](#görseller-ve-uzun-listeler-a5--önerilen-zorunlu-değil)).
+1. **Uzun listeler:** Siparişler ve İade Talepleri sayfalanıyor (sunucu
+   yalnızca o sayfayı okur; IS-KURALLARI › 24). Teklifler, Servis
+   Talepleri, Garantiler, Yorumlar, Üyeler, Mesajlar, Welders Club ve
+   Bayilik Başvuruları hâlâ hepsini birden okur; aynı yolla sayfalanacak.
    Panelin Yorumlar ekranı bütün yorumları fotoğraf ve videolarıyla okur;
    yorum sayısı artınca yavaşlar.
 2. **Katalog önbelleği:** Katalog (bugün ~110 KB, sıkıştırılmış ~17 KB) her
@@ -1374,7 +1375,7 @@ teyit edilmeli). Yapılacaklar:
      görseller (`/dosya/…`) geçebilir.
    - `next.config.mjs` içindeki `images.remotePatterns` ve güvenlik
      politikasındaki görsel izni birlikte güncellenmeli.
-2. **Sayfalama:** Panelde hiçbir liste sayfalanmıyor (İşlem Kaydı ve
-   E-posta Kaydı hariç); siparişler, üyeler, teklifler, yorumlar tek
-   sayfada. Kayıt sayısı artınca sayfa sayfa gösterilmeli. Sitedeki
+2. **Sayfalama:** Panelde Siparişler, İade Talepleri, İşlem Kaydı ve
+   E-posta Kaydı sayfalanıyor; diğer uzun listeler
+   [Veritabanı — kalanlar](#veritabanı--kalanlar) 1'de. Sitedeki
    listeler: [SEO](#seo-alanları-ve-link-yönlendirme) 5.

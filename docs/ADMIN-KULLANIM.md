@@ -204,6 +204,19 @@ alan seçilir, ekran okuyucu alanı etiketiyle okur.
 
 - Listede soluk görünür; sitede görünmez (adresi açılırsa 404).
 
+**Uzun listeler** (bugün Siparişler ve İade Talepleri; kurallar
+[IS-KURALLARI.md › 24](IS-KURALLARI.md#24-panel-listeleri-sayfalama-ve-arama)):
+
+- Sayfa başına 50 kayıt. Tablonun altında "1–50 / 133", **← Önceki**,
+  "Sayfa 1 / 3" ve **Sonraki →**; tek sayfada yalnızca kayıt aralığı yazar.
+- Seçilen durum, arama ve sayfa adreste durur: geri tuşu önceki hale döner,
+  adres paylaşılınca aynı liste açılır. Durum ya da arama değişince 1.
+  sayfaya dönülür.
+- Arama yazmayı bırakınca (yaklaşık 0,3 saniye) yapılır; I, İ, ı ve i aynı
+  harf sayılır.
+- Veritabanı modunda sunucu yalnızca o sayfanın kayıtlarını gönderir; yeni
+  sayfa gelene kadar tablo soluk görünür.
+
 **Görsel yükleme (tüm panel):**
 
 - Görsel iki yolla eklenir: adres (URL) yazarak ya da dosya yükleyerek.
@@ -388,8 +401,9 @@ siparişler. Havale ödemesini onaylamak, kargo takip numarası girmek için
 siparişi açın."
 
 - **Sekmeler** (sayılı): Tümü / Ödeme Bekleniyor / Hazırlanıyor / Kargoda /
-  Teslim Edildi / İptal.
+  Teslim Edildi / İptal. Sayılar aramadan bağımsızdır.
 - **Arama:** Sipariş no, müşteri adı, e-posta, fatura firma adı.
+- En yeni sipariş üstte; sayfa başına 50 (bkz. [Uzun listeler](#2-ortak-davranışlar)).
 - **Tablo:** Kod, tarih, müşteri, ürünler (adet × ad), tutar, ödeme ("Kart",
   "Kart · N taksit" ya da "Havale/EFT"), durum rozeti.
 - Satıra tıklayınca sipariş detayı açılır.
@@ -478,7 +492,7 @@ Bireysel üyelerin Hesabım › Siparişlerim'den açtığı iade (cayma) talepl
 - **Başlık altı:** "<n> talep · <n> yeni".
 - **Tablo:** Talep (numara, tarih), Sipariş (numara; tıklayınca sipariş
   detayı açılır), Müşteri (ad, e-posta), Ürünler (toplam adet), Neden,
-  Durum. En yeni talep üstte. Boşsa "Henüz iade talebi yok."
+  Durum. En yeni talep üstte; sayfa başına 50. Boşsa "Henüz iade talebi yok."
 - **Satıra tıklayınca:** İade edilecek ürünler (adet × ad — seçenek, kod),
   müşterinin açıklaması, e-posta ve telefon.
   - Uyarı: "Para iadesi panelden yapılmaz. Onaylanan talepte iadeyi banka ya
@@ -575,7 +589,9 @@ kurallar demo moduyla aynıdır; farklar:
 
 - Ekran her açılışta ve her kayıttan sonra veriyi sunucudan okur: sitede
   verilen siparişler ve açılan iade talepleri, müşterinin kullandığı
-  kuponlar burada görünür. Siparişler açılırken ödeme süresi dolan havale
+  kuponlar burada görünür. Siparişler ve İade Talepleri'nde yalnızca
+  açılan sayfanın kayıtları okunur; arama ve durum süzgeci sunucuda
+  yapılır. Siparişler açılırken ödeme süresi dolan havale
   siparişleri iptal edilir ve kupon hakları geri verilir.
 - Ödeme Alındı, Kargoya Ver, takip numarası düzeltme, Teslim Edildi,
   iptal, iç not, iade talebinin durumu ve notu, kupon oluşturma,

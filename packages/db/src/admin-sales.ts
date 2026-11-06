@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull, max, ne, sql } from "drizzle-orm";
+import { and, count, eq, inArray, isNull, max, ne, sql } from "drizzle-orm";
 import {
   couponCodeTaken,
   isTransferExpired,
@@ -16,9 +16,11 @@ import {
   type CouponRedemption,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
+import { pageWindow, type ListPage } from "@zenweld/utils";
 import { changedFields, writeAudit, type Actor, type AuditDb } from "./audit";
 import { cancelExpiredTransfers } from "./orders";
 import { checkRow, fail, isFailure, newId, saved, text, unchanged, type PanelFailure, type PanelResult, type Saved } from "./panel";
+import { countRows, searchLike } from "./panel-lists";
 import { readCoupons, readOrders, readReturnRequests, readSettings, userRecord } from "./read";
 import { queueSapOrder, readSapExports, requeueSapOrder } from "./sap-orders";
 import * as s from "./schema";
@@ -44,27 +46,72 @@ const iso = (value: Date | null | undefined) => (value ? value.toISOString() : u
  * (sayfanin sunucu bileseni; apps/zenweld-web/src/app/yonetim/(panel)).
  */
 
+const ORDER_STATUSES: OrderStatus[] = ["awaiting_payment", "preparing", "shipped", "delivered", "cancelled"];
+
+export interface OrderListFilter {
+  status?: OrderStatus;
+  /** Siparis no, musteri, e-posta, fatura firmasi */
+  q?: string;
+  page: number;
+}
+
+export interface OrderListPage extends ListPage<Order> {
+  /** Durumlara gore siparis sayisi (aramadan bagimsiz; sekmelerde) */
+  counts: Record<OrderStatus, number>;
+  /** Butun siparisler */
+  all: number;
+}
+
 /**
- * Siparisler (liste) ya da tek siparis (detay) ve magaza ayarlari (kargo
- * firmalari). Once odeme suresi dolan havaleler iptal edilir; bu yuzden bir
- * islem (transaction) icinde cagrilir.
+ * Siparisler (liste): suzgece uyan siparislerin bir sayfasi (yeniden eskiye)
+ * ve durum sayilari. Once odeme suresi dolan havaleler iptal edilir; bu
+ * yuzden bir islem (transaction) icinde cagrilir.
+ */
+export async function readOrdersPage(db: AuditDb, at: Date, filter: OrderListFilter): Promise<OrderListPage> {
+  await cancelExpiredTransfers(db, at);
+  const t = s.orders;
+  const where = and(
+    filter.status ? eq(t.status, filter.status) : undefined,
+    searchLike([t.code, t.customerName, t.email, sql`${t.invoice}->>'companyName'`], filter.q),
+  );
+  const total = await countRows(db, t, where);
+  const w = pageWindow(total, filter.page);
+  const rows = total ? await readOrders(db, where, w) : [];
+  const byStatus = await db.select({ status: t.status, n: count() }).from(t).groupBy(t.status);
+  const counts = Object.fromEntries(ORDER_STATUSES.map((status) => [status, 0])) as Record<OrderStatus, number>;
+  byStatus.forEach((r) => (counts[r.status as OrderStatus] = r.n));
+  return { rows, total, page: w.page, counts, all: byStatus.reduce((sum, r) => sum + r.n, 0) };
+}
+
+/**
+ * Tek siparis (detay) ve magaza ayarlari (kargo firmalari). Once odeme
+ * suresi dolan havaleler iptal edilir; bu yuzden bir islem icinde cagrilir.
  */
 export async function readOrdersPanel(
   db: AuditDb,
   at: Date,
-  id?: string,
+  id: string,
 ): Promise<{ orders: Order[]; settings: SiteSettings }> {
   await cancelExpiredTransfers(db, at);
-  const orders = await readOrders(db, id === undefined ? undefined : eq(s.orders.id, id));
+  const orders = await readOrders(db, eq(s.orders.id, id));
   const settings = await readSettings(db);
-  if (id === undefined) return { orders, settings };
-  // Detay: SAP'a aktarimin durumu (K-108).
+  // SAP'a aktarimin durumu (K-108).
   const exports = await readSapExports(db, orders.map((o) => o.id));
   return { orders: orders.map((o) => (exports.has(o.id) ? { ...o, sapExport: exports.get(o.id) } : o)), settings };
 }
 
-export async function readReturnsPanel(db: AuditDb): Promise<{ returnRequests: ReturnRequest[] }> {
-  return { returnRequests: await readReturnRequests(db) };
+export interface ReturnListPage extends ListPage<ReturnRequest> {
+  /** Yeni (incelenmemis) talepler */
+  newCount: number;
+}
+
+/** Iade talepleri (liste): bir sayfa (yeniden eskiye) ve yeni talep sayisi. */
+export async function readReturnsPage(db: AuditDb, page: number): Promise<ReturnListPage> {
+  const t = s.returnRequests;
+  const total = await countRows(db, t);
+  const w = pageWindow(total, page);
+  const rows = total ? await readReturnRequests(db, undefined, w) : [];
+  return { rows, total, page: w.page, newCount: await countRows(db, t, eq(t.status, "new")) };
 }
 
 /** Uyeler (kisiye ozel kuponun e-posta listesi); sifre ozeti gonderilmez. */
