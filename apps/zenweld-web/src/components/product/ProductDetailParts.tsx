@@ -415,7 +415,6 @@ export function ProductMeta({ product }: { product: Product }) {
   const t = useT();
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {product.isNew && <Badge tone="red">{t.product.new}</Badge>}
       <Badge tone="grey">
         <ShieldCheck size={11} />
         {t.product.warrantyMonths.replace("{months}", String(product.warrantyMonths))}

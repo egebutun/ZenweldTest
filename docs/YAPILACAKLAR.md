@@ -52,6 +52,7 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Bayilik başvurusundan bayi açma](#bayilik-başvurusundan-bayi-açma--sahibiyle-birlikte-tasarlanacak) ·
      [Zenweld – bayi B2B](#zenweld--bayi-b2b-uygulaması) ·
      [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) ·
+     [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) ·
      [Erişilebilirlik (A4)](#erişilebilirlik-a4--önerilen-zorunlu-değil) ·
      [Görseller (A5)](#görseller-a5--önerilen-zorunlu-değil)
 
@@ -376,6 +377,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Teklif, servis, garanti ve iade durumlarında müşteriye e-posta | Hangi bildirimlerin gideceği ve metinleri | [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 | Yöneticinin kendi şifresini panelden değiştirmesi | Şimdi yapılmıyor (K-105) | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 2 |
 | Sitenin tasarımı | Sahibi yapacak | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
+| Anasayfa: kurumsal metin, güven şeridi bilgileri, gerçek metinler, Force Serisi sayfası | Sahibinin göndermesi; Force sayfası ileride | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
 | Görsel düzenleyici (önizleme, sürükle, ölçekle) ve sayfa görsellerinin panelden değişmesi | Tasarımın bitmesi (fotoğrafların yeri ve sayısı kesinleşince) | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) 5 |
 
 ---
@@ -1360,14 +1362,41 @@ yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
        yüklenmesi istenir.
    - **Sayfa görselleri panelden:** Bugün Destek ve Garanti sayfasının üst
      görseli (`components/support/SupportHub.tsx` › `HERO_IMAGE`, geçici:
-     Evomig 205 P) ve anasayfanın büyük fotoğrafı
-     (`components/home/HomeSections.tsx` › `HERO_PHOTO`) kodda sabit.
+     Evomig 205 P) ve anasayfanın tanıtım alanındaki üç fotoğraf
+     (`components/home/HomeHero.tsx` › `CORPORATE_PHOTO`, `FORCE_PHOTO`,
+     `LASER_PHOTO`) kodda sabit.
      Panelde (ör. Görünüm › Sayfa Görselleri) değiştirilebilir olacak;
      önizlemede sayfanın masaüstü ve telefon görünümü birlikte görülecek.
      Tasarımda eklenen diğer sabit görseller de buraya girer. Veritabanında
      yeni bir ayar (`settings` tablosuna yeni anahtar) gerekir.
    - Satış temsilcilerinin fotoğrafı yok (sitede adın baş harfleri
      görünüyor); gerçek fotoğraflar panelden eklenecek.
+
+## Anasayfa — sahibinden gelecekler ve sonraki işler
+
+Anasayfa yeni tasarımla yayında (KARARLAR K-112; [WEBSITE-KULLANIM.md ›
+Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
+
+1. **Kurumsal tanıtım sayfasının başlığı ve kısa metni:** Bugün örnek
+   metin var ("Atölyeden sahaya, her kaynakta Zenweld gücü"); sahibi
+   gönderecek (`packages/i18n/src/tr.ts` › `home.slides`).
+2. **Güven şeridine eklenecek bilgiler** (sahibi bulup gönderecek):
+   - kaç yıllık tecrübe
+   - satılan makine ya da müşteri sayısı
+   - ihracat yapılan ülke sayısı
+   - belgeler (CE, ISO 9001)
+   - servis yanıt süresi
+   - yedek parça bulundurma süresi
+3. **Gerçek metinler:** Neden Zenweld? maddelerinin açıklamaları (bugün
+   lorem ipsum) ve tanıtım alanındaki Force Serisi ve Jasic Lazer metinleri
+   sahibiyle yazılacak.
+4. **Force Serisi sayfası:** İleride Force Serisi için ayrı bir sayfa
+   yapılacak. Bugün tanıtım alanındaki **Force Serisini İncele** ve Force
+   şeridindeki **Tümünü Gör** "Force" arama sonuçlarına gidiyor.
+5. **Fotoğraflar:** Lazer Temizleme ve Lazer Markalama kartlarında ürün
+   fotoğrafı olmadığı için kategori çizimi görünüyor; Jasic lazer kaynak
+   modelleri eklenince (K-74) Jasic şeridine ve kartlara kendiliğinden
+   girer ([Ürün fotoğrafları](#ürün-fotoğrafları--eksikler)).
 
 ## Erişilebilirlik (A4) — önerilen, zorunlu değil
 

@@ -6,16 +6,16 @@ import { defaultSettings } from "@zenweld/data";
 import { getHomePageData, getServerCatalog } from "@/lib/server/catalog";
 import { getServerContent } from "@/lib/server/content";
 import { pageMetadataFor } from "@/lib/server/page-metadata";
+import { CategoryShowcase } from "@/components/home/CategoryShowcase";
+import { HomeHero } from "@/components/home/HomeHero";
+import { TrustStrip } from "@/components/home/TrustStrip";
 import {
-  BlogTeaser,
-  DealerApplyBanner,
+  CtaCards,
   DealerStrip,
-  Hero,
-  HomeActionStrip,
-  HomeFaq,
+  FaqAndBlog,
+  FinderBand,
   HotSale,
-  NewArrivals,
-  QuoteBanner,
+  SeriesStrips,
   WhyZenweld,
 } from "@/components/home/HomeSections";
 
@@ -39,17 +39,17 @@ export default async function HomePage() {
       <JsonLd data={organizationJsonLd(company)} />
       {/* Sorular arama sonuclarinda acilir baslik olarak cikabilsin */}
       <JsonLd data={faqJsonLd(faqs)} />
-      <HomeActionStrip />
-      <Hero />
+      <HomeHero />
+      <TrustStrip />
+      <CategoryShowcase />
       <HotSale />
-      <NewArrivals />
+      <SeriesStrips />
+      <FinderBand />
       <DealerStrip />
       <WhyZenweld />
       <ReviewMarquee />
-      <HomeFaq />
-      <QuoteBanner />
-      <DealerApplyBanner />
-      <BlogTeaser />
+      <CtaCards />
+      <FaqAndBlog />
     </PageData>
   );
 }

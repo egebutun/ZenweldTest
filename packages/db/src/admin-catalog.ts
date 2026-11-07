@@ -755,7 +755,6 @@ const PRODUCT_FIELDS = [
   "inTheBox",
   "highlights",
   "options",
-  "isNew",
   "order",
   "manualUrl",
   "warrantyMonths",
@@ -902,7 +901,6 @@ export async function adminSaveProduct(
     vatRate === null ||
     warrantyMonths === null ||
     order === null ||
-    typeof input.isNew !== "boolean" ||
     typeof input.active !== "boolean"
   ) {
     return invalid();
@@ -957,7 +955,6 @@ export async function adminSaveProduct(
     highlights,
     discount,
     options,
-    isNew: input.isNew,
     order,
     manualUrl: text(input.manualUrl, 2000) || undefined,
     warrantyMonths,
@@ -1015,7 +1012,6 @@ export async function adminSaveProduct(
     inTheBox,
     highlights,
     processes: draft.processes,
-    isNew: draft.isNew,
     manualUrl: draft.manualUrl ?? null,
     warrantyMonths,
     active: draft.active,

@@ -226,7 +226,6 @@ export interface Product {
    * urune baglidir, secenege degil.
    */
   filterValues?: ProductFilterValues;
-  isNew: boolean;
   /**
    * Kategori icindeki sira (panelde "Sıra"): kategori sayfasindaki "Önerilen"
    * siralama ve kategori kartindaki gorsel buna gore. Kucuk numara once;

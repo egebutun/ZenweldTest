@@ -19,6 +19,9 @@ import { ProductCard } from "./ProductCard";
  * - Parmakla/fareyle elle de kaydirilabilir; birakildiginda devam eder.
  * - Isletim sisteminde "hareketi azalt" secili ise hic kaymaz.
  */
+/** Seritteki en az kart sayisi (genis ekrani doldursun diye). */
+const MIN_ITEMS = 8;
+
 export function ProductMarquee({
   products,
   /** Saniyede kac piksel kaysin. */
@@ -68,8 +71,11 @@ export function ProductMarquee({
 
   if (products.length === 0) return null;
 
-  // Kesintisiz donus icin liste iki kez basilir.
-  const loop = [...products, ...products];
+  // Kesintisiz donus icin liste iki kez basilir. Urun azsa (ornegin 4)
+  // once seridi dolduracak kadar tekrarlanir; yoksa serit sona gelince
+  // basa sicrar.
+  const base = Array.from({ length: Math.ceil(MIN_ITEMS / products.length) }, () => products).flat();
+  const loop = [...base, ...base];
 
   return (
     <div

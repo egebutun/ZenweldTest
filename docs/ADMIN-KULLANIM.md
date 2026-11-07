@@ -936,8 +936,7 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
 - **Sekmeler** (sayı rozetli): Temel Bilgiler · Açıklamalar · Görseller ·
   Teknik Özellikler · Kutu İçeriği · Seçenekler · Filtreler · SEO.
 - **Yeni ürünün başlangıç değerleri:** Bölüm Ekipmanlar, bölümün ilk
-  kategorisi, KDV %20, garanti 24 ay; Yayında ve Yeni ürün rozeti
-  işaretli.
+  kategorisi, KDV %20, garanti 24 ay; Yayında işaretli.
 - Kayıt: "Ürün kaydedildi."
 - **Yeni ürün ve stok:** Yeni ürün hiçbir bayide ve online satıcıda stokta
   görünmez. Haritada ve online satıcılarda çıkması için bayi/satıcı stok
@@ -979,7 +978,8 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
     kombinasyonlara (ör. 3 m / 5 m) uygulanır."
   - Hatalar: "İndirim oranı %1 ile %90 arasında tam sayı olmalıdır." /
     "Kampanya bitişi, başlangıçtan sonra olmalıdır."
-- **Yayında (aktif)**, **Yeni ürün rozeti**. Teklif Al listesine
+- **Yayında (aktif)**. Ürünlerde "yeni" işareti yoktur (KARARLAR K-113).
+  Teklif Al listesine
   Ekipmanlar'daki yayındaki ürünlerin hepsi kendiliğinden girer; ayrı bir
   işaret yoktur (KARARLAR K-79).
 - **Kullanım Kılavuzu (PDF bağlantısı).**

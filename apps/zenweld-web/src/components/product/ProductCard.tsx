@@ -74,9 +74,6 @@ export function ProductCard({
             ) : (
               discount > 0 && <Badge tone="red">%{discount} {t.product.discount}</Badge>
             )}
-            {product.isNew && (
-              <Badge tone={discount > 0 ? "dark" : "red"}>{t.product.new}</Badge>
-            )}
           </div>
           {!inStock && (
             <span className="absolute inset-x-0 bottom-0 bg-zw-ink/85 py-1.5 text-center text-xs font-bold uppercase tracking-wide text-white">

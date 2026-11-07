@@ -144,11 +144,6 @@ export function BasicsTab({ creating, ...props }: ProductTabProps & { creating: 
           checked={draft.active}
           onChange={(e) => set("active", e.target.checked)}
         />
-        <Checkbox
-          label="Yeni ürün rozeti"
-          checked={draft.isNew}
-          onChange={(e) => set("isNew", e.target.checked)}
-        />
       </div>
 
       <FormRow label="Kullanım Kılavuzu (PDF bağlantısı)">

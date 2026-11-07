@@ -323,7 +323,6 @@ machineSeeds.forEach((seed) => {
     highlights: content?.highlights ?? [...phrases, "12 ay garanti", "Yetkili bayi ve servis ağı"].slice(0, 3),
     ...(options ? { options } : {}),
     ...(series ? { filterValues: { "model-serisi": [series] } } : {}),
-    isNew: false,
     manualUrl: "#",
     warrantyMonths: 12,
     createdAt: now,
@@ -352,25 +351,7 @@ const HOT_SALE: Record<string, number> = {
   "multicut-85-cnc": 10,
 };
 
-/**
- * Yeni gelenler (anasayfadaki "Yeni Gelenler" seridi).
- * Serit ekrani dolduracak kadar urun olsun diye 8 urun; bazilari ayni
- * zamanda kampanyali, kartta iki etiket birlikte gorunur. Panelde
- * Urunler > urun > "Yeni" kutusundan degistirilir.
- */
-const NEW_ARRIVALS = new Set([
-  "evomig-205-p",
-  "ultimate-205-mte-pro",
-  "ultimate-251-thp",
-  "ultimate-255-mma",
-  "multicut-85-cnc",
-  "forcemig-185-mp",
-  "forcecut-45",
-  "y300-qcw",
-]);
-
 products.forEach((p) => {
-  if (NEW_ARRIVALS.has(p.slug)) p.isNew = true;
   const percent = HOT_SALE[p.slug];
   // Urunde NORMAL fiyat saklanir, indirim gosterimde uygulanir.
   if (percent) p.discount = { percent };

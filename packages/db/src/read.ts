@@ -225,7 +225,6 @@ async function readProducts(
         : undefined,
       options: optionIds.length > 0 ? { optionIds, variants: variantList } : undefined,
       filterValues: Object.keys(filterValueMap).length > 0 ? filterValueMap : undefined,
-      isNew: p.isNew,
       order: opt(p.position),
       manualUrl: opt(p.manualUrl),
       warrantyMonths: p.warrantyMonths,

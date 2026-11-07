@@ -424,7 +424,6 @@ const productInput = (fields: Record<string, unknown> = {}) => ({
   specs: [{ label: "Güç", value: "5 kW" }],
   inTheBox: ["Kablo"],
   highlights: [],
-  isNew: true,
   warrantyMonths: 24,
   active: true,
   ...fields,
@@ -442,7 +441,6 @@ const storedP1 = (fields: Record<string, unknown> = {}) =>
     images: [],
     specs: [],
     inTheBox: [],
-    isNew: false,
     ...fields,
   });
 

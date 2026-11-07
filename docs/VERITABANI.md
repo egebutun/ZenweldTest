@@ -359,7 +359,6 @@ silinmez.
 | `in_the_box` | jsonb | zorunlu | Kutu içeriği (metin listesi) |
 | `highlights` | jsonb | zorunlu | Öne çıkanlar (metin listesi); ilk 3'ü menü kartında |
 | `processes` | text[] | | Kaynak yöntemleri: `MIG`, `MAG`, `TIG`, `MMA`, `PULSE`, `PLAZMA`, `MULTI`. Yalnızca eski Ürün Seçici ve arama kullanır, panelde girilmez; Ürün Seçici yeniden kurulunca kalkar (K-69) |
-| `is_new` | boolean | zorunlu | "Yeni" rozeti |
 | `position` | int | | Kategori içindeki sıra (`order`); boş olan sona, eşitler ada göre |
 | `manual_url` | text | | Kullanım kılavuzu (PDF) |
 | `warranty_months` | int | zorunlu | Garanti süresi (ay) |

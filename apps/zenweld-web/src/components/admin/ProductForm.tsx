@@ -45,7 +45,7 @@ export function ProductForm({ product }: { product?: Product }) {
   const db = useDatabase();
   const router = useRouter();
   const actions = useCatalogActions();
-  // Yeni kayit mi (urunun "Yeni urun rozeti" alani draft.isNew'dur, karistirilmasin).
+  // Yeni kayit mi
   const creating = !product;
   const form = useContentForm<Product>(
     product ?? {
@@ -65,7 +65,6 @@ export function ProductForm({ product }: { product?: Product }) {
       specs: [],
       inTheBox: [],
       highlights: [],
-      isNew: true,
       warrantyMonths: 24,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

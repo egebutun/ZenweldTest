@@ -142,7 +142,6 @@ export function useCatalogActions() {
           highlights: next.highlights,
           options: next.options,
           filterValues: next.filterValues,
-          isNew: next.isNew,
           order: next.order,
           manualUrl: next.manualUrl,
           warrantyMonths: next.warrantyMonths,

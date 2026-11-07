@@ -174,7 +174,6 @@ export const products = pgTable(
     highlights: jsonb("highlights").$type<string[]>().notNull().default([]),
     /** Eski Urun Secici ve arama icin; Urun Secici yeniden kurulunca kalkar (K-69) */
     processes: text("processes").array(),
-    isNew: boolean("is_new").notNull().default(false),
     position: integer("position"),
     manualUrl: text("manual_url"),
     warrantyMonths: integer("warranty_months").notNull(),

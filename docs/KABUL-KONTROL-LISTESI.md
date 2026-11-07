@@ -181,9 +181,26 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] İlk ziyarette çerez bandı çıkar (Tümünü Kabul Et / Tümünü Reddet /
       Tanımlama Bilgisi Ayarları); seçim yapılınca aynı tarayıcıda bir daha
       sorulmaz.
-- [ ] Anasayfada Yeni Gelenler'in altındaki sıra: bayi haritası → Neden
-      Zenweld? → Müşterilerimiz Ne Diyor? → Sık Sorulan Sorular (ilk 8) →
-      Teklif bandı → Bayilik bandı → Bloğumuzdan (en yeni 3).
+- [ ] Anasayfa sırası: tanıtım alanı → güven şeridi → Ne arıyorsunuz?
+      (kategori kartları) → Kampanyalı Ürünler → Force Serisi → Jasic Lazer
+      Ürünleri → Ürün Seçici bandı → bayi haritası → Neden Zenweld? →
+      Müşterilerimiz Ne Diyor? → kurumsal teklif ve bayilik kartları →
+      Sık Sorulan Sorular (ilk 6) ve Bloğumuzdan (en yeni 3). Yeni
+      Gelenler yoktur (`tests/e2e/anasayfa.spec.ts`).
+- [ ] Tanıtım alanı 7 saniyede bir sonraki sayfaya geçer (Zenweld → Force
+      Serisi → Jasic Lazer); fare üzerindeyken durur; sekmeler ve oklar
+      sayfayı değiştirir; telefonda parmakla kaydırılır.
+- [ ] Güven şeridindeki bayi sayısı Bayiler'deki kayıt sayısıyla, taksit
+      ve ücretsiz kargo Mağaza Ayarları'yla aynıdır; panelde değişince
+      anasayfada da değişir (iki modda; `tests/e2e-db/anasayfa.spec.ts`).
+- [ ] Kategori kartları Ekipmanlar'ın kategorilerini panel sırasıyla ve
+      ürün sayılarıyla gösterir, kategori sayfasına gider; altta
+      Güvenlik, Aksesuarlar ve Dolgu Metalleri kartları bölüm sayfasına
+      gider.
+- [ ] Force Serisi şeridinde Model Serisi Force olan, Jasic şeridinde
+      markası Jasic olan yayındaki ürünler vardır.
+- [ ] Ürün kartında ve ürün sayfasında "YENİ" etiketi, panelde "Yeni ürün
+      rozeti" kutusu yoktur.
 - [ ] Kampanyası geçerli ürünler Kampanyalı Ürünler (Hot Sale) bölümünde en
       yüksek indirim önce görünür; kampanya bitince kendiliğinden çıkar.
 - [ ] Anasayfa yorum şeridinde panelde "Anasayfada göster" denmiş en fazla 10

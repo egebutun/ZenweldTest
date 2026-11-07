@@ -200,45 +200,80 @@ menüler açılıp kapanır; bölümlerde ve Destek ve Garanti'de (`/destek`)
 
 ## 3. Anasayfa
 
-Yukarıdan aşağıya bölümler:
+Yukarıdan aşağıya bölümler (KARARLAR K-112):
 
-1. **Ürün seçici bandı:** "Hangi kaynak makinesi size uygun? — 3 soruda
-   ihtiyacınıza uygun modeli bulun." ve **Teste Başla!** (`/urun-secici`).
-2. **Tanıtım alanı:**
-   - Fotoğraf, büyük başlık "Zenweld Kaynak Makineleri ve Plazma Kesme
-     Sistemleri" ve slogan "Kaynakta bir üst seviye".
-   - İki düğme: **Ürünleri Keşfet** (`/ekipmanlar`), **Teklif Al**.
-3. **Kampanyalı Ürünler (Hot Sale):**
+1. **Tanıtım alanı:** Üç sayfa yana kayar; her biri 7 saniye ekranda kalır.
+   - **Zenweld** (kurumsal): atölye fotoğrafı, Zenweld'i ve farkını anlatan
+     başlık ve metin, üç madde (Yerinde yetkili servis, Hızlı yedek parça,
+     Uzman teknik destek); **Ürünleri Keşfet** (`/ekipmanlar`) ve
+     **Zenweld'i Tanıyın** (`/hakkimizda`). Metin örnektir; sahibi
+     gönderecek.
+   - **Force Serisi:** ForceMIG 200 fotoğrafı, seri adları (ForceMIG,
+     ForceTIG, ForceArc, ForceCut); **Force Serisini İncele**
+     (`/arama?q=Force`) ve **Teklif Al**.
+   - **Jasic Lazer:** Jasic lazer kaynak makinesi fotoğrafı, Lazer Kaynak ·
+     Lazer Temizleme · Lazer Markalama; **Lazer Makinelerini İncele**
+     (`/ekipmanlar/lazer-makineleri`) ve **Teklif Al**.
+   - Alttaki sekmelerde (01 Zenweld · 02 Force Serisi · 03 Jasic Lazer)
+     ilerleme çizgisi dolunca sonraki sayfa gelir; sekmeye ya da
+     **‹ / ›** oklarına tıklanınca o sayfa açılır. Fare tanıtım alanının
+     üzerindeyken ya da klavyeyle içindeyken durur. Telefonda parmakla
+     sağa-sola kaydırılır; telefonda seri adları gösterilmez.
+   - Sayfanın ana başlığı (arama motorları için) "Zenweld Kaynak Makineleri
+     ve Plazma Kesme Sistemleri"dir; ekranda görünmez.
+2. **Güven şeridi:** Yana kayan rakamlar. Sitedeki veriden gelenler:
+   yetkili bayi ve servis noktası sayısı, bu noktaların bulunduğu şehir
+   sayısı (Bayiler), kredi kartında en çok taksit (Mağaza Ayarları › banka
+   POS'ları), ücretsiz kargo sınırı (Mağaza Ayarları; 0 ise gösterilmez),
+   ofis sayısı ve şehirleri (Şirket ve İletişim). Sabit olanlar: "+12 ay"
+   online kayıtla ücretsiz garanti uzatma, "14 gün" bireysel alımlarda iade
+   hakkı, "Vadeli & çek" kurumsal alımda ödeme kolaylığı.
+3. **Ne arıyorsunuz?** Kategori kartları; ürün listesi yoktur.
+   - Ekipmanlar bölümünün kategorileri, panelde verilen sırayla (önce
+     grup, sonra kategori): numara, ürün sayısı (yayındaki ürünler), görsel
+     ve ad. Kart kategori sayfasına gider.
+   - Kart görseli: kategoride fotoğrafı olan ilk ürünün fotoğrafı; yoksa
+     kategorinin çizimi. Lazer Kaynak Makineleri'nde Jasic fotoğrafı
+     kullanılır.
+   - Altında Güvenlik, Aksesuarlar ve Dolgu Metalleri kartları: grup
+     adları ve kategori sayısı; bölüm sayfasına gider.
+4. **Kampanyalı Ürünler (Hot Sale):**
    - Kampanyası **şu an geçerli** olan ürünler, en yüksek indirim önce, en
      fazla 12 tane.
    - Kampanya başlayınca ürün buraya kendiliğinden girer, bitince çıkar.
    - Kampanyalı ürün yoksa bölüm görünmez. "Tümünü Gör" `/ekipmanlar`'a
      gider.
-4. **Yeni Gelenler:**
-   - Panelde "Yeni ürün" işaretli yayındaki ürünler, en fazla 12 tane.
-   - Böyle bir ürün yoksa bölüm görünmez.
-5. **Bayi ve servis haritası:** "Size En Yakın Zenweld Bayi ve Yetkili
+5. **Force Serisi:** Model Serisi "Force" olan yayındaki ürünler
+   ("Tümünü Gör" `/arama?q=Force`).
+6. **Jasic Lazer Ürünleri:** Markası Jasic olan yayındaki ürünler
+   ("Tümünü Gör" `/ekipmanlar/lazer-makineleri`). Seriye ya da markaya ürün
+   eklenince kendiliğinden girer; ürün yoksa bölüm görünmez.
+7. **Ürün seçici bandı:** "Hangi kaynak makinesi size uygun? — 3 soruda
+   ihtiyacınıza uygun modeli bulun." ve **Teste Başla!** (`/urun-secici`).
+8. **Bayi ve servis haritası:** "Size En Yakın Zenweld Bayi ve Yetkili
    Servisini Bulun" başlığıyla bayi bulucunun anasayfa hali
    ([7. bölüm](#7-bayi-ve-servis-bulucu)).
-6. **Neden Zenweld?** Beş madde: Sanayinin Tercihi, Ödüllü Marka, Kolay
-   Destek, Garanti Sorgula, Yetkili Bayi ve Servis Ağı. Açıklama metinleri
-   yer tutucudur (lorem ipsum).
-7. **Müşterilerimiz Ne Diyor?**
-   - Panelde "anasayfada göster" işaretlenmiş, onaylı ve ürünü yayında olan
-     değerlendirmeler, en fazla 10 tane.
-   - Kartta puan, başlık, yorum, yazan ve ürün adı vardır.
-8. **Sık Sorulan Sorular:** İlk 8 soru (açılır-kapanır) ve "Tümünü Gör"
-   (`/sss`).
-9. **Teklif bandı:** "Kurumsal alım mı yapacaksınız? Vadeli ödeme ve çek ile
-   ödeme seçenekleri için satış ekibimizden teklif alın." → **Teklif Al**.
-10. **Bayilik bandı:** "Zenweld Bayisi Olmak İster misiniz?" →
-    **Bayilik Başvurusu**.
-11. **Bloğumuzdan:** En yeni 3 blog yazısı (kapak, kategori, başlık, tarih) ve
-    "Tümünü Gör".
+9. **Neden Zenweld?** Beş madde: Sanayinin Tercihi, Ödüllü Marka, Kolay
+   Destek, Garanti Sorgula, Yetkili Bayi ve Servis Ağı; sonda **Zenweld'i
+   Tanıyın** kutusu (`/hakkimizda`). Açıklama metinleri yer tutucudur
+   (lorem ipsum).
+10. **Müşterilerimiz Ne Diyor?**
+    - Panelde "anasayfada göster" işaretlenmiş, onaylı ve ürünü yayında
+      olan değerlendirmeler, en fazla 10 tane.
+    - Kartta puan, başlık, yorum, yazan ve ürün adı vardır.
+11. **Kurumsal teklif ve bayilik** (yan yana iki kart):
+    - "Kurumsal alım mı yapacaksınız? Vadeli ödeme ve çek ile ödeme
+      seçenekleri için satış ekibimizden teklif alın." → **Teklif Al**.
+    - "Zenweld Bayisi Olmak İster misiniz?" → **Bayilik Başvurusu**.
+12. **Sık Sorulan Sorular ve Bloğumuzdan** (yan yana): ilk 6 soru
+    (açılır-kapanır, "Tümünü Gör" `/sss`) ve en yeni 3 blog yazısı (kapak,
+    kategori, başlık, tarih; "Tümünü Gör" `/blog`).
 
-**Kayan şeritler:** Hot Sale, Yeni Gelenler ve yorumlar yana doğru yavaşça
-kayar. Fareyle üzerine gelince durur, elle kaydırılabilir. İşletim sisteminde
-"hareketi azalt" seçiliyse kaymaz.
+**Kayan şeritler:** Güven şeridi, Hot Sale, Force Serisi, Jasic Lazer ve
+yorumlar yana doğru yavaşça kayar. Fareyle üzerine gelince durur; ürün
+şeritleri elle de kaydırılabilir. Şeritte ürün azsa (ör. 4) şerit dolsun
+diye ürünler tekrar edilir. İşletim sisteminde "hareketi azalt" seçiliyse
+şeritler kaymaz, tanıtım alanı kendiliğinden dönmez.
 
 ---
 
@@ -334,8 +369,6 @@ Katalogda, anasayfa şeritlerinde, aramada, Ürün Seçici'de, favorilerde ve
   - Kampanya **%25 ve üzerindeyse** "Flaş İndirim %X" yazar ve kartın etrafında
     alev efekti olur. Bu eşik koddaki tek bir sayıdır, değiştirilebilir.
   - Daha düşük kampanyada "%X indirim" yazar.
-  - Panelde "Yeni ürün" işaretliyse "YENİ" yazar. Kampanyalı üründe de
-    görünür.
   - Ürünün hiçbir seçeneği Zenweld deposunda yoksa görselin altında
     **STOKTA YOK** yazar ([IS-KURALLARI.md › Zenweld depo
     stoğu](IS-KURALLARI.md#20-zenweld-depo-stoğu)).
@@ -373,7 +406,7 @@ hiçbiri değilse 404 çıkar.
     soğutmalı makinede Hava ya da Su seçilince o halin fotoğrafı).
 - **Ürün adı ve kısa açıklama.**
 - **Bilgi satırı:**
-  - "YENİ" rozeti (işaretliyse) ve "<N> ay garanti".
+  - "<N> ay garanti".
   - **Ürün Kodu:** Seçenekli üründe seçilen kombinasyonun kodu.
   - **Model:** Model kodu girilmişse.
 - **Seçenek seçici** (yalnızca seçenekli üründe):

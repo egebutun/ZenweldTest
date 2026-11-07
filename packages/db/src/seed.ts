@@ -138,7 +138,6 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
       inTheBox: p.inTheBox,
       highlights: p.highlights,
       processes: p.processes,
-      isNew: p.isNew,
       position: p.order,
       manualUrl: p.manualUrl,
       warrantyMonths: p.warrantyMonths,

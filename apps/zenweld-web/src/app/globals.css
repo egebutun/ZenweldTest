@@ -159,3 +159,193 @@
     animation: zw-rise-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }
+
+/* ==================================================================== */
+/* ANASAYFA (components/home)                                            */
+/*                                                                      */
+/* Endustriyel tema: koyu celik zeminler, firca izli doku, teknik cizim */
+/* izgarasi, kivilcim parcaciklari, dev ici bos seri adlari.            */
+/* ==================================================================== */
+
+/* --- Tanitim alani: sayfa gecisleri --- */
+.zw-hero-slide {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 700ms ease, visibility 0s linear 700ms;
+}
+.zw-hero-slide[data-active="true"] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 700ms ease, visibility 0s;
+}
+
+@keyframes zw-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+.zw-hero-progress {
+  animation-name: zw-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
+@keyframes zw-kenburns {
+  from { transform: scale(1.12); }
+  to   { transform: scale(1); }
+}
+@keyframes zw-hero-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes zw-hero-product-in {
+  from { opacity: 0; transform: translateX(60px) scale(0.94); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes zw-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes zw-ember {
+  0%   { opacity: 0; transform: translate(0, 0) scale(1); }
+  12%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx, 0), -240px) scale(0.3); }
+}
+@keyframes zw-laser-sweep {
+  0%   { top: 8%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 92%; opacity: 0; }
+}
+@keyframes zw-glow-breathe {
+  0%, 100% { opacity: 0.75; }
+  50%      { opacity: 1; }
+}
+
+/* Etkin sayfanin icerigi her gelisinde yeniden belirir. */
+.zw-hero-slide[data-active="true"] .zw-hero-in {
+  animation: zw-hero-rise 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.zw-hero-slide[data-active="true"] .zw-hero-photo {
+  animation: zw-kenburns 9s ease-out both;
+}
+.zw-hero-slide[data-active="true"] .zw-hero-product {
+  animation: zw-hero-product-in 1100ms cubic-bezier(0.22, 1, 0.36, 1) 150ms both;
+}
+.zw-float {
+  animation: zw-float 6s ease-in-out infinite;
+}
+.zw-hero-slide[data-active="true"] .zw-laser-line {
+  animation: zw-laser-sweep 2.6s cubic-bezier(0.45, 0, 0.55, 1) 300ms both;
+}
+
+.zw-ember {
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: #ffb36b;
+  box-shadow: 0 0 6px 2px rgb(255 120 40 / 0.75);
+  animation-name: zw-ember;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-out;
+  opacity: 0;
+}
+
+/* Firca izli celik dokusu (koyu zemin) */
+.zw-steel,
+.zw-steel-section {
+  background-image:
+    repeating-linear-gradient(115deg, rgb(255 255 255 / 0.018) 0 1px, transparent 1px 7px),
+    linear-gradient(160deg, #22262b 0%, #141619 55%, #0e1012 100%);
+}
+
+/* Teknik cizim izgarasi (lazer sayfasi) */
+.zw-blueprint {
+  background-color: #101316;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(rgb(255 255 255 / 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.02) 1px, transparent 1px),
+    radial-gradient(ellipse at 70% 50%, #1d2228 0%, #101316 70%);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px, 100% 100%;
+}
+
+/* Urunun arkasindaki isik */
+.zw-hero-glow {
+  background: radial-gradient(ellipse 38% 55% at 74% 52%, rgb(184 36 41 / 0.5), transparent 70%);
+  animation: zw-glow-breathe 6s ease-in-out infinite;
+}
+.zw-hero-glow-cool {
+  background:
+    radial-gradient(ellipse 40% 55% at 72% 55%, rgb(255 110 40 / 0.28), transparent 70%),
+    radial-gradient(ellipse 30% 40% at 72% 55%, rgb(120 160 255 / 0.12), transparent 70%);
+}
+
+/* Boydan boya gecen lazer cizgisi */
+.zw-laser-line {
+  top: 50%;
+  height: 2px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent 0%, rgb(255 80 60 / 0.9) 30%, #fff 50%, rgb(255 80 60 / 0.9) 70%, transparent 100%);
+  box-shadow: 0 0 18px 4px rgb(255 70 50 / 0.55);
+}
+
+/* Dev, ici bos seri adi */
+.zw-big-word {
+  font-size: clamp(110px, 22vw, 340px);
+  letter-spacing: -0.02em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.09);
+}
+.zw-big-word-light {
+  -webkit-text-stroke: 1.5px rgb(20 22 25 / 0.06);
+}
+/* Tanitim alaninda sag kenar boyunca dikey */
+.zw-big-word-vertical {
+  font-size: clamp(120px, 13vw, 210px);
+  writing-mode: vertical-rl;
+  transform: translateY(-50%) rotate(180deg);
+  -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.12);
+}
+
+/* --- Guven seridi --- */
+@keyframes zw-trust-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.zw-trust-track {
+  animation: zw-trust-scroll 48s linear infinite;
+}
+.zw-trust:hover .zw-trust-track {
+  animation-play-state: paused;
+}
+
+/* --- Urun secici bandi: egik celik cizgiler --- */
+.zw-finder::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, rgb(255 255 255 / 0.06) 0 2px, transparent 2px 16px),
+    linear-gradient(105deg, transparent 40%, rgb(110 22 25 / 0.55) 100%);
+  pointer-events: none;
+}
+
+/* Hareket azaltma tercihinde her sey sabit; tanitim alani kendiliginden donmez. */
+@media (prefers-reduced-motion: reduce) {
+  .zw-hero-slide,
+  .zw-hero-slide[data-active="true"] { transition: none; }
+  .zw-hero-progress,
+  .zw-hero-slide[data-active="true"] .zw-hero-in,
+  .zw-hero-slide[data-active="true"] .zw-hero-photo,
+  .zw-hero-slide[data-active="true"] .zw-hero-product,
+  .zw-hero-slide[data-active="true"] .zw-laser-line,
+  .zw-float,
+  .zw-ember,
+  .zw-hero-glow,
+  .zw-trust-track {
+    animation: none;
+  }
+  .zw-hero-progress { transform: scaleX(0); }
+  .zw-trust { overflow-x: auto; }
+}

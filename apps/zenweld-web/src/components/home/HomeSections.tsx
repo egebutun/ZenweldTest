@@ -1,75 +1,30 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowRight, Award, Compass, Flame, Factory, Handshake, Headphones, Truck, Wrench } from "lucide-react";
+import { ArrowRight, Award, Compass, Factory, Flame, Handshake, Headphones, Truck, Wrench } from "lucide-react";
+import type { Product } from "@zenweld/data";
 import { listBlogPosts, listProducts, useDatabase, useNow } from "@zenweld/store";
-import { Accordion, Button, ProductImage, SectionHeading } from "@zenweld/ui";
+import { Accordion, ProductImage } from "@zenweld/ui";
 import { discountPercent, isDiscountActive } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
 import Link from "next/link";
 import { ProductMarquee } from "@/components/product/ProductMarquee";
+import { SectionTitle } from "@/components/home/CategoryShowcase";
 import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";
 
-/** Anasayfa tanitim alani arka plani (public/images/hero). */
-const HERO_PHOTO = "/images/hero/kaynak-atolyesi.webp";
-
-/**
- * Buyuk tanitim alani.
- *
- * Ust banttan (urun secici) sonra ilk ekranda TAMAMEN
- * gorunecek kadar kisa tutulur. Fotograf solda koyulasir (yazi okunur),
- * sagda kaynakci ve kivilcimlar acik kalir.
- */
-export function Hero() {
-  const t = useT();
-  // Genis ekranda yukseklik ekran genisligiyle orantili: fotograf her
-  // genislikte ayni oranda kirpilir, kaynak yapan usta (kask, eller,
-  // kivilcim) her zaman gorunur.
+/** "Tumunu Gor" baglantisi (bolum basliginin saginda). */
+function ViewAll({ href, label, dark }: { href: string; label: string; dark?: boolean }) {
   return (
-    <section className="relative overflow-hidden bg-zw-ink lg:flex lg:min-h-[31vw] lg:items-center">
-      <ProductImage
-        src={HERO_PHOTO}
-        alt="Zenweld kaynak makinesiyle atölyede kaynak yapan usta"
-        label="ZENWELD"
-        priority
-        className="absolute inset-0 h-full w-full object-cover object-[72%_center] lg:object-[center_62%]"
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-zw-ink/95 via-zw-ink/70 to-zw-ink/10" />
-      {/* Telefonda yazi fotografin tamaminin uzerine gelir; biraz daha koyulastir. */}
-      <div className="absolute inset-0 bg-zw-ink/45 lg:hidden" />
-
-      <div className="zw-container relative w-full py-9 lg:py-10">
-        <div className="max-w-2xl text-white">
-          <div className="mb-3 inline-block border-l-4 border-zw-red-600 pl-3 text-xs font-bold uppercase tracking-[0.2em] text-zw-red-500">
-            {t.common.tagline}
-          </div>
-          <h1 className="font-display text-3xl font-bold uppercase leading-[1.02] tracking-tight sm:text-4xl lg:text-5xl">
-            {t.home.heroTitle}
-          </h1>
-          <p className="mt-3 font-display text-xl font-semibold uppercase tracking-tight text-zw-red-500 sm:text-2xl">
-            {t.home.heroSlogan}
-          </p>
-          <p className="mt-3 max-w-xl text-zw-grey-200">{t.home.heroSubtitle}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/ekipmanlar">
-              <Button size="lg" rightIcon={<ArrowRight size={18} />}>
-                {t.home.heroCta}
-              </Button>
-            </Link>
-            <Link href="/teklif-al">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white bg-transparent text-white hover:bg-white hover:text-zw-ink"
-              >
-                {t.home.heroCtaSecondary}
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
+    <Link
+      href={href}
+      className={`group inline-flex shrink-0 items-center gap-2 self-start whitespace-nowrap text-sm font-bold uppercase tracking-wide sm:self-auto ${
+        dark ? "text-white hover:text-zw-red-400" : "text-zw-ink hover:text-zw-red-600"
+      }`}
+    >
+      {label}
+      <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+    </Link>
   );
 }
 
@@ -94,11 +49,9 @@ export function HotSale() {
   if (items.length === 0) return null;
 
   return (
-    // Zemin acik: alttaki Yeni Gelenler (cok acik gri) ile ayni gorunum;
-    // tam beyaz oldugu icin iki bolum birbirinden ayrilir.
-    <section className="bg-white">
+    <section className="bg-zw-grey-50">
       <div className="zw-container zw-section">
-        <SectionHeading
+        <SectionTitle
           eyebrow={
             <span className="flex items-center gap-1.5">
               <Flame size={15} />
@@ -107,14 +60,7 @@ export function HotSale() {
           }
           title={t.home.hotSaleTitle}
           subtitle={t.home.hotSaleSubtitle}
-          action={
-            <Link
-              href="/ekipmanlar"
-              className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:self-auto"
-            >
-              {t.common.viewAll} <ArrowRight size={16} />
-            </Link>
-          }
+          action={<ViewAll href="/ekipmanlar" label={t.common.viewAll} />}
         />
         <ProductMarquee products={items} />
       </div>
@@ -123,111 +69,120 @@ export function HotSale() {
 }
 
 /**
- * Baslik altindaki ust bant: urun secici. Ince tutulur ki buyuk tanitim
- * alani ilk ekranda gorunsun.
+ * SERI SERITLERI: Force Serisi (Model Serisi "Force") ve Jasic lazer
+ * urunleri (markasi Jasic). Kampanyali urunler gibi yana kayar; seriye
+ * yeni urun eklenince kendiliginden girer.
  */
-export function HomeActionStrip() {
-  const t = useT();
-
-  return (
-    <section className="relative overflow-hidden bg-zw-ink text-white">
-      {/* Marka kirmizisindan egik bir isik huzmesi — dikkat ceker ama
-          paletten cikmaz. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-70"
-        style={{
-          background:
-            "linear-gradient(105deg, transparent 38%, var(--color-zw-red-800) 58%, var(--color-zw-red-600) 78%, var(--color-zw-red-700) 100%)",
-        }}
-      />
-
-      <div className="zw-container relative">
-        <ActionRow
-          Icon={Compass}
-          title={t.finder.question}
-          text={t.finder.hint}
-          href="/urun-secici"
-          cta={t.finder.cta}
-        />
-      </div>
-    </section>
-  );
-}
-
-function ActionRow({
-  Icon,
-  title,
-  text,
-  href,
-  cta,
-}: {
-  Icon: typeof Compass;
-  title: string;
-  text: string;
-  href: string;
-  cta: string;
-}) {
-  return (
-    <div className="flex flex-col gap-3 py-4 lg:flex-row lg:items-center lg:justify-between">
-      <div className="flex items-center gap-3.5">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/25">
-          <Icon size={21} className="text-white" />
-        </span>
-        <div>
-          <h2 className="font-display text-xl font-bold uppercase leading-tight sm:text-2xl">
-            {title}
-          </h2>
-          <p className="mt-0.5 text-sm text-zw-grey-300">{text}</p>
-        </div>
-      </div>
-      <Link
-        href={href}
-        className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-zw-red-700 shadow-lg transition-colors hover:bg-zw-grey-100"
-      >
-        {cta}
-        <ArrowRight
-          size={17}
-          className="transition-transform duration-200 group-hover:translate-x-1"
-        />
-      </Link>
-    </div>
-  );
-}
-
-/** Yeni eklenen urunler. */
-export function NewArrivals() {
+export function SeriesStrips() {
   const t = useT();
   const db = useDatabase();
-  const items = useMemo(
-    () => listProducts(db).filter((p) => p.isNew).slice(0, 12),
-    [db],
-  );
-
-  if (items.length === 0) return null;
+  const { force, jasic } = useMemo(() => {
+    const visible = listProducts(db);
+    return {
+      force: visible.filter((p) => p.filterValues?.["model-serisi"]?.includes("force")),
+      jasic: visible.filter((p) => p.brand?.toLocaleLowerCase("tr") === "jasic"),
+    };
+  }, [db]);
 
   return (
-    <section className="bg-zw-grey-50">
-      <div className="zw-container zw-section">
-        <SectionHeading
-          eyebrow={t.home.newArrivalsEyebrow}
-          title={t.home.newArrivalsTitle}
-          subtitle={t.home.newArrivalsSubtitle}
-          action={
-            <Link
-              href="/ekipmanlar"
-              className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:self-auto"
-            >
-              {t.common.viewAll} <ArrowRight size={16} />
-            </Link>
-          }
+    <>
+      <SeriesStrip
+        word="FORCE"
+        eyebrow={t.home.forceStripEyebrow}
+        title={t.home.forceStripTitle}
+        subtitle={t.home.forceStripSubtitle}
+        href="/arama?q=Force"
+        products={force}
+        dark
+      />
+      <SeriesStrip
+        word="LAZER"
+        eyebrow={t.home.laserStripEyebrow}
+        title={t.home.laserStripTitle}
+        subtitle={t.home.laserStripSubtitle}
+        href="/ekipmanlar/lazer-makineleri"
+        products={jasic}
+      />
+    </>
+  );
+}
+
+function SeriesStrip({
+  word,
+  eyebrow,
+  title,
+  subtitle,
+  href,
+  products,
+  dark,
+}: {
+  word: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  href: string;
+  products: Product[];
+  dark?: boolean;
+}) {
+  const t = useT();
+  if (products.length === 0) return null;
+  return (
+    <section className={`relative overflow-hidden ${dark ? "zw-steel-section bg-zw-ink" : "bg-white"}`}>
+      <div
+        aria-hidden="true"
+        className={`zw-big-word pointer-events-none absolute -top-6 right-0 select-none font-display font-bold uppercase leading-none ${
+          dark ? "" : "zw-big-word-light"
+        }`}
+      >
+        {word}
+      </div>
+      <div className="zw-container zw-section relative">
+        <SectionTitle
+          eyebrow={eyebrow}
+          title={title}
+          subtitle={subtitle}
+          dark={dark}
+          action={<ViewAll href={href} label={t.common.viewAll} dark={dark} />}
         />
-        <ProductMarquee products={items} />
+        <ProductMarquee products={products} />
       </div>
     </section>
   );
 }
 
+/**
+ * Urun secici bandi: "Hangi kaynak makinesi size uygun?" Sayfanin ortasinda,
+ * kirmizi zeminli genis bir bant.
+ */
+export function FinderBand() {
+  const t = useT();
+  return (
+    <section className="zw-container py-12 sm:py-16">
+      <div className="zw-finder relative overflow-hidden rounded-[6px] bg-zw-red-600 px-6 py-10 text-white sm:px-10 lg:px-14">
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-5">
+            <span className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/30 sm:flex">
+              <Compass size={30} />
+            </span>
+            <div>
+              <h2 className="font-display text-3xl font-bold uppercase leading-[0.95] sm:text-[44px]">{t.finder.question}</h2>
+              <p className="mt-2 text-white/85">{t.finder.hint}</p>
+            </div>
+          </div>
+          <Link
+            href="/urun-secici"
+            className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-[4px] bg-white px-7 py-4 text-sm font-bold uppercase tracking-wide text-zw-red-700 shadow-lg transition-colors hover:bg-zw-ink hover:text-white zw-focus"
+          >
+            {t.finder.cta}
+            <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Neden Zenweld? Numarali maddeler (metinler sonra yazilacak). */
 export function WhyZenweld() {
   const t = useT();
   const items = [
@@ -239,33 +194,47 @@ export function WhyZenweld() {
   ];
 
   return (
-    <section className="zw-container zw-section">
-      <SectionHeading align="center" title={t.home.whyTitle} subtitle={t.home.whySubtitle} />
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map(({ Icon, title }) => (
-          <div
-            key={title}
-            className="rounded-[4px] border border-zw-grey-200 p-6 transition-colors hover:border-zw-red-600"
-          >
-            <Icon size={28} className="text-zw-red-600" />
-            <h3 className="mt-4 font-display text-xl font-semibold uppercase">{title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-zw-grey-500">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua.
-            </p>
-          </div>
-        ))}
+    <section className="zw-steel-section relative overflow-hidden bg-zw-ink text-white">
+      <div className="zw-container zw-section relative">
+        <SectionTitle eyebrow="Zenweld" title={t.home.whyTitle} subtitle={t.home.whySubtitle} dark />
+        <ul className="grid gap-px overflow-hidden rounded-[6px] bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map(({ Icon, title }, i) => (
+            <li key={title} className="group relative bg-zw-ink p-7 transition-colors hover:bg-zw-grey-900">
+              <div className="flex items-center justify-between">
+                <span className="flex h-12 w-12 items-center justify-center rounded-[4px] bg-zw-red-600/15 text-zw-red-500 ring-1 ring-zw-red-600/40 transition-colors group-hover:bg-zw-red-600 group-hover:text-white">
+                  <Icon size={24} />
+                </span>
+                <span className="font-display text-4xl font-bold text-white/10">{String(i + 1).padStart(2, "0")}</span>
+              </div>
+              <h3 className="mt-6 font-display text-2xl font-bold uppercase">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/60">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua.
+              </p>
+            </li>
+          ))}
+          {/* Izgaranin son kutusu: Hakkimizda */}
+          <li>
+            <Link
+              href="/hakkimizda"
+              className="group flex h-full flex-col justify-between bg-zw-red-600 p-7 transition-colors hover:bg-zw-red-700 zw-focus"
+            >
+              <span className="font-display text-4xl font-bold uppercase leading-[0.95]">{t.home.slides.corporateCtaSecondary}</span>
+              <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide">
+                {t.explore.about}
+                <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />
+              </span>
+            </Link>
+          </li>
+        </ul>
       </div>
     </section>
   );
 }
 
 /**
- * Anasayfadaki bayi/servis bolumu.
- *
- * Onceden sehir ve bayi adi yazan kutucuklar vardi; yerine bayi bulucu
- * sayfasindaki haritanin aynisi kondu. Sehir ve tur (yetkili satici /
- * yetkili servis) filtreleri burada da calisiyor.
+ * Anasayfadaki bayi/servis bolumu: bayi bulucu sayfasindaki haritanin
+ * aynisi (sehir ve tur suzgecleri calisir).
  */
 export function DealerStrip() {
   const t = useT();
@@ -273,15 +242,7 @@ export function DealerStrip() {
   return (
     <section className="bg-zw-grey-100">
       <div className="zw-container zw-section">
-        <div className="mb-6">
-          <div className="max-w-3xl">
-            <h2 className="font-display text-3xl font-bold uppercase leading-tight sm:text-4xl">
-              {t.home.dealerTitle}
-            </h2>
-            <p className="mt-3 text-zw-grey-600">{t.home.dealerSubtitle}</p>
-          </div>
-        </div>
-
+        <SectionTitle eyebrow={t.nav.findDealer} title={t.home.dealerTitle} subtitle={t.home.dealerSubtitle} />
         <DealerFinder variant="home" compact />
       </div>
     </section>
@@ -289,148 +250,136 @@ export function DealerStrip() {
 }
 
 /**
- * Anasayfadaki sik sorulan sorular.
- *
- * SEO icin onemli: sorular sayfanin HTML'inde duz metin olarak bulunur
- * ve ayrica FAQPage yapisal verisi olarak arama motoruna bildirilir
- * (bkz. app/(site)/page.tsx). Google bu sorulari sonuc sayfasinda
- * dogrudan gosterebiliyor.
+ * Kurumsal teklif ve bayilik: yan yana iki kart (eskiden iki ayri bant).
  */
-export function HomeFaq() {
+export function CtaCards() {
   const t = useT();
-  const db = useDatabase();
-  const items = useMemo(() => db.faqs.slice(0, 8), [db]);
-
-  if (items.length === 0) return null;
-
   return (
-    <section className="bg-white">
-      <div className="zw-container zw-section">
-        <SectionHeading
-          eyebrow={t.support.faqTitle}
-          title={t.home.faqTitle}
-          subtitle={t.home.faqSubtitle}
-          action={
-            <Link
-              href="/sss"
-              className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:self-auto"
-            >
-              {t.common.viewAll} <ArrowRight size={16} />
-            </Link>
-          }
+    <section className="zw-container py-12 sm:py-16">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <CtaCard
+          tone="red"
+          eyebrow={t.home.ctaEyebrow}
+          title={t.home.quoteBannerTitle}
+          text={t.home.quoteBannerText}
+          href="/teklif-al"
+          cta={t.home.quoteBannerCta}
+          Icon={Factory}
         />
-        <div className="max-w-3xl">
-          <Accordion
-            icon="plus"
-            items={items.map((f) => ({
-              id: f.id,
-              title: f.question,
-              content: f.answer,
-            }))}
-          />
-        </div>
+        <CtaCard
+          tone="dark"
+          eyebrow={t.home.ctaEyebrow}
+          title={t.dealerApply.homeTitle}
+          text={t.dealerApply.homeText}
+          href="/bayilik-basvurusu"
+          cta={t.dealerApply.homeCta}
+          Icon={Handshake}
+        />
       </div>
     </section>
+  );
+}
+
+function CtaCard({
+  tone,
+  eyebrow,
+  title,
+  text,
+  href,
+  cta,
+  Icon,
+}: {
+  tone: "red" | "dark";
+  eyebrow: string;
+  title: string;
+  text: string;
+  href: string;
+  cta: string;
+  Icon: typeof Factory;
+}) {
+  return (
+    <div
+      className={`zw-cta-card relative flex flex-col overflow-hidden rounded-[6px] p-8 text-white sm:p-10 ${
+        tone === "red" ? "bg-zw-red-600" : "zw-steel-section bg-zw-ink"
+      }`}
+    >
+      <Icon aria-hidden="true" size={180} strokeWidth={1} className="pointer-events-none absolute -bottom-8 -right-6 text-white/10" />
+      <div className="relative flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-white/70">
+        <span className="h-[2px] w-8 bg-white/60" />
+        {eyebrow}
+      </div>
+      <h2 className="relative mt-4 max-w-md font-display text-3xl font-bold uppercase leading-[0.95] sm:text-4xl">{title}</h2>
+      <p className="relative mt-3 max-w-md text-white/85">{text}</p>
+      <Link
+        href={href}
+        className={`group relative mt-8 inline-flex w-fit items-center gap-2 rounded-[4px] px-6 py-3.5 text-sm font-bold uppercase tracking-wide transition-colors zw-focus ${
+          tone === "red" ? "bg-white text-zw-red-700 hover:bg-zw-ink hover:text-white" : "bg-zw-red-600 text-white hover:bg-white hover:text-zw-ink"
+        }`}
+      >
+        {cta}
+        <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />
+      </Link>
+    </div>
   );
 }
 
 /**
- * Kurumsal alim / teklif cagrisi: sade, logo kirmizisi zeminli kutu.
- * Ust banttaki urun seciciden ayri tasarimdadir.
+ * Sik sorulan sorular (ilk 6) ve blog (en yeni 3) yan yana.
+ *
+ * SEO icin onemli: sorular sayfanin HTML'inde duz metin olarak bulunur
+ * ve ayrica FAQPage yapisal verisi olarak arama motoruna bildirilir
+ * (bkz. app/(site)/page.tsx).
  */
-export function QuoteBanner() {
-  const t = useT();
-  return (
-    <section className="zw-container pt-12">
-      <div className="flex flex-col items-start gap-6 rounded-[4px] bg-zw-red-600 px-8 py-10 text-white lg:flex-row lg:items-center lg:justify-between">
-        <div className="max-w-2xl">
-          <h2 className="font-display text-3xl font-bold uppercase leading-tight sm:text-4xl">
-            {t.home.quoteBannerTitle}
-          </h2>
-          <p className="mt-2 text-white/90">{t.home.quoteBannerText}</p>
-        </div>
-        <Link href="/teklif-al" className="shrink-0">
-          <Button size="lg" variant="light" rightIcon={<ArrowRight size={18} />}>
-            {t.home.quoteBannerCta}
-          </Button>
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-/** Anasayfada bayilik basvurusuna cagri. */
-export function DealerApplyBanner() {
-  const t = useT();
-  return (
-    <section className="zw-container py-12">
-      <div className="flex flex-col items-start gap-5 rounded-[6px] border-2 border-zw-red-600 bg-zw-red-50 px-7 py-8 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-start gap-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zw-red-600 text-white">
-            <Handshake size={24} />
-          </span>
-          <div>
-            <h2 className="font-display text-2xl font-bold uppercase text-zw-ink sm:text-3xl">
-              {t.dealerApply.homeTitle}
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm text-zw-grey-700">{t.dealerApply.homeText}</p>
-          </div>
-        </div>
-        <Link href="/bayilik-basvurusu" className="shrink-0">
-          <Button size="lg">{t.dealerApply.homeCta}</Button>
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-export function BlogTeaser() {
+export function FaqAndBlog() {
   const t = useT();
   const db = useDatabase();
+  const faqs = useMemo(() => db.faqs.slice(0, 6), [db]);
+  const posts = useMemo(() => listBlogPosts(db).slice(0, 3), [db]);
 
   return (
-    <section className="zw-container zw-section">
-      <SectionHeading
-        eyebrow={t.home.blogSubtitle}
-        title={t.home.blogTitle}
-        action={
-          <Link
-            href="/blog"
-            className="flex items-center gap-1.5 self-start text-sm font-semibold uppercase text-zw-red-600 hover:underline sm:self-auto"
-          >
-            {t.common.viewAll} <ArrowRight size={16} />
-          </Link>
-        }
-      />
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {listBlogPosts(db).slice(0, 3).map((post) => (
-          <Link
-            key={post.id}
-            href={`/blog/${post.slug}`}
-            className="group overflow-hidden rounded-[4px] border border-zw-grey-200"
-          >
-            <div className="aspect-[16/9] overflow-hidden bg-zw-grey-100">
-              <ProductImage
-                src={post.coverUrl}
-                alt={post.title}
-                label={post.category}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            </div>
-            <div className="p-5">
-              <div className="text-xs font-semibold uppercase tracking-wide text-zw-red-600">
-                {post.category}
-              </div>
-              <h3 className="mt-2 font-display text-xl font-semibold leading-tight group-hover:text-zw-red-600">
-                {post.title}
-              </h3>
-              <p className="mt-2 line-clamp-2 text-sm text-zw-grey-500">{post.excerpt}</p>
-              <div className="mt-3 text-xs text-zw-grey-400">
-                {formatDate(post.publishedAt)}
-              </div>
-            </div>
-          </Link>
-        ))}
+    <section className="bg-white">
+      <div className="zw-container zw-section grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+        {faqs.length > 0 && (
+          <div>
+            <SectionTitle
+              eyebrow={t.nav.support}
+              title={t.home.faqTitle}
+              action={<ViewAll href="/sss" label={t.common.viewAll} />}
+            />
+            <Accordion icon="plus" items={faqs.map((f) => ({ id: f.id, title: f.question, content: f.answer }))} />
+          </div>
+        )}
+
+        <div>
+          <SectionTitle
+            eyebrow={t.explore.blog}
+            title={t.home.blogTitle}
+            action={<ViewAll href="/blog" label={t.common.viewAll} />}
+          />
+          <ul className="space-y-4">
+            {posts.map((post) => (
+              <li key={post.id}>
+                <Link href={`/blog/${post.slug}`} className="group flex gap-4 rounded-[6px] p-2 transition-colors hover:bg-zw-grey-50">
+                  <div className="aspect-[4/3] w-32 shrink-0 overflow-hidden rounded-[4px] bg-zw-grey-100 sm:w-40">
+                    <ProductImage
+                      src={post.coverUrl}
+                      alt={post.title}
+                      label={post.category}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="min-w-0 py-1">
+                    <div className="text-xs font-bold uppercase tracking-wide text-zw-red-600">{post.category}</div>
+                    <h3 className="mt-1 font-display text-xl font-bold leading-tight text-zw-ink group-hover:text-zw-red-600">
+                      {post.title}
+                    </h3>
+                    <div className="mt-2 text-xs text-zw-grey-500">{formatDate(post.publishedAt)}</div>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
