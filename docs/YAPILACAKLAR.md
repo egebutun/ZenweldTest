@@ -376,6 +376,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Teklif, servis, garanti ve iade durumlarında müşteriye e-posta | Hangi bildirimlerin gideceği ve metinleri | [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 | Yöneticinin kendi şifresini panelden değiştirmesi | Şimdi yapılmıyor (K-105) | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 2 |
 | Sitenin tasarımı | Sahibi yapacak | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
+| Görsel düzenleyici (önizleme, sürükle, ölçekle) ve sayfa görsellerinin panelden değişmesi | Tasarımın bitmesi (fotoğrafların yeri ve sayısı kesinleşince) | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) 5 |
 
 ---
 
@@ -1339,6 +1340,34 @@ yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
 3. Renk karşıtlığı bu aşamada ele alınacak ("Erişilebilirlik (A4)" 4).
 4. Tasarım öncesi kodun yedeği GitHub'da `yedek/2026-10-22-tasarim-oncesi`
    dalında.
+5. **Görsel düzenleyici ve sayfa görselleri** (sahibinin isteği; tasarım
+   bitip sayfalardaki fotoğrafların yeri ve sayısı kesinleşince yapılacak):
+   - **Görsel düzenleyici:** Paneldeki her görsel alanında (ürünler,
+     kategori ve grup kartları, haber/etkinlik/blog kapakları, Hakkımızda,
+     satış temsilcisi fotoğrafı) dosya seçilince ya da mevcut görselde
+     **Düzenle** denince görsel, sitede görüneceği çerçevenin şeklinde
+     (kare, yatay, yuvarlak) önizlenir; fareyle sürüklenir, fare tekerleği,
+     kaydırma çubuğu ya da telefonda iki parmakla yakınlaştırılır;
+     **Sığdır**, **Doldur**, **Sıfırla**; **Uygula** ile çerçeveye göre
+     kırpılıp kaydedilir.
+     - Önerilen yol kırparak kaydetmek: kayıtlar ve sitedeki gösterim
+       değişmez. Sınırı: kırpılan dış kısım geri gelmez; daha geniş alan
+       için görsel yeniden yüklenir. Diğer yol kırpmadan yalnızca konum ve
+       yakınlığı saklamak (her zaman geri alınır, ama bütün görsel
+       kayıtları ve sitedeki her gösterim değişir); sahibiyle seçilecek.
+     - Başka sitedeki görselin adresi girildiyse tarayıcı o görseli
+       kırpamayabilir (karşı site izin vermezse); o zaman dosya olarak
+       yüklenmesi istenir.
+   - **Sayfa görselleri panelden:** Bugün Destek ve Garanti sayfasının üst
+     görseli (`components/support/SupportHub.tsx` › `HERO_IMAGE`, geçici:
+     Evomig 205 P) ve anasayfanın büyük fotoğrafı
+     (`components/home/HomeSections.tsx` › `HERO_PHOTO`) kodda sabit.
+     Panelde (ör. Görünüm › Sayfa Görselleri) değiştirilebilir olacak;
+     önizlemede sayfanın masaüstü ve telefon görünümü birlikte görülecek.
+     Tasarımda eklenen diğer sabit görseller de buraya girer. Veritabanında
+     yeni bir ayar (`settings` tablosuna yeni anahtar) gerekir.
+   - Satış temsilcilerinin fotoğrafı yok (sitede adın baş harfleri
+     görünüyor); gerçek fotoğraflar panelden eklenecek.
 
 ## Erişilebilirlik (A4) — önerilen, zorunlu değil
 
