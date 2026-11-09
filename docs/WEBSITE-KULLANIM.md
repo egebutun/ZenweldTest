@@ -252,8 +252,8 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
    - Kampanya başlayınca ürün buraya kendiliğinden girer, bitince çıkar.
    - Kampanyalı ürün yoksa bölüm görünmez. "Tümünü Gör" `/ekipmanlar`'a
      gider.
-7. **Ürün seçici bandı:** "İhtiyacınıza uygun kaynak makinesini bulun." ve
-   **Teste Başla!** (`/urun-secici`).
+7. **Ürün seçici bandı:** "Hangi kaynak makinesi size uygun?" ve **Teste
+   Başla!** (`/urun-secici`).
 8. **Bayi ve servis haritası:** "Size En Yakın Zenweld Bayi ve Yetkili
    Servisini Bulun" başlığıyla bayi bulucunun anasayfa hali
    ([7. bölüm](#7-bayi-ve-servis-bulucu)).

@@ -65,7 +65,7 @@ export const tr = {
     myQuotes: "Tekliflerim",
   },
   finder: {
-    question: "İhtiyacınıza uygun kaynak makinesini bulun.",
+    question: "Hangi kaynak makinesi size uygun?",
     cta: "Teste Başla!",
   },
   explore: {
@@ -342,7 +342,7 @@ export const tr = {
   quote: {
     title: "Teklif Al",
     subtitle:
-      "İhtiyacınız olan ürünler için size özel fiyat teklifi hazırlayalım; vadeli ödeme ve çek ile ödeme seçenekleri de sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin.",
+      "Bireysel ve kurumsal alımlarınız için size özel fiyat teklifi hazırlayalım. Vadeli ödeme ve çek ile ödeme seçenekleri de sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin.",
     step1: "Firma Bilgileri",
     step2: "Ürünler",
     step3: "Ödeme Tercihi",

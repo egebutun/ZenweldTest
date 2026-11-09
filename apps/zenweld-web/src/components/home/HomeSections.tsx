@@ -243,6 +243,9 @@ export function DealerStrip() {
 
 /**
  * Kurumsal teklif ve bayilik: yan yana iki kart (eskiden iki ayri bant).
+ * Genis ekranda iki kartin satirlari (ust yazi, baslik, metin, dugme) ortak
+ * izgaraya baglidir: ust yazisi olmayan ya da basligi kisa olan kartta da
+ * metin ve dugme digeriyle ayni hizada durur.
  */
 export function CtaCards() {
   const t = useT();
@@ -290,22 +293,25 @@ function CtaCard({
 }) {
   return (
     <div
-      className={`zw-cta-card relative flex flex-col overflow-hidden rounded-[6px] p-8 text-white sm:p-10 ${
+      className={`zw-cta-card relative flex flex-col overflow-hidden rounded-[6px] p-8 text-white sm:p-10 lg:row-span-4 lg:grid lg:grid-rows-subgrid lg:gap-y-0 ${
         tone === "red" ? "bg-zw-red-600" : "zw-steel-section bg-zw-ink"
       }`}
     >
       <Icon aria-hidden="true" size={180} strokeWidth={1} className="pointer-events-none absolute -bottom-8 -right-6 text-white/10" />
-      {eyebrow && (
-        <div className="relative mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-white/70">
-          <span className="h-[2px] w-8 bg-white/60" />
-          {eyebrow}
-        </div>
-      )}
-      <h2 className="relative max-w-md font-display text-3xl font-bold uppercase leading-[0.95] sm:text-4xl">{title}</h2>
+      {/* Ust yazi satiri; ust yazisi olmayan kartta bos kalir */}
+      <div className="relative">
+        {eyebrow && (
+          <div className="mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-white/70">
+            <span className="h-[2px] w-8 bg-white/60" />
+            {eyebrow}
+          </div>
+        )}
+      </div>
+      <h2 className="relative max-w-md self-end text-balance font-display lg:max-w-sm text-3xl font-bold uppercase leading-[0.95] sm:text-4xl">{title}</h2>
       <p className="relative mt-3 max-w-md text-white/85">{text}</p>
       <Link
         href={href}
-        className={`group relative mt-8 inline-flex w-fit items-center gap-2 rounded-[4px] px-6 py-3.5 text-sm font-bold uppercase tracking-wide transition-colors zw-focus ${
+        className={`group relative mt-8 inline-flex w-fit self-start items-center gap-2 rounded-[4px] px-6 py-3.5 text-sm font-bold uppercase tracking-wide transition-colors zw-focus ${
           tone === "red" ? "bg-white text-zw-red-700 hover:bg-zw-ink hover:text-white" : "bg-zw-red-600 text-white hover:bg-white hover:text-zw-ink"
         }`}
       >

@@ -90,7 +90,7 @@ test("bölüm sırası, kategori kartları, Force ve Jasic şeritleri", async ({
   // Bolum sirasi (KARARLAR K-47); seritler veri gelince cizilir
   await expect(page.getByRole("heading", { level: 2, name: "Kampanyalı Ürünler" })).toBeVisible();
   const titles = await page.locator("main h2").allTextContents();
-  const order = ["Ne arıyorsunuz?", "Force Serisi", "Jasic Lazer Ürünleri", "Kampanyalı Ürünler", "İhtiyacınıza uygun kaynak makinesini bulun."];
+  const order = ["Ne arıyorsunuz?", "Force Serisi", "Jasic Lazer Ürünleri", "Kampanyalı Ürünler", "Hangi kaynak makinesi size uygun?"];
   const at = order.map((title) => titles.indexOf(title));
   expect(at.every((i) => i >= 0), titles.join(" | ")).toBe(true);
   expect(at).toEqual([...at].sort((a, b) => a - b));

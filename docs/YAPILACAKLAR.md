@@ -44,7 +44,7 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Kategori filtreleri](#kategori-filtreleri) ·
      [Ürün grupları](#ürün-grupları-kaynak-makineleri-lazer-makineleri-) ·
      [Blog yazıları](#blog-yazıları--yayına-girmeden-önce) ·
-     [Teklif Al metinleri](#teklif-al-metinleri--kalanlar) ·
+     [Teklif Al formu](#teklif-al-formu--sorular-yeniden-düzenlenecek) ·
      [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) ·
      [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme)
    - **İleride:** [Ürün Seçici](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) ·
@@ -359,7 +359,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Menü düzeni, sayfalar, metinler | Sahibinin kararı; bugünkü hepsi örnek (KARARLAR K-102). Dört ana bölüm kodda sabit; yeni bölüm ya da sayfa kod işidir | — |
 | Ürün Seçici'nin yeniden kurulması | Bütün ürünlerin kesinleşmesi; en son ele alınacak (KARARLAR K-69) | [Ürün Seçici ve arama](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) |
 | "İlgili Ürünler" öneri mantığı | Bölümdeki kararlar | [Ürün önerileri](#ürün-önerileri--ürün-sayfasındaki-i̇lgili-ürünler-yeniden-kurgulanacak) |
-| Teklif Al: arama kelimeleri ve 1. adım başlığı | Sahibinin kararı | [Teklif Al metinleri](#teklif-al-metinleri--kalanlar) |
+| Teklif Al formunun soruları (bireyselleri de kapsayacak) | Sahibinin göndereceği gerçek sorular | [Teklif Al formu](#teklif-al-formu--sorular-yeniden-düzenlenecek) |
 | Ayrı ürünü seçeneğe dönüştürme ekranı | Gerçek ürünler girilmeye başlanınca karar | [Ürün seçenekleri](#ürün-seçenekleri-3-m--5-m-gibi) 2 |
 | Satıcı bilgilerinin sitede gösterilmesi (ETBİS, unvan, MERSİS) | ETBİS kaydı ve şirket bilgileri | [Satıcı bilgileri sitede](#satıcı-bilgileri-sitede-etbi̇s-unvan-mersi̇s) |
 | Kargo firması API'si (etiket, durum) | Kargo firması ve entegrasyon kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 8 |
@@ -1119,20 +1119,33 @@ gövdesi ve özeti hâlâ yer tutucu metin (Lorem ipsum,
 önce bu yazılar gerçek metinlerle değiştirilmeli ya da panelden yayından
 kaldırılmalı; yoksa Google bu metni Zenweld'in içeriği olarak listeler.
 
-## Teklif Al metinleri — kalanlar
+## Teklif Al formu — sorular yeniden düzenlenecek
 
-Vadeli ödeme ve çekle ödeme herkese açıktır (KARARLAR K-25). Teklif Al
-sayfasının açıklaması, Google'da görünen açıklaması ve "Vadeli veya çekle
-ödeme yapabilir miyim?" sorusunun cevabı buna göre değiştirildi; anasayfadaki
-"Kurumsal alım mı yapacaksınız?" kartının başlığını sahibi tuttu. Kalanlar
-(öneri, sahibinin kararı):
+Teklif Al herkese açıktır; vadeli ödeme ve çekle ödeme de herkese açıktır
+(KARARLAR K-25). Sayfanın açıklaması ve Google'da görünen açıklaması
+bireysel ve kurumsal müşterilere hitap edecek şekilde değiştirildi. Form ise
+hâlâ yalnızca firmalara yönelikmiş gibi görünüyor; **sahibi formun gerçek
+sorularını gönderecek**, form bireysel müşterileri de kapsayacak şekilde
+yeniden düzenlenecek.
 
-1. **Site aramasındaki gizli kelimeler** (`lib/search/search-client.ts`)
-   - Şimdi: "kurumsal vadeli çek ödeme"
-   - Öneri: "fiyat teklifi toplu alım bireysel kurumsal vadeli çek ödeme"
-2. **Formun 1. adım başlığı** (`quote.step1`)
-   - Şimdi: "Firma Bilgileri" — Öneri: "İletişim Bilgileri" (bireysel üyede
-     firma adı zaten isteğe bağlı)
+Bugünkü form (`app/(site)/teklif-al/page.tsx`, metinler
+`packages/i18n/src/tr.ts` › `quote`):
+
+1. **Firma Bilgileri** adımı: Firma Ünvanı (ziyaretçide ve kurumsal üyede
+   zorunlu, bireysel üyede isteğe bağlı), Yetkili Kişi, Vergi No, E-posta,
+   Telefon, Şehir. Adım adı ve "Yetkili Kişi", "Vergi No" gibi sorular
+   firmaya göre.
+2. **Ürünler:** model, seçenek ve adet.
+3. **Ödeme Tercihi:** Vadeli (vade günüyle), Çek ile Ödeme, Havale / EFT,
+   Görüşelim; Notunuz.
+4. **Özet** ve gönderim.
+
+Sorular değişince aynı işte güncellenecekler: teklif kaydının alanları
+(veritabanı `quotes` tablosu dahil), paneldeki Teklifler ekranı, Zenweld'e
+giden teklif e-postası, testler ve belgeler. Site aramasında Teklif Al
+sayfasının gizli kelimeleri de ("kurumsal vadeli çek ödeme",
+`lib/search/search-client.ts`) bireysel alımı kapsayacak şekilde
+genişletilecek.
 
 ## Görseller ve yüklenen dosyalar
 
@@ -1199,7 +1212,7 @@ kesinleşince, en son ele alınacak. Bugün ürünlerin tamamı kesin olmadığ�
 sağlıklı sonuç vermiyor; şu anki sonuçları önemli değil, ona göre ayar
 yapılmaz.
 
-Ürün Seçici, ana sayfadaki "İhtiyacınıza uygun kaynak makinesini bulun." bandının açtığı
+Ürün Seçici, ana sayfadaki "Hangi kaynak makinesi size uygun?" bandının açtığı
 testtir (`/urun-secici`). Teklif Al sayfasındaki ürün listesiyle ilgisi yoktur.
 
 **Nasıl kurulacak (sahibin kararı, 2026-11-02, K-69 eki):**
