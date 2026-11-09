@@ -88,7 +88,6 @@ export function SeriesStrips() {
     <>
       <SeriesStrip
         word="FORCE"
-        eyebrow={t.home.forceStripEyebrow}
         title={t.home.forceStripTitle}
         subtitle={t.home.forceStripSubtitle}
         href="/arama?q=Force"
@@ -97,7 +96,6 @@ export function SeriesStrips() {
       />
       <SeriesStrip
         word="LAZER"
-        eyebrow={t.home.laserStripEyebrow}
         title={t.home.laserStripTitle}
         subtitle={t.home.laserStripSubtitle}
         href="/ekipmanlar/lazer-makineleri"
@@ -109,7 +107,6 @@ export function SeriesStrips() {
 
 function SeriesStrip({
   word,
-  eyebrow,
   title,
   subtitle,
   href,
@@ -117,7 +114,6 @@ function SeriesStrip({
   dark,
 }: {
   word: string;
-  eyebrow: string;
   title: string;
   subtitle: string;
   href: string;
@@ -138,7 +134,6 @@ function SeriesStrip({
       </div>
       <div className="zw-container zw-section relative">
         <SectionTitle
-          eyebrow={eyebrow}
           title={title}
           subtitle={subtitle}
           dark={dark}
@@ -151,8 +146,8 @@ function SeriesStrip({
 }
 
 /**
- * Urun secici bandi: "Hangi kaynak makinesi size uygun?" Sayfanin ortasinda,
- * kirmizi zeminli genis bir bant.
+ * Urun secici bandi: tek satir baslik ve "Teste Basla!" dugmesi. Sayfanin
+ * ortasinda, kirmizi zeminli genis bir bant.
  */
 export function FinderBand() {
   const t = useT();
@@ -160,14 +155,11 @@ export function FinderBand() {
     <section className="zw-container py-12 sm:py-16">
       <div className="zw-finder relative overflow-hidden rounded-[6px] bg-zw-red-600 px-6 py-10 text-white sm:px-10 lg:px-14">
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-start gap-5">
+          <div className="flex items-center gap-5">
             <span className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/30 sm:flex">
               <Compass size={30} />
             </span>
-            <div>
-              <h2 className="font-display text-3xl font-bold uppercase leading-[0.95] sm:text-[44px]">{t.finder.question}</h2>
-              <p className="mt-2 text-white/85">{t.finder.hint}</p>
-            </div>
+            <h2 className="font-display text-3xl font-bold uppercase leading-[0.95] sm:text-[44px]">{t.finder.question}</h2>
           </div>
           <Link
             href="/urun-secici"
@@ -196,7 +188,7 @@ export function WhyZenweld() {
   return (
     <section className="zw-steel-section relative overflow-hidden bg-zw-ink text-white">
       <div className="zw-container zw-section relative">
-        <SectionTitle eyebrow="Zenweld" title={t.home.whyTitle} subtitle={t.home.whySubtitle} dark />
+        <SectionTitle title={t.home.whyTitle} dark />
         <ul className="grid gap-px overflow-hidden rounded-[6px] bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
           {items.map(({ Icon, title }, i) => (
             <li key={title} className="group relative bg-zw-ink p-7 transition-colors hover:bg-zw-grey-900">
@@ -242,7 +234,7 @@ export function DealerStrip() {
   return (
     <section className="bg-zw-grey-100">
       <div className="zw-container zw-section">
-        <SectionTitle eyebrow={t.nav.findDealer} title={t.home.dealerTitle} subtitle={t.home.dealerSubtitle} />
+        <SectionTitle title={t.home.dealerTitle} subtitle={t.home.dealerSubtitle} />
         <DealerFinder variant="home" compact />
       </div>
     </section>
@@ -259,7 +251,6 @@ export function CtaCards() {
       <div className="grid gap-4 lg:grid-cols-2">
         <CtaCard
           tone="red"
-          eyebrow={t.home.ctaEyebrow}
           title={t.home.quoteBannerTitle}
           text={t.home.quoteBannerText}
           href="/teklif-al"
@@ -290,7 +281,7 @@ function CtaCard({
   Icon,
 }: {
   tone: "red" | "dark";
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   text: string;
   href: string;
@@ -304,11 +295,13 @@ function CtaCard({
       }`}
     >
       <Icon aria-hidden="true" size={180} strokeWidth={1} className="pointer-events-none absolute -bottom-8 -right-6 text-white/10" />
-      <div className="relative flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-white/70">
-        <span className="h-[2px] w-8 bg-white/60" />
-        {eyebrow}
-      </div>
-      <h2 className="relative mt-4 max-w-md font-display text-3xl font-bold uppercase leading-[0.95] sm:text-4xl">{title}</h2>
+      {eyebrow && (
+        <div className="relative mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-white/70">
+          <span className="h-[2px] w-8 bg-white/60" />
+          {eyebrow}
+        </div>
+      )}
+      <h2 className="relative max-w-md font-display text-3xl font-bold uppercase leading-[0.95] sm:text-4xl">{title}</h2>
       <p className="relative mt-3 max-w-md text-white/85">{text}</p>
       <Link
         href={href}
@@ -342,7 +335,6 @@ export function FaqAndBlog() {
         {faqs.length > 0 && (
           <div>
             <SectionTitle
-              eyebrow={t.nav.support}
               title={t.home.faqTitle}
               action={<ViewAll href="/sss" label={t.common.viewAll} />}
             />
@@ -352,7 +344,6 @@ export function FaqAndBlog() {
 
         <div>
           <SectionTitle
-            eyebrow={t.explore.blog}
             title={t.home.blogTitle}
             action={<ViewAll href="/blog" label={t.common.viewAll} />}
           />

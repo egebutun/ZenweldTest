@@ -42,8 +42,8 @@ export default async function HomePage() {
       <HomeHero />
       <TrustStrip />
       <CategoryShowcase />
-      <HotSale />
       <SeriesStrips />
+      <HotSale />
       <FinderBand />
       <DealerStrip />
       <WhyZenweld />

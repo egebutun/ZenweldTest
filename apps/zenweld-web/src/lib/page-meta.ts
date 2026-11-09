@@ -55,7 +55,7 @@ const PAGES = {
   "/guvenlik": section("guvenlik"),
   "/aksesuarlar": section("aksesuarlar"),
   "/dolgu-metalleri": section("dolgu-metalleri"),
-  "/teklif-al": { name: "Teklif Al", title: "Teklif Al", description: "Kurumsal müşterilerimize vadeli ödeme ve çek ile ödeme seçenekleri sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin.", group: HOME },
+  "/teklif-al": { name: "Teklif Al", title: "Teklif Al", description: "Size özel fiyat teklifi alın; vadeli ödeme ve çek ile ödeme seçenekleri de sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin.", group: HOME },
 
   "/hakkimizda": { name: "Hakkımızda", title: "Hakkımızda", description: "Zenweld hakkında: kaynak teknolojileri, üretim yaklaşımımız ve Türkiye genelindeki bayi ağımız.", group: DISCOVER },
   "/satis-temsilcilerimiz": { name: "Satış Temsilcilerimiz", title: "Satış Temsilcilerimiz", description: "Zenweld satış temsilcileri: İstanbul, Ege, Akdeniz, Bursa ve İç Anadolu bölgelerinde telefon, WhatsApp ve e-posta ile doğrudan iletişim.", group: DISCOVER },

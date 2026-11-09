@@ -16,7 +16,7 @@ export const blogPosts: BlogPost[] = [
 
 export const faqs: FaqItem[] = [
   { id: "f1", topic: "genel", question: "Zenweld ürünlerini doğrudan siteden satın alabilir miyim?", answer: "Evet. Üye girişi yaparak ürünleri sepete ekleyip kredi kartı (taksit seçenekleriyle) veya havale/EFT ile ödeyebilirsiniz. Siparişinizin durumunu ve kargo takip numarasını Hesabım > Siparişlerim sayfasından izlersiniz. Ürünlerimiz ayrıca yetkili bayilerimizde ve anlaşmalı online satıcılarda da bulunur; ürün sayfasındaki \"Stoktaki Bayileri Gör\" butonundan size en yakın bayiyi bulabilirsiniz." },
-  { id: "f2", topic: "siparis", question: "Vadeli veya çekle ödeme yapabilir miyim?", answer: "Kurumsal müşterilerimiz için vadeli ödeme ve çek ile ödeme seçenekleri mevcuttur. \"Teklif Al\" formunu doldurduğunuzda satış ekibimiz sizinle iletişime geçer." },
+  { id: "f2", topic: "siparis", question: "Vadeli veya çekle ödeme yapabilir miyim?", answer: "Evet. Vadeli ödeme ve çek ile ödeme seçenekleri bireysel ve kurumsal bütün müşterilerimize açıktır. \"Teklif Al\" formunda ödeme tercihinizi seçin; satış ekibimiz sizinle iletişime geçer." },
   { id: "f3", topic: "garanti", question: "Makinemin garantisi ne kadar?", answer: "Zenweld kaynak makineleri 24 ay, aksesuar ve sarf ürünleri 12 ay garantilidir. Ürününüzü online kaydettirerek garanti sürenizi uzatabilirsiniz." },
   { id: "f4", topic: "garanti", question: "Garanti kaydımı nasıl yaparım?", answer: "Keşfet > Garanti Kaydı sayfasından seri numaranız ve satın alma bilgilerinizle kayıt oluşturabilirsiniz." },
   { id: "f5", topic: "teknik", question: "Makinem hangi şebekede çalışır?", answer: lorem, },

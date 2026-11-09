@@ -71,18 +71,17 @@ export function CategoryShowcase() {
   return (
     <section className="bg-white">
       <div className="zw-container zw-section">
-        <SectionTitle eyebrow={t.home.categoriesEyebrow} title={t.home.categoriesTitle} subtitle={t.home.categoriesSubtitle} />
+        <SectionTitle title={t.home.categoriesTitle} subtitle={t.home.categoriesSubtitle} />
 
         <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {categories.map((c, i) => (
+          {categories.map((c) => (
             <li key={c.id}>
               <Link
                 href={c.href}
                 className="zw-cat-card group relative flex h-full flex-col overflow-hidden rounded-[6px] bg-zw-grey-100 p-4 transition duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_18px_44px_-16px_rgb(20_22_25/0.35)] sm:p-5 zw-focus"
               >
-                <div className="flex items-start justify-between text-xs font-semibold text-zw-grey-500">
-                  <span className="font-display text-sm font-bold text-zw-red-600">{String(i + 1).padStart(2, "0")}</span>
-                  <span>{t.home.categoryCount.replace("{count}", String(c.count))}</span>
+                <div className="text-right text-xs font-semibold text-zw-grey-500">
+                  {t.home.categoryCount.replace("{count}", String(c.count))}
                 </div>
                 <div className="relative mx-auto my-3 flex aspect-[4/3] w-full items-center justify-center sm:my-4">
                   <ProductImage
@@ -133,7 +132,7 @@ export function CategoryShowcase() {
   );
 }
 
-/** Anasayfa bolum basligi: kirmizi cizgili ust yazi, buyuk baslik, aciklama, sagda baglanti. */
+/** Anasayfa bolum basligi: (varsa) kirmizi cizgili ust yazi, buyuk baslik, aciklama, sagda baglanti. */
 export function SectionTitle({
   eyebrow,
   title,
@@ -141,7 +140,7 @@ export function SectionTitle({
   action,
   dark,
 }: {
-  eyebrow: React.ReactNode;
+  eyebrow?: React.ReactNode;
   title: string;
   subtitle?: string;
   action?: React.ReactNode;
@@ -150,11 +149,13 @@ export function SectionTitle({
   return (
     <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-2xl">
-        <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-zw-red-600">
-          <span className="h-[2px] w-8 bg-zw-red-600" />
-          {eyebrow}
-        </div>
-        <h2 className={`mt-3 font-display text-4xl font-bold uppercase leading-[0.95] sm:text-5xl ${dark ? "text-white" : "text-zw-ink"}`}>
+        {eyebrow && (
+          <div className="mb-3 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-zw-red-600">
+            <span className="h-[2px] w-8 bg-zw-red-600" />
+            {eyebrow}
+          </div>
+        )}
+        <h2 className={`font-display text-4xl font-bold uppercase leading-[0.95] sm:text-5xl ${dark ? "text-white" : "text-zw-ink"}`}>
           {title}
         </h2>
         {subtitle && <p className={`mt-3 ${dark ? "text-white/70" : "text-zw-grey-600"}`}>{subtitle}</p>}

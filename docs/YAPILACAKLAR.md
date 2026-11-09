@@ -44,7 +44,7 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Kategori filtreleri](#kategori-filtreleri) ·
      [Ürün grupları](#ürün-grupları-kaynak-makineleri-lazer-makineleri-) ·
      [Blog yazıları](#blog-yazıları--yayına-girmeden-önce) ·
-     [Teklif Al metinleri](#teklif-al-metinleri--herkese-hitap-edecek-şekilde-güncellenecek) ·
+     [Teklif Al metinleri](#teklif-al-metinleri--kalanlar) ·
      [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) ·
      [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme)
    - **İleride:** [Ürün Seçici](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) ·
@@ -359,7 +359,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Menü düzeni, sayfalar, metinler | Sahibinin kararı; bugünkü hepsi örnek (KARARLAR K-102). Dört ana bölüm kodda sabit; yeni bölüm ya da sayfa kod işidir | — |
 | Ürün Seçici'nin yeniden kurulması | Bütün ürünlerin kesinleşmesi; en son ele alınacak (KARARLAR K-69) | [Ürün Seçici ve arama](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) |
 | "İlgili Ürünler" öneri mantığı | Bölümdeki kararlar | [Ürün önerileri](#ürün-önerileri--ürün-sayfasındaki-i̇lgili-ürünler-yeniden-kurgulanacak) |
-| Teklif Al metinleri | Müdür kararı | [Teklif Al metinleri](#teklif-al-metinleri--herkese-hitap-edecek-şekilde-güncellenecek) |
+| Teklif Al: arama kelimeleri ve 1. adım başlığı | Sahibinin kararı | [Teklif Al metinleri](#teklif-al-metinleri--kalanlar) |
 | Ayrı ürünü seçeneğe dönüştürme ekranı | Gerçek ürünler girilmeye başlanınca karar | [Ürün seçenekleri](#ürün-seçenekleri-3-m--5-m-gibi) 2 |
 | Satıcı bilgilerinin sitede gösterilmesi (ETBİS, unvan, MERSİS) | ETBİS kaydı ve şirket bilgileri | [Satıcı bilgileri sitede](#satıcı-bilgileri-sitede-etbi̇s-unvan-mersi̇s) |
 | Kargo firması API'si (etiket, durum) | Kargo firması ve entegrasyon kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 8 |
@@ -377,7 +377,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Teklif, servis, garanti ve iade durumlarında müşteriye e-posta | Hangi bildirimlerin gideceği ve metinleri | [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 | Yöneticinin kendi şifresini panelden değiştirmesi | Şimdi yapılmıyor (K-105) | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 2 |
 | Sitenin tasarımı | Sahibi yapacak | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
-| Anasayfa: kurumsal metin, güven şeridi bilgileri, gerçek metinler, Force Serisi sayfası | Sahibinin göndermesi; Force sayfası ileride | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
+| Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler, Force Serisi sayfası | Sahibinin göndermesi; Force sayfası ileride | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
 | Görsel düzenleyici (önizleme, sürükle, ölçekle) ve sayfa görsellerinin panelden değişmesi | Tasarımın bitmesi (fotoğrafların yeri ve sayısı kesinleşince) | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) 5 |
 
 ---
@@ -1119,40 +1119,20 @@ gövdesi ve özeti hâlâ yer tutucu metin (Lorem ipsum,
 önce bu yazılar gerçek metinlerle değiştirilmeli ya da panelden yayından
 kaldırılmalı; yoksa Google bu metni Zenweld'in içeriği olarak listeler.
 
-## Teklif Al metinleri — herkese hitap edecek şekilde güncellenecek
+## Teklif Al metinleri — kalanlar
 
-Teklif Al artık bireysel üyelere de açık, ama bazı metinler hâlâ yalnızca
-kurumsal müşterilere hitap ediyor. **Karar bekliyor (müdüre danışılacak).**
-Güncellenecek yerler ve önerilen metinler:
+Vadeli ödeme ve çekle ödeme herkese açıktır (KARARLAR K-25). Teklif Al
+sayfasının açıklaması, Google'da görünen açıklaması ve "Vadeli veya çekle
+ödeme yapabilir miyim?" sorusunun cevabı buna göre değiştirildi; anasayfadaki
+"Kurumsal alım mı yapacaksınız?" kartının başlığını sahibi tuttu. Kalanlar
+(öneri, sahibinin kararı):
 
-1. **Teklif Al sayfasının açıklaması** (`packages/i18n/src/tr.ts` → `quote.subtitle`)
-   - Şimdi: "Kurumsal müşterilerimize vadeli ödeme ve çek ile ödeme seçenekleri
-     sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin."
-   - Öneri: "İhtiyacınız olan ürünler için size özel fiyat teklifi hazırlayalım.
-     Formu doldurun, satış ekibimiz sizinle iletişime geçsin. Firmalara vadeli
-     ödeme ve çek ile ödeme seçenekleri de sunuyoruz."
-2. **Google'da görünen açıklama** (`lib/page-meta.ts` → `/teklif-al`; panelde
-   Sayfa SEO'dan da değiştirilebilir)
-   - Şimdi: 1. maddedeki cümlenin aynısı
-   - Öneri: "Bireysel ve kurumsal alımlarınız için Zenweld'den fiyat teklifi alın.
-     Firmalara vadeli ödeme ve çek seçenekleri." (160 karakterin altında)
-3. **Ana sayfadaki kırmızı kutu** (`home.quoteBannerTitle`, `home.quoteBannerText`)
-   - Şimdi: "Kurumsal alım mı yapacaksınız?" / "Vadeli ödeme ve çek ile ödeme
-     seçenekleri için satış ekibimizden teklif alın."
-   - Öneri: "Size özel fiyat teklifi alın" / "Tekli ya da toplu alımlarınız için
-     satış ekibimizden teklif isteyin. Firmalara vadeli ödeme ve çek ile ödeme
-     seçenekleri de sunuyoruz."
-4. **Site aramasındaki gizli kelimeler** (`lib/search/search-client.ts`)
+1. **Site aramasındaki gizli kelimeler** (`lib/search/search-client.ts`)
    - Şimdi: "kurumsal vadeli çek ödeme"
    - Öneri: "fiyat teklifi toplu alım bireysel kurumsal vadeli çek ödeme"
-5. **İsteğe bağlı: formun 1. adım başlığı** (`quote.step1`)
-   - Şimdi: "Firma Bilgileri" — Öneri: "İletişim Bilgileri" (bireysel üyede firma
-     adı zaten isteğe bağlı)
-
-Açık soru: vadeli ödeme ve çek bireysel müşterilere de açık mı? Formda bu iki
-seçenek bugün herkese görünüyor. Yalnızca firmalar içinse formda yalnızca
-kurumsal üyelere gösterilmeli; herkese açıksa metinlerdeki "Firmalara"
-ifadesi çıkarılmalı.
+2. **Formun 1. adım başlığı** (`quote.step1`)
+   - Şimdi: "Firma Bilgileri" — Öneri: "İletişim Bilgileri" (bireysel üyede
+     firma adı zaten isteğe bağlı)
 
 ## Görseller ve yüklenen dosyalar
 
@@ -1219,7 +1199,7 @@ kesinleşince, en son ele alınacak. Bugün ürünlerin tamamı kesin olmadığ�
 sağlıklı sonuç vermiyor; şu anki sonuçları önemli değil, ona göre ayar
 yapılmaz.
 
-Ürün Seçici, ana sayfadaki "Hangi kaynak makinesi size uygun?" bandının açtığı
+Ürün Seçici, ana sayfadaki "İhtiyacınıza uygun kaynak makinesini bulun." bandının açtığı
 testtir (`/urun-secici`). Teklif Al sayfasındaki ürün listesiyle ilgisi yoktur.
 
 **Nasıl kurulacak (sahibin kararı, 2026-11-02, K-69 eki):**
@@ -1374,7 +1354,7 @@ yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
 
 ## Anasayfa — sahibinden gelecekler ve sonraki işler
 
-Anasayfa yeni tasarımla yayında (KARARLAR K-112; [WEBSITE-KULLANIM.md ›
+Anasayfa yeni tasarımla yayında (KARARLAR K-47; [WEBSITE-KULLANIM.md ›
 Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
 
 1. **Kurumsal tanıtım sayfasının başlığı ve kısa metni:** Bugün örnek
@@ -1387,13 +1367,22 @@ Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
    - belgeler (CE, ISO 9001)
    - servis yanıt süresi
    - yedek parça bulundurma süresi
-3. **Gerçek metinler:** Neden Zenweld? maddelerinin açıklamaları (bugün
+3. **Güven şeridindeki sayılar kontrol edilip düzenlenecek:** Şeritteki
+   yazılar sabittir, hiçbir veriye bağlı değildir (K-47); bayi sayısı,
+   mağaza ayarı ya da ofis değişince kendiliğinden değişmez. Kontrol
+   edilecekler: 29+ yetkili bayi ve servis noktası, 25 şehir, 12 taksit,
+   ₺5.000 ücretsiz kargo sınırı, 2 ofis (İstanbul · İzmir). Bayi
+   bölümündeki "Türkiye genelinde 30'u aşkın yetkili satış ve servis
+   noktamız" cümlesi de aynı sayıyla uyumlu olmalı (bugün 29+ ile 30'u
+   aşkın farklı). Yer: `packages/i18n/src/tr.ts` › `home.trust.items` ve
+   `home.dealerSubtitle`.
+4. **Gerçek metinler:** Neden Zenweld? maddelerinin açıklamaları (bugün
    lorem ipsum) ve tanıtım alanındaki Force Serisi ve Jasic Lazer metinleri
    sahibiyle yazılacak.
-4. **Force Serisi sayfası:** İleride Force Serisi için ayrı bir sayfa
+5. **Force Serisi sayfası:** İleride Force Serisi için ayrı bir sayfa
    yapılacak. Bugün tanıtım alanındaki **Force Serisini İncele** ve Force
    şeridindeki **Tümünü Gör** "Force" arama sonuçlarına gidiyor.
-5. **Fotoğraflar:** Lazer Temizleme ve Lazer Markalama kartlarında ürün
+6. **Fotoğraflar:** Lazer Temizleme ve Lazer Markalama kartlarında ürün
    fotoğrafı olmadığı için kategori çizimi görünüyor; Jasic lazer kaynak
    modelleri eklenince (K-74) Jasic şeridine ve kartlara kendiliğinden
    girer ([Ürün fotoğrafları](#ürün-fotoğrafları--eksikler)).

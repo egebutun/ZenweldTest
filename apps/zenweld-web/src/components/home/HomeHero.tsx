@@ -215,7 +215,6 @@ function ForceSlide() {
         text={s.forceText}
         primary={{ label: s.forceCta, href: "/arama?q=Force" }}
         secondary={{ label: s.quoteCta, href: "/teklif-al" }}
-        chips={s.forceModels}
         narrow
       />
     </>
@@ -273,11 +272,12 @@ function SlideContent({
   return (
     <div className="zw-container relative flex h-full flex-col justify-start pb-24 pt-10 sm:pt-14 lg:justify-center lg:pb-20 lg:pt-0">
       <div className={narrow ? "max-w-xl lg:max-w-[46%]" : "max-w-2xl"}>
-        <div className="zw-hero-in flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-zw-red-500">
+        {/* Ust baslik yalnizca telefonda: genis ekranda ayni ad alttaki sekmede yazar. */}
+        <div className="zw-hero-in mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.22em] text-zw-red-500 sm:hidden">
           <span className="h-[2px] w-8 bg-zw-red-600" />
           {eyebrow}
         </div>
-        <h2 className="zw-hero-in mt-4 font-display text-[40px] font-bold uppercase leading-[0.95] tracking-tight [animation-delay:80ms] sm:text-6xl lg:text-[68px]">
+        <h2 className="zw-hero-in font-display text-[40px] font-bold uppercase leading-[0.95] tracking-tight [animation-delay:80ms] sm:text-6xl lg:text-[68px]">
           {title}
         </h2>
         <p className="zw-hero-in mt-5 max-w-xl text-base leading-relaxed text-white/80 [animation-delay:160ms] sm:text-lg">

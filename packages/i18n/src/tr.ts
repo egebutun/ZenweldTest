@@ -65,8 +65,7 @@ export const tr = {
     myQuotes: "Tekliflerim",
   },
   finder: {
-    question: "Hangi kaynak makinesi size uygun?",
-    hint: "3 soruda ihtiyacınıza uygun modeli bulun.",
+    question: "İhtiyacınıza uygun kaynak makinesini bulun.",
     cta: "Teste Başla!",
   },
   explore: {
@@ -154,7 +153,6 @@ export const tr = {
     hotSaleSubtitle:
       "Sınırlı süreli fiyatlarla öne çıkan kaynak makineleri ve ekipmanları. Stoklarla sınırlıdır.",
     whyTitle: "Neden Zenweld?",
-    whySubtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     faqTitle: "Sık Sorulan Sorular",
     faqSubtitle: "Müşterilerimizin en çok merak ettiği konular.",
     dealerTitle: "Size En Yakın Zenweld Bayi ve Yetkili Servisini Bulun",
@@ -164,7 +162,7 @@ export const tr = {
     quoteBannerText:
       "Vadeli ödeme ve çek ile ödeme seçenekleri için satış ekibimizden teklif alın.",
     quoteBannerCta: "Teklif Al",
-    blogTitle: "Bloğumuzdan",
+    blogTitle: "Blog",
     blogSubtitle: "Kaynak dünyasından haberler ve teknik rehberler",
     /** Tanitim alani (kayan uc sayfa). Kurumsal sayfanin metni ornektir; sahibi gonderecek. */
     slides: {
@@ -172,6 +170,7 @@ export const tr = {
       previous: "Önceki",
       next: "Sonraki",
       corporateTab: "Zenweld",
+      /** Ust kirmizi baslik yalnizca telefonda gorunur (orada alttaki sekmelerde yazi yok). */
       corporateEyebrow: "Zenweld · Kaynak Teknolojileri",
       corporateTitle: "Atölyeden sahaya, her kaynakta Zenweld gücü",
       corporateText:
@@ -184,7 +183,6 @@ export const tr = {
       forceTitle: "Kompakt gövde, tam güç",
       forceText:
         "MIG/MAG, TIG, MMA ve plazma kesimde günlük işin yükünü taşıyan; taşıması kolay, kullanımı basit makineler.",
-      forceModels: ["ForceMIG", "ForceTIG", "ForceArc", "ForceCut"],
       forceCta: "Force Serisini İncele",
       laserTab: "Jasic Lazer",
       laserEyebrow: "Jasic Lazer Teknolojileri",
@@ -195,33 +193,33 @@ export const tr = {
       laserCta: "Lazer Makinelerini İncele",
       quoteCta: "Teklif Al",
     },
-    /** Guven seridi; sayilar sitedeki veriden gelir. */
+    /**
+     * Guven seridi. Sabit yazilardir; hicbir veriye ya da ayara bagli
+     * degildir (KARARLAR K-47). Degistirmek icin buradan duzenlenir.
+     */
     trust: {
       label: "Neden güvenle alışveriş",
-      dealers: "Yetkili bayi ve servis noktası",
-      cities: "Şehirde satış ve servis",
-      warrantyValue: "+12 ay",
-      warranty: "Online kayıtla ücretsiz garanti uzatma",
-      installments: "Kredi kartına taksit",
-      installmentsValue: "{count} taksit",
-      freeShipping: "Üzeri siparişlerde ücretsiz kargo",
-      returnsValue: "14 gün",
-      returns: "Bireysel alımlarda iade hakkı",
-      corporateValue: "Vadeli & çek",
-      corporate: "Kurumsal alımda ödeme kolaylığı",
-      officesValue: "{count} ofis",
+      items: [
+        { value: "29+", label: "Yetkili bayi ve servis noktası" },
+        { value: "25", label: "Şehirde satış ve servis" },
+        { value: "+12 ay", label: "Online kayıtla ücretsiz garanti uzatma" },
+        { value: "12 taksit", label: "Kredi kartına taksit" },
+        { value: "₺5.000", label: "Üzeri siparişlerde ücretsiz kargo" },
+        { value: "14 gün", label: "İade hakkı" },
+        { value: "Havale & Kredi Kartı & Vadeli & Çek", label: "Ödeme seçenekleri" },
+        { value: "2 ofis", label: "İstanbul · İzmir" },
+      ],
     },
-    categoriesEyebrow: "Kategoriler",
     categoriesTitle: "Ne arıyorsunuz?",
-    categoriesSubtitle: "Kaynak, kesme ve lazer makinelerinden koruyucu ekipmana; ihtiyacınıza giden en kısa yol.",
+    categoriesSubtitle:
+      "Kaynak makineleri, lazer kaynak, markalama ve temizleme sistemleri, dolgu metalleri, kaynak aksesuarları ve iş güvenliği ekipmanlarıyla üretiminiz için ihtiyaç duyduğunuz tüm profesyonel çözümleri Zenweld'de keşfedin.",
     categoryCount: "{count} ürün",
     sectionCardText: "{count} kategori",
-    forceStripEyebrow: "Seri",
     forceStripTitle: "Force Serisi",
     forceStripSubtitle: "Kompakt, dayanıklı ve kullanımı kolay MIG, TIG, MMA ve plazma makineleri.",
-    laserStripEyebrow: "Jasic",
     laserStripTitle: "Jasic Lazer Ürünleri",
     laserStripSubtitle: "Lazer temizleme, markalama ve kaynakta Jasic teknolojisi, Zenweld güvencesiyle.",
+    /** Yalnizca bayilik kartinin ustunde. */
     ctaEyebrow: "Birlikte çalışalım",
   },
   product: {
@@ -344,7 +342,7 @@ export const tr = {
   quote: {
     title: "Teklif Al",
     subtitle:
-      "Kurumsal müşterilerimize vadeli ödeme ve çek ile ödeme seçenekleri sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin.",
+      "İhtiyacınız olan ürünler için size özel fiyat teklifi hazırlayalım; vadeli ödeme ve çek ile ödeme seçenekleri de sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin.",
     step1: "Firma Bilgileri",
     step2: "Ürünler",
     step3: "Ödeme Tercihi",

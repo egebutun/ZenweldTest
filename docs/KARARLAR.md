@@ -23,13 +23,13 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 ## İçindekiler
 
 1. [Genel](#1-genel) — K-01–K-04, K-83, K-102
-2. [Katalog ve ürün](#2-katalog-ve-ürün) — K-05–K-12, K-69, K-71–K-78, K-113
+2. [Katalog ve ürün](#2-katalog-ve-ürün) — K-05–K-12, K-69, K-71–K-78
 3. [Ürün seçenekleri](#3-ürün-seçenekleri) — K-13–K-19, K-70
 4. [Satış, ödeme ve teklif](#4-satış-ödeme-ve-teklif) — K-21–K-27, K-64, K-65, K-79, K-80, K-85, K-86, K-97
 5. [Stok ve SAP; bayiler ve online satıcılar](#5-stok-ve-sap-bayiler-ve-online-satıcılar) — K-20, K-28–K-33, K-82, K-84, K-93
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap) — K-34–K-37, K-68, K-94–K-96
 7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41
-8. [İçerik](#8-i̇çerik) — K-42–K-47, K-112
+8. [İçerik](#8-i̇çerik) — K-42–K-47
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
@@ -321,12 +321,6 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   kuruldu. Kampanya örneklerinde %25 ve üzeri "Flaş İndirim" örneği
   ForceArc 200 MMA'dır; en az 10 onaylı yorum vardır.
 
-### K-113 · Ürünlerde "yeni" işareti yok
-- Ürün kartında ve ürün sayfasında "YENİ" etiketi yoktur; anasayfada
-  "Yeni Gelenler" bölümü yoktur.
-- Panelde "Yeni ürün rozeti" kutusu ve verideki alan (`products.is_new`)
-  kaldırıldı.
-
 ---
 
 ## 3. Ürün seçenekleri
@@ -420,6 +414,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 ### K-25 · Teklifi bireysel üye de isteyebilir
 - Teklif Al herkese açıktır; bireysel üye de teklif ister (bireysel üyede
   firma ünvanı isteğe bağlı).
+- Vadeli ödeme ve çekle ödeme yalnızca kurumsal müşterilere değil,
+  herkese açıktır; Teklif Al'da ödeme tercihi olarak seçilir.
 - Her iki hesap türünde Hesabım'da Tekliflerim ve Siparişlerim vardır.
 - Sağ üstteki kullanıcı menüsünde Tekliflerim **yoktur**.
 
@@ -754,23 +750,18 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - "%100 Yerli Üretim" ifadesi her yerden ve "Geri Çağırma" sayfası
   kaldırıldı.
 
-### K-47 · Anasayfa düzeni — Değişti → K-112
-- Eski karar: en üstte Ürün Seçici bandı ve tek fotoğraflı tanıtım alanı;
-  Yeni Gelenler'in altında Bayi ve Servis haritası, Neden Zenweld?,
-  Müşterilerimiz Ne Diyor?, Sık Sorulan Sorular, Teklif Al bandı, Bayilik
-  bandı, Bloğumuzdan.
-- Neden değişti: anasayfa yeniden tasarlandı; sahibi taslağı onayladı.
-
-### K-112 · Anasayfa düzeni (yeni tasarım)
+### K-47 · Anasayfa düzeni
 - Sıra: kayan tanıtım alanı (Zenweld, Force Serisi, Jasic Lazer), güven
-  şeridi, kategori kartları, Kampanyalı Ürünler, Force Serisi ve Jasic
-  Lazer Ürünleri şeritleri, Ürün Seçici bandı, Bayi ve Servis haritası,
-  Neden Zenweld?, Müşterilerimiz Ne Diyor?, kurumsal teklif ve bayilik
-  kartları, Sık Sorulan Sorular ve Bloğumuzdan.
+  şeridi, kategori kartları, Force Serisi ve Jasic Lazer Ürünleri
+  şeritleri, Kampanyalı Ürünler, Ürün Seçici bandı, Bayi ve Servis
+  haritası, Neden Zenweld?, Müşterilerimiz Ne Diyor?, kurumsal teklif ve
+  bayilik kartları, Sık Sorulan Sorular ve Blog.
 - Kategoriye göre ürün listesi yerine kategori sayfalarına giden kartlar
-  vardır. Yeni Gelenler yoktur (K-113).
-- Kurumsal sayfanın başlığı ve metni, Neden Zenweld? ve güven şeridine
-  eklenecek bilgiler sahibinden gelecek.
+  vardır.
+- Güven şeridindeki yazılar sabittir; bayilere, mağaza ayarlarına ya da
+  şirket bilgilerine bağlı değildir. Değişmesi için kodda düzenlenir.
+- Kurumsal sayfanın başlığı ve metni, Neden Zenweld? metinleri ve güven
+  şeridine eklenecek bilgiler sahibinden gelecek.
 - Tam sıra: [WEBSITE-KULLANIM.md › Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa).
 
 ---

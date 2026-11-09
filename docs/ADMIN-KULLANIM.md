@@ -978,8 +978,7 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
     kombinasyonlara (ör. 3 m / 5 m) uygulanır."
   - Hatalar: "İndirim oranı %1 ile %90 arasında tam sayı olmalıdır." /
     "Kampanya bitişi, başlangıçtan sonra olmalıdır."
-- **Yayında (aktif)**. Ürünlerde "yeni" işareti yoktur (KARARLAR K-113).
-  Teklif Al listesine
+- **Yayında (aktif)**. Teklif Al listesine
   Ekipmanlar'daki yayındaki ürünlerin hepsi kendiliğinden girer; ayrı bir
   işaret yoktur (KARARLAR K-79).
 - **Kullanım Kılavuzu (PDF bağlantısı).**

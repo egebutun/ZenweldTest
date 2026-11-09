@@ -200,7 +200,7 @@ menüler açılıp kapanır; bölümlerde ve Destek ve Garanti'de (`/destek`)
 
 ## 3. Anasayfa
 
-Yukarıdan aşağıya bölümler (KARARLAR K-112):
+Yukarıdan aşağıya bölümler (KARARLAR K-47):
 
 1. **Tanıtım alanı:** Üç sayfa yana kayar; her biri 7 saniye ekranda kalır.
    - **Zenweld** (kurumsal): atölye fotoğrafı, Zenweld'i ve farkını anlatan
@@ -208,9 +208,8 @@ Yukarıdan aşağıya bölümler (KARARLAR K-112):
      Uzman teknik destek); **Ürünleri Keşfet** (`/ekipmanlar`) ve
      **Zenweld'i Tanıyın** (`/hakkimizda`). Metin örnektir; sahibi
      gönderecek.
-   - **Force Serisi:** ForceMIG 200 fotoğrafı, seri adları (ForceMIG,
-     ForceTIG, ForceArc, ForceCut); **Force Serisini İncele**
-     (`/arama?q=Force`) ve **Teklif Al**.
+   - **Force Serisi:** ForceMIG 200 fotoğrafı, başlık ve metin; **Force
+     Serisini İncele** (`/arama?q=Force`) ve **Teklif Al**.
    - **Jasic Lazer:** Jasic lazer kaynak makinesi fotoğrafı, Lazer Kaynak ·
      Lazer Temizleme · Lazer Markalama; **Lazer Makinelerini İncele**
      (`/ekipmanlar/lazer-makineleri`) ve **Teklif Al**.
@@ -218,44 +217,49 @@ Yukarıdan aşağıya bölümler (KARARLAR K-112):
      ilerleme çizgisi dolunca sonraki sayfa gelir; sekmeye ya da
      **‹ / ›** oklarına tıklanınca o sayfa açılır. Fare tanıtım alanının
      üzerindeyken ya da klavyeyle içindeyken durur. Telefonda parmakla
-     sağa-sola kaydırılır; telefonda seri adları gösterilmez.
+     sağa-sola kaydırılır.
+   - Telefonda sekmelerde yazı yoktur (yalnızca çizgi); sayfanın adı
+     (ör. "Force Serisi") başlığın üstünde yazar. Telefonda Jasic'teki üç
+     lazer adı gösterilmez.
    - Sayfanın ana başlığı (arama motorları için) "Zenweld Kaynak Makineleri
      ve Plazma Kesme Sistemleri"dir; ekranda görünmez.
-2. **Güven şeridi:** Yana kayan rakamlar. Sitedeki veriden gelenler:
-   yetkili bayi ve servis noktası sayısı, bu noktaların bulunduğu şehir
-   sayısı (Bayiler), kredi kartında en çok taksit (Mağaza Ayarları › banka
-   POS'ları), ücretsiz kargo sınırı (Mağaza Ayarları; 0 ise gösterilmez),
-   ofis sayısı ve şehirleri (Şirket ve İletişim). Sabit olanlar: "+12 ay"
-   online kayıtla ücretsiz garanti uzatma, "14 gün" bireysel alımlarda iade
-   hakkı, "Vadeli & çek" kurumsal alımda ödeme kolaylığı.
+2. **Güven şeridi:** Yana kayan sabit yazılar; hiçbir veriye ya da panel
+   ayarına bağlı değildir, değişmesi için kodda düzenlenir
+   (`packages/i18n/src/tr.ts` › `home.trust.items`): "29+" yetkili bayi ve
+   servis noktası, "25" şehirde satış ve servis, "+12 ay" online kayıtla
+   ücretsiz garanti uzatma, "12 taksit" kredi kartına taksit, "₺5.000"
+   üzeri siparişlerde ücretsiz kargo, "14 gün" iade hakkı, "Havale & Kredi
+   Kartı & Vadeli & Çek" ödeme seçenekleri, "2 ofis" İstanbul · İzmir.
+   Sayıların kontrolü: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Anasayfa.
 3. **Ne arıyorsunuz?** Kategori kartları; ürün listesi yoktur.
    - Ekipmanlar bölümünün kategorileri, panelde verilen sırayla (önce
-     grup, sonra kategori): numara, ürün sayısı (yayındaki ürünler), görsel
-     ve ad. Kart kategori sayfasına gider.
+     grup, sonra kategori): ürün sayısı (yayındaki ürünler), görsel ve ad.
+     Kart kategori sayfasına gider.
    - Kart görseli: kategoride fotoğrafı olan ilk ürünün fotoğrafı; yoksa
      kategorinin çizimi. Lazer Kaynak Makineleri'nde Jasic fotoğrafı
      kullanılır.
    - Altında Güvenlik, Aksesuarlar ve Dolgu Metalleri kartları: grup
      adları ve kategori sayısı; bölüm sayfasına gider.
-4. **Kampanyalı Ürünler (Hot Sale):**
+4. **Force Serisi:** Model Serisi "Force" olan yayındaki ürünler; kategori
+   sayfasındaki Model Serisi filtresinde "Force" seçilince çıkan ürünlerle
+   aynıdır ("Tümünü Gör" `/arama?q=Force`).
+5. **Jasic Lazer Ürünleri:** Markası Jasic olan yayındaki ürünler
+   ("Tümünü Gör" `/ekipmanlar/lazer-makineleri`). Seriye ya da markaya ürün
+   eklenince kendiliğinden girer; ürün yoksa bölüm görünmez.
+6. **Kampanyalı Ürünler (Hot Sale):**
    - Kampanyası **şu an geçerli** olan ürünler, en yüksek indirim önce, en
      fazla 12 tane.
    - Kampanya başlayınca ürün buraya kendiliğinden girer, bitince çıkar.
    - Kampanyalı ürün yoksa bölüm görünmez. "Tümünü Gör" `/ekipmanlar`'a
      gider.
-5. **Force Serisi:** Model Serisi "Force" olan yayındaki ürünler
-   ("Tümünü Gör" `/arama?q=Force`).
-6. **Jasic Lazer Ürünleri:** Markası Jasic olan yayındaki ürünler
-   ("Tümünü Gör" `/ekipmanlar/lazer-makineleri`). Seriye ya da markaya ürün
-   eklenince kendiliğinden girer; ürün yoksa bölüm görünmez.
-7. **Ürün seçici bandı:** "Hangi kaynak makinesi size uygun? — 3 soruda
-   ihtiyacınıza uygun modeli bulun." ve **Teste Başla!** (`/urun-secici`).
+7. **Ürün seçici bandı:** "İhtiyacınıza uygun kaynak makinesini bulun." ve
+   **Teste Başla!** (`/urun-secici`).
 8. **Bayi ve servis haritası:** "Size En Yakın Zenweld Bayi ve Yetkili
    Servisini Bulun" başlığıyla bayi bulucunun anasayfa hali
    ([7. bölüm](#7-bayi-ve-servis-bulucu)).
 9. **Neden Zenweld?** Beş madde: Sanayinin Tercihi, Ödüllü Marka, Kolay
    Destek, Garanti Sorgula, Yetkili Bayi ve Servis Ağı; sonda **Zenweld'i
-   Tanıyın** kutusu (`/hakkimizda`). Açıklama metinleri yer tutucudur
+   Tanıyın** kutusu (`/hakkimizda`). Madde açıklamaları yer tutucudur
    (lorem ipsum).
 10. **Müşterilerimiz Ne Diyor?**
     - Panelde "anasayfada göster" işaretlenmiş, onaylı ve ürünü yayında
@@ -264,10 +268,11 @@ Yukarıdan aşağıya bölümler (KARARLAR K-112):
 11. **Kurumsal teklif ve bayilik** (yan yana iki kart):
     - "Kurumsal alım mı yapacaksınız? Vadeli ödeme ve çek ile ödeme
       seçenekleri için satış ekibimizden teklif alın." → **Teklif Al**.
-    - "Zenweld Bayisi Olmak İster misiniz?" → **Bayilik Başvurusu**.
-12. **Sık Sorulan Sorular ve Bloğumuzdan** (yan yana): ilk 6 soru
-    (açılır-kapanır, "Tümünü Gör" `/sss`) ve en yeni 3 blog yazısı (kapak,
-    kategori, başlık, tarih; "Tümünü Gör" `/blog`).
+    - "Birlikte çalışalım — Zenweld Bayisi Olmak İster misiniz?" →
+      **Bayilik Başvurusu**.
+12. **Sık Sorulan Sorular ve Blog** (yan yana): ilk 6 soru (açılır-kapanır,
+    "Tümünü Gör" `/sss`) ve en yeni 3 blog yazısı (kapak, kategori, başlık,
+    tarih; "Tümünü Gör" `/blog`).
 
 **Kayan şeritler:** Güven şeridi, Hot Sale, Force Serisi, Jasic Lazer ve
 yorumlar yana doğru yavaşça kayar. Fareyle üzerine gelince durur; ürün
@@ -1223,8 +1228,8 @@ sayısı sunucudan gelir; gelene kadar "…" yazar.
 ## 15. Teklif Al
 
 Adres: `/teklif-al`. Herkese açıktır; üyede bilgiler hesaptan gelir. Vadeli
-ödeme veya çekle almak isteyen kurumsal müşteriler içindir; satış ekibi
-teklifi ayrıca hazırlar.
+ödeme ve çekle ödeme bireysel ve kurumsal herkese açıktır ve buradan
+istenir (KARARLAR K-25); satış ekibi teklifi ayrıca hazırlar.
 
 **Ürün sayfasında teklife ekleme düğmesi yoktur ve olmayacaktır** (karar,
 bkz. [KARARLAR.md](KARARLAR.md)). Ürünler yalnızca bu sayfadaki listeden
