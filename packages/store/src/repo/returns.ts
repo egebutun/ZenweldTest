@@ -32,7 +32,7 @@ export function createReturnRequest(input: NewReturnRequest): ReturnRequest | fa
     const order = draft.orders.find((o) => o.id === input.orderId);
     const user = draft.users.find((u) => u.id === input.userId);
     if (!order || !user || order.userId !== user.id) return;
-    if (!canRequestReturn(order, user.role, draft.returnRequests)) return;
+    if (!canRequestReturn(order, draft.returnRequests)) return;
     const left = returnableQuantities(order, draft.returnRequests);
     const valid = (item: ReturnRequest["items"][number]) =>
       Number.isInteger(item.quantity) && item.quantity >= 1 && item.quantity <= (left[item.line] ?? 0);

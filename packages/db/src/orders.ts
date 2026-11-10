@@ -448,7 +448,7 @@ export async function createReturnRequest(
   if (!row) return fail(404, tr.orders.notFound);
   const [order] = await readOrders(db, eq(s.orders.id, row.id));
   const requests = await readReturnRequests(db, eq(s.returnRequests.orderId, order.id));
-  if (!canRequestReturn(order, member.role, requests, at)) return fail(409, tr.returns.failed);
+  if (!canRequestReturn(order, requests, at)) return fail(409, tr.returns.failed);
 
   const reason = RETURN_REASONS.find((r) => r === input.reason);
   if (!reason) return fail(400, tr.returns.failed);

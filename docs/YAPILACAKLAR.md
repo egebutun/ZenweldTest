@@ -88,7 +88,7 @@ farkları: [README](../README.md) › Demo ve veritabanı modu.
 | 6 | **SAP satış siparişi aktarımı:** siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`; sıra, iş, yeniden deneme ve panel kutusu hazır, bugün deneme dosyasına yazıyor), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si; cari ve KDV kararları | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap), [Şirketten öğrenilecekler](#3-şirketten-öğrenilecekler-kişiye-göre) › SAP |
 | 7 | **Form güvenliği:** istek sınırı ve bot koruması (canlıdan önce şart, K-98) | Kod; bot koruması seçimi | [Formlar — güvenlik](#formlar--güvenlik) |
 | 8 | **Dosya deposu:** panelden görsel ve belge yükleme hazır (sunucunun diski, `DOSYA_KLASORU`; K-108). Kalan: deponun yeri ve yedeği, istenirse S3 uyumlu depo parçası, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları | BT (depo seçimi) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
-| 9 | **Hukuk ve muhasebe:** yasal metinler (bugün taslak), ETBİS kaydı, gerçek MERSİS no, kurumsal alıcıda cayma, KVKK saklama süreleri; e-Arşiv / e-Fatura | Hukuk danışmanı, mali müşavir | [Online satış](#online-satış--canlıya-çıkmadan-önce) 2–4, [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) |
+| 9 | **Hukuk ve muhasebe:** yasal metinler (bugün taslak), ETBİS kaydı, gerçek MERSİS no, kurumsal alıcının iade hakkının metinlere işlenmesi, KVKK saklama süreleri; e-Arşiv / e-Fatura | Hukuk danışmanı, mali müşavir | [Online satış](#online-satış--canlıya-çıkmadan-önce) 2–4, [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) |
 | 10 | **Gerçek içerik ve değerler:** ürün bilgileri, fotoğraflar, fiyatlar; kargo ücreti, POS'lar ve vade farkları, IBAN'lar; blog yazıları | Sahibi | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler), [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler), [Online satış](#online-satış--canlıya-çıkmadan-önce) 9, [Blog yazıları](#blog-yazıları--yayına-girmeden-önce) |
 | 11 | **Canlıya hazırlık (kod):** zamanlanmış işler (havale iptali, işlem kaydı temizliği, kampanya yenilemesi), hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, eski linklerin sunucuda 301 ile yönlenmesi, ölçümün canlıda tekrarı, örnek verinin koddan kaldırılması (canlıya zaten yüklenmez, K-91) | Sunucu kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 7, [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme), [Ölçüm](#ölçüm-hız) |
 
@@ -112,7 +112,7 @@ kadarı, ileride gelecek bağlantılara (API) açık ve genişletilebilir yapıl
 | **Belgeler** (MSDS, sertifikalar, rehber) | Demo modunda dosya tarayıcıda; veritabanı modunda dosya deposu ayarlıysa yüklenir, değilse adres girilir (K-104, K-108) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
 | **SEO** | Ürün, kategori, grup, blog, haber, etkinlik ve sabit sayfalarda SEO alanları; eski adres yönlendirmesi (tarayıcıda); site haritası | [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) |
 | **Kargo** (ücret, firmalar, takip, entegrasyon) | Sabit ücret ve ücretsiz kargo sınırı, firma listesi, takip numarası elle girilir; firmaya takip adresi girilince müşteri ve panelde takip bağlantısı (K-105); kargo firması API'si yok | [Online satış](#online-satış--canlıya-çıkmadan-önce) 8–9 |
-| **İade** | Bireysel üye 14 gün içinde talep açar; panelde durum; para iadesi elle | [İade talebi](#i̇ade-talebi) 2–4 |
+| **İade** | Üye (bireysel ya da kurumsal) 14 gün içinde talep açar; panelde durum; para iadesi elle | [İade talebi](#i̇ade-talebi) 2–4 |
 | **SAP ayarları ve stok kontrolü** | Depo stoğu deneme dosyasından 15 dakikada bir okunur; stokta olmayan ürün sepete eklenmez; bayi stoğunda geçerlilik süresi | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap), [Bayi ve satıcı stokları](#bayi-ve-satıcı-stokları) |
 | **SAP'a sipariş kaydı** | Veritabanı modunda aktarım sırası hazır (K-108): ödemesi kesinleşen sipariş sıraya girer, iş gönderir, başarısızsa yeniden dener, panelde durum ve **Yeniden sıraya al**; SAP yerine deneme dosyasına yazıyor | [1](#1-canlıya-giden-yol) › 6, [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap) |
 | **API ayarları** (SAP, ödeme, e-posta, kargo bağlantıları) | Bağlantı bilgileri yalnızca sunucuda ortam değişkeni; panelde yok (güvenlik kuralı) | [SUNUCU.md](SUNUCU.md), [Bağlantıların durumu](#bağlantıların-durumu-panelde--öneri) |
@@ -302,7 +302,8 @@ kişiye verilir; o kişi doğrudan sunucuya girer
       Sözleşmesi, İade ve Değişim, Kullanım Koşulları, Gizlilik, Çerez
       Politikası, KVKK Aydınlatma Metni ve diğer politikalar. Bugünkü
       metinler taslak; hukukçunun metinleriyle değiştirilmeli. [Panel]
-- [ ] Kurumsal (ticari) alıcılara cayma hakkı uygulanacak mı? [Karar]
+- [ ] Kurumsal alıcılara da 14 gün iade hakkı tanınıyor (K-65); sözleşmeler
+      ve İade ve Değişim metni buna göre yazılmalı. [Panel]
 - [ ] ETBİS kaydı (Ticaret Bakanlığı) ve MERSİS numarası. Unvan ve MERSİS
       sitede nerede gösterilmeli (alt bilgi, İletişim)? [Panel] [Karar]
 - [ ] Müşteri verisi yurt dışındaki bir sunucuda tutulabilir mi? [Karar]
@@ -364,7 +365,6 @@ olanlar ilgili bölüme bağlanmıştır.
 | Satıcı bilgilerinin sitede gösterilmesi (ETBİS, unvan, MERSİS) | ETBİS kaydı ve şirket bilgileri | [Satıcı bilgileri sitede](#satıcı-bilgileri-sitede-etbi̇s-unvan-mersi̇s) |
 | Kargo firması API'si (etiket, durum) | Kargo firması ve entegrasyon kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 8 |
 | Müşterinin siparişini sitede iptal etmesi | İleride düşünülecek | [Müşterinin siparişi iptal etmesi](#müşterinin-siparişi-iptal-etmesi--ileride-düşünülecek) |
-| Kurumsal üyelerde iade talebi | Kurumsal alıcılara cayma hakkının uygulanıp uygulanmayacağı sorulup öğrenilecek | [İade talebi](#i̇ade-talebi) 1 |
 | KVKK başvuru formu (2b) | İleride düşünülecek; hesap silme için 2a (Hesabımı Sil) seçildi | [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) 10 |
 | Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | [Erişilebilirlik](#erişilebilirlik-a4--önerilen-zorunlu-değil) |
 | Görsel optimizasyonu (A5) | Sahibin sıralaması; zorunlu değil. Görseller sahibi söyleyince; dosya deposu, gerçek fotoğraflar ve canlıya hazırlıkta hatırlatılır (KARARLAR K-102) | [Görseller](#görseller-a5--önerilen-zorunlu-değil) |
@@ -644,7 +644,8 @@ temsili. Canlı için:
    için gerekenler.
 2. **Hukuk metinleri**: Ön Bilgilendirme Formu, Mesafeli Satış Sözleşmesi,
    İade/Cayma koşulları — şu anki metinler taslak, hukuk danışmanı yazmalı.
-   Kurumsal (ticari) alıcılara cayma hakkının uygulanıp uygulanmayacağı netleşmeli.
+   Kurumsal alıcılara da 14 gün iade hakkı tanınıyor (K-65); metinler buna
+   göre yazılmalı ([İade talebi](#i̇ade-talebi) 1).
 3. **ETBİS kaydı** (Ticaret Bakanlığı e-ticaret bilgi sistemi) yapılmalı ve
    satıcının MERSİS numarası panelden (Mağaza Ayarları › Şirket ve
    İletişim) girilmeli; sözleşmelerdeki alan hazır (K-105).
@@ -729,12 +730,13 @@ indirim, kullanım sınırı ve iptal sunucuda ([SUNUCU.md](SUNUCU.md) › 8). K
 
 ## İade talebi
 
-1. **Kurumsal üyeler için sor, öğren:** İade talebi düğmesi bugün yalnızca
-   bireysel üyede (KARARLAR K-65). Kurumsal (ticari) alıcılara cayma
-   hakkının uygulanıp uygulanmayacağı hukukçuya ve müdüre sorulup
-   öğrenilmeli ("Online satış" 2'deki açık soruyla aynı konu). Uygulanacaksa
-   `packages/data/src/returns.ts` › `canRequestReturn` içindeki rol kontrolü
-   kaldırılır.
+1. **Yasal metinler kurumsal alıcıya göre yazılacak:** İade talebi bireysel
+   ve kurumsal bütün üyelere açık (KARARLAR K-65). Bugünkü Ön Bilgilendirme
+   Formu'ndaki "Kurumsal alıcılar" paragrafı ("ticari amaçla alan alıcı
+   tüketici sayılmaz; cayma hakkı ve tüketici mevzuatına ilişkin hükümler
+   uygulanmayabilir") bununla çelişiyor. Hukukçu metinleri yazarken
+   kurumsal alıcılara tanınan 14 günlük iade hakkını işlemeli ("Online
+   satış" 2). Metinler panelden (Yasal Metinler) değiştirilir.
 2. **Ürünün geri gönderilmesi:** Müşteriye kargo kodu ya da gönderim adresi
    verilmesi, ürün depoya ulaşınca kontrol edilmesi süreci tanımlanmalı.
 3. **Para iadesi:** Ödeme kuruluşunun iade işlemi bağlanırsa onaylanan

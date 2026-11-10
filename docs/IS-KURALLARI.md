@@ -391,7 +391,7 @@ Kod: `packages/data/src/orders.ts` (`isTransferExpired`),
 
 **Kısaca:** Ödeme Bekleniyor → Hazırlanıyor → Kargoda → Teslim Edildi (ya da
 İptal). Ödemesi kesinleşen sipariş SAP'a aktarılmak üzere sıraya girer.
-Bireysel üye teslimden sonra 14 gün içinde iade talebi açar.
+Üye (bireysel ya da kurumsal) teslimden sonra 14 gün içinde iade talebi açar.
 
 Siparişi yalnızca **üye** verir.
 
@@ -462,8 +462,8 @@ Kod: `packages/db/src/sap-orders.ts`.
 
 **İade (cayma) talebi:**
 
-- Yalnızca **bireysel üye**, yalnızca **Teslim Edildi** durumundaki siparişi
-  için açar; kurumsal üyede yoktur ([KARARLAR.md](KARARLAR.md) K-65).
+- Üye (bireysel ya da kurumsal), yalnızca **Teslim Edildi** durumundaki
+  siparişi için açar ([KARARLAR.md](KARARLAR.md) K-65).
 - **Süre:** Teslim gününden itibaren **14 gün**; son gün 23:59'a kadar
   (Türkiye saati).
   Teslim anı kargo kaydındaki teslim tarihidir (yoksa durum geçmişindeki

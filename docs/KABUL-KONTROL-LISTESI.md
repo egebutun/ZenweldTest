@@ -184,7 +184,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Anasayfa sırası: tanıtım alanı → güven şeridi → Ne arıyorsunuz?
       (kategori kartları) → Force Serisi → Jasic Lazer Ürünleri →
       Kampanyalı Ürünler → Ürün Seçici bandı → bayi haritası → Neden
-      Zenweld? → Müşterilerimiz Ne Diyor? → kurumsal teklif ve bayilik
+      Zenweld? → Müşterilerimiz Ne Diyor? → teklif ve bayilik
       kartları → Sık Sorulan Sorular (ilk 6) ve Blog (en yeni 3)
       (`tests/e2e/anasayfa.spec.ts`).
 - [ ] Tanıtım alanı 7 saniyede bir sonraki sayfaya geçer (Zenweld → Force
@@ -458,9 +458,9 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Profil › Hesabımı Sil: yanlış şifreyle silinmez; doğru şifre ve onayla
       silinir, Giriş sayfasında "Hesabınız silindi." yazar; aynı e-postayla
       giriş "E-posta ya da şifre hatalı." der. Üyenin siparişleri panelde durur.
-- [ ] Bireysel üyede teslim edilen siparişin detayında **İade Talebi
-      Oluştur** teslim gününden itibaren 14 gün görünür, sonra görünmez;
-      kurumsal üyede hiç görünmez.
+- [ ] Bireysel ve kurumsal üyede teslim edilen siparişin detayında **İade
+      Talebi Oluştur** teslim gününden itibaren 14 gün görünür, sonra
+      görünmez.
 - [ ] Ürün seçmeden gönderilen talep: "İade edilecek en az bir ürün seçin."
       Gönderilen talep `IAD-<yıl>-<4 hane>` numarası ve "Yeni" durumuyla
       görünür; açık talep varken düğme görünmez.

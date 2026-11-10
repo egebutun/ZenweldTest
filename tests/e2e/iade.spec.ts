@@ -65,12 +65,12 @@ test("bireysel üye iade talebi açar, yönetici onaylar", async ({ page, proble
   await expect(main).toContainText(order.code);
   await expect(page.getByRole("button", { name: "İade Talebi Oluştur" })).toHaveCount(0);
 
-  // Kurumsal uyede dugme yok.
+  // Kurumsal uyede de dugme var (K-65).
   await deliverAt(2 * DAY);
   await changeDb(page, (d) => {
     d.users.find((u) => u.id === member.id)!.role = "business";
   });
   await expect(main).toContainText(order.code);
-  await expect(page.getByRole("button", { name: "İade Talebi Oluştur" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "İade Talebi Oluştur" })).toBeVisible();
   expect(problems).toEqual([]);
 });

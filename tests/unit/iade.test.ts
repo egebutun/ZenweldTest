@@ -47,10 +47,10 @@ describe("İade süresi", () => {
   });
 
   it("14. günün sonuna kadar talep açılır, ertesi gün açılmaz", () => {
-    expect(canRequestReturn(order(), "individual", [], new Date("2026-03-24T23:59:00+03:00"))).toBe(true);
-    expect(canRequestReturn(order(), "individual", [], new Date("2026-03-25T00:00:01+03:00"))).toBe(false);
+    expect(canRequestReturn(order(), [], new Date("2026-03-24T23:59:00+03:00"))).toBe(true);
+    expect(canRequestReturn(order(), [], new Date("2026-03-25T00:00:01+03:00"))).toBe(false);
     // Sunucu UTC'de calisir: 24.03 21:00 UTC, Turkiye'de 25.03 00:00'dir.
-    expect(canRequestReturn(order(), "individual", [], new Date("2026-03-24T21:00:01Z"))).toBe(false);
+    expect(canRequestReturn(order(), [], new Date("2026-03-24T21:00:01Z"))).toBe(false);
   });
 
   it("teslim tarihi kargo kaydında yoksa durum geçmişinden okunur", () => {
@@ -62,30 +62,29 @@ describe("İade süresi", () => {
 describe("Kim, hangi siparişte talep açabilir", () => {
   const during = new Date("2026-03-12T12:00:00+03:00");
 
-  it("yalnızca bireysel üye; kurumsal üyede yok", () => {
-    expect(canRequestReturn(order(), "individual", [], during)).toBe(true);
-    expect(canRequestReturn(order(), "business", [], during)).toBe(false);
+  it("üye türü kurala girmez: bireysel ve kurumsal üye aynı kurala bağlı (K-65)", () => {
+    expect(canRequestReturn(order(), [], during)).toBe(true);
   });
 
   it("yalnızca teslim edilmiş siparişte", () => {
-    expect(canRequestReturn(order({ status: "shipped" }), "individual", [], during)).toBe(false);
+    expect(canRequestReturn(order({ status: "shipped" }), [], during)).toBe(false);
   });
 
   it("açık talep (Yeni, İnceleniyor) varken yeni talep açılmaz", () => {
-    expect(canRequestReturn(order(), "individual", [request({ status: "new" })], during)).toBe(false);
-    expect(canRequestReturn(order(), "individual", [request({ status: "reviewing" })], during)).toBe(false);
+    expect(canRequestReturn(order(), [request({ status: "new" })], during)).toBe(false);
+    expect(canRequestReturn(order(), [request({ status: "reviewing" })], during)).toBe(false);
   });
 
   it("reddedilen talepten sonra yeniden açılır; reddedilen adetler iade edilebilir kalır", () => {
     const rejected = request({ status: "rejected", items: [{ line: 0, quantity: 2 } as ReturnRequest["items"][0]] });
-    expect(canRequestReturn(order(), "individual", [rejected], during)).toBe(true);
+    expect(canRequestReturn(order(), [rejected], during)).toBe(true);
     expect(returnableQuantities(order(), [rejected])).toEqual([2, 1]);
   });
 
   it("onaylanan adetler düşer; bütün ürünler iade edildiyse talep açılmaz", () => {
     const partly = request({ status: "approved" });
     expect(returnableQuantities(order(), [partly])).toEqual([1, 1]);
-    expect(canRequestReturn(order(), "individual", [partly], during)).toBe(true);
+    expect(canRequestReturn(order(), [partly], during)).toBe(true);
     const all = request({
       status: "approved",
       items: [
@@ -93,7 +92,7 @@ describe("Kim, hangi siparişte talep açabilir", () => {
         { line: 1, quantity: 1 } as ReturnRequest["items"][0],
       ],
     });
-    expect(canRequestReturn(order(), "individual", [all], during)).toBe(false);
+    expect(canRequestReturn(order(), [all], during)).toBe(false);
   });
 });
 
@@ -132,13 +131,13 @@ describe("İade talebi kaydı", () => {
     expect(createReturnRequest(input)).not.toBe(false);
   });
 
-  it("siparişteki adetten fazlası, başkasının siparişi ve kurumsal üye reddedilir", () => {
+  it("siparişteki adetten fazlası ve başkasının siparişi reddedilir; kurumsal üye kendi siparişi için açar", () => {
     mutate((db) => {
       db.returnRequests = db.returnRequests.filter((r) => r.orderId !== "o-iade");
     });
     expect(createReturnRequest({ ...input, items: [{ ...input.items[0], quantity: 3 }] })).toBe(false);
     expect(createReturnRequest({ ...input, items: [] })).toBe(false);
     expect(createReturnRequest({ ...input, userId: "u-firma" })).toBe(false);
-    expect(createReturnRequest({ ...input, orderId: "o-firma", userId: "u-firma" })).toBe(false);
+    expect(createReturnRequest({ ...input, orderId: "o-firma", userId: "u-firma" })).not.toBe(false);
   });
 });

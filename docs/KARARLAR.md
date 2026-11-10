@@ -443,13 +443,10 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   verilmesin. (Testler, en son teklif silinince numarasının yeniden
   verildiğini ortaya çıkarmıştı; belge değil kod düzeltildi.)
 
-### K-65 · İade talebi yalnızca bireysel üyede, teslimden itibaren 14 gün
-- Bireysel üye, teslim edilen siparişi için Hesabım › Siparişlerim'den
-  iade (cayma) talebi açar. Süre teslim gününden itibaren 14 gündür (son
-  gün 23:59'a kadar).
-- Kurumsal üyede bu düğme şimdilik yoktur; kurumsal alıcılara uygulanıp
-  uygulanmayacağı sorulup öğrenilecek ([YAPILACAKLAR.md](YAPILACAKLAR.md)
-  › İade talebi).
+### K-65 · İade talebi bütün üyelerde, teslimden itibaren 14 gün
+- Bireysel ve kurumsal her üye, teslim edilen siparişi için Hesabım ›
+  Siparişlerim'den iade (cayma) talebi açar. Süre teslim gününden itibaren
+  14 gündür (son gün 23:59'a kadar).
 - Panelde Satış grubunda **İade Talepleri** ekranı vardır. Para iadesi
   K-27'ye göre banka ya da ödeme kuruluşu üzerinden ayrıca yapılır.
 
@@ -754,7 +751,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - Sıra: kayan tanıtım alanı (Zenweld, Force Serisi, Jasic Lazer), güven
   şeridi, kategori kartları, Force Serisi ve Jasic Lazer Ürünleri
   şeritleri, Kampanyalı Ürünler, Ürün Seçici bandı, Bayi ve Servis
-  haritası, Neden Zenweld?, Müşterilerimiz Ne Diyor?, kurumsal teklif ve
+  haritası, Neden Zenweld?, Müşterilerimiz Ne Diyor?, teklif ve
   bayilik kartları, Sık Sorulan Sorular ve Blog.
 - Kategoriye göre ürün listesi yerine kategori sayfalarına giden kartlar
   vardır.

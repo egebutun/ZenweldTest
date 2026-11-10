@@ -900,7 +900,7 @@ modunda her kartlı siparişte ödeme sağlayıcısının sonucu buraya yazılı
 
 ### `return_requests` ve `return_request_items` — iade talepleri
 
-Bireysel üyenin teslim edilen siparişi için açtığı iade (cayma) talebi
+Üyenin (bireysel ya da kurumsal) teslim edilen siparişi için açtığı iade (cayma) talebi
 (kurallar: [IS-KURALLARI.md › 7](IS-KURALLARI.md#7-sipariş-durumları)).
 
 `return_requests`:

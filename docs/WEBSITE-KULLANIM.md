@@ -265,9 +265,11 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
     - Panelde "anasayfada göster" işaretlenmiş, onaylı ve ürünü yayında
       olan değerlendirmeler, en fazla 10 tane.
     - Kartta puan, başlık, yorum, yazan ve ürün adı vardır.
-11. **Kurumsal teklif ve bayilik** (yan yana iki kart):
-    - "Kurumsal alım mı yapacaksınız? Vadeli ödeme ve çek ile ödeme
-      seçenekleri için satış ekibimizden teklif alın." → **Teklif Al**.
+11. **Teklif ve bayilik** (yan yana iki kart):
+    - "Size özel fiyat teklifi ister misiniz? Tekli ya da toplu
+      alımlarınız için size özel fiyat hazırlayalım. Havale/EFT, vadeli
+      ödeme ve çek dahil size uygun ödeme seçeneğini birlikte
+      belirleyelim." → **Teklif Al**.
     - "Birlikte çalışalım — Zenweld Bayisi Olmak İster misiniz?" →
       **Bayilik Başvurusu**.
 12. **Sık Sorulan Sorular ve Blog** (yan yana): ilk 6 soru (açılır-kapanır,
@@ -1159,7 +1161,7 @@ sayısı sunucudan gelir; gelene kadar "…" yazar.
   - Teslimat adresi ve fatura bilgileri.
   - Sözleşmeler: Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi, sipariş
     anının bilgileriyle.
-- **İade Talebi** (yalnızca bireysel üyede; kurallar
+- **İade Talebi** (bireysel ve kurumsal üyede; kurallar
   [IS-KURALLARI.md](IS-KURALLARI.md#7-sipariş-durumları)):
   - Bölüm, siparişin iade talebi varsa ya da talep açılabiliyorsa görünür.
   - Açılmış talepler: numara, durum (Yeni, İnceleniyor, Onaylandı,

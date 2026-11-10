@@ -285,7 +285,7 @@ describe("sipariş verme", () => {
 });
 
 describe("iade talebi", () => {
-  it("teslim edilen siparişte bireysel üye açar; açık talep varken, kurumsal üyede ya da başkasının siparişinde açılmaz", async () => {
+  it("teslim edilen siparişte üye açar (kurumsal da, K-65); açık talep varken ya da başkasının siparişinde açılmaz", async () => {
     await withShop(async (db, client, data) => {
       const at = new Date();
       const placed = await placeOrder(db, memberA, order(), at, data);
@@ -302,11 +302,11 @@ describe("iade talebi", () => {
         [code, at],
       );
       expect(await request(memberB)).toMatchObject({ ok: false, status: 404, error: "Sipariş bulunamadı." });
-      expect(await request({ ...memberA, role: "business" })).toMatchObject({ ok: false, status: 409 });
       expect(await request(memberA, { items: [{ line: 0, quantity: 3 }] })).toMatchObject({ ok: false, status: 400 });
       expect(await request(memberA, { items: [] })).toMatchObject({ error: "İade edilecek en az bir ürün seçin." });
 
-      const created = await request(memberA, { note: " Kutusu açılmadı " });
+      // Uye kurumsal olsa da talep acilir (K-65).
+      const created = await request({ ...memberA, role: "business" }, { note: " Kutusu açılmadı " });
       expect(created.ok).toBe(true);
       if (!created.ok) return;
       expect(created.request).toMatchObject({

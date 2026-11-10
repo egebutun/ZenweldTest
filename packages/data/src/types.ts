@@ -1040,7 +1040,7 @@ export interface ReturnRequestItem {
   quantity: number;
 }
 
-/** Bireysel uyenin teslim edilen siparisi icin actigi iade talebi (DB: return_requests). */
+/** Uyenin (bireysel ya da kurumsal) teslim edilen siparisi icin actigi iade talebi (DB: return_requests). */
 export interface ReturnRequest {
   id: string;
   /** IAD-<yil>-<4 hane> */

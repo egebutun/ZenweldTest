@@ -492,7 +492,7 @@ temsilidir; para çekilmez (KARARLAR K-97).
 
 ### İade Talepleri (`/yonetim/iade-talepleri`)
 
-Bireysel üyelerin Hesabım › Siparişlerim'den açtığı iade (cayma) talepleri
+Üyelerin (bireysel ve kurumsal) Hesabım › Siparişlerim'den açtığı iade (cayma) talepleri
 (kurallar: [IS-KURALLARI.md](IS-KURALLARI.md#7-sipariş-durumları)).
 
 - **Başlık altı:** "<n> talep · <n> yeni".

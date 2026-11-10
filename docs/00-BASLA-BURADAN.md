@@ -68,7 +68,7 @@ Site dört işi birlikte yapar:
 |---|---|
 | **Ziyaretçi** (üye değil) | Kataloğu gezer, sepete ekler, bayi haritasını kullanır, Teklif Al ve diğer formları doldurur. Ödeme için üye olması gerekir. |
 | **Bireysel üye** | Ziyaretçinin yapabildiklerine ek olarak sipariş verir; Hesabım'da siparişlerini, tekliflerini, favorilerini, garanti kayıtlarını, adreslerini ve profilini görür; teslim edilen sipariş için iade talebi açar. |
-| **Kurumsal üye** | Bireysel üyeyle aynıdır; kayıtta firma bilgileri istenir, ödemede fatura kurumsal gelir. İade talebi düğmesi şimdilik yoktur. |
+| **Kurumsal üye** | Bireysel üyeyle aynıdır; kayıtta firma bilgileri istenir, ödemede fatura kurumsal gelir. |
 | **Yönetici** | Yalnızca yönetim panelini kullanır: ürünler, siparişler, teklifler, stok, bayiler, içerik ve ayarlar. Sitede giriş yapamaz. |
 | **Bayi** | Sitenin üyesi değildir, siteye giriş yapmaz. Bayi olmak isteyen **Bayilik Başvurusu** formunu doldurur. Stok listesini yönetici panelden yükler. |
 | **Online satıcı** | Zenweld ürünlerini kendi sitesinde satan mağaza. Siteye giriş yapmaz; stok listesini yönetici panelden yükler. |
@@ -100,7 +100,7 @@ Site dört işi birlikte yapar:
 | **Teklif** | Ekipmanlar için fiyat teklifi talebi (ödeme tercihi: vadeli, çek, havale ya da görüşelim). Herkes gönderebilir; satış ekibi panelden takip eder. |
 | **Garanti kaydı** | Müşterinin aldığı makineyi seri numarasıyla kaydetmesi. Garanti bitiş tarihi sorgulanabilir. |
 | **Servis talebi** | Kurulum, bakım, onarım ya da eğitim için gönderilen talep. Panelden takip edilir. |
-| **İade talebi** | Bireysel üyenin teslim edilen siparişindeki ürünleri geri göndermek için teslimden itibaren 14 gün içinde Hesabım'dan açtığı talep (cayma). Panelde İade Talepleri'nden takip edilir. |
+| **İade talebi** | Üyenin (bireysel ya da kurumsal) teslim edilen siparişindeki ürünleri geri göndermek için teslimden itibaren 14 gün içinde Hesabım'dan açtığı talep (cayma). Panelde İade Talepleri'nden takip edilir. |
 | **Bayilik başvurusu** | Bayi olmak isteyen firmanın formu. Zenweld'e e-postayla gider; panelde Bayilik Başvuruları'nda görünür. |
 | **Welders Club** | Kaynakçılar için topluluk sayfası. Katılım formu Zenweld'e e-postayla gider; panelde Welders Club ekranında görünür. |
 | **Belgeler** | MSDS (güvenlik bilgi formları), Kaynak Rehberi ve Parti Sertifikaları sayfalarındaki dosyalar. Panelden yönetilir. |

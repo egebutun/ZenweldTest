@@ -242,7 +242,7 @@ export function DealerStrip() {
 }
 
 /**
- * Kurumsal teklif ve bayilik: yan yana iki kart (eskiden iki ayri bant).
+ * Teklif ve bayilik: yan yana iki kart (eskiden iki ayri bant).
  * Genis ekranda iki kartin satirlari (ust yazi, baslik, metin, dugme) ortak
  * izgaraya baglidir: ust yazisi olmayan ya da basligi kisa olan kartta da
  * metin ve dugme digeriyle ayni hizada durur.

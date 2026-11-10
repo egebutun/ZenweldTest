@@ -1,12 +1,12 @@
 import { turkeyDayEnd } from "./orders";
-import type { Order, ReturnRequest, UserRole } from "./types";
+import type { Order, ReturnRequest } from "./types";
 
 /**
  * IADE (CAYMA) TALEBI KURALLARI
  *
- * Bireysel uye, teslim edilen siparisi icin teslim gununden itibaren 14 gun
- * icinde iade talebi acar; kurumsal uyede yoktur (KARARLAR K-65). Para
- * iadesi panelden yapilmaz, banka uzerinden ayrica yapilir (K-27).
+ * Uye (bireysel ya da kurumsal), teslim edilen siparisi icin teslim gununden
+ * itibaren 14 gun icinde iade talebi acar (KARARLAR K-65). Para iadesi
+ * panelden yapilmaz, banka uzerinden ayrica yapilir (K-27).
  */
 
 export const RETURN_WINDOW_DAYS = 14;
@@ -40,16 +40,12 @@ export function returnableQuantities(order: Order, requests: ReturnRequest[]): n
 }
 
 /**
- * Bu siparise su an iade talebi acilabilir mi: bireysel uye, siparis teslim
- * edilmis, sure dolmamis, acik talep yok ve iade edilecek urun kalmis.
+ * Bu siparise su an iade talebi acilabilir mi: siparis teslim edilmis, sure
+ * dolmamis, acik talep yok ve iade edilecek urun kalmis. Uye turu fark
+ * etmez (bireysel ve kurumsal; K-65).
  */
-export function canRequestReturn(
-  order: Order,
-  role: UserRole,
-  requests: ReturnRequest[],
-  now: Date = new Date(),
-): boolean {
-  if (role !== "individual" || order.status !== "delivered") return false;
+export function canRequestReturn(order: Order, requests: ReturnRequest[], now: Date = new Date()): boolean {
+  if (order.status !== "delivered") return false;
   const deadline = returnDeadline(order);
   if (!deadline || now > deadline) return false;
   const own = requests.filter((r) => r.orderId === order.id);

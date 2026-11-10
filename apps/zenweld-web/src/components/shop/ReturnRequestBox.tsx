@@ -50,7 +50,7 @@ export function ReturnRequestBox({
   const [created, setCreated] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
 
-  const allowed = canRequestReturn(order, user.role, requests);
+  const allowed = canRequestReturn(order, requests);
   if (!allowed && requests.length === 0 && !created) return null;
   const left = returnableQuantities(order, requests);
   const deadline = returnDeadline(order);
