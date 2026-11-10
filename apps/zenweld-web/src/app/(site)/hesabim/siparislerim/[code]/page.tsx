@@ -153,7 +153,7 @@ function OrderDetail() {
         </dl>
       </Box>
 
-      <ReturnRequestBox order={order} user={user} requests={returnsFor(order.id)} onSubmit={requestReturn} />
+      <ReturnRequestBox order={order} requests={returnsFor(order.id)} onSubmit={requestReturn} />
 
       <div className="grid gap-6 md:grid-cols-3">
         <Box title={t.orders.payment}>

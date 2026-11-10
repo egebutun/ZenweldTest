@@ -1357,9 +1357,8 @@ yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
        yüklenmesi istenir.
    - **Sayfa görselleri panelden:** Bugün Destek ve Garanti sayfasının üst
      görseli (`components/support/SupportHub.tsx` › `HERO_IMAGE`, geçici:
-     Evomig 205 P) ve anasayfanın tanıtım alanındaki üç fotoğraf
-     (`components/home/HomeHero.tsx` › `CORPORATE_PHOTO`, `FORCE_PHOTO`,
-     `LASER_PHOTO`) kodda sabit.
+     Evomig 205 P) kodda sabit. (Anasayfanın tanıtım alanındaki görseller
+     panelden değişir: Anasayfa Tanıtım, K-45.)
      Panelde (ör. Görünüm › Sayfa Görselleri) değiştirilebilir olacak;
      önizlemede sayfanın masaüstü ve telefon görünümü birlikte görülecek.
      Tasarımda eklenen diğer sabit görseller de buraya girer. Veritabanında
@@ -1374,7 +1373,7 @@ Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
 
 1. **Kurumsal tanıtım sayfasının başlığı ve kısa metni:** Bugün örnek
    metin var ("Atölyeden sahaya, her kaynakta Zenweld gücü"); sahibi
-   gönderecek (`packages/i18n/src/tr.ts` › `home.slides`).
+   panelden girecek (Panel › Anasayfa Tanıtım).
 2. **Güven şeridine eklenecek bilgiler** (sahibi bulup gönderecek):
    - kaç yıllık tecrübe
    - satılan makine ya da müşteri sayısı
@@ -1392,8 +1391,8 @@ Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
    aşkın farklı). Yer: `packages/i18n/src/tr.ts` › `home.trust.items` ve
    `home.dealerSubtitle`.
 4. **Gerçek metinler:** Neden Zenweld? maddelerinin açıklamaları (bugün
-   lorem ipsum) ve tanıtım alanındaki Force Serisi ve Jasic Lazer metinleri
-   sahibiyle yazılacak.
+   lorem ipsum) sahibiyle yazılacak; tanıtım alanındaki Force Serisi ve
+   Jasic Lazer metinleri panelden (Anasayfa Tanıtım) değiştirilir.
 5. **Force Serisi sayfası:** İleride Force Serisi için ayrı bir sayfa
    yapılacak. Bugün tanıtım alanındaki **Force Serisini İncele** ve Force
    şeridindeki **Tümünü Gör** "Force" arama sonuçlarına gidiyor.

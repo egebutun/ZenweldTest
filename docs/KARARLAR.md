@@ -741,6 +741,9 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - Sık sorulan sorular, 11 yasal metin, Hakkımızda, satış temsilcileri,
   belge sayfaları (MSDS, Kaynak Rehberi, Parti Sertifikaları), kategori
   ve gruplar panelden yönetilir.
+- Anasayfanın kayan tanıtım alanı panelden yönetilir (Anasayfa Tanıtım):
+  sayfaların sırası, yazıları, maddeleri, etiketleri, görünümü, görseli,
+  düğmeleri ve yayın tarihi.
 - Yasal metinlerin adresi ve sırası sabittir.
 
 ### K-46 · Kaldırılan içerikler

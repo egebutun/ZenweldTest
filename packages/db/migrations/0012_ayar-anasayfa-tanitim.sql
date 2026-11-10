@@ -1,0 +1,2 @@
+ALTER TABLE "settings" DROP CONSTRAINT "settings_key";--> statement-breakpoint
+ALTER TABLE "settings" ADD CONSTRAINT "settings_key" CHECK ("settings"."key" IN ('shop', 'stock', 'rich_text', 'company', 'home_hero'));

@@ -23,8 +23,8 @@ test("tanıtım alanı: üç sayfa; sekme ve oklar değiştirir; fare dışarıd
   await expect(slides.nth(0)).toHaveAttribute("aria-hidden", "false");
   await expect(slides.nth(0).getByRole("link", { name: /Ürünleri Keşfet/ })).toHaveAttribute("href", "/ekipmanlar");
 
-  // Genis ekranda kirmizi ust baslik yok (ayni ad alttaki sekmede yazar).
-  await expect(slides.nth(0).getByText("Zenweld · Kaynak Teknolojileri")).toBeHidden();
+  // Genis ekranda kirmizi ust baslik (sekme adi) gorunmez; ayni ad alttaki sekmede yazar.
+  await expect(slides.nth(0).getByText("Zenweld", { exact: true })).toBeHidden();
 
   await hero.getByRole("button", { name: "Force Serisi" }).click();
   await expect(slides.nth(1)).toHaveAttribute("aria-hidden", "false");
@@ -47,11 +47,11 @@ test("tanıtım alanı: üç sayfa; sekme ve oklar değiştirir; fare dışarıd
   expect(problems).toEqual([]);
 });
 
-test("telefonda tanıtım alanının kırmızı üst başlığı görünür (sekmelerde yazı yok)", async ({ page, problems }) => {
+test("telefonda tanıtım alanının kırmızı üst başlığı (sekme adı) görünür; sekmelerde yazı yok", async ({ page, problems }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   const slide = page.locator('[aria-roledescription="slide"]').first();
-  await expect(slide.getByText("Zenweld · Kaynak Teknolojileri")).toBeVisible();
+  await expect(slide.getByText("Zenweld", { exact: true })).toBeVisible();
   expect(problems).toEqual([]);
 });
 

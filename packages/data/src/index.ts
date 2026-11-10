@@ -13,6 +13,7 @@ export * from "./coupon";
 export * from "./catalog-rules";
 export * from "./network-rules";
 export * from "./settings-rules";
+export * from "./hero-rules";
 export * from "./shipping";
 export * from "./content-rules";
 export * from "./file-rules";
@@ -55,7 +56,7 @@ import { createSampleWarehouseStock } from "./seed/warehouse.seed";
 import { createSampleCoupons } from "./seed/coupons.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 78;
+export const DB_VERSION = 79;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida

@@ -2,6 +2,7 @@ import { and, asc, desc, eq, gt, inArray, isNotNull, type SQL } from "drizzle-or
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import {
   DB_VERSION,
+  defaultSettings,
   type Category,
   type CategoryGroup,
   type Coupon,
@@ -422,6 +423,7 @@ export async function readSettings(db: ReadDb): Promise<SiteSettings> {
     },
     stock: value("stock") as SiteSettings["stock"],
     richText: value("rich_text") as SiteSettings["richText"],
+    homeHero: (value("home_hero") as SiteSettings["homeHero"] | undefined) ?? defaultSettings.homeHero,
     company: value("company") as SiteSettings["company"],
   };
 }

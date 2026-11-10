@@ -17,9 +17,11 @@ const isDev = process.env.NODE_ENV === "development";
  * - img-src https: panelden herhangi bir https gorsel adresi girilebiliyor.
  * - data:/blob: panelde yuklenen gorseller, yorum videolari ve belgeler
  *   tarayicida bu bicimde tutulur.
- * - frame-src: iletisim sayfasindaki Google Haritalar.
+ * - frame-src: iletisim sayfasindaki Google Haritalar; 'self': panelin
+ *   Anasayfa Tanıtım ekranindaki onizleme cercevesi.
  * - frame-ancestors 'none': site baska bir sitenin icinde (cerceve)
- *   acilamaz.
+ *   acilamaz. Tek istisna onizleme sayfasi (asagida PREVIEW): yalnizca ayni
+ *   sitenin icinde cerceveye girer.
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -29,12 +31,22 @@ const contentSecurityPolicy = [
   "media-src 'self' data: blob:",
   "font-src 'self' data:",
   `connect-src 'self'${isDev ? " ws:" : ""}`,
-  "frame-src https://maps.google.com https://www.google.com",
+  "frame-src 'self' https://maps.google.com https://www.google.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
 ].join("; ");
+
+/**
+ * Panelin onizleme sayfalari (/yonetim/onizleme/...): yalnizca ayni sitenin
+ * icinde cerceveye girebilir (Anasayfa Tanıtım ekrani masaustu ve telefon
+ * genisligini cercevede gosterir).
+ */
+const previewHeaders = [
+  { key: "Content-Security-Policy", value: contentSecurityPolicy.replace("frame-ancestors 'none'", "frame-ancestors 'self'") },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+];
 
 /** Butun yanitlara eklenen guvenlik basliklari. */
 const securityHeaders = [
@@ -86,6 +98,8 @@ const nextConfig = {
     const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }];
     return [
       { source: "/:path*", headers: securityHeaders },
+      // Ayni baslik iki kurala uyarsa sonraki gecerlidir.
+      { source: "/yonetim/onizleme/:path*", headers: previewHeaders },
       { source: "/yonetim", headers: noindex },
       { source: "/yonetim/:path*", headers: noindex },
     ];

@@ -152,7 +152,7 @@ açılınca çalışır), işlem kaydının 2 yıldan eskisini silme
 |---|---|
 | `Content-Security-Policy` | Sayfanın hangi adreslerden kod, görsel, çerçeve yükleyebileceğini ve formun nereye gönderilebileceğini belirler |
 | `Strict-Transport-Security` | Tarayıcı siteye bir yıl boyunca yalnızca https ile bağlanır. Alt alan adlarını kapsamaz |
-| `X-Frame-Options: DENY` | Site başka bir sitenin içinde (çerçevede) açılamaz |
+| `X-Frame-Options: DENY` | Site başka bir sitenin içinde (çerçevede) açılamaz. Tek istisna panelin önizleme sayfaları (`/yonetim/onizleme/…`, ör. Anasayfa Tanıtım önizlemesi): yalnızca sitenin kendi sayfalarında çerçeveye girer (`SAMEORIGIN`, CSP'de `frame-ancestors 'self'`) |
 | `X-Content-Type-Options: nosniff` | Tarayıcı dosya türünü tahmin etmez |
 | `Referrer-Policy` | Dış sitelere yalnızca alan adı gider, sayfa yolu gitmez |
 | `Permissions-Policy` | Kamera, mikrofon, ödeme ve USB kapalı; konum yalnızca sitenin kendisine açık (bayi ağı sayfasındaki **Konumumu Kullan**) |
@@ -163,7 +163,8 @@ Güvenlik politikasının (CSP) bugün izin verdiği dış adresler:
   girilebildiği için; harita döşemeleri ve Unsplash dahil), ayrıca
   tarayıcıda tutulan yüklenmiş görseller (`data:`, `blob:`).
 - **Çerçeve:** `maps.google.com` ve `www.google.com` (iletişim sayfasındaki
-  harita).
+  harita) ve sitenin kendisi (panelin Anasayfa Tanıtım ekranındaki
+  önizleme çerçevesi).
 - **Kod, bağlantı (istek), yazı tipi:** yalnızca sitenin kendisi. E-posta
   servisine sunucu bağlandığı için tarayıcıya izin gerekmez.
 
@@ -1275,13 +1276,23 @@ Yasal Metinler, Belgeler, Sayfa SEO ve Görünüm; 5. alan; KARARLAR K-104;
   Belgeler ve Sayfa SEO'nun sunucu bileşeni okur
   (`apps/zenweld-web/src/components/admin/PagesPanelData.tsx`).
   `readAppearancePanel(db)`: ayarlar, `rich_text` satırının
-  `updated_at`'iyle (Görünüm sayfası).
+  `updated_at`'iyle (Görünüm sayfası). `readHeroPanel(db)`: ayarlar,
+  `home_hero` satırının `updated_at`'iyle (Anasayfa Tanıtım sayfası).
 - **Yazma:** `POST /api/yonetim/icerik/<işlem>`: `yasal-metin`,
   `sayfa-seo`, `belge-sayfasi`, `belge`, `belge-yayin`, `belge-sil`,
   `belge-sira`; ardından `refreshSite(["icerik"])`.
-  `POST /api/yonetim/ayarlar/gorunum`; ardından `refreshSite(["katalog"])`
+  `POST /api/yonetim/ayarlar/gorunum` ve `POST /api/yonetim/ayarlar/tanitim`
+  (`adminSaveHomeHero`; kurallar `packages/data/src/hero-rules.ts`, yüklenen
+  dosya (data:) kaydedilmez); ardından `refreshSite(["katalog"])`
   (ayarlar katalogla birlikte önbellektedir). `audit_log`: `legal_pages`,
-  `page_seo`, `document_pages`, `documents`, `settings` / `rich_text`.
+  `page_seo`, `document_pages`, `documents`, `settings` / `rich_text`,
+  `settings` / `home_hero`.
+- **Anasayfa Tanıtım önizlemesi:** Panel, `/yonetim/onizleme/tanitim`
+  sayfasını bir çerçevede masaüstü (1440 px) ya da telefon (390 px)
+  genişliğinde açar ve kaydedilmemiş taslağı ona mesajla (`postMessage`)
+  gönderir; sayfa yalnızca aynı siteden ve kendisini açan pencereden gelen
+  mesajı okur, hiçbir kaydı okumaz ya da yazmaz
+  (`apps/zenweld-web/src/lib/hero-preview.ts`).
 - **Yasal metin:** Yalnızca var olan satır güncellenir (liste sabit);
   başlık ve metin zorunlu (`content-rules.ts` › `legalDraftError`).
 - **Sayfa SEO:** Yalnızca Sayfa SEO ekranındaki (aramaya açık) sabit

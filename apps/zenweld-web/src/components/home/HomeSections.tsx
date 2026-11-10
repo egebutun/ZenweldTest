@@ -211,7 +211,7 @@ export function WhyZenweld() {
               href="/hakkimizda"
               className="group flex h-full flex-col justify-between bg-zw-red-600 p-7 transition-colors hover:bg-zw-red-700 zw-focus"
             >
-              <span className="font-display text-4xl font-bold uppercase leading-[0.95]">{t.home.slides.corporateCtaSecondary}</span>
+              <span className="font-display text-4xl font-bold uppercase leading-[0.95]">{t.home.whyAboutTile}</span>
               <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wide">
                 {t.explore.about}
                 <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />

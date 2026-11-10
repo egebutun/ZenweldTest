@@ -7,7 +7,7 @@ import { getHomePageData, getServerCatalog } from "@/lib/server/catalog";
 import { getServerContent } from "@/lib/server/content";
 import { pageMetadataFor } from "@/lib/server/page-metadata";
 import { CategoryShowcase } from "@/components/home/CategoryShowcase";
-import { HomeHero } from "@/components/home/HomeHero";
+import { HomeHeroSection } from "@/components/home/HomeHero";
 import { TrustStrip } from "@/components/home/TrustStrip";
 import {
   CtaCards,
@@ -39,7 +39,7 @@ export default async function HomePage() {
       <JsonLd data={organizationJsonLd(company)} />
       {/* Sorular arama sonuclarinda acilir baslik olarak cikabilsin */}
       <JsonLd data={faqJsonLd(faqs)} />
-      <HomeHero />
+      <HomeHeroSection />
       <TrustStrip />
       <CategoryShowcase />
       <SeriesStrips />

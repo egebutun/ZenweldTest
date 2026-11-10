@@ -53,6 +53,7 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 22. [Panelde kayıt düzenleme](#22-panelde-kayıt-düzenleme)
 23. [Yüklenen dosyalar](#23-yüklenen-dosyalar)
 24. [Panel listeleri: sayfalama ve arama](#24-panel-listeleri-sayfalama-ve-arama)
+25. [Anasayfa tanıtım alanı](#25-anasayfa-tanıtım-alanı)
 
 ---
 
@@ -1571,3 +1572,43 @@ aynı hesap tarayıcıda yapılır.
 - Testler: `tests/unit/panel-listeleri.test.ts` (demo modu) ile
   `tests/db/panel-satis.test.ts`, `tests/db/panel-talepler.test.ts` ve
   `tests/db/panel-uyeler.test.ts` (veritabanı) aynı örnekleri dener.
+
+---
+
+## 25. Anasayfa tanıtım alanı
+
+**Kısaca:** Anasayfanın en üstündeki kayan sayfalar panelden yönetilir
+(Panel › Anasayfa Tanıtım; KARARLAR K-45). Sitede yalnızca yayında olan ve
+yayın tarihi içindeki sayfalar, paneldeki sırayla görünür.
+
+Kurallar demo ve veritabanı modunda aynıdır (`packages/data/src/hero-rules.ts`);
+sunucu tarayıcıdan geleni yeniden denetler.
+
+| Alan | Kural |
+|---|---|
+| Sayfa sayısı | En az 1, en fazla 5; en az biri yayında olmalı |
+| Ekranda kalma süresi | 4–12 saniye, tam sayı (başlangıç 7) |
+| Sekme adı | Zorunlu, en fazla 24 karakter |
+| Başlık | Zorunlu, en fazla 70 karakter |
+| Metin | İsteğe bağlı, en fazla 240 karakter |
+| Maddeler | En fazla 3, her biri en fazla 40 karakter; boş satır atlanır |
+| Etiketler | En fazla 4, her biri en fazla 30 karakter; boş satır atlanır |
+| Görünüm | Fotoğraf arka planlı · Ürün · koyu atölye · Ürün · teknik çizim |
+| Görsel | Zorunlu; site içi adres (`/…`), `https://…` ya da yüklenen dosya |
+| Arka plandaki büyük yazı | En fazla 10 harf, büyük harfe çevrilir; yalnızca ürün görünümlerinde (fotoğraf arka planlıda kaydedilmez) |
+| 1. düğme | Yazı (en fazla 30) ve bağlantı zorunlu |
+| 2. düğme | Yazı ve bağlantı birlikte; ikisi de boşsa düğme yoktur |
+| Bağlantı | `/` ile başlayan site içi adres ya da `https://` adresi |
+| Yayın tarihi | İsteğe bağlı başlangıç ve bitiş (YYYY-AA-GG); bitiş başlangıçtan önce olamaz |
+
+- Metinler kırpılır (baştaki ve sondaki boşluk).
+- **Yayın tarihi Türkiye günüdür:** Sayfa başlangıç günü 00:00'dan bitiş
+  günü 23:59'a kadar görünür. Örnek: bitişi 7 Aralık olan sayfa 8 Aralık
+  00:00'da (Türkiye) kalkar.
+- Görünen sayfa yoksa tanıtım alanı hiç görünmez (sayfanın arama motorları
+  için başlığı kalır). Tek sayfa görünüyorsa alttaki sekmeler ve oklar
+  yoktur.
+- Veritabanı modunda yüklenen dosya (data:) kaydedilmez; görsel dosya
+  deposuna yüklenir (K-108), depo ayarlı değilse adres yazılır.
+- Testler: `tests/unit/tanitim-alani.test.ts`, `tests/db/panel-tanitim.test.ts`.
+

@@ -202,25 +202,34 @@ menüler açılıp kapanır; bölümlerde ve Destek ve Garanti'de (`/destek`)
 
 Yukarıdan aşağıya bölümler (KARARLAR K-47):
 
-1. **Tanıtım alanı:** Üç sayfa yana kayar; her biri 7 saniye ekranda kalır.
-   - **Zenweld** (kurumsal): atölye fotoğrafı, Zenweld'i ve farkını anlatan
-     başlık ve metin, üç madde (Yerinde yetkili servis, Hızlı yedek parça,
-     Uzman teknik destek); **Ürünleri Keşfet** (`/ekipmanlar`) ve
-     **Zenweld'i Tanıyın** (`/hakkimizda`). Metin örnektir; sahibi
-     gönderecek.
-   - **Force Serisi:** ForceMIG 200 fotoğrafı, başlık ve metin; **Force
-     Serisini İncele** (`/arama?q=Force`) ve **Teklif Al**.
-   - **Jasic Lazer:** Jasic lazer kaynak makinesi fotoğrafı, Lazer Kaynak ·
-     Lazer Temizleme · Lazer Markalama; **Lazer Makinelerini İncele**
+1. **Tanıtım alanı:** Sayfalar yana kayar. Sayfaların hepsi panelden
+   yönetilir (Panel › Anasayfa Tanıtım; KARARLAR K-45): sıra, sekme adı,
+   başlık, metin, maddeler, etiketler, görünüm, görsel, düğmeler, yayın
+   tarihi ve ekranda kalma süresi (başlangıçta 7 sn). Sitede yalnızca
+   yayında ve yayın tarihi içindeki sayfalar görünür (kurallar:
+   [IS-KURALLARI.md › 25](IS-KURALLARI.md#25-anasayfa-tanıtım-alanı)).
+   Başlangıçtaki üç sayfa:
+   - **Zenweld** (fotoğraf arka planlı): atölye fotoğrafı, Zenweld'i ve
+     farkını anlatan başlık ve metin, üç madde (Yerinde yetkili servis,
+     Hızlı yedek parça, Uzman teknik destek); **Ürünleri Keşfet**
+     (`/ekipmanlar`) ve **Zenweld'i Tanıyın** (`/hakkimizda`). Metin
+     örnektir; sahibi panelden girecek.
+   - **Force Serisi** (ürün · koyu atölye): ForceMIG 200 fotoğrafı, arka
+     planda "FORCE"; **Force Serisini İncele** (`/arama?q=Force`) ve
+     **Teklif Al**.
+   - **Jasic Lazer** (ürün · teknik çizim): Jasic lazer kaynak makinesi
+     fotoğrafı, arka planda "LAZER", etiketler Lazer Kaynak · Lazer
+     Temizleme · Lazer Markalama; **Lazer Makinelerini İncele**
      (`/ekipmanlar/lazer-makineleri`) ve **Teklif Al**.
    - Alttaki sekmelerde (01 Zenweld · 02 Force Serisi · 03 Jasic Lazer)
      ilerleme çizgisi dolunca sonraki sayfa gelir; sekmeye ya da
      **‹ / ›** oklarına tıklanınca o sayfa açılır. Fare tanıtım alanının
      üzerindeyken ya da klavyeyle içindeyken durur. Telefonda parmakla
-     sağa-sola kaydırılır.
-   - Telefonda sekmelerde yazı yoktur (yalnızca çizgi); sayfanın adı
-     (ör. "Force Serisi") başlığın üstünde yazar. Telefonda Jasic'teki üç
-     lazer adı gösterilmez.
+     sağa-sola kaydırılır. Tek sayfa varsa sekmeler ve oklar yoktur;
+     görünen sayfa yoksa tanıtım alanı görünmez.
+   - Telefonda sekmelerde yazı yoktur (yalnızca çizgi); sayfanın sekme adı
+     (ör. "Force Serisi") başlığın üstünde yazar. Telefonda etiketler
+     gösterilmez.
    - Sayfanın ana başlığı (arama motorları için) "Zenweld Kaynak Makineleri
      ve Plazma Kesme Sistemleri"dir; ekranda görünmez.
 2. **Güven şeridi:** Yana kayan sabit yazılar; hiçbir veriye ya da panel

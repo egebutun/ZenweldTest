@@ -164,35 +164,18 @@ export const tr = {
     quoteBannerCta: "Teklif Al",
     blogTitle: "Blog",
     blogSubtitle: "Kaynak dünyasından haberler ve teknik rehberler",
-    /** Tanitim alani (kayan uc sayfa). Kurumsal sayfanin metni ornektir; sahibi gonderecek. */
+    /**
+     * Tanitim alaninin dugme ve okuma metinleri. Sayfalarin kendisi (sekme,
+     * baslik, metin, gorsel, dugmeler) panelden yonetilir: Anasayfa Tanıtım
+     * (settings.homeHero, KARARLAR K-45).
+     */
     slides: {
       label: "Tanıtım",
       previous: "Önceki",
       next: "Sonraki",
-      corporateTab: "Zenweld",
-      /** Ust kirmizi baslik yalnizca telefonda gorunur (orada alttaki sekmelerde yazi yok). */
-      corporateEyebrow: "Zenweld · Kaynak Teknolojileri",
-      corporateTitle: "Atölyeden sahaya, her kaynakta Zenweld gücü",
-      corporateText:
-        "Kaynak, kesme ve lazer teknolojilerinde geniş ürün gamı; Türkiye genelinde yetkili bayi ve servis ağı, hızlı yedek parça ve uzman teknik destekle makineniz hep çalışır durumda.",
-      corporatePoints: ["Yerinde yetkili servis", "Hızlı yedek parça", "Uzman teknik destek"],
-      corporateCta: "Ürünleri Keşfet",
-      corporateCtaSecondary: "Zenweld'i Tanıyın",
-      forceTab: "Force Serisi",
-      forceEyebrow: "Force Serisi",
-      forceTitle: "Kompakt gövde, tam güç",
-      forceText:
-        "MIG/MAG, TIG, MMA ve plazma kesimde günlük işin yükünü taşıyan; taşıması kolay, kullanımı basit makineler.",
-      forceCta: "Force Serisini İncele",
-      laserTab: "Jasic Lazer",
-      laserEyebrow: "Jasic Lazer Teknolojileri",
-      laserTitle: "Lazerle daha hızlı, daha temiz, daha hassas",
-      laserText:
-        "Lazer kaynak, temizleme ve markalamada düşük ısı girdisi ve yüksek hız. Jasic lazer makineleri Zenweld güvencesi, kurulum ve servis desteğiyle.",
-      laserModels: ["Lazer Kaynak", "Lazer Temizleme", "Lazer Markalama"],
-      laserCta: "Lazer Makinelerini İncele",
-      quoteCta: "Teklif Al",
     },
+    /** Neden Zenweld? izgarasinin son kutusu (Hakkımızda'ya gider). */
+    whyAboutTile: "Zenweld'i Tanıyın",
     /**
      * Guven seridi. Sabit yazilardir; hicbir veriye ya da ayara bagli
      * degildir (KARARLAR K-47). Degistirmek icin buradan duzenlenir.

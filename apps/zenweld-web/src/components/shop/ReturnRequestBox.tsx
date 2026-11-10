@@ -8,7 +8,6 @@ import {
   type Order,
   type ReturnReason,
   type ReturnRequest,
-  type User,
 } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Select, Textarea } from "@zenweld/ui";
 import { formatDate, formatDateTime } from "@zenweld/utils";
@@ -25,18 +24,16 @@ const STATUS_TONE: Record<ReturnRequest["status"], "amber" | "grey" | "green" | 
 /**
  * SIPARIS DETAYINDA IADE (CAYMA) TALEBI
  *
- * Siparisin iade talepleri ve durumlari; kurallar uygunsa (bireysel uye,
- * teslimden itibaren 14 gun, acik talep yok) yeni talep formu. Kurallar:
+ * Siparisin iade talepleri ve durumlari; kurallar uygunsa (teslimden
+ * itibaren 14 gun, acik talep yok; uye turu fark etmez) yeni talep formu. Kurallar:
  * packages/data/src/returns.ts.
  */
 export function ReturnRequestBox({
   order,
-  user,
   requests,
   onSubmit,
 }: {
   order: Order;
-  user: User;
   requests: ReturnRequest[];
   /** Talebi kaydeder (lib/member-orders.ts: veritabani modunda sunucu) */
   onSubmit: (input: ReturnInput) => Promise<{ ok: true; code: string } | { ok: false; error: string }>;

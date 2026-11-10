@@ -48,7 +48,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 21. [Belgeler](#21-belgeler)
 22. [Yasal Metinler](#22-yasal-metinler)
 23. [Sayfa SEO](#23-sayfa-seo)
-24. [Görünüm](#24-görünüm) (İşlem Kaydı ve E-posta Kaydı dahil)
+24. [Görünüm](#24-görünüm) (Anasayfa Tanıtım, İşlem Kaydı ve E-posta Kaydı dahil)
 25. [Siteden panele gelenler](#25-siteden-panele-gelenler)
 26. [Bütün panel adresleri](#26-bütün-panel-adresleri)
 27. [Bilinen durumlar](#27-bilinen-durumlar)
@@ -104,7 +104,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
       ve Stok Matrisi ([Veritabanı modunda Stok Matrisi](#veritabanı-modunda-stok-matrisi)).
     - **Ayarlar:** Mağaza Ayarları
       ([Veritabanı modunda Mağaza Ayarları](#veritabanı-modunda-mağaza-ayarları))
-      ve Görünüm ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
+      ve Görünüm ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)),
+      Anasayfa Tanıtım ([24](#anasayfa-tanıtım)).
     - **İçerik:** Haberler, Etkinlikler, Blog, Hakkımızda, Sık Sorulan
       Sorular, Belgeler, Yasal Metinler, Sayfa SEO
       ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
@@ -145,7 +146,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 | Ürünler | Ürünler · Kategoriler · Seçenek Tanımları · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Bayilik Başvuruları · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar · Welders Club |
-| İçerik | Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
+| İçerik | Anasayfa Tanıtım · Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
 | Ayarlar | Görünüm · İşlem Kaydı · E-posta Kaydı (son ikisi yalnızca veritabanı modunda kayıt tutar) |
 
 **Bulunamayan panel sayfası:** "Sayfa bulunamadı" ve **Panele dön**
@@ -2363,6 +2364,67 @@ yazıların punto ve renklerini buradan ayarlayın."
 - Ayarlar başka bir sekmede kaydedilirse ekran yenilenir; kaydedilmemiş
   değişiklik varsa korunur.
 
+### Anasayfa Tanıtım
+
+Adres: `/yonetim/tanitim` (menüde İçerik grubunun başında). Anasayfanın en
+üstündeki kayan sayfalar (KARARLAR K-45; sitede görünüşü:
+[WEBSITE-KULLANIM.md › Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa); kurallar:
+[IS-KURALLARI.md › 25](IS-KURALLARI.md#25-anasayfa-tanıtım-alanı)).
+Açıklama: "Anasayfanın en üstündeki kayan sayfalar. Sayfaların sırası,
+yazıları, görselleri ve düğmeleri buradan değişir; kaydedince sitede hemen
+görünür."
+
+- Değişiklikler önce ekranda (taslakta) durur; **Değişiklikleri Kaydet** ile
+  sitede geçerli olur → "Tanıtım alanı kaydedildi." **Varsayılana Dön**
+  başlangıçtaki üç sayfayı (Zenweld, Force Serisi, Jasic Lazer) taslağa
+  getirir; kaydedilince uygulanır.
+- **Sayfalar** (solda): her satırda küçük görsel, sıra numarası, sekme adı,
+  görünüm ve durum: **Yayında**, **Kapalı** ya da **Tarih dışı** (yayında ama
+  yayın tarihi bugünü kapsamıyor). Satıra tıklayınca sayfa sağda açılır.
+  - Sıra sürükleyerek ya da satırdaki ↑ / ↓ oklarıyla değişir.
+  - **Yeni sayfa ekle:** boş bir sayfa (Ürün · koyu atölye görünümünde,
+    yayında) ekler. En az 1, en fazla 5 sayfa.
+- **Genel:** "Her sayfanın ekranda kalma süresi" 4–12 saniye (başlangıç 7).
+- **Sayfanın düzenlenmesi** (sağda): üstte **Yayında** kutusu ve **Sayfayı
+  sil** (tek sayfa kaldıysa silinemez).
+  - **Yazılar:** Sekme adı* (en fazla 24 karakter; alttaki sekmede yazar,
+    telefonda başlığın üstünde görünür), Başlık* (70), Metin (240).
+  - **Maddeler** (isteğe bağlı, en fazla 3, her biri 40 karakter): başında
+    onay işaretiyle yan yana gösterilir (Zenweld sayfasındaki gibi).
+  - **Etiketler** (isteğe bağlı, en fazla 4, her biri 30 karakter): kutucuk
+    şeklinde gösterilir (Jasic Lazer sayfasındaki Lazer Kaynak, Lazer
+    Temizleme, Lazer Markalama gibi); telefonda gösterilmez.
+  - **Düğmeler:** 1. düğme (kırmızı) yazısı* ve bağlantısı*; 2. düğme
+    (çerçeveli) yazısı ve bağlantısı, boşsa gösterilmez. Bağlantı site içi
+    adres (`/teklif-al`) ya da `https://…` olur.
+  - **Görünüm:** Fotoğraf arka planlı (tam ekran fotoğraf, solda yazı) ·
+    Ürün · koyu atölye (koyu çelik zemin, sağda ürün) · Ürün · teknik çizim
+    (çizim ızgarası ve lazer çizgisi, sağda ürün).
+  - **Görsel:** fotoğraf arka planlı görünümde arka plan fotoğrafı, ürün
+    görünümlerinde arka planı saydam ürün fotoğrafı (PNG ya da WebP); adres
+    yazılır ya da dosya yüklenir (diğer görsel alanları gibi; veritabanı
+    modunda dosya deposu ayarlı değilse yalnızca adres). Ürün görünümlerinde
+    ayrıca **Arka plandaki büyük yazı** (en fazla 10 harf, büyük harfe
+    çevrilir; boşsa gösterilmez).
+  - **Yayın tarihi** (isteğe bağlı): Başlangıç ve Bitiş; aralık dışında
+    sayfa sitede kendiliğinden gizlenir (Türkiye günü, başlangıç 00:00 –
+    bitiş 23:59).
+- **Önizleme** (altta): tanıtım alanı sitedeki haliyle, kaydedilmemiş
+  değişikliklerle; **Masaüstü** ya da **Telefon** genişliğinde. Seçili sayfa
+  açık gelir, kendiliğinden dönmez; kapalı sayfalar da önizlemede görünür.
+- Hatalar (kaydedilmez; hatalı sayfa seçilir):
+  - "<n>. sayfa (<sekme adı>): sekme adı yazılmalı." / "… başlık
+    yazılmalı." / "… görsel seçilmeli." / "… 1. düğmenin yazısı ve
+    bağlantısı yazılmalı." / "… 2. düğmenin yazısı ve bağlantısı birlikte
+    yazılmalı (ya da ikisi de boş kalmalı)." / "… "<adres>" bağlantısı / ile
+    (site içi) ya da https:// ile başlamalı." / "… bitiş tarihi
+    başlangıçtan önce olamaz."
+  - "En az bir sayfa yayında olmalı."
+- Veritabanı modunda kayıt sunucuya yazılır, İşlem Kaydı'na "Anasayfa
+  Tanıtım" olarak girer ve anasayfa hemen yenilenir; ekran açıldıktan sonra
+  başka bir yönetici kaydettiyse kayıt reddedilir ("Bu kayıt siz açtıktan
+  sonra değişti; sayfayı yenileyin."). Demo modunda tarayıcıya yazılır.
+
 ### İşlem Kaydı (veritabanı modu)
 
 Adres: `/yonetim/islem-kaydi` (Ayarlar › **İşlem Kaydı**). Açıklama:
@@ -2575,6 +2637,7 @@ sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 | `/yonetim/yasal-metinler/<id>` | Yasal metin düzenleme |
 | `/yonetim/sayfa-seo` | Sayfa SEO |
 | `/yonetim/gorunum` | Görünüm |
+| `/yonetim/tanitim` | Anasayfa Tanıtım |
 | `/yonetim/islem-kaydi` | İşlem Kaydı (veritabanı modu) |
 | `/yonetim/e-posta-kaydi` | E-posta Kaydı (veritabanı modu) |
 

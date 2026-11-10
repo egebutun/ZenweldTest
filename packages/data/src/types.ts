@@ -1260,8 +1260,57 @@ export interface CompanySettings {
   updatedAt?: string;
 }
 
+/**
+ * ANASAYFA TANITIM ALANI (kayan sayfalar; panel › Anasayfa Tanıtım,
+ * KARARLAR K-45). Kurallar: hero-rules.ts.
+ */
+
+/** Sayfanin hazir gorunumu: fotograf arka planli, koyu atolyede urun, teknik cizimde urun. */
+export type HeroLook = "photo" | "product-dark" | "product-blueprint";
+
+export interface HeroButton {
+  label: string;
+  /** Site ici adres (/...) ya da https:// */
+  href: string;
+}
+
+export interface HeroSlide {
+  id: string;
+  /** Yayinda mi (kapaliysa sitede gorunmez) */
+  active: boolean;
+  /** Alttaki sekmede yazan ad; telefonda basligin ustunde */
+  tab: string;
+  title: string;
+  text: string;
+  /** Onay isaretli maddeler (en fazla 3) */
+  points: string[];
+  /** Kutucuk etiketler (en fazla 4; telefonda gosterilmez) */
+  chips: string[];
+  look: HeroLook;
+  /** Fotograf arka planli gorunumde tam ekran fotograf; urun gorunumlerinde arka plani saydam urun fotografi */
+  image: string;
+  /** Urun gorunumlerinde arka plandaki ici bos dev yazi; bos: yok */
+  bigWord: string;
+  /** Kirmizi dugme */
+  primary: HeroButton;
+  /** Cerceveli dugme; yoksa gosterilmez */
+  secondary?: HeroButton;
+  /** Yayin tarihi (Turkiye gunu, YYYY-AA-GG); bossa sinirsiz */
+  startsOn?: string;
+  endsOn?: string;
+}
+
+export interface HomeHeroSettings {
+  /** Her sayfanin ekranda kalma suresi (saniye) */
+  intervalSeconds: number;
+  slides: HeroSlide[];
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
+}
+
 export interface SiteSettings {
   richText: RichTextStyle;
+  homeHero: HomeHeroSettings;
   shop: ShopSettings;
   stock: StockSettings;
   company: CompanySettings;

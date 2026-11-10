@@ -59,6 +59,57 @@ const samplePos: PaymentPos[] = [
  * don" dugmeleri bu degerleri geri yukler.
  */
 export const defaultSettings: SiteSettings = {
+  /**
+   * Anasayfa tanitim alani (panel › Anasayfa Tanıtım). Zenweld sayfasinin
+   * basligi ve metni ornektir; sahibi gonderecek.
+   */
+  homeHero: {
+    intervalSeconds: 7,
+    slides: [
+      {
+        id: "zenweld",
+        active: true,
+        tab: "Zenweld",
+        title: "Atölyeden sahaya, her kaynakta Zenweld gücü",
+        text: "Kaynak, kesme ve lazer teknolojilerinde geniş ürün gamı; Türkiye genelinde yetkili bayi ve servis ağı, hızlı yedek parça ve uzman teknik destekle makineniz hep çalışır durumda.",
+        points: ["Yerinde yetkili servis", "Hızlı yedek parça", "Uzman teknik destek"],
+        chips: [],
+        look: "photo",
+        image: "/images/hero/kaynak-atolyesi.webp",
+        bigWord: "",
+        primary: { label: "Ürünleri Keşfet", href: "/ekipmanlar" },
+        secondary: { label: "Zenweld'i Tanıyın", href: "/hakkimizda" },
+      },
+      {
+        id: "force",
+        active: true,
+        tab: "Force Serisi",
+        title: "Kompakt gövde, tam güç",
+        text: "MIG/MAG, TIG, MMA ve plazma kesimde günlük işin yükünü taşıyan; taşıması kolay, kullanımı basit makineler.",
+        points: [],
+        chips: [],
+        look: "product-dark",
+        image: "/images/home/force-mig-200.webp",
+        bigWord: "FORCE",
+        primary: { label: "Force Serisini İncele", href: "/arama?q=Force" },
+        secondary: { label: "Teklif Al", href: "/teklif-al" },
+      },
+      {
+        id: "jasic-lazer",
+        active: true,
+        tab: "Jasic Lazer",
+        title: "Lazerle daha hızlı, daha temiz, daha hassas",
+        text: "Lazer kaynak, temizleme ve markalamada düşük ısı girdisi ve yüksek hız. Jasic lazer makineleri Zenweld güvencesi, kurulum ve servis desteğiyle.",
+        points: [],
+        chips: ["Lazer Kaynak", "Lazer Temizleme", "Lazer Markalama"],
+        look: "product-blueprint",
+        image: "/images/home/jasic-lazer-kaynak.webp",
+        bigWord: "LAZER",
+        primary: { label: "Lazer Makinelerini İncele", href: "/ekipmanlar/lazer-makineleri" },
+        secondary: { label: "Teklif Al", href: "/teklif-al" },
+      },
+    ],
+  },
   richText: {
     headingSize: 18,
     headingColor: "#141619",

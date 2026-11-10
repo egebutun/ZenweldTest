@@ -85,6 +85,13 @@
       "when": 1794062180661,
       "tag": "0011_urun-yeni-isareti-kaldirildi",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1794300987456,
+      "tag": "0012_ayar-anasayfa-tanitim",
+      "breakpoints": true
     }
   ]
 }

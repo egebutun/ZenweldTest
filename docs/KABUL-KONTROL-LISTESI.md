@@ -190,7 +190,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Tanıtım alanı 7 saniyede bir sonraki sayfaya geçer (Zenweld → Force
       Serisi → Jasic Lazer); fare üzerindeyken durur; sekmeler ve oklar
       sayfayı değiştirir; telefonda parmakla kaydırılır. Telefonda sayfanın
-      adı başlığın üstünde yazar.
+      sekme adı başlığın üstünde yazar.
 - [ ] Güven şeridi sabit yazıdır (29+ bayi ve servis noktası, 25 şehir,
       +12 ay, 12 taksit, ₺5.000, 14 gün iade hakkı, Havale & Kredi Kartı &
       Vadeli & Çek, 2 ofis); panelde bayiler, mağaza ayarları ya da şirket
@@ -1106,6 +1106,18 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       değişmez.
 - [ ] Sayfa SEO: başlık değişince sayfanın sekme başlığı değişir; Varsayılana
       dön + Kaydet varsayılana döndürür.
+- [ ] Anasayfa Tanıtım: sayfa oklarla ya da sürükleyerek taşınır; başlık,
+      madde ve etiket değişikliği alttaki önizlemede (Masaüstü ve Telefon)
+      kaydetmeden görünür; kaydedince anasayfada sıra ve yazılar aynıdır
+      (iki modda; `tests/e2e/tanitim.spec.ts`,
+      `tests/e2e-db/panel-tanitim.spec.ts`).
+- [ ] Anasayfa Tanıtım: kapatılan ya da yayın tarihi dışındaki sayfa
+      anasayfada görünmez; listede "Kapalı" / "Tarih dışı" yazar. Başlığı
+      boş sayfa kaydedilmez ("<n>. sayfa (<sekme adı>): başlık yazılmalı.").
+      Tek sayfa yayındaysa anasayfada sekmeler ve oklar görünmez.
+- [ ] Anasayfa Tanıtım: veritabanı modunda kayıt İşlem Kaydı'na "Anasayfa
+      Tanıtım" olarak girer; **Varsayılana Dön** + kaydet başlangıçtaki üç
+      sayfayı geri getirir.
 - [ ] Görünüm: punto ve renk değişikliği haber, blog, Hakkımızda ve yasal
       metinlere yansır; Varsayılana Dön + Ayarları Kaydet başlangıç
       değerlerine döndürür.

@@ -129,6 +129,11 @@ test.describe("ziyaretçi", () => {
       expect(headers["permissions-policy"], path).toBeTruthy();
     }
     expect((await request.get("/yonetim/giris")).headers()["x-robots-tag"]).toContain("noindex");
+
+    // Panelin tanitim alani onizlemesi yalnizca ayni sitenin icinde cerceveye girer.
+    const preview = (await request.get("/yonetim/onizleme/tanitim")).headers();
+    expect(preview["content-security-policy"]).toContain("frame-ancestors 'self'");
+    expect(preview["x-frame-options"]).toBe("SAMEORIGIN");
   });
 
   test("yenileme ve SAP uçları anahtarsız ya da yanlış anahtarla çalışmaz", async ({ request }) => {

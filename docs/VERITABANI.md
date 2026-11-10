@@ -1181,7 +1181,7 @@ Tek bir ayar kaydının bölümleri; her bölüm bir satır.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
-| `key` | text | anahtar; `shop`, `stock`, `rich_text`, `company` | |
+| `key` | text | anahtar; `shop`, `stock`, `rich_text`, `company`, `home_hero` | |
 | `value` | jsonb | zorunlu | Aşağıda |
 | `updated_at` | timestamptz | zorunlu | |
 | `updated_by` | text | → `users` (boşalır) (yeni) | |
@@ -1235,6 +1235,33 @@ görünümü: `headingSize` (14–32, 18), `headingColor` (#141619),
 40), `leadSize` (14–26, 18), `bodySize` (12–22, 15), `bodyColor`
 (#3d4348), `strongColor` (#141619). Parantez içinde aralık ve başlangıç
 değeri. Renkler `#RRGGBB` biçimindedir.
+
+**`home_hero` — anasayfa tanıtım alanı** (koddaki `settings.homeHero`;
+Panel › Anasayfa Tanıtım, KARARLAR K-45; geçiş betiği
+`0012_ayar-anasayfa-tanitim`):
+
+| Alan | Açıklama | Örnek değer |
+|---|---|---|
+| `intervalSeconds` | Her sayfanın ekranda kalma süresi (4–12 sn) | 7 |
+| `slides[]` | Sayfalar, sitedeki sırayla (1–5) | Zenweld, Force Serisi, Jasic Lazer |
+| `slides[].id` | Sayfanın kimliği | `zenweld`, `force`, `jasic-lazer` |
+| `slides[].active` | Yayında mı | evet |
+| `slides[].tab` | Sekme adı (telefonda başlığın üstünde) | Force Serisi |
+| `slides[].title`, `text` | Başlık ve metin | Kompakt gövde, tam güç |
+| `slides[].points[]` | Onay işaretli maddeler (en fazla 3) | Yerinde yetkili servis… |
+| `slides[].chips[]` | Kutucuk etiketler (en fazla 4) | Lazer Kaynak, Lazer Temizleme, Lazer Markalama |
+| `slides[].look` | `photo` (fotoğraf arka planlı), `product-dark` (ürün · koyu atölye), `product-blueprint` (ürün · teknik çizim) | `product-dark` |
+| `slides[].image` | Görselin adresi | `/images/home/force-mig-200.webp` |
+| `slides[].bigWord` | Arka plandaki büyük yazı; boş: yok | FORCE |
+| `slides[].primary` | 1. düğme `{ label, href }` | Force Serisini İncele, `/arama?q=Force` |
+| `slides[].secondary` | 2. düğme `{ label, href }`; yoksa alan yok | Teklif Al, `/teklif-al` |
+| `slides[].startsOn`, `endsOn` | Yayın tarihi (YYYY-AA-GG, Türkiye günü); yoksa alan yok | yok |
+
+- Satır yoksa site başlangıç değerlerini kullanır
+  (`defaultSettings.homeHero`).
+- Kurallar tarayıcı ve sunucuda ortak (`packages/data/src/hero-rules.ts` ›
+  `parseHomeHero`; [IS-KURALLARI.md › 25](IS-KURALLARI.md#25-anasayfa-tanıtım-alanı));
+  sunucu yüklenen dosyayı (data:) kaydetmez.
 
 ### `payment_pos` — banka sanal POS'ları
 

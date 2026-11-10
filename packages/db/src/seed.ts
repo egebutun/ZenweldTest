@@ -337,6 +337,7 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
     },
     { key: "stock", value: data.settings.stock },
     { key: "rich_text", value: data.settings.richText },
+    { key: "home_hero", value: data.settings.homeHero },
     { key: "company", value: data.settings.company },
   ];
 

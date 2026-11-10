@@ -4,6 +4,7 @@ import type {
   AboutContent,
   CompanySettings,
   EmailRecipient,
+  HomeHeroSettings,
   PageSeoFields,
   RichTextStyle,
   SalesRep,
@@ -29,6 +30,22 @@ export function getRichTextStyle(db: ZenweldDatabase = getSnapshot()): RichTextS
 export function saveRichTextStyle(style: RichTextStyle): boolean {
   return mutate((db) => {
     db.settings = { ...db.settings, richText: style };
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Anasayfa tanitim alani (KARARLAR K-45)                              */
+/* ------------------------------------------------------------------ */
+
+/** Tanitim alani; eski bir localStorage kaydinda yoksa varsayilan. */
+export function getHomeHero(db: ZenweldDatabase = getSnapshot()): HomeHeroSettings {
+  return db.settings?.homeHero ?? defaultSettings.homeHero;
+}
+
+/** hero: denetlenmis ayar (parseHomeHero). */
+export function saveHomeHero(hero: HomeHeroSettings): boolean {
+  return mutate((db) => {
+    db.settings = { ...db.settings, homeHero: hero };
   });
 }
 

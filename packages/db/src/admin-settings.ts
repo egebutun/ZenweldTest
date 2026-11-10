@@ -7,7 +7,10 @@ import {
   bankAccountKey,
   carrierKey,
   defaultSettings,
+  heroHasUploadedFile,
+  heroKey,
   parseCompanySettings,
+  parseHomeHero,
   parseRecipients,
   parseShopSettings,
   posKey,
@@ -16,6 +19,7 @@ import {
   type Carrier,
   type CompanySettings,
   type EmailRecipient,
+  type HomeHeroSettings,
   type RichTextStyle,
   type ShopSettings,
   type ZenweldDatabase,
@@ -43,7 +47,8 @@ import * as s from "./schema";
  *   sosyal medya; tek kayit, settings('company') satiri (adim 5.3, K-105).
  *
  * Görünüm ekrani (bicimli metinlerin punto ve renkleri) da burada: tek
- * kayit, settings('rich_text') satiri (adim 5.3).
+ * kayit, settings('rich_text') satiri (adim 5.3). Anasayfa Tanıtım ekrani
+ * (anasayfanin kayan tanitim alani; K-45): tek kayit, settings('home_hero').
  *
  * Kurallar tarayiciyla ortak: packages/data › settings-rules.ts,
  * content-rules.ts (Görünüm).
@@ -361,6 +366,50 @@ export async function adminSaveRichText(db: AuditDb, actor: Actor, input: Input,
     db,
     actor,
     { action: row ? "update" : "create", entityType: "settings", entityId: "rich_text", entityLabel: "Görünüm", changes },
+    at,
+  );
+  return saved(at);
+}
+
+/* ------------------------------ Anasayfa tanitim alani ------------------------------ */
+
+/** Anasayfa Tanıtım ekraninin verisi: ayarlar (tanitim alaninin son degisiklik aniyla). */
+export async function readHeroPanel(db: AuditDb): Promise<Partial<ZenweldDatabase>> {
+  const settings = await readSettings(db);
+  const [row] = await db.select({ updatedAt: s.settings.updatedAt }).from(s.settings).where(eq(s.settings.key, "home_hero"));
+  return { settings: { ...settings, homeHero: { ...settings.homeHero, ...(row && { updatedAt: iso(row.updatedAt) }) } } };
+}
+
+/**
+ * Anasayfa tanitim alanini kaydeder. input: { hero, updatedAt? }. Kurallar
+ * packages/data › hero-rules.ts; yuklenen dosya (data:) kaydedilmez, gorsel
+ * dosya deposuna yuklenir (K-108). Degisen bir sey yoksa hicbir sey yazilmaz.
+ */
+export async function adminSaveHomeHero(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<Saved>> {
+  const parsed = parseHomeHero(input.hero);
+  if (!parsed.ok) return parsed.error ? fail(400, parsed.error) : invalid();
+  const next = parsed.value;
+  if (heroHasUploadedFile(next)) return fail(400, tr.panel.uploadDisabled);
+
+  await lock(db, "settings:home_hero");
+  const [row] = await db.select().from(s.settings).where(eq(s.settings.key, "home_hero"));
+  if ((row ? iso(row.updatedAt) : undefined) !== (input.updatedAt || undefined)) return fail(409, stale);
+  // jsonb alanlarin sirasini degistirir: onceki deger ayni kurallardan gecirilip karsilastirilir.
+  const stored = (row?.value as HomeHeroSettings | undefined) ?? defaultSettings.homeHero;
+  const normalized = parseHomeHero(stored);
+  const before = normalized.ok ? normalized.value : stored;
+  if (row && heroKey(before) === heroKey(next)) return unchanged(row);
+
+  const changes: AuditChanges = {};
+  if (before.intervalSeconds !== next.intervalSeconds) changes.intervalSeconds = [before.intervalSeconds, next.intervalSeconds];
+  if (JSON.stringify(before.slides) !== JSON.stringify(next.slides)) changes.slides = [before.slides, next.slides];
+
+  if (row) await db.update(s.settings).set({ value: next, updatedAt: at }).where(eq(s.settings.key, "home_hero"));
+  else await db.insert(s.settings).values({ key: "home_hero", value: next, updatedAt: at });
+  await writeAudit(
+    db,
+    actor,
+    { action: row ? "update" : "create", entityType: "settings", entityId: "home_hero", entityLabel: "Anasayfa Tanıtım", changes },
     at,
   );
   return saved(at);

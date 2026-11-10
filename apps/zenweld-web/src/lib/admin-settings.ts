@@ -1,7 +1,7 @@
 "use client";
 
-import type { CompanySettings, EmailRecipient, RichTextStyle, ShopSettings } from "@zenweld/data";
-import { saveCompanySettings, saveEmailRecipients, saveRichTextStyle, saveShopSettings } from "@zenweld/store";
+import type { CompanySettings, EmailRecipient, HomeHeroSettings, RichTextStyle, ShopSettings } from "@zenweld/data";
+import { saveCompanySettings, saveEmailRecipients, saveHomeHero, saveRichTextStyle, saveShopSettings } from "@zenweld/store";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
 
 export type { PanelAnswer };
@@ -9,7 +9,7 @@ export type { PanelAnswer };
 /**
  * PANEL › AYAR ISLEMLERI: Mağaza Ayarları'nin Genel sekmesi (kargo,
  * taksit, POS, havale), E-posta Alicilari ve Şirket ve İletişim sekmeleri;
- * Görünüm ekrani.
+ * Görünüm ve Anasayfa Tanıtım ekranlari.
  *
  * Veritabani modunda islem sunucuya gider (/api/yonetim/ayarlar; Asama 5,
  * 5. alan, KARARLAR K-99, K-104; ortak akis lib/admin-panel.ts). Demo
@@ -50,6 +50,14 @@ export function useSettingsActions() {
         return call("gorunum", { style: value, ...(ref.updatedAt && { updatedAt: ref.updatedAt }), id: "rich_text" }, "settings");
       }
       return localAnswer(saveRichTextStyle(value as RichTextStyle));
+    },
+    /** Anasayfa tanitim alani. hero: denetlenmis ayar (parseHomeHero); stored: ekranin gordugu kayit. */
+    saveHomeHero: (hero: HomeHeroSettings, stored: HomeHeroSettings): Promise<PanelAnswer> => {
+      if (server) {
+        const ref = recordRef("settings", { id: "home_hero", updatedAt: stored.updatedAt });
+        return call("tanitim", { hero, ...(ref.updatedAt && { updatedAt: ref.updatedAt }), id: "home_hero" }, "settings");
+      }
+      return localAnswer(saveHomeHero(hero));
     },
   };
 }
