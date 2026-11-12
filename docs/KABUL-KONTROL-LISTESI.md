@@ -619,6 +619,10 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       olmayan belgede ürün adı tıklanamaz.
 - [ ] 11 yasal metin kendi adresinde açılır (ör. `/yasal/kvkk`,
       `/garanti/kosullar`).
+- [ ] `/yasal/iade`'de başlığın hemen altında koyu yazıyla "İade veya
+      Değişim Talebi işlemleriniz için SİPARİŞLERİM menüsündeki…" yazar
+      (iki modda da); panelde metin değişse de bu yazı kalır. Diğer yasal
+      metinlerde bu yazı yoktur.
 
 ---
 

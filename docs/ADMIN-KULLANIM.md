@@ -2270,6 +2270,10 @@ bilgideki sıradır:
 **Önemli:** Metinlerin tamamı taslaktır; canlıya çıkmadan hukuk danışmanının
 metinleriyle değiştirilmelidir.
 
+İade ve Değişim sayfasının başındaki "İade veya Değişim Talebi işlemleriniz
+için SİPARİŞLERİM menüsündeki…" yazısı sabittir; panelde görünmez ve
+değiştirilemez. Panelde düzenlenen metin bu yazının altında görünür.
+
 - **Liste:** Başlık (düzenlemeye gider), Adres (sitede yeni sekmede açılır),
   Son güncelleme, Düzenle.
 - **Düzenleme:** `/yonetim/yasal-metinler/<id>`. "Yasal metin" ve **Sayfayı

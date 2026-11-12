@@ -6,6 +6,8 @@ import { closeDatabase, expect, sql, test } from "./yardimci";
  * "Destek ekibimize ulasin"daki e-posta, adresler ve telefonlar
  * veritabanindaki sirket bilgisinden (settings.company) gelir; menu ve
  * kartlar iki modda aynidir (demo modu: tests/e2e/destek.spec.ts).
+ * Iade ve Degisim sayfasinin basliktan sonraki sabit yazisi da iki modda
+ * aynidir; panelden gelen metin onun altindadir.
  */
 test.afterAll(closeDatabase);
 
@@ -30,5 +32,20 @@ test("/destek: iletişim bilgileri veritabanındaki şirket bilgisinden; menü v
   const title = page.locator("header nav").getByRole("link", { name: "Destek ve Garanti" });
   await title.hover();
   await expect(page.locator(".zw-mega").getByRole("link", { name: "Tümünü Gör" })).toHaveAttribute("href", "/destek");
+  expect(problems).toEqual([]);
+});
+
+test("/yasal/iade: başlık veritabanından; altında koyu, sabit yönlendirme yazısı (panelde yok)", async ({ page, problems }) => {
+  const [{ title }] = await sql<{ title: string }>("SELECT title FROM legal_pages WHERE id = 'iade'");
+  await page.goto("/yasal/iade");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
+
+  const notice = page.locator("main").getByText(/^İade veya Değişim Talebi işlemleriniz için SİPARİŞLERİM menüsündeki/);
+  await expect(notice).toHaveText(
+    "İade veya Değişim Talebi işlemleriniz için SİPARİŞLERİM menüsündeki ilgili siparişi (son 14 gün içerisinde teslim edilmiş) seçerek ilerleyebilirsiniz.",
+  );
+  expect(Number(await notice.evaluate((el) => getComputedStyle(el).fontWeight))).toBeGreaterThanOrEqual(700);
+  const [top, updated] = await Promise.all([notice.boundingBox(), page.locator("main").getByText(/^Son güncelleme/).boundingBox()]);
+  expect(top!.y).toBeLessThan(updated!.y);
   expect(problems).toEqual([]);
 });

@@ -794,6 +794,9 @@ export const tr = {
     termsAfter: "'nı okudum ve kabul ediyorum.",
     termsRequired: "Üye olmak için Kullanım Koşulları'nı kabul etmelisiniz.",
     newsletterRequired: "Bülten kaydı için onay kutusunu işaretleyin.",
+    /** İade ve Değişim sayfasında başlığın hemen altında; sabit, panelden değişmez (KARARLAR K-65). */
+    returnsNotice:
+      "İade veya Değişim Talebi işlemleriniz için SİPARİŞLERİM menüsündeki ilgili siparişi (son 14 gün içerisinde teslim edilmiş) seçerek ilerleyebilirsiniz.",
   },
   filters: {
     title: "Filtreler",

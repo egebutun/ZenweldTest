@@ -1661,6 +1661,11 @@ sıradadır:
 | Mesafeli Satış Sözleşmesi | `/yasal/mesafeli-satis-sozlesmesi` |
 
 - **Sayfa düzeni:** Başlık, "Son güncelleme: <tarih>" ve metin.
+- **İade ve Değişim:** Başlığın hemen altında, "Son güncelleme"nin üstünde
+  koyu yazıyla "İade veya Değişim Talebi işlemleriniz için SİPARİŞLERİM
+  menüsündeki ilgili siparişi (son 14 gün içerisinde teslim edilmiş) seçerek
+  ilerleyebilirsiniz." yazar. Bu yazı sabittir, panelden değişmez; altındaki
+  metin panelden gelir.
 - **Sözleşme sayfaları:** Ön Bilgilendirme Formu ile Mesafeli Satış
   Sözleşmesi'nde metnin üstünde boş sipariş tabloları vardır
   ([12. bölüm](#12-sözleşmeler)).

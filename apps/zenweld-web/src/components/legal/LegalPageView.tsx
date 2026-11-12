@@ -13,7 +13,11 @@ const ORDER_DOCUMENTS: Record<string, LegalDocumentKind> = {
   "mesafeli-satis-sozlesmesi": "contract",
 };
 
-/** Yasal metin sayfasi. Baslik ve metin yonetim panelinden duzenlenir. */
+/**
+ * Yasal metin sayfasi. Baslik ve metin yonetim panelinden duzenlenir.
+ * Iade ve Degisim sayfasinin basindaki yonlendirme yazisi sabittir; panelden
+ * degismez, metnin ustunde hep gorunur (KARARLAR K-65).
+ */
 export function LegalPageView({ id }: { id: string }) {
   const t = useT();
   const page = findLegalPage(id, useDatabase());
@@ -23,6 +27,7 @@ export function LegalPageView({ id }: { id: string }) {
     <>
       <PageHero title={page.title} />
       <div className="zw-container max-w-4xl py-10">
+        {id === "iade" && <p className="mb-6 font-bold text-zw-ink">{t.legal.returnsNotice}</p>}
         <p className="mb-6 text-xs text-zw-grey-500">
           {t.footer.lastUpdated.replace("{date}", formatDate(page.updatedAt))}
         </p>

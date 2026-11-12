@@ -450,6 +450,9 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   14 gündür (son gün 23:59'a kadar).
 - Panelde Satış grubunda **İade Talepleri** ekranı vardır. Para iadesi
   K-27'ye göre banka ya da ödeme kuruluşu üzerinden ayrıca yapılır.
+- İade ve Değişim sayfasının başında, başlığın hemen altında koyu yazıyla
+  Siparişlerim'e yönlendiren sabit yazı hep durur; panelden değişmez.
+  Altındaki metin panelden yönetilir; hukukçuyla birlikte yazılacak.
 
 ### K-79 · Teklif yalnızca Ekipmanlar için
 - Teklif yalnızca Ekipmanlar'daki ürünler için istenir. Teklif Al

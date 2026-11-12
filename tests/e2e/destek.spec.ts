@@ -1,8 +1,8 @@
 import { expect, test } from "./yardimci";
 
 /**
- * DESTEK VE GARANTI: UST MENU VE /destek (demo modu;
- * docs/WEBSITE-KULLANIM.md › 2 Ust menu, 19 Destek ve Garanti)
+ * DESTEK VE GARANTI: UST MENU, /destek VE /yasal/iade (demo modu;
+ * docs/WEBSITE-KULLANIM.md › 2 Ust menu, 19 Destek ve Garanti, 21 Yasal metinler)
  *
  * Veritabani modundaki hali: tests/e2e-db/destek.spec.ts.
  */
@@ -16,6 +16,10 @@ const LINKS: [string, string][] = [
   ["Garanti Sorgulama", "/garanti/sorgulama"],
   ["Garanti Koşulları", "/garanti/kosullar"],
 ];
+
+/** Iade ve Degisim sayfasinin basindaki sabit yazi (KARARLAR K-65). */
+const RETURNS_NOTICE =
+  "İade veya Değişim Talebi işlemleriniz için SİPARİŞLERİM menüsündeki ilgili siparişi (son 14 gün içerisinde teslim edilmiş) seçerek ilerleyebilirsiniz.";
 
 test.use({ viewport: { width: 1440, height: 900 } });
 
@@ -70,5 +74,19 @@ test("/destek: başlık, menüdeki yedi kart ve İletişim bilgileri", async ({ 
 
   await main.getByRole("link", { name: /^Servis Talebi/ }).click();
   await expect(page).toHaveURL(/\/servis-talebi$/);
+  expect(problems).toEqual([]);
+});
+
+test("/yasal/iade: başlığın hemen altında koyu, sabit yönlendirme yazısı; diğer yasal metinlerde yok", async ({ page, problems }) => {
+  await page.goto("/yasal/iade");
+  const notice = page.locator("main").getByText(/^İade veya Değişim Talebi işlemleriniz için SİPARİŞLERİM menüsündeki ilgili siparişi/);
+  await expect(notice).toHaveText(RETURNS_NOTICE);
+  expect(Number(await notice.evaluate((el) => getComputedStyle(el).fontWeight))).toBeGreaterThanOrEqual(700);
+  // Yazi "Son guncelleme"nin ve panelden gelen metnin ustundedir.
+  const [top, updated] = await Promise.all([notice.boundingBox(), page.locator("main").getByText(/^Son güncelleme/).boundingBox()]);
+  expect(top!.y).toBeLessThan(updated!.y);
+
+  await page.goto("/yasal/kvkk");
+  await expect(page.locator("main")).not.toContainText("SİPARİŞLERİM");
   expect(problems).toEqual([]);
 });
