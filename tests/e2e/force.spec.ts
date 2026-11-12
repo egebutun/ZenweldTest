@@ -60,6 +60,10 @@ test("/force: başlık, dört makine bölümü ürün sayfalarına bağlanır", 
   await expect(page.getByRole("heading", { level: 1, name: "Zenweld Force Serisi", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: /Makineleri Keşfet/ })).toHaveAttribute("href", "#makineler");
   await expect(page.getByRole("link", { name: "Teknik Karşılaştırma" })).toHaveAttribute("href", "#karsilastirma");
+  // Acilis: FORCE yazisinin altindan yukselen kaynak ustasi (dekoratif) yuklenir.
+  const welder = page.locator('img[src$="/images/force/kaynak-ustasi.webp"]');
+  await expect(welder).toBeVisible();
+  await expect.poll(() => welder.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
 
   for (const [name, slogan, href] of MACHINES) {
     const chapter = page.locator("section").filter({ has: page.getByRole("heading", { level: 2, name }) });
@@ -106,13 +110,16 @@ test("/force teknik tablo: Force serisinin bütün modelleri yan yana; fiyat, Se
   expect(problems).toEqual([]);
 });
 
-test("anasayfa: Force Serisi şeridinin Tümünü Gör'ü ve tanıtım alanındaki düğme /force'a gider", async ({ page, problems }) => {
+test("anasayfa: Force Serisi şeridinin Tümünü Gör'ü ve tanıtım alanındaki tek düğme /force'a gider", async ({ page, problems }) => {
   await page.goto("/");
   const strip = page.locator("section").filter({ has: page.getByRole("heading", { name: "Force Serisi", exact: true }) });
   await expect(strip.getByRole("link", { name: /Tümünü Gör/ })).toHaveAttribute("href", "/force");
   const hero = page.locator('section[aria-roledescription="carousel"]');
   await hero.getByRole("button", { name: "Force Serisi" }).click();
-  await hero.getByRole("link", { name: /Force Serisini İncele/ }).click();
+  const cta = hero.getByRole("link", { name: /Force Serisini İncele/ });
+  // Force sayfasinda Teklif Al dugmesi yok (yalnizca Force Serisini Incele).
+  await expect(cta.locator("..").getByRole("link")).toHaveCount(1);
+  await cta.click();
   await expect(page).toHaveURL(/\/force$/);
   expect(problems).toEqual([]);
 });

@@ -222,8 +222,8 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
      (`/ekipmanlar`) ve **Zenweld'i Tanıyın** (`/hakkimizda`). Metin
      örnektir; sahibi panelden girecek.
    - **Force Serisi** (ürün · koyu atölye): ForceMIG 200 fotoğrafı, arka
-     planda "FORCE"; **Force Serisini İncele** ([Force Serisi
-     sayfası](#force-serisi-force), `/force`) ve **Teklif Al**.
+     planda "FORCE"; tek düğme: **Force Serisini İncele** ([Force Serisi
+     sayfası](#force-serisi-force), `/force`).
    - **Jasic Lazer** (ürün · teknik çizim): Jasic lazer kaynak makinesi
      fotoğrafı, arka planda "LAZER", etiketler Lazer Kaynak · Lazer
      Temizleme · Lazer Markalama; **Lazer Makinelerini İncele**
@@ -385,12 +385,13 @@ zeminlidir; bölümler sayfa kaydırıldıkça kayarak, büyüyerek ya da soldan
 açılarak belirir. Hareket azaltma tercihi olan ziyaretçide hareket olmaz,
 her şey hemen görünür.
 
-1. **Açılış:** "Zenweld Force Serisi", dev **FORCE** yazısı, önünde dört
-   makine (ForceArc 200, ForceMIG 200, ForceTIG 200, ForceCut 45; zemini
-   kaldırılmış fotoğraflar), "Kompakt gövde. Tam güç." ve kısa metin.
-   **Makineleri Keşfet** dört makinenin kartlarına, **Teknik
-   Karşılaştırma** tabloya iner. Kaydırınca yazı aşağı, makineler yukarı
-   kayıp iki yana açılır.
+1. **Açılış:** "Zenweld Force Serisi"; arkada dev **FORCE** yazısı, onun
+   altından yükselen kaynak ustası (Force fuar davetiyesindeki karikatür;
+   torcunun ucunda ark titrer), önde dört makine (ForceArc 200, ForceMIG
+   200, ForceTIG 200, ForceCut 45; zemini kaldırılmış fotoğraflar). Altında
+   "Kompakt gövde. Tam güç." ve kısa metin. **Makineleri Keşfet** dört
+   makinenin kartlarına, **Teknik Karşılaştırma** tabloya iner. Kaydırınca
+   yazı aşağı, makineler ve usta yukarı kayar, makineler iki yana açılır.
 2. **Kayan şerit:** MIG/MAG, Pulse TIG, MMA, Plazma Kesim, Sinerjik Kontrol,
    230 V, Dijital Panel, Yetkili Servis (fare üzerindeyken durur).
 3. **Dört yöntem. Tek seri.:** Dört makinenin kartı (yöntem, ad, slogan);

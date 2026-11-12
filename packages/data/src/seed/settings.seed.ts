@@ -92,7 +92,6 @@ export const defaultSettings: SiteSettings = {
         image: "/images/home/force-mig-200.webp",
         bigWord: "FORCE",
         primary: { label: "Force Serisini İncele", href: "/force" },
-        secondary: { label: "Teklif Al", href: "/teklif-al" },
       },
       {
         id: "jasic-lazer",

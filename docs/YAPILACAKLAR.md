@@ -1203,8 +1203,9 @@ Force sayfası (`/force`, KARARLAR K-114) bugün çalışıyor; sonra yapılacak
       "Force Sayfası" ekranından değişsin (Anasayfa Tanıtım gibi). [Panel]
 - [ ] **Fotoğraf ve videolar:** Sahibi makinelerin profesyonel fotoğraf ve
       videolarını gönderecek; makine bölümlerine galeri ve video eklenecek.
-      Bugünkü dört görsel sahibinin fotoğraflarından zemini kaldırılarak
-      hazırlandı (`public/images/force/`). [Karar]
+      Bugünkü dört makine görseli sahibinin fotoğraflarından zemini
+      kaldırılarak hazırlandı; açılıştaki kaynak ustası Force fuar
+      davetiyesindeki karikatürden kesildi (`public/images/force/`). [Karar]
 - [ ] **Teknik değerler:** Makine bölümlerindeki rakamlar ürünlerin bugünkü
       teknik özelliklerinden yazıldı; gerçek değerler gelince yazılar da
       güncellenir. Tabloda ForceArc 400 CEL'in teknik özellikleri yok

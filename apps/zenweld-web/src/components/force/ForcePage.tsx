@@ -49,6 +49,9 @@ export function ForcePage() {
 
 /** Acilistaki dizilis: soldan saga, genislik (%), derinlik ve kaydirinca acilma. */
 // Telefonda makineler daha buyuk; kenardakiler ekranin disina tasar.
+/** Afisteki kaynak ustasi (zemini kaldirilmis; alt kismi makinelerin arkasinda kalir). */
+const WELDER = "/images/force/kaynak-ustasi.webp";
+
 const HERO_LINEUP: { key: ForceMachineKey; width: string; z: number; spread: string; delay: number; lift: string }[] = [
   { key: "arc", width: "w-[32%] md:w-[24%]", z: 10, spread: "-90px", delay: 350, lift: "mb-[2%]" },
   { key: "mig", width: "w-[44%] md:w-[33%]", z: 30, spread: "-30px", delay: 150, lift: "" },
@@ -67,7 +70,7 @@ function Hero() {
       <div aria-hidden="true" className="zw-force-hero-bg absolute inset-0 -z-10" />
       <Sparks />
 
-      <div className="zw-container relative pt-8 md:pt-12">
+      <div className="zw-container relative pt-8">
         <p className="zw-force-in flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.32em] text-zw-red-500 md:text-xs">
           <span className="h-px w-10 bg-zw-red-500" />
           {f.eyebrow}
@@ -81,8 +84,18 @@ function Hero() {
         </span>
       </h1>
 
-      {/* Dort makine: kelimenin alt kismina biner; kaydirinca yukari kayip acilir. */}
-      <div className="zw-force-lineup relative z-10 mx-auto -mt-[12vw] flex w-full max-w-[1100px] items-end justify-center px-2 md:-mt-[8vw] 2xl:max-w-[1240px]">
+      {/* Katmanlar: arkada FORCE yazisi, onun altindan yukselen kaynak ustasi, onde dort
+          makine. Usta yazinin alt kenarina, makineler ustanin govdesine biner. */}
+      <div aria-hidden="true" className="zw-force-welder pointer-events-none relative z-10 mx-auto -mt-[5vw] w-[74%] max-w-[580px] md:-mt-[3.4vw] md:w-[35%]">
+        <div className="zw-force-welder-in relative">
+          <ProductImage src={WELDER} alt="" label="Zenweld kaynak ustası" priority className="w-full" />
+          {/* Torc ucundaki ark */}
+          <span className="zw-force-torch absolute left-[85.5%] top-[85%]" />
+        </div>
+      </div>
+
+      {/* Dort makine: ustanin govdesinin alt kismina biner; kaydirinca yukari kayip acilir. */}
+      <div className="zw-force-lineup relative z-20 mx-auto -mt-[13vw] flex w-full max-w-[1100px] items-end justify-center px-2 md:-mt-[4.4vw] md:max-w-[780px] 2xl:max-w-[920px]">
         {/* Makinelerin bastigi isikli zemin cizgisi */}
         <div aria-hidden="true" className="zw-force-floor absolute inset-x-[-30%] bottom-[3%] h-px" />
         {HERO_LINEUP.map(({ key, width, z, spread, delay, lift }) => {
@@ -101,9 +114,9 @@ function Hero() {
         })}
       </div>
 
-      <div className="zw-container relative z-20 mt-auto flex flex-col gap-6 pb-10 pt-8 md:flex-row md:items-end md:justify-between md:pb-12">
+      <div className="zw-container relative z-20 mt-auto flex flex-col gap-6 pb-10 pt-8 md:flex-row md:items-end md:justify-between md:pb-9 md:pt-5">
         <div className="zw-force-in [animation-delay:500ms]">
-          <p className="font-display text-[40px] font-bold uppercase leading-[0.92] md:text-6xl">
+          <p className="font-display text-[40px] font-bold uppercase leading-[0.92] md:text-[54px]">
             <span className="block">{f.heroLineA}</span>
             <span className="block text-zw-red-500">{f.heroLineB}</span>
           </p>

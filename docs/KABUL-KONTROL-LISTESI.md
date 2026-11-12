@@ -158,7 +158,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Üst menü: FORCE · Ekipmanlar · Güvenlik · Aksesuarlar · Dolgu
       Metalleri · Destek ve Garanti · Keşfet. FORCE menü açmaz, `/force`'u
       açar (telefon menüsünde de en üstte; `tests/e2e/force.spec.ts`).
-- [ ] `/force`: açılışta dev FORCE yazısı ve dört makine; Makineleri Keşfet
+- [ ] `/force`: açılışta dev FORCE yazısı, altından yükselen kaynak ustası
+      ve önünde dört makine; yazı okunur, ustanın eldivenleri ve torcu
+      makinelerin üstünde görünür; Makineleri Keşfet
       kartlara, Teknik Karşılaştırma tabloya iner. Dört makine bölümünde
       slogan, açıklama, rakamlar, fiyat, Sepete Ekle, kalp ve Ürünü İncele
       (ürün sayfası) vardır. Hareket azaltma tercihinde her şey sabit ve
