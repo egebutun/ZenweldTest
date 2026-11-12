@@ -275,9 +275,8 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
       olan değerlendirmeler, en fazla 10 tane.
     - Kartta puan, başlık, yorum, yazan ve ürün adı vardır.
 11. **Kurumsal teklif ve bayilik** (yan yana iki kart):
-    - "Kurumsal alım mı yapacaksınız? Firmanıza özel fiyat teklifi
-      hazırlayalım. Havale/EFT, vadeli ödeme ve çek dahil size uygun ödeme
-      seçeneğini birlikte belirleyelim." → **Teklif Al**.
+    - "Kurumsal alım mı yapacaksınız? Vadeli ödeme ve çek ile ödeme
+      seçenekleri için satış ekibimizden teklif alın." → **Teklif Al**.
     - "Birlikte çalışalım — Zenweld Bayisi Olmak İster misiniz?" →
       **Bayilik Başvurusu**.
 12. **Sık Sorulan Sorular ve Blog** (yan yana): ilk 6 soru (açılır-kapanır,

@@ -160,7 +160,7 @@ export const tr = {
       "Türkiye genelinde 30'u aşkın yetkili satış ve servis noktamızdan ürünlerimizi inceleyebilir, satın alabilirsiniz.",
     quoteBannerTitle: "Kurumsal alım mı yapacaksınız?",
     quoteBannerText:
-      "Firmanıza özel fiyat teklifi hazırlayalım. Havale/EFT, vadeli ödeme ve çek dahil size uygun ödeme seçeneğini birlikte belirleyelim.",
+      "Vadeli ödeme ve çek ile ödeme seçenekleri için satış ekibimizden teklif alın.",
     quoteBannerCta: "Teklif Al",
     blogTitle: "Blog",
     blogSubtitle: "Kaynak dünyasından haberler ve teknik rehberler",
