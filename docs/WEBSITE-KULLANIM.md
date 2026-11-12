@@ -387,8 +387,9 @@ her şey hemen görünür.
 
 1. **Açılış:** "Zenweld Force Serisi"; arkada dev **FORCE** yazısı, onun
    altından yükselen kaynak ustası (Force fuar davetiyesindeki karikatür;
-   torcunun ucunda ark titrer), önde dört makine (ForceArc 200, ForceMIG
-   200, ForceTIG 200, ForceCut 45; zemini kaldırılmış fotoğraflar). Altında
+   torcunun ucunda ark titrer), önde aralıklı dört makine (ForceArc 200,
+   ForceMIG 200, ForceTIG 200, ForceCut 45; zemini kaldırılmış
+   fotoğraflar; birbirinin üstüne binmez). Altında
    "Kompakt gövde. Tam güç." ve kısa metin. **Makineleri Keşfet** dört
    makinenin kartlarına, **Teknik Karşılaştırma** tabloya iner. Kaydırınca
    yazı aşağı, makineler ve usta yukarı kayar, makineler iki yana açılır.

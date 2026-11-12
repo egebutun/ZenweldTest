@@ -11,7 +11,7 @@ import { catalog, closeDatabase, expect, expectedOffer, sql, test } from "./yard
 test.afterAll(closeDatabase);
 test.use({ viewport: { width: 1440, height: 900 } });
 
-type Hero = { slides: { id: string; primary: { label: string; href: string } }[] };
+type Hero = { slides: { id: string; primary: { label: string; href: string }; secondary?: { label: string; href: string } }[] };
 
 test("/force: tablo veritabanındaki Force ürünlerinden; fiyat ve stok aynı; sepete eklenir", async ({ page, problems }) => {
   const { products, warehouseStock } = await catalog();
@@ -46,10 +46,12 @@ test("/force: tablo veritabanındaki Force ürünlerinden; fiyat ve stok aynı; 
   expect(problems).toEqual([]);
 });
 
-test("üst menüde FORCE ilk başlık; anasayfa Force düğmesi kayıttaki adrese (/force) gider", async ({ page, problems }) => {
+test("üst menüde FORCE ilk başlık; anasayfa Force sayfasında tek düğme, kayıttaki adrese (/force) gider", async ({ page, problems }) => {
   const [{ value: hero }] = await sql<{ value: Hero }>("SELECT value FROM settings WHERE key = 'home_hero'");
   const forceSlide = hero.slides.find((s) => s.id === "force")!;
   expect(forceSlide.primary.href).toBe("/force");
+  // Force sayfasinda tek dugme (Teklif Al yok).
+  expect(forceSlide.secondary).toBeUndefined();
 
   await page.goto("/");
   await expect(page.locator("header nav > *").first()).toHaveText("FORCE");

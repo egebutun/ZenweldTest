@@ -53,10 +53,10 @@ export function ForcePage() {
 const WELDER = "/images/force/kaynak-ustasi.webp";
 
 const HERO_LINEUP: { key: ForceMachineKey; width: string; z: number; spread: string; delay: number; lift: string }[] = [
-  { key: "arc", width: "w-[32%] md:w-[24%]", z: 10, spread: "-90px", delay: 350, lift: "mb-[2%]" },
-  { key: "mig", width: "w-[44%] md:w-[33%]", z: 30, spread: "-30px", delay: 150, lift: "" },
-  { key: "tig", width: "w-[34%] md:w-[25%]", z: 20, spread: "30px", delay: 250, lift: "mb-[1%]" },
-  { key: "cut", width: "w-[30%] md:w-[22%]", z: 10, spread: "90px", delay: 450, lift: "mb-[3%]" },
+  { key: "arc", width: "w-[22%] md:w-[21%]", z: 10, spread: "-90px", delay: 350, lift: "mb-[2%]" },
+  { key: "mig", width: "w-[30%] md:w-[28%]", z: 30, spread: "-30px", delay: 150, lift: "" },
+  { key: "tig", width: "w-[24%] md:w-[22%]", z: 20, spread: "30px", delay: 250, lift: "mb-[1%]" },
+  { key: "cut", width: "w-[21%] md:w-[19%]", z: 10, spread: "90px", delay: 450, lift: "mb-[3%]" },
 ];
 
 function Hero() {
@@ -94,8 +94,8 @@ function Hero() {
         </div>
       </div>
 
-      {/* Dort makine: ustanin govdesinin alt kismina biner; kaydirinca yukari kayip acilir. */}
-      <div className="zw-force-lineup relative z-20 mx-auto -mt-[13vw] flex w-full max-w-[1100px] items-end justify-center px-2 md:-mt-[4.4vw] md:max-w-[780px] 2xl:max-w-[920px]">
+      {/* Dort makine aralikli durur ve ustanin govdesinin alt kismina biner; kaydirinca yukari kayip iki yana acilir. */}
+      <div className="zw-force-lineup relative z-20 mx-auto -mt-[13vw] flex w-full max-w-[1100px] items-end justify-center px-2 md:-mt-[4.4vw] md:max-w-[920px] 2xl:max-w-[1080px]">
         {/* Makinelerin bastigi isikli zemin cizgisi */}
         <div aria-hidden="true" className="zw-force-floor absolute inset-x-[-30%] bottom-[3%] h-px" />
         {HERO_LINEUP.map(({ key, width, z, spread, delay, lift }) => {
@@ -103,7 +103,7 @@ function Hero() {
           return (
             <div
               key={key}
-              className={`zw-force-unit relative -mx-[1.5%] shrink-0 ${width} ${lift}`}
+              className={`zw-force-unit relative mx-[0.5%] shrink-0 md:mx-[1.2%] ${width} ${lift}`}
               style={{ zIndex: z, "--spread": spread } as React.CSSProperties}
             >
               <div className="zw-force-rise" style={{ "--d": `${delay}ms` } as React.CSSProperties}>

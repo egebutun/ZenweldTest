@@ -64,6 +64,10 @@ test("/force: başlık, dört makine bölümü ürün sayfalarına bağlanır", 
   const welder = page.locator('img[src$="/images/force/kaynak-ustasi.webp"]');
   await expect(welder).toBeVisible();
   await expect.poll(() => welder.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+  // Dort makine aralikli durur: hicbiri yanindakinin ustune binmez.
+  const units = await page.locator(".zw-force-unit").evaluateAll((els) => els.map((e) => e.getBoundingClientRect().toJSON()));
+  expect(units).toHaveLength(4);
+  for (let i = 1; i < units.length; i++) expect(units[i].left).toBeGreaterThanOrEqual(units[i - 1].right);
 
   for (const [name, slogan, href] of MACHINES) {
     const chapter = page.locator("section").filter({ has: page.getByRole("heading", { level: 2, name }) });
