@@ -1,4 +1,5 @@
 import { productsWithoutOnlineStock, type Order, type OrderStatus, type ZenweldDatabase } from "@zenweld/data";
+import { newestFirst as byNewest } from "@zenweld/utils";
 
 /**
  * YONETIM PANELI ANA SAYFASI — HESAPLAR
@@ -300,7 +301,7 @@ export type DashboardData = Pick<
   | "news"
 >;
 
-const newestFirst = <T extends { createdAt: string }>(xs: T[]) => [...xs].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+const newestFirst = <T extends { createdAt: string }>(xs: T[]) => [...xs].sort((a, b) => byNewest(a.createdAt, b.createdAt));
 
 /**
  * Ana sayfanin tamami: grafikler, genel durum kutulari, online saticida

@@ -106,8 +106,10 @@ test("/force teknik tablo: Force serisinin bütün modelleri yan yana; fiyat, Se
   expect(problems).toEqual([]);
 });
 
-test("anasayfa Force Serisi düğmesi /force'a gider", async ({ page, problems }) => {
+test("anasayfa: Force Serisi şeridinin Tümünü Gör'ü ve tanıtım alanındaki düğme /force'a gider", async ({ page, problems }) => {
   await page.goto("/");
+  const strip = page.locator("section").filter({ has: page.getByRole("heading", { name: "Force Serisi", exact: true }) });
+  await expect(strip.getByRole("link", { name: /Tümünü Gör/ })).toHaveAttribute("href", "/force");
   const hero = page.locator('section[aria-roledescription="carousel"]');
   await hero.getByRole("button", { name: "Force Serisi" }).click();
   await hero.getByRole("link", { name: /Force Serisini İncele/ }).click();

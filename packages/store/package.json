@@ -5,6 +5,7 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "dependencies": {
-    "@zenweld/data": "*"
+    "@zenweld/data": "*",
+    "@zenweld/utils": "*"
   }
 }

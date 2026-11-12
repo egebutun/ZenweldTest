@@ -27,11 +27,8 @@ import type {
   WarrantyListPage,
   WarrantyState,
   SupportMessageRecord,
-  WeldersClubListFilter,
-  WeldersClubListPage,
-  WeldersClubRecord,
 } from "@zenweld/db";
-import { pageOf, searchMatches, type ListPage } from "@zenweld/utils";
+import { newestFirst as byNewest, pageOf, searchMatches, type ListPage } from "@zenweld/utils";
 
 /**
  * PANEL LISTELERI — ADRESTEKI SUZGECLER VE DEMO MODUNDA HESAP
@@ -62,7 +59,7 @@ export function pageParam(get: ParamReader): number {
 
 /** Yeniden eskiye; ayni anda olusanlar koda (ya da kimlige) gore, sunucuyla ayni sira. */
 function newestFirst<T>(rows: T[], at: (row: T) => string, tie: (row: T) => string): T[] {
-  return [...rows].sort((a, b) => at(b).localeCompare(at(a)) || tie(b).localeCompare(tie(a)));
+  return [...rows].sort((a, b) => byNewest(at(a), at(b)) || tie(b).localeCompare(tie(a)));
 }
 
 /* ------------------------------ Siparisler ------------------------------ */
@@ -191,7 +188,7 @@ export function memberListFilter(get: ParamReader): MemberListFilter {
 /** Suzgece uyan hesaplar, en yeni once (ayni anda olusanlar e-postaya gore); CSV'nin tamami da budur. */
 export function matchingMembers(users: User[], filter: Omit<MemberListFilter, "page">): User[] {
   return [...users]
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || a.email.localeCompare(b.email))
+    .sort((a, b) => byNewest(a.createdAt, b.createdAt) || a.email.localeCompare(b.email))
     .filter(
       (u) =>
         (!filter.role || u.role === filter.role) &&
@@ -216,20 +213,6 @@ export function messageListFilter(get: ParamReader): MessageListFilter {
 export function messageListPage(messages: SupportMessageRecord[], filter: MessageListFilter): CountedListPage<SupportMessageRecord> {
   const matching = newestFirst(messages, (m) => m.createdAt, (m) => m.id).filter((m) => !filter.type || m.type === filter.type);
   return { ...pageOf(matching, filter.page), all: messages.length, newCount: messages.filter((m) => m.status === "new").length };
-}
-
-/* ------------------------------ Welders Club ------------------------------ */
-
-export function weldersClubListFilter(get: ParamReader): WeldersClubListFilter {
-  return { q: get("ara"), page: pageParam(get) };
-}
-
-export function weldersClubListPage(members: WeldersClubRecord[], filter: WeldersClubListFilter): WeldersClubListPage {
-  const matching = newestFirst(members, (m) => m.createdAt, (m) => m.id).filter((m) =>
-    searchMatches(filter.q ?? "", [m.name, m.email, m.city]),
-  );
-  const passive = members.filter((m) => m.leftAt).length;
-  return { ...pageOf(matching, filter.page), active: members.length - passive, passive };
 }
 
 /* ------------------------------ Bayilik basvurulari ------------------------------ */

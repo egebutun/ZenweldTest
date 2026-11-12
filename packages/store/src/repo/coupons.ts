@@ -19,6 +19,7 @@ import {
 } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nowIso } from "./shared";
+import { newestFirst } from "@zenweld/utils";
 
 /**
  * KUPONLAR (KARARLAR K-85, IS-KURALLARI › 21)
@@ -29,7 +30,7 @@ import { nowIso } from "./shared";
  */
 
 export function listCoupons(db: ZenweldDatabase = getSnapshot()): Coupon[] {
-  return [...db.coupons].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return [...db.coupons].sort((a, b) => newestFirst(a.createdAt, b.createdAt));
 }
 
 export function findCoupon(id: string, db: ZenweldDatabase = getSnapshot()): Coupon | undefined {
@@ -46,7 +47,7 @@ export function findCouponByCode(code: string, db: ZenweldDatabase = getSnapshot
 export function couponRedemptions(couponId: string, db: ZenweldDatabase = getSnapshot()): CouponRedemption[] {
   return db.couponRedemptions
     .filter((r) => r.couponId === couponId)
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    .sort((a, b) => newestFirst(a.createdAt, b.createdAt));
 }
 
 /** Gecerli kullanim sayisi (iptal edilen siparisler haric). */

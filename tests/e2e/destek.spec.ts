@@ -22,7 +22,7 @@ const LINKS: [string, string][] = [
 /** Kesfet: uc kolon ve sirayla baglantilari. */
 const EXPLORE: [string, [string, string][]][] = [
   ["Kurumsal", [["Hakkımızda", "/hakkimizda"], ["Satış Temsilcilerimiz", "/satis-temsilcilerimiz"], ["Bayimiz Olun", "/bayilik-basvurusu"]]],
-  ["Güncel", [["Haberler", "/haberler"], ["Etkinlikler", "/etkinlikler"], ["Blog", "/blog"], ["Welders Club", "/welders-club"]]],
+  ["Güncel", [["Haberler", "/haberler"], ["Etkinlikler", "/etkinlikler"], ["Blog", "/blog"]]],
   ["Diğer", [["Ürün Seçici", "/urun-secici"], ["Ultimate Kaynak Rehberi", "/kaynak-rehberi"], ["MSDS", "/msds"], ["Parti Sertifikaları", "/parti-sertifikalari"]]],
 ];
 

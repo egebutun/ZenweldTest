@@ -41,7 +41,6 @@ const PANEL = [
   "/yonetim/servis-talepleri",
   "/yonetim/garantiler",
   "/yonetim/mesajlar",
-  "/yonetim/welders-club",
   "/yonetim/bayilik-basvurulari",
   "/yonetim/haberler",
   "/yonetim/etkinlikler",

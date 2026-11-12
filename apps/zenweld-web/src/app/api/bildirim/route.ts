@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { saveSupportMessage, saveWeldersClubSignup } from "@zenweld/db";
+import { saveSupportMessage } from "@zenweld/db";
 import { database, usesDatabase } from "@/lib/server/db";
 import { botResult, isBot, isEmail, readFields, readJsonObject, recordBot, sourcePath } from "@/lib/server/mail";
 import { siteMember } from "@/lib/server/member";
@@ -14,8 +14,8 @@ import { isNotificationType, sendNotification } from "@/lib/server/notify";
  * kaydi ayrica yonetim panelindedir; e-posta haber vermek icindir.
  * Veritabani modunda siparis, iade, teklif, servis, garanti ve yorum
  * bildirimini kaydi yapan sunucu gonderir (/api/siparis, /api/formlar);
- * iletisim formu ve Welders Club katilimi burada kendi tablolarina da
- * yazilir (KARARLAR K-81; Asama 5.3). Sablonlar: lib/server/notify.ts.
+ * iletisim formu burada kendi tablosuna da yazilir (KARARLAR K-81;
+ * Asama 5.3). Sablonlar: lib/server/notify.ts.
  */
 
 export const runtime = "nodejs";
@@ -34,30 +34,23 @@ export async function POST(request: NextRequest) {
   const type = body.type;
   const fields = data as Record<string, unknown>;
 
-  // Veritabani modu: iletisim mesaji ve Welders Club katilimi once kaydedilir.
+  // Veritabani modu: iletisim mesaji once kaydedilir.
   let entity: { type: string; id: string } | undefined;
-  if (usesDatabase() && (type === "iletisim" || type === "welders-club")) {
-    const v = readFields(fields, ["name", "email", "subject", "message", "city"]);
-    if (!v || !v.name || !isEmail(v.email) || (type === "iletisim" && !v.message)) {
+  if (usesDatabase() && type === "iletisim") {
+    const v = readFields(fields, ["name", "email", "subject", "message"]);
+    if (!v || !v.name || !isEmail(v.email) || !v.message) {
       return NextResponse.json({ ok: false, error: "eksik-alan" }, { status: 400 });
     }
     const member = await siteMember(request);
-    const at = new Date();
-    entity =
-      type === "iletisim"
-        ? {
-            type: "support_messages",
-            id: await saveSupportMessage(
-              database(),
-              member,
-              { type: "iletisim", name: v.name, email: v.email, subject: v.subject, message: v.message, pageUrl: page },
-              at,
-            ),
-          }
-        : {
-            type: "welders_club_signups",
-            id: await saveWeldersClubSignup(database(), member, { name: v.name, email: v.email, city: v.city }, at),
-          };
+    entity = {
+      type: "support_messages",
+      id: await saveSupportMessage(
+        database(),
+        member,
+        { type: "iletisim", name: v.name, email: v.email, subject: v.subject, message: v.message, pageUrl: page },
+        new Date(),
+      ),
+    };
   }
 
   const result = await sendNotification(type, fields, { sourcePath: page, entity });

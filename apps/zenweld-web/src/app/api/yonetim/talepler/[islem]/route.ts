@@ -10,7 +10,6 @@ import {
   adminSaveWarranty,
   adminSetReviewApproved,
   adminSetReviewFeatured,
-  adminSetWeldersClubActive,
 } from "@zenweld/db";
 import { runPanelAction } from "@/lib/server/admin";
 import { refreshSite } from "@/lib/server/refresh";
@@ -28,7 +27,6 @@ import { refreshSite } from "@/lib/server/refresh";
  *   POST /api/yonetim/talepler/yorum-sil       {id, updatedAt}
  *   POST /api/yonetim/talepler/basvuru         {id, updatedAt, status, adminNote}
  *   POST /api/yonetim/talepler/mesaj           {id, updatedAt, status, adminNote}
- *   POST /api/yonetim/talepler/welders-club    {id, updatedAt, active}
  *
  * Kurallar: packages/db/src/admin-requests.ts. Yorum degisince sitenin
  * yorum onbellegi hemen yenilenir (urun sayfasi ve anasayfa seridi).
@@ -47,7 +45,6 @@ const ACTIONS = {
   "yorum-sil": adminDeleteReview,
   basvuru: adminSaveDealerApplication,
   mesaj: adminSaveSupportMessage,
-  "welders-club": adminSetWeldersClubActive,
 };
 
 type Context = { params: Promise<{ islem: string }> };

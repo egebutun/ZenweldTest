@@ -74,8 +74,6 @@ export const tr = {
   explore: {
     about: "Hakkımızda",
     aboutDesc: "Türkiye'nin kaynak teknolojileri markası",
-    weldersClub: "Welders Club",
-    weldersClubDesc: "Binlerce kaynakçının buluştuğu topluluğumuza katılın",
     warranty: "Garanti",
     warrantyDesc: "Garanti kaydı yapın veya mevcut garantinizi sorgulayın",
     warrantyChoose: "Ne yapmak istiyorsunuz?",
@@ -501,18 +499,6 @@ export const tr = {
     invalidSellerTaxNumber: "Satıcı VKN 10 haneli (şahıs firmalarında 11 haneli) olmalıdır.",
     duplicateSerial: "Bu seri numarası daha önce kaydedilmiş.",
     required: "Lütfen zorunlu alanları doldurun.",
-  },
-  club: {
-    title: "Welders Club",
-    subtitle:
-      "Binlerce kaynakçının bir araya geldiği topluluğumuza katılın; ipuçları, etkinlikler ve özel kampanyalardan ilk siz haberdar olun.",
-    benefit1: "Üyelere özel indirimler",
-    benefit2: "Teknik eğitim içerikleri",
-    benefit3: "Etkinlik ve fuar davetiyeleri",
-    benefit4: "Yeni ürünlere erken erişim",
-    join: "Kulübe Katıl",
-    joined: "Kulüp üyeliğiniz oluşturuldu!",
-    sendError: "Kaydınız şu an alınamadı. Lütfen tekrar deneyin ya da info@zenweld.com adresine e-posta gönderin.",
   },
   footer: {
     legal: "Politikalar & Yasal",

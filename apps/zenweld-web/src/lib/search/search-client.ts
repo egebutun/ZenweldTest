@@ -49,7 +49,6 @@ const STATIC_PAGES: { id: string; text: string; href: string }[] = [
   { id: "page-bayi", text: "Nereden Alabilirim bayi bul harita satış noktası", href: "/yetkili-bayi-ve-servis-agi" },
   { id: "page-garanti-sorgula", text: "Garanti Sorgula seri numarası", href: "/garanti/sorgulama" },
   { id: "page-garanti-kayit", text: "Garanti Kaydı uzatma kayıt", href: "/garanti/kayit" },
-  { id: "page-club", text: "Welders Club topluluk üyelik", href: "/welders-club" },
   { id: "page-msds", text: "MSDS malzeme güvenlik bilgi formu", href: "/msds" },
   { id: "page-sertifika", text: "Parti Sertifikaları uygunluk belgesi", href: "/parti-sertifikalari" },
   { id: "page-secici", text: "Ürün Seçici hangi makine bana uygun", href: "/urun-secici" },

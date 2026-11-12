@@ -931,7 +931,7 @@ export interface AboutContent {
 }
 
 /* ------------------------------------------------------------------ */
-/* Form kayitlari: bayilik basvurusu, mesaj, Welders Club (K-100, K-109) */
+/* Form kayitlari: bayilik basvurusu, mesaj (K-100, K-109)            */
 /* ------------------------------------------------------------------ */
 
 /** Bayilik basvurusu (sitedeki Bayimiz Olun formu). */
@@ -972,19 +972,6 @@ export interface SupportMessage {
   pageUrl?: string;
   userId?: string;
   adminNote?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-/** Welders Club katilimi. */
-export interface WeldersClubSignup {
-  id: string;
-  name: string;
-  email: string;
-  city?: string;
-  userId?: string;
-  /** Pasife alindiysa (kulupten ayrildi) o an */
-  leftAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -1369,6 +1356,5 @@ export interface ZenweldDatabase {
    */
   dealerApplications?: DealerApplication[];
   supportMessages?: SupportMessage[];
-  weldersClub?: WeldersClubSignup[];
   settings: SiteSettings;
 }

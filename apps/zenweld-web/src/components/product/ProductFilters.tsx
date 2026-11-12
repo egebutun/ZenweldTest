@@ -3,6 +3,7 @@
 import { byProductOrder, salePriceExVat, type FilterFacet, type Product } from "@zenweld/data";
 import { useT } from "@/lib/i18n-client";
 import { FormRow, Select } from "@zenweld/ui";
+import { newestFirst } from "@zenweld/utils";
 
 export type SortKey = "featured" | "priceAsc" | "priceDesc" | "nameAsc" | "newest";
 
@@ -128,7 +129,7 @@ export function applyFilters(items: Product[], filters: FilterState, now?: Date)
       sorted.sort((a, b) => a.name.localeCompare(b.name, "tr"));
       break;
     case "newest":
-      sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      sorted.sort((a, b) => newestFirst(a.createdAt, b.createdAt));
       break;
     default:
       // "Önerilen": panelde verilen Sıra numarasi.

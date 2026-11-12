@@ -295,7 +295,6 @@ export const EMAIL_RECIPIENT_TYPES = [
   { type: "iletisim", label: "İletişim formu" },
   { type: "urun-destek", label: "Ürün destek sorusu" },
   { type: "bayilik", label: "Bayilik başvurusu" },
-  { type: "welders-club", label: "Welders Club katılımı" },
 ] as const;
 
 export type EmailRecipientType = (typeof EMAIL_RECIPIENT_TYPES)[number]["type"];

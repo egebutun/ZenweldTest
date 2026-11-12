@@ -42,6 +42,6 @@ describe("Bayilik başvurusunun kaydı", () => {
 describe("Form kayıtları tarayıcı verisinde isteğe bağlıdır", () => {
   it("örnek veride ve eski kayıtlarda yoktur (veri sürümü değişmeden eklenir)", () => {
     const db: ZenweldDatabase = createSeedDatabase();
-    expect([db.dealerApplications, db.supportMessages, db.weldersClub]).toEqual([undefined, undefined, undefined]);
+    expect([db.dealerApplications, db.supportMessages]).toEqual([undefined, undefined]);
   });
 });

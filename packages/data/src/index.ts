@@ -56,7 +56,7 @@ import { createSampleWarehouseStock } from "./seed/warehouse.seed";
 import { createSampleCoupons } from "./seed/coupons.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 82;
+export const DB_VERSION = 83;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida

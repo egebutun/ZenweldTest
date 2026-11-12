@@ -128,7 +128,7 @@ herkes görür, tarayıcıya örnek veri gönderilmez. Tablolar:
 | Şifremi unuttum | Aynı mesaj çıkar, e-posta gitmez | Hesap varsa 1 saat geçerli bağlantı e-postayla gider |
 | Kartla ödeme | Para çekilmez | Para çekilmez (ödeme kuruluşu bağlanana kadar); tutar, stok ve kupon sunucuda yeniden hesaplanır |
 | İşlem Kaydı, E-posta Kaydı | Ekranlar menüdedir, tablo boştur ("site veritabanına bağlandığında burada listelenir") | Paneldeki her işlem ve gönderilen her e-posta listelenir |
-| Mesajlar, Welders Club, Bayilik Başvuruları | Formu gönderen tarayıcının panelinde görünür (K-109) | Sunucudadır; bütün yöneticiler görür |
+| Mesajlar, Bayilik Başvuruları | Formu gönderen tarayıcının panelinde görünür (K-109) | Sunucudadır; bütün yöneticiler görür |
 | Sipariş detayındaki SAP Aktarımı kutusu | Yoktur | Ödemesi kesinleşen siparişte görünür |
 | Aynı kaydı iki yönetici düzenlerse | Her tarayıcının kendi kopyası vardır | Sonra kaydeden uyarı alır ("sayfayı yenileyin"), kayıt değişmez |
 | Görsel ve belge yükleme | Görsel kaydın içine, belge tarayıcının dosya deposuna yazılır | `DOSYA_KLASORU` ayarlıysa sunucuya yüklenir (`/dosya/…`); değilse adres girilir |

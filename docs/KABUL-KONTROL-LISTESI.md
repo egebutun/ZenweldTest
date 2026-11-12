@@ -68,7 +68,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       geçersiz kalan kuponla ödeme engeli, kuponlu sipariş ve kişi başı
       sınır, kişiye özel kupon panelde ve sepette).
 - [ ] Veritabanı: boş bir PostgreSQL'de `npm run db:migrate` hatasız biter
-      ve 65 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
+      ve 64 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
       `npm run db:generate` "No schema changes" der.
 - [ ] `npm run db:seed` boş veritabanına örnek veriyi yükler ve tablo
       tablo satır sayılarını yazar (ör. products 40, orders 133); ikinci
@@ -178,7 +178,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       ve **Destek ve Garanti** başlığı `/destek`'i açar
       (`tests/e2e/destek.spec.ts`).
 - [ ] Keşfet menüsü: başlığa tıklamak sayfa açmaz; solda başlık ve
-      açıklama, "Tümünü Gör" yok; sağda Kurumsal (3), Güncel (4), Diğer (4)
+      açıklama, "Tümünü Gör" yok; sağda Kurumsal (3), Güncel (3), Diğer (4)
       başlıklı kolonlarda sembollü bağlantılar.
 - [ ] Bir menü açıkken arkadaki sayfa bulanık görünür; bulanık alana
       tıklayınca ya da **Esc** ile menü kapanır.
@@ -542,9 +542,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       tekrar girilince "Bu seri numarası daha önce kaydedilmiş." der. Garanti
       sorgulamada seri numarası küçük harf ve boşlukla yazılsa da bulunur;
       Garantilerim'de görünür. Değerlendirme `reviews`'ta onaysız durur.
-      İletişim formu `support_messages`'ta, Welders Club katılımı
-      `welders_club_signups`'ta, bayilik başvurusu `dealer_applications`'ta
-      görünür. Her form için `email_log`'da bir satır vardır (Resend
+      İletişim formu `support_messages`'ta, bayilik başvurusu
+      `dealer_applications`'ta görünür. Her form için `email_log`'da bir satır vardır (Resend
       tanımlı değilse durumu `skipped`).
 - [ ] Veritabanı modunda panel: oturumsuz `/yonetim/urunler`
       giriş ekranına (`?next=%2Fyonetim%2Furunler`) gider; yönetici girişinden
@@ -590,8 +589,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Formlardaki yasal bağlantılar yeni sekmede açılır; form kaybolmaz.
 - [ ] Onay kutuları boş gelir (Kullanım Koşulları, sözleşme onayı, servis
       gizlilik onayı, kampanya e-postası izni, bülten izni).
-- [ ] İletişim, Bayilik Başvurusu, Welders Club ve ürün destek sorusu
-      gönderilir; demo adresinde e-posta servisi tanımlı değilse başarılı
+- [ ] İletişim, Bayilik Başvurusu ve ürün destek sorusu gönderilir; demo adresinde e-posta servisi tanımlı değilse başarılı
       görünür.
 - [ ] E-posta anahtarı tanımlıyken her form varsayılan adrese
       (`info@zenweld.com`; veritabanı modunda türün panelde yazılan
@@ -720,12 +718,15 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       yalnızca görünen 50 kaydı değil, süzgece uyan kayıtların tamamını
       indirir (örnek veride 54 kayıt). Oturumsuz
       `/api/yonetim/csv/garantiler` 401 verir.
-- [ ] Üyeler, Mesajlar, Welders Club ve Bayilik Başvuruları da 50'şer
+- [ ] Sitede yeni gönderilen servis talebi Servis Talepleri listesinin en
+      üstündedir; aynı günün örnek kayıtlarının altına düşmez (listeler
+      saate göre sıralanır; `tests/e2e/form-kayitlari.spec.ts`).
+- [ ] Üyeler, Mesajlar ve Bayilik Başvuruları da 50'şer
       sayfalanır. Üyeler'de rol süzgeci adrese yazılır (`?rol=business`)
       ve açıklamadaki sayı süzgece uyan hesaplardır; **CSV İndir** bütün
       sayfalardaki hesapları indirir, CSV'de şifre özeti yoktur. Mesajlar'da
-      tür süzgeci `?tur=` olur; başlıktaki "<n> mesaj · <n> yeni", Welders
-      Club'da "<n> aktif · <n> pasif" bütün kayıtları sayar.
+      tür süzgeci `?tur=` olur; başlıktaki "<n> mesaj · <n> yeni" bütün
+      kayıtları sayar.
 - [ ] Havale siparişinde **Ödeme Alındı** → Hazırlanıyor.
 - [ ] Kargo firması ve takip numarası olmadan **Kargoya Ver** çalışmaz;
       girilince Kargoda; müşteri Siparişlerim'de takip numarasını görür.
@@ -803,14 +804,11 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       müşterinin Garantilerim sayfasında ve garanti sorgulamada görünür.
 - [ ] Sitedeki Bayimiz Olun formu Bayi ve Satış Ağı › Bayilik
       Başvuruları'nda; iletişim formu ve ürün sayfasındaki destek sorusu
-      Müşteriler ve Servis › Mesajlar'da; Welders Club katılımı Müşteriler
-      ve Servis › Welders Club'da görünür. Demo modunda da (aynı
-      tarayıcıda) görünür; durum, not ve pasife alma çalışır (KARARLAR
-      K-109; tarayıcı testi: `tests/e2e/form-kayitlari.spec.ts`).
-- [ ] Başvurunun ve mesajın durumu ve iç notu kaydedilir; başvuru, mesaj
-      ve Welders Club kaydı için silme düğmesi yoktur.
-- [ ] Welders Club'da **Pasife al** satırı soluklaştırır ve "Pasif · <tarih>"
-      yazar; **Aktif yap** geri alır.
+      Müşteriler ve Servis › Mesajlar'da görünür. Demo modunda da (aynı
+      tarayıcıda) görünür; durum ve not çalışır (KARARLAR K-109; tarayıcı
+      testi: `tests/e2e/form-kayitlari.spec.ts`).
+- [ ] Başvurunun ve mesajın durumu ve iç notu kaydedilir; başvuru ve mesaj
+      için silme düğmesi yoktur.
 - [ ] Bir sekmede açık kayıt başka sekmede değiştirilince ilk sekmede
       kaydedilmez: "Bu kayıt siz açtıktan sonra değişti; sayfayı yenileyin."
 

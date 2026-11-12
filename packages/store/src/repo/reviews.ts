@@ -3,6 +3,7 @@
 import { FEATURED_REVIEW_LIMIT, type ProductReview, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nowIso } from "./shared";
+import { newestFirst } from "@zenweld/utils";
 
 /* ------------------------------------------------------------------ */
 /* Urun degerlendirmeleri                                              */
@@ -18,7 +19,7 @@ export function listProductReviews(
 ): ProductReview[] {
   return db.reviews
     .filter((r) => r.productId === productId && r.approved)
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    .sort((a, b) => newestFirst(a.createdAt, b.createdAt));
 }
 
 /** Ortalama puan ve yorum sayisi. */
@@ -42,7 +43,7 @@ function visibleFeatured(db: ZenweldDatabase): ProductReview[] {
 
 export function featuredReviews(db: ZenweldDatabase = getSnapshot()): ProductReview[] {
   return visibleFeatured(db)
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .sort((a, b) => newestFirst(a.createdAt, b.createdAt))
     .slice(0, FEATURED_REVIEW_LIMIT);
 }
 
@@ -51,7 +52,7 @@ export const featuredReviewCount = (db: ZenweldDatabase = getSnapshot()) => visi
 
 /** Yonetim panelindeki tam liste (onay bekleyenler dahil). */
 export function listAllReviews(db: ZenweldDatabase = getSnapshot()): ProductReview[] {
-  return [...db.reviews].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return [...db.reviews].sort((a, b) => newestFirst(a.createdAt, b.createdAt));
 }
 
 /** Yeni yorum; tarayici deposuna sigmazsa (buyuk video) null. */

@@ -14,7 +14,6 @@ import {
   registerWarranty,
   saveDealerApplication,
   saveSupportMessage,
-  saveWeldersClubSignup,
   type FormCatalog,
   type Member,
 } from "../../packages/db/src";
@@ -220,7 +219,7 @@ describe("Ürün yorumu", () => {
 });
 
 describe("E-postaya giden formlar ve e-posta kaydı", () => {
-  it("bayilik, iletişim, ürün sorusu ve Welders Club kendi tablolarına yazılır; e-posta kaydı tutulur", async () => {
+  it("bayilik, iletişim ve ürün sorusu kendi tablolarına yazılır; e-posta kaydı tutulur", async () => {
     await withCatalog(async (db, client) => {
       const at = new Date();
       await saveDealerApplication(
@@ -238,8 +237,6 @@ describe("E-postaya giden formlar ve e-posta kaydı", () => {
         { type: "iletisim", product_id: null },
         { type: "urun-destek", product_id: "p1" },
       ]);
-      await saveWeldersClubSignup(db, null, { name: "Z", email: "z@ornek.com" }, at);
-      expect((await client.query("SELECT count(*)::int AS n FROM welders_club_signups")).rows[0].n).toBe(1);
 
       await logEmail(db, { type: "sifre-sifirlama", recipients: ["a@ornek.com"], subject: "Zenweld şifre sıfırlama", status: "skipped" });
       await logEmail(db, {

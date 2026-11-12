@@ -47,7 +47,7 @@ Site dört işi birlikte yapar:
    Ekipmanlar için **Teklif Al** formu vardır.
 4. **Destek ve içerik.** Garanti kaydı ve sorgulama, servis talebi, sık
    sorulan sorular, belgeler (MSDS, kaynak rehberi, parti sertifikaları),
-   blog, haberler, etkinlikler, Welders Club ve kurumsal sayfalar.
+   blog, haberler, etkinlikler ve kurumsal sayfalar.
 
 - **Yönetim paneli** sitenin içindedir (`/yonetim`); kendi giriş ekranı ve
   oturumu vardır, site üyeliğinden ayrıdır.
@@ -102,7 +102,6 @@ Site dört işi birlikte yapar:
 | **Servis talebi** | Kurulum, bakım, onarım ya da eğitim için gönderilen talep. Panelden takip edilir. |
 | **İade talebi** | Üyenin (bireysel ya da kurumsal) teslim edilen siparişindeki ürünleri geri göndermek için teslimden itibaren 14 gün içinde Hesabım'dan açtığı talep (cayma). Panelde İade Talepleri'nden takip edilir. |
 | **Bayilik başvurusu** | Bayi olmak isteyen firmanın formu. Zenweld'e e-postayla gider; panelde Bayilik Başvuruları'nda görünür. |
-| **Welders Club** | Kaynakçılar için topluluk sayfası. Katılım formu Zenweld'e e-postayla gider; panelde Welders Club ekranında görünür. |
 | **Belgeler** | MSDS (güvenlik bilgi formları), Kaynak Rehberi ve Parti Sertifikaları sayfalarındaki dosyalar. Panelden yönetilir. |
 | **Sayfa SEO** | Sabit sayfaların (Hakkımızda, İletişim vb.) Google'da görünen başlık ve açıklaması. Panelden düzenlenir. |
 | **Yasal metinler** | KVKK, gizlilik, çerez, iade, mesafeli satış sözleşmesi gibi 11 metin. Panelden düzenlenir; bugün taslaktır. |

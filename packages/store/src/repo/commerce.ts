@@ -4,13 +4,14 @@ import { isTransferExpired, PAYMENT_EXPIRED_NOTE, type Order, type OrderStatus, 
 import { getSnapshot, mutate, uid } from "../database";
 import { nextCode, nowIso } from "./shared";
 import { addRedemption, releaseRedemption } from "./coupons";
+import { newestFirst } from "@zenweld/utils";
 
 /* ------------------------------------------------------------------ */
 /* Teklifler                                                           */
 /* ------------------------------------------------------------------ */
 
 export function listQuotes(db: ZenweldDatabase = getSnapshot()): Quote[] {
-  return [...db.quotes].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return [...db.quotes].sort((a, b) => newestFirst(a.createdAt, b.createdAt));
 }
 
 export function quotesForUser(
@@ -50,7 +51,7 @@ export function deleteQuote(id: string): void {
 /* ------------------------------------------------------------------ */
 
 export function listOrders(db: ZenweldDatabase = getSnapshot()): Order[] {
-  return [...db.orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return [...db.orders].sort((a, b) => newestFirst(a.createdAt, b.createdAt));
 }
 
 export function ordersForUser(userId: string, db: ZenweldDatabase = getSnapshot()): Order[] {

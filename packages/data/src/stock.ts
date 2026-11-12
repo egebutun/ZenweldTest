@@ -12,6 +12,7 @@ import type {
   ZenweldDatabase,
 } from "./types";
 import { productOptionsView } from "./variants";
+import { newestFirst } from "@zenweld/utils";
 
 /**
  * STOK DOSYASI — OKUMA, ESLESTIRME, FARK
@@ -439,7 +440,7 @@ export const STOCK_FILE_TRUNCATED =
  * Panel ekrani ve sunucu ayni fonksiyonla hesaplar.
  */
 export function stockVersion(rows: Pick<StockRow, "updatedAt">[], history: Pick<StockImport, "id" | "createdAt">[]): string {
-  const last = [...history].sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id))[0];
+  const last = [...history].sort((a, b) => newestFirst(a.createdAt, b.createdAt) || b.id.localeCompare(a.id))[0];
   const latest = rows.map((r) => r.updatedAt).sort().pop() ?? "";
   return `${last?.id ?? ""}|${rows.length}|${latest}`;
 }

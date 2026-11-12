@@ -3,13 +3,14 @@
 import { canRequestReturn, returnableQuantities, type ReturnRequest, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nextCode, nowIso } from "./shared";
+import { newestFirst } from "@zenweld/utils";
 
 /* ------------------------------------------------------------------ */
 /* Iade (cayma) talepleri                                              */
 /* ------------------------------------------------------------------ */
 
 export function listReturnRequests(db: ZenweldDatabase = getSnapshot()): ReturnRequest[] {
-  return [...db.returnRequests].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return [...db.returnRequests].sort((a, b) => newestFirst(a.createdAt, b.createdAt));
 }
 
 export function returnRequestsForOrder(orderId: string, db: ZenweldDatabase = getSnapshot()): ReturnRequest[] {

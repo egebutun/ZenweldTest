@@ -354,7 +354,6 @@ describe("kargo, SAP stoğu ve formlar (2026-11-02)", () => {
         (await expectFailure(db, "INSERT INTO support_messages (id, type, message) VALUES ('m1', 'baska', 'Soru')")).code,
       ).toBe("23514");
       await db.query("INSERT INTO support_messages (id, type, message) VALUES ('m2', 'urun-destek', 'Soru')");
-      await db.query("INSERT INTO welders_club_signups (id, name, email) VALUES ('w1', 'Ad', 'a@ornek.com')");
     });
   });
 });

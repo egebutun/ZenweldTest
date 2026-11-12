@@ -23,7 +23,6 @@ export type MenuIconName =
   | "haberler"
   | "etkinlikler"
   | "blog"
-  | "welders-club"
   | "urun-secici"
   | "kaynak-rehberi"
   | "msds"
@@ -141,15 +140,6 @@ const PATHS: Record<MenuIconName, React.ReactNode> = {
       <path d="M15 4.5 19.5 9 9.25 19.25l-5 1 1-5Z" />
       <path d="m12.75 6.75 4.5 4.5" />
       <path d="M13.5 20.25h6.75" />
-    </>
-  ),
-  // Iki kisi: topluluk
-  "welders-club": (
-    <>
-      <circle cx="9" cy="8.25" r="3.25" />
-      <path d="M3.25 19.75a5.75 5.75 0 0 1 11.5 0" />
-      <path d="M15.5 5.1a3.25 3.25 0 0 1 0 6.3" />
-      <path d="M17.5 14.35a5.75 5.75 0 0 1 3.25 5.4" />
     </>
   ),
   // Ayar surgusu

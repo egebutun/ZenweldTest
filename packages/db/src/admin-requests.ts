@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gte, inArray, isNotNull, lt, ne, sql, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, lt, ne, sql, type SQL } from "drizzle-orm";
 import {
   FEATURED_REVIEW_LIMIT,
   featuredReviewLimitText,
@@ -12,7 +12,6 @@ import {
   type DealerApplication,
   type SupportMessage,
   type WarrantyRecord,
-  type WeldersClubSignup,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { pageWindow, type ListPage } from "@zenweld/utils";
@@ -26,12 +25,11 @@ import * as s from "./schema";
  * PANEL › TALEPLER SUNUCUDA (veritabani modu; Asama 5, 2. alan; KARARLAR K-99, K-100)
  *
  * Teklifler, Servis Talepleri, Garantiler, Yorumlar ile sitedeki formlardan
- * gelen Bayilik Basvurulari, Mesajlar (iletisim ve urun destek) ve Welders
- * Club kayitlari. Kurallar demo modundaki panelle aynidir (packages/store ›
- * repo/; packages/data). Yazmalar panel.ts'teki ortak kurallarla yapilir.
+ * gelen Bayilik Basvurulari ve Mesajlar (iletisim ve urun destek). Kurallar
+ * demo modundaki panelle aynidir (packages/store › repo/; packages/data).
+ * Yazmalar panel.ts'teki ortak kurallarla yapilir.
  *
- * Form kayitlari (basvuru, mesaj, Welders Club) panelden silinmez; Welders
- * Club'dan ayrilmak isteyen pasife alinir (K-100).
+ * Form kayitlari (basvuru, mesaj) panelden silinmez (K-100).
  */
 
 const opt = <T>(value: T | null): T | undefined => (value === null ? undefined : value);
@@ -45,13 +43,12 @@ const notFound = tr.panel.recordNotFound;
 /* ------------------------------ Kayit turleri ------------------------------ */
 
 /**
- * Form kayitlari (dealer_applications, support_messages,
- * welders_club_signups). Tipler packages/data'dadir; demo modunda ayni
- * kayitlar tarayicida tutulur (KARARLAR K-109).
+ * Form kayitlari (dealer_applications, support_messages). Tipler
+ * packages/data'dadir; demo modunda ayni kayitlar tarayicida tutulur
+ * (KARARLAR K-109).
  */
 export type DealerApplicationRecord = DealerApplication;
 export type SupportMessageRecord = SupportMessage;
-export type WeldersClubRecord = WeldersClubSignup;
 
 /* ------------------------------ Okuma ------------------------------ */
 
@@ -201,7 +198,6 @@ export async function readReviewsPage(db: AuditDb, filter: ReviewListFilter): Pr
 
 type DealerApplicationRow = typeof s.dealerApplications.$inferSelect;
 type SupportMessageRow = typeof s.supportMessages.$inferSelect;
-type WeldersClubRow = typeof s.weldersClubSignups.$inferSelect;
 
 const dealerApplicationRecord = (r: DealerApplicationRow): DealerApplicationRecord => ({
   id: r.id,
@@ -243,17 +239,6 @@ const supportMessageRecord = (r: SupportMessageRow): SupportMessageRecord => ({
   updatedAt: iso(r.updatedAt),
 });
 
-const weldersClubRecord = (r: WeldersClubRow): WeldersClubRecord => ({
-  id: r.id,
-  name: r.name,
-  email: r.email,
-  city: opt(r.city),
-  userId: opt(r.userId),
-  leftAt: r.leftAt ? iso(r.leftAt) : undefined,
-  createdAt: iso(r.createdAt),
-  updatedAt: iso(r.updatedAt),
-});
-
 export interface CountedListPage<T> extends ListPage<T> {
   /** Butun kayitlar */
   all: number;
@@ -291,32 +276,6 @@ export async function readMessagesPage(db: AuditDb, filter: MessageListFilter): 
     all: await countRows(db, t),
     newCount: await countRows(db, t, eq(t.status, "new")),
   };
-}
-
-export interface WeldersClubListFilter {
-  /** Ad, e-posta, sehir */
-  q?: string;
-  page: number;
-}
-
-export interface WeldersClubListPage extends ListPage<WeldersClubRecord> {
-  /** Butun kayitlarda aktif ve pasif (ayrilan) sayisi */
-  active: number;
-  passive: number;
-}
-
-/** Welders Club: aramaya uyan katilimlarin bir sayfasi; aktif / pasif sayilari butun kayitlarda. */
-export async function readWeldersClubPage(db: AuditDb, filter: WeldersClubListFilter): Promise<WeldersClubListPage> {
-  const t = s.weldersClubSignups;
-  const where = searchLike([t.name, t.email, t.city], filter.q);
-  const total = await countRows(db, t, where);
-  const w = pageWindow(total, filter.page);
-  const rows = total
-    ? await db.select().from(t).where(where).orderBy(desc(t.createdAt), desc(t.id)).limit(w.limit).offset(w.offset)
-    : [];
-  const all = await countRows(db, t);
-  const passive = await countRows(db, t, isNotNull(t.leftAt));
-  return { rows: rows.map(weldersClubRecord), total, page: w.page, active: all - passive, passive };
 }
 
 /* ------------------------------ Ortak ------------------------------ */
@@ -530,7 +489,7 @@ export async function adminDeleteReview(db: AuditDb, actor: Actor, input: Input,
   return { ok: true };
 }
 
-/* --------------------- Basvurular, mesajlar, Welders Club --------------------- */
+/* --------------------- Basvurular, mesajlar --------------------- */
 
 const APPLICATION_STATUSES = ["new", "reviewing", "approved", "rejected"] as const;
 const MESSAGE_STATUSES = ["new", "read", "answered"] as const;
@@ -579,34 +538,4 @@ export async function adminSaveSupportMessage(
     { status, adminNote: note(input.adminNote) },
     (values) => db.update(s.supportMessages).set(values).where(eq(s.supportMessages.id, row.id)),
   );
-}
-
-/** Welders Club: kulupten ayrilmak isteyen pasife alinir (kayit silinmez; K-100); yeniden aktif yapilabilir. */
-export async function adminSetWeldersClubActive(
-  db: AuditDb,
-  actor: Actor,
-  input: Input,
-  at: Date,
-): Promise<PanelResult<Saved>> {
-  if (typeof input.active !== "boolean") return fail(400, tr.panel.invalidRequest);
-  const id = text(input.id, 100);
-  const [found] = id ? await db.select().from(s.weldersClubSignups).where(eq(s.weldersClubSignups.id, id)).for("update") : [];
-  const row = checkRow(found, input, notFound, stale);
-  if (isFailure(row)) return row;
-  if (input.active === (row.leftAt === null)) return unchanged(row);
-  const leftAt = input.active ? null : at;
-  await db.update(s.weldersClubSignups).set({ leftAt, updatedAt: at }).where(eq(s.weldersClubSignups.id, row.id));
-  await writeAudit(
-    db,
-    actor,
-    {
-      action: "update",
-      entityType: "welders_club_signups",
-      entityId: row.id,
-      entityLabel: row.email,
-      changes: { leftAt: [row.leftAt ? iso(row.leftAt) : null, leftAt ? iso(leftAt) : null] },
-    },
-    at,
-  );
-  return saved(at);
 }

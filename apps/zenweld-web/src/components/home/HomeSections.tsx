@@ -90,7 +90,7 @@ export function SeriesStrips() {
         word="FORCE"
         title={t.home.forceStripTitle}
         subtitle={t.home.forceStripSubtitle}
-        href="/arama?q=Force"
+        href="/force"
         products={force}
         dark
       />

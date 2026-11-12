@@ -36,8 +36,8 @@ import * as s from "./schema";
  * denetlenip yazilir; kayit numarasini sunucu verir. Urun ve kategori
  * bilgisi (ad, kod, secenek adi) tarayicidan degil katalogdan alinir.
  *
- * Yalnizca e-postaya giden formlar (iletisim, bayilik, urun destek sorusu,
- * Welders Club) da kendi tablolarina yazilir (KARARLAR K-81). Gonderilen
+ * Yalnizca e-postaya giden formlar (iletisim, bayilik, urun destek sorusu)
+ * da kendi tablolarina yazilir (KARARLAR K-81). Gonderilen
  * her e-posta email_log'a yazilir (logEmail).
  *
  * Yazan fonksiyonlar bir islem (transaction) icinde cagrilir.
@@ -395,20 +395,6 @@ export async function saveSupportMessage(
     createdAt: at,
     updatedAt: at,
   });
-  return id;
-}
-
-/** Welders Club katilimi. */
-export async function saveWeldersClubSignup(
-  db: OrderDb,
-  member: Member | null,
-  v: { name: string; email: string; city?: string },
-  at: Date,
-) {
-  const id = newId("wc");
-  await db
-    .insert(s.weldersClubSignups)
-    .values({ id, name: v.name, email: v.email, city: v.city || null, userId: member?.id ?? null, createdAt: at, updatedAt: at });
   return id;
 }
 

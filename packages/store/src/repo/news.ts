@@ -3,6 +3,7 @@
 import { type NewsItem, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { findMoved, nowIso, withPreviousSlugs } from "./shared";
+import { newestFirst } from "@zenweld/utils";
 
 /* ------------------------------------------------------------------ */
 /* Haberler                                                            */
@@ -12,7 +13,7 @@ import { findMoved, nowIso, withPreviousSlugs } from "./shared";
 export function listNews(db: ZenweldDatabase = getSnapshot()): NewsItem[] {
   return db.news
     .filter((n) => n.active)
-    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    .sort((a, b) => newestFirst(a.publishedAt, b.publishedAt));
 }
 
 export function findNewsById(
@@ -37,7 +38,7 @@ export function findMovedNews(slug: string, db: ZenweldDatabase = getSnapshot())
 
 /** Yayin tarihine gore yeniden eskiye siralar. */
 function sortNews(list: NewsItem[]): void {
-  list.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  list.sort((a, b) => newestFirst(a.publishedAt, b.publishedAt));
 }
 
 export function saveNews(item: NewsItem): void {

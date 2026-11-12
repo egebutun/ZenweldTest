@@ -133,12 +133,6 @@ const TEMPLATES = {
     note: ["note", "Açıklama"],
     replyTo: "email",
   },
-  "welders-club": {
-    title: "Welders Club katılım",
-    subject: (d) => `Welders Club katılım — ${d.name}`,
-    fields: [["name", "Ad"], ["email", "E-posta"], ["city", "Şehir"]],
-    replyTo: "email",
-  },
 } satisfies Record<string, Template>;
 
 export type NotificationType = keyof typeof TEMPLATES;

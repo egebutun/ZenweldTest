@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Order, ProductReview, Quote, ReturnRequest, ServiceRequest, User, WarrantyRecord } from "@zenweld/data";
 import { pageOf, pageWindow, searchFold, searchMatches } from "@zenweld/utils";
-import type { DealerApplicationRecord, SupportMessageRecord, WeldersClubRecord } from "@zenweld/db";
+import type { DealerApplicationRecord, SupportMessageRecord } from "@zenweld/db";
 import { memberCsvRows, quoteCsvRows } from "@/lib/admin-csv";
 import {
   dealerApplicationListPage,
@@ -9,7 +9,6 @@ import {
   memberListFilter,
   messageListFilter,
   messageListPage,
-  weldersClubListPage,
   matchingQuotes,
   matchingWarranties,
   orderListFilter,
@@ -153,6 +152,14 @@ describe("Servis talepleri listesi (demo modu)", () => {
     expect(page).toMatchObject({ total: 3, newCount: 2, page: 1 });
     expect(page.rows.map((r) => r.code)).toEqual(["SRV-s3", "SRV-s2", "SRV-s1"]);
   });
+
+  it("yeni talep en üstte: örnek veri Türkiye saatiyle (+03:00), yeni kayıt UTC (Z) yazılır; sıra saate göre", () => {
+    const requests = [
+      { id: "ornek", code: "SRV-ornek", status: "new", createdAt: "2026-03-10T17:30:00+03:00" },
+      { id: "yeni", code: "SRV-yeni", status: "new", createdAt: "2026-03-10T15:00:00.000Z" }, // 18:00 TR
+    ] as ServiceRequest[];
+    expect(serviceListPage(requests, 1).rows.map((r) => r.code)).toEqual(["SRV-yeni", "SRV-ornek"]);
+  });
 });
 
 describe("Garantiler listesi (demo modu)", () => {
@@ -233,7 +240,7 @@ describe("Üyeler listesi (demo modu)", () => {
   });
 });
 
-describe("Mesajlar, Welders Club, Bayilik Başvuruları (demo modu)", () => {
+describe("Mesajlar, Bayilik Başvuruları (demo modu)", () => {
   it("mesajlar: ?tur=; sayılar bütün mesajlarda", () => {
     expect(messageListFilter((n) => ({ tur: "urun-destek" })[n]).type).toBe("urun-destek");
     expect(messageListFilter((n) => ({ tur: "yok" })[n]).type).toBeUndefined();
@@ -247,20 +254,6 @@ describe("Mesajlar, Welders Club, Bayilik Başvuruları (demo modu)", () => {
     const page = messageListPage(messages, { page: 1, type: "iletisim" });
     expect(page).toMatchObject({ total: 2, all: 3, newCount: 2 });
     expect(page.rows.map((m) => m.id)).toEqual(["m3", "m1"]);
-  });
-
-  it("Welders Club: Türkçe arama (ad, e-posta, şehir); aktif / pasif bütün kayıtlarda", () => {
-    const club = (
-      [
-        ["c1", "IŞIK Usta", undefined],
-        ["c2", "Deneme", "2026-03-11T09:00:00Z"],
-        ["c3", "Başka", undefined],
-      ] as const
-    ).map(([id, name, leftAt]) => ({ id, name, email: `${id}@ornek.com`, city: "Isparta", leftAt, createdAt: T0 }) as WeldersClubRecord);
-    const page = weldersClubListPage(club, { page: 1, q: "ışık" });
-    expect(page).toMatchObject({ total: 1, active: 2, passive: 1 });
-    expect(page.rows.map((m) => m.id)).toEqual(["c1"]);
-    expect(weldersClubListPage(club, { page: 1, q: "ısparta" }).total).toBe(3);
   });
 
   it("bayilik başvuruları: sayfa ve yeni başvuru sayısı", () => {

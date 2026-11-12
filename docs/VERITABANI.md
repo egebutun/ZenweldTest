@@ -211,7 +211,7 @@ Demo modunda veri tarayıcıda tek bir nesnedir (`ZenweldDatabase`) ve
 | `recordCounters` | `record_counters` | Aynı anda gelen iki kayıt aynı numarayı almasın |
 | Kuponun `productIds`, `categoryIds`, `customerEmails` listeleri | `coupon_targets`, `coupon_customers` | Silinen ürün ve kategori kupondan da çıksın; e-postayla arama yapılabilsin (K-85, K-86) |
 | Favoriler ve oturum tarayıcıda | `favourites`, `sessions` | Üye başka cihazda da görsün; oturum sunucuda tutulur (K-94, K-96) |
-| İletişim, bayilik, Welders Club ve ürün destek formları: isteğe bağlı `dealerApplications`, `supportMessages`, `weldersClub` listeleri (K-109; eski kayıtlarda yok, yalnızca formu gönderen tarayıcıda) | `dealer_applications`, `support_messages`, `welders_club_signups` | Sahibinin kararı (K-81); panelde bütün yöneticiler görsün (K-100) |
+| İletişim, bayilik ve ürün destek formları: isteğe bağlı `dealerApplications`, `supportMessages` listeleri (K-109; eski kayıtlarda yok, yalnızca formu gönderen tarayıcıda) | `dealer_applications`, `support_messages` | Sahibinin kararı (K-81); panelde bütün yöneticiler görsün (K-100) |
 | `warehouseStock` (örnek depo stoğu) | `warehouse_stock`, `sap_sync_runs` | Depo stoğu SAP'tan okunur, okumaların kaydı tutulur (K-82) |
 | `emailRecipients` (tarayıcıda saklanır ama kullanılmaz; e-postaları sunucu gönderir) | `email_recipients` | Alıcı forma göre panelden değişir (K-81, K-104); satırı olmayan tür `SUPPORT_EMAIL`'e gider |
 | Gönderilen e-postaların ve panel değişikliklerinin kaydı yok | `email_log`, `audit_log` | Sahibinin kararı (K-81) |
@@ -1321,21 +1321,20 @@ Panelde banka adı ve IBAN zorunludur; hesap sahibi boş kalabilir (boş metin).
 
 ### E-posta formlarının kayıtları (yeni)
 
-Sahibinin kararı (K-81): iletişim formu, ürün destek sorusu, bayilik
-başvurusu ve Welders Club katılımı e-postayla birlikte kayıt olarak da
-saklanır.
+Sahibinin kararı (K-81): iletişim formu, ürün destek sorusu ve bayilik
+başvurusu e-postayla birlikte kayıt olarak da saklanır.
 
 - **Veritabanı modunda** kayıt bu tablolara yazılır; e-posta gitmese de
   kayıt alınır, gidip gitmediği `email_log`'dadır
   ([SUNUCU.md › Formlar](SUNUCU.md#formlar)).
 - **Demo modunda** kayıt, e-posta gidince tarayıcıdaki verinin isteğe bağlı
-  listelerine yazılır (`dealerApplications`, `supportMessages`,
-  `weldersClub`; K-109) ve yalnızca formu gönderen tarayıcıda görünür.
+  listelerine yazılır (`dealerApplications`, `supportMessages`; K-109) ve
+  yalnızca formu gönderen tarayıcıda görünür.
   Alanlar tablolarla aynıdır.
-- Panelde Bayilik Başvuruları, Mesajlar ve Welders Club ekranlarında
-  görünür; kayıtlar panelden silinmez (K-100). Panelin kullandığı kayıt
-  türleri `packages/db/src/admin-requests.ts`'tedir
-  (`DealerApplicationRecord`, `SupportMessageRecord`, `WeldersClubRecord`).
+- Panelde Bayilik Başvuruları ve Mesajlar ekranlarında görünür; kayıtlar
+  panelden silinmez (K-100). Panelin kullandığı kayıt türleri
+  `packages/db/src/admin-requests.ts`'tedir (`DealerApplicationRecord`,
+  `SupportMessageRecord`).
 - Bülten kaydı bunlara girmez; bülten servisi kararını bekliyor
   ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Bülten ve İYS).
 
@@ -1375,18 +1374,6 @@ saklanır.
 | `admin_note` | text | | |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
-`welders_club_signups` — Welders Club katılım:
-
-| Kolon | Tür | Kural | Açıklama |
-|---|---|---|---|
-| `id` | text | anahtar | |
-| `name`, `email` | text | zorunlu | |
-| `city` | text | | |
-| `user_id` | text | → `users` (boşalır) | |
-| `left_at` | timestamptz | | Kulüpten ayrılmak isteyen panelde pasife alınınca o an; boşsa aktif (K-100; 0008) |
-| `created_at` | timestamptz | zorunlu | |
-| `updated_at` | timestamptz | zorunlu | Son değişiklik (0008) |
-
 ### `email_recipients` — e-postaların alıcıları (yeni)
 
 Sahibinin kararı (K-81, K-104): Zenweld'e giden e-postaların alıcıları
@@ -1414,7 +1401,6 @@ Panelde Mağaza Ayarları › E-posta Alıcıları sekmesinden değişir (panel 
 |---|---|
 | `iletisim` | İletişim formu |
 | `bayilik` | Bayilik Başvurusu |
-| `welders-club` | Welders Club katılım |
 | `urun-destek` | Ürün sayfasındaki destek sorusu |
 | `teklif` | Teklif Al |
 | `servis` | Servis Talebi |
@@ -1444,7 +1430,7 @@ listelenir; demo modunda kayıt tutulmaz (K-109).
 |---|---|---|---|
 | `id` | bigint | anahtar; sırayla artar | |
 | `type` | text | zorunlu | E-posta türü (yukarıdaki liste): hangi özellik için gönderildiği |
-| `source_path` | text | | Formun gönderildiği sayfa (`/welders-club`, `/urun/ultimate-250-mtc`) |
+| `source_path` | text | | Formun gönderildiği sayfa (`/iletisim`, `/urun/ultimate-250-mtc`) |
 | `entity_type`, `entity_id` | text | | Bağlı kayıt (ör. `quotes` + teklifin kimliği, `dealer_applications` + başvurunun kimliği) |
 | `recipients` | text[] | zorunlu | Gönderildiği adresler |
 | `reply_to` | text | | Yanıtla denince gidilecek adres (formu dolduran) |
@@ -1527,9 +1513,9 @@ Ayarlar › İşlem Kaydı'nda listelenir; demo modunda kayıt tutulmaz (K-109).
 | Servis, garanti, yorum | `service_requests`, `warranties`, `reviews` | 3 |
 | İçerik | `blog_posts`, `news`, `events`, `faqs`, `sales_reps`, `legal_pages`, `about_page`, `page_seo`, `document_pages`, `documents` | 10 |
 | Ayarlar, ödeme ve kargo | `settings`, `payment_pos`, `bank_accounts`, `carriers` | 4 |
-| Formlar | `dealer_applications`, `support_messages`, `welders_club_signups` | 3 |
+| Formlar | `dealer_applications`, `support_messages` | 2 |
 | Sistem | `email_recipients`, `email_log`, `record_counters`, `audit_log` | 4 |
-| **Toplam** | | **65** |
+| **Toplam** | | **64** |
 
 ---
 
@@ -1640,7 +1626,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 | Belge | — | Dosyası (adresi girilen belgede yalnızca kayıt) |
 | Yasal metin | Silinemez | — |
 | Sipariş, servis talebi, iade talebi | Panelde silinmez | — |
-| Bayilik başvurusu, mesaj, Welders Club katılımı | Panelde silinmez (K-100) | — |
+| Bayilik başvurusu, mesaj | Panelde silinmez (K-100) | — |
 | İşlem kaydı (`audit_log`) | Elle silinmez | 2 yıldan eskisi her gün kendiliğinden silinir |
 
 ---

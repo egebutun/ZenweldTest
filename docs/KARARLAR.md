@@ -824,7 +824,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 
 ### K-98 · Formlar sunucuda: e-posta formlarının kaydı ve spam koruması
 - Veritabanı modunda yalnızca e-postaya giden formlar da (iletişim,
-  bayilik başvurusu, ürün destek sorusu, Welders Club) kendi tablolarına
+  bayilik başvurusu, ürün destek sorusu) kendi tablolarına
   yazılır; gönderilen her e-posta `email_log`'a kaydedilir (K-81'in
   uygulanışı).
 - Spam koruması olarak şimdilik görünmez bot tuzağı yeterlidir. İstek
@@ -833,24 +833,22 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - **Neden:** Tablolar hazırdı; istek sınırı için paylaşılan sayaç ve
   sunucu kararı gerekiyor.
 
-### K-100 · Form kayıtları panelde: yer, silme ve Welders Club'tan ayrılma
-- Sitedeki formlardan gelen kayıtlar için üç ekran vardır:
+### K-100 · Form kayıtları panelde: yer ve silme
+- Sitedeki formlardan gelen kayıtlar için iki ekran vardır:
   - **Bayilik Başvuruları** sol menüde "Bayi ve Satış Ağı" grubunda,
     Bayiler'in yanında;
-  - **Mesajlar** (iletişim formu ve ürün destek soruları) ve **Welders
-    Club** "Müşteriler ve Servis" grubunda.
-- Bu kayıtlar (başvuru, mesaj, Welders Club) panelden silinmez. Silme,
-  KVKK saklama süresi kararıyla birlikte ele alınır.
-- Welders Club'dan ayrılmak isteyen kişi o zamana kadar pasife alınır
-  (yeniden aktif yapılabilir).
+  - **Mesajlar** (iletişim formu ve ürün destek soruları) "Müşteriler ve
+    Servis" grubunda.
+- Bu kayıtlar (başvuru, mesaj) panelden silinmez. Silme, KVKK saklama
+  süresi kararıyla birlikte ele alınır.
 - **Neden:** Bayilik başvurusu Bayiler'in yanında kolay bulunur. Kişisel
   veri içeren kayıtların ne kadar saklanacağı henüz belli değil;
   yanlışlıkla silinmesin.
 
 ### K-104 · E-posta alıcıları Mağaza Ayarları'nda ayrı sekme; belgelerde dosya yükleme depoyla
 - **E-posta alıcıları:** Zenweld'e giden e-postaların (sipariş, iade,
-  teklif, servis, garanti, yorum, üyelik, iletişim, ürün destek, bayilik,
-  Welders Club) alıcıları panelde Mağaza Ayarları › **E-posta
+  teklif, servis, garanti, yorum, üyelik, iletişim, ürün destek, bayilik)
+  alıcıları panelde Mağaza Ayarları › **E-posta
   Alıcıları** sekmesinde, form türü başına yazılır. Alıcısı yazılmayan
   tür varsayılan adrese (`SUPPORT_EMAIL`, yoksa info@zenweld.com) gider.
   Veritabanı modunda geçerlidir.
@@ -990,11 +988,10 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   Kayıt yalnızca veritabanı modunda tutulduğu için demoda tablo boştur ve
   kaydın veritabanına bağlanınca tutulacağını yazar ("demo" kelimesi
   geçmez; K-02).
-- İletişim formu, ürün destek sorusu, Welders Club ve bayilik başvurusu
-  demo modunda e-postayla birlikte tarayıcıya da kaydedilir; Mesajlar,
-  Welders Club ve Bayilik Başvuruları ekranlarında aynı tarayıcıda
-  görünür. Durum, not ve pasife alma çalışır (K-100'deki silinmeme kuralı
-  aynen geçerli). Veritabanı modunda bu kayıtlar yalnızca sunucudadır.
+- İletişim formu, ürün destek sorusu ve bayilik başvurusu demo modunda
+  e-postayla birlikte tarayıcıya da kaydedilir; Mesajlar ve Bayilik
+  Başvuruları ekranlarında aynı tarayıcıda görünür. Durum ve not çalışır
+  (K-100'deki silinmeme kuralı aynen geçerli). Veritabanı modunda bu kayıtlar yalnızca sunucudadır.
 - **Neden:** Sahibi yayındaki (demo) sitede bu ekranları göremedi ve
   yapılan işin görünmesini istedi. Demoda boş ya da gizli ekran, ekranın
   hiç yapılmadığı izlenimini veriyor.
@@ -1011,14 +1008,13 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   ortamda aynı çalışır.
 - Formlar kendi tablolarında saklanır: bayilik başvuruları
   (`dealer_applications`), iletişim ve ürün destek mesajları
-  (`support_messages`), Welders Club katılımları (`welders_club_signups`).
-  Sahibinin isteğiyle kupon (`coupons`, `coupon_targets`,
+  (`support_messages`). Sahibinin isteğiyle kupon (`coupons`, `coupon_targets`,
   `coupon_redemptions`) ve kargo (`carriers`, `shipments`) tabloları da
   eklendi.
 - Panelde yapılan her değişiklik kaydedilir: kim, ne zaman, hangi
   kayıtta, eski ve yeni değer. Panele giriş ve çıkışlar da yazılır.
   Kayıtlar 2 yıl saklanır.
-- Gönderilen her e-postanın sitenin hangi özelliği (Welders Club, Servis
+- Gönderilen her e-postanın sitenin hangi özelliği (İletişim, Servis
   Talebi…) ve sayfası için gönderildiği kaydedilir. E-posta alıcıları
   türe göre tutulur (K-104).
 - Kişisel verilerin saklama süresi avukata sorulacak

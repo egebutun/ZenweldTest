@@ -129,18 +129,13 @@ test("üyeler 50'şer; CSV süzgece uyan hesapların tamamı; rol süzgeci adres
   expect(problems).toEqual([]);
 });
 
-test("mesajlar, Welders Club ve bayilik başvuruları: başlıktaki sayılar tarayıcıdaki kayıtlardan", async ({ page, problems }) => {
+test("mesajlar ve bayilik başvuruları: başlıktaki sayılar tarayıcıdaki kayıtlardan", async ({ page, problems }) => {
   await page.goto("/yonetim/mesajlar");
   const db = await readDb(page);
   const messages = db.supportMessages ?? [];
   await expect(page.getByText(`${messages.length} mesaj · ${messages.filter((m) => m.status === "new").length} yeni`)).toBeVisible();
   await page.getByLabel("Tür").selectOption("urun-destek");
   await expect(page).toHaveURL(/\?tur=urun-destek$/);
-
-  const club = db.weldersClub ?? [];
-  await page.goto("/yonetim/welders-club");
-  const passive = club.filter((m) => m.leftAt).length;
-  await expect(page.getByText(`${club.length - passive} aktif · ${passive} pasif`)).toBeVisible();
 
   const apps = db.dealerApplications ?? [];
   await page.goto("/yonetim/bayilik-basvurulari");

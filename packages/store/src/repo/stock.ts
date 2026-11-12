@@ -23,6 +23,7 @@ import {
 } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nowIso } from "./shared";
+import { newestFirst } from "@zenweld/utils";
 
 /**
  * STOK — BAYI VE ONLINE SATICI STOKLARI
@@ -236,7 +237,7 @@ export function sourceStatus(
 export function stockHistory(type: StockSourceType, id: string, db: ZenweldDatabase = getSnapshot()): StockImport[] {
   return db.stockImports
     .filter((i) => sameSource(i, type, id))
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    .sort((a, b) => newestFirst(a.createdAt, b.createdAt));
 }
 
 /** Geri alinabilecek kayit: kaynagin en son islemi, dosya yuklemesi, onceki hali saklanmis. */
@@ -273,7 +274,7 @@ function prune(db: ZenweldDatabase, type: StockSourceType, id: string) {
   const keep = new Set<string>();
   db.stockImports
     .filter((i) => sameSource(i, type, id))
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .sort((a, b) => newestFirst(a.createdAt, b.createdAt))
     .forEach((i) => {
       count += 1;
       if (count <= KEEP_HISTORY) keep.add(i.id);

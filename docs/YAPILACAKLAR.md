@@ -458,8 +458,8 @@ Veritabanı modu bütün kayıtlar için hazır ([VERITABANI.md](VERITABANI.md),
 2. **Süreye bağlı yenileme:** Değişiklik panel kaydında hemen görünür
    (`refreshSite`); sayfaların 30 saniyede bir yeniden hazırlanması yalnızca
    yedektir. Sürenin uzatılıp uzatılmayacağı sahibine sorulur (K-88).
-3. **Form kayıtlarının saklama süresi:** bayilik başvurusu, mesaj ve
-   Welders Club kayıtlarının ne kadar tutulacağı ve silinmesi KVKK kararıyla
+3. **Form kayıtlarının saklama süresi:** bayilik başvurusu ve mesaj
+   kayıtlarının ne kadar tutulacağı ve silinmesi KVKK kararıyla
    belirlenecek (K-100; [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama)).
 4. **"Doğrulanmış alıcı":** Giriş yapmış üyenin ürün değerlendirmesi bugün
    iki modda da "Doğrulanmış alıcı" sayılıyor; üyenin o ürünü gerçekten
@@ -577,7 +577,7 @@ formda botlar için görünmez bir tuzak alanı var
 3. **Bildirim ucu:** Kayıt tutan formlar (teklif, servis talebi, garanti,
    yorum, üyelik, sipariş, iade) veritabanı modunda sunucuda veritabanına
    yazılıyor ve e-posta bu kayıttan gidiyor. Kalan: canlıda `/api/bildirim`
-   yalnızca kaydı olmayan türleri (iletişim, Welders Club) ve üyelik
+   yalnızca kaydı olmayan türü (iletişim) ve üyelik
    bildirimini kabul etmeli; bugün bu uca sahte bir bildirim (ör. "yeni
    sipariş") de gönderilebilir. Sipariş e-postası ödeme kuruluşunun
    onayından sonra gönderilmeli.
@@ -622,8 +622,9 @@ kararlaştırılacak. Form uçlarındaki istek sınırı ve bot koruması:
 [Formlar — güvenlik](#formlar--güvenlik).
 
 1. Görsellerde `width`/`height` yok (sayfa kayması — CLS)
-2. 8 dosyada hâlâ Lorem ipsum yer tutucu metin var: anasayfa, ürün sayfası,
-   Welders Club, Teklif Al formu, Adreslerim, `tr.ts` ve örnek veriler
+2. 10 dosyada hâlâ Lorem ipsum yer tutucu metin var: anasayfa, ürün
+   sayfası, blog yazısı sayfası, Teklif Al formu, Adreslerim ve örnek
+   veriler (içerik, ürün, sipariş, üye, öne çıkanlar)
 3. Otomatik kontrol (CI) yok; iş kuralları testleri (`npm test`) ve
    tarayıcı testleri (`npm run test:e2e`) var, elle çalıştırılıyor
    (KARARLAR K-67)
@@ -658,7 +659,7 @@ temsili. Canlı için:
    hiçbir e-posta gitmiyor, 6. madde.)
 6. **Form e-postaları için Resend kurulumu**: sunucuda `RESEND_API_KEY` ve
    doğrulanmış gönderici adresi `SUPPORT_FROM` tanımlanmalı. Tanımlı değilse
-   canlıda e-posta formları (iletişim, bayilik, Welders Club) veritabanı
+   canlıda e-posta formları (iletişim, bayilik) veritabanı
    kaydı da yoksa ziyaretçiye hata gösterir.
 7. **Zamanlanmış iş**: süresi dolan havale siparişlerini iptal eden günlük iş
    (bugün sipariş sayfaları açılınca yapılıyor; veritabanı modunda
@@ -786,6 +787,7 @@ Sipariş bildirimleri "Online satış" 5'te. Ayrıca:
 Hangi bildirimlerin gönderileceği ve metinleri kararlaştırılmalı. Yeni tür
 eklenince [VERITABANI.md](VERITABANI.md) › `email_recipients` › Müşteriye
 giden e-postalar listesine yazılır.
+
 
 ## Bayi ve satıcı stokları
 

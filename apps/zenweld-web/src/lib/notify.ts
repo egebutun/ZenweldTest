@@ -6,8 +6,8 @@
  * Sunucu tarafi: app/api/bildirim (form turleri ve alanlari orada).
  * Kayit tutan formlar (teklif, servis, garanti, yorum, uyelik, siparis, iade)
  * e-postayi haber vermek icin gonderir ve sonucunu beklemez; kaydi
- * olmayan formlar (iletisim, bayilik, Welders Club) sonuca gore basari ya da hata
- * gosterir (reached).
+ * olmayan formlar (iletisim, bayilik) sonuca gore basari ya da hata gosterir
+ * (reached).
  */
 
 export type NotifyType =
@@ -18,8 +18,7 @@ export type NotifyType =
   | "yorum"
   | "uye"
   | "siparis"
-  | "iade"
-  | "welders-club";
+  | "iade";
 
 export interface SendResult {
   ok: boolean;

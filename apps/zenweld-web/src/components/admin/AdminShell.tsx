@@ -12,7 +12,6 @@ import {
   FileText,
   FolderOpen,
   FolderTree,
-  Flame,
   GalleryHorizontal,
   Handshake,
   HelpCircle,
@@ -112,7 +111,6 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/yonetim/servis-talepleri", label: "Servis Talepleri", Icon: Wrench },
       { href: "/yonetim/garantiler", label: "Garantiler", Icon: ShieldCheck },
       { href: "/yonetim/mesajlar", label: "Mesajlar", Icon: MessageSquare },
-      { href: "/yonetim/welders-club", label: "Welders Club", Icon: Flame },
     ],
   },
   {

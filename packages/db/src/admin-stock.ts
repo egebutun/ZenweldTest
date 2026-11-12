@@ -22,6 +22,7 @@ import { writeAudit, type Actor, type AuditDb } from "./audit";
 import { fail, newId, saved, text, unchanged, type PanelResult, type Saved } from "./panel";
 import { dealerStockRow, readCatalog, readDealers, readRetailers, readSettings, retailerStockRow, stockImportRow } from "./read";
 import * as s from "./schema";
+import { newestFirst } from "@zenweld/utils";
 
 /**
  * PANEL › STOK MATRISI SUNUCUDA (veritabani modu; Asama 5, 4. alan, adim
@@ -496,7 +497,7 @@ export async function adminRevertStockImport(db: AuditDb, actor: Actor, input: I
   await lockSource(db, source.type, source.id);
   const [record] = await db.select().from(s.stockImports).where(eq(s.stockImports.id, importId)).for("update");
   const [latest] = [...(await sourceHistory(db, source.type, source.id))].sort(
-    (a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id),
+    (a, b) => newestFirst(a.createdAt, b.createdAt) || b.id.localeCompare(a.id),
   );
   if (!record || latest?.id !== record.id || record.kind !== "file" || record.revertedAt || !record.previous) return fail(409, stale);
 

@@ -6,8 +6,8 @@ import { closeDatabase, expect, registerMember, sql, test } from "./yardimci";
  * FORMLAR SUNUCUDA (Asama 5.3; KARARLAR K-81, IS-KURALLARI › Form e-postaları)
  *
  * Veritabani modunda Teklif Al, servis talebi, garanti kaydi ve urun yorumu
- * sunucuda kaydedilir; iletisim, bayilik, urun sorusu ve Welders Club kendi
- * tablolarina da yazilir; gonderilen her e-posta email_log'a yazilir.
+ * sunucuda kaydedilir; iletisim, bayilik ve urun sorusu kendi tablolarina
+ * da yazilir; gonderilen her e-posta email_log'a yazilir.
  */
 test.describe.configure({ mode: "serial" });
 test.afterAll(closeDatabase);
@@ -132,7 +132,7 @@ test("servis talebi, garanti kaydı ve ürün yorumu sunucuda; garanti sorgulama
   ).toEqual([{ approved: false, verified_purchase: true }]);
 });
 
-test("iletişim formu ve Welders Club kendi tablolarına yazılır; bot tuzağına takılan kaydedilmez", async ({ page }) => {
+test("iletişim formu kendi tablosuna yazılır; bot tuzağına takılan kaydedilmez", async ({ page }) => {
   const email = newEmail("iletisim");
   await page.goto("/iletisim");
   const form = page.locator("main form").first();
@@ -151,13 +151,9 @@ test("iletişim formu ve Welders Club kendi tablolarına yazılır; bot tuzağı
   expect(message).toMatchObject({ type: "iletisim", page_url: "/iletisim", subject: "Bilgi" });
   await expect.poll(async () => (await mailLog("support_messages", message.id)).length).toBe(1);
 
-  const club = await page.request.post("/api/bildirim", { data: { type: "welders-club", data: { name: "Kaynakçı", email } } });
-  expect((await club.json()).saved).toBe(true);
-  expect(await sql("SELECT name FROM welders_club_signups WHERE email = $1", [email])).toEqual([{ name: "Kaynakçı" }]);
-
   const bot = await page.request.post("/api/bildirim", {
-    data: { type: "welders-club", data: { name: "Bot", email: "bot@ornek.com" }, website: "http://spam" },
+    data: { type: "iletisim", data: { name: "Bot", email: "bot@ornek.com", message: "Spam" }, website: "http://spam" },
   });
   expect(bot.status()).toBe(200);
-  expect(await sql("SELECT 1 FROM welders_club_signups WHERE email = 'bot@ornek.com'")).toEqual([]);
+  expect(await sql("SELECT 1 FROM support_messages WHERE email = 'bot@ornek.com'")).toEqual([]);
 });

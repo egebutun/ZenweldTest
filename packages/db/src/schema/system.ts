@@ -12,7 +12,6 @@ import { users } from "./users";
 export const EMAIL_TYPES = [
   "iletisim",
   "bayilik",
-  "welders-club",
   "urun-destek",
   "teklif",
   "servis",

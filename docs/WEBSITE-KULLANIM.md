@@ -37,7 +37,7 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
 13. [Üyelik: giriş, kayıt, şifre, çıkış](#13-üyelik)
 14. [Hesabım](#14-hesabım)
 15. [Teklif Al](#15-teklif-al)
-16. [İletişim, Bayilik Başvurusu, Servis Talebi, Welders Club](#16-formlar)
+16. [İletişim, Bayilik Başvurusu, Servis Talebi](#16-formlar)
 17. [Garanti](#17-garanti)
 18. [Belgeler: MSDS, Kaynak Rehberi, Parti Sertifikaları](#18-belgeler)
 19. [Kurumsal sayfalar: Hakkımızda, Satış Temsilcilerimiz, SSS](#19-kurumsal-sayfalar)
@@ -84,8 +84,8 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
   - Kaydı panelde tutulan formlar (sipariş, teklif, servis talebi, garanti,
     değerlendirme, üyelik) e-postanın sonucunu beklemez; kayıt her durumda
     yapılır.
-  - E-posta formları (iletişim, bayilik, Welders Club, ürün destek
-    sohbeti) demo modunda e-posta gidemezse ziyaretçiye hata gösterir ve
+  - E-posta formları (iletişim, bayilik, ürün destek sohbeti) demo
+    modunda e-posta gidemezse ziyaretçiye hata gösterir ve
     `info@zenweld.com`'a doğrudan yazmasını söyler; e-posta gidince kayıt
     tarayıcıya da yazılır ve aynı tarayıcının panelinde görünür (KARARLAR
     K-109). Veritabanı modunda bu formlar veritabanına kaydedilir; kayıt
@@ -117,7 +117,7 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
 | **FORCE** (ilk başlık, kırmızı) | Menüsü yoktur; tıklayınca [Force Serisi sayfası](#force-serisi-force) (`/force`) açılır. |
 | **Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri** | Başlığa tıklayınca bölüm sayfası açılır; üzerine gelince mega menü açılır. |
 | **Destek ve Garanti** | Başlığa tıklayınca [Destek ve Garanti sayfası](#destek-ve-garanti-destek) (`/destek`) açılır. Üzerine gelince menü açılır: solda başlık, kısa açıklama ve **Tümünü Gör** (`/destek`); sağda iki kolonda, sembolleriyle ve kısa açıklamalarıyla: 1. kolon İletişim, Yetkili Bayi ve Servis Bul, Servis Talebi, Sık Sorulan Sorular; 2. kolon Garanti Kaydı, Garanti Sorgulama, Garanti Koşulları, İade ve Değişim (`/yasal/iade`). |
-| **Keşfet** (en sonda) | Başlık bir sayfa açmaz; üzerine gelince ya da tıklayınca menü açılır. Solda "Keşfet" ve "Zenweld'i tanıyın; haberler, etkinlikler, rehberler ve belgeler tek yerde."; sağda üç başlıklı kolonda, sembolleriyle ve kısa açıklamalarıyla: **Kurumsal** (Hakkımızda, Satış Temsilcilerimiz, Bayimiz Olun), **Güncel** (Haberler, Etkinlikler, Blog, Welders Club), **Diğer** (Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları). "Tümünü Gör" yoktur. |
+| **Keşfet** (en sonda) | Başlık bir sayfa açmaz; üzerine gelince ya da tıklayınca menü açılır. Solda "Keşfet" ve "Zenweld'i tanıyın; haberler, etkinlikler, rehberler ve belgeler tek yerde."; sağda üç başlıklı kolonda, sembolleriyle ve kısa açıklamalarıyla: **Kurumsal** (Hakkımızda, Satış Temsilcilerimiz, Bayimiz Olun), **Güncel** (Haberler, Etkinlikler, Blog), **Diğer** (Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları). "Tümünü Gör" yoktur. |
 | **Ara** kutusu | Arama penceresini açar. Klavyede **⌘K / Ctrl+K** ile de açılır. |
 | Konum simgesi | Yetkili Bayi ve Servis Ağı sayfasına gider. |
 | Sepet simgesi | Sepete gider; sepetteki toplam adet rozetle yazar (99'dan fazlaysa "99+"). |
@@ -258,7 +258,8 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
      adları ve kategori sayısı; bölüm sayfasına gider.
 4. **Force Serisi:** Model Serisi "Force" olan yayındaki ürünler; kategori
    sayfasındaki Model Serisi filtresinde "Force" seçilince çıkan ürünlerle
-   aynıdır ("Tümünü Gör" `/arama?q=Force`).
+   aynıdır ("Tümünü Gör" [Force Serisi sayfasını](#force-serisi-force)
+   açar, `/force`).
 5. **Jasic Lazer Ürünleri:** Markası Jasic olan yayındaki ürünler
    ("Tümünü Gör" `/ekipmanlar/lazer-makineleri`). Seriye ya da markaya ürün
    eklenince kendiliğinden girer; ürün yoksa bölüm görünmez.
@@ -721,7 +722,7 @@ listelenir.
 - **Kategoriler:** Ad, açıklama ve anahtar kelimeleri.
 - **İçerik:** Yayındaki etkinlikler, haberler ve blog yazıları.
 - **Sabit sayfalar** (anahtar kelimeleriyle): Teklif Al, bayi bulucu, garanti
-  sorgulama ve kaydı, Welders Club, MSDS, Parti Sertifikaları, Ürün Seçici,
+  sorgulama ve kaydı, MSDS, Parti Sertifikaları, Ürün Seçici,
   İletişim, SSS, Hakkımızda, Blog, Etkinlikler, Haberler.
 
 **Arama kuralları:**
@@ -1451,25 +1452,6 @@ gelinir.
     temizler; iletişim bilgileri kalır.
   - Veritabanı modunda talebi sunucu kaydeder ve kuralları yeniden denetler.
 
-### Welders Club (`/welders-club`)
-
-- **Avantajlar:** Üyelere özel indirimler, Teknik eğitim içerikleri, Etkinlik
-  ve fuar davetiyeleri, Yeni ürünlere erken erişim. Açıklama metinleri yer
-  tutucudur.
-- **Katılım formu:**
-  - Zorunlu: Ad, E-posta.
-  - İsteğe bağlı: Şehir.
-  - **Kulübe Katıl** düğmesi; bot tuzağı vardır.
-- **Kayıt:** `info@zenweld.com`'a "Welders Club katılım" e-postası gider.
-  Demo modunda e-posta gidince katılım tarayıcıya da kaydedilir ve aynı
-  tarayıcıda panelin Welders Club ekranında görünür (KARARLAR K-109).
-  Veritabanı modunda katılım veritabanına kaydedilir; kayıt
-  yapıldıysa e-posta gitmese de başarı mesajı çıkar.
-- **Sonuç:**
-  - Başarı: "Kulüp üyeliğiniz oluşturuldu!"
-  - Hata: "Kaydınız şu an alınamadı. Lütfen tekrar deneyin ya da
-    info@zenweld.com adresine e-posta gönderin."
-
 ---
 
 ## 17. Garanti
@@ -1804,7 +1786,6 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 | `/iletisim` | İletişim |
 | `/bayilik-basvurusu` | Bayilik Başvurusu |
 | `/servis-talebi` | Servis Talebi |
-| `/welders-club` | Welders Club |
 | `/garanti`, `/garanti/kayit`, `/garanti/sorgulama`, `/garanti/kosullar` | Garanti |
 | `/msds`, `/kaynak-rehberi`, `/parti-sertifikalari` | Belgeler |
 | `/destek` | Destek ve Garanti |
@@ -1830,7 +1811,7 @@ Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 - **Çerez ayarları penceresi:** Henüz boştur; analiz ve pazarlama
   kategorileri sonra eklenecek.
 - **Yer tutucu metinler:** Anasayfadaki "Neden Zenweld?", ürünlerin Garanti
-  sekmesi, Welders Club avantaj açıklamaları, boş Adreslerim açıklaması, yasal
+  sekmesi, boş Adreslerim açıklaması, yasal
   metinler ve örnek blog yazıları lorem ipsum'dur.
 - **Ürün fotoğrafları:** Ekipmanlardan 19 ürünün fotoğrafı yok ve 4
   soğutmalı üründe bir soğutma halinin fotoğrafı eksik; bunlarda alt

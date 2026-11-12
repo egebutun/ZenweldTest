@@ -985,8 +985,8 @@ olmadığı için hiçbir e-posta gitmez.
 - Varsayılan alıcı sunucudaki `SUPPORT_EMAIL`'dir (yoksa
   `info@zenweld.com`).
 - Veritabanı modunda her türün (sipariş, iade talebi, teklif, servis
-  talebi, garanti kaydı, yorum, üyelik, iletişim, ürün destek, bayilik,
-  Welders Club) alıcıları panelde Mağaza Ayarları › E-posta Alıcıları'ndan
+  talebi, garanti kaydı, yorum, üyelik, iletişim, ürün destek, bayilik)
+  alıcıları panelde Mağaza Ayarları › E-posta Alıcıları'ndan
   yazılır: tür başına en fazla 10 adres; adresler küçük harfe çevrilir,
   aynı adres bir kez alınır. Alıcısı yazılmayan türün e-postası varsayılan
   adrese gider. Değişiklik bir sonraki e-postada geçerlidir.
@@ -1009,13 +1009,13 @@ olmadığı için hiçbir e-posta gitmez.
 - **Kaydı panelde olan formlar** (sipariş, teklif, servis, garanti, yorum,
   üyelik, iade talebi) e-postanın sonucunu beklemez; e-posta gitmese de
   kayıt yapılır.
-- **Yalnızca e-postayla giden formlar** (iletişim, bayilik başvurusu,
-  Welders Club, ürün destek sorusu) e-posta gidemezse ziyaretçiye hata
+- **Yalnızca e-postayla giden formlar** (iletişim, bayilik başvurusu, ürün
+  destek sorusu) e-posta gidemezse ziyaretçiye hata
   gösterir; ziyaretçi tekrar deneyebilir. Veritabanı modunda bu formlar da
   kendi tablolarına kaydedilir (KARARLAR K-81); kayıt yapıldıysa
   e-posta gitmese de form ulaşmış sayılır ve hata gösterilmez. Demo
   modunda form ulaşınca kayıt tarayıcıya da yazılır ve aynı tarayıcıda
-  panelde (Mesajlar, Welders Club, Bayilik Başvuruları) görünür (KARARLAR
+  panelde (Mesajlar, Bayilik Başvuruları) görünür (KARARLAR
   K-109); bot tuzağına takılan gönderim kaydedilmez.
 - **Bayilik başvurusunun kaydı** (iki modda aynı kural,
   `packages/data/src/forms.ts` › `dealerApplicationFields`): boş alan
@@ -1046,7 +1046,6 @@ olmadığı için hiçbir e-posta gitmez.
 | Üye Ol | "Yeni üye — <ad> (<tür>)" | Ad Soyad, E-posta, Telefon, Şehir, Üyelik, Firma, Bülten izni | Üyeler |
 | Sipariş | "Yeni sipariş — <no> — <toplam>" | Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — tutar), Kupon (varsa: kod (−indirim)), Toplam, Ödeme, Teslimat adresi, Fatura (kurumsalda firma, vergi dairesi, VKN; bireyselde ad); Müşteri notu | Siparişler |
 | İade talebi | "Yeni iade talebi — <talep no> — <sipariş no>" | Talep no, Sipariş no, Müşteri, E-posta, Telefon, Ürünler (adet × ad (seçenek) — kod), Neden; Açıklama | İade Talepleri |
-| Welders Club | "Welders Club katılım — <ad>" | Ad, E-posta, Şehir | Welders Club (demo modunda tarayıcıda; veritabanı modunda `welders_club_signups`) |
 | Bayilik Başvurusu | "Bayilik başvurusu — <firma>" | Firma unvanı, Vergi dairesi / no, Şehir, Faaliyet alanı, Sektördeki yıl, Çalıştığı markalar, Showroom var mı, Servis kabiliyeti, Yetkili kişi, E-posta, Telefon, Not. Sunucu firma ve e-posta olmadan kabul etmez | Bayilik Başvuruları (demo modunda tarayıcıda; veritabanı modunda `dealer_applications`) |
 | Ürün destek sorusu | "Ürün destek talebi — <ürün> (<kod>)" | Ürün, Ürün kodu, Ürün sayfası, Ad Soyad, E-posta, Telefon, Üye mi; Soru. Sunucu soru ve (e-posta ya da telefon) olmadan kabul etmez | Mesajlar (demo modunda tarayıcıda; veritabanı modunda `support_messages`) |
 
@@ -1341,8 +1340,7 @@ Aşağıdaki kurallar panelin bütün ekranlarında geçerlidir.
   değiştirilemez, 2 yıl saklanır (K-81).
 - **Sipariş geçmişi:** Panelde yapılan her durum değişikliğinde işlemi yapan
   yönetici de saklanır (müşteriye gösterilmez).
-- **Silinmeyen kayıtlar:** Bayilik başvurusu, mesaj ve Welders Club kaydı
-  panelden silinmez; Welders Club'dan ayrılmak isteyen pasife alınır
+- **Silinmeyen kayıtlar:** Bayilik başvurusu ve mesaj panelden silinmez
   (KARARLAR K-100). Kullanılmış kupon da silinmez ([21](#21-kuponlar)).
 - **Anasayfa yorum sınırı:** En fazla 10 yorum ([15](#15-ürün-yorumları));
   iki yönetici aynı anda işaretlese de sınır aşılmaz. Onaylanan ya da
@@ -1525,15 +1523,19 @@ Kod: `packages/data/src/file-rules.ts` (türler, boyut, adres),
 ## 24. Panel listeleri: sayfalama ve arama
 
 Uzun panel listeleri (Siparişler, İade Talepleri, Teklifler, Servis
-Talepleri, Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları, Mesajlar ve
-Welders Club) iki modda aynı kurallarla sayfalanır. Veritabanı modunda
+Talepleri, Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları ve Mesajlar)
+iki modda aynı kurallarla sayfalanır. Veritabanı modunda
 sunucu yalnızca istenen sayfanın kayıtlarını okur ve gönderir; demo modunda
 aynı hesap tarayıcıda yapılır.
 
 - **Sayfa:** Sayfa başına 50 kayıt. Sayfa numarası adreste durur
   (`?sayfa=2`). Son sayfadan büyük bir numara son sayfayı açar.
-- **Sıra:** Yeniden eskiye; aynı anda oluşanlar kayıt numarasına göre
-  (büyük numara önce). Üyelerde aynı anda açılan hesaplar e-postaya göre
+- **Sıra:** Yeniden eskiye, kaydın saatine göre. Zaman Türkiye saatiyle
+  (`+03:00`, örnek veri) ya da UTC olarak (`Z`, sitede yeni oluşan kayıt)
+  yazılmış olsa da gerçek saat karşılaştırılır.
+  - **Örnek:** 18:00'de gönderilen talep (`15:00Z`), aynı gün 17:30'daki
+    örnek talebin (`17:30+03:00`) üstündedir.
+  - Aynı anda oluşanlar kayıt numarasına göre (büyük numara önce). Üyelerde aynı anda açılan hesaplar e-postaya göre
   (A'dan Z'ye).
 - **Süzgeç ve arama adreste:** Durum `?durum=`, arama `?ara=`. Süzgeç ya
   da arama değişince 1. sayfaya dönülür. Arama en çok 100 karakterdir.
@@ -1566,8 +1568,6 @@ aynı hesap tarayıcıda yapılır.
     üyeyi; "ısparta" firması "Isparta Ltd" olan üyeyi bulur.
 - **Mesajlar:** Tür süzgeci (`?tur=`: iletişim formu ya da ürün sorusu).
   Başlıktaki "<n> mesaj · <n> yeni" bütün mesajları sayar.
-- **Welders Club:** Arama ad, e-posta ve şehirde. Başlıktaki "<n> aktif · <n>
-  pasif" bütün kayıtları sayar.
 - **Bayilik Başvuruları:** Başlıktaki "<n> başvuru · <n> yeni" bütün
   başvuruları sayar.
 - **CSV İndir** (Teklifler, Garantiler, Üyeler): seçili süzgece uyan

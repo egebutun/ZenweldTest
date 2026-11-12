@@ -10,7 +10,6 @@ import {
   type ServiceRequestStatus,
   type SupportMessage,
   type WarrantyRecord,
-  type WeldersClubSignup,
 } from "@zenweld/data";
 import {
   deleteQuote,
@@ -22,7 +21,6 @@ import {
   saveWarranty,
   setDealerApplicationStatus,
   setSupportMessageStatus,
-  setWeldersClubActive,
   toggleFeaturedReview,
 } from "@zenweld/store";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
@@ -31,12 +29,11 @@ export type { PanelAnswer };
 
 /**
  * PANEL › TALEPLER ISLEMLERI (teklifler, servis talepleri, garantiler,
- * yorumlar; bayilik basvurulari, mesajlar, Welders Club)
+ * yorumlar; bayilik basvurulari, mesajlar)
  *
  * Veritabani modunda islem sunucuya gider (/api/yonetim/talepler; Asama 5,
- * 2. alan, KARARLAR K-99, K-100). Demo modunda tarayicidaki veriye yazilir;
- * basvuru, mesaj ve Welders Club kayitlari yalnizca veritabaninda tutulur
- * (demo modunda bu ekranlar bostur).
+ * 2. alan, KARARLAR K-99, K-100). Demo modunda tarayicidaki veriye yazilir
+ * (basvuru ve mesaj dahil; KARARLAR K-109).
  */
 export function useRequestActions() {
   const { server, pending, call } = usePanelCall("talepler");
@@ -89,9 +86,5 @@ export function useRequestActions() {
       server
         ? call("mesaj", { ...recordRef("support_messages", m), status, adminNote }, "support_messages")
         : localAnswer(setSupportMessageStatus(m.id, status, adminNote)),
-    setWeldersClubActive: (w: WeldersClubSignup, active: boolean) =>
-      server
-        ? call("welders-club", { ...recordRef("welders_club_signups", w), active }, "welders_club_signups")
-        : localAnswer(setWeldersClubActive(w.id, active)),
   };
 }

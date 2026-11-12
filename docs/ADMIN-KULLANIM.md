@@ -95,7 +95,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     - **Satış:** Siparişler, İade Talepleri, Kuponlar
       ([Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)).
     - **Talepler:** Teklifler, Servis Talepleri, Garantiler, Yorumlar ile
-      Bayilik Başvuruları, Mesajlar ve Welders Club
+      Bayilik Başvuruları ve Mesajlar
       ([Veritabanı modunda Talepler ekranları](#veritabanı-modunda-talepler-ekranları)).
     - **Katalog:** Seçenek Tanımları, Kategoriler ve gruplar, Ürünler
       ([Veritabanı modunda Katalog ekranları](#veritabanı-modunda-katalog-ekranları)).
@@ -145,7 +145,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 | Satış | Siparişler · Teklifler · İade Talepleri · Kuponlar · Mağaza Ayarları |
 | Ürünler | Ürünler · Kategoriler · Seçenek Tanımları · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Bayilik Başvuruları · Online Satıcılar · Satış Temsilcileri |
-| Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar · Welders Club |
+| Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar |
 | İçerik | Anasayfa Tanıtım · Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
 | Ayarlar | Görünüm · İşlem Kaydı · E-posta Kaydı (son ikisi yalnızca veritabanı modunda kayıt tutar) |
 
@@ -206,8 +206,7 @@ alan seçilir, ekran okuyucu alanı etiketiyle okur.
 - Listede soluk görünür; sitede görünmez (adresi açılırsa 404).
 
 **Uzun listeler** (Siparişler, İade Talepleri, Teklifler, Servis Talepleri,
-Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları, Mesajlar ve Welders
-Club; kurallar
+Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları ve Mesajlar; kurallar
 [IS-KURALLARI.md › 24](IS-KURALLARI.md#24-panel-listeleri-sayfalama-ve-arama)):
 
 - Sayfa başına 50 kayıt. Tablonun altında "1–50 / 133", **← Önceki**,
@@ -817,7 +816,7 @@ alıcıları, türüne göre (KARARLAR K-104).
   info@zenweld.com); kutularda soluk olarak görünür.
 - Satırlar: Yeni sipariş, İade talebi, Teklif talebi, Servis talebi,
   Garanti kaydı, Ürün yorumu, Yeni üye, İletişim formu, Ürün destek sorusu,
-  Bayilik başvurusu, Welders Club katılımı.
+  Bayilik başvurusu.
 - Adresler virgül, noktalı virgül, boşluk ya da satır sonuyla ayrılabilir;
   küçük harfe çevrilir, aynı adres bir kez alınır.
 - Hatalar: "<tür>: "<adres>" geçerli bir e-posta adresi değil." /
@@ -2305,7 +2304,7 @@ sayfalarla aynı listedir.
 | Grup | Sayfalar |
 |---|---|
 | Ana sayfa ve ürün bölümleri | Ana Sayfa, Force Serisi, Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri, Teklif Al |
-| Keşfet | Hakkımızda, Satış Temsilcilerimiz, Bayilik Başvurusu, Haberler, Etkinlikler, Blog, Welders Club, Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları |
+| Keşfet | Hakkımızda, Satış Temsilcilerimiz, Bayilik Başvurusu, Haberler, Etkinlikler, Blog, Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları |
 | Destek ve Garanti | Destek ve Garanti, İletişim, Sık Sorulan Sorular, Yetkili Bayi ve Servis Ağı, Servis Talebi, Garanti, Garanti Kaydı, Garanti Sorgulama |
 
 - Giriş Yap, Üye Ol, Şifremi Unuttum ve Arama sayfaları aramaya kapalıdır;
@@ -2492,7 +2491,6 @@ veritabanına bağlandığında burada listelenir." yazar.
 | Üye Ol | Üyeler | Aktif |
 | İletişim | Mesajlar | Yeni |
 | Bayilik Başvurusu | Bayilik Başvuruları | Yeni |
-| Welders Club | Welders Club | Aktif |
 | Ürün sayfası destek sorusu | Mesajlar | Yeni |
 | Bülten kaydı | — (hiçbir yere gitmez) | — |
 | Şifremi Unuttum | — (hiçbir yere gitmez) | — |
@@ -2502,11 +2500,11 @@ veritabanına bağlandığında burada listelenir." yazar.
   hiçbir e-posta gitmez ([SUNUCU.md](SUNUCU.md) › 9).
   - E-postada **Yanıtla** denince yanıt doğrudan formu dolduran kişiye gider.
   - Sipariş e-postasına T.C. kimlik no ve kart bilgisi yazılmaz.
-  - İletişim, bayilik, Welders Club ve ürün destek formları e-posta
-    gönderilemezse ziyaretçiye hata gösterir ve tekrar denenebilir. Demo
-    modunda form ulaşınca kayıt tarayıcıya da yazılır; Bayilik
-    Başvuruları, Mesajlar ve Welders Club ekranlarında **aynı tarayıcıda**
-    görünür, durum, not ve pasife alma orada da çalışır (KARARLAR K-109).
+  - İletişim, bayilik ve ürün destek formları e-posta gönderilemezse
+    ziyaretçiye hata gösterir ve tekrar denenebilir. Demo modunda form
+    ulaşınca kayıt tarayıcıya da yazılır; Bayilik Başvuruları ve Mesajlar
+    ekranlarında **aynı tarayıcıda** görünür, durum ve not orada da çalışır
+    (KARARLAR K-109).
     Veritabanı modunda bu formlar sunucuda kaydedilir; e-posta gitmese de
     form ulaşmış sayılır.
   - Her formda botlar için görünmez bir tuzak alanı vardır; onu dolduran
@@ -2554,26 +2552,10 @@ Menüde Müşteriler ve Servis grubundadır. Sitedeki iletişim formundan ve
     programını açar. Yanıt panelden gönderilmez.
 - Mesaj silinmez (KARARLAR K-100).
 
-### Welders Club (`/yonetim/welders-club`)
-
-Menüde Müşteriler ve Servis grubundadır. Sitedeki Welders Club formundan
-katılanlar. Başlık altı: "<n> aktif · <n> pasif".
-
-- **Arama:** "Ad, e-posta veya şehir ara…" (adreste `?ara=`). Başlık
-  altındaki sayılar bütün kayıtlardır.
-- **Tablo:** Ad Soyad, E-posta, Şehir, Katılım tarihi, Durum ("Aktif" ya da
-  "Pasif · <tarih>"), İşlem. En yeni katılım üstte; sayfa başına 50 (bkz.
-  [Uzun listeler](#2-ortak-davranışlar)). Boşsa "Henüz Welders
-  Club katılımı yok." / "Aramanıza uygun kayıt yok."
-- **Pasife al:** Kulüpten ayrılmak isteyen kişi pasife alınır; satır soluk
-  görünür. **Aktif yap** geri alır.
-- Kayıt silinmez (KARARLAR K-100). Ekranın altındaki not: "Kulüpten
-  ayrılmak isteyen kişi pasife alınır; kaydı silinmez."
-
 ### Veritabanı modunda Talepler ekranları
 
 Veritabanı modunda Teklifler, Servis Talepleri, Garantiler, Yorumlar,
-Bayilik Başvuruları, Mesajlar ve Welders Club veritabanıyla çalışır
+Bayilik Başvuruları ve Mesajlar veritabanıyla çalışır
 (KARARLAR K-99, K-100). Kurallar
 [Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
 ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur (listelerde
@@ -2630,7 +2612,6 @@ sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 | `/yonetim/servis-talepleri` | Servis Talepleri |
 | `/yonetim/garantiler` | Garantiler |
 | `/yonetim/mesajlar` | Mesajlar |
-| `/yonetim/welders-club` | Welders Club |
 | `/yonetim/haberler`, `/yeni`, `/<id>` | Haberler |
 | `/yonetim/etkinlikler`, `/yeni`, `/<id>` | Etkinlikler |
 | `/yonetim/blog`, `/yeni`, `/<id>` | Blog |

@@ -14,7 +14,6 @@ import {
   adminSaveWarranty,
   adminSetReviewApproved,
   adminSetReviewFeatured,
-  adminSetWeldersClubActive,
   readDealerApplicationsPage,
   readMessagesPage,
   readQuotesForExport,
@@ -23,7 +22,6 @@ import {
   readServicePage,
   readWarrantiesForExport,
   readWarrantiesPage,
-  readWeldersClubPage,
   type Actor,
 } from "../../packages/db/src";
 import * as schema from "../../packages/db/src/schema";
@@ -32,8 +30,8 @@ import { category, closePool, group, inTransaction, product, user } from "./orta
 /*
  * PANEL › TALEPLER SUNUCUDA (packages/db/src/admin-requests.ts; Asama 5,
  * 2. alan, KARARLAR K-99, K-100): teklif, servis talebi, garanti, yorum,
- * bayilik basvurusu, mesaj ve Welders Club islemleri; ekran acildiktan
- * sonra degismis kaydin kaydedilmemesi; audit_log. Her test kendi isleminde
+ * bayilik basvurusu ve mesaj islemleri; ekran acildiktan sonra degismis
+ * kaydin kaydedilmemesi; audit_log. Her test kendi isleminde
  * calisir ve geri alinir.
  */
 
@@ -222,7 +220,7 @@ describe("yorumlar", () => {
   });
 });
 
-describe("bayilik başvuruları, mesajlar, Welders Club", () => {
+describe("bayilik başvuruları, mesajlar", () => {
   it("başvuru ve mesajın durumu ve iç notu kaydedilir; hatalı durum ve eski ekran reddedilir", async () => {
     await withPanel(async (db, client) => {
       await client.query(
@@ -251,25 +249,6 @@ describe("bayilik başvuruları, mesajlar, Welders Club", () => {
         ["support_messages", "Ali"],
       ]);
       // Form kayitlari panelden silinmez: silme islemi yok (K-100).
-    });
-  });
-
-  it("Welders Club: pasife alınır ve yeniden aktif yapılır; kayıt silinmez", async () => {
-    await withPanel(async (db, client) => {
-      await client.query(
-        "INSERT INTO welders_club_signups (id, name, email, created_at, updated_at) VALUES ('wc1', 'Usta', 'usta@ornek.com', $1, $1)",
-        [T0],
-      );
-      expect(await adminSetWeldersClubActive(db, admin, { ...ref("wc1"), active: false }, T1)).toEqual(saved(T1));
-      expect((await readWeldersClubPage(db, { page: 1 })).rows[0]).toMatchObject({ leftAt: T1.toISOString(), updatedAt: T1.toISOString() });
-      // Zaten pasif: hicbir sey yazilmaz.
-      expect(await adminSetWeldersClubActive(db, admin, { ...ref("wc1", T1), active: false }, T2)).toEqual(saved(T1));
-      expect(await adminSetWeldersClubActive(db, admin, { ...ref("wc1", T1), active: true }, T2)).toEqual(saved(T2));
-      expect((await readWeldersClubPage(db, { page: 1 })).rows[0].leftAt).toBeUndefined();
-      expect((await audit(client)).map((r) => r.changes)).toEqual([
-        { leftAt: [null, T1.toISOString()] },
-        { leftAt: [T1.toISOString(), null] },
-      ]);
     });
   });
 });
@@ -371,7 +350,7 @@ describe("sayfalı listeler", () => {
     });
   });
 
-  it("mesajlar (tür), Welders Club (Türkçe arama, aktif / pasif) ve bayilik başvuruları: sayfa ve sayılar", async () => {
+  it("mesajlar (tür) ve bayilik başvuruları: sayfa ve sayılar", async () => {
     await withPanel(async (db, client) => {
       for (const [id, type, status] of [["m1", "iletisim", "new"], ["m2", "urun-destek", "read"], ["m3", "iletisim", "new"]]) {
         await client.query(
@@ -382,17 +361,6 @@ describe("sayfalı listeler", () => {
       const messages = await readMessagesPage(db, { page: 1, type: "iletisim" });
       expect(messages).toMatchObject({ total: 2, all: 3, newCount: 2 });
       expect(messages.rows.map((m) => m.id)).toEqual(["m3", "m1"]);
-
-      for (const [id, name, left] of [["c1", "IŞIK Usta", null], ["c2", "Deneme", T1], ["c3", "Başka", null]] as const) {
-        await client.query(
-          "INSERT INTO welders_club_signups (id, name, email, city, left_at, created_at, updated_at) VALUES ($1, $2, $1 || '@ornek.com', 'Isparta', $3, $4, $4)",
-          [id, name, left, T0],
-        );
-      }
-      const club = await readWeldersClubPage(db, { page: 1, q: "ışık" });
-      expect(club).toMatchObject({ total: 1, active: 2, passive: 1 });
-      expect(club.rows.map((m) => m.id)).toEqual(["c1"]);
-      expect((await readWeldersClubPage(db, { page: 1, q: "ısparta" })).total).toBe(3);
 
       for (const [id, status] of [["b1", "new"], ["b2", "approved"]]) {
         await client.query(

@@ -3,6 +3,7 @@
 import { type BlogPost, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { findMoved, nowIso, withPreviousSlugs } from "./shared";
+import { newestFirst } from "@zenweld/utils";
 
 /* ------------------------------------------------------------------ */
 /* Blog                                                               */
@@ -14,12 +15,12 @@ import { findMoved, nowIso, withPreviousSlugs } from "./shared";
 export function listBlogPosts(db: ZenweldDatabase = getSnapshot()): BlogPost[] {
   return db.blogPosts
     .filter((p) => p.active !== false)
-    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    .sort((a, b) => newestFirst(a.publishedAt, b.publishedAt));
 }
 
 /** Yonetim panelindeki tam liste (yayinda olmayanlar dahil). */
 export function listAllBlogPosts(db: ZenweldDatabase = getSnapshot()): BlogPost[] {
-  return [...db.blogPosts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  return [...db.blogPosts].sort((a, b) => newestFirst(a.publishedAt, b.publishedAt));
 }
 
 export function findBlogPostById(
@@ -43,7 +44,7 @@ export function findMovedBlogPost(slug: string, db: ZenweldDatabase = getSnapsho
 }
 
 function sortBlogPosts(list: BlogPost[]): void {
-  list.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  list.sort((a, b) => newestFirst(a.publishedAt, b.publishedAt));
 }
 
 export function saveBlogPost(item: BlogPost): void {

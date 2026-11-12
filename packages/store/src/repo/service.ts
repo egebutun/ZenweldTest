@@ -3,13 +3,14 @@
 import type { ServiceRequest, ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nextCode, nowIso } from "./shared";
+import { newestFirst } from "@zenweld/utils";
 
 /* ------------------------------------------------------------------ */
 /* Servis talepleri                                                    */
 /* ------------------------------------------------------------------ */
 
 export function listServiceRequests(db: ZenweldDatabase = getSnapshot()): ServiceRequest[] {
-  return [...db.serviceRequests].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  return [...db.serviceRequests].sort((a, b) => newestFirst(a.createdAt, b.createdAt));
 }
 
 /** Tarayici deposuna yazilamazsa (depo dolu) kayit yapilmaz ve null doner. */

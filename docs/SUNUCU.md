@@ -181,7 +181,7 @@ konsolda "Content Security Policy" uyarısı çıkar.
 
 | Yer | İçerik |
 |---|---|
-| `src/schema/` | Tabloların tanımı (Drizzle ORM), konuya göre dosyalar: `catalog`, `network` (bayi, satıcı, stok), `users`, `sales` (teklif, sipariş, kargo gönderisi, iade), `coupons`, `sap` (depo stoğu), `support` (servis, garanti, yorum), `content`, `settings` (ayarlar, POS, banka, kargo firmaları), `forms` (bayilik, destek mesajları, Welders Club), `system` (e-postalar, numaralar, değişiklik kaydı) |
+| `src/schema/` | Tabloların tanımı (Drizzle ORM), konuya göre dosyalar: `catalog`, `network` (bayi, satıcı, stok), `users`, `sales` (teklif, sipariş, kargo gönderisi, iade), `coupons`, `sap` (depo stoğu), `support` (servis, garanti, yorum), `content`, `settings` (ayarlar, POS, banka, kargo firmaları), `forms` (bayilik, destek mesajları), `system` (e-postalar, numaralar, değişiklik kaydı) |
 | `migrations/` | Geçiş betikleri (aşağıda) |
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
@@ -218,6 +218,9 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `0008_welders-club-pasif.sql` | `welders_club_signups`'a `left_at` (pasife alınma) ve `updated_at` (panelde aynı kayıt koruması; K-100) |
 | `0009_ayar-sirket-bilgileri.sql` | `settings.key` `company` değerini de kabul eder (Şirket ve İletişim, K-105) |
 | `0010_sap-siparis-aktarimi.sql` | `sap_order_exports`: SAP'a sipariş aktarım sırası (K-108) |
+| `0011_urun-yeni-isareti-kaldirildi.sql` | `products.is_new` kaldırıldı |
+| `0012_ayar-anasayfa-tanitim.sql` | `settings.key` `home_hero` değerini de kabul eder (Anasayfa Tanıtım, K-45) |
+| `0013_welders-club-kaldirildi.sql` | Welders Club kaldırıldı: `welders_club_signups` tablosu silinir; `email_recipients` ve `email_log`'daki `welders-club` satırları silinir ve tür listesinden çıkar |
 
 **Veritabanındaki kurallar** (`0001_kurallar.sql`):
 
@@ -678,18 +681,18 @@ KARARLAR K-81; `src/forms.ts`.
 - E-posta formları da kendi tablolarına yazılır: `/api/bayilik` →
   `dealer_applications`, `/api/destek` → `support_messages`
   (`urun-destek`; ürün koduna göre `product_id`), `/api/bildirim` iletişim →
-  `support_messages` (`iletisim`), Welders Club → `welders_club_signups`.
+  `support_messages` (`iletisim`).
   Yanıtta `saved: true` döner; e-posta gitmese de form ulaşmış sayılır.
   Demo modunda bu kayıtları tarayıcı yazar (K-109).
 - Bot tuzağı doluysa kayıt yapılmaz; `email_log`'a `skipped` yazılır.
 - Panelin Teklifler, Servis Talepleri, Garantiler, Yorumlar, Bayilik
-  Başvuruları, Mesajlar ve Welders Club ekranları: [Panel › Talepler](#talepler).
+  Başvuruları ve Mesajlar ekranları: [Panel › Talepler](#talepler).
 - Test: `tests/db/formlar.test.ts` (teklif kuralları ve katalogdan alınan
   ürün bilgisi, servis talebi, garanti kaydı, tekrar eden seri no, Türkiye
   gününe göre bitiş, sorgulama, yorum, e-postaya giden formların kaydı,
   e-posta kaydı ve türleri); `tests/e2e-db/formlar.spec.ts` (tarayıcıda:
   ziyaretçi ve üye teklifi, Tekliflerim, servis, garanti, sorgulama,
-  Garantilerim, yorum, iletişim, Welders Club, bot tuzağı).
+  Garantilerim, yorum, iletişim, bot tuzağı).
 
 ### E-posta (Resend)
 
@@ -711,7 +714,7 @@ girilir ([2](#2-ortam-değişkenleri)).
 - E-posta yalnızca **sunucudan** gönderilir; tarayıcı servise doğrudan
   bağlanmaz. Formlar sitenin kendi uçlarına gönderir:
   - `POST /api/bildirim` — iletişim, teklif, servis, garanti, yorum, üye,
-    sipariş, iade talebi, Welders Club (`type` alanıyla).
+    sipariş, iade talebi (`type` alanıyla).
   - `POST /api/bayilik` — bayilik başvurusu.
   - `POST /api/destek` — ürün sayfasındaki destek sorusu.
   - Veritabanı modunda sipariş, iade talebi, teklif, servis talebi, garanti
@@ -748,8 +751,7 @@ girilir ([2](#2-ortam-değişkenleri)).
 - **Kaydı panelde olan formlar** (sipariş, teklif, servis, garanti, yorum,
   üyelik, iade talebi) e-postanın sonucunu beklemez; kayıt her durumda
   yapılır.
-- **E-posta formları** (iletişim, bayilik, Welders Club, ürün destek
-  sorusu):
+- **E-posta formları** (iletişim, bayilik, ürün destek sorusu):
   - E-posta gittiyse başarılı.
   - Veritabanı modunda kayıt yapıldıysa e-posta gitmese de başarılı.
   - Demo adresinde e-posta servisi tanımlı değilse yine başarılı görünür.
@@ -893,9 +895,8 @@ yazılır. Kuralların yöneticinin gördüğü hali:
   bekleyenler; onay bekleyen ve anasayfa sayıları). CSV için süzgece uyan
   kayıtların tamamı: `readQuotesForExport`, `readWarrantiesForExport`.
   `readDealerApplicationsPage` (toplam ve yeni başvuru sayısı),
-  `readMessagesPage` (tür; toplam ve yeni mesaj sayısı bütün mesajlardan),
-  `readWeldersClubPage` (arama ad, e-posta, şehir; aktif ve pasif sayısı
-  bütün kayıtlardan). Ürün ve kategori adları sitenin önbellekteki
+  `readMessagesPage` (tür; toplam ve yeni mesaj sayısı bütün mesajlardan).
+  Ürün ve kategori adları sitenin önbellekteki
   katalogundan.
 - **CSV:** `GET /api/yonetim/csv/teklifler?durum=…`,
   `GET /api/yonetim/csv/garantiler?ara=…&durum=…` ve
@@ -909,27 +910,25 @@ yazılır. Kuralların yöneticinin gördüğü hali:
   değişmez), `teklif-sil` (satırlarıyla), `servis`, `garanti` (bitiş tarihi
   ya da uzatılmış garanti; +12 ay kayıttaki güncel tarihten), `garanti-sil`,
   `yorum-onay` (kaldırılan yorumun `featured`'ı da kalkar), `yorum-anasayfa`,
-  `yorum-sil`, `basvuru`, `mesaj`, `welders-club` (`left_at` doldurulur ya da
-  boşaltılır).
+  `yorum-sil`, `basvuru`, `mesaj`.
 - **Anasayfa yorum sınırı:** İşaretleme sırayla yapılır (kilit); onaylı,
   `featured` ve ürünü yayında yorumlar sayılır, 10'a ulaşınca reddedilir.
 - **Site önbelleği:** Yorum işlemleri başarılı olunca `refreshSite(["yorumlar"])`
   çağrılır; ürün sayfası ve anasayfa şeridi hemen yenilenir. Teklif,
   garanti ve servis kayıtları sitede önbelleksiz okunduğu için yenileme
   gerekmez.
-- **Silinmeyen kayıtlar:** `dealer_applications`, `support_messages`,
-  `welders_club_signups` için silme işlemi yoktur (K-100).
+- **Silinmeyen kayıtlar:** `dealer_applications` ve `support_messages` için
+  silme işlemi yoktur (K-100).
 - **İşlem kaydı:** Yorum silinirken fotoğraf ve videolar `changes`'e
   yazılmaz, yalnızca sayıları ("2 dosya").
 - Test: `tests/db/panel-talepler.test.ts` (teklifin alan alan kaydı ve
   kendi kaydının ardından yeni anla ikinci kayıt, silme; servis; garanti
   tarihi, geçersiz tarih, +12 ay, silme; yorum onayı, onaysız yorumun
-  anasayfaya alınmaması, anasayfa sınırı, silme; başvuru ve mesaj durumu;
-  Welders Club pasif/aktif); `tests/e2e-db/panel-talepler.spec.ts`
+  anasayfaya alınmaması, anasayfa sınırı, silme; başvuru ve mesaj
+  durumu); `tests/e2e-db/panel-talepler.spec.ts`
   (tarayıcıda: menüdeki ekranlar, teklif durumu ve hemen ardından not,
   onaylanan yorumun ürün sayfasında hemen görünmesi, sitedeki bayilik
-  başvurusu ve ürün sorusunun panelde görünmesi, Welders Club, oturumsuz
-  istek).
+  başvurusu ve ürün sorusunun panelde görünmesi, oturumsuz istek).
 
 ### Katalog
 
@@ -1213,7 +1212,7 @@ eşleşme kuralları: [STOK.md](STOK.md).
   değişiklik, ofis sırası, eski ekran, değişmeyen kayıt, kural ihlali);
   `tests/unit/magaza-ayarlari.test.ts` (kurallar, takip bağlantısı);
   `tests/e2e-db/panel-ayarlar.spec.ts` (tarayıcıda: kargo ücretinin sitede
-  hemen geçerli olması ve geri alınması, Welders Club alıcısının e-posta
+  hemen geçerli olması ve geri alınması, iletişim formu alıcısının e-posta
   kaydına yazılması, oturumsuz istek); `tests/e2e-db/panel-sirket.spec.ts`
   (MERSİS no sözleşmede ve telefon alt bilgide hemen görünür; kargo takip
   adresi girilince müşteri ve panel sipariş detayında bağlantı; oturumsuz
@@ -1523,7 +1522,7 @@ toplanması, eksi miktar, geçersiz okuma):
   geçici bir fotoğrafı gösterir (KARARLAR K-77). Güvenlik, Aksesuarlar ve
   Dolgu Metalleri'nde bugün ürün yok; eklenen ürünün fotoğrafı panelden
   verilir.
-- **Blog, haber, etkinlik, Hakkımızda ve Welders Club görselleri**
+- **Blog, haber, etkinlik ve Hakkımızda görselleri**
   **Unsplash**'ten gelir (`https://images.unsplash.com/…`,
   `packages/data/src/seed/images.ts`). Gerçek fotoğraflarla değiştirilmeli.
 - Tarayıcının hangi adreslerden görsel yükleyebileceğini güvenlik politikası

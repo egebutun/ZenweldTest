@@ -6,8 +6,8 @@ import { catalog, closeDatabase, expect, sql, test } from "./yardimci";
 /**
  * PANEL › TALEPLER VERITABANINDA (Asama 5, 2. alan; KARARLAR K-99, K-100)
  *
- * Teklifler, Yorumlar ve sitedeki formlardan gelen Bayilik Basvurulari,
- * Mesajlar ve Welders Club kayitlari veritabanindan okunur ve yazilir.
+ * Teklifler, Yorumlar ve sitedeki formlardan gelen Bayilik Basvurulari ve
+ * Mesajlar veritabanindan okunur ve yazilir.
  * Onaylanan yorum sitede hemen gorunur.
  */
 test.describe.configure({ mode: "serial" });
@@ -19,7 +19,6 @@ const QUOTE = { id: `q-e2e-${stamp}`, code: `TKL-E2E-${stamp}` };
 const REVIEW = { id: `rv-e2e-${stamp}`, body: `Panel deneme yorumu ${stamp}` };
 const COMPANY = `Başvuru Deneme ${stamp}`;
 const MESSAGE = `Panel deneme sorusu ${stamp}`;
-const CLUB = { id: `wc-e2e-${stamp}`, email: `kulup-${stamp}@ornek.com` };
 
 async function panelLogin(page: Page) {
   await page.goto("/yonetim/giris");
@@ -44,7 +43,6 @@ test.beforeAll(async () => {
     "INSERT INTO reviews (id, product_id, author_name, rating, body, approved) VALUES ($1, $2, 'Panel Deneme', 5, $3, false)",
     [REVIEW.id, product.id, REVIEW.body],
   );
-  await sql("INSERT INTO welders_club_signups (id, name, email, city) VALUES ($1, 'Usta Deneme', $2, 'Konya')", [CLUB.id, CLUB.email]);
 });
 
 test.afterAll(async () => {
@@ -52,19 +50,18 @@ test.afterAll(async () => {
   await sql("DELETE FROM reviews WHERE id = $1", [REVIEW.id]);
   await sql("DELETE FROM dealer_applications WHERE company_name = $1", [COMPANY]);
   await sql("DELETE FROM support_messages WHERE message = $1", [MESSAGE]);
-  await sql("DELETE FROM welders_club_signups WHERE id = $1", [CLUB.id]);
 });
 
-test("yeni ekranlar menüde: Bayilik Başvuruları, Mesajlar, Welders Club", async ({ page, problems }) => {
+test("yeni ekranlar menüde: Bayilik Başvuruları, Mesajlar", async ({ page, problems }) => {
   await panelLogin(page);
   const nav = page.locator("nav");
   await nav.getByRole("button", { name: "Bayi ve Satış Ağı" }).click();
   await nav.getByRole("link", { name: "Bayilik Başvuruları" }).click();
   await expect(page).toHaveURL(/\/yonetim\/bayilik-basvurulari$/);
   await nav.getByRole("button", { name: "Müşteriler ve Servis" }).click();
-  await expect(nav.getByRole("link", { name: "Mesajlar" })).toBeVisible();
-  await nav.getByRole("link", { name: "Welders Club" }).click();
-  await expect(page).toHaveURL(/\/yonetim\/welders-club$/);
+  await nav.getByRole("link", { name: "Mesajlar" }).click();
+  await expect(page).toHaveURL(/\/yonetim\/mesajlar$/);
+  await expect(nav.getByRole("link", { name: "Welders Club" })).toHaveCount(0);
   expect(problems).toEqual([]);
 });
 
@@ -133,22 +130,7 @@ test("sitedeki bayilik başvurusu ve ürün sorusu panelde görünür; durumu ka
   expect((await sql<{ status: string }>("SELECT status FROM support_messages WHERE message = $1", [MESSAGE]))[0].status).toBe("answered");
 });
 
-test("Welders Club: pasife alınır, kayıt silinmez; yeniden aktif yapılır", async ({ page }) => {
-  await panelLogin(page);
-  await page.goto("/yonetim/welders-club");
-  await page.getByPlaceholder("Ad, e-posta veya şehir ara…").fill(CLUB.email);
-  const row = page.locator("tr", { hasText: CLUB.email });
-  await row.getByRole("button", { name: "Pasife al" }).click();
-  await expect(row.getByRole("button", { name: "Aktif yap" })).toBeVisible();
-  await expect(row).toContainText("Pasif");
-  expect((await sql<{ left_at: Date | null }>("SELECT left_at FROM welders_club_signups WHERE id = $1", [CLUB.id]))[0].left_at).not.toBeNull();
-
-  await row.getByRole("button", { name: "Aktif yap" }).click();
-  await expect(row.getByRole("button", { name: "Pasife al" })).toBeVisible();
-  expect((await sql<{ left_at: Date | null }>("SELECT left_at FROM welders_club_signups WHERE id = $1", [CLUB.id]))[0].left_at).toBeNull();
-});
-
 test("oturumsuz panel isteği reddedilir", async ({ request }) => {
-  const answer = await request.post("/api/yonetim/talepler/welders-club", { data: { id: CLUB.id, active: false } });
+  const answer = await request.post("/api/yonetim/talepler/mesaj", { data: { id: "yok", status: "read" } });
   expect([answer.status(), (await answer.json()).error]).toEqual([401, tr.panel.sessionEnded]);
 });

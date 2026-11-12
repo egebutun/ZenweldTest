@@ -15,7 +15,7 @@ test.describe.configure({ mode: "serial" });
 
 const admin = demoAccount("Yönetici");
 const stamp = Date.now();
-const CLUB = `kulup-${stamp}@zenweld.com`;
+const CONTACT = `iletisim-${stamp}@zenweld.com`;
 
 async function panelLogin(page: Page) {
   await page.goto("/yonetim/giris");
@@ -38,7 +38,7 @@ const shippingFee = async () =>
   (await sql<{ value: { shippingFee: number } }>("SELECT value FROM settings WHERE key = 'shop'"))[0].value.shippingFee;
 
 test.afterAll(async () => {
-  await sql("DELETE FROM email_recipients WHERE $1 = ANY(recipients)", [CLUB]);
+  await sql("DELETE FROM email_recipients WHERE $1 = ANY(recipients)", [CONTACT]);
   await closeDatabase();
 });
 
@@ -75,24 +75,24 @@ test("E-posta Alıcıları: yazılan adres o türün e-postasının alıcısı o
   await panelLogin(page);
   await page.goto("/yonetim/magaza");
   await page.getByRole("button", { name: "E-posta Alıcıları" }).click();
-  const club = page.getByLabel("Welders Club katılımı alıcıları");
-  await club.fill(` ${CLUB.toUpperCase()} `);
+  const contact = page.getByLabel("İletişim formu alıcıları");
+  await contact.fill(` ${CONTACT.toUpperCase()} `);
   await page.getByRole("button", { name: "Kaydet", exact: true }).click();
   await expect(page.getByText("E-posta alıcıları kaydedildi.")).toBeVisible();
-  await expect(club).toHaveValue(CLUB);
-  expect(await sql("SELECT recipients FROM email_recipients WHERE type = 'welders-club'")).toEqual([{ recipients: [CLUB] }]);
+  await expect(contact).toHaveValue(CONTACT);
+  expect(await sql("SELECT recipients FROM email_recipients WHERE type = 'iletisim'")).toEqual([{ recipients: [CONTACT] }]);
 
-  const signup = await page.request.post("/api/bildirim", {
-    data: { type: "welders-club", data: { name: "Kaynakçı", email: `uye-${stamp}@ornek.com` } },
+  const message = await page.request.post("/api/bildirim", {
+    data: { type: "iletisim", data: { name: "Deneme", email: `uye-${stamp}@ornek.com`, message: "Merhaba" } },
   });
-  expect((await signup.json()).saved).toBe(true);
+  expect((await message.json()).saved).toBe(true);
   await expect
-    .poll(async () => (await sql<{ recipients: string[] }>("SELECT recipients FROM email_log WHERE type = 'welders-club' ORDER BY id DESC LIMIT 1"))[0]?.recipients)
-    .toEqual([CLUB]);
+    .poll(async () => (await sql<{ recipients: string[] }>("SELECT recipients FROM email_log WHERE type = 'iletisim' ORDER BY id DESC LIMIT 1"))[0]?.recipients)
+    .toEqual([CONTACT]);
 
-  await club.fill("");
+  await contact.fill("");
   await page.getByRole("button", { name: "Kaydet", exact: true }).click();
-  await expect.poll(async () => (await sql("SELECT 1 FROM email_recipients WHERE type = 'welders-club'")).length).toBe(0);
+  await expect.poll(async () => (await sql("SELECT 1 FROM email_recipients WHERE type = 'iletisim'")).length).toBe(0);
   await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
 });
 

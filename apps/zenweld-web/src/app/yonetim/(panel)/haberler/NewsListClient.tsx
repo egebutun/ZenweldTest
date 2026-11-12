@@ -7,7 +7,7 @@ import { Alert, Badge, Button, Input, ProductImage } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { useContentActions, type PanelAnswer } from "@/lib/admin-content";
 import Link from "next/link";
-import { formatDate } from "@zenweld/utils";
+import { formatDate, newestFirst } from "@zenweld/utils";
 
 export function NewsListClient() {
   const db = useDatabase();
@@ -29,7 +29,7 @@ export function NewsListClient() {
           n.title.toLocaleLowerCase("tr").includes(q) ||
           n.summary.toLocaleLowerCase("tr").includes(q),
       )
-      .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+      .sort((a, b) => newestFirst(a.publishedAt, b.publishedAt));
   }, [db, query]);
 
   return (
