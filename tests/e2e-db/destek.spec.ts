@@ -35,7 +35,7 @@ test("/destek: İletişim kartı ilk sırada; İletişim sayfasındaki bilgiler 
   }
 
   await page.setViewportSize({ width: 1440, height: 900 });
-  await expect(page.locator("header nav > *")).toHaveText(["Ekipmanlar", "Güvenlik", "Aksesuarlar", "Dolgu Metalleri", "Destek ve Garanti", "Keşfet"]);
+  await expect(page.locator("header nav > *")).toHaveText(["FORCE", "Ekipmanlar", "Güvenlik", "Aksesuarlar", "Dolgu Metalleri", "Destek ve Garanti", "Keşfet"]);
   const title = page.locator("header nav").getByRole("link", { name: "Destek ve Garanti" });
   await title.hover();
   await expect(page.locator(".zw-mega").getByRole("link", { name: "Tümünü Gör" })).toHaveAttribute("href", "/destek");

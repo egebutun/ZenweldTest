@@ -45,6 +45,7 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Ürün grupları](#ürün-grupları-kaynak-makineleri-lazer-makineleri-) ·
      [Blog yazıları](#blog-yazıları--yayına-girmeden-önce) ·
      [Teklif Al formu](#teklif-al-formu--sorular-düzenlenecek) ·
+     [Force sayfası](#force-sayfası--panelden-yönetim-fotoğraf-ve-videolar) ·
      [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) ·
      [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme)
    - **İleride:** [Ürün Seçici](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) ·
@@ -980,35 +981,31 @@ Ekipmanların gerçek fotoğrafları sahibinden gelir (KARARLAR K-77). Fotoğraf
 sonra `.webp` hali üretilir ve ürün örnek veriye bağlanır
 (`packages/data/src/seed/products.seed.ts` › `MACHINE_PHOTOS`; bkz.
 klasördeki `BURAYA-GORSEL-YUKLEYIN.md`). Fotoğrafı olmayan ürün ve soğutma
-hali, alt kategorinin kart çizimini gösterir. Force serisinin 9 ürünü
-(ForceArc 200, 250, 280; ForceMIG 125, 185 MP, 200, 205 DP; ForceTIG 200;
-ForceCut 45) şimdilik ortak geçici bir fotoğraf gösterir
-(`force-serisi-gecici.webp`, KARARLAR K-77 eki); gerçekleri gelince geçici
-fotoğraf kaldırılır.
+hali, alt kategorinin kart çizimini gösterir. Force serisinin 5 ürünü
+(ForceArc 250, 280; ForceMIG 125, 185 MP, 205 DP) şimdilik ortak geçici bir
+fotoğraf gösterir (`force-serisi-gecici.webp`, KARARLAR K-77 eki);
+gerçekleri gelince geçici fotoğraf kaldırılır.
 
 **Çeşit:** 2 = hava ve su soğutmalı hali ayrı fotoğraf; 1 = tek fotoğraf.
-Ekipmanların 40 ürününden 17'sinin fotoğrafı tam; 19 üründe hiç fotoğraf yok,
+Ekipmanların 40 ürününden 21'inin fotoğrafı tam; 15 üründe hiç fotoğraf yok,
 4 üründe bir soğutma hali eksik. Sahibi bu fotoğrafları bulamadı; bulununca
-yüklenecek (2026-10-28):
+yüklenecek (2026-10-28; ForceArc 200, ForceTIG 200, ForceMIG 200 ve ForceCut
+45'inki sonradan geldi):
 
 | Kategori | Model | Çeşit | Eksik | Yüklenecek dosya adı |
 |---|---|:-:|---|---|
 | MMA | Ultimate 255 MMA | 1 | Fotoğraf | `ultimate-255-mma.jpg` |
-| MMA | ForceArc 200 MMA | 1 | Fotoğraf | `forcearc-200-mma.jpg` |
 | MMA | ForceArc 250 MMA | 1 | Fotoğraf | `forcearc-250-mma.jpg` |
 | MMA | ForceArc 280 MMA | 1 | Fotoğraf | `forcearc-280-mma.jpg` |
 | MMA | ForceArc 400 CEL MMA | 1 | Fotoğraf | `forcearc-400-cel-mma.jpg` |
 | TIG | Ultimate 405 THP | 2 | Hava | `ultimate-405-thp-hava-sogutmali.jpg` |
-| TIG | ForceTIG 200 | 1 | Fotoğraf | `forcetig-200.jpg` |
 | MIG | Ultimate 505 MTS | 2 | Hava | `ultimate-505-mts-hava-sogutmali.jpg` |
 | MIG | Evomig 405 P | 2 | Hava | `evomig-405-p-hava-sogutmali.jpg` |
 | MIG | Evomig 555 P | 2 | Hava | `evomig-555-p-hava-sogutmali.jpg` |
 | MIG | Evomig 255 P | 1 | Fotoğraf | `evomig-255-p.jpg` |
 | Çok Fonksiyonlu | ForceMIG 125 | 1 | Fotoğraf | `forcemig-125.jpg` |
 | Çok Fonksiyonlu | ForceMIG 185 MP | 1 | Fotoğraf | `forcemig-185-mp.jpg` |
-| Çok Fonksiyonlu | ForceMIG 200 | 1 | Fotoğraf | `forcemig-200.jpg` |
 | Çok Fonksiyonlu | ForceMIG 205 DP | 1 | Fotoğraf | `forcemig-205-dp.jpg` |
-| Plazma | ForceCut 45 | 1 | Fotoğraf | `forcecut-45.jpg` |
 | Lazer Kaynak | Y300 QCW | 1 | Fotoğraf | `y300-qcw.jpg` |
 | Lazer Temizleme | Jasic LS-20000F | 1 | Fotoğraf | `jasic-ls-20000f-lazer-temizleme.jpg` |
 | Lazer Temizleme | Jasic LS-30000D | 1 | Fotoğraf | `jasic-ls-30000d-lazer-temizleme.jpg` |
@@ -1128,6 +1125,23 @@ Teklif Al formunun soruları henüz tam doğru değil; sahibi gerçek soruları
 gönderecek, form buna göre düzenlenecek (Teklif Al kurumsal müşteriler
 içindir, KARARLAR K-25). Yer: `app/(site)/teklif-al/page.tsx`, metinler
 `packages/i18n/src/tr.ts` › `quote`.
+
+## Force sayfası — panelden yönetim, fotoğraf ve videolar
+
+Force sayfası (`/force`, KARARLAR K-114) bugün çalışıyor; sonra yapılacaklar:
+
+- [ ] **Panelden yönetim:** Dört makinenin slogan, kısa açıklama, rakamlar
+      ve görselleri bugün kodda (`packages/i18n/src/tr.ts` › `forcePage`,
+      `apps/zenweld-web/src/lib/force.ts` › `FORCE_SHOWCASE`). Panelde bir
+      "Force Sayfası" ekranından değişsin (Anasayfa Tanıtım gibi). [Panel]
+- [ ] **Fotoğraf ve videolar:** Sahibi makinelerin profesyonel fotoğraf ve
+      videolarını gönderecek; makine bölümlerine galeri ve video eklenecek.
+      Bugünkü dört görsel sahibinin fotoğraflarından zemini kaldırılarak
+      hazırlandı (`public/images/force/`). [Karar]
+- [ ] **Teknik değerler:** Makine bölümlerindeki rakamlar ürünlerin bugünkü
+      teknik özelliklerinden yazıldı; gerçek değerler gelince yazılar da
+      güncellenir. Tabloda ForceArc 400 CEL'in teknik özellikleri yok
+      (kolonu "—"; bkz. [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler)).
 
 ## Görseller ve yüklenen dosyalar
 

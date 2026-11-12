@@ -1,0 +1,456 @@
+"use client";
+
+import { ArrowDown, ArrowRight, BadgeCheck, Box, Gauge, Heart, PlugZap, ShieldCheck, Weight } from "lucide-react";
+import type { Product } from "@zenweld/data";
+import { isProductInStock, useDatabase } from "@zenweld/store";
+import { ProductImage } from "@zenweld/ui";
+import Link from "next/link";
+import { CardCartButton, ProductPrice } from "@/components/product/ProductCard";
+import { useFavourites } from "@/lib/favourites";
+import { FORCE_SHOWCASE, useForceProducts, type ForceMachineKey } from "@/lib/force";
+import { useT } from "@/lib/i18n-client";
+import { ForceSpecTable } from "./ForceSpecTable";
+import { CountUp, Sparks, useReveal, useScrollProgress } from "./force-motion";
+
+/**
+ * FORCE SERISI TANITIM SAYFASI (/force; KARARLAR K-114)
+ *
+ * Ust menudeki FORCE ve anasayfa tanitim alanindaki "Force Serisini Incele"
+ * buraya gelir. Bolumler:
+ *  1. Acilis: dev FORCE yazisi, dort makine, kivilcimlar.
+ *  2. Kayan serit (yontemler).
+ *  3. Dort yontem. Tek seri: makine kartlari (bolumlere iner).
+ *  4. Her makineye bir bolum: slogan, aciklama, rakamlar, fiyat, sepet.
+ *  5. Her Force'ta standart: ortak ozellikler.
+ *  6. Teknik karsilastirma: seri butun modelleri yan yana.
+ *  7. Bayi ve destek cagrisi.
+ * Yazilar packages/i18n › forcePage; urun bilgileri urun kayitlarindan.
+ */
+export function ForcePage() {
+  const { series, showcase } = useForceProducts();
+  return (
+    <div className="bg-[#0a0b0d]">
+      <Hero />
+      <Ticker />
+      <Lineup />
+      {FORCE_SHOWCASE.map((machine, i) => (
+        <Chapter key={machine.key} index={i} machine={machine} product={showcase[machine.key]} />
+      ))}
+      <Dna />
+      {series.length > 0 && <Compare products={series} />}
+      <FinalCta />
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 1. Acilis                                                           */
+/* ------------------------------------------------------------------ */
+
+/** Acilistaki dizilis: soldan saga, genislik (%), derinlik ve kaydirinca acilma. */
+// Telefonda makineler daha buyuk; kenardakiler ekranin disina tasar.
+const HERO_LINEUP: { key: ForceMachineKey; width: string; z: number; spread: string; delay: number; lift: string }[] = [
+  { key: "arc", width: "w-[32%] md:w-[24%]", z: 10, spread: "-90px", delay: 350, lift: "mb-[2%]" },
+  { key: "mig", width: "w-[44%] md:w-[33%]", z: 30, spread: "-30px", delay: 150, lift: "" },
+  { key: "tig", width: "w-[34%] md:w-[25%]", z: 20, spread: "30px", delay: 250, lift: "mb-[1%]" },
+  { key: "cut", width: "w-[30%] md:w-[22%]", z: 10, spread: "90px", delay: 450, lift: "mb-[3%]" },
+];
+
+function Hero() {
+  const f = useT().forcePage;
+  const ref = useScrollProgress<HTMLElement>();
+  return (
+    <section
+      ref={ref}
+      className="zw-force-hero relative isolate flex flex-col overflow-hidden text-white md:min-h-[calc(100svh-72px)]"
+    >
+      <div aria-hidden="true" className="zw-force-hero-bg absolute inset-0 -z-10" />
+      <Sparks />
+
+      <div className="zw-container relative pt-8 md:pt-12">
+        <p className="zw-force-in flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.32em] text-zw-red-500 md:text-xs">
+          <span className="h-px w-10 bg-zw-red-500" />
+          {f.eyebrow}
+        </p>
+      </div>
+
+      <h1 className="relative mt-3 select-none text-center font-display font-bold leading-[0.78] md:mt-0">
+        <span className="sr-only">{f.title}</span>
+        <span aria-hidden="true" className="zw-force-word-wrap block">
+          <span className="zw-force-word block">FORCE</span>
+        </span>
+      </h1>
+
+      {/* Dort makine: kelimenin alt kismina biner; kaydirinca yukari kayip acilir. */}
+      <div className="zw-force-lineup relative z-10 mx-auto -mt-[12vw] flex w-full max-w-[1100px] items-end justify-center px-2 md:-mt-[8vw] 2xl:max-w-[1240px]">
+        {/* Makinelerin bastigi isikli zemin cizgisi */}
+        <div aria-hidden="true" className="zw-force-floor absolute inset-x-[-30%] bottom-[3%] h-px" />
+        {HERO_LINEUP.map(({ key, width, z, spread, delay, lift }) => {
+          const machine = FORCE_SHOWCASE.find((m) => m.key === key)!;
+          return (
+            <div
+              key={key}
+              className={`zw-force-unit relative -mx-[1.5%] shrink-0 ${width} ${lift}`}
+              style={{ zIndex: z, "--spread": spread } as React.CSSProperties}
+            >
+              <div className="zw-force-rise" style={{ "--d": `${delay}ms` } as React.CSSProperties}>
+                <ProductImage src={machine.image} alt={machine.name} label={machine.name} priority className="w-full" />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="zw-container relative z-20 mt-auto flex flex-col gap-6 pb-10 pt-8 md:flex-row md:items-end md:justify-between md:pb-12">
+        <div className="zw-force-in [animation-delay:500ms]">
+          <p className="font-display text-[40px] font-bold uppercase leading-[0.92] md:text-6xl">
+            <span className="block">{f.heroLineA}</span>
+            <span className="block text-zw-red-500">{f.heroLineB}</span>
+          </p>
+          <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/65 md:text-base">{f.heroText}</p>
+        </div>
+        <div className="zw-force-in flex flex-wrap gap-3 [animation-delay:650ms]">
+          <a
+            href="#makineler"
+            className="inline-flex items-center gap-2 rounded-[4px] bg-zw-red-600 px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-zw-red-700"
+          >
+            {f.heroCta}
+            <ArrowDown size={16} />
+          </a>
+          <a
+            href="#karsilastirma"
+            className="inline-flex items-center gap-2 rounded-[4px] border border-white/25 px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:border-white hover:bg-white hover:text-zw-ink"
+          >
+            {f.heroCompare}
+          </a>
+        </div>
+      </div>
+
+      <div aria-hidden="true" className="absolute bottom-4 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 xl:flex">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/40">{f.scrollHint}</span>
+        <span className="zw-force-scroll-line block h-10 w-px bg-white/25" />
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Kayan serit                                                      */
+/* ------------------------------------------------------------------ */
+
+function Ticker() {
+  const words = useT().forcePage.ticker;
+  const row = (copy: number) => (
+    <ul aria-hidden={copy === 1} className="flex shrink-0 items-center">
+      {words.map((w) => (
+        <li key={`${copy}-${w}`} className="flex items-center gap-8 whitespace-nowrap px-8 font-display text-2xl font-bold uppercase tracking-wide md:text-[32px]">
+          {w}
+          <span aria-hidden="true" className="h-2.5 w-2.5 rotate-45 bg-white/80" />
+        </li>
+      ))}
+    </ul>
+  );
+  return (
+    <div className="zw-force-ticker relative overflow-hidden bg-zw-red-600 py-4 text-white">
+      <div className="zw-force-marquee flex w-max">
+        {row(0)}
+        {row(1)}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Dort yontem. Tek seri.                                           */
+/* ------------------------------------------------------------------ */
+
+function Lineup() {
+  const f = useT().forcePage;
+  const ref = useReveal<HTMLElement>();
+  return (
+    <section id="makineler" ref={ref} className="zw-fx scroll-mt-[72px] bg-[#0e1012] py-16 text-white md:py-24">
+      <SectionHead eyebrow={f.eyebrow} title={f.lineupTitle} text={f.lineupText} dark />
+      <div className="zw-container mt-10 grid grid-cols-2 gap-3 md:mt-14 md:gap-5 lg:grid-cols-4">
+        {FORCE_SHOWCASE.map((m, i) => {
+          const copy = f.machines[m.key];
+          return (
+            <a
+              key={m.key}
+              href={`#force-${m.key}`}
+              data-fx="up"
+              style={{ "--d": `${150 + i * 110}ms` } as React.CSSProperties}
+              className="zw-force-card group relative flex flex-col overflow-hidden rounded-[6px] border border-white/10 p-4 transition duration-500 hover:-translate-y-1.5 hover:border-zw-red-600/60 md:p-6"
+            >
+              <span className="font-display text-sm font-bold text-white/35">0{i + 1}</span>
+              <div className="relative mt-2 flex aspect-square items-center justify-center">
+                <div aria-hidden="true" className="zw-force-card-glow absolute inset-[12%] rounded-full" />
+                <ProductImage
+                  src={m.image}
+                  alt={m.name}
+                  label={m.name}
+                  className="relative w-[88%] transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-[1.06]"
+                />
+              </div>
+              <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-zw-red-500">{copy.method}</div>
+              <div className="mt-1 font-display text-2xl font-bold leading-none md:text-[32px]">{m.name}</div>
+              <p className="mt-2 hidden text-sm text-white/55 sm:block">{copy.slogan}</p>
+              <span className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-white/70 transition-colors group-hover:text-white">
+                <span className="h-px w-6 bg-zw-red-600 transition-all duration-500 group-hover:w-10" />
+                <ArrowDown size={14} />
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Makine bolumleri                                                 */
+/* ------------------------------------------------------------------ */
+
+function Chapter({
+  index,
+  machine,
+  product,
+}: {
+  index: number;
+  machine: (typeof FORCE_SHOWCASE)[number];
+  product?: Product;
+}) {
+  const f = useT().forcePage;
+  const copy = f.machines[machine.key];
+  const progress = useScrollProgress<HTMLElement>();
+  const reveal = useReveal<HTMLDivElement>();
+  const reverse = index % 2 === 1;
+
+  return (
+    <section
+      id={`force-${machine.key}`}
+      ref={progress}
+      className={`zw-force-chapter relative isolate scroll-mt-[72px] overflow-hidden py-16 text-white md:py-28 ${
+        reverse ? "zw-steel" : "bg-[#0a0b0d]"
+      }`}
+    >
+      <div aria-hidden="true" className="zw-force-seam absolute inset-x-0 top-0 h-px" />
+      <div
+        aria-hidden="true"
+        className={`zw-force-ghost pointer-events-none absolute top-1/2 -z-10 select-none font-display font-bold leading-none ${
+          reverse ? "left-[-4%]" : "right-[-4%]"
+        }`}
+      >
+        {machine.ghost}
+      </div>
+
+      <div ref={reveal} className="zw-fx zw-container grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        {/* Gorsel: kirmizi isik, yansima, kaydirinca hafif yukselme */}
+        <div className={`relative ${reverse ? "lg:order-2" : ""}`} data-fx="zoom">
+          <div aria-hidden="true" className="zw-force-halo absolute inset-[6%] rounded-full" />
+          <div className="zw-force-machine relative mx-auto max-w-[520px]">
+            <ProductImage src={machine.image} alt={machine.name} label={machine.name} className="zw-force-reflect w-full" />
+          </div>
+        </div>
+
+        <div className={reverse ? "lg:order-1" : ""}>
+          <div data-fx="up" className="flex items-center gap-4">
+            <span className="font-display text-5xl font-bold leading-none text-zw-red-600 md:text-6xl">0{index + 1}</span>
+            <span className="h-px flex-1 bg-white/15" />
+            <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/50">{copy.method}</span>
+          </div>
+          <h2 data-fx="wipe" style={{ "--d": "120ms" } as React.CSSProperties} className="mt-5 font-display text-5xl font-bold leading-[0.9] md:text-7xl">
+            {machine.name}
+          </h2>
+          <p data-fx="up" style={{ "--d": "220ms" } as React.CSSProperties} className="mt-4 font-display text-[26px] font-semibold uppercase leading-tight text-zw-red-500 md:text-[34px]">
+            {copy.slogan}
+          </p>
+          <p data-fx="up" style={{ "--d": "300ms" } as React.CSSProperties} className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/65 md:text-base">
+            {copy.text}
+          </p>
+
+          <dl data-fx="up" style={{ "--d": "380ms" } as React.CSSProperties} className="mt-8 grid max-w-xl grid-cols-3 border-y border-white/10">
+            {copy.stats.map((s, i) => (
+              <div key={s.label} className={`py-5 ${i ? "border-l border-white/10 pl-4 md:pl-6" : "pr-4"}`}>
+                <dt className="sr-only">{s.label}</dt>
+                <dd>
+                  <span className="font-display text-4xl font-bold leading-none md:text-5xl">
+                    <CountUp value={s.value} />
+                  </span>
+                  {s.unit && <span className="ml-1 font-display text-xl font-bold text-zw-red-500 md:text-2xl">{s.unit}</span>}
+                  <span className="mt-2 block text-[11px] uppercase tracking-[0.14em] text-white/45 md:text-xs">{s.label}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          {product && (
+            <div data-fx="up" style={{ "--d": "460ms" } as React.CSSProperties} className="mt-8 flex flex-wrap items-end gap-x-8 gap-y-5">
+              <div>
+                <ProductPrice product={product} dark />
+              </div>
+              <ChapterActions product={product} />
+            </div>
+          )}
+          <div data-fx="up" style={{ "--d": "520ms" } as React.CSSProperties} className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
+            {product && (
+              <Link href={`/urun/${product.slug}`} className="group inline-flex items-center gap-1.5 text-white hover:text-zw-red-500">
+                {f.productLink}
+                <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+              </Link>
+            )}
+            <a href="#karsilastirma" className="text-white/55 hover:text-white">
+              {f.specsLink}
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ChapterActions({ product }: { product: Product }) {
+  const favourites = useFavourites();
+  const inStock = isProductInStock(product, undefined, useDatabase());
+  const liked = favourites.has(product.id);
+  return (
+    <div className="flex w-full max-w-xs items-end gap-2 sm:w-64">
+      <div className="min-w-0 flex-1">
+        <CardCartButton product={product} inStock={inStock} accent />
+      </div>
+      <button
+        type="button"
+        onClick={() => favourites.toggle(product.id)}
+        aria-label="Favori"
+        aria-pressed={liked}
+        className="flex h-[38px] w-10 shrink-0 items-center justify-center rounded-[4px] border border-white/25 text-white/70 transition-colors hover:border-white hover:text-white"
+      >
+        <Heart size={17} className={liked ? "fill-zw-red-500 text-zw-red-500" : ""} />
+      </button>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 5. Her Force'ta standart                                            */
+/* ------------------------------------------------------------------ */
+
+const DNA_ICONS = [Gauge, PlugZap, Weight, ShieldCheck, Box, BadgeCheck];
+
+function Dna() {
+  const f = useT().forcePage;
+  const ref = useReveal<HTMLElement>();
+  return (
+    <section ref={ref} className="zw-fx zw-force-dna relative overflow-hidden bg-white py-16 md:py-24">
+      <SectionHead eyebrow={f.dnaEyebrow} title={f.dnaTitle} />
+      <div className="zw-container mt-10 md:mt-14">
+        <div className="grid gap-px overflow-hidden rounded-[6px] border border-zw-grey-200 bg-zw-grey-200 sm:grid-cols-2 lg:grid-cols-3">
+          {f.dna.map((item, i) => {
+            const Icon = DNA_ICONS[i % DNA_ICONS.length];
+            return (
+              <div
+                key={item.title}
+                data-fx="up"
+                style={{ "--d": `${i * 90}ms` } as React.CSSProperties}
+                className="group relative bg-white p-7 transition-colors duration-500 hover:bg-zw-ink md:p-9"
+              >
+                <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-zw-red-600 transition-transform duration-500 group-hover:scale-x-100" />
+                <div className="flex items-center justify-between">
+                  <Icon size={30} strokeWidth={1.5} className="text-zw-red-600" />
+                  <span className="font-display text-sm font-bold text-zw-grey-300 transition-colors group-hover:text-white/30">0{i + 1}</span>
+                </div>
+                <h3 className="mt-8 font-display text-2xl font-bold uppercase leading-tight text-zw-ink transition-colors group-hover:text-white">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-zw-grey-600 transition-colors group-hover:text-white/65">{item.text}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 6. Teknik karsilastirma                                             */
+/* ------------------------------------------------------------------ */
+
+function Compare({ products }: { products: Product[] }) {
+  const f = useT().forcePage;
+  const ref = useReveal<HTMLElement>();
+  return (
+    <section id="karsilastirma" ref={ref} className="zw-fx scroll-mt-[72px] bg-zw-grey-50 py-16 md:py-24">
+      <SectionHead eyebrow={f.tableEyebrow} title={f.tableTitle} text={f.tableText} />
+      <div data-fx="up" style={{ "--d": "250ms" } as React.CSSProperties} className="mx-auto mt-10 max-w-[1680px] px-4 sm:px-6">
+        <ForceSpecTable products={products} />
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* 7. Kapanis                                                          */
+/* ------------------------------------------------------------------ */
+
+function FinalCta() {
+  const f = useT().forcePage;
+  const ref = useReveal<HTMLElement>();
+  return (
+    <section ref={ref} className="zw-fx zw-force-cta relative isolate overflow-hidden py-20 text-white md:py-28">
+      <Sparks count={8} />
+      <div className="zw-container relative flex flex-col items-center text-center">
+        <div data-fx="zoom" className="flex w-full max-w-3xl items-end justify-center">
+          {FORCE_SHOWCASE.map((m) => (
+            <ProductImage key={m.key} src={m.image} alt="" label="" className="-mx-[2%] w-1/4" />
+          ))}
+        </div>
+        <h2 data-fx="up" style={{ "--d": "150ms" } as React.CSSProperties} className="mt-8 font-display text-5xl font-bold uppercase leading-[0.92] md:text-7xl">
+          {f.ctaTitle}
+        </h2>
+        <p data-fx="up" style={{ "--d": "250ms" } as React.CSSProperties} className="mt-4 max-w-lg text-white/65">
+          {f.ctaText}
+        </p>
+        <div data-fx="up" style={{ "--d": "350ms" } as React.CSSProperties} className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link
+            href="/yetkili-bayi-ve-servis-agi"
+            className="inline-flex items-center gap-2 rounded-[4px] bg-zw-red-600 px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-zw-red-700"
+          >
+            {f.ctaDealer}
+            <ArrowRight size={16} />
+          </Link>
+          <Link
+            href="/destek"
+            className="inline-flex items-center gap-2 rounded-[4px] border border-white/25 px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:border-white hover:bg-white hover:text-zw-ink"
+          >
+            {f.ctaSupport}
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+function SectionHead({ eyebrow, title, text, dark = false }: { eyebrow: string; title: string; text?: string; dark?: boolean }) {
+  return (
+    <div className="zw-container">
+      <p data-fx="up" className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.3em] text-zw-red-600 md:text-xs">
+        <span className="h-px w-10 bg-zw-red-600" />
+        {eyebrow}
+      </p>
+      <h2
+        data-fx="wipe"
+        style={{ "--d": "100ms" } as React.CSSProperties}
+        className={`mt-4 max-w-4xl font-display text-[44px] font-bold uppercase leading-[0.92] md:text-7xl ${dark ? "text-white" : "text-zw-ink"}`}
+      >
+        {title}
+      </h2>
+      {text && (
+        <p data-fx="up" style={{ "--d": "200ms" } as React.CSSProperties} className={`mt-4 max-w-xl ${dark ? "text-white/60" : "text-zw-grey-600"}`}>
+          {text}
+        </p>
+      )}
+    </div>
+  );
+}

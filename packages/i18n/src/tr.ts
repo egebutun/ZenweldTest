@@ -32,6 +32,7 @@ export const tr = {
       "Gönderilemedi: tarayıcınızın deposu dolu, kayıt yapılmadı. Tarayıcının bu siteye ait verilerini temizleyip tekrar deneyin.",
   },
   nav: {
+    force: "FORCE",
     equipment: "Ekipmanlar",
     safety: "Güvenlik",
     accessories: "Aksesuarlar",
@@ -274,7 +275,9 @@ export const tr = {
   dealerApply: {
     title: "Bayimiz Olun",
     subtitle:
-      "Zenweld yetkili bayi ağına katılın. Başvurunuzu inceleyip sizinle iletişime geçelim.",
+      "Zenweld yetkili bayi ağına katılın; ürün, eğitim ve teknik destekle her zaman yanınızdayız. Başvurunuzu inceleyip sizinle iletişime geçelim.",
+    /** Keşfet menüsündeki kısa açıklama */
+    menuText: "Türkiye genelindeki yetkili bayi ağımıza katılın",
     companySection: "Firma Bilgileri",
     contactSection: "İletişim",
     company: "Firma Unvanı",
@@ -556,6 +559,87 @@ export const tr = {
     officesSubtitle:
       "İstanbul ve İzmir ofislerimizi ziyaret edebilirsiniz. Harita üzerine tıklayarak yol tarifi alabilirsiniz.",
     directions: "Yol tarifi al",
+  },
+  /**
+   * /force: Force serisinin tanitim sayfasi (KARARLAR K-114). Sloganlar,
+   * aciklamalar ve rakamlar urunlerin teknik ozelliklerinden yazildi; fiyat
+   * ve teknik tablo urun kayitlarindan gelir.
+   */
+  forcePage: {
+    eyebrow: "Zenweld Force Serisi",
+    title: "Zenweld Force Serisi",
+    heroLineA: "Kompakt gövde.",
+    heroLineB: "Tam güç.",
+    heroText: "MIG, TIG, elektrot ve plazma kesim için dört makine. Prize takın, işe başlayın.",
+    heroCta: "Makineleri Keşfet",
+    heroCompare: "Teknik Karşılaştırma",
+    scrollHint: "Kaydırın",
+    ticker: ["MIG/MAG", "Pulse TIG", "MMA", "Plazma Kesim", "Sinerjik Kontrol", "230 V", "Dijital Panel", "Yetkili Servis"],
+    lineupTitle: "Dört yöntem. Tek seri.",
+    lineupText: "Her biri kendi işinin ustası; hepsi aynı Force karakterini taşır.",
+    machines: {
+      mig: {
+        method: "Çok fonksiyonlu kaynak",
+        slogan: "Tek makine. Dört yöntem.",
+        text: "Standart 230 V prizden 200 A MIG gücü. Sinerjik kontrol ayarı sizin yerinize yapar; spool gun desteğiyle alüminyuma da hazırdır. MIG, gazsız özlü tel, elektrot ve Lift TIG tek gövdede.",
+        stats: [
+          { value: "200", unit: "A", label: "MIG kaynak akımı" },
+          { value: "4", unit: "", label: "kaynak yöntemi" },
+          { value: "230", unit: "V", label: "standart priz" },
+        ],
+      },
+      tig: {
+        method: "TIG argon kaynak",
+        slogan: "İnce işin ustası.",
+        text: "Pulse TIG ile ince saclarda az ısı, az çarpılma, kusursuz dikiş. TIG ve elektrot aynı gövdede; 2T, 4T ve punta modlarıyla her ayrıntıya hâkim olun.",
+        stats: [
+          { value: "200", unit: "A", label: "TIG kaynak akımı" },
+          { value: "4,8", unit: "kg", label: "ağırlık" },
+          { value: "3", unit: "", label: "çalışma modu" },
+        ],
+      },
+      arc: {
+        method: "Elektrod kaynak",
+        slogan: "Küçük gövde. Büyük ark.",
+        text: "3,56 kg'lık gövdeden 200 A. Sıcak başlangıç, ark kuvveti ve yapışma önleyici sayesinde ark ilk denemede tutuşur, sonuna kadar kararlı kalır.",
+        stats: [
+          { value: "200", unit: "A", label: "kaynak akımı" },
+          { value: "3,56", unit: "kg", label: "ağırlık" },
+          { value: "6", unit: "mm", label: "tek pasoda kaynak" },
+        ],
+      },
+      cut: {
+        method: "Plazma kesme",
+        slogan: "Çeliği çizer gibi keser.",
+        text: "10 mm'ye kadar temiz, 16 mm'ye kadar ayırma kesimi. Temassız HF pilot ark sarf malzemesini korur, akıllı son gaz torcu soğutur. 4,6 kg ile sahaya kolayca taşınır.",
+        stats: [
+          { value: "10", unit: "mm", label: "temiz kesim" },
+          { value: "16", unit: "mm", label: "ayırma kesimi" },
+          { value: "4,6", unit: "kg", label: "ağırlık" },
+        ],
+      },
+    },
+    productLink: "Ürünü İncele",
+    specsLink: "Teknik Özellikler",
+    dnaEyebrow: "Her Force'ta standart",
+    dnaTitle: "Güçlü. Dayanıklı. Kolay.",
+    dna: [
+      { title: "Dijital kontrol paneli", text: "Akım, mod ve fonksiyonlar net bir ekranda; ayarlar birkaç dokunuşla yapılır." },
+      { title: "Standart 230 V priz", text: "Dört makine de monofaze 230 V prizle çalışır; ek tesisat gerekmez." },
+      { title: "Taşınabilir gövde", text: "3,56 kg'dan başlayan ağırlıkla atölyeden sahaya kolayca taşınır." },
+      { title: "Otomatik koruma", text: "Aşırı akım ve aşırı ısınmada makine kendini korur." },
+      { title: "IP21S gövde", text: "IP21S koruma sınıfı ve H sınıfı izolasyonla zorlu koşullara dayanıklı." },
+      { title: "Servis ve garanti", text: "Türkiye genelinde yetkili servis; online garanti kaydıyla +12 ay ek garanti." },
+    ],
+    tableEyebrow: "Bütün modeller",
+    tableTitle: "Teknik Karşılaştırma",
+    tableText: "Force serisinin bütün modelleri yan yana. Tabloyu yana kaydırarak karşılaştırın.",
+    tableModel: "Model",
+    tablePrice: "Fiyat",
+    ctaTitle: "Force'u yakından görün.",
+    ctaText: "Size en yakın yetkili bayide makineleri inceleyin, uzmanlarımızdan bilgi alın.",
+    ctaDealer: "Yetkili Bayi Bul",
+    ctaSupport: "Destek ve Garanti",
   },
   /** /destek: Destek ve Garanti sayfasi */
   supportHub: {

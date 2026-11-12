@@ -54,6 +54,20 @@ export const test = base.extend<{ problems: string[] }>({
 export { expect };
 
 /**
+ * Telefonda sitenin menu cekmecesini acar ve cekmecedeki menuyu verir.
+ * Sayfa henuz hazir degilken yapilan tiklama bosa gidebilir; cekmece
+ * gorunene kadar "Menü" yeniden tiklanir (dugme yalnizca acar).
+ */
+export async function openDrawer(page: Page): Promise<Locator> {
+  const drawer = page.locator("nav").filter({ visible: true }).filter({ has: page.getByRole("button", { name: "Keşfet" }) });
+  await expect(async () => {
+    await page.getByRole("button", { name: "Menü", exact: true }).click();
+    await expect(drawer).toBeVisible({ timeout: 1500 });
+  }).toPass({ timeout: 20_000 });
+  return drawer;
+}
+
+/**
  * Formdaki alani etiketiyle bulur. Etiketler alanlara baglidir (FormRow);
  * zorunlu alanin etiketinde "*" vardir. Ad tam eslesir: "Ad" Soyad'i bulmaz.
  */

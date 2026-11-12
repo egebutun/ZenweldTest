@@ -97,23 +97,24 @@ const MACHINE_PHOTOS = new Set([
   "multicut-105-cnc",
   "multicut-85-cnc",
   "multicut-60-s",
+  "forcearc-200-mma",
+  "forcetig-200",
+  "forcemig-200",
+  "forcecut-45",
 ]);
 
 /**
- * Gercek fotografi gelene kadar Force serisi 9 urunun gecici ortak fotografi
- * (sahibinin istegi, KARARLAR K-77 eki). ForceArc 400 CEL bunlardan degil.
+ * Gercek fotografi gelene kadar Force serisinin 5 urununun gecici ortak
+ * fotografi (sahibinin istegi, KARARLAR K-77 eki). ForceArc 200, ForceTIG
+ * 200, ForceMIG 200 ve ForceCut 45'in gercek fotografi var (MACHINE_PHOTOS).
  */
 const FORCE_TEMP_PHOTO = "/images/products/force-serisi-gecici.webp";
 const FORCE_TEMP = new Set([
-  "forcearc-200-mma",
   "forcearc-250-mma",
   "forcearc-280-mma",
   "forcemig-125",
   "forcemig-185-mp",
-  "forcemig-200",
   "forcemig-205-dp",
-  "forcetig-200",
-  "forcecut-45",
 ]);
 
 const COOLING_LABELS = { hava: "Hava Soğutmalı", su: "Su Soğutmalı" } as const;

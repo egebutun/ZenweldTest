@@ -29,7 +29,7 @@ test("tanıtım alanı: üç sayfa; sekme ve oklar değiştirir; fare dışarıd
   await hero.getByRole("button", { name: "Force Serisi" }).click();
   await expect(slides.nth(1)).toHaveAttribute("aria-hidden", "false");
   await expect(slides.nth(0)).toHaveAttribute("aria-hidden", "true");
-  await expect(slides.nth(1).getByRole("link", { name: /Force Serisini İncele/ })).toHaveAttribute("href", "/arama?q=Force");
+  await expect(slides.nth(1).getByRole("link", { name: /Force Serisini İncele/ })).toHaveAttribute("href", "/force");
   await expect(slides.nth(1).getByText("ForceMIG", { exact: true })).toHaveCount(0);
 
   await hero.getByRole("button", { name: "Sonraki" }).click();

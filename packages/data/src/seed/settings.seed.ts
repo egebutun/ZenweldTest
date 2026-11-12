@@ -91,7 +91,7 @@ export const defaultSettings: SiteSettings = {
         look: "product-dark",
         image: "/images/home/force-mig-200.webp",
         bigWord: "FORCE",
-        primary: { label: "Force Serisini İncele", href: "/arama?q=Force" },
+        primary: { label: "Force Serisini İncele", href: "/force" },
         secondary: { label: "Teklif Al", href: "/teklif-al" },
       },
       {

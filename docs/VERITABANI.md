@@ -1253,7 +1253,7 @@ Panel › Anasayfa Tanıtım, KARARLAR K-45; geçiş betiği
 | `slides[].look` | `photo` (fotoğraf arka planlı), `product-dark` (ürün · koyu atölye), `product-blueprint` (ürün · teknik çizim) | `product-dark` |
 | `slides[].image` | Görselin adresi | `/images/home/force-mig-200.webp` |
 | `slides[].bigWord` | Arka plandaki büyük yazı; boş: yok | FORCE |
-| `slides[].primary` | 1. düğme `{ label, href }` | Force Serisini İncele, `/arama?q=Force` |
+| `slides[].primary` | 1. düğme `{ label, href }` | Force Serisini İncele, `/force` |
 | `slides[].secondary` | 2. düğme `{ label, href }`; yoksa alan yok | Teklif Al, `/teklif-al` |
 | `slides[].startsOn`, `endsOn` | Yayın tarihi (YYYY-AA-GG, Türkiye günü); yoksa alan yok | yok |
 

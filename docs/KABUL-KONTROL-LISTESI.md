@@ -155,8 +155,20 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 
 ## 3. Menü, alt bilgi ve anasayfa
 
-- [ ] Üst menü: Ekipmanlar · Güvenlik · Aksesuarlar · Dolgu Metalleri ·
-      Destek ve Garanti · Keşfet.
+- [ ] Üst menü: FORCE · Ekipmanlar · Güvenlik · Aksesuarlar · Dolgu
+      Metalleri · Destek ve Garanti · Keşfet. FORCE menü açmaz, `/force`'u
+      açar (telefon menüsünde de en üstte; `tests/e2e/force.spec.ts`).
+- [ ] `/force`: açılışta dev FORCE yazısı ve dört makine; Makineleri Keşfet
+      kartlara, Teknik Karşılaştırma tabloya iner. Dört makine bölümünde
+      slogan, açıklama, rakamlar, fiyat, Sepete Ekle, kalp ve Ürünü İncele
+      (ürün sayfası) vardır. Hareket azaltma tercihinde her şey sabit ve
+      görünür.
+- [ ] `/force` teknik tablo: Model Serisi "Force" olan yayındaki bütün
+      ürünler (aile sırasıyla); üründe olmayan özellik "—"; her kolonun
+      altında fiyat, Sepete Ekle ve kalp. Depoda olmayanda "STOKTA YOK".
+      Panelde Force serisine ürün eklenince ya da fiyat/teknik özellik
+      değişince tablo da değişir (iki modda; `tests/e2e-db/force.spec.ts`).
+- [ ] Anasayfa tanıtım alanında **Force Serisini İncele** `/force`'u açar.
 - [ ] Bölüm menüsünde grup başlığı grup sayfasına, kategori kategori
       sayfasına gider; bölüm adına tıklanınca bölüm sayfası açılır.
 - [ ] Destek ve Garanti menüsü: solda başlık, açıklama ve **Tümünü Gör**;

@@ -1,4 +1,4 @@
-import { expect, test } from "./yardimci";
+import { expect, openDrawer, test } from "./yardimci";
 
 /**
  * DESTEK VE GARANTI VE KESFET: UST MENU, /destek VE /yasal/iade (demo modu;
@@ -32,9 +32,9 @@ const RETURNS_NOTICE =
 
 test.use({ viewport: { width: 1440, height: 900 } });
 
-test("üst menü sırası: ürün bölümleri, Destek ve Garanti, en sonda Keşfet", async ({ page, problems }) => {
+test("üst menü sırası: FORCE, ürün bölümleri, Destek ve Garanti, en sonda Keşfet", async ({ page, problems }) => {
   await page.goto("/");
-  await expect(page.locator("header nav > *")).toHaveText(["Ekipmanlar", "Güvenlik", "Aksesuarlar", "Dolgu Metalleri", "Destek ve Garanti", "Keşfet"]);
+  await expect(page.locator("header nav > *")).toHaveText(["FORCE", "Ekipmanlar", "Güvenlik", "Aksesuarlar", "Dolgu Metalleri", "Destek ve Garanti", "Keşfet"]);
   expect(problems).toEqual([]);
 });
 
@@ -107,8 +107,7 @@ test("Keşfet menüsü: başlığı sayfa açmaz; solda açıklama, sağda Kurum
 test("telefon menüsü: Destek ve Garanti'de kolon başlığı yok; Keşfet'te Kurumsal, Güncel, Diğer başlıkları var", async ({ page, problems }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await page.getByRole("button", { name: "Menü" }).click();
-  const drawer = page.locator("nav").filter({ visible: true }).filter({ has: page.getByRole("button", { name: "Keşfet" }) });
+  const drawer = await openDrawer(page);
 
   await drawer.getByRole("button", { name: "Destek ve Garanti" }).click();
   for (const [label, href] of LINKS) await expect(drawer.getByRole("link", { name: label, exact: true })).toHaveAttribute("href", href);

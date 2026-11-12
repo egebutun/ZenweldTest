@@ -2304,7 +2304,7 @@ sayfalarla aynı listedir.
 
 | Grup | Sayfalar |
 |---|---|
-| Ana sayfa ve ürün bölümleri | Ana Sayfa, Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri, Teklif Al |
+| Ana sayfa ve ürün bölümleri | Ana Sayfa, Force Serisi, Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri, Teklif Al |
 | Keşfet | Hakkımızda, Satış Temsilcilerimiz, Bayilik Başvurusu, Haberler, Etkinlikler, Blog, Welders Club, Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları |
 | Destek ve Garanti | Destek ve Garanti, İletişim, Sık Sorulan Sorular, Yetkili Bayi ve Servis Ağı, Servis Talebi, Garanti, Garanti Kaydı, Garanti Sorgulama |
 

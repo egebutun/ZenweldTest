@@ -29,7 +29,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 5. [Stok ve SAP; bayiler ve online satıcılar](#5-stok-ve-sap-bayiler-ve-online-satıcılar) — K-20, K-28–K-33, K-82, K-84, K-93
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap) — K-34–K-37, K-68, K-94–K-96
 7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41
-8. [İçerik](#8-i̇çerik) — K-42–K-47
+8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
@@ -304,9 +304,10 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - Sahibinin isteğiyle silinenler: sitede karşılığı olmayan
   `ultimate-400-cel`, üzerinde "LS-15000F" yazan Jasic LS-20000F
   fotoğrafı ve Force ürünlerinin geçici Jasic TIG200 fotoğrafı.
-- Force serisinin 9 ürünü (ForceArc 200, 250, 280; ForceMIG 125, 185 MP,
-  200, 205 DP; ForceTIG 200; ForceCut 45), gerçek fotoğrafları gelene
-  kadar sahibinin verdiği geçici ortak fotoğrafı (Jasic ARC280 görseli,
+- ForceArc 200, ForceTIG 200, ForceMIG 200 ve ForceCut 45'in gerçek
+  fotoğrafı sahibinden geldi. Force serisinin kalan 5 ürünü (ForceArc 250,
+  280; ForceMIG 125, 185 MP, 205 DP), gerçek fotoğrafları gelene kadar
+  sahibinin verdiği geçici ortak fotoğrafı (Jasic ARC280 görseli,
   `force-serisi-gecici.webp`) gösterir. ForceArc 400 CEL bu listede
   yoktur; çizim gösterir.
 - Ayrıntı: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları.
@@ -767,6 +768,18 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - Kurumsal sayfanın başlığı ve metni, Neden Zenweld? metinleri ve güven
   şeridine eklenecek bilgiler sahibinden gelecek.
 - Tam sıra: [WEBSITE-KULLANIM.md › Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa).
+
+### K-114 · Force serisinin tanıtım sayfası
+- Üst menüde ilk başlık **FORCE**'tur; menüsü yoktur, doğrudan Force
+  sayfasını (`/force`) açar. Anasayfa tanıtım alanındaki "Force Serisini
+  İncele" de buraya gelir.
+- Sayfada dört makine tanıtılır: ForceMIG 200, ForceTIG 200, ForceArc 200,
+  ForceCut 45. Fotoğraflar sahibinden; sloganları ve kısa açıklamaları
+  sahibinin onayıyla şimdilik kodda yazılıdır. Panelden yönetim ve yeni
+  fotoğraf/video sonra eklenir.
+- En altta teknik tablo: Model Serisi "Force" olan yayındaki bütün ürünler
+  yan yana; her kolonun altında fiyat, Sepete Ekle ve favori kalbi. Fiyat,
+  stok ve teknik özellikler ürün kayıtlarından gelir.
 
 ---
 

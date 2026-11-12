@@ -88,6 +88,19 @@ export function Header() {
               1280px altinda basliklar sikisir, arama kutusu simgeye kuculur. */}
           <nav className="ml-2 hidden items-center lg:flex xl:ml-4 xl:gap-1">
             {menus.map((menu) => {
+              // FORCE: menusu olmayan tek baslik; kirmizi ve kalin, dogrudan /force'a gider.
+              if (!menu.columns.length && menu.href) {
+                return (
+                  <Link
+                    key={menu.id}
+                    href={menu.href}
+                    onMouseEnter={() => showMenu(null)}
+                    className="whitespace-nowrap rounded-full px-2 py-2 font-display text-[17px] font-bold tracking-[0.08em] text-zw-red-600 transition-colors hover:text-zw-red-700 xl:px-3 zw-focus"
+                  >
+                    {menu.label}
+                  </Link>
+                );
+              }
               const className = `flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-sm xl:px-3 font-semibold transition-colors zw-focus ${
                 openMenu === menu.id
                   ? "bg-zw-grey-100 text-zw-ink"

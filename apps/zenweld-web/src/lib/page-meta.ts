@@ -51,6 +51,7 @@ const section = (s: TopLevelSection): PageMeta => ({
 
 const PAGES = {
   "/": { name: "Ana Sayfa", title: HOME_TITLE, absoluteTitle: HOME_TITLE, description: SITE_DESCRIPTION, group: HOME },
+  "/force": { name: "Force Serisi", title: "Force Serisi", description: "Zenweld Force serisi: ForceMIG, ForceTIG, ForceArc ve ForceCut. Kompakt gövde, tam güç; bütün modellerin teknik özellikleri ve fiyatları tek sayfada.", group: HOME },
   "/ekipmanlar": section("ekipmanlar"),
   "/guvenlik": section("guvenlik"),
   "/aksesuarlar": section("aksesuarlar"),

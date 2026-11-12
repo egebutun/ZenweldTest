@@ -38,7 +38,6 @@ export function ProductCard({
   // Kampanya tarihleri "now" ile degerlendirilir.
   const discount = discountPercent(product, now);
   const flash = discount >= FLASH_DISCOUNT_THRESHOLD;
-  const sale = salePriceExVat(product, now);
 
   const card = (
     <div className="group relative flex h-full flex-col overflow-hidden rounded-[4px] border border-zw-grey-200 bg-white transition-shadow hover:shadow-lg">
@@ -113,31 +112,7 @@ export function ProductCard({
         )}
 
         <div className={compact ? "mt-auto pt-3" : "mt-auto pt-4"}>
-          {/* Indirimli fiyat kirmizi kutuda beyaz ve kalin; indirimsizler
-              de eskisinden belirgin sekilde buyuk. */}
-          {discount > 0 ? (
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={`inline-block rounded-[4px] bg-zw-red-600 px-2.5 py-1 font-bold text-white ${
-                  compact ? "text-xl" : "text-2xl"
-                }`}
-              >
-                {formatPrice(priceWithVat(sale, product.vatRate))}
-              </span>
-              <span
-                className={`text-zw-grey-500 line-through ${compact ? "text-sm" : "text-base"}`}
-              >
-                {formatPrice(priceWithVat(product.priceExVat, product.vatRate))}
-              </span>
-            </div>
-          ) : (
-            <div className={`font-bold text-zw-ink ${compact ? "text-xl" : "text-2xl"}`}>
-              {formatPrice(priceWithVat(sale, product.vatRate))}
-            </div>
-          )}
-          <div className="mt-1 text-xs text-zw-grey-500">
-            {t.product.priceIncVat} · {formatPrice(sale)} {t.product.priceExVat}
-          </div>
+          <ProductPrice product={product} compact={compact} />
           <CardCartButton product={product} inStock={inStock} />
         </div>
       </div>
@@ -152,16 +127,76 @@ export function ProductCard({
 }
 
 /**
+ * Kartin fiyati: indirimli fiyat kirmizi kutuda beyaz ve kalin, eski fiyat
+ * ustu cizili; altinda KDV dahil/haric. Force sayfasinin tablosu da bunu
+ * kullanir. Kampanya tarihleri "now" ile degerlendirilir.
+ */
+export function ProductPrice({
+  product,
+  compact = false,
+  /** Koyu zeminde (Force sayfasi): beyaz fiyat, acik gri satirlar. */
+  dark = false,
+}: {
+  product: Product;
+  compact?: boolean;
+  dark?: boolean;
+}) {
+  const t = useT();
+  const now = useNow();
+  const discount = discountPercent(product, now);
+  const sale = salePriceExVat(product, now);
+  return (
+    <>
+      {/* Indirimli fiyat kirmizi kutuda beyaz ve kalin; indirimsizler
+          de eskisinden belirgin sekilde buyuk. */}
+      {discount > 0 ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className={`inline-block rounded-[4px] bg-zw-red-600 px-2.5 py-1 font-bold text-white ${
+              compact ? "text-xl" : "text-2xl"
+            }`}
+          >
+            {formatPrice(priceWithVat(sale, product.vatRate))}
+          </span>
+          <span
+            className={`line-through ${dark ? "text-white/50" : "text-zw-grey-500"} ${compact ? "text-sm" : "text-base"}`}
+          >
+            {formatPrice(priceWithVat(product.priceExVat, product.vatRate))}
+          </span>
+        </div>
+      ) : (
+        <div className={`font-bold ${dark ? "text-white" : "text-zw-ink"} ${compact ? "text-xl" : "text-2xl"}`}>
+          {formatPrice(priceWithVat(sale, product.vatRate))}
+        </div>
+      )}
+      <div className={`mt-1 text-xs ${dark ? "text-white/55" : "text-zw-grey-500"}`}>
+        {t.product.priceIncVat} · {formatPrice(sale)} {t.product.priceExVat}
+      </div>
+    </>
+  );
+}
+
+/**
  * Kartin altindaki dugme. Seceneksiz urun dogrudan sepete eklenir;
  * secenekli urunde (3 m / 5 m torc gibi) once secim yapilsin diye urun
  * sayfasina gidilir.
  */
-function CardCartButton({ product, inStock }: { product: Product; inStock: boolean }) {
+export function CardCartButton({
+  product,
+  inStock,
+  /** Kirmizi dugme (Force sayfasinin koyu bolumleri). */
+  accent = false,
+}: {
+  product: Product;
+  inStock: boolean;
+  accent?: boolean;
+}) {
   const t = useT();
   const cart = useCart();
   const [added, setAdded] = useState(false);
   const className =
     "mt-3 flex w-full items-center justify-center gap-2 rounded-[4px] py-2.5 text-center text-xs font-bold uppercase tracking-wide text-white transition-colors";
+  const solid = accent ? "bg-zw-red-600 hover:bg-zw-red-700" : "bg-zw-ink hover:bg-zw-red-600";
 
   // Depoda yok: sepete eklenmez (KARARLAR K-82).
   if (!inStock) {
@@ -174,7 +209,7 @@ function CardCartButton({ product, inStock }: { product: Product; inStock: boole
 
   if (product.options?.variants.length) {
     return (
-      <Link href={`/urun/${product.slug}`} className={`${className} bg-zw-ink hover:bg-zw-red-600`}>
+      <Link href={`/urun/${product.slug}`} className={`${className} ${solid}`}>
         {t.cart.chooseOptions}
       </Link>
     );
@@ -196,7 +231,7 @@ function CardCartButton({ product, inStock }: { product: Product; inStock: boole
         cart.add(product.id);
         setAdded(true);
       }}
-      className={`${className} bg-zw-ink hover:bg-zw-red-600`}
+      className={`${className} ${solid}`}
     >
       <ShoppingCart size={15} />
       {t.cart.addToCart}

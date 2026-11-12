@@ -55,6 +55,7 @@ export interface MenuColumn {
 export interface TopMenu {
   id: string;
   label: string;
+  /** Kolonu yoksa (FORCE) baslik yalnizca bir baglantidir; menu acilmaz. */
   /** Bolum ya da tanitim sayfasi: /ekipmanlar, /destek. Kesfet'te yok: baslik bir sayfa acmaz. */
   href?: string;
   columns: MenuColumn[];
@@ -129,7 +130,10 @@ export function useMainMenu(): TopMenu[] {
       columns: exploreColumns(t),
     };
 
-    return [...productMenus, supportWarranty, explore];
+    // En basta: Force serisinin tanitim sayfasi (KARARLAR K-114); menusu yok.
+    const force: TopMenu = { id: "force", label: t.nav.force, href: "/force", columns: [] };
+
+    return [force, ...productMenus, supportWarranty, explore];
   }, [db, t]);
 }
 
@@ -145,7 +149,7 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
       links: [
         { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda", icon: "hakkimizda" },
         { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/satis-temsilcilerimiz", icon: "satis-temsilcileri" },
-        { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/bayilik-basvurusu", icon: "bayilik-basvurusu" },
+        { label: t.dealerApply.title, description: t.dealerApply.menuText, href: "/bayilik-basvurusu", icon: "bayilik-basvurusu" },
       ],
     },
     {

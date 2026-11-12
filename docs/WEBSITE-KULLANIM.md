@@ -114,6 +114,7 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
 | Öğe | Davranış |
 |---|---|
 | Logo | Anasayfaya gider. |
+| **FORCE** (ilk başlık, kırmızı) | Menüsü yoktur; tıklayınca [Force Serisi sayfası](#force-serisi-force) (`/force`) açılır. |
 | **Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri** | Başlığa tıklayınca bölüm sayfası açılır; üzerine gelince mega menü açılır. |
 | **Destek ve Garanti** | Başlığa tıklayınca [Destek ve Garanti sayfası](#destek-ve-garanti-destek) (`/destek`) açılır. Üzerine gelince menü açılır: solda başlık, kısa açıklama ve **Tümünü Gör** (`/destek`); sağda iki kolonda, sembolleriyle ve kısa açıklamalarıyla: 1. kolon İletişim, Yetkili Bayi ve Servis Bul, Servis Talebi, Sık Sorulan Sorular; 2. kolon Garanti Kaydı, Garanti Sorgulama, Garanti Koşulları, İade ve Değişim (`/yasal/iade`). |
 | **Keşfet** (en sonda) | Başlık bir sayfa açmaz; üzerine gelince ya da tıklayınca menü açılır. Solda "Keşfet" ve "Zenweld'i tanıyın; haberler, etkinlikler, rehberler ve belgeler tek yerde."; sağda üç başlıklı kolonda, sembolleriyle ve kısa açıklamalarıyla: **Kurumsal** (Hakkımızda, Satış Temsilcilerimiz, Bayimiz Olun), **Güncel** (Haberler, Etkinlikler, Blog, Welders Club), **Diğer** (Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları). "Tümünü Gör" yoktur. |
@@ -142,7 +143,8 @@ diğerine geçince menü kapanmadan içeriği değişir.
   kayıt sırasıyla gelir; Sıra numarası menüde kullanılmaz.
 
 **Mobil menü:** Telefonda menü simgesinden yandan açılan çekmecedir. Aynı
-menüler aynı sırada açılıp kapanır; bölümlerde ve Destek ve Garanti'de
+menüler aynı sırada açılıp kapanır; en üstteki FORCE açılmaz, doğrudan
+`/force`'a gider. Bölümlerde ve Destek ve Garanti'de
 (`/destek`) "Tümünü Gör", bölümlerde tıklanabilir grup başlıkları vardır.
 Keşfet'te Kurumsal, Güncel, Diğer başlıkları görünür; Destek ve Garanti'nin
 iki listesi başlıksız alt alta durur. Semboller ve açıklamalar telefonda
@@ -220,8 +222,8 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
      (`/ekipmanlar`) ve **Zenweld'i Tanıyın** (`/hakkimizda`). Metin
      örnektir; sahibi panelden girecek.
    - **Force Serisi** (ürün · koyu atölye): ForceMIG 200 fotoğrafı, arka
-     planda "FORCE"; **Force Serisini İncele** (`/arama?q=Force`) ve
-     **Teklif Al**.
+     planda "FORCE"; **Force Serisini İncele** ([Force Serisi
+     sayfası](#force-serisi-force), `/force`) ve **Teklif Al**.
    - **Jasic Lazer** (ürün · teknik çizim): Jasic lazer kaynak makinesi
      fotoğrafı, arka planda "LAZER", etiketler Lazer Kaynak · Lazer
      Temizleme · Lazer Markalama; **Lazer Makinelerini İncele**
@@ -373,6 +375,51 @@ Her seviyede üstte konum satırı (ör. Ekipmanlar › Kaynak Makineleri ›
 - Linki ya da grubu değişen kategorinin ve linki değişen grubun eski adresi
   yeni adrese yönlenir. Grubun linki değişirse içindeki bütün kategorilerin
   eski adresleri de yönlenir.
+
+### Force Serisi (`/force`)
+
+Force serisinin tanıtım sayfası (KARARLAR K-114). Üst menüdeki **FORCE** ve
+anasayfa tanıtım alanındaki **Force Serisini İncele** buraya gelir. Koyu
+zeminlidir; bölümler sayfa kaydırıldıkça kayarak, büyüyerek ya da soldan
+açılarak belirir. Hareket azaltma tercihi olan ziyaretçide hareket olmaz,
+her şey hemen görünür.
+
+1. **Açılış:** "Zenweld Force Serisi", dev **FORCE** yazısı, önünde dört
+   makine (ForceArc 200, ForceMIG 200, ForceTIG 200, ForceCut 45; zemini
+   kaldırılmış fotoğraflar), "Kompakt gövde. Tam güç." ve kısa metin.
+   **Makineleri Keşfet** dört makinenin kartlarına, **Teknik
+   Karşılaştırma** tabloya iner. Kaydırınca yazı aşağı, makineler yukarı
+   kayıp iki yana açılır.
+2. **Kayan şerit:** MIG/MAG, Pulse TIG, MMA, Plazma Kesim, Sinerjik Kontrol,
+   230 V, Dijital Panel, Yetkili Servis (fare üzerindeyken durur).
+3. **Dört yöntem. Tek seri.:** Dört makinenin kartı (yöntem, ad, slogan);
+   karta tıklayınca o makinenin bölümüne iner.
+4. **Makine bölümleri** (ForceMIG 200, ForceTIG 200, ForceArc 200, ForceCut
+   45): sıra numarası, yöntem, ad, slogan, kısa açıklama, üç rakam
+   (ekrana girince sayarak artar), fiyat (ürün kartındaki kuralla, KDV
+   dahil ve hariç), **Sepete Ekle**, favori kalbi, **Ürünü İncele** (ürün
+   sayfası) ve **Teknik Özellikler** (tabloya iner). Sloganlar, açıklamalar
+   ve rakamlar şimdilik kodda yazılıdır (`packages/i18n` › `forcePage`);
+   fiyat, stok ve sepet ürün kaydından gelir. Ürün yayında değilse
+   bölümde fiyat, sepet ve ürün bağlantısı görünmez.
+5. **Her Force'ta standart:** Altı ortak özellik (dijital kontrol paneli,
+   standart 230 V priz, taşınabilir gövde, otomatik koruma, IP21S gövde,
+   servis ve garanti).
+6. **Teknik Karşılaştırma:** Model Serisi "Force" olan yayındaki bütün
+   ürünler yan yana; panelde Force serisine ürün eklenince kendiliğinden
+   girer.
+   - Kolonlar aile sırasıyla (ForceMIG, ForceTIG, ForceArc, ForceCut),
+     aile içinde model numarasına göre dizilir; en üstte aile bandı, altında
+     ürün fotoğrafı ve kısa model adı (ürün sayfasına gider).
+   - Satırlar ürünlerin teknik özelliklerinin birleşimidir; "Kaynak
+     yöntemi/yöntemleri" tek satırda "Yöntem" olarak toplanır, "Marka"
+     gösterilmez. Üründe olmayan özellik "—" yazar.
+   - Her kolonun en altında fiyat, **Sepete Ekle** ve favori kalbi (ürün
+     kartındaki kurallar: depoda yoksa "STOKTA YOK", seçenekli üründe
+     "Seçenekleri Gör").
+   - Tablo yana kayar; özellik adları solda sabit kalır.
+7. **Kapanış:** "Force'u yakından görün."; **Yetkili Bayi Bul** ve
+   **Destek ve Garanti**.
 
 ---
 
@@ -1739,6 +1786,7 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 | Adres | Sayfa |
 |---|---|
 | `/` | Anasayfa |
+| `/force` | Force Serisi |
 | `/ekipmanlar`, `/guvenlik`, `/aksesuarlar`, `/dolgu-metalleri` | Bölüm sayfaları |
 | `/<bölüm>/<grup>` | Grup sayfası |
 | `/<bölüm>/<grup>/<kategori>` | Kategori sayfası |
