@@ -788,6 +788,71 @@ Hangi bildirimlerin gönderileceği ve metinleri kararlaştırılmalı. Yeni tü
 eklenince [VERITABANI.md](VERITABANI.md) › `email_recipients` › Müşteriye
 giden e-postalar listesine yazılır.
 
+### Servis talebini en yakın yetkili servise yönlendirme — e-posta taslakları
+
+Servis atama tasarımı (sahibine sunuldu, onay bekliyor): yeni servis
+talebi en yakın yetkili servis noktasına kendiliğinden atanır, servis
+noktasına bilgi e-postası gider, dönüş e-postası paneldeki talep kaydında
+görünür, yönetici **Onayla**'ya basınca müşteri Hesabım › Servis
+Taleplerim'de servis noktasının iletişim bilgilerini görür. Metinler
+taslaktır; sahibiyle birlikte düzenlenecek. `<…>` alanları talepten ve
+bayi kaydından gelir.
+
+**1. Servis noktasına bilgi e-postası** (talep atanınca; alıcı bayi
+kaydındaki e-posta):
+
+- **Konu:** Zenweld servis talebi — `<talep no>` — `<ilçe> / <il>`
+- **Yanıt adresi:** Talebe özel adres; servis noktasının yanıtı talep
+  kaydına eklenir.
+- **Metin:**
+
+  > Merhaba `<servis noktası adı>`,
+  >
+  > Bölgenizdeki bir müşterimiz Zenweld'e servis talebi gönderdi. Talebi
+  > size en yakın yetkili servis noktası olarak yönlendirdik.
+  >
+  > Talep no: `<talep no>` · Tarih: `<gün.ay.yıl saat>`
+  > Talep konusu: `<Kurulum / Bakım / Onarım / Kullanım-Bakım Eğitimi>`
+  > Makine: `<model>` (`<makine türü>`)
+  > Müşteri şikayeti: `<şikayet>`
+  > Konum: `<ilçe> / <il>` · Size uzaklığı yaklaşık `<km>` km
+  >
+  > Bu talebi üstlenip üstlenemeyeceğinizi bu e-postayı yanıtlayarak
+  > bildirin; mümkünse müşteriyle ne zaman iletişime geçebileceğinizi de
+  > yazın. Uygun değilseniz nedenini kısaca yazmanız yeterli; talebi başka
+  > bir servis noktasına yönlendiririz.
+  >
+  > Talep onaylanınca müşterinin iletişim bilgilerini ayrı bir e-postayla
+  > göndereceğiz.
+  >
+  > Zenweld Servis · `<destek e-postası>` · `<destek telefonu>`
+
+**2. Servis noktasına "talep size verildi" e-postası** (yönetici
+**Onayla**'ya basınca):
+
+- **Konu:** Talep `<talep no>` size verildi — `<müşteri adı>`
+- **Metin:** "Talep `<talep no>` onaylandı ve size verildi. Müşteri
+  bilgileri: `<firma / ad soyad>`, yetkili `<yetkili kişi>`, GSM
+  `<yetkili GSM>`, telefon `<telefon>`, e-posta `<e-posta>`, adres
+  `<adres>, <ilçe> / <il>`. Lütfen müşteriyle en kısa sürede iletişime
+  geçin. Talep tamamlanınca bu e-postayı yanıtlayarak bize bildirin."
+
+**3. Müşteriye "servis noktanız belli oldu" e-postası** (Onayla'dan sonra;
+üye olmayan müşteri Hesabım'ı göremediği için bilgiyi bu e-postayla alır):
+
+- **Konu:** Servis talebiniz `<talep no>` — yetkili servisiniz belli oldu
+- **Metin:** "Servis talebiniz `<servis noktası adı>`'na yönlendirildi.
+  Servis ekibi sizinle iletişime geçecek; dilerseniz siz de
+  ulaşabilirsiniz: adres `<adres>`, telefon `<telefon>`, WhatsApp
+  `<whatsapp>`, e-posta `<e-posta>`, çalışma saatleri `<saatler>`.
+  Üyeyseniz talebinizi Hesabım › Servis Taleplerim'den de
+  izleyebilirsiniz."
+
+**Açık sorular:** Müşterinin kişisel bilgileri servis noktasına ilk
+e-postada mı yoksa (taslaktaki gibi) onaydan sonra mı gönderilsin (KVKK:
+gerekmedikçe paylaşılmaması önerilir)? 2. ve 3. e-postalar gönderilsin mi?
+Yanıt e-postasının kayda eklenmesi için e-posta servisinin gelen e-posta
+özelliği gerekir (Resend kurulumuyla birlikte; [Online satış](#online-satış--canlıya-çıkmadan-önce) 6).
 
 ## Bayi ve satıcı stokları
 
