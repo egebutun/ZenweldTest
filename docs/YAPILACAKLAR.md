@@ -359,6 +359,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Ürün karşılaştırma (bugün yok) | Ürünlerin kesinleşmesi; istenirse (KARARLAR K-102) | — |
 | Menü düzeni, sayfalar, metinler | Sahibinin kararı; bugünkü hepsi örnek (KARARLAR K-102). Dört ana bölüm kodda sabit; yeni bölüm ya da sayfa kod işidir | — |
 | Ürün Seçici'nin yeniden kurulması | Bütün ürünlerin kesinleşmesi; en son ele alınacak (KARARLAR K-69) | [Ürün Seçici ve arama](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) |
+| Site içi aramanın ayarları (çalışma prensibi; hangi kelimede hangi sayfa çıkar) | Sahibiyle sonra ele alınacak | [Ürün Seçici ve arama](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) › Site içi arama |
 | "İlgili Ürünler" öneri mantığı | Bölümdeki kararlar | [Ürün önerileri](#ürün-önerileri--ürün-sayfasındaki-i̇lgili-ürünler-yeniden-kurgulanacak) |
 | Teklif Al formunun soruları | Sahibinin göndereceği gerçek sorular | [Teklif Al formu](#teklif-al-formu--sorular-düzenlenecek) |
 | Ayrı ürünü seçeneğe dönüştürme ekranı | Gerçek ürünler girilmeye başlanınca karar | [Ürün seçenekleri](#ürün-seçenekleri-3-m--5-m-gibi) 2 |
@@ -1231,6 +1232,21 @@ yeniden kurulunca `processes` alanı tamamen kaldırılmalı.
 Not: Bu alan silinmeden önce, aşağıdaki "Ürün önerileri" bölümündeki uyumlu
 aksesuar kurallarında (MIG makinesi → MIG aksesuarları gibi) kullanılıp
 kullanılamayacağı değerlendirilsin.
+
+**Site içi arama (Ara kutusu) — sonra ayarlanacak:** Aramanın çalışma
+prensibi ve hangi kelimede hangi sayfanın bulunacağı sahibiyle sonra
+belirlenecek. Bugünkü durum
+([WEBSITE-KULLANIM.md › Arama](WEBSITE-KULLANIM.md#8-arama);
+`apps/zenweld-web/src/lib/search/`):
+
+- Arama tarayıcıda çalışır; ürünler, kategoriler, yazılar (blog, haber,
+  etkinlik) ve bazı sabit sayfalar aranır. Ürün adı kategori ve
+  açıklamadan önce gelir; yazım hatası ve Türkçe karakter farkı tolere
+  edilir; eşanlamlı kelimeler (`synonyms.ts`) aramayı genişletir.
+- Sabit sayfalar yalnızca kodda yazılı gizli kelimelerle bulunur
+  (`search-client.ts` › `STATIC_PAGES`). Örnek: Teklif Al için "Teklif Al
+  kurumsal vadeli çek ödeme"; arama kutusuna "vadeli" ya da "çek" yazılınca
+  Teklif Al da çıkar. Bu kelimeler ve eşanlamlılar panelden değişmez.
 
 ## Ürün önerileri — ürün sayfasındaki "İlgili Ürünler" yeniden kurgulanacak
 
