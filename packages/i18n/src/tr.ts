@@ -44,6 +44,8 @@ export const tr = {
     /** Destek ve Garanti menusunun solundaki kisa aciklama */
     supportWarrantyIntro:
       "Sorularınızın cevapları, servis ve iade işlemleri, garanti kaydı ve sorgulama tek yerde.",
+    /** Keşfet menüsünün solundaki kısa açıklama */
+    exploreIntro: "Zenweld'i tanıyın; haberler, etkinlikler, rehberler ve belgeler tek yerde.",
     returnsExchange: "İade ve Değişim",
     returnsExchangeDesc: "Cayma hakkı, iade süresi ve değişim koşulları",
     updates: "Güncel",
@@ -562,6 +564,7 @@ export const tr = {
       "Kurulumdan bakıma, servis talebinden garanti işlemlerine kadar makineniz için ihtiyacınız olan her şey burada.",
     tasksTitle: "Size nasıl yardımcı olabiliriz?",
     tasksText: "Yapmak istediğiniz işi seçin; sizi doğru sayfaya götürelim.",
+    ctaContact: "Bize ulaşın",
     ctaFaq: "Soruları inceleyin",
     ctaDealer: "Haritada bulun",
     ctaService: "Talep oluşturun",
@@ -569,9 +572,6 @@ export const tr = {
     ctaWarrantyRegister: "Ürününüzü kaydedin",
     ctaWarrantyCheck: "Garantinizi sorgulayın",
     ctaWarrantyTerms: "Koşulları okuyun",
-    contactTitle: "Destek ekibimize ulaşın",
-    contactText: "Aradığınızı bulamadıysanız bize telefonla ya da e-postayla ulaşın.",
-    contactEmail: "E-posta",
   },
   search: {
     title: "Arama Sonuçları",

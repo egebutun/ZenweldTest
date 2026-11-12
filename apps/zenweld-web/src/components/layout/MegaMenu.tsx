@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { ProductImage } from "@zenweld/ui";
 import Link from "next/link";
-import { SupportIcon } from "@/components/support/SupportIcons";
+import { MenuIcon } from "@/components/common/MenuIcons";
 import { useT } from "@/lib/i18n-client";
 import type { TopMenu } from "@/lib/menu";
 
@@ -95,7 +95,7 @@ function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => void 
     setActiveLink(0);
   };
 
-  if (menu.intro) return <SupportMenu menu={menu} onNavigate={onNavigate} />;
+  if (menu.intro) return <IntroMenu menu={menu} onNavigate={onNavigate} />;
 
   return (
     <div className="zw-mega-content">
@@ -259,16 +259,23 @@ function MegaMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => void 
 }
 
 /**
- * DESTEK VE GARANTI MENUSU
+ * DESTEK VE GARANTI ILE KESFET MENULERI
  *
- * Solda baslik, kisa aciklama ve "Tumunu Gor" (/destek); sagda iki kolonda
- * sembollu baglantilar (Destek, Garanti).
+ * Solda baslik, kisa aciklama ve (sayfasi olan menude) "Tumunu Gor"; sagda
+ * kolonlarda sembollu baglantilar. Destek ve Garanti iki basliksiz kolon,
+ * Kesfet uc baslikli kolondur (Kurumsal, Guncel, Diger).
  */
-function SupportMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => void }) {
+function IntroMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => void }) {
   const t = useT();
+  const wide = menu.columns.length === 3;
   return (
     <div className="zw-mega-content">
-      <div className="zw-container grid grid-cols-[minmax(220px,300px)_1fr] gap-12 py-10 xl:gap-20">
+      {/* Uc kolonlu menude dar ekranda soldaki tanitim daralir, kolonlara yer kalir. */}
+      <div
+        className={`zw-container grid py-10 xl:grid-cols-[minmax(220px,300px)_1fr] xl:gap-20 ${
+          wide ? "grid-cols-[180px_1fr] gap-8" : "grid-cols-[minmax(220px,300px)_1fr] gap-12"
+        }`}
+      >
         <div>
           <div className="font-display text-[34px] font-bold leading-none text-zw-ink">{menu.label}</div>
           <p className="mt-4 max-w-[260px] text-sm leading-relaxed text-zw-grey-600">{menu.intro}</p>
@@ -284,35 +291,42 @@ function SupportMenu({ menu, onNavigate }: { menu: TopMenu; onNavigate: () => vo
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-x-10 xl:gap-x-14">
-          {menu.columns.map((col) => (
-            <ul key={col.label}>
-              {col.links.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={onNavigate}
-                    className="group flex items-center gap-4 border-b border-zw-grey-200 py-3.5"
-                  >
-                    {link.icon && (
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[6px] bg-zw-grey-100 text-zw-red-600 transition-colors group-hover:bg-zw-red-600 group-hover:text-white">
-                        <SupportIcon name={link.icon} size={22} />
-                      </span>
-                    )}
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-[15px] font-semibold text-zw-ink">{link.label}</span>
-                      {link.description && (
-                        <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-zw-grey-500">{link.description}</span>
+        <div className={`grid ${wide ? "grid-cols-3 gap-x-6 xl:gap-x-10" : "grid-cols-2 gap-x-10 xl:gap-x-14"}`}>
+          {menu.columns.map((col, i) => (
+            <div key={i}>
+              {col.label && (
+                <div className="border-b border-zw-grey-200 pb-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-zw-grey-500">
+                  {col.label}
+                </div>
+              )}
+              <ul>
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      onClick={onNavigate}
+                      className="group flex items-center gap-4 border-b border-zw-grey-200 py-3.5"
+                    >
+                      {link.icon && (
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[6px] bg-zw-grey-100 text-zw-red-600 transition-colors group-hover:bg-zw-red-600 group-hover:text-white">
+                          <MenuIcon name={link.icon} size={22} />
+                        </span>
                       )}
-                    </span>
-                    <ChevronRight
-                      size={17}
-                      className="shrink-0 text-zw-grey-400 transition-transform group-hover:translate-x-0.5 group-hover:text-zw-ink"
-                    />
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[15px] font-semibold text-zw-ink">{link.label}</span>
+                        {link.description && (
+                          <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-zw-grey-500">{link.description}</span>
+                        )}
+                      </span>
+                      <ChevronRight
+                        size={17}
+                        className="shrink-0 text-zw-grey-400 transition-transform group-hover:translate-x-0.5 group-hover:text-zw-ink"
+                      />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
         </div>
       </div>

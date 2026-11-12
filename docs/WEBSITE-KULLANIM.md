@@ -115,8 +115,8 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
 |---|---|
 | Logo | Anasayfaya gider. |
 | **Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri** | Başlığa tıklayınca bölüm sayfası açılır; üzerine gelince mega menü açılır. |
-| **Keşfet** | Mega menü: **Kurumsal** (Hakkımızda, Satış Temsilcilerimiz, Bayimiz Olun, İletişim), **Güncel** (Haberler, Etkinlikler, Blog, Welders Club), **Diğer** (Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları). Her bağlantının kısa açıklaması vardır. |
-| **Destek ve Garanti** | Başlığa tıklayınca [Destek ve Garanti sayfası](#destek-ve-garanti-destek) (`/destek`) açılır. Üzerine gelince menü açılır: solda başlık, kısa açıklama ve **Tümünü Gör** (`/destek`); sağda sembolleriyle ve kısa açıklamalarıyla Sık Sorulan Sorular, Yetkili Bayi ve Servis Bul, Servis Talebi, İade ve Değişim (`/yasal/iade`), Garanti Kaydı, Garanti Sorgulama, Garanti Koşulları. |
+| **Destek ve Garanti** | Başlığa tıklayınca [Destek ve Garanti sayfası](#destek-ve-garanti-destek) (`/destek`) açılır. Üzerine gelince menü açılır: solda başlık, kısa açıklama ve **Tümünü Gör** (`/destek`); sağda iki kolonda, sembolleriyle ve kısa açıklamalarıyla: 1. kolon İletişim, Yetkili Bayi ve Servis Bul, Servis Talebi, Sık Sorulan Sorular; 2. kolon Garanti Kaydı, Garanti Sorgulama, Garanti Koşulları, İade ve Değişim (`/yasal/iade`). |
+| **Keşfet** (en sonda) | Başlık bir sayfa açmaz; üzerine gelince ya da tıklayınca menü açılır. Solda "Keşfet" ve "Zenweld'i tanıyın; haberler, etkinlikler, rehberler ve belgeler tek yerde."; sağda üç başlıklı kolonda, sembolleriyle ve kısa açıklamalarıyla: **Kurumsal** (Hakkımızda, Satış Temsilcilerimiz, Bayimiz Olun), **Güncel** (Haberler, Etkinlikler, Blog, Welders Club), **Diğer** (Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları). "Tümünü Gör" yoktur. |
 | **Ara** kutusu | Arama penceresini açar. Klavyede **⌘K / Ctrl+K** ile de açılır. |
 | Konum simgesi | Yetkili Bayi ve Servis Ağı sayfasına gider. |
 | Sepet simgesi | Sepete gider; sepetteki toplam adet rozetle yazar (99'dan fazlaysa "99+"). |
@@ -142,14 +142,19 @@ diğerine geçince menü kapanmadan içeriği değişir.
   kayıt sırasıyla gelir; Sıra numarası menüde kullanılmaz.
 
 **Mobil menü:** Telefonda menü simgesinden yandan açılan çekmecedir. Aynı
-menüler açılıp kapanır; bölümlerde ve Destek ve Garanti'de (`/destek`)
-"Tümünü Gör", bölümlerde tıklanabilir grup başlıkları vardır.
+menüler aynı sırada açılıp kapanır; bölümlerde ve Destek ve Garanti'de
+(`/destek`) "Tümünü Gör", bölümlerde tıklanabilir grup başlıkları vardır.
+Keşfet'te Kurumsal, Güncel, Diğer başlıkları görünür; Destek ve Garanti'nin
+iki listesi başlıksız alt alta durur. Semboller ve açıklamalar telefonda
+gösterilmez.
 
 ### Alt bilgi (her sayfada)
 
-- **Altı sütun:** Kurumsal, Güncel, Diğer, Destek, Garanti (üst menüdekiyle
-  aynı bağlantılar; İade ve Değişim yalnızca Politikalar & Yasal'da) ve
-  **Politikalar & Yasal**. Yasal sütundaki adlar panelden
+- **Altı sütun:** Üst menüyle aynı sırada Destek (İletişim, Yetkili Bayi ve
+  Servis Bul, Servis Talebi, Sık Sorulan Sorular), Garanti (Garanti Kaydı,
+  Garanti Sorgulama, Garanti Koşulları), Kurumsal, Güncel, Diğer (üst
+  menüdekiyle aynı bağlantılar; İade ve Değişim yalnızca Politikalar &
+  Yasal'da) ve **Politikalar & Yasal**. Yasal sütundaki adlar panelden
   değişebildiği için kayıtlı başlıklardan okunur; sırası
   [21. bölümdeki](#21-yasal-metinler) gibidir.
 - **İletişim:** Logo, merkez ofisin adresi, telefon ve e-posta (örnek veride
@@ -1557,14 +1562,15 @@ sayfayı açar.
 
 - **Üst kısım:** "Zenweld", altında "Destek ve Garanti" ve kısa açıklama;
   arkada ürün görseli (bugün geçici olarak Evomig 205 P).
-- **Size nasıl yardımcı olabiliriz?** Menüdeki yedi bağlantı kart olarak:
-  sembol, başlık, kısa açıklama ve bağlantı metni (ör. "Soruları
-  inceleyin →"). Kartın tamamı tıklanır. Telefonda kartlar iki sütundur ve
-  açıklama gösterilmez.
-- **Destek ekibimize ulaşın:** İletişim sayfasındaki bilgiler: e-posta
-  (iki ofis için ortak) ve her ofisin adresi, telefonları ve **Yol tarifi
-  al** (Google Haritalar, yeni sekme). Bilgiler panelden (Mağaza Ayarları ›
-  Şirket ve İletişim) değişir.
+- **Size nasıl yardımcı olabiliriz?** Menüdeki sekiz bağlantı, menüdeki
+  sırayla kart olarak (geniş ekranda dörderli iki satır): İletişim ("Bize
+  ulaşın →"), Yetkili Bayi ve Servis Bul, Servis Talebi, Sık Sorulan
+  Sorular, Garanti Kaydı, Garanti Sorgulama, Garanti Koşulları, İade ve
+  Değişim. Kartta sembol, başlık, kısa açıklama ve bağlantı metni (ör.
+  "Soruları inceleyin →") vardır; kartın tamamı tıklanır. Telefonda kartlar
+  iki sütundur ve açıklama gösterilmez.
+- Adres, telefon ve e-posta bu sayfada yazmaz; İletişim kartı İletişim
+  sayfasını açar.
 
 ### Sık Sorulan Sorular (`/sss`)
 

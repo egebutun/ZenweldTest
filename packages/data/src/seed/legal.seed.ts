@@ -165,7 +165,7 @@ KVKK 11. madde kapsamındaki haklarınız için info@zenweld.com adresine başvu
 - Ürün kullanılmamış ve orijinal ambalajında olmalıdır.
 - Fatura ve tüm aksesuarlar eksiksiz gönderilmelidir.
 ## İade süreci
-İade talebinizi info@zenweld.com adresine iletin; ödemeniz ürün bize ulaştıktan sonra 14 gün içinde iade edilir.
+Ödemeniz ürün bize ulaştıktan sonra 14 gün içinde iade edilir.
 ## Değişim
 Hatalı veya hasarlı ürünlerde değişim yapılır.
 `,

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { getCompany, listLegalPages, listProducts, useDatabase } from "@zenweld/store";
 import { legalPath, productHighlights, type LegalPageId, type TopLevelSection } from "@zenweld/data";
 import type { Dictionary } from "@zenweld/i18n";
-import type { SupportIconName } from "@/components/support/SupportIcons";
+import type { MenuIconName } from "@/components/common/MenuIcons";
 import { useT } from "./i18n-client";
 import { categoryHref, groupHref } from "./catalog";
 
@@ -31,8 +31,8 @@ export interface MenuLink {
   products?: MenuProduct[];
   /** Kategorideki toplam urun sayisi (6'dan fazlaysa "tumunu gor" onemli) */
   productCount?: number;
-  /** Destek ve Garanti: menude ve /destek kartlarinda sembol */
-  icon?: SupportIconName;
+  /** Destek ve Garanti ve Kesfet: menude (ve /destek kartlarinda) sembol */
+  icon?: MenuIconName;
   /** Destek ve Garanti: /destek kartindaki baglanti metni */
   cta?: string;
 }
@@ -41,7 +41,11 @@ export interface MenuLink {
 const MENU_PRODUCT_LIMIT = 6;
 
 export interface MenuColumn {
-  /** Sol kolondaki grup ("Kaynak Makineleri" gibi). Ustune gelince kategorileri acar. */
+  /**
+   * Sol kolondaki grup ("Kaynak Makineleri" gibi). Ustune gelince kategorileri
+   * acar. Kesfet'te kolon basligidir; Destek ve Garanti'nin kolonlarinda
+   * baslik yoktur (bos).
+   */
   label: string;
   /** Urun menulerinde grup sayfasi: /ekipmanlar/kaynak-makineleri */
   href?: string;
@@ -51,10 +55,13 @@ export interface MenuColumn {
 export interface TopMenu {
   id: string;
   label: string;
-  /** Bolum ya da tanitim sayfasi: /ekipmanlar, /destek */
+  /** Bolum ya da tanitim sayfasi: /ekipmanlar, /destek. Kesfet'te yok: baslik bir sayfa acmaz. */
   href?: string;
   columns: MenuColumn[];
-  /** Menunun solunda baslik, kisa aciklama ve "Tumunu Gor" (Destek ve Garanti) */
+  /**
+   * Menunun solunda baslik ve kisa aciklama; sagda sembollu baglantilar
+   * (Destek ve Garanti, Kesfet). Sayfasi olan menude "Tumunu Gor" da vardir.
+   */
   intro?: string;
 }
 
@@ -106,15 +113,8 @@ export function useMainMenu(): TopMenu[] {
       };
     });
 
-    // Urun disi menuler; alt basliklari (Kurumsal, Destek, Garanti ...) mega
-    // menude sol kolonda durur.
-    const explore: TopMenu = {
-      id: "kesfet",
-      label: t.nav.explore,
-      columns: exploreColumns(t),
-    };
-
-    // Basligi /destek sayfasina gider; menude solda tanitim, sagda sembollu baglantilar.
+    // Urun disi menuler: solda tanitim, sagda sembollu baglantilar.
+    // Destek ve Garanti'nin basligi /destek sayfasina gider; Kesfet'in sayfasi yoktur.
     const supportWarranty: TopMenu = {
       id: "destek-garanti",
       label: t.nav.supportWarranty,
@@ -122,42 +122,48 @@ export function useMainMenu(): TopMenu[] {
       intro: t.nav.supportWarrantyIntro,
       columns: supportWarrantyColumns(t),
     };
+    const explore: TopMenu = {
+      id: "kesfet",
+      label: t.nav.explore,
+      intro: t.nav.exploreIntro,
+      columns: exploreColumns(t),
+    };
 
-    return [...productMenus, explore, supportWarranty];
+    return [...productMenus, supportWarranty, explore];
   }, [db, t]);
 }
 
 /**
- * Kesfet menusunun alt basliklari. Ust menu ve alt bilgi ayni listeleri
- * kullanir; bir baglanti eklendiginde iki yerde de gorunur.
+ * Kesfet menusunun kolonlari (Kurumsal, Guncel, Diger). Ust menu ve alt
+ * bilgi ayni listeleri kullanir; bir baglanti eklendiginde iki yerde de
+ * gorunur.
  */
 function exploreColumns(t: Dictionary): MenuColumn[] {
   return [
     {
       label: t.nav.corporate,
       links: [
-        { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda" },
-        { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/satis-temsilcilerimiz" },
-        { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/bayilik-basvurusu" },
-        { label: t.support.contactTitle, description: t.support.contactCardText, href: "/iletisim" },
+        { label: t.explore.about, description: t.explore.aboutDesc, href: "/hakkimizda", icon: "hakkimizda" },
+        { label: t.explore.salesReps, description: t.explore.salesRepsDesc, href: "/satis-temsilcilerimiz", icon: "satis-temsilcileri" },
+        { label: t.dealerApply.title, description: t.dealerApply.homeText, href: "/bayilik-basvurusu", icon: "bayilik-basvurusu" },
       ],
     },
     {
       label: t.nav.updates,
       links: [
-        { label: t.explore.news, description: t.explore.newsDesc, href: "/haberler" },
-        { label: t.explore.events, description: t.explore.eventsDesc, href: "/etkinlikler" },
-        { label: t.explore.blog, description: t.explore.blogDesc, href: "/blog" },
-        { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/welders-club" },
+        { label: t.explore.news, description: t.explore.newsDesc, href: "/haberler", icon: "haberler" },
+        { label: t.explore.events, description: t.explore.eventsDesc, href: "/etkinlikler", icon: "etkinlikler" },
+        { label: t.explore.blog, description: t.explore.blogDesc, href: "/blog", icon: "blog" },
+        { label: t.explore.weldersClub, description: t.explore.weldersClubDesc, href: "/welders-club", icon: "welders-club" },
       ],
     },
     {
       label: t.nav.other,
       links: [
-        { label: t.explore.productSelector, description: t.explore.productSelectorDesc, href: "/urun-secici" },
-        { label: t.explore.guide, description: t.explore.guideDesc, href: "/kaynak-rehberi" },
-        { label: t.explore.msds, description: t.explore.msdsDesc, href: "/msds" },
-        { label: t.explore.batchCertificates, description: t.explore.batchCertificatesDesc, href: "/parti-sertifikalari" },
+        { label: t.explore.productSelector, description: t.explore.productSelectorDesc, href: "/urun-secici", icon: "urun-secici" },
+        { label: t.explore.guide, description: t.explore.guideDesc, href: "/kaynak-rehberi", icon: "kaynak-rehberi" },
+        { label: t.explore.msds, description: t.explore.msdsDesc, href: "/msds", icon: "msds" },
+        { label: t.explore.batchCertificates, description: t.explore.batchCertificatesDesc, href: "/parti-sertifikalari", icon: "parti-sertifikalari" },
       ],
     },
   ];
@@ -177,27 +183,29 @@ function warrantyLinks(t: Dictionary): MenuLink[] {
 function supportLinks(t: Dictionary): MenuLink[] {
   const s = t.supportHub;
   return [
-    { label: t.support.faqTitle, description: t.support.faqCardText, href: "/sss", icon: "sss", cta: s.ctaFaq },
+    { label: t.support.contactTitle, description: t.support.contactCardText, href: "/iletisim", icon: "iletisim", cta: s.ctaContact },
     { label: t.nav.findDealerService, description: t.support.dealerCardText, href: "/yetkili-bayi-ve-servis-agi", icon: "bayi-servis", cta: s.ctaDealer },
     { label: t.service.title, description: t.service.menuText, href: "/servis-talebi", icon: "servis-talebi", cta: s.ctaService },
+    { label: t.support.faqTitle, description: t.support.faqCardText, href: "/sss", icon: "sss", cta: s.ctaFaq },
   ];
 }
 
 /**
- * Ust menudeki Destek ve Garanti ile /destek sayfasi: Destek'in sonunda
- * Iade ve Degisim de var. (Alt bilgide Iade ve Degisim, Politikalar &
- * Yasal'da durdugu icin orada tekrar edilmez.)
+ * Ust menudeki Destek ve Garanti ile /destek sayfasi: iki kolon, basliksiz
+ * (telefon menusunde de). Ikinci kolonun sonunda Iade ve Degisim var. (Alt
+ * bilgide Iade ve Degisim, Politikalar & Yasal'da durdugu icin orada tekrar
+ * edilmez.)
  */
 export function supportWarrantyColumns(t: Dictionary): MenuColumn[] {
   return [
+    { label: "", links: supportLinks(t) },
     {
-      label: t.nav.support,
+      label: "",
       links: [
-        ...supportLinks(t),
+        ...warrantyLinks(t),
         { label: t.nav.returnsExchange, description: t.nav.returnsExchangeDesc, href: legalPath("iade"), icon: "iade", cta: t.supportHub.ctaReturns },
       ],
     },
-    { label: t.nav.warranty, links: warrantyLinks(t) },
   ];
 }
 
@@ -206,8 +214,8 @@ const plainLinks = (links: MenuLink[]) => links.map(({ label, href }) => ({ labe
 /**
  * ALT BILGI
  *
- * Ust menunun aynisi ve ayni sirada: Kesfet'in alt basliklari, Destek,
- * Garanti; sonda Politikalar & Yasal. Yasal metinlerin adlari yonetim
+ * Ust menunun aynisi ve ayni sirada: Destek, Garanti, Kesfet'in kolonlari
+ * (Kurumsal, Guncel, Diger); sonda Politikalar & Yasal. Yasal metinlerin adlari yonetim
  * panelinden (Yasal Metinler) degisebildigi icin veritabanindan okunur.
  */
 export function useFooterMenu() {
@@ -215,9 +223,9 @@ export function useFooterMenu() {
   const db = useDatabase();
   return useMemo(
     () => [
-      ...exploreColumns(t).map((col) => ({ title: col.label, links: plainLinks(col.links) })),
       { title: t.nav.support, links: plainLinks(supportLinks(t)) },
       { title: t.nav.warranty, links: plainLinks(warrantyLinks(t)) },
+      ...exploreColumns(t).map((col) => ({ title: col.label, links: plainLinks(col.links) })),
       {
         title: t.footer.legal,
         links: listLegalPages(db).map((p) => ({

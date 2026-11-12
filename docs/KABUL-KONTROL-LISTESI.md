@@ -156,22 +156,30 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 ## 3. Menü, alt bilgi ve anasayfa
 
 - [ ] Üst menü: Ekipmanlar · Güvenlik · Aksesuarlar · Dolgu Metalleri ·
-      Keşfet · Destek ve Garanti.
+      Destek ve Garanti · Keşfet.
 - [ ] Bölüm menüsünde grup başlığı grup sayfasına, kategori kategori
       sayfasına gider; bölüm adına tıklanınca bölüm sayfası açılır.
 - [ ] Destek ve Garanti menüsü: solda başlık, açıklama ve **Tümünü Gör**;
-      sağda sembolleriyle yedi bağlantı (Sık Sorulan Sorular, Yetkili Bayi
-      ve Servis Bul, Servis Talebi, İade ve Değişim, Garanti Kaydı, Garanti
-      Sorgulama, Garanti Koşulları). **Tümünü Gör** ve **Destek ve Garanti**
-      başlığı `/destek`'i açar (`tests/e2e/destek.spec.ts`).
+      sağda iki kolonda sembolleriyle sekiz bağlantı: İletişim, Yetkili Bayi
+      ve Servis Bul, Servis Talebi, Sık Sorulan Sorular | Garanti Kaydı,
+      Garanti Sorgulama, Garanti Koşulları, İade ve Değişim. **Tümünü Gör**
+      ve **Destek ve Garanti** başlığı `/destek`'i açar
+      (`tests/e2e/destek.spec.ts`).
+- [ ] Keşfet menüsü: başlığa tıklamak sayfa açmaz; solda başlık ve
+      açıklama, "Tümünü Gör" yok; sağda Kurumsal (3), Güncel (4), Diğer (4)
+      başlıklı kolonlarda sembollü bağlantılar.
 - [ ] Bir menü açıkken arkadaki sayfa bulanık görünür; bulanık alana
       tıklayınca ya da **Esc** ile menü kapanır.
-- [ ] `/destek`: yedi kart menüdeki sayfalara gider; "Destek ekibimize
-      ulaşın"da e-posta, iki ofisin adresi ve telefonları Mağaza Ayarları ›
-      Şirket ve İletişim'dekilerle aynıdır (iki modda;
-      `tests/e2e-db/destek.spec.ts`).
+- [ ] `/destek`: sekiz kart menüdeki sırayla (İletişim ilk) sayfalara
+      gider; sayfada adres ve telefon kutusu yoktur. İletişim sayfasındaki
+      e-posta, iki ofisin adresi ve telefonları Mağaza Ayarları › Şirket ve
+      İletişim'dekilerle aynıdır (iki modda; `tests/e2e-db/destek.spec.ts`).
 - [ ] Mobil menüde her bölümde ve Destek ve Garanti'de **Tümünü Gör** vardır;
-      **Teklif Al bağlantısı yoktur** (masaüstüyle aynı).
+      Keşfet'te Kurumsal, Güncel, Diğer başlıkları vardır, Destek ve
+      Garanti'de kolon başlığı yoktur; **Teklif Al bağlantısı yoktur**
+      (masaüstüyle aynı).
+- [ ] Alt bilgi sütunları: Destek, Garanti, Kurumsal, Güncel, Diğer,
+      Politikalar & Yasal; İletişim Destek sütunundadır.
 - [ ] Sağ üstteki kullanıcı menüsünde Hesabım ve Siparişlerim vardır,
       **Tekliflerim yoktur**.
 - [ ] Alt bilgide Politikalar & Yasal altında 11 yasal metin vardır.

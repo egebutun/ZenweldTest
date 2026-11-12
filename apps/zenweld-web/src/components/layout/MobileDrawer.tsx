@@ -46,8 +46,9 @@ export function MobileDrawer({ menus, onClose }: { menus: TopMenu[]; onClose: ()
                       {t.nav.seeAll}
                     </Link>
                   )}
-                  {menu.columns.map((col) => (
-                    <div key={col.label} className="px-4 py-2">
+                  {/* Destek ve Garanti'nin kolonlari basliksizdir; yalniz Kesfet ve urun menulerinde baslik var. */}
+                  {menu.columns.map((col, i) => (
+                    <div key={i} className="px-4 py-2">
                       {col.label &&
                         (col.href ? (
                           <Link

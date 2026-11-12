@@ -60,7 +60,6 @@ const PAGES = {
   "/hakkimizda": { name: "Hakkımızda", title: "Hakkımızda", description: "Zenweld hakkında: kaynak teknolojileri, üretim yaklaşımımız ve Türkiye genelindeki bayi ağımız.", group: DISCOVER },
   "/satis-temsilcilerimiz": { name: "Satış Temsilcilerimiz", title: "Satış Temsilcilerimiz", description: "Zenweld satış temsilcileri: İstanbul, Ege, Akdeniz, Bursa ve İç Anadolu bölgelerinde telefon, WhatsApp ve e-posta ile doğrudan iletişim.", group: DISCOVER },
   "/bayilik-basvurusu": { name: "Bayilik Başvurusu", title: "Bayilik Başvurusu", description: "Zenweld yetkili bayisi olun: başvuru formunu doldurun, bölge satış ekibimiz sizinle iletişime geçsin.", group: DISCOVER },
-  "/iletisim": { name: "İletişim", title: "İletişim", description: "Zenweld ile iletişime geçin: telefon, e-posta ve adres bilgileri.", group: DISCOVER },
   "/haberler": { name: "Haberler", title: "Haberler", description: "Zenweld'den son gelişmeler, duyurular ve basın açıklamaları.", group: DISCOVER },
   "/etkinlikler": { name: "Etkinlikler", title: "Etkinlik Takvimi", description: "Zenweld'in katılacağı veya sponsor olacağı fuar ve diğer etkinlikler hakkında bilgi bulabilirsiniz.", group: DISCOVER },
   "/blog": { name: "Blog", title: "Blog", description: "Kaynak dünyasından haberler, teknik rehberler ve uzman ipuçları.", group: DISCOVER },
@@ -71,6 +70,7 @@ const PAGES = {
   "/parti-sertifikalari": { name: "Parti Sertifikaları", title: "Parti Sertifikaları", description: "Zenweld ürün uygunluk ve parti sertifikalarını indirin.", group: DISCOVER },
 
   "/destek": { name: "Destek ve Garanti", title: "Destek ve Garanti", description: "Zenweld destek: sık sorulan sorular, yetkili bayi ve servis, servis talebi, iade ve değişim, garanti kaydı ve sorgulama.", group: SUPPORT },
+  "/iletisim": { name: "İletişim", title: "İletişim", description: "Zenweld ile iletişime geçin: telefon, e-posta ve adres bilgileri.", group: SUPPORT },
   "/sss": { name: "Sık Sorulan Sorular", title: "Sık Sorulan Sorular", description: "Zenweld ürünleri, garanti, sipariş ve teknik konularda sık sorulan sorular.", group: SUPPORT },
   "/yetkili-bayi-ve-servis-agi": { name: "Yetkili Bayi ve Servis Ağı", title: "Yetkili Bayi ve Servis Ağı", description: "Size en yakın Zenweld yetkili bayisini haritada bulun; ürünleri yerinde inceleyin ve satın alın.", group: SUPPORT },
   "/servis-talebi": { name: "Servis Talebi", title: "Servis Talebi", description: "Zenweld makineniz için kurulum, bakım, onarım veya kullanım eğitimi talebi oluşturun.", group: SUPPORT },

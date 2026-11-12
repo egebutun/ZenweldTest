@@ -1,11 +1,12 @@
 import { closeDatabase, expect, sql, test } from "./yardimci";
 
 /**
- * DESTEK VE GARANTI SAYFASI (veritabani modu; docs/WEBSITE-KULLANIM.md › 19)
+ * DESTEK VE GARANTI SAYFASI VE ILETISIM (veritabani modu;
+ * docs/WEBSITE-KULLANIM.md › 19 Destek ve Garanti, Iletisim)
  *
- * "Destek ekibimize ulasin"daki e-posta, adresler ve telefonlar
- * veritabanindaki sirket bilgisinden (settings.company) gelir; menu ve
- * kartlar iki modda aynidir (demo modu: tests/e2e/destek.spec.ts).
+ * /destek'teki kartlar ve menuler iki modda aynidir (demo modu:
+ * tests/e2e/destek.spec.ts); Iletisim sayfasindaki e-posta, adresler ve
+ * telefonlar veritabanindaki sirket bilgisinden (settings.company) gelir.
  * Iade ve Degisim sayfasinin basliktan sonraki sabit yazisi da iki modda
  * aynidir; panelden gelen metin onun altindadir.
  */
@@ -13,25 +14,32 @@ test.afterAll(closeDatabase);
 
 type Company = { email: string; offices: { city: string; addressLines: string[]; phones: string[] }[] };
 
-test("/destek: iletişim bilgileri veritabanındaki şirket bilgisinden; menü ve kartlar aynı", async ({ page, problems }) => {
+test("/destek: İletişim kartı ilk sırada; İletişim sayfasındaki bilgiler veritabanındaki şirket bilgisinden; menü aynı", async ({ page, problems }) => {
   const [{ value: company }] = await sql<{ value: Company }>("SELECT value FROM settings WHERE key = 'company'");
   await page.goto("/destek");
 
   const main = page.locator("main");
+  const cards = main.locator("ul li a");
+  await expect(cards).toHaveCount(8);
+  await expect(cards.first()).toHaveAttribute("href", "/iletisim");
   await expect(main.getByRole("link", { name: /^İade ve Değişim/ })).toHaveAttribute("href", "/yasal/iade");
-  await expect(main.getByRole("link", { name: /^Garanti Sorgulama/ })).toHaveAttribute("href", "/garanti/sorgulama");
+  await expect(main).not.toContainText("Destek ekibimize ulaşın");
 
-  const contact = main.locator("section").filter({ hasText: "Destek ekibimize ulaşın" });
-  await expect(contact.getByRole("link", { name: company.email })).toHaveAttribute("href", `mailto:${company.email}`);
+  await cards.first().click();
+  await expect(page).toHaveURL(/\/iletisim$/);
+  const contact = page.locator("main");
+  await expect(contact.getByRole("link", { name: company.email }).first()).toHaveAttribute("href", `mailto:${company.email}`);
   for (const office of company.offices) {
     for (const line of office.addressLines) await expect(contact).toContainText(line);
-    for (const phone of office.phones) await expect(contact.getByRole("link", { name: phone })).toBeVisible();
+    for (const phone of office.phones) await expect(contact.getByRole("link", { name: phone }).first()).toBeVisible();
   }
 
   await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(page.locator("header nav > *")).toHaveText(["Ekipmanlar", "Güvenlik", "Aksesuarlar", "Dolgu Metalleri", "Destek ve Garanti", "Keşfet"]);
   const title = page.locator("header nav").getByRole("link", { name: "Destek ve Garanti" });
   await title.hover();
   await expect(page.locator(".zw-mega").getByRole("link", { name: "Tümünü Gör" })).toHaveAttribute("href", "/destek");
+  await expect(page.locator(".zw-mega").getByRole("link", { name: /^İletişim/ })).toHaveAttribute("href", "/iletisim");
   expect(problems).toEqual([]);
 });
 

@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Mail, MapPin, Navigation, Phone } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { ProductImage } from "@zenweld/ui";
-import { SupportIcon } from "@/components/support/SupportIcons";
+import { MenuIcon } from "@/components/common/MenuIcons";
 import { useT } from "@/lib/i18n-client";
-import { mapDirectionsUrl, supportWarrantyColumns, useCompany } from "@/lib/menu";
+import { supportWarrantyColumns } from "@/lib/menu";
 
 /**
  * Ust bolumun arkasindaki urun gorseli (gecici; gercek gorsel gelince
@@ -17,14 +17,13 @@ const HERO_IMAGE = "/images/products/evomig-205-p.webp";
  * DESTEK VE GARANTI (/destek)
  *
  * Ust menudeki Destek ve Garanti basligi ve menudeki "Tumunu Gor" bu
- * sayfaya gelir. Ustte baslik ve efektli urun gorseli, ortada menudeki
- * baglantilarin aynisi sembollu kartlar halinde, altta Iletisim
- * sayfasindaki bilgilerle "Destek ekibimize ulasin".
+ * sayfaya gelir. Ustte baslik ve efektli urun gorseli, altinda menudeki
+ * baglantilarin aynisi ayni sirada sembollu kartlar halinde (Iletisim
+ * dahil sekiz kart).
  */
 export function SupportHub() {
   const t = useT();
   const s = t.supportHub;
-  const company = useCompany();
   const links = supportWarrantyColumns(t).flatMap((col) => col.links);
 
   return (
@@ -71,7 +70,7 @@ export function SupportHub() {
                 className="group flex h-full flex-col rounded-[6px] bg-zw-grey-100 p-4 transition duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_40px_-12px_rgb(20_22_25/0.25)] sm:p-6 zw-focus"
               >
                 {link.icon && (
-                  <SupportIcon name={link.icon} size={34} className="h-7 w-7 text-zw-red-600 sm:h-[34px] sm:w-[34px]" />
+                  <MenuIcon name={link.icon} size={34} className="h-7 w-7 text-zw-red-600 sm:h-[34px] sm:w-[34px]" />
                 )}
                 <h3 className="mt-5 text-lg font-semibold leading-tight text-zw-ink sm:mt-8 sm:text-[22px]">{link.label}</h3>
                 {link.description && (
@@ -88,70 +87,6 @@ export function SupportHub() {
           ))}
         </ul>
       </section>
-
-      {/* 3. Destek ekibimize ulasin: Iletisim sayfasindaki bilgiler */}
-      <section className="zw-container pb-12 md:pb-16">
-        <div className="zw-support-contact relative overflow-hidden rounded-[6px] bg-zw-red-600 px-6 py-12 text-center text-white md:px-12 md:py-16">
-          <h2 className="relative font-display text-3xl font-bold md:text-[42px]">{s.contactTitle}</h2>
-          <p className="relative mx-auto mt-2 max-w-xl text-white/85">{s.contactText}</p>
-
-          <div className="relative mx-auto mt-10 grid max-w-5xl gap-10 md:grid-cols-3 md:gap-6">
-            <div className="flex flex-col items-center">
-              <ContactIcon>
-                <Mail size={22} strokeWidth={1.75} />
-              </ContactIcon>
-              <div className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-white/75">{s.contactEmail}</div>
-              <a href={`mailto:${company.email}`} className="mt-2 text-lg font-semibold hover:underline">
-                {company.email}
-              </a>
-              <p className="mt-1 text-sm text-white/75">{t.support.emailNote}</p>
-            </div>
-
-            {company.offices.map((office) => (
-              <div key={office.id} className="flex flex-col items-center">
-                <ContactIcon>
-                  <MapPin size={22} strokeWidth={1.75} />
-                </ContactIcon>
-                <div className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-white/75">{office.city}</div>
-                <div className="mt-2 text-sm leading-relaxed text-white/90">
-                  {office.addressLines.map((line) => (
-                    <div key={line}>{line}</div>
-                  ))}
-                </div>
-                <div className="mt-2.5 space-y-0.5">
-                  {office.phones.map((phone) => (
-                    <a
-                      key={phone}
-                      href={`tel:${phone.replace(/\s/g, "")}`}
-                      className="flex items-center justify-center gap-1.5 font-semibold hover:underline"
-                    >
-                      <Phone size={14} strokeWidth={2} />
-                      {phone}
-                    </a>
-                  ))}
-                </div>
-                <a
-                  href={mapDirectionsUrl(office)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-flex items-center gap-1.5 text-sm text-white/80 hover:text-white hover:underline"
-                >
-                  <Navigation size={13} />
-                  {t.support.directions}
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </>
-  );
-}
-
-function ContactIcon({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/30">
-      {children}
-    </span>
   );
 }
