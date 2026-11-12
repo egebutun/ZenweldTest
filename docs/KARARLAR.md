@@ -411,11 +411,12 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - **Neden:** Müşteriye "son ödeme: <gün>" yazıyor; aynı gün akşam ödeyenin
   siparişi iptal olmamalı.
 
-### K-25 · Teklifi bireysel üye de isteyebilir
-- Teklif Al herkese açıktır; bireysel üye de teklif ister (bireysel üyede
-  firma ünvanı isteğe bağlı).
-- Vadeli ödeme ve çekle ödeme yalnızca kurumsal müşterilere değil,
-  herkese açıktır; Teklif Al'da ödeme tercihi olarak seçilir.
+### K-25 · Teklif Al kurumsal müşteriler için
+- Teklif Al yalnızca kurumsal müşteriler içindir; vadeli ödeme ve çekle
+  ödeme buradan istenir.
+- Formun soruları yalnızca firmanın verebileceği bilgileri isteyecek;
+  bireysel müşteri formu dolduramaz (sorular düzenlenecek:
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Teklif Al formu).
 - Her iki hesap türünde Hesabım'da Tekliflerim ve Siparişlerim vardır.
 - Sağ üstteki kullanıcı menüsünde Tekliflerim **yoktur**.
 
@@ -754,7 +755,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - Sıra: kayan tanıtım alanı (Zenweld, Force Serisi, Jasic Lazer), güven
   şeridi, kategori kartları, Force Serisi ve Jasic Lazer Ürünleri
   şeritleri, Kampanyalı Ürünler, Ürün Seçici bandı, Bayi ve Servis
-  haritası, Neden Zenweld?, Müşterilerimiz Ne Diyor?, teklif ve
+  haritası, Neden Zenweld?, Müşterilerimiz Ne Diyor?, kurumsal teklif ve
   bayilik kartları, Sık Sorulan Sorular ve Blog.
 - Kategoriye göre ürün listesi yerine kategori sayfalarına giden kartlar
   vardır.

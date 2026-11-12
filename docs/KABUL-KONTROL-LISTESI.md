@@ -184,7 +184,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Anasayfa sırası: tanıtım alanı → güven şeridi → Ne arıyorsunuz?
       (kategori kartları) → Force Serisi → Jasic Lazer Ürünleri →
       Kampanyalı Ürünler → Ürün Seçici bandı → bayi haritası → Neden
-      Zenweld? → Müşterilerimiz Ne Diyor? → teklif ve bayilik
+      Zenweld? → Müşterilerimiz Ne Diyor? → kurumsal teklif ve bayilik
       kartları → Sık Sorulan Sorular (ilk 6) ve Blog (en yeni 3)
       (`tests/e2e/anasayfa.spec.ts`).
 - [ ] Tanıtım alanı 7 saniyede bir sonraki sayfaya geçer (Zenweld → Force

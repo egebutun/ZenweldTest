@@ -158,9 +158,9 @@ export const tr = {
     dealerTitle: "Size En Yakın Zenweld Bayi ve Yetkili Servisini Bulun",
     dealerSubtitle:
       "Türkiye genelinde 30'u aşkın yetkili satış ve servis noktamızdan ürünlerimizi inceleyebilir, satın alabilirsiniz.",
-    quoteBannerTitle: "Size özel fiyat teklifi ister misiniz?",
+    quoteBannerTitle: "Kurumsal alım mı yapacaksınız?",
     quoteBannerText:
-      "Tekli ya da toplu alımlarınız için size özel fiyat hazırlayalım. Havale/EFT, vadeli ödeme ve çek dahil size uygun ödeme seçeneğini birlikte belirleyelim.",
+      "Firmanıza özel fiyat teklifi hazırlayalım. Havale/EFT, vadeli ödeme ve çek dahil size uygun ödeme seçeneğini birlikte belirleyelim.",
     quoteBannerCta: "Teklif Al",
     blogTitle: "Blog",
     blogSubtitle: "Kaynak dünyasından haberler ve teknik rehberler",
@@ -325,7 +325,7 @@ export const tr = {
   quote: {
     title: "Teklif Al",
     subtitle:
-      "Bireysel ve kurumsal alımlarınız için size özel fiyat teklifi hazırlayalım. Vadeli ödeme ve çek ile ödeme seçenekleri de sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin.",
+      "Kurumsal müşterilerimize vadeli ödeme ve çek ile ödeme seçenekleri sunuyoruz. Formu doldurun, satış ekibimiz sizinle iletişime geçsin.",
     step1: "Firma Bilgileri",
     step2: "Ürünler",
     step3: "Ödeme Tercihi",

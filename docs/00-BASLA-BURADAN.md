@@ -97,7 +97,7 @@ Site dört işi birlikte yapar:
 | **Stok dosyası** | Kaynağın ürün kodu ve adet listesi (CSV/XLSX). Her yükleme kaynağın tam listesi sayılır. |
 | **Kod eşleştirmesi** | Bayinin kendi ürün kodunu bizim ürünümüze bağlayan kayıt. Sonraki dosyalarda kod kendiliğinden tanınır. |
 | **Sipariş** | Sitede ödemesi yapılan (ya da havale beklenen) satın alma. Durumu panelden ilerletilir. |
-| **Teklif** | Ekipmanlar için fiyat teklifi talebi (ödeme tercihi: vadeli, çek, havale ya da görüşelim). Herkes gönderebilir; satış ekibi panelden takip eder. |
+| **Teklif** | Ekipmanlar için fiyat teklifi talebi (ödeme tercihi: vadeli, çek, havale ya da görüşelim). Kurumsal müşteriler içindir; satış ekibi panelden takip eder. |
 | **Garanti kaydı** | Müşterinin aldığı makineyi seri numarasıyla kaydetmesi. Garanti bitiş tarihi sorgulanabilir. |
 | **Servis talebi** | Kurulum, bakım, onarım ya da eğitim için gönderilen talep. Panelden takip edilir. |
 | **İade talebi** | Üyenin (bireysel ya da kurumsal) teslim edilen siparişindeki ürünleri geri göndermek için teslimden itibaren 14 gün içinde Hesabım'dan açtığı talep (cayma). Panelde İade Talepleri'nden takip edilir. |

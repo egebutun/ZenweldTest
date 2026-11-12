@@ -274,11 +274,10 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
     - Panelde "anasayfada göster" işaretlenmiş, onaylı ve ürünü yayında
       olan değerlendirmeler, en fazla 10 tane.
     - Kartta puan, başlık, yorum, yazan ve ürün adı vardır.
-11. **Teklif ve bayilik** (yan yana iki kart):
-    - "Size özel fiyat teklifi ister misiniz? Tekli ya da toplu
-      alımlarınız için size özel fiyat hazırlayalım. Havale/EFT, vadeli
-      ödeme ve çek dahil size uygun ödeme seçeneğini birlikte
-      belirleyelim." → **Teklif Al**.
+11. **Kurumsal teklif ve bayilik** (yan yana iki kart):
+    - "Kurumsal alım mı yapacaksınız? Firmanıza özel fiyat teklifi
+      hazırlayalım. Havale/EFT, vadeli ödeme ve çek dahil size uygun ödeme
+      seçeneğini birlikte belirleyelim." → **Teklif Al**.
     - "Birlikte çalışalım — Zenweld Bayisi Olmak İster misiniz?" →
       **Bayilik Başvurusu**.
 12. **Sık Sorulan Sorular ve Blog** (yan yana): ilk 6 soru (açılır-kapanır,
@@ -1238,9 +1237,11 @@ sayısı sunucudan gelir; gelene kadar "…" yazar.
 
 ## 15. Teklif Al
 
-Adres: `/teklif-al`. Herkese açıktır; üyede bilgiler hesaptan gelir. Vadeli
-ödeme ve çekle ödeme bireysel ve kurumsal herkese açıktır ve buradan
-istenir (KARARLAR K-25); satış ekibi teklifi ayrıca hazırlar.
+Adres: `/teklif-al`. Kurumsal müşteriler içindir (KARARLAR K-25); vadeli
+ödeme ve çekle almak isteyen firma buradan teklif ister, satış ekibi
+teklifi ayrıca hazırlar. Giriş gerekmez; üyede bilgiler hesaptan gelir.
+Formun soruları henüz tam doğru değil; düzenlenecek
+([YAPILACAKLAR.md](YAPILACAKLAR.md) › Teklif Al formu).
 
 **Ürün sayfasında teklife ekleme düğmesi yoktur ve olmayacaktır** (karar,
 bkz. [KARARLAR.md](KARARLAR.md)). Ürünler yalnızca bu sayfadaki listeden

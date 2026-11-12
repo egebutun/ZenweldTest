@@ -497,11 +497,14 @@ sunucu: `packages/db/src/orders.ts` (`createReturnRequest`).
 
 ## 8. Teklif
 
-**Kısaca:** Herkes, yalnızca Ekipmanlar'daki ürünler için teklif
-isteyebilir. Teklifte fiyat sistemde hesaplanmaz; satış ekibi ayrıca
-gönderir.
+**Kısaca:** Teklif Al kurumsal müşteriler içindir (KARARLAR K-25);
+yalnızca Ekipmanlar'daki ürünler için teklif istenir. Teklifte fiyat
+sistemde hesaplanmaz; satış ekibi ayrıca gönderir.
 
-**Kim:** Herkes (üye ya da ziyaretçi) teklif isteyebilir. Üye gönderirse
+**Kim:** Kurumsal müşteriler. Formun soruları yalnızca firmanın
+verebileceği bilgileri isteyecek şekilde düzenlenecek
+([YAPILACAKLAR.md](YAPILACAKLAR.md) › Teklif Al formu); bugünkü formu
+giriş yapmadan ya da üye olarak herkes gönderebiliyor. Üye gönderirse
 teklif Hesabım › Tekliflerim'de görünür.
 
 **Ürünler:**
