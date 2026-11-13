@@ -1,13 +1,33 @@
 "use client";
 
-import { ArrowDown, ArrowRight, BadgeCheck, Box, Gauge, Heart, PlugZap, ShieldCheck, Weight } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowRight,
+  BadgeCheck,
+  Ban,
+  Check,
+  Cpu,
+  Flame,
+  Fuel,
+  Gauge,
+  Heart,
+  Magnet,
+  Monitor,
+  ShieldCheck,
+  SlidersHorizontal,
+  Thermometer,
+  Weight,
+  Wrench,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import type { Product } from "@zenweld/data";
 import { isProductInStock, useDatabase } from "@zenweld/store";
 import { ProductImage } from "@zenweld/ui";
 import Link from "next/link";
 import { CardCartButton, ProductPrice } from "@/components/product/ProductCard";
 import { useFavourites } from "@/lib/favourites";
-import { FORCE_SHOWCASE, useForceProducts, type ForceMachineKey } from "@/lib/force";
+import { FORCE_SHOWCASE, useForceProducts, type ForceMachine, type ForceMachineKey } from "@/lib/force";
 import { useT } from "@/lib/i18n-client";
 import { ForceDealerMap } from "./ForceDealerMap";
 import { ForceSpecTable } from "./ForceSpecTable";
@@ -21,26 +41,28 @@ import { useReveal } from "./force-motion";
  *  1. Acilis: dev FORCE yazisi, kaynak ustasi, dort makine (sabit durur).
  *  2. Kayan serit (yontemler).
  *  3. Dort yontem. Tek seri: makine kartlari (bolumlere iner).
- *  4. Her makineye bir bolum: slogan, aciklama, rakamlar, fiyat, sepet.
+ *  4. Her makineye bir bolum: tur, slogan, one cikan ozellikler, ozellik
+ *     simgeleri, rakamlar, fiyat, sepet.
  *  5. Her Force'ta standart: ortak ozellikler.
- *  6. Teknik karsilastirma: ziyaretcinin sectigi modeller yan yana.
- *  7. Kapanis: Destek ve Garanti, Force bayileri haritasi.
+ *  6. Kapanis: Destek ve Garanti, Force bayileri haritasi.
+ *  7. Teknik ozellikler: ziyaretcinin sectigi makineler yan yana.
  * Kaydirinca yalnizca yumusak belirme vardir (force-motion.tsx).
- * Yazilar packages/i18n › forcePage; urun bilgileri urun kayitlarindan.
+ * Yazilar ve teknik degerler Force katalogundan (packages/i18n › forcePage);
+ * fiyat, stok ve sepet urun kayitlarindan.
  */
 export function ForcePage() {
-  const { series, showcase } = useForceProducts();
+  const products = useForceProducts();
   return (
     <div className="bg-[#0a0b0d]">
       <Hero />
       <Ticker />
       <Lineup />
       {FORCE_SHOWCASE.map((machine, i) => (
-        <Chapter key={machine.key} index={i} machine={machine} product={showcase[machine.key]} />
+        <Chapter key={machine.key} index={i} machine={machine} product={products[machine.key]} />
       ))}
       <Dna />
-      {series.length > 0 && <Compare products={series} />}
       <FinalCta />
+      <Compare products={products} />
     </div>
   );
 }
@@ -209,15 +231,21 @@ function Lineup() {
 /* 4. Makine bolumleri                                                 */
 /* ------------------------------------------------------------------ */
 
-function Chapter({
-  index,
-  machine,
-  product,
-}: {
-  index: number;
-  machine: (typeof FORCE_SHOWCASE)[number];
-  product?: Product;
-}) {
+/** Katalogdaki ozellik simgelerinin karsiligi. */
+const FEATURE_ICONS: Record<ForceMachine["features"][number], LucideIcon> = {
+  thermal: Thermometer,
+  emc: Magnet,
+  arcForce: Zap,
+  hotStart: Flame,
+  antiStick: Ban,
+  lcd: Monitor,
+  generator: Fuel,
+  ipTest: BadgeCheck,
+  igbt: Cpu,
+  synergic: SlidersHorizontal,
+};
+
+function Chapter({ index, machine, product }: { index: number; machine: ForceMachine; product?: Product }) {
   const f = useT().forcePage;
   const copy = f.machines[machine.key];
   const reveal = useReveal<HTMLDivElement>();
@@ -239,32 +267,44 @@ function Chapter({
         {machine.ghost}
       </div>
 
-      <div ref={reveal} className="zw-fx zw-container grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+      {/* Masaustunde: gorsel ve altinda ozellik simgeleri bir yanda, yazilar obur yanda. */}
+      <div ref={reveal} className="zw-fx zw-container grid gap-10 lg:grid-cols-2 lg:gap-x-16">
         {/* Gorsel: kirmizi isik ve yansima */}
-        <div className={`relative ${reverse ? "lg:order-2" : ""}`} data-fx="up">
+        <div className={`relative lg:row-start-1 ${reverse ? "lg:col-start-2" : "lg:col-start-1"}`} data-fx="up">
           <div aria-hidden="true" className="zw-force-halo absolute inset-[6%] rounded-full" />
           <div className="relative mx-auto max-w-[520px]">
             <ProductImage src={machine.image} alt={machine.name} label={machine.name} className="zw-force-reflect w-full" />
           </div>
         </div>
 
-        <div className={reverse ? "lg:order-1" : ""}>
+        <div className={`lg:row-span-2 lg:row-start-1 lg:self-center ${reverse ? "lg:col-start-1" : "lg:col-start-2"}`}>
           <h2 data-fx="up" className="font-display text-5xl font-bold leading-[0.9] md:text-7xl">
             {machine.name}
           </h2>
-          <p data-fx="up" style={{ "--d": "220ms" } as React.CSSProperties} className="mt-4 font-display text-[26px] font-semibold uppercase leading-tight text-zw-red-500 md:text-[34px]">
+          <p data-fx="up" style={{ "--d": "150ms" } as React.CSSProperties} className="mt-4 text-sm font-semibold uppercase tracking-[0.16em] text-white/60">
+            {copy.method}
+          </p>
+          <p data-fx="up" style={{ "--d": "220ms" } as React.CSSProperties} className="mt-1 font-display text-[26px] font-semibold uppercase leading-tight text-zw-red-500 md:text-[34px]">
             {copy.slogan}
           </p>
-          <p data-fx="up" style={{ "--d": "300ms" } as React.CSSProperties} className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/65 md:text-base">
-            {copy.text}
-          </p>
+          <div data-fx="up" style={{ "--d": "300ms" } as React.CSSProperties} className="mt-6 max-w-xl">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/45">{f.highlightsTitle}</h3>
+            <ul className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+              {copy.highlights.map((h) => (
+                <li key={h} className="flex gap-2 text-[15px] leading-snug text-white/75">
+                  <Check size={16} strokeWidth={2.5} className="mt-0.5 shrink-0 text-zw-red-500" />
+                  {h}
+                </li>
+              ))}
+            </ul>
+          </div>
 
           <dl data-fx="up" style={{ "--d": "380ms" } as React.CSSProperties} className="mt-8 grid max-w-xl grid-cols-3 border-y border-white/10">
             {copy.stats.map((s, i) => (
               <div key={s.label} className={`py-5 ${i ? "border-l border-white/10 pl-4 md:pl-6" : "pr-4"}`}>
                 <dt className="sr-only">{s.label}</dt>
                 <dd>
-                  <span className="font-display text-4xl font-bold leading-none md:text-5xl">
+                  <span className="whitespace-nowrap font-display text-3xl font-bold leading-none sm:text-4xl md:text-5xl">
                     {s.value}
                   </span>
                   {s.unit && <span className="ml-1 font-display text-xl font-bold text-zw-red-500 md:text-2xl">{s.unit}</span>}
@@ -294,6 +334,23 @@ function Chapter({
             </a>
           </div>
         </div>
+
+        {/* Katalogdaki ozellik simgeleri */}
+        <ul
+          data-fx="up"
+          style={{ "--d": "200ms" } as React.CSSProperties}
+          className={`grid grid-cols-2 gap-2 sm:grid-cols-3 lg:row-start-2 lg:self-start ${reverse ? "lg:col-start-2" : "lg:col-start-1"}`}
+        >
+          {machine.features.map((key) => {
+            const Icon = FEATURE_ICONS[key];
+            return (
+              <li key={key} className="flex items-center gap-2.5 rounded-[4px] border border-white/10 bg-white/[0.03] px-3 py-2.5">
+                <Icon size={18} strokeWidth={1.75} className="shrink-0 text-zw-red-500" />
+                <span className="text-xs leading-snug text-white/70">{f.featureLabels[key]}</span>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );
@@ -325,7 +382,8 @@ function ChapterActions({ product }: { product: Product }) {
 /* 5. Her Force'ta standart                                            */
 /* ------------------------------------------------------------------ */
 
-const DNA_ICONS = [Gauge, PlugZap, Weight, ShieldCheck, Box, BadgeCheck];
+/** Ortak ozelliklerin simgeleri, i18n › forcePage.dna sirasiyla. */
+const DNA_ICONS = [Gauge, Weight, Fuel, ShieldCheck, BadgeCheck, Wrench];
 
 function Dna() {
   const f = useT().forcePage;
@@ -360,10 +418,10 @@ function Dna() {
 }
 
 /* ------------------------------------------------------------------ */
-/* 6. Teknik karsilastirma                                             */
+/* 7. Teknik ozellikler                                                */
 /* ------------------------------------------------------------------ */
 
-function Compare({ products }: { products: Product[] }) {
+function Compare({ products }: { products: Record<ForceMachineKey, Product | undefined> }) {
   const f = useT().forcePage;
   const ref = useReveal<HTMLElement>();
   return (
@@ -377,7 +435,7 @@ function Compare({ products }: { products: Product[] }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 7. Kapanis                                                          */
+/* 6. Kapanis (teknik tablonun ustunde)                               */
 /* ------------------------------------------------------------------ */
 
 function FinalCta() {

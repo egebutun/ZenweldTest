@@ -774,23 +774,27 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   sayfasını (`/force`) açar. Anasayfa tanıtım alanındaki "Force Serisini
   İncele" de buraya gelir.
 - Sayfada dört makine tanıtılır: ForceMIG 200, ForceTIG 200, ForceArc 200,
-  ForceCut 45. Fotoğraflar sahibinden; sloganları ve kısa açıklamaları
-  sahibinin onayıyla şimdilik kodda yazılıdır. Panelden yönetim ve yeni
-  fotoğraf/video sonra eklenir.
+  ForceCut 45. Fotoğraflar sahibinden. Türü, sloganı, öne çıkan
+  özellikleri, özellik simgeleri ve teknik değerleri sahibinin Force
+  kataloğundan (FORCE SERİSİ) alınır ve şimdilik kodda yazılıdır. Bu
+  bilgiler yalnızca Force sayfasında kullanılır; ürün kayıtlarındaki teknik
+  özellikler değişmez. Panelden yönetim ve yeni fotoğraf/video sonra
+  eklenir.
 - Sayfa sade ve hafiftir: makineler ve kaynak ustası kaydırınca yerinden
   oynamaz; kıvılcım, yanıp sönen çizgi, sayaç, sıra numarası ve "Kaydırın"
   yazısı yoktur. Aşağı inildikçe yalnızca yumuşak belirme vardır.
-- Teknik tabloda ziyaretçi modelleri işaretler; tablo yalnızca seçtiklerini
-  yan yana gösterir (Model Serisi "Force" olan yayındaki ürünler arasından;
-  açılışta tanıtılan dört makine seçili, aynı anda en fazla 4). Her
-  kolonun altında fiyat, Sepete Ekle ve favori kalbi. Fiyat, stok ve teknik
-  özellikler ürün kayıtlarından gelir.
-- Kapanışta Yetkili Bayi Bul düğmesi yoktur: başlığın altında Destek ve
-  Garanti, onun altında Force bayileri haritası (K-115).
+- En altta **Teknik Özellikler** (karşılaştırma değil): yalnızca bu dört
+  makine, katalogdaki satır ve değerlerle. Ziyaretçi makineleri işaretler;
+  tablo yalnızca seçtiklerini gösterir (açılışta dördü seçili). Her
+  kolonun altında fiyat, Sepete Ekle ve favori kalbi; fiyat ve stok ürün
+  kayıtlarından gelir.
+- Kapanış ("Force'u yakından görün.") teknik özelliklerin üstündedir.
+  Yetkili Bayi Bul düğmesi yoktur: başlığın altında Destek ve Garanti, onun
+  altında Force bayileri haritası (K-115).
 
 ### K-115 · Force bayileri
 - Panelde Bayiler'de bir bayi **Force Bayi** olarak işaretlenebilir.
-- İşaret yalnızca Force sayfasının en altındaki Türkiye haritası içindir:
+- İşaret yalnızca Force sayfasındaki Türkiye haritası içindir:
   haritada Force Bayi işaretli ve aktif bayiler görünür. İşaret sitenin
   başka hiçbir yerinde etiket ya da rozet olarak gösterilmez.
 - Örnek veride bütün bayiler Force Bayi işaretlidir.

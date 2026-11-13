@@ -387,55 +387,54 @@ belirir; kaydırmaya bağlı kayma, kıvılcım, sayaç ve sıra numarası yoktu
 Hareket azaltma tercihi olan ziyaretçide hareket olmaz, her şey hemen
 görünür.
 
+Makinelerin türü, sloganı, öne çıkan özellikleri, özellik simgeleri ve
+teknik değerleri sahibinin Force kataloğundan (FORCE SERİSİ) alınmıştır ve
+şimdilik kodda yazılıdır (`packages/i18n` › `forcePage`). Bu bilgiler
+yalnızca Force sayfasında görünür; ürün sayfalarındaki teknik özellikler
+ürün kayıtlarından gelir ve değişmez. Fiyat, stok, sepet ve ürün sayfası
+bağlantısı ürün kaydından gelir.
+
 1. **Açılış:** "Zenweld Force Serisi"; arkada dev **FORCE** yazısı, onun
    altında kaynak ustası (Force fuar davetiyesindeki karikatür; torcunun
    ucunda sabit ark ışığı), önde aralıklı dört makine (ForceArc 200,
    ForceMIG 200, ForceTIG 200, ForceCut 45; zemini kaldırılmış
    fotoğraflar; birbirinin üstüne binmez) ve makinelerin bastığı sabit
-   ışıklı zemin çizgisi. Altında "Kompakt gövde. Tam güç." ve kısa metin.
-   **Makineleri Keşfet** dört makinenin kartlarına, **Teknik Karşılaştırma**
-   tabloya iner. Sayfa kaydırılınca makineler ve usta yerinden oynamaz.
-2. **Kayan şerit:** MIG/MAG, Pulse TIG, MMA, Plazma Kesim, Sinerjik Kontrol,
-   230 V, Dijital Panel, Yetkili Servis (fare üzerindeyken durur).
-3. **Dört yöntem. Tek seri.:** Dört makinenin kartı (yöntem, ad, slogan);
-   karta tıklayınca o makinenin bölümüne iner.
+   ışıklı zemin çizgisi. Altında "Kompakt gövde. Tam güç." ve "MIG, TIG,
+   MMA ve plazma kesimde profesyonel çözüm. Full dijital kontrol, düşük
+   ağırlıklı ve kompakt dizayn." **Makineleri Keşfet** dört makinenin
+   kartlarına, **Teknik Özellikler** en alttaki tabloya iner. Sayfa
+   kaydırılınca makineler ve usta yerinden oynamaz.
+2. **Kayan şerit:** MIG, TIG Pulse, MMA, Plazma Kesim, Sinerjik Program,
+   IGBT Teknolojisi, Full Dijital Kontrol, Jeneratör ile Çalışabilme (fare
+   üzerindeyken durur).
+3. **Dört yöntem. Tek seri.:** Dört makinenin kartı (tür, ad, slogan); karta
+   tıklayınca o makinenin bölümüne iner.
 4. **Makine bölümleri** (ForceMIG 200, ForceTIG 200, ForceArc 200, ForceCut
-   45): ad, slogan, kısa açıklama, üç rakam, fiyat (ürün kartındaki
-   kuralla, KDV dahil ve hariç), **Sepete Ekle**, favori kalbi, **Ürünü
-   İncele** (ürün sayfası) ve **Teknik Özellikler** (tabloya iner). Arkada
-   yöntemin adı (MIG, TIG, ARC, CUT) silik yazılıdır. Sloganlar,
-   açıklamalar ve rakamlar şimdilik kodda yazılıdır (`packages/i18n` ›
-   `forcePage`); fiyat, stok ve sepet ürün kaydından gelir. Ürün yayında
-   değilse bölümde fiyat, sepet ve ürün bağlantısı görünmez.
-5. **Her Force'ta standart:** Altı ortak özellik (dijital kontrol paneli,
-   standart 230 V priz, taşınabilir gövde, otomatik koruma, IP21S gövde,
-   servis ve garanti).
-6. **Teknik Karşılaştırma:** Ziyaretçi modelleri işaretler; tablo yalnızca
-   işaretlenenleri yan yana gösterir.
-   - **Modelleri seçin:** Model Serisi "Force" olan yayındaki bütün ürünler
-     ailelerine göre (ForceMIG, ForceTIG, ForceArc, ForceCut) kısa model
-     adıyla listelenir; panelde Force serisine ürün eklenince burada
-     kendiliğinden çıkar.
-   - Sayfa açılınca tanıtılan dört makine (ForceMIG 200, ForceTIG 200,
-     ForceArc 200, ForceCut 45) işaretlidir. Aynı anda en fazla 4 model
-     seçilir ("4 / 4 model seçili"); dört seçiliyken öteki modeller
-     işaretlenemez. **Seçimi temizle** hepsini kaldırır; hiç model seçili
-     değilse tablo yerine "Karşılaştırmak için yukarıdan en az bir model
-     işaretleyin." yazar.
-   - Kolonlar seçim sırasına bakılmadan seri sırasıyla dizilir (aile
-     sırası, aile içinde model numarası). Kolonun üstünde ürün fotoğrafı,
-     aile ve kısa model adı (ürün sayfasına gider) ve kolonu çıkaran çarpı
-     (**Tablodan çıkar**).
-   - Satırlar seçilen ürünlerin teknik özelliklerinin birleşimidir; "Kaynak
-     yöntemi/yöntemleri" tek satırda "Yöntem" olarak toplanır, "Marka"
-     gösterilmez. Seçilen bir üründe olmayan özellik "—" yazar.
-   - Her kolonun en altında fiyat, **Sepete Ekle** ve favori kalbi (ürün
-     kartındaki kurallar: depoda yoksa "STOKTA YOK", seçenekli üründe
-     "Seçenekleri Gör").
-   - Telefonda tablo yana kayar; özellik adları solda sabit kalır.
-7. **Kapanış:** "Force'u yakından görün."; hemen altında **Destek ve
+   45):
+   - Ad; altında katalogdaki tür ("MIG Kaynak Makinası", "TIG Kaynak
+     Makinası", "MMA Kaynak Makinası", "Plazma Kesim Makinası") ve slogan
+     ("MIG kaynağında profesyonel çözüm!" gibi).
+   - **Öne Çıkan Özellikleri:** katalogdaki madde listesi (ForceMIG 200: 9,
+     ForceTIG 200: 7, ForceArc 200: 7, ForceCut 45: 8 madde).
+   - Üç rakam: akım ayar aralığı, maks. güç tüketimi ve net ağırlık
+     (ForceCut 45'te 10 mm temiz kesim, 16 mm kopartma ve net ağırlık).
+   - Görselin altında katalogdaki özellik simgeleri: aşırı ısınma
+     sonrasında devreye giren koruma modülü, elektromanyetik uyumluluk
+     testi, LCD dijital ekran, jeneratör ile çalışabilme, koruma sınıfı
+     testi, IGBT teknolojisi (dördünde); sinerjik program (ForceMIG 200,
+     ForceTIG 200, ForceArc 200); ark gücü, sıcak başlangıç ve elektrodun
+     yapışmama özelliği (ForceTIG 200, ForceArc 200).
+   - Fiyat (ürün kartındaki kuralla, KDV dahil ve hariç), **Sepete Ekle**,
+     favori kalbi, **Ürünü İncele** (ürün sayfası) ve **Teknik Özellikler**
+     (tabloya iner). Arkada yöntemin adı (MIG, TIG, ARC, CUT) silik
+     yazılıdır. Ürün yayında değilse bölümde fiyat, sepet ve ürün
+     bağlantısı görünmez.
+5. **Her Force'ta standart:** Altı ortak özellik (full dijital kontrol,
+   kompakt ve hafif, jeneratörle çalışır, koruma modülü, test edilmiş gövde,
+   kolay servis).
+6. **Kapanış:** "Force'u yakından görün."; hemen altında **Destek ve
    Garanti** (`/destek`), onun altında **Force Bayileri** haritası
-   (KARARLAR K-115):
+   (KARARLAR K-115). Teknik özelliklerin üstündedir:
    - Panelde **Force Bayi** işaretli ve aktif bayiler Türkiye haritasında
      görünür: bayisi olan iller kırmızı tonla boyanır, her ile bir nokta
      düşer (bayilerinin ortalama konumunda; ilde birden çok bayi varsa
@@ -454,6 +453,25 @@ görünür.
    - Force bayisi yoksa harita bölümü hiç görünmez. Force Bayi işareti
      sitenin başka yerinde (Yetkili Bayi ve Servis Ağı, ürün sayfası)
      gösterilmez.
+7. **Teknik Özellikler** (sayfanın en altı): yalnızca tanıtılan dört makine;
+   değerler Force kataloğundan.
+   - **Makineleri seçin:** Dört makine işaretlenir; sayfa açılınca dördü de
+     işaretlidir. **Seçimi temizle** hepsini kaldırır; hiç makine seçili
+     değilse tablo yerine "Teknik özellikleri görmek için yukarıdan en az
+     bir makine işaretleyin." yazar.
+   - Kolonlar seçim sırasına bakılmadan sayfadaki sırayla dizilir (ForceMIG
+     200, ForceTIG 200, ForceArc 200, ForceCut 45). Kolonun üstünde
+     makinenin fotoğrafı, türü ve adı (ürün sayfasına gider) ve kolonu
+     çıkaran çarpı (**Tablodan çıkar**).
+   - Satırlar katalogdaki tablodur: Makine kodu, Şebeke voltajı, Maks. güç
+     tüketimi, Akım ayar aralığı, Devrede kalma (40 °C), Boşta çalışma
+     voltajı, Verimlilik, Koruma sınıfı, İzolasyon sınıfı, Boyutlar (Y × G
+     × D), Net ağırlık. Makine kodu katalogdaki gibidir (ör. 30100000074;
+     sitedeki ürün kodunun başında "ZW" vardır).
+   - Her kolonun en altında fiyat, **Sepete Ekle** ve favori kalbi (ürün
+     kartındaki kurallar: depoda yoksa "STOKTA YOK"); ürün yayında değilse
+     "—".
+   - Telefonda tablo yana kayar; satır adları solda sabit kalır.
 
 ---
 

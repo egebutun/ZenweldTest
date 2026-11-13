@@ -161,24 +161,23 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] `/force`: açılışta dev FORCE yazısı, altında kaynak ustası ve önünde
       aralıklı dört makine (üst üste binmez); yazı okunur, ustanın
       eldivenleri ve torcu makinelerin üstünde görünür; Makineleri Keşfet
-      kartlara, Teknik Karşılaştırma tabloya iner. Kaydırınca makineler ve
+      kartlara, Teknik Özellikler en alttaki tabloya iner. Kaydırınca makineler ve
       usta yerinden oynamaz; kıvılcım, yanıp sönen zemin çizgisi, "Kaydırın"
       yazısı, bölüm başlarında uzayan çizgi, sıra numarası ve sayan rakam
       yoktur; bölümler yalnızca yumuşakça belirir. Dört makine bölümünde
-      slogan, açıklama, rakamlar, fiyat, Sepete Ekle, kalp ve Ürünü İncele
-      (ürün sayfası) vardır. Hareket azaltma tercihinde her şey sabit ve
-      görünür.
-- [ ] `/force` teknik tablo: Model Serisi "Force" olan yayındaki bütün
-      ürünler ailelerine göre işaretlenebilir; açılışta dört tanıtılan
-      makine seçili, en fazla 4 seçilir (dördüncüden sonra ötekiler
-      işaretlenemez). Tablo yalnızca seçilenleri seri sırasıyla gösterir;
-      çarpı kolonu çıkarır, Seçimi temizle hepsini kaldırır (tablo yerine
-      yönlendiren yazı). Seçilen bir üründe olmayan özellik "—"; her kolonun
-      altında fiyat, Sepete Ekle ve kalp. Depoda olmayanda "STOKTA YOK".
-      Panelde Force serisine ürün eklenince ya da fiyat/teknik özellik
-      değişince seçenekler ve tablo da değişir (iki modda;
+      Force kataloğundaki tür ve slogan ("MIG kaynağında profesyonel
+      çözüm!"), Öne Çıkan Özellikleri listesi, görselin altında özellik
+      simgeleri, rakamlar, fiyat, Sepete Ekle, kalp ve Ürünü İncele (ürün
+      sayfası) vardır. Hareket azaltma tercihinde her şey sabit ve görünür.
+- [ ] `/force` Teknik Özellikler (sayfanın en altı): yalnızca dört makine,
+      açılışta dördü seçili; çarpı kolonu çıkarır, Seçimi temizle hepsini
+      kaldırır (tablo yerine yönlendiren yazı). 11 satır ve değerler Force
+      kataloğundaki gibi (ör. ForceTIG 200: 220 V, 5,00 kg; ForceCut 45:
+      18–45 A, 340 V; makine kodu "ZW"siz). Ürün sayfalarındaki teknik
+      özellikler değişmez. Her kolonun altında ürün kaydından fiyat, Sepete
+      Ekle ve kalp; depoda olmayanda "STOKTA YOK" (iki modda;
       `tests/e2e-db/force.spec.ts`).
-- [ ] `/force` kapanış: "Force'u yakından görün." altında Destek ve Garanti
+- [ ] `/force` kapanış teknik özelliklerin üstünde: "Force'u yakından görün." altında Destek ve Garanti
       (`/destek`); Yetkili Bayi Bul yok. Altında Force Bayileri haritası:
       örnek veride 29 bayi · 25 il, her ile bir nokta (Ankara'da "2"); ilin
       noktası ili seçer (tek bayili ilde bayinin bilgileri hemen açılır);

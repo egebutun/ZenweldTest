@@ -3,10 +3,10 @@ import { catalog, closeDatabase, expect, expectedOffer, sql, test } from "./yard
 /**
  * FORCE SAYFASI (veritabani modu; docs/WEBSITE-KULLANIM.md › Force Serisi)
  *
- * Teknik tablonun secilebilen modelleri, teknik ozellikleri, fiyatlari ve
- * stok durumu veritabanindaki urunlerden gelir (Model Serisi "Force" olan
- * yayindaki urunler). Force bayileri haritasi dealers tablosundan (aktif ve
- * force_dealer). Anasayfa tanitim alanindaki Force dugmesi
+ * Teknik ozelliklerdeki dort makinenin fiyati ve stok durumu veritabanindaki
+ * urunlerden gelir; teknik degerler Force katalogundan (koddan) gelir, urun
+ * kaydindaki teknik ozellikler kullanilmaz. Force bayileri haritasi dealers
+ * tablosundan (aktif ve force_dealer). Anasayfa tanitim alanindaki Force dugmesi
  * settings('home_hero') kaydindan gelir. Demo modundaki hali:
  * tests/e2e/force.spec.ts.
  */
@@ -15,41 +15,29 @@ test.use({ viewport: { width: 1440, height: 900 } });
 
 type Hero = { slides: { id: string; primary: { label: string; href: string }; secondary?: { label: string; href: string } }[] };
 
-test("/force: seçilebilen modeller veritabanındaki Force ürünleri; tablodaki fiyat ve stok aynı; sepete eklenir", async ({ page, problems }) => {
+test("/force: teknik özelliklerde dört makine; fiyat ve stok veritabanıyla aynı, teknik değerler katalogdan; sepete eklenir", async ({ page, problems }) => {
   const { products, warehouseStock } = await catalog();
-  const force = products.filter((p) => p.active && p.filterValues?.["model-serisi"]?.includes("force"));
-  expect(force.length).toBeGreaterThan(0);
+  const slugs = ["forcemig-200", "forcetig-200", "forcearc-200-mma", "forcecut-45"];
 
   await page.goto("/force#karsilastirma");
-  const section = page.locator("#karsilastirma");
-  await expect(section.getByRole("checkbox")).toHaveCount(force.length);
-  // Her secenek bir Force urunu: kisa model adi urun adinin basidir.
-  for (const label of await section.locator("fieldset label").allInnerTexts()) {
-    expect(force.some((p) => p.name.startsWith(label.trim())), `${label}: veritabanında yok`).toBeTruthy();
-  }
+  const table = page.locator("#karsilastirma table");
+  await expect(table.locator("thead [data-model]")).toHaveText(["ForceMIG 200", "ForceTIG 200", "ForceArc 200", "ForceCut 45"]);
 
-  // Acilista secili kolonlar: fiyat ve stok veritabaniyla ayni
-  const table = section.locator("table");
-  const names = (await table.locator("thead [data-model]").allInnerTexts()).map((s) => s.trim());
-  expect(names.length).toBeGreaterThan(0);
   const cells = table.locator("tfoot td");
-  for (const [i, name] of names.entries()) {
-    const product = force.find((p) => p.name.startsWith(name))!;
-    const offer = expectedOffer(product, warehouseStock);
+  for (const [i, slug] of slugs.entries()) {
+    const product = products.find((p) => p.slug === slug && p.active);
+    expect(product, `${slug}: veritabanında yayında değil`).toBeTruthy();
+    const offer = expectedOffer(product!, warehouseStock);
     await expect(cells.nth(i)).toContainText(offer.price.toLocaleString("tr-TR"));
     await expect(cells.nth(i).getByRole("button", { name: /Sepete Ekle/i })).toHaveCount(offer.inStock ? 1 : 0);
   }
 
-  // Bir ozellik degeri dogrudan urunun teknik ozelliklerinden
-  const mig = force.find((p) => p.slug === "forcemig-200")!;
-  const weight = mig.specs.find((s) => s.label === "Ağırlık")!.value;
-  const column = names.findIndex((n) => mig.name.startsWith(n));
-  expect(column).toBeGreaterThanOrEqual(0);
-  const row = table.locator("tbody tr").filter({ has: page.getByRole("rowheader", { name: "Ağırlık" }) });
-  await expect(row.locator("td").nth(column)).toHaveText(weight);
+  // Teknik degerler katalogdan: ForceTIG 200'un net agirligi katalogda 5,00 kg
+  const weight = table.locator("tbody tr").filter({ has: page.getByRole("rowheader", { name: "Net ağırlık" }) }).locator("td");
+  await expect(weight).toHaveText(["11,00 kg", "5,00 kg", "3,56 kg", "4,60 kg"]);
 
-  await cells.nth(column).getByRole("button", { name: /Sepete Ekle/i }).click();
-  await expect(cells.nth(column).getByRole("link", { name: /Sepete Git/i })).toBeVisible();
+  await cells.nth(0).getByRole("button", { name: /Sepete Ekle/i }).click();
+  await expect(cells.nth(0).getByRole("link", { name: /Sepete Git/i })).toBeVisible();
   expect(problems).toEqual([]);
 });
 
