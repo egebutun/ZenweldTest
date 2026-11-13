@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { closeDatabase, expect, registerMember, sql, test } from "./yardimci";
+import { closeDatabase, expect, newVisitor, registerMember, sql, test } from "./yardimci";
 
 /**
  * UYENIN ADRESLERI VE FAVORILERI VERITABANINDA (Asama 5.1; KARARLAR K-96)
@@ -82,7 +82,7 @@ test("adresler sunucuda: eklenir, varsayılan değişir, silinir; başka cihazda
   expect(await addressesOf(email)).toEqual([{ title: "İş", is_default: true }]);
 
   // Ayni hesap baska tarayicida: ayni adresler.
-  const other = await browser.newContext();
+  const other = await newVisitor(browser);
   try {
     const second = await other.newPage();
     await loginViaForm(second, email);
@@ -117,7 +117,7 @@ test("favoriler: misafirinkiler girişte hesaba eklenir; her cihazda aynı; çı
   await expect(page.getByRole("button", { name: "Favori", exact: true })).toHaveCount(2);
 
   // Baska tarayicida ayni liste; orada cikarilan favori hesaptan da gider.
-  const other = await browser.newContext();
+  const other = await newVisitor(browser);
   try {
     const second = await other.newPage();
     await loginViaForm(second, email);

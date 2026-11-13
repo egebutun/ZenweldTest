@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 import { formatPrice } from "@zenweld/utils";
 import { withLuhn } from "../unit/ornek";
-import { catalog, closeDatabase, expect, expectedOffer, plainProductInStock, registerMember, sql, test } from "./yardimci";
+import { catalog, closeDatabase, expect, expectedOffer, newVisitor, plainProductInStock, registerMember, sql, test } from "./yardimci";
 
 /**
  * SIPARISLER SUNUCUDA (Asama 5.2; KARARLAR K-97, IS-KURALLARI › Sipariş)
@@ -110,7 +110,7 @@ test("kartla sipariş sunucuda; sepette kupon sunucuda denetlenir; başka cihazd
   expect((await sql("SELECT 1 FROM coupon_redemptions WHERE coupon_code = 'E2E100' AND released_at IS NULL")).length).toBeGreaterThan(0);
 
   // Baska cihaz: Siparislerim sunucudan.
-  const other = await browser.newContext();
+  const other = await newVisitor(browser);
   try {
     const second = await other.newPage();
     await loginViaForm(second, email);

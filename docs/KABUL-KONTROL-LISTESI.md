@@ -124,6 +124,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Sitede ve panelde "demo" yazısı geçmez.
 - [ ] Var olmayan bir adres 404 sayfası gösterir; panelde "Sayfa bulunamadı"
       ve "Panele dön".
+- [ ] Tarayıcıda çerezler/site verisi engelliyken (ör. iPhone › Ayarlar ›
+      Safari › Tüm Çerezleri Engelle) site açılır, "Bir sorun oluştu"
+      çıkmaz; ürün sepete eklenir (`tests/e2e/depo-kapali.spec.ts`).
 - [ ] Bir sayfa hata verirse "Bir sorun oluştu", **Tekrar Dene** ve **Ana
       sayfaya dön** çıkar; üst menü ve alt bilgi yerinde kalır. (Elle
       denemek için geçici olarak hata veren bir sayfa gerekir; yazılımcı

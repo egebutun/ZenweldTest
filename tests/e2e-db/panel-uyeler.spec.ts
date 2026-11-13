@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 import { tr } from "@zenweld/i18n";
 import { demoAccount } from "../e2e/yardimci";
-import { closeDatabase, expect, registerMember, sql, test } from "./yardimci";
+import { closeDatabase, expect, newVisitor, registerMember, sql, test } from "./yardimci";
 
 /**
  * PANEL › UYELER VERITABANINDA (Asama 5, 6. alan; KARARLAR K-35, K-36, K-99)
@@ -49,7 +49,7 @@ test("üye: rolü ve durumu değişir (askıdaki üye giremez); silinir; işlem 
   await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
 
   // Askidaki uye siteye giremez.
-  const login = await (await browser.newContext()).request.post("/api/uyelik/giris", { data: { email: MEMBER.email, password: MEMBER.password } });
+  const login = await (await newVisitor(browser)).request.post("/api/uyelik/giris", { data: { email: MEMBER.email, password: MEMBER.password } });
   expect(login.ok()).toBe(false);
 
   await row.getByRole("button", { name: "Aktifleştir" }).click();

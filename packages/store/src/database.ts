@@ -45,12 +45,24 @@ const listeners = new Set<() => void>();
 export const uid = (prefix: string) =>
   `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
 
-function isBrowser(): boolean {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+/**
+ * Tarayicida miyiz ve tarayicinin deposu (localStorage) kullanilabilir mi?
+ * Ziyaretci cerezleri/site verisini engellediyse (ornegin iPhone'da "Tum
+ * Cerezleri Engelle") depoya erismek bile hata firlatir; o zaman site
+ * cokmez, veri yalnizca bellekte tutulur (sayfa yenilenince ornek veriye
+ * doner).
+ */
+function hasStorage(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return typeof window.localStorage !== "undefined";
+  } catch {
+    return false;
+  }
 }
 
 function loadFromStorage(): ZenweldDatabase {
-  if (!isBrowser()) return initialDatabase(BUILD_TIME.getTime());
+  if (!hasStorage()) return initialDatabase(BUILD_TIME.getTime());
   if (SERVER_DATA) {
     // Ayni adreste daha once calismis demo sitesinden kalan veri silinir.
     try {
@@ -100,7 +112,7 @@ export function getServerSnapshot(): ZenweldDatabase {
  * sekmenin bellekteki kopyasina alinir; yoksa bu sekmenin bir sonraki kaydi
  * butun veritabanini kendi eski kopyasiyla yazip o degisikligi silerdi.
  */
-if (isBrowser() && !SERVER_DATA) {
+if (hasStorage() && !SERVER_DATA) {
   window.addEventListener("storage", (event) => {
     if (event.key !== STORAGE_KEY && event.key !== null) return;
     memoryDb = null; // bir sonraki okuma depodan yapilir
@@ -151,7 +163,7 @@ export function mutate(updater: (db: ZenweldDatabase) => ZenweldDatabase | void)
   const draft = structuredClone(current);
   const result = updater(draft) ?? draft;
   // Veritabani modunda kayitlar sunucuya yazilir; bu kopya depoya yazilmaz.
-  if (isBrowser() && !SERVER_DATA) {
+  if (hasStorage() && !SERVER_DATA) {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
     } catch (err) {

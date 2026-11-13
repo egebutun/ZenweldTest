@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import type { APIRequestContext, Page } from "@playwright/test";
 import { demoHash } from "../../packages/auth/src/hash";
 import { demoAccount, field } from "../e2e/yardimci";
-import { closeDatabase, expect, memberLogin, sql, test } from "./yardimci";
+import { closeDatabase, expect, memberLogin, newVisitor, sql, test } from "./yardimci";
 
 /**
  * SITE UYELIGI SUNUCUDA (Asama 4.2; IS-KURALLARI › 16, KARARLAR K-94)
@@ -124,8 +124,8 @@ test("yanlış şifre, olmayan hesap ve yönetici hesabı aynı mesajı alır; 1
 
 test("şifre değişince diğer cihazdaki oturum kapanır, bu cihazdaki açık kalır", async ({ browser }) => {
   const email = newEmail("sifre");
-  const here = await browser.newContext();
-  const there = await browser.newContext();
+  const here = await newVisitor(browser);
+  const there = await newVisitor(browser);
   try {
     const page = await here.newPage();
     const other = await there.newPage();
@@ -195,7 +195,7 @@ test("başka bir siteden gelen istek ve oturumsuz işlem reddedilir", async ({ r
 
 test("şifre sıfırlama: aynı mesaj; bağlantıyla yeni şifre, tek kullanım, diğer oturumlar kapanır", async ({ page, browser }) => {
   const email = newEmail("sifirla");
-  const other = await browser.newContext();
+  const other = await newVisitor(browser);
   try {
     // Baska bir cihazda acik oturum.
     await registerViaApi((await other.newPage()).request, email, "uzun-sifre-1");

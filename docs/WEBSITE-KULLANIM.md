@@ -104,6 +104,11 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
   modunda oturum ve bütün site verisi de (ürünler, siparişler, üyeler…)
   tarayıcıdadır. Veritabanı modunda oturum, giriş yapmış üyenin adresleri,
   favorileri ve siparişleri sunucudadır (bkz. [Hesabım](#14-hesabım)).
+- **Tarayıcının deposu kapalıysa** (ziyaretçi çerezleri/site verisini
+  engellediyse; ör. iPhone'da "Tüm Çerezleri Engelle") site yine açılır. Bu
+  bilgiler yalnızca sayfa açıkken hatırlanır: sayfa yenilenince sepet
+  boşalır, karşılama penceresi ve çerez bandı yeniden çıkar. **Demo notu:**
+  Demo modunda site verisi de sayfa yenilenince örnek veriye döner.
 
 ---
 

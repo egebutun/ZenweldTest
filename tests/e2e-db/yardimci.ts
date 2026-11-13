@@ -5,7 +5,7 @@ import { Pool } from "pg";
 import { isInWarehouse, salePriceExVat, warehouseStockMap, type Product, type WarehouseStockRow } from "@zenweld/data";
 import { readCatalog, readWarehouseStock } from "../../packages/db/src/read";
 import * as schema from "../../packages/db/src/schema";
-import { demoAccount, expect, test } from "../e2e/yardimci";
+import { demoAccount, expect, newVisitor, test } from "../e2e/yardimci";
 
 /**
  * VERITABANI MODUNUN TARAYICI TESTLERI ICIN ORTAK PARCALAR
@@ -14,7 +14,7 @@ import { demoAccount, expect, test } from "../e2e/yardimci";
  * veritabanindan (TEST_DATABASE_URL) okur. Testler beklenen degerleri ayni
  * veritabanindan ve sitenin kendi kurallariyla (packages/data) hesaplar.
  */
-export { expect, test };
+export { expect, newVisitor, test };
 
 let pool: Pool | undefined;
 

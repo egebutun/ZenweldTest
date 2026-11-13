@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { test as base, expect, type Locator, type Page } from "@playwright/test";
+import { test as base, expect, type Browser, type BrowserContext, type Locator, type Page } from "@playwright/test";
 import type { ZenweldDatabase } from "@zenweld/data";
 
 /**
@@ -25,21 +25,35 @@ export const SESSION = {
   admin: "tests/e2e/.oturum/yonetici.json",
 };
 
+/** Bu tarayicida cerez bandi ve karsilama penceresi kapali gelir (testi ortmesin). */
+async function quiet(context: BrowserContext): Promise<BrowserContext> {
+  await context.addInitScript(() => {
+    try {
+      localStorage.setItem("zenweld.cookie-consent.v1", JSON.stringify({ choice: "all", at: "test" }));
+      sessionStorage.setItem("zenweld.welcome.seen", "1");
+    } catch {
+      /* cerceve icindeki dis sayfalarda depo yok */
+    }
+  });
+  return context;
+}
+
+/**
+ * Testin icinde acilan ikinci bir tarayici (ornegin "baska cihazda ayni
+ * liste"). browser.newContext() yerine bu kullanilir; yoksa karsilama
+ * penceresi acilip tiklamalari engeller.
+ */
+export async function newVisitor(browser: Browser): Promise<BrowserContext> {
+  return quiet(await browser.newContext());
+}
+
 /**
  * Her sayfada: cerez bandi ve karsilama penceresi kapali gelir (testi
  * ortmesin); sayfa hatalari ve guvenlik politikasi (CSP) ihlalleri toplanir.
  */
 export const test = base.extend<{ problems: string[] }>({
   context: async ({ context }, provide) => {
-    await context.addInitScript(() => {
-      try {
-        localStorage.setItem("zenweld.cookie-consent.v1", JSON.stringify({ choice: "all", at: "test" }));
-        sessionStorage.setItem("zenweld.welcome.seen", "1");
-      } catch {
-        /* cerceve icindeki dis sayfalarda depo yok */
-      }
-    });
-    await provide(context);
+    await provide(await quiet(context));
   },
   problems: async ({ page }, provide) => {
     const problems: string[] = [];

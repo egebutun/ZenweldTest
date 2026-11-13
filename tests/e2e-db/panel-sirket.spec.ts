@@ -1,7 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 import { tr } from "@zenweld/i18n";
 import { demoAccount } from "../e2e/yardimci";
-import { closeDatabase, expect, sql, test } from "./yardimci";
+import { closeDatabase, expect, newVisitor, sql, test } from "./yardimci";
 
 /**
  * PANEL › SIRKET VE ILETISIM, KARGO TAKIP BAGLANTISI (Asama 5, 5. alan,
@@ -107,7 +107,7 @@ test("kargo takip bağlantısı: firmaya takip adresi girilir; müşteri ve pane
   await expect(page.getByRole("link", { name: /Yurtiçi Kargo takip sayfasını aç/ })).toHaveAttribute("href", expected);
 
   // Musteri: kendi siparisinin detayi.
-  const customer = await (await browser.newContext()).newPage();
+  const customer = await (await newVisitor(browser)).newPage();
   await customer.goto("/giris");
   const form = customer.locator("main form").filter({ has: customer.locator("input[type=password]") });
   await form.locator("input[type=email]").fill(member.email);
