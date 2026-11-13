@@ -1693,8 +1693,8 @@ Bayiler sitenin müşterisi değildir; sitede bayi girişi yoktur (bkz.
 - **Yeni Bayi** düğmesi.
 - **Şehir süzgeci:** "Tüm şehirler (N)" ve kayıtlı şehirler (A–Z).
 - **Tablo:** Bayi (ad ve adres), Şehir / İlçe, Telefon, Rozetler (Yetkili
-  Bayi / Yetkili Servis; bağlı mağaza varsa "Online mağaza"), **Düzenle**,
-  Sil.
+  Bayi / Yetkili Servis; bağlı mağaza varsa "Online mağaza"; Force Bayi
+  işaretliyse kırmızı "Force"), **Düzenle**, Sil.
 - Pasif bayi soluk görünür; sitede görünmez.
 - **Sil:** "<ad> silinsin mi?" Bayinin stok satırları, stok yükleme geçmişi
   ve kod eşleştirmeleri de silinir.
@@ -1719,6 +1719,11 @@ Bayiler sitenin müşterisi değildir; sitede bayi girişi yoktur (bkz.
 - **Bayi Türü** (zorunlu): Yetkili Bayi / Yetkili Servis / Yetkili Bayi +
   Yetkili Servis. Sitede haritada ve servis ağı sayfasında rozet olarak
   görünür.
+- **Force Bayi:** "Yalnızca Force sayfasındaki Türkiye haritasında görünür;
+  sitenin başka yerinde etiket olarak gösterilmez." İşaretli ve aktif bayi
+  [Force sayfasının](WEBSITE-KULLANIM.md#force-serisi-force) en altındaki
+  Force Bayileri haritasında çıkar (KARARLAR K-115). Yeni kayıtta işaretsiz
+  gelir; örnek veride bütün bayiler işaretlidir.
 - **Aktif.**
 - Hatalar:
   - "Bayi adı ve şehir zorunludur."
@@ -1806,8 +1811,8 @@ sonra değişti; sayfayı yenileyin."); her değişiklik işlem kaydına yazıl�
 Ekranlar ve kurallar demo moduyla aynıdır; farklar:
 
 - Kaydedilen ya da silinen bayi ve satıcı sitede (Yetkili Bayi ve Servis
-  Ağı haritası, ürün sayfasındaki "Stoktaki Bayileri Gör" ve online satıcı
-  kartları) hemen değişir; temsilci Satış Temsilcilerimiz sayfasında hemen
+  Ağı haritası, Force sayfasındaki Force Bayileri haritası, ürün sayfasındaki
+  "Stoktaki Bayileri Gör" ve online satıcı kartları) hemen değişir; temsilci Satış Temsilcilerimiz sayfasında hemen
   değişir.
 - Bir online mağazanın tek bayiye bağlanması sunucuda da denetlenir; iki
   yönetici aynı anda aynı mağazayı iki bayiye bağlayamaz. Seçilen mağaza bu

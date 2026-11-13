@@ -502,6 +502,7 @@ Bayiler sitenin üyesi değildir; sitede bayi girişi yoktur (K-03).
 | `lat`, `lng` | numeric(9,6) | zorunlu | Harita konumu |
 | `badges` | text[] | zorunlu; `yetkili-satici` (Yetkili Bayi), `yetkili-servis` (Yetkili Servis); en az biri | |
 | `retailer_id` | text | benzersiz; → `retailers` (boşalır) | Bayinin online mağazası; bir mağaza en fazla bir bayiye bağlı |
+| `force_dealer` | boolean | zorunlu; varsayılan `false` | Force Bayi: yalnızca Force sayfasındaki haritada görünür, sitenin başka yerinde gösterilmez (K-115) |
 | `active` | boolean | zorunlu | |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 

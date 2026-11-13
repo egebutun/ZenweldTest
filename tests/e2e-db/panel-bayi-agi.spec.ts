@@ -50,13 +50,19 @@ test("bayi: eklenir ve Bayi Bul'da hemen görünür; adı değişir (kendi kayd�
   await field(dialog, "Bayi Adı").fill(DEALER.name);
   await field(dialog, "Şehir").fill("Konya");
   await field(dialog, "İlçe").fill("Selçuklu");
+  await dialog.getByRole("checkbox", { name: /Force Bayi/ }).check();
   await dialog.getByRole("button", { name: "Kaydet" }).click();
   await expect(dialog).toHaveCount(0);
-  const [{ id }] = await sql<{ id: string }>("SELECT id FROM dealers WHERE name = $1", [DEALER.name]);
+  const [{ id, force_dealer }] = await sql<{ id: string; force_dealer: boolean }>("SELECT id, force_dealer FROM dealers WHERE name = $1", [DEALER.name]);
+  expect(force_dealer).toBe(true);
 
   const finder = await page.context().newPage();
   await finder.goto("/yetkili-bayi-ve-servis-agi");
   await expect(finder.getByText(DEALER.name).first()).toBeVisible();
+  // Force Bayi isaretli: Force sayfasindaki haritada da hemen gorunur (KARARLAR K-115)
+  await finder.goto("/force");
+  await expect(finder.locator(`#force-bayileri [data-force-dealer="${id}"]`)).toHaveCount(1);
+  await finder.goto("/yetkili-bayi-ve-servis-agi");
 
   await page.locator("tr", { hasText: DEALER.name }).getByRole("button", { name: "Düzenle" }).click();
   await field(dialog, "Bayi Adı").fill(DEALER.renamed);

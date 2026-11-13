@@ -63,8 +63,14 @@ export function DealerMap({
 
     return () => {
       cancelled = true;
-      if (mapRef.current) {
-        mapRef.current.remove();
+      const map = mapRef.current;
+      if (map) {
+        // Yakinlasma animasyonu suruyorsa bitmis sayilir: Leaflet (1.9.4)
+        // animasyonu 250 ms sonra bitirmeye calisir ve harita kaldirildiysa
+        // "_leaflet_pos" hatasi verir (sayfadan hizla cikilinca). Bayrak
+        // kapaliyken o adim hicbir sey yapmaz.
+        map._animatingZoom = false;
+        map.remove();
         mapRef.current = null;
       }
     };

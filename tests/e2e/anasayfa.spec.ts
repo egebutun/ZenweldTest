@@ -120,3 +120,16 @@ test("bölüm sırası, kategori kartları, Force ve Jasic şeritleri", async ({
 
   expect(problems).toEqual([]);
 });
+
+test("bayi haritası yakınlaşırken sayfadan çıkılınca hata vermez", async ({ page, problems }) => {
+  for (let i = 0; i < 3; i++) {
+    await page.goto("/");
+    // Harita acilinca bayileri cercevelemek icin yakinlasir; Leaflet bu sirada leaflet-zoom-anim ekler.
+    await page.locator(".leaflet-zoom-anim").waitFor({ state: "attached" });
+    await page.locator("header nav").getByRole("link", { name: "FORCE" }).click();
+    await expect(page).toHaveURL(/\/force$/);
+    // Leaflet yakinlasmayi 250 ms sonra bitirmeye calisir; harita kaldirildiysa hata vermemeli.
+    await page.waitForTimeout(400);
+  }
+  expect(problems).toEqual([]);
+});

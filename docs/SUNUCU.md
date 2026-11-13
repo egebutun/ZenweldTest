@@ -221,6 +221,7 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `0011_urun-yeni-isareti-kaldirildi.sql` | `products.is_new` kaldırıldı |
 | `0012_ayar-anasayfa-tanitim.sql` | `settings.key` `home_hero` değerini de kabul eder (Anasayfa Tanıtım, K-45) |
 | `0013_welders-club-kaldirildi.sql` | Welders Club kaldırıldı: `welders_club_signups` tablosu silinir; `email_recipients` ve `email_log`'daki `welders-club` satırları silinir ve tür listesinden çıkar |
+| `0014_force-bayi.sql` | `dealers.force_dealer` (Force Bayi işareti; Force sayfasındaki harita, K-115). Var olan bayiler işaretsiz gelir |
 
 **Veritabanındaki kurallar** (`0001_kurallar.sql`):
 

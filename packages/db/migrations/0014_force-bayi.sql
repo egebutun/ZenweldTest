@@ -1,0 +1,1 @@
+ALTER TABLE "dealers" ADD COLUMN "force_dealer" boolean DEFAULT false NOT NULL;

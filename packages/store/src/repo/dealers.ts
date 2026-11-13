@@ -12,6 +12,11 @@ export function listDealers(db: ZenweldDatabase = getSnapshot()): Dealer[] {
   return db.dealers.filter((d) => d.active);
 }
 
+/** Force sayfasindaki haritanin bayileri: aktif ve Force Bayi isaretli (KARARLAR K-115). */
+export function listForceDealers(db: ZenweldDatabase = getSnapshot()): Dealer[] {
+  return listDealers(db).filter((d) => d.forceDealer);
+}
+
 /**
  * Bayiyi kaydeder. Secilen online magaza baska bir bayiye bagliysa
  * kaydetmez ve false doner: bir magaza yalnizca bir bayiye baglanabilir

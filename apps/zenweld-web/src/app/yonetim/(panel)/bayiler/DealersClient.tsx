@@ -19,6 +19,7 @@ const EMPTY: Dealer = {
   lng: 35.6,
   badges: ["yetkili-satici"],
   workingHours: "Hafta içi 09:00 – 18:00",
+  forceDealer: false,
   active: true,
 };
 
@@ -129,6 +130,7 @@ export function DealersClient() {
                       </Badge>
                     ))}
                     {d.retailerId && <Badge tone="outline">Online mağaza</Badge>}
+                    {d.forceDealer && <Badge tone="red">Force</Badge>}
                   </div>
                 </td>
                 <td className="px-4 py-2.5 text-right">
@@ -278,6 +280,18 @@ export function DealersClient() {
               </div>
             </div>
             {error && <p className="text-sm font-semibold text-zw-red-600">{error}</p>}
+            <Checkbox
+              label={
+                <>
+                  Force Bayi
+                  <span className="mt-0.5 block text-xs text-zw-grey-500">
+                    Yalnızca Force sayfasındaki Türkiye haritasında görünür; sitenin başka yerinde etiket olarak gösterilmez.
+                  </span>
+                </>
+              }
+              checked={editing.forceDealer}
+              onChange={(e) => setEditing({ ...editing, forceDealer: e.target.checked })}
+            />
             <Checkbox
               label="Aktif"
               checked={editing.active}

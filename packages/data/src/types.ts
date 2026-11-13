@@ -285,6 +285,11 @@ export interface Dealer {
    * bayiye baglanabilir (bkz. saveDealer).
    */
   retailerId?: string;
+  /**
+   * Force bayisi: yalnizca Force sayfasindaki Turkiye haritasinda gosterilir;
+   * sitenin baska bir yerinde etiket olarak gorunmez (KARARLAR K-115).
+   */
+  forceDealer: boolean;
   active: boolean;
   /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
   updatedAt?: string;

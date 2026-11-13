@@ -343,12 +343,11 @@
 /* FORCE SAYFASI (components/force; /force)                              */
 /*                                                                      */
 /* Koyu endustriyel zemin, dev FORCE yazisi, zemini kaldirilmis makine  */
-/* fotograflari. Kaydirmaya bagli hareketler --p ve --exit degiskenleriyle */
-/* (force-motion.tsx); bolumler ekrana girince [data-fx] ogeleri belirir.  */
-/* Hareket azaltma tercihinde hepsi durur ve icerik hemen gorunur.         */
+/* fotograflari. Acilis bir kez belirir, sonra her sey yerinde durur;    */
+/* kaydirinca bolumlerin [data-fx] ogeleri yumusakca belirir             */
+/* (force-motion.tsx). Hareket azaltma tercihinde icerik hemen gorunur. */
 /* ==================================================================== */
 
-.zw-force-hero { --exit: 0; }
 .zw-force-hero-bg {
   background:
     radial-gradient(ellipse 70% 55% at 50% 92%, rgb(190 30 38 / 0.42), transparent 70%),
@@ -356,14 +355,10 @@
     repeating-linear-gradient(115deg, rgb(255 255 255 / 0.018) 0 1px, transparent 1px 8px),
     linear-gradient(180deg, #15181c 0%, #0b0c0e 58%, #060708 100%);
 }
-/* Makinelerin bastigi isikli zemin cizgisi; kaynak arki gibi titrer. */
+/* Makinelerin bastigi isikli zemin cizgisi (sabit). */
 .zw-force-floor {
   background: linear-gradient(90deg, transparent 0%, rgb(255 90 70 / 0.7) 30%, #fff 50%, rgb(255 90 70 / 0.7) 70%, transparent 100%);
   box-shadow: 0 0 40px 6px rgb(255 60 50 / 0.45);
-}
-.zw-force-word-wrap {
-  transform: translateY(calc(var(--exit) * 160px)) scale(calc(1 + var(--exit) * 0.08));
-  opacity: calc(1 - var(--exit) * 0.9);
 }
 .zw-force-word {
   font-size: clamp(110px, 38vw, 400px);
@@ -376,18 +371,15 @@
 @media (min-width: 768px) {
   .zw-force-word { font-size: clamp(110px, 15.5vw, 290px); }
 }
-.zw-force-lineup { transform: translateY(calc(var(--exit) * -110px)); }
-/* Kaynak ustasi makinelerden yavas kayar (derinlik); arkasinda kirmizi isik. */
-.zw-force-welder { transform: translateY(calc(var(--exit) * -40px)); }
+/* Kaynak ustasinin arkasindaki kirmizi isik. */
 .zw-force-welder::before {
   content: "";
   position: absolute;
   inset: 0 0 -10% 0;
   z-index: -1;
   background: radial-gradient(closest-side, rgb(200 30 40 / 0.4), transparent);
-  filter: blur(12px);
 }
-/* Torc ucundaki ark: beyaz-mavi cekirdek, turuncu hale; titrer. */
+/* Torc ucundaki ark: beyaz-mavi cekirdek, turuncu hale (sabit isik). */
 .zw-force-torch {
   width: 9%;
   aspect-ratio: 1;
@@ -396,7 +388,6 @@
   background: radial-gradient(closest-side, #fff 0%, rgb(170 210 255 / 0.95) 18%, rgb(255 150 60 / 0.55) 45%, transparent 75%);
   mix-blend-mode: screen;
 }
-.zw-force-unit { transform: translateX(calc(var(--exit) * var(--spread, 0px))); }
 
 .zw-force-card { background: linear-gradient(160deg, #1a1d21 0%, #111316 100%); }
 .zw-force-card-glow {
@@ -406,25 +397,16 @@
 }
 .zw-force-card:hover .zw-force-card-glow { transform: scale(1.25); opacity: 1; }
 
-/* Makine bolumleri */
-.zw-force-chapter { --p: 0.5; }
-.zw-force-seam {
-  background: linear-gradient(90deg, rgb(200 30 40) 0%, #ff6a4d 60%, #fff 100%);
-  box-shadow: 0 0 14px 1px rgb(255 70 50 / 0.6);
-  transform-origin: left;
-  transform: scaleX(clamp(0, calc(var(--p) * 2.2 - 0.3), 1));
-}
+/* Makine bolumleri: arkada yontemin adi (MIG, TIG ...) ince cizgiyle, makinenin arkasinda kirmizi isik. */
 .zw-force-ghost {
   font-size: clamp(170px, 30vw, 470px);
   color: transparent;
   -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.07);
-  transform: translate(calc((var(--p) - 0.5) * -36%), -50%);
+  transform: translateY(-50%);
 }
 .zw-force-halo {
   background: radial-gradient(closest-side, rgb(200 30 40 / 0.5), rgb(200 30 40 / 0.12) 55%, transparent);
-  transform: scale(calc(0.7 + var(--p) * 0.6));
 }
-.zw-force-machine { transform: translateY(calc((0.5 - var(--p)) * 110px)) rotate(calc((0.5 - var(--p)) * -4deg)); }
 .zw-force-reflect { -webkit-box-reflect: below -4% linear-gradient(transparent 74%, rgb(255 255 255 / 0.13)); }
 
 .zw-force-dna {
@@ -440,58 +422,25 @@
 }
 
 @keyframes zw-force-rise {
-  from { opacity: 0; transform: translateY(90px) scale(0.92); }
+  from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: none; }
-}
-@keyframes zw-force-word-in {
-  from { opacity: 0; letter-spacing: 0.22em; filter: blur(14px); }
-  to   { opacity: 1; letter-spacing: -0.015em; filter: blur(0); }
-}
-@keyframes zw-force-arc {
-  0%, 100% { opacity: 0.8; }
-  6%  { opacity: 1; }
-  8%  { opacity: 0.55; }
-  10% { opacity: 0.95; }
-  38% { opacity: 0.75; }
-  40% { opacity: 1; }
-  66% { opacity: 0.65; }
-  68% { opacity: 0.9; }
 }
 @keyframes zw-force-marquee { to { transform: translateX(-50%); } }
-@keyframes zw-force-scroll {
-  0%   { transform: scaleY(0); transform-origin: top; }
-  50%  { transform: scaleY(1); transform-origin: top; }
-  51%  { transform: scaleY(1); transform-origin: bottom; }
-  100% { transform: scaleY(0); transform-origin: bottom; }
-}
 @keyframes zw-fx-up {
-  from { opacity: 0; transform: translateY(34px); }
-  to   { opacity: 1; transform: none; }
-}
-@keyframes zw-fx-wipe {
-  from { opacity: 1; clip-path: inset(0 100% 0 0); }
-  to   { opacity: 1; clip-path: inset(0 0 0 0); }
-}
-@keyframes zw-fx-zoom {
-  from { opacity: 0; transform: scale(0.88); }
+  from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .zw-force-word { animation: zw-force-word-in 1.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
-  .zw-force-rise { animation: zw-force-rise 1.3s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms) both; }
+  .zw-force-word { animation: zw-fade-in 1s ease-out both; }
+  .zw-force-rise { animation: zw-force-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms) both; }
   .zw-force-in { animation: zw-rise-in 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-  .zw-force-floor { animation: zw-force-arc 3.2s steps(1, end) infinite; }
-  .zw-force-welder-in { animation: zw-force-rise 1.4s cubic-bezier(0.22, 1, 0.36, 1) 500ms both; }
-  .zw-force-torch { animation: zw-force-arc 1.1s steps(1, end) infinite; }
+  .zw-force-welder-in { animation: zw-force-rise 1s cubic-bezier(0.22, 1, 0.36, 1) 300ms both; }
   .zw-force-marquee { animation: zw-force-marquee 32s linear infinite; }
   .zw-force-ticker:hover .zw-force-marquee { animation-play-state: paused; }
-  .zw-force-scroll-line { animation: zw-force-scroll 2.2s ease-in-out infinite; }
 
   .zw-fx [data-fx] { opacity: 0; }
-  .zw-fx[data-shown="true"] [data-fx="up"] { animation: zw-fx-up 900ms cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms) both; }
-  .zw-fx[data-shown="true"] [data-fx="wipe"] { animation: zw-fx-wipe 1100ms cubic-bezier(0.77, 0, 0.18, 1) var(--d, 0ms) both; }
-  .zw-fx[data-shown="true"] [data-fx="zoom"] { animation: zw-fx-zoom 1300ms cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0ms) both; }
+  .zw-fx[data-shown="true"] [data-fx="up"] { animation: zw-fx-up 800ms ease-out var(--d, 0ms) both; }
 }
 
 @media (prefers-reduced-motion: reduce) {

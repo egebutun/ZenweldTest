@@ -42,6 +42,8 @@ export const dealers = pgTable(
     retailerId: text("retailer_id")
       .unique("dealers_retailer")
       .references(() => retailers.id, { onDelete: "set null" }),
+    /** Force bayisi: yalnizca Force sayfasindaki haritada (K-115) */
+    forceDealer: boolean("force_dealer").notNull().default(false),
     active: boolean("active").notNull().default(true),
     ...timestamps(),
   },

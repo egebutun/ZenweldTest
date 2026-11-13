@@ -120,6 +120,7 @@ const DEALER_FIELDS = [
   "badges",
   "workingHours",
   "retailerId",
+  "forceDealer",
   "active",
 ] as const satisfies readonly (keyof Dealer)[];
 
@@ -134,7 +135,13 @@ export async function adminSaveDealer(db: AuditDb, actor: Actor, input: Input, a
   const lat = coordinate(input.lat, 90);
   const lng = coordinate(input.lng, 180);
   const badges = Array.isArray(input.badges) ? [...new Set(input.badges)] : null;
-  if (lat === null || lng === null || !badges || badges.some((b) => !BADGES.includes(b as DealerBadge)) || typeof input.active !== "boolean") {
+  if (
+    lat === null ||
+    lng === null ||
+    !badges || badges.some((b) => !BADGES.includes(b as DealerBadge)) ||
+    typeof input.forceDealer !== "boolean" ||
+    typeof input.active !== "boolean"
+  ) {
     return invalid();
   }
   const draft = {
@@ -149,6 +156,7 @@ export async function adminSaveDealer(db: AuditDb, actor: Actor, input: Input, a
     badges: badges as DealerBadge[],
     workingHours: text(input.workingHours, 200),
     retailerId: text(input.retailerId, 100) || undefined,
+    forceDealer: input.forceDealer,
     active: input.active,
   };
   const problem = dealerDraftError(draft);

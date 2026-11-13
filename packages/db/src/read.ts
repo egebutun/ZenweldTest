@@ -256,6 +256,7 @@ export async function readDealers(db: ReadDb): Promise<Dealer[]> {
     badges: d.badges as Dealer["badges"],
     workingHours: d.workingHours,
     retailerId: opt(d.retailerId),
+    forceDealer: d.forceDealer,
     active: d.active,
   }));
 }

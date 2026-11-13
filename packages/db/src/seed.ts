@@ -235,6 +235,7 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
     badges: d.badges,
     workingHours: d.workingHours,
     retailerId: d.retailerId,
+    forceDealer: d.forceDealer,
     active: d.active,
   }));
   const stockImports = data.stockImports.map((i) => ({

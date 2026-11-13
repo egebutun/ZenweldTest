@@ -158,18 +158,35 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Üst menü: FORCE · Ekipmanlar · Güvenlik · Aksesuarlar · Dolgu
       Metalleri · Destek ve Garanti · Keşfet. FORCE menü açmaz, `/force`'u
       açar (telefon menüsünde de en üstte; `tests/e2e/force.spec.ts`).
-- [ ] `/force`: açılışta dev FORCE yazısı, altından yükselen kaynak ustası
-      ve önünde aralıklı dört makine (üst üste binmez); yazı okunur,
-      ustanın eldivenleri ve torcu makinelerin üstünde görünür; Makineleri Keşfet
-      kartlara, Teknik Karşılaştırma tabloya iner. Dört makine bölümünde
+- [ ] `/force`: açılışta dev FORCE yazısı, altında kaynak ustası ve önünde
+      aralıklı dört makine (üst üste binmez); yazı okunur, ustanın
+      eldivenleri ve torcu makinelerin üstünde görünür; Makineleri Keşfet
+      kartlara, Teknik Karşılaştırma tabloya iner. Kaydırınca makineler ve
+      usta yerinden oynamaz; kıvılcım, yanıp sönen zemin çizgisi, "Kaydırın"
+      yazısı, bölüm başlarında uzayan çizgi, sıra numarası ve sayan rakam
+      yoktur; bölümler yalnızca yumuşakça belirir. Dört makine bölümünde
       slogan, açıklama, rakamlar, fiyat, Sepete Ekle, kalp ve Ürünü İncele
       (ürün sayfası) vardır. Hareket azaltma tercihinde her şey sabit ve
       görünür.
 - [ ] `/force` teknik tablo: Model Serisi "Force" olan yayındaki bütün
-      ürünler (aile sırasıyla); üründe olmayan özellik "—"; her kolonun
+      ürünler ailelerine göre işaretlenebilir; açılışta dört tanıtılan
+      makine seçili, en fazla 4 seçilir (dördüncüden sonra ötekiler
+      işaretlenemez). Tablo yalnızca seçilenleri seri sırasıyla gösterir;
+      çarpı kolonu çıkarır, Seçimi temizle hepsini kaldırır (tablo yerine
+      yönlendiren yazı). Seçilen bir üründe olmayan özellik "—"; her kolonun
       altında fiyat, Sepete Ekle ve kalp. Depoda olmayanda "STOKTA YOK".
       Panelde Force serisine ürün eklenince ya da fiyat/teknik özellik
-      değişince tablo da değişir (iki modda; `tests/e2e-db/force.spec.ts`).
+      değişince seçenekler ve tablo da değişir (iki modda;
+      `tests/e2e-db/force.spec.ts`).
+- [ ] `/force` kapanış: "Force'u yakından görün." altında Destek ve Garanti
+      (`/destek`); Yetkili Bayi Bul yok. Altında Force Bayileri haritası:
+      örnek veride 29 bayi · 25 il, her ile bir nokta (Ankara'da "2"); ilin
+      noktası ili seçer (tek bayili ilde bayinin bilgileri hemen açılır);
+      listedeki bayiye dokununca adres, çalışma saatleri, Ara / WhatsApp /
+      Yol Tarifi; İl seçimi listeyi daraltır. Panel › Bayiler'de Force Bayi işareti kaldırılan bayi
+      haritadan çıkar; işaret Yetkili Bayi ve Servis Ağı'nda ve başka
+      yerde görünmez (iki modda; `tests/e2e/force.spec.ts`,
+      `tests/e2e-db/force.spec.ts`, `tests/e2e-db/panel-bayi-agi.spec.ts`).
 - [ ] Anasayfa tanıtım alanında **Force Serisini İncele** `/force`'u açar.
 - [ ] Bölüm menüsünde grup başlığı grup sayfasına, kategori kategori
       sayfasına gider; bölüm adına tıklanınca bölüm sayfası açılır.
@@ -633,6 +650,9 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       temsilci görünmez.
 - [ ] Yetkili Bayi ve Servis Ağı haritası açılır; bayi türü rozetleri ve yol
       tarifi bağlantısı çalışır.
+- [ ] Anasayfadaki bayi haritası açılırken (yakınlaşırken) başka sayfaya
+      geçilince tarayıcı konsolunda hata çıkmaz
+      (`tests/e2e/anasayfa.spec.ts`).
 - [ ] MSDS, Kaynak Rehberi ve Parti Sertifikaları sayfalarında panelden
       yüklenen belgeler listelenir; ad, ürün, kod ve parti numarasıyla
       aranır; PDF "Görüntüle" ile, diğerleri "İndir" ile açılır; ürünü yayında

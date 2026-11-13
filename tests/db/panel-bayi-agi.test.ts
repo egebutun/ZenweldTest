@@ -84,6 +84,7 @@ const dealerInput = (fields: Record<string, unknown> = {}) => ({
   lng: 27.21,
   badges: ["yetkili-satici", "yetkili-servis"],
   workingHours: "09-18",
+  forceDealer: false,
   active: true,
   ...fields,
 });
@@ -117,16 +118,18 @@ describe("bayiler", () => {
       });
       expect(await adminSaveDealer(db, admin, dealerInput({ badges: ["uydurma"] }), T1)).toMatchObject({ status: 400 });
       expect(await adminSaveDealer(db, admin, dealerInput({ lat: 120 }), T1)).toMatchObject({ status: 400 });
+      expect(await adminSaveDealer(db, admin, dealerInput({ forceDealer: "evet" }), T1)).toMatchObject({ status: 400 });
       expect(await adminSaveDealer(db, admin, dealerInput({ retailerId: "r1" }), T1)).toEqual({ ok: false, status: 409, error: DEALER_STORE_TAKEN });
       expect(await adminSaveDealer(db, admin, dealerInput({ retailerId: "yok" }), T1)).toMatchObject({ status: 400, error: tr.panel.storeMissing });
 
-      const created = await adminSaveDealer(db, admin, dealerInput({ retailerId: "r2", whatsapp: " " }), T1);
+      const created = await adminSaveDealer(db, admin, dealerInput({ retailerId: "r2", whatsapp: " ", forceDealer: true }), T1);
       expect(created).toMatchObject({ ok: true, updatedAt: T1.toISOString() });
       const id = (created as { id: string }).id;
       expect((await readDealersPanel(db)).dealers.find((d) => d.id === id)).toMatchObject({
         name: "Yeni Bayi",
         retailerId: "r2",
         badges: ["yetkili-satici", "yetkili-servis"],
+        forceDealer: true,
         updatedAt: T1.toISOString(),
       });
 

@@ -99,6 +99,13 @@
       "when": 1794521844838,
       "tag": "0013_welders-club-kaldirildi",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1794564692333,
+      "tag": "0014_force-bayi",
+      "breakpoints": true
     }
   ]
 }

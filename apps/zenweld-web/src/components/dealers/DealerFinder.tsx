@@ -2,21 +2,13 @@
 
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import {
-  Building2,
-  Clock,
-  ExternalLink,
-  LocateFixed,
-  MapPin,
-  MessageCircle,
-  Phone,
-  Wrench,
-} from "lucide-react";
+import { Building2, Clock, LocateFixed, MapPin, Wrench } from "lucide-react";
 import type { Dealer } from "@zenweld/data";
 import { dealersWithProduct, listDealers, useDatabase, useNow } from "@zenweld/store";
 import { Badge, Button, Checkbox, FormRow, Select, Skeleton } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { CITY_CENTERS, haversineKm } from "@/lib/geo";
+import { DealerActions } from "./DealerActions";
 
 const DealerMap = dynamic(() => import("./DealerMap").then((m) => m.DealerMap), {
   ssr: false,
@@ -25,46 +17,6 @@ const DealerMap = dynamic(() => import("./DealerMap").then((m) => m.DealerMap), 
 
 interface DealerWithDistance extends Dealer {
   distanceKm?: number;
-}
-
-/**
- * Bir noktanin iletisim eylemleri: Ara / WhatsApp / Yol Tarifi.
- *
- * Hem listedeki kartta hem anasayfada haritanin altindaki secili nokta
- * kartinda kullanilir; ayni kodun iki kopyasi durmasin.
- */
-function DealerActions({ dealer, t }: { dealer: Dealer; t: ReturnType<typeof useT> }) {
-  const stop = (e: React.MouseEvent) => e.stopPropagation();
-  const cls =
-    "inline-flex items-center gap-1.5 rounded-[3px] border border-zw-grey-300 px-2.5 py-1.5 text-xs font-semibold hover:border-zw-ink";
-
-  return (
-    <div className="mt-3 flex flex-wrap gap-2">
-      <a href={`tel:${dealer.phone.replace(/\s/g, "")}`} onClick={stop} className={cls}>
-        <Phone size={13} /> {t.dealers.call}
-      </a>
-      {dealer.whatsapp && (
-        <a
-          href={`https://wa.me/${dealer.whatsapp.replace(/\D/g, "")}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={stop}
-          className={cls}
-        >
-          <MessageCircle size={13} /> {t.dealers.whatsapp}
-        </a>
-      )}
-      <a
-        href={`https://www.google.com/maps/dir/?api=1&destination=${dealer.lat},${dealer.lng}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={stop}
-        className={cls}
-      >
-        <ExternalLink size={13} /> {t.dealers.directions}
-      </a>
-    </div>
-  );
 }
 
 export function DealerFinder({
@@ -261,7 +213,7 @@ export function DealerFinder({
                   ))}
                 </div>
               </div>
-              <DealerActions dealer={selected} t={t} />
+              <DealerActions dealer={selected} />
             </div>
           ) : (
             <p className="mt-4 rounded-[4px] border border-dashed border-zw-grey-300 px-4 py-5 text-center text-sm text-zw-grey-500">
@@ -318,7 +270,7 @@ export function DealerFinder({
                   )}
                 </div>
 
-                <DealerActions dealer={dealer} t={t} />
+                <DealerActions dealer={dealer} />
               </button>
             ))}
 

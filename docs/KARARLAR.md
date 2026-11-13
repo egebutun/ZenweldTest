@@ -29,7 +29,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 5. [Stok ve SAP; bayiler ve online satıcılar](#5-stok-ve-sap-bayiler-ve-online-satıcılar) — K-20, K-28–K-33, K-82, K-84, K-93
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap) — K-34–K-37, K-68, K-94–K-96
 7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41
-8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114
+8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
@@ -777,9 +777,23 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   ForceCut 45. Fotoğraflar sahibinden; sloganları ve kısa açıklamaları
   sahibinin onayıyla şimdilik kodda yazılıdır. Panelden yönetim ve yeni
   fotoğraf/video sonra eklenir.
-- En altta teknik tablo: Model Serisi "Force" olan yayındaki bütün ürünler
-  yan yana; her kolonun altında fiyat, Sepete Ekle ve favori kalbi. Fiyat,
-  stok ve teknik özellikler ürün kayıtlarından gelir.
+- Sayfa sade ve hafiftir: makineler ve kaynak ustası kaydırınca yerinden
+  oynamaz; kıvılcım, yanıp sönen çizgi, sayaç, sıra numarası ve "Kaydırın"
+  yazısı yoktur. Aşağı inildikçe yalnızca yumuşak belirme vardır.
+- Teknik tabloda ziyaretçi modelleri işaretler; tablo yalnızca seçtiklerini
+  yan yana gösterir (Model Serisi "Force" olan yayındaki ürünler arasından;
+  açılışta tanıtılan dört makine seçili, aynı anda en fazla 4). Her
+  kolonun altında fiyat, Sepete Ekle ve favori kalbi. Fiyat, stok ve teknik
+  özellikler ürün kayıtlarından gelir.
+- Kapanışta Yetkili Bayi Bul düğmesi yoktur: başlığın altında Destek ve
+  Garanti, onun altında Force bayileri haritası (K-115).
+
+### K-115 · Force bayileri
+- Panelde Bayiler'de bir bayi **Force Bayi** olarak işaretlenebilir.
+- İşaret yalnızca Force sayfasının en altındaki Türkiye haritası içindir:
+  haritada Force Bayi işaretli ve aktif bayiler görünür. İşaret sitenin
+  başka hiçbir yerinde etiket ya da rozet olarak gösterilmez.
+- Örnek veride bütün bayiler Force Bayi işaretlidir.
 
 ---
 

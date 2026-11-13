@@ -45,6 +45,7 @@ export function useNetworkActions() {
           badges: next.badges,
           workingHours: next.workingHours,
           retailerId: next.retailerId,
+          forceDealer: next.forceDealer,
           active: next.active,
         };
         return call("bayi", stored ? { ...fields, ...dealer(stored) } : fields, "dealers");
