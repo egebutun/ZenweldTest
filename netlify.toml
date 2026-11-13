@@ -1,0 +1,13 @@
+# NETLIFY YAYINI (vercel.app adresine erisilemeyen ziyaretciler icin ikinci
+# adres; docs/SUNUCU.md › Yayin). Depo kokunden kurulur (npm workspaces),
+# yalnizca site (apps/zenweld-web) derlenir; Next.js'i Netlify'in kendi
+# eklentisi calistirir. Ortam degiskeni verilmezse site demo modundadir.
+[build]
+  command = "npm run build --workspace=@zenweld/web"
+  publish = "apps/zenweld-web/.next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

@@ -21,7 +21,8 @@ import { socialLinks } from "@/lib/contact";
  * Site adresi sirasiyla su kaynaklardan okunur:
  *   1. NEXT_PUBLIC_SITE_URL          (elle tanimlanirsa)
  *   2. VERCEL_PROJECT_PRODUCTION_URL (Vercel otomatik saglar)
- *   3. http://localhost:3000         (yerel gelistirme)
+ *   3. URL                           (Netlify otomatik saglar; netlify.toml)
+ *   4. http://localhost:3000         (yerel gelistirme)
  */
 export function getSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
@@ -35,6 +36,9 @@ export function getSiteUrl(): string {
   const vercel =
     process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
   if (vercel) return `https://${vercel.replace(/\/$/, "")}`;
+
+  // Netlify sitenin ana adresini URL'de verir (https://<ad>.netlify.app).
+  if (process.env.NETLIFY === "true" && process.env.URL) return process.env.URL.replace(/\/$/, "");
 
   return "http://localhost:3000";
 }

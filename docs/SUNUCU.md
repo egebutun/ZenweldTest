@@ -94,9 +94,10 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `TEST_DATABASE_URL` | Geliştirici | Yalnızca veritabanı testleri (`npm run test:db`, `test:e2e:db`); her çalıştırmada silinip baştan kurulur, `DATABASE_URL` ile aynı olamaz |
 | `NEXT_PUBLIC_BUILD_TIME` | Otomatik (derleme) | Derleme anı; sunucu çıktısı ile tarayıcının ilk çiziminin aynı anı kullanması için |
 | `VERCEL_ENV`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_URL` | Otomatik (yalnızca demo, Vercel) | Site adresi tanımlı değilse yedek; önizleme sürümleri her zaman aramaya kapalı. Canlıda yoktur (K-92) |
+| `NETLIFY`, `URL` | Otomatik (yalnızca demo, Netlify) | Netlify'daki ikinci demo adresinde site adresi tanımlı değilse yedek (`https://<ad>.netlify.app`) |
 
 **Site adresi sırası:** `NEXT_PUBLIC_SITE_URL` → Vercel'in otomatik
-değişkenleri → `http://localhost:3000`.
+değişkenleri → Netlify'ın `URL`'si → `http://localhost:3000`.
 
 ---
 
@@ -105,6 +106,19 @@ değişkenleri → `http://localhost:3000`.
 **Barındırma:** Bugün demo Vercel'de yayında. Canlı: kendi sunucumuz ve
 kendi alan adımız (KARARLAR K-92). Proje standart bir Next.js projesidir;
 her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
+
+- **İkinci demo adresi (Netlify):** Bazı ağlar `vercel.app` adreslerine
+  bağlantıyı kesiyor ("Bağlantı sıfırlandı", ERR_CONNECTION_RESET). Bu
+  ziyaretçiler için aynı site Netlify'da da yayınlanabilir; ayarlar depo
+  kökündeki `netlify.toml`'dadır (yalnızca site derlenir, Next.js'i
+  Netlify'ın eklentisi çalıştırır, ortam değişkeni verilmezse demo modu).
+  Kurulum: Netlify'da GitHub ile giriş › Add new project › Import an
+  existing project › GitHub › depo; Branch to deploy: yayındaki dal;
+  monorepo sorulursa proje `@zenweld/web` ya da Package directory
+  `apps/zenweld-web` (Base directory boş). Sonraki her gönderimde
+  kendiliğinden yeniden yayınlanır. Demo verisi her adreste ayrı
+  tarayıcıda durduğu için iki adresin panel değişiklikleri birbirini
+  görmez.
 
 - Node.js: 22 (`.nvmrc`); en az 20 (`package.json` › `engines`).
 - Sunucunun yeri (KVKK), kurulumu ve demo Vercel'den kalkınca kaldırılacak
