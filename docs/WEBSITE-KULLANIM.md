@@ -77,9 +77,10 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
 - **Bot tuzağı:** E-posta gönderen her formda ziyaretçinin görmediği bir alan
   vardır. Formu otomatik dolduran bot bu alanı da doldurur; o zaman sunucu
   e-posta göndermez ama bota başarılı gibi yanıt verir.
-- **Form e-postaları:** Formlar `info@zenweld.com` adresine e-posta gönderir.
-  Veritabanı modunda alıcılar türe göre panelden değişir (Mağaza Ayarları ›
-  E-posta Alıcıları; KARARLAR K-104).
+- **Form e-postaları:** Formlar `info@zenweld.com` adresine, bu adresten
+  e-posta gönderir. Veritabanı modunda gönderici ve alıcılar türe göre
+  panelden değişir (Müşteriler ve Servis › E-posta › Adresler; KARARLAR
+  K-116).
   Hangi formun hangi bilgileri gönderdiği: [IS-KURALLARI.md](IS-KURALLARI.md).
   - Kaydı panelde tutulan formlar (sipariş, teklif, servis talebi, garanti,
     değerlendirme, üyelik) e-postanın sonucunu beklemez; kayıt her durumda
@@ -97,7 +98,8 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
     Değerlendirme formunun kendi mesajı vardır ([6](#6-ürün-sayfası)).
   - Veritabanı modunda teklif, servis talebi, garanti kaydı ve
     değerlendirmeyi sunucu kaydeder ve kuralları yeniden denetler; gönderilen
-    her e-posta kayıt altına alınır (`email_log`).
+    her e-posta metniyle kayıt altına alınır ve panelde E-posta ›
+    Yazışmalar'da görünür (`email_log`; K-116).
 - **Tarayıcıda tutulanlar:** Sepet, teklif listesi, çerez seçimi,
   karşılama penceresinin görülmesi ve giriş yapmamış ziyaretçinin
   favorileri ziyaretçinin tarayıcısında tutulur. **Demo notu:** Demo

@@ -1197,15 +1197,55 @@ export interface ShopSettings {
 }
 
 /**
- * Zenweld'e giden bir e-posta turunun alicilari (Magaza Ayarlari > E-posta
- * Alicilari; KARARLAR K-104). Satiri olmayan tur varsayilan adrese gider.
+ * Bir e-posta turunun adresleri (Panel › E-posta › Adresler; KARARLAR
+ * K-116). Satiri olmayan tur, gondericisi ya da alicisi bos tur varsayilan
+ * adresi (info@zenweld.com) kullanir.
  */
-export interface EmailRecipient {
-  /** E-posta turu (packages/data › settings-rules.ts › EMAIL_RECIPIENT_TYPES) */
+export interface EmailSetting {
+  /** E-posta turu (packages/data › email.ts › EMAIL_KINDS) */
   type: string;
+  /** Gonderici adres; bos = varsayilan */
+  sender?: string;
+  /** Zenweld'e giden e-postanin alicilari; bos = varsayilan */
   recipients: string[];
   /** Son degisiklik ani; yalnizca veritabani modunda dolu. */
   updatedAt?: string;
+}
+
+/**
+ * Sitenin gonderdigi ya da posta kutusundan panele aldigi bir e-posta
+ * (Panel › E-posta › Yazismalar; KARARLAR K-116). Veritabani modunda
+ * email_log satiridir.
+ */
+export interface EmailMessage {
+  id: string;
+  /** Gonderilme ya da gelme ani */
+  at: string;
+  /** E-posta turu (EMAIL_KINDS) */
+  type: string;
+  /** out: siteden giden; in: posta kutusundan gelen */
+  direction: "out" | "in";
+  from?: string;
+  to: string[];
+  /** Yanitin gidecegi adres (formu dolduranin adresi) */
+  replyTo?: string;
+  subject: string;
+  /** Duz metin; metin saklanmadan once gonderilen e-postalarda yok */
+  body?: string;
+  status: "sent" | "failed" | "skipped" | "received";
+  /** Gonderilemediyse nedeni */
+  error?: string;
+  /** Bagli kayit (servis talebi, siparis ...) */
+  entityType?: string;
+  entityId?: string;
+  /** Formun gonderildigi sayfa */
+  sourcePath?: string;
+  /** Panelden gonderen yonetici */
+  actorName?: string;
+  /** Yanitlanan e-posta */
+  parentId?: string;
+  /** Gelen e-postanin ek dosyalarinin adlari (dosyalar posta kutusunda kalir) */
+  attachments?: string[];
 }
 
 export interface StockSettings {
@@ -1353,8 +1393,13 @@ export interface ZenweldDatabase {
    * (sayfa adresi -> alanlar; Icerik > Sayfa SEO). Eski kayitlarda yok.
    */
   pageSeo?: Record<string, PageSeoFields>;
-  /** E-posta alicilari (tur basina). Eski kayitlarda yok; yoksa hepsi varsayilan adrese gider. */
-  emailRecipients?: EmailRecipient[];
+  /** E-posta adresleri (tur basina). Yoksa hepsi varsayilan adresi kullanir. */
+  emailSettings?: EmailSetting[];
+  /**
+   * Yazismalar (demo modu; KARARLAR K-116). Veritabani modunda yalnizca
+   * sunucuda, email_log'da durur.
+   */
+  emailMessages?: EmailMessage[];
   /**
    * Form kayitlari (demo modu; KARARLAR K-109). Veritabani modunda bu
    * kayitlar yalnizca sunucuda, tablolarda durur. Eski kayitlarda yok.

@@ -101,7 +101,7 @@ export function CompanySettingsForm() {
               </FormRow>
             </div>
             <p className="text-xs text-zw-grey-500">
-              Formlardan Zenweld&apos;e giden e-postaların alıcıları E-posta Alıcıları sekmesindedir.
+              Sitenin gönderdiği e-postaların gönderici ve alıcı adresleri Müşteriler ve Servis › E-posta › Adresler&apos;dedir.
             </p>
           </div>
         </AdminCard>

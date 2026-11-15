@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type { APIRequestContext, Page } from "@playwright/test";
+import { tr } from "@zenweld/i18n";
 import { demoHash } from "../../packages/auth/src/hash";
 import { demoAccount, field } from "../e2e/yardimci";
 import { closeDatabase, expect, memberLogin, newVisitor, sql, test } from "./yardimci";
@@ -209,6 +210,10 @@ test("şifre sıfırlama: aynı mesaj; bağlantıyla yeni şifre, tek kullanım,
       await expect(page.locator("main")).toContainText("Bu e-postayla kayıtlı bir hesap varsa şifre sıfırlama bağlantısı gönderildi.");
     }
     expect(await linksOf()).toBe(1);
+    // Yazismalara baglantisiz yazilir (KARARLAR K-116): kaydi goren sifreyi degistiremez.
+    const [logged] = await sql<{ body: string }>("SELECT body FROM email_log WHERE type = 'sifre-sifirlama' AND $1 = ANY(recipients)", [email]);
+    expect(logged.body).toContain(tr.auth.reset.linkHidden);
+    expect(logged.body).not.toContain("anahtar=");
 
     // E-posta bu ortamda gitmez: bilinen bir anahtar dogrudan yazilir.
     const token = `e2e-${Date.now()}`;

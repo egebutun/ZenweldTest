@@ -213,8 +213,9 @@ Demo modunda veri tarayıcıda tek bir nesnedir (`ZenweldDatabase`) ve
 | Favoriler ve oturum tarayıcıda | `favourites`, `sessions` | Üye başka cihazda da görsün; oturum sunucuda tutulur (K-94, K-96) |
 | İletişim, bayilik ve ürün destek formları: isteğe bağlı `dealerApplications`, `supportMessages` listeleri (K-109; eski kayıtlarda yok, yalnızca formu gönderen tarayıcıda) | `dealer_applications`, `support_messages` | Sahibinin kararı (K-81); panelde bütün yöneticiler görsün (K-100) |
 | `warehouseStock` (örnek depo stoğu) | `warehouse_stock`, `sap_sync_runs` | Depo stoğu SAP'tan okunur, okumaların kaydı tutulur (K-82) |
-| `emailRecipients` (tarayıcıda saklanır ama kullanılmaz; e-postaları sunucu gönderir) | `email_recipients` | Alıcı forma göre panelden değişir (K-81, K-104); satırı olmayan tür `SUPPORT_EMAIL`'e gider |
-| Gönderilen e-postaların ve panel değişikliklerinin kaydı yok | `email_log`, `audit_log` | Sahibinin kararı (K-81) |
+| `emailSettings` (tarayıcıda saklanır ama e-postayı sunucu gönderdiği için gönderimde kullanılmaz) | `email_settings` | Gönderici ve alıcı türe göre panelden değişir (K-116); satırı olmayan tür varsayılan adresi kullanır |
+| `emailMessages` (örnek yazışmalar ve panelden yazılan, gönderilmeyen e-postalar) | `email_log`, `mailbox_state` | E-postalar metniyle saklanır, posta kutusundan gelen yanıtlar da girer (K-116) |
+| Panel değişikliklerinin kaydı yok | `audit_log` | Sahibinin kararı (K-81) |
 
 Tarayıcıda kalacaklar (sepet, teklif listesi, çerez tercihi):
 [17](#17-tarayıcıda-tutulanlar).
@@ -1326,7 +1327,7 @@ Sahibinin kararı (K-81): iletişim formu, ürün destek sorusu ve bayilik
 başvurusu e-postayla birlikte kayıt olarak da saklanır.
 
 - **Veritabanı modunda** kayıt bu tablolara yazılır; e-posta gitmese de
-  kayıt alınır, gidip gitmediği `email_log`'dadır
+  kayıt alınır, gidip gitmediği ve metni `email_log`'dadır
   ([SUNUCU.md › Formlar](SUNUCU.md#formlar)).
 - **Demo modunda** kayıt, e-posta gidince tarayıcıdaki verinin isteğe bağlı
   listelerine yazılır (`dealerApplications`, `supportMessages`; K-109) ve
@@ -1375,74 +1376,98 @@ başvurusu e-postayla birlikte kayıt olarak da saklanır.
 | `admin_note` | text | | |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
-### `email_recipients` — e-postaların alıcıları (yeni)
+### `email_settings` — e-posta türlerinin adresleri (yeni)
 
-Sahibinin kararı (K-81, K-104): Zenweld'e giden e-postaların alıcıları
-e-posta türü başına tutulur; başlangıçta hepsi info@zenweld.com'dur.
-Panelde Mağaza Ayarları › E-posta Alıcıları sekmesinden değişir (panel 5.1).
+Sahibinin kararı (K-116): sitenin her e-posta türünün gönderici adresi ve
+Zenweld'e giden e-postanın alıcıları tür başına tutulur; başlangıçta hepsi
+info@zenweld.com'dur. Panelde E-posta › (tür) › Adresler'den değişir.
+Önceki `email_recipients` tablosu (yalnızca alıcılar) geçiş betiği
+`0015_eposta-bolumu` ile buraya taşındı ve kaldırıldı.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
-| `type` | text | anahtar | E-posta türü (aşağıda; koddaki `EMAIL_RECIPIENT_TYPES`) |
-| `recipients` | text[] | zorunlu; en az bir geçerli adres | Alıcı adresleri: 1–10 geçerli adres, küçük harf, tekrarsız |
+| `type` | text | anahtar; aşağıdaki türlerden biri | E-posta türü (koddaki `EMAIL_KINDS`) |
+| `sender` | text | | Gönderici adres; boşsa varsayılan |
+| `recipients` | text[] | zorunlu (boş olabilir) | Zenweld'e giden e-postanın alıcıları: en fazla 10 geçerli adres, küçük harf, tekrarsız; boşsa varsayılan |
 | `updated_at` | timestamptz | zorunlu | |
 | `updated_by` | text | → `users` (boşalır) | |
 
-- Bir türün satırı yoksa e-posta sunucudaki varsayılan adrese
-  (`SUPPORT_EMAIL`, yoksa info@zenweld.com) gider. Alıcısı boşaltılan
-  türün satırı silinir.
-- Demo modunda liste tarayıcıda (`emailRecipients[]`) saklanır ama
-  e-postaları sunucu gönderdiği için kullanılmaz; e-postalar varsayılan
-  adrese gider. Eski tarayıcı kayıtlarında liste yoktur.
+- Gönderici ya da alıcıdan en az biri yazılıdır; ikisi de boşaltılınca
+  satır silinir. Satırı olmayan tür sunucudaki varsayılan adresleri kullanır:
+  alıcı `SUPPORT_EMAIL` (yoksa info@zenweld.com), gönderici `SUPPORT_FROM`
+  (yoksa `SUPPORT_EMAIL`).
+- Yalnızca müşteriye giden türlerde (şifre sıfırlama, bülten) alıcı
+  yazılmaz.
+- Demo modunda liste tarayıcıda (`emailSettings[]`) saklanır; e-postaları
+  sunucu gönderdiği için gönderimde kullanılmaz.
 
-**E-posta türleri** (Zenweld'e giden e-postalar;
-[IS-KURALLARI.md › 18](IS-KURALLARI.md#18-form-e-postaları)):
+**E-posta türleri** (paneldeki sekme sırasıyla;
+[IS-KURALLARI.md › 18](IS-KURALLARI.md#18-e-postalar)):
 
-| `type` | Sitedeki özellik |
-|---|---|
-| `iletisim` | İletişim formu |
-| `bayilik` | Bayilik Başvurusu |
-| `urun-destek` | Ürün sayfasındaki destek sorusu |
-| `teklif` | Teklif Al |
-| `servis` | Servis Talebi |
-| `garanti` | Garanti Kaydı |
-| `yorum` | Ürün değerlendirmesi |
-| `uye` | Üye Ol |
-| `siparis` | Ödeme (sipariş) |
-| `iade` | İade talebi |
+| `type` | Sekme | Sitenin bugün gönderdiği |
+|---|---|---|
+| `siparis` | Sipariş | Yeni sipariş (Zenweld'e) |
+| `iade` | İade | İade talebi (Zenweld'e) |
+| `teklif` | Teklif | Teklif Al (Zenweld'e) |
+| `servis` | Servis | Servis Talebi (Zenweld'e) |
+| `garanti` | Garanti | Garanti Kaydı (Zenweld'e) |
+| `yorum` | Yorum | Ürün değerlendirmesi (Zenweld'e) |
+| `uye` | Üyelik | Üye Ol (Zenweld'e) |
+| `iletisim` | İletişim | İletişim formu (Zenweld'e) |
+| `urun-destek` | Ürün Sorusu | Ürün sayfasındaki destek sorusu (Zenweld'e) |
+| `bayilik` | Bayilik | Bayilik Başvurusu (Zenweld'e) |
+| `sifre-sifirlama` | Şifre Sıfırlama | Şifremi Unuttum (müşteriye; K-95) |
+| `bulten` | Bülten | Henüz e-posta yok (İYS kaydı bekleniyor) |
 
-**Müşteriye giden e-postalar** yalnızca `email_log`'da tutulur (alıcısı
-müşteridir; `email_recipients`'ta yoktur):
+Her türde panelden müşteriye ya da başka bir adrese e-posta da yazılır;
+o e-posta türün göndericisinden gider.
 
-| `type` | Sitedeki özellik |
-|---|---|
-| `sifre-sifirlama` | Şifremi Unuttum (K-95) |
+### `email_log` — yazışmalar (yeni)
 
-Sipariş onayı gibi yeni müşteri e-postaları kurulunca türleri bu listeye
-eklenir.
-
-### `email_log` — gönderilen e-postalar (yeni)
-
-Sahibinin kararı (K-81): gönderilen her e-postanın sitenin hangi özelliği ve
-sayfası için gönderildiği tutulur. Panelde Ayarlar › E-posta Kaydı'nda
-listelenir; demo modunda kayıt tutulmaz (K-109).
+Sahibinin kararı (K-81, K-116): sitenin gönderdiği her e-posta (form
+bildirimi, müşteriye giden, panelden yazılan) ve posta kutusundan panele
+alınan yanıtlar metniyle tutulur. Panelde E-posta › (tür) › Yazışmalar'da ve
+kaydın kendi ekranında (servis talebi, mesaj) listelenir.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | bigint | anahtar; sırayla artar | |
-| `type` | text | zorunlu | E-posta türü (yukarıdaki liste): hangi özellik için gönderildiği |
+| `type` | text | zorunlu; e-posta türlerinden biri | Hangi özellik için gönderildiği ya da geldiği |
+| `direction` | text | zorunlu; `out`, `in` | `out`: siteden giden; `in`: posta kutusundan gelen |
 | `source_path` | text | | Formun gönderildiği sayfa (`/iletisim`, `/urun/ultimate-250-mtc`) |
-| `entity_type`, `entity_id` | text | | Bağlı kayıt (ör. `quotes` + teklifin kimliği, `dealer_applications` + başvurunun kimliği) |
-| `recipients` | text[] | zorunlu | Gönderildiği adresler |
+| `entity_type`, `entity_id` | text | | Bağlı kayıt (ör. `quotes` + teklifin kimliği, `service_requests` + talebin kimliği) |
+| `from_address` | text | | Gönderen adres |
+| `recipients` | text[] | zorunlu | Gönderildiği adresler (gelen e-postada Kime ve Bilgi) |
 | `reply_to` | text | | Yanıtla denince gidilecek adres (formu dolduran) |
 | `subject` | text | zorunlu | Konu satırı |
-| `status` | text | zorunlu; `sent`, `failed`, `skipped` | `skipped`: e-posta servisinin anahtarı tanımlı değil ya da bot tuzağı |
+| `body` | text | | Düz metin (en fazla 50.000 karakter); K-116'dan önce gönderilenlerde boş |
+| `status` | text | zorunlu; `sent`, `failed`, `skipped`, `received` | `skipped`: e-posta servisinin anahtarı tanımlı değil ya da bot tuzağı; `received` yalnızca gelen e-postada |
 | `provider_message_id` | text | | E-posta servisinin verdiği numara |
+| `message_id` | text | gelen e-postada tekrarsız | E-postanın Message-ID başlığı: yanıtı eşleştirmek ve aynı e-postayı iki kez almamak için |
+| `parent_id` | bigint | → `email_log` (boşalır) | Yanıtlanan e-posta |
+| `attachments` | text[] | zorunlu (boş olabilir) | Gelen e-postanın eklerinin adları; dosyalar posta kutusunda kalır |
+| `actor_user_id` | text | → `users` (boşalır) | Panelden gönderen yönetici |
+| `actor_name` | text | | Yöneticinin adı (kopya; hesap silinse de okunur) |
 | `error` | text | | Hata mesajı |
-| `created_at` | timestamptz | zorunlu | |
+| `created_at` | timestamptz | zorunlu | Gönderilme ya da panele alınma anı |
 
-E-postanın metni saklanmaz (kişisel veri; içerik zaten bağlı kayıtta
-duruyor). Aranır: türe, bağlı kayda ve tarihe göre.
+Aranır: türe, bağlı kayda, Message-ID'ye ve tarihe göre. Metin kişisel veri
+içerir; saklama süresi açık sorudur ([13](#13-açık-sorular)). Demo modunda
+yazışmalar tarayıcıda (`emailMessages[]`) durur: örnek yazışmalar ve panelden
+yazılan, gönderilmeyen e-postalar.
+
+### `mailbox_state` — posta kutusu okuması (yeni)
+
+K-116: sunucunun okuduğu her posta kutusunda en son okunan e-postanın yeri.
+Bir sonraki okuma oradan devam eder; okunan e-posta kutuda olduğu gibi kalır.
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `mailbox` | text | anahtar | `imap:info@zenweld.com/INBOX` ya da `klasor:/yol` (deneme) |
+| `uid_validity` | bigint | | Kutunun numaralama dönemi (IMAP UIDVALIDITY); değişirse son 7 gün yeniden okunur |
+| `last_uid` | bigint | zorunlu; varsayılan 0 | En son okunan e-postanın kutudaki sıra numarası (IMAP UID) |
+| `checked_at` | timestamptz | | Son okuma |
+| `last_error` | text | | Son okumanın hatası; başarılıysa boş |
 
 ### `record_counters` — kayıt numaraları
 
@@ -1515,15 +1540,15 @@ Ayarlar › İşlem Kaydı'nda listelenir; demo modunda kayıt tutulmaz (K-109).
 | İçerik | `blog_posts`, `news`, `events`, `faqs`, `sales_reps`, `legal_pages`, `about_page`, `page_seo`, `document_pages`, `documents` | 10 |
 | Ayarlar, ödeme ve kargo | `settings`, `payment_pos`, `bank_accounts`, `carriers` | 4 |
 | Formlar | `dealer_applications`, `support_messages` | 2 |
-| Sistem | `email_recipients`, `email_log`, `record_counters`, `audit_log` | 4 |
-| **Toplam** | | **64** |
+| Sistem | `email_settings`, `email_log`, `mailbox_state`, `record_counters`, `audit_log` | 5 |
+| **Toplam** | | **65** |
 
 ---
 
 ## 13. Açık sorular
 
 1. **Kişisel verilerin saklama süresi (KVKK):** Sipariş faturasındaki T.C.
-   kimlik no, form kayıtları, gönderilen e-postaların kaydı ve silinen
+   kimlik no, form kayıtları, metniyle saklanan yazışmalar (K-116) ve silinen
    üyenin geçmiş kayıtları ne kadar tutulacak? Sahibi avukata soracak
    ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Hesap silme). Cevaba göre bu
    dosyaya saklama süreleri ve kendiliğinden silme eklenir.
@@ -1628,6 +1653,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 | Yasal metin | Silinemez | — |
 | Sipariş, servis talebi, iade talebi | Panelde silinmez | — |
 | Bayilik başvurusu, mesaj | Panelde silinmez (K-100) | — |
+| Yazışma (`email_log`) | Panelde silinmez (K-116) | Yanıtlanan e-posta silinirse yanıtın bağı boşalır |
 | İşlem kaydı (`audit_log`) | Elle silinmez | 2 yıldan eskisi her gün kendiliğinden silinir |
 
 ---
@@ -1658,7 +1684,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 **Veri sürümü (`DB_VERSION`, yalnızca demo modu):**
 
-- `packages/data/src/index.ts`'tedir (bugün 76).
+- `packages/data/src/index.ts`'tedir (bugün 86).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -1684,6 +1710,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 | Sipariş / teklif | 133 / 48 | |
 | Servis talebi / garanti | 34 / 54 | |
 | İade talebi | 0 | Hesabım'dan açılır |
+| Yazışma | 24 | Örnek kayıtlara bağlı: servis (7 giden, 1 gelen yanıt), teklif (5 giden, 1 gelen), sipariş 4, üyelik 3, garanti 2, şifre sıfırlama 1. `db:seed` yükler, `db:yukle` yüklemez (K-116) |
 | Kupon / kupon kullanımı | 4 / 0 | HOSGELDIN5 (%5, bütün ürünler, kişi başı 1), LAZER25000 (25.000 ₺, Lazer Kaynak Makineleri, en az 500.000 ₺, 20 kullanım, 60 gün), YAZ10 (%10, süresi dolmuş), OZEL15 (%15, kişiye özel: bir örnek kurumsal üyenin ve henüz üye olmayan bir kişinin e-postası, kişi başı 1, 30 gün); tarihler kurulum anına göre |
 | Yorum | 11 | 10'u onaylı, 1'i onay bekliyor; hepsi ekipmanlarda |
 | Blog / haber / etkinlik | 6 / 2 / 8 | |

@@ -1,6 +1,7 @@
 import { getTableName } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT, PgTable } from "drizzle-orm/pg-core";
 import type { Product, ZenweldDatabase } from "@zenweld/data";
+import { logEmail } from "./email-log";
 import * as s from "./schema";
 
 /**
@@ -751,5 +752,34 @@ export async function seedDatabase(db: Database, data: ZenweldDatabase): Promise
     counts.sap_sync_runs = 1;
     counts.warehouse_stock = rows.length;
   }
+
+  // Ornek yazismalar (Panel › E-posta): numaralari veritabani verir; yanit,
+  // yanitladigi e-postanin yeni numarasina baglanir. db:yukle yuklemez.
+  const emails = [...(data.emailMessages ?? [])].sort((a, b) => a.at.localeCompare(b.at));
+  const ids = new Map<string, number>();
+  for (const m of emails) {
+    const id = await logEmail(
+      db,
+      {
+        type: m.type,
+        direction: m.direction,
+        sourcePath: m.sourcePath,
+        entityType: m.entityType,
+        entityId: m.entityId,
+        from: m.from,
+        recipients: m.to,
+        replyTo: m.replyTo,
+        subject: m.subject,
+        body: m.body,
+        status: m.status,
+        error: m.error,
+        parentId: m.parentId ? ids.get(m.parentId) : undefined,
+        attachments: m.attachments,
+      },
+      new Date(m.at),
+    );
+    ids.set(m.id, id);
+  }
+  if (emails.length) counts.email_log = emails.length;
   return counts;
 }

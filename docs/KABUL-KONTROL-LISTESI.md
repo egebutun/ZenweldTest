@@ -615,7 +615,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] E-posta anahtarı tanımlıyken her form varsayılan adrese
       (`info@zenweld.com`; veritabanı modunda türün panelde yazılan
       alıcılarına)
-      [IS-KURALLARI.md](IS-KURALLARI.md#18-form-e-postaları)'daki konu ve
+      [IS-KURALLARI.md](IS-KURALLARI.md#18-e-postalar)'daki konu ve
       alanlarla e-posta gönderir; **Yanıtla** formu doldurana gider (yorum
       e-postası hariç).
 - [ ] Sipariş e-postasında T.C. kimlik no ve kart bilgisi yoktur.
@@ -849,11 +849,10 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Havale süresi değişince yeni siparişlerin son ödeme tarihi değişir.
 - [ ] POS API anahtarı ya da şifresi için alan yoktur.
 - [ ] Aynı kargo firması iki kez yazılıp kaydedilince bir kez kalır.
-- [ ] Kargo ve Ödeme sekmesinde değişiklik yapıp E-posta Alıcıları
+- [ ] Kargo ve Ödeme sekmesinde değişiklik yapıp Şirket ve İletişim
       sekmesine geçip dönünce değişiklik durur.
-- [ ] E-posta Alıcıları'nda geçersiz adres kaydedilmez ("<tür>: "<adres>"
-      geçerli bir e-posta adresi değil."); büyük harfle yazılan adres küçük
-      harfe döner.
+- [ ] Mağaza Ayarları'nda E-posta Alıcıları sekmesi yoktur (adresler
+      Müşteriler ve Servis › E-posta › Adresler'dedir).
 - [ ] Kargo Firmaları'nda bir firmaya `https://…{takip}` biçiminde takip
       adresi girilip kaydedilince o firmayla kargoya verilmiş siparişte
       müşterinin sipariş detayında **Kargoyu takip et**, panel sipariş
@@ -866,7 +865,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       ofisler değişince İletişim sayfasında değişir. Boş bırakılan sosyal
       medya simgesi alt bilgide görünmez.
 
-**Veritabanı modunda Mağaza Ayarları (KARARLAR K-99, K-104, K-105):**
+**Veritabanı modunda Mağaza Ayarları (KARARLAR K-99, K-105):**
 
 - [ ] Kargo ücreti değişince sepetteki kargo hemen değişir; işlem kaydına
       eski ve yeni değer yazılır. Hemen ardından eski değer yazılınca uyarı
@@ -876,9 +875,6 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       yenileyin.").
 - [ ] Varsayılan POS başka bir POS'a alınıp kaydedilince `db:studio`'da
       `payment_pos`'ta yalnızca o POS varsayılandır.
-- [ ] E-posta Alıcıları'nda bir türe adres yazılınca o formun sonraki
-      e-postası `email_log`'da bu adreslerle görünür; boşaltılınca
-      `SUPPORT_EMAIL`'e döner.
 - [ ] Kargo firmasına girilen takip adresi `db:studio` › `carriers` ›
       `tracking_url`'de görünür.
 - [ ] Şirket ve İletişim kaydı sitede (alt bilgi, İletişim, sözleşmeler)
@@ -1087,11 +1083,11 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Üye silinince `db:studio`'da adresleri ve oturumları da yoktur;
       siparişleri kalır, siparişin üye bağı boşalır.
 
-**Veritabanı modunda İşlem Kaydı ve E-posta Kaydı (KARARLAR K-81, K-98, K-99):**
+**Veritabanı modunda İşlem Kaydı (KARARLAR K-81, K-98, K-99):**
 
-- [ ] Ayarlar menüsünde İşlem Kaydı ve E-posta Kaydı vardır. Demo modunda
-      da menüdedir; ekran açılır, tablo boştur ve kaydın veritabanına
-      bağlanınca tutulacağını yazar.
+- [ ] Ayarlar menüsünde İşlem Kaydı vardır (E-posta Kaydı yoktur). Demo
+      modunda da menüdedir; ekran açılır, tablo boştur ve kaydın
+      veritabanına bağlanınca tutulacağını yazar.
 - [ ] Panelde bir siparişin iç notu kaydedilince İşlem Kaydı'nda en üstte
       "Değiştirdi · Sipariş · SIP-…" satırı çıkar; "1 alan" açılınca eski
       ve yeni not görünür; sipariş adına tıklanınca sipariş açılır.
@@ -1101,9 +1097,43 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       kayıtları görünür.
 - [ ] 50'den çok kayıt varsa **Daha eski kayıtlar →** sonraki 50'yi
       getirir; **← En yeni kayıtlar** başa döner.
-- [ ] Sitede teklif formu gönderilince E-posta Kaydı'nda "Teklif talebi"
-      satırı çıkar; e-posta servisi ayarlı değilse durumu "Gönderilmedi"dir
-      ve nedeni yazar. Teklif numarasına tıklanınca Teklifler açılır.
+
+**Panel › E-posta (KARARLAR K-116; iki modda):**
+
+- [ ] Müşteriler ve Servis menüsünde **E-posta** vardır; 12 tür sekmesi
+      (Sipariş … Bülten) ve her birinde Yazışmalar ile Adresler görünür.
+      Sekmenin altında "Gönderen: info@zenweld.com" yazar.
+- [ ] Servis sekmesinde örnek yazışmalar görünür; Gelen satıra
+      tıklanınca metni ve "Ekler (posta kutusunda): …" çıkar.
+- [ ] **Yanıtla**: Kime gönderen, konu "Re: …", metnin altında önceki
+      e-posta "> " ile; **Gönder** sonrası (e-posta servisi ayarlı değilse)
+      "E-posta servisi bu sitede ayarlı olmadığı için e-posta gönderilmedi;
+      kaydı Yazışmalar'da." yazar ve en üstte "Gönderilmedi" satırı çıkar.
+- [ ] Adresler'de Servis'e gönderici "servis@zenweld.com" yazılıp
+      kaydedilince sekmede "Gönderen: servis@zenweld.com" yazar; Yeni
+      e-posta bu adresten gönderilir. Yanlış adres kaydedilmez
+      ("Gönderici: "…" geçerli bir e-posta adresi değil."). Şifre
+      Sıfırlama ve Bülten'de alıcı kutusu yoktur.
+- [ ] Servis Talepleri'nde bir talep açılınca altında "Yazışmalar (<n>)"
+      ve **E-posta gönder** vardır; alıcı talebin e-postası, konu "Servis
+      talebiniz <kod> hakkında" gelir. Mesajlar'da da aynı kutu vardır.
+- [ ] Veritabanı modunda: sitede teklif formu gönderilince E-posta ›
+      Teklif'te satırı çıkar, açılınca e-postanın metni görünür; e-posta
+      servisi ayarlı değilse durumu "Gönderilmedi"dir. Teklif numarasına
+      tıklanınca Teklifler açılır.
+- [ ] Veritabanı modunda: Adresler'de İletişim'e alıcı yazılınca iletişim
+      formunun sonraki e-postası `email_log`'da bu alıcıyla ve
+      göndericiyle görünür; ikisi boşaltılınca varsayılana döner.
+- [ ] Veritabanı modunda: panelden gönderilen e-posta İşlem Kaydı'nda
+      "Ekledi · E-posta" olarak görünür.
+- [ ] Veritabanı modunda posta kutusu (`POSTA_KLASORU` ya da IMAP):
+      konusunda bir talebin numarası geçen e-posta **Şimdi oku** ile Servis
+      sekmesine ve talebin yazışmalarına "Gelen" olarak girer; numarası
+      olmayan reklam e-postası girmez; aynı e-posta ikinci okumada tekrar
+      girmez. Posta kutusu tanımlı değilse "Posta kutusu bağlı değil…"
+      yazar.
+- [ ] Veritabanı modunda şifre sıfırlama e-postasının yazışmadaki metninde
+      bağlantı yoktur ("(sıfırlama bağlantısı; güvenlik için saklanmaz)").
 
 **Veritabanı modunda panel ana sayfası (KARARLAR K-99):**
 

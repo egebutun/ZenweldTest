@@ -112,10 +112,13 @@ export async function POST(request: NextRequest, context: Context) {
     if (reset) {
       // Baglanti sitenin tanimli adresiyle kurulur (istegin Host basligiyla degil).
       const link = `${getSiteUrl()}/sifre-sifirla?anahtar=${reset.token}`;
+      const body = tr.auth.reset.mailBody.replace("{name}", reset.firstName);
       const mail = await sendCustomerMail({
         to: reset.email,
         subject: tr.auth.reset.mailSubject,
-        text: tr.auth.reset.mailBody.replace("{name}", reset.firstName).replace("{link}", link),
+        text: body.replace("{link}", link),
+        // Yazismalara baglantisiz yazilir: kaydi goren kimse sifreyi degistiremesin.
+        logText: body.replace("{link}", tr.auth.reset.linkHidden),
         log: { type: "sifre-sifirlama", sourcePath: sourcePath(request) },
       });
       if (!mail.delivered) console.warn(`Şifre sıfırlama e-postası gönderilemedi (${mail.reason}).`);

@@ -46,7 +46,7 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 15. [Ürün yorumları](#15-ürün-yorumları)
 16. [Üyelik ve oturum](#16-üyelik-ve-oturum)
 17. [Kayıt numaraları](#17-kayıt-numaraları)
-18. [Form e-postaları](#18-form-e-postaları)
+18. [E-postalar](#18-e-postalar)
 19. [Kategori filtreleri](#19-kategori-filtreleri)
 20. [Zenweld depo stoğu](#20-zenweld-depo-stoğu)
 21. [Kuponlar](#21-kuponlar)
@@ -970,32 +970,74 @@ sunucuda).
 
 ---
 
-## 18. Form e-postaları
+## 18. E-postalar
 
-**Kısaca:** Formlar Zenweld'e e-posta gönderir (varsayılan info@zenweld.com;
-veritabanı modunda tür başına alıcı panelden). Bugün e-posta servisi kurulu
-olmadığı için hiçbir e-posta gitmez.
+**Kısaca:** Formlar Zenweld'e e-posta gönderir; panelden de e-posta yazılır
+ve yanıtlanır. Her e-posta türünün gönderici ve alıcı adresleri panelde
+yazılır (varsayılan info@zenweld.com). E-postalar metniyle saklanır;
+sitenin e-postalarına gelen yanıtlar posta kutusundan panele alınır
+(KARARLAR K-116). Bugün e-posta servisi kurulu olmadığı için hiçbir e-posta
+gitmez.
 
-Sitedeki formlar Zenweld'e e-posta gönderir. Servisin kurulumu ve demo
-davranışı: [SUNUCU.md](SUNUCU.md) › 9. Bugün servis kurulu
-olmadığı için hiçbir e-posta gitmez.
+Servisin ve posta kutusunun kurulumu: [SUNUCU.md](SUNUCU.md) › 9. Panel
+ekranı: [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md) › E-posta.
 
-**Alıcılar (KARARLAR K-104):**
+**E-posta türleri** (paneldeki sekmeler; `packages/data/src/email.ts` ›
+`EMAIL_KINDS`): Sipariş, İade, Teklif, Servis, Garanti, Yorum, Üyelik,
+İletişim, Ürün Sorusu, Bayilik (bu on türde site Zenweld'e bildirim
+gönderir), Şifre Sıfırlama (müşteriye) ve Bülten (bugün e-posta yok).
 
-- Varsayılan alıcı sunucudaki `SUPPORT_EMAIL`'dir (yoksa
-  `info@zenweld.com`).
-- Veritabanı modunda her türün (sipariş, iade talebi, teklif, servis
-  talebi, garanti kaydı, yorum, üyelik, iletişim, ürün destek, bayilik)
-  alıcıları panelde Mağaza Ayarları › E-posta Alıcıları'ndan
-  yazılır: tür başına en fazla 10 adres; adresler küçük harfe çevrilir,
-  aynı adres bir kez alınır. Alıcısı yazılmayan türün e-postası varsayılan
-  adrese gider. Değişiklik bir sonraki e-postada geçerlidir.
-  - **Örnek:** Teklif talebi alıcıları "satis@zenweld.com,
-    bolge@zenweld.com" yazılırsa yeni teklif e-postası iki adrese gider;
-    servis talebi boşsa servis e-postası info@zenweld.com'a gider.
-- Alıcılar okunamazsa (veritabanı hatası) e-posta varsayılan adrese gider.
-- Demo modunda e-postaların hepsi varsayılan adrese gider.
-- Müşteriye giden e-postalar (şifre sıfırlama) bu listeden etkilenmez.
+**Adresler (K-116):**
+
+- Her türün bir **gönderici** adresi ve (Zenweld'e giden türlerde)
+  **alıcıları** vardır. Yazılmazsa varsayılan kullanılır: gönderici
+  sunucudaki `SUPPORT_FROM`, yoksa `SUPPORT_EMAIL`, yoksa
+  `info@zenweld.com`; alıcı `SUPPORT_EMAIL`, yoksa `info@zenweld.com`.
+- Gönderici tek adrestir. Alıcılar en fazla 10 adres; virgül, noktalı
+  virgül, boşluk ya da satır sonuyla ayrılır; küçük harfe çevrilir, aynı
+  adres bir kez alınır. Yalnızca müşteriye giden türlerde (Şifre Sıfırlama,
+  Bülten) alıcı yazılmaz.
+  - **Örnek:** Teklif'in alıcıları "satis@zenweld.com, bolge@zenweld.com"
+    yazılırsa yeni teklif e-postası iki adrese gider; Servis'in göndericisi
+    "servis@zenweld.com" yazılırsa servis e-postaları ve Servis'ten
+    panelden yazılan e-postalar bu adresten gider; boş bırakılan tür
+    info@zenweld.com'u kullanır.
+- Değişiklik bir sonraki e-postada geçerlidir (veritabanı modu). Adresler
+  okunamazsa (veritabanı hatası) varsayılanlar kullanılır.
+- Demo modunda adresler tarayıcıda saklanır; e-postayı sunucu gönderdiği
+  için e-postalar varsayılan adreslerle gider.
+- Gönderici adresin alan adı (zenweld.com) e-posta servisinde doğrulanmış
+  olmalıdır; değilse e-posta gönderilemez.
+
+**Panelden yazılan e-posta (K-116):**
+
+- Alıcı (en fazla 10 adres), konu (en fazla 200 karakter, tek satır) ve
+  metin (en fazla 20.000 karakter) zorunludur. Düz metin olarak gider;
+  gönderen türün göndericisidir.
+- **Yanıt:** alıcı gelen e-postada gönderen, sitenin bildiriminde formu
+  dolduran kişidir; konu "Re: <konu>" olur (zaten "Re:", "YNT:" ya da
+  "Yanıt:" ile başlıyorsa aynı kalır); metnin altına önceki e-posta "> " ile
+  alıntılanır. Yanıt aynı kayda ve yanıtlanan e-postaya bağlanır.
+- Kayıt ekranından (servis talebi, mesaj) yazılan e-posta o kayda bağlanır.
+- Demo modunda e-posta gönderilmez; "Gönderilmedi" olarak kaydedilir.
+
+**Gelen e-posta (veritabanı modu, K-116):** Site posta kutusunu okur ve
+yalnızca şunları panele alır; gerisi posta kutusunda kalır:
+
+1. Sitenin gönderdiği bir e-postaya yanıt (yanıt başlığı o e-postayı
+   gösteriyor): o e-postanın türüne ve kaydına bağlanır.
+2. Sitenin son 180 günde e-posta gönderdiği kişiden aynı konuyla gelen
+   e-posta ("Re:", "YNT:", "Fwd:", "İlt:" gibi ekler, boşluklar ve büyük
+   küçük harf farkı sayılmaz).
+3. Konusunda, yoksa metninde var olan bir kaydın numarası (SIP-, IAD-,
+   TKL-, SRV-) geçen e-posta: o kaydın türüne ve kaydına bağlanır.
+   - **Örnek:** Konusu "Talebim srv-2026-0012" olan e-posta SRV-2026-0012
+     talebinin yazışmalarına, Servis sekmesine girer. Var olmayan numara
+     ("SRV-2026-9999") e-postayı panele almaz.
+
+Sitenin kendi adreslerinden gelen e-posta (ör. info@'ya giden bildirimin
+kopyası) ve daha önce alınmış e-posta (aynı Message-ID) alınmaz. Ekler
+kaydedilmez; adları görünür, dosyalar posta kutusunda kalır.
 
 **Genel kurallar:**
 
@@ -1024,15 +1066,18 @@ olmadığı için hiçbir e-posta gitmez.
   seçilmediyse boş kalır.
 - **Veritabanı modunda** teklif, servis talebi, garanti kaydı, yorum,
   sipariş ve iade talebinin kaydını ve bildirimini sunucu yapar; bildirim kayıttan sonra gider.
-- **E-posta kaydı** (veritabanı modu, K-81): gönderilen ya da
-  gönderilemeyen her e-posta `email_log`'a yazılır: türü, formun sayfası,
-  bağlı kayıt, alıcı, konu ve sonucu (gitti / hata / gönderilmedi). E-posta
-  servisi tanımlı değilse ya da bot tuzağına takıldıysa "gönderilmedi"
-  yazılır. E-postanın metni saklanmaz. Müşteriye giden şifre sıfırlama
-  e-postası da yazılır (bağlantı yazılmaz).
+- **Yazışmalar** (veritabanı modu, K-81, K-116): gönderilen ya da
+  gönderilemeyen her e-posta metniyle `email_log`'a yazılır: türü, formun
+  sayfası, bağlı kayıt, gönderen, alıcı, konu, düz metin ve sonucu
+  (Gönderildi / Gönderilemedi / Gönderilmedi; gelen e-postada Geldi).
+  E-posta servisi tanımlı değilse ya da bot tuzağına takıldıysa
+  "Gönderilmedi" yazılır. Müşteriye giden şifre sıfırlama e-postası da
+  metniyle yazılır; sıfırlama bağlantısının yerine "(sıfırlama bağlantısı;
+  güvenlik için saklanmaz)" yazar (kaydı gören kimse şifreyi
+  değiştiremesin). Yazışmalar panelden silinmez.
 - Sipariş e-postasına T.C. kimlik no ve kart bilgisi yazılmaz.
-- Panelden müşteriye hiçbir e-posta gitmez; bülten kaydı hiçbir yere
-  gitmez. "Şifremi Unuttum" e-postası veritabanı modunda gider (K-95).
+- Bülten kaydı hiçbir yere gitmez. "Şifremi Unuttum" e-postası veritabanı
+  modunda gider (K-95).
 
 **Formlar:**
 
@@ -1057,7 +1102,9 @@ Kod: `apps/zenweld-web/src/app/api/bildirim/route.ts`,
 `apps/zenweld-web/src/app/api/formlar/[tur]/route.ts`,
 `apps/zenweld-web/src/lib/notify.ts`, `apps/zenweld-web/src/lib/server/mail.ts`,
 `apps/zenweld-web/src/lib/server/notify.ts` (şablonlar),
-`apps/zenweld-web/src/lib/form-text.ts`, `apps/zenweld-web/src/lib/order-text.ts`.
+`apps/zenweld-web/src/lib/form-text.ts`, `apps/zenweld-web/src/lib/order-text.ts`,
+`packages/data/src/email.ts` (adres, e-posta ve eşleştirme kuralları),
+`packages/db/src/emails.ts`, `packages/db/src/mailbox.ts`.
 
 ---
 
@@ -1396,7 +1443,7 @@ Aşağıdaki kurallar panelin bütün ekranlarında geçerlidir.
   metinler kırpılır, IBAN büyük harfe çevrilir, aynı kargo firması bir kez
   alınır. Kayıt sitede (sepet, ödeme) hemen geçerli olur. Listeden çıkan
   POS ya da kargo firması silinir; eski siparişler onların adını kendi
-  kopyasında tutar. E-posta alıcıları için [18](#18-form-e-postaları).
+  kopyasında tutar. E-posta adresleri için [18](#18-e-postalar).
 - **Şirket ve İletişim (KARARLAR K-105):** Tek kayıttır. Ticari unvan,
   telefon ve geçerli e-posta zorunlu; MERSİS no 16 rakam ya da boş
   (boşluklar atılır; boşsa sözleşmede "[—]"); en az bir, en fazla 10 ofis,

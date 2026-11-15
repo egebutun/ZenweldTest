@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-110).
+  K-116).
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -30,7 +30,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap) — K-34–K-37, K-68, K-94–K-96
 7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41
 8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115
-9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104
+9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
 12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108
@@ -831,8 +831,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 
 ### K-50 · Form e-postaları info@zenweld.com'a
 - Sitedeki formlar `info@zenweld.com`'a e-posta gönderir. Veritabanı
-  modunda form türü başına başka alıcı yazılabilir (K-104); yazılmayan
-  tür yine buraya gider.
+  modunda tür başına başka alıcı ve gönderici yazılabilir (K-116);
+  yazılmayan tür yine bu adresi kullanır.
 - **Alt bilgideki bülten kaydı info@'a gitmez** (bülten servisi seçilince
   bağlanacak).
 
@@ -864,19 +864,52 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   yanlışlıkla silinmesin.
 
 ### K-104 · E-posta alıcıları Mağaza Ayarları'nda ayrı sekme; belgelerde dosya yükleme depoyla
-- **E-posta alıcıları:** Zenweld'e giden e-postaların (sipariş, iade,
-  teklif, servis, garanti, yorum, üyelik, iletişim, ürün destek, bayilik)
-  alıcıları panelde Mağaza Ayarları › **E-posta
-  Alıcıları** sekmesinde, form türü başına yazılır. Alıcısı yazılmayan
-  tür varsayılan adrese (`SUPPORT_EMAIL`, yoksa info@zenweld.com) gider.
-  Veritabanı modunda geçerlidir.
+- **E-posta alıcıları:** ~~Mağaza Ayarları › E-posta Alıcıları
+  sekmesinde, form türü başına~~ **Değişti → K-116:** alıcılar ve
+  gönderici Panel › E-posta › Adresler'de, tür başına yazılır. Alıcısı
+  yazılmayan tür varsayılan adrese (`SUPPORT_EMAIL`, yoksa
+  info@zenweld.com) gider.
 - **Belgeler (MSDS vb.):** Veritabanı modunda dosya deposu ayarlı değilse
   Belgeler ekranında dosya yüklenmez, yalnızca dosyanın adresi girilir
   (K-101 ile aynı mantık). Dosya deposu ayarlıysa dosya yüklenir (K-108).
-- **Neden:** Sahibinin kararı. Alıcılar mağazanın işleyişine ait bir
-  ayardır. Dosyanın kendisi veritabanına konmaz; depo gelince taşınması
+- **Neden:** Sahibinin kararı. Dosyanın kendisi veritabanına konmaz; depo gelince taşınması
   gerekmesin.
 
+
+### K-116 · Panel › E-posta: türe göre adresler, metniyle yazışmalar, panelden gönderme ve gelen yanıtlar
+- Panelde Müşteriler ve Servis altında **E-posta** bölümü vardır. Sitenin
+  her e-posta türünün (Sipariş, İade, Teklif, Servis, Garanti, Yorum,
+  Üyelik, İletişim, Ürün Sorusu, Bayilik, Şifre Sıfırlama, Bülten) kendi
+  sekmesi; her sekmede **Yazışmalar** ve **Adresler**.
+- **Adresler:** Her türün gönderici adresi ve Zenweld'e giden e-postanın
+  alıcıları panelde tutulur. Hepsi varsayılan olarak info@zenweld.com'dur;
+  ileride bir tür için ayrı adres (ör. servis@zenweld.com) yazılabilir.
+  Mağaza Ayarları'ndaki E-posta Alıcıları buraya taşındı.
+- **Yazışmalar:** Sitenin gönderdiği bütün e-postalar ve posta kutusundan
+  gelen yanıtlar, **metniyle** saklanır ve bağlı kayda (servis talebi,
+  sipariş…) bağlanır. Eski E-posta Kaydı buraya dönüştü. Yazışmalar
+  panelden silinmez; saklama süresi KVKK kararıyla birlikte belirlenir.
+- **Panelden e-posta:** E-posta programına girmeden panelden yazılır ve
+  yanıtlanır; türün gönderici adresinden gider. Servis Talepleri ve
+  Mesajlar'da da kaydın yazışmaları ve **E-posta gönder** vardır.
+- **Gelen e-posta:** Site info@zenweld.com'un (ve ileride yazılacak diğer
+  adreslerin) posta kutusunu okur. Yalnızca sitenin e-postasına yanıt olan
+  ya da bir kayıt numarası taşıyan e-posta panele alınır; şirketin diğer
+  e-postaları posta kutusunda kalır. Okunan e-posta kutuda olduğu gibi
+  kalır.
+- Posta kutusunun bağlantı bilgileri yalnızca sunucuda ortam değişkenidir;
+  panelde, veride ve GitHub'da yer almaz. Posta kutusu okuma
+  değiştirilebilir parçadır (K-108): ilk parça IMAP; sağlayıcı BT'den
+  öğrenilince gerekirse onun parçası eklenir.
+- Şifre sıfırlama e-postası yazışmalara bağlantısız yazılır (kaydı gören
+  kimse şifreyi değiştiremesin).
+- Demo modunda e-posta gönderilmez; yazılan e-posta "Gönderilmedi" olarak
+  tarayıcıda kaydedilir; örnek yazışmalar görünür. Posta kutusu okuma
+  yalnızca veritabanı modundadır.
+- **Neden:** Sahibinin kararı. Bütün yazışmalar tek yerde ve kayıtla
+  birlikte görünsün; e-postalar panelden info@zenweld.com adına yönetilsin.
+  Adresler türe göre esnek olsun. K-81'deki "metin saklanmaz" bu yüzden
+  değişti.
 ---
 
 ## 10. Arama motorları ve adresler
@@ -946,8 +979,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 ### K-99 · Panel veritabanına alan alan geçti; aynı kaydı iki kişi düzenlerse
 - Panel veritabanına alan alan geçti; her alanda o alanın ekranları hem
   okur hem yazar. Sıra: Satış; Talepler; Katalog; Bayiler, satıcılar ve
-  stok; İçerik ve ayarlar; Üyeler, İşlem Kaydı ve E-posta Kaydı; en son
-  panel ana sayfası.
+  stok; İçerik ve ayarlar; Üyeler, İşlem Kaydı ve E-posta Kaydı (sonra
+  Panel › E-posta'ya dönüştü, K-116); en son panel ana sayfası.
 - İki yönetici aynı kaydı aynı anda düzenlerse: kayıt, yönetici ekranı
   açtıktan sonra değişmişse (başka yönetici, müşteri ya da sistem)
   kaydedilmez; "Bu kayıt siz açtıktan sonra değişti; sayfayı yenileyin."
@@ -1002,10 +1035,11 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - **Neden:** Sahibinin kararı.
 
 ### K-109 · Demo modunda panel ekranları gizlenmez; form kayıtları tarayıcıda tutulur
-- İşlem Kaydı ve E-posta Kaydı demo modunda da Ayarlar menüsündedir.
-  Kayıt yalnızca veritabanı modunda tutulduğu için demoda tablo boştur ve
-  kaydın veritabanına bağlanınca tutulacağını yazar ("demo" kelimesi
-  geçmez; K-02).
+- İşlem Kaydı demo modunda da Ayarlar menüsündedir. Kayıt yalnızca
+  veritabanı modunda tutulduğu için demoda tablo boştur ve kaydın
+  veritabanına bağlanınca tutulacağını yazar ("demo" kelimesi geçmez;
+  K-02). E-posta Kaydı Panel › E-posta'ya dönüştü (K-116); demo modunda
+  örnek yazışmaları gösterir.
 - İletişim formu, ürün destek sorusu ve bayilik başvurusu demo modunda
   e-postayla birlikte tarayıcıya da kaydedilir; Mesajlar ve Bayilik
   Başvuruları ekranlarında aynı tarayıcıda görünür. Durum ve not çalışır
@@ -1033,8 +1067,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   kayıtta, eski ve yeni değer. Panele giriş ve çıkışlar da yazılır.
   Kayıtlar 2 yıl saklanır.
 - Gönderilen her e-postanın sitenin hangi özelliği (İletişim, Servis
-  Talebi…) ve sayfası için gönderildiği kaydedilir. E-posta alıcıları
-  türe göre tutulur (K-104).
+  Talebi…) ve sayfası için gönderildiği kaydedilir. **Değişti → K-116:**
+  e-postalar metniyle saklanır; gönderici ve alıcılar türe göre tutulur.
 - Kişisel verilerin saklama süresi avukata sorulacak
   ([VERITABANI.md](VERITABANI.md) › Açık sorular).
 - Ayrıntı: tablolar ve kolonlar [VERITABANI.md](VERITABANI.md).

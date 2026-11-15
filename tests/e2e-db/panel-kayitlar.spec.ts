@@ -3,11 +3,11 @@ import { demoAccount } from "../e2e/yardimci";
 import { closeDatabase, expect, sql, test } from "./yardimci";
 
 /**
- * PANEL › ISLEM KAYDI VE E-POSTA KAYDI (Asama 5, 6. alan)
+ * PANEL › ISLEM KAYDI (Asama 5, 6. alan)
  *
- * Iki ekran da Ayarlar menusundedir ve veritabanindan okur. Panele giris
- * islem kaydinda gorunur; suzgecler adreste durur. E-posta kaydi alici,
- * konu ve durumu gosterir.
+ * Ayarlar menusundedir ve veritabanindan okur. Panele giris islem
+ * kaydinda gorunur; suzgecler adreste durur. E-posta yazismalari:
+ * eposta.spec.ts.
  */
 test.afterAll(closeDatabase);
 
@@ -44,26 +44,6 @@ test("işlem kaydı: panele giriş görünür; işleme ve yöneticiye göre süz
 
   await page.goto(`/yonetim/islem-kaydi?yonetici=${id}&ara=${encodeURIComponent("bulunmayacak-" + stamp)}`);
   await expect(page.getByText("Kayıt yok.")).toBeVisible();
-});
-
-test("e-posta kaydı: alıcı, konu ve durum görünür; alıcıyla aranır", async ({ page }) => {
-  const to = `kayit-${stamp}@ornek.com`;
-  await sql(
-    `INSERT INTO email_log (type, recipients, subject, status, entity_type, entity_id, error, source_path)
-     VALUES ('teklif', ARRAY[$1], 'Yeni teklif talebi', 'skipped', 'quotes', 'TKL-2026-9999', 'eposta-yapilandirilmadi', '/teklif-al')`,
-    [to],
-  );
-  await panelLogin(page);
-  await page.goto("/yonetim/e-posta-kaydi");
-  await page.getByPlaceholder("Adres, konu ya da kayıt no ara…").fill(to);
-  await page.getByRole("button", { name: "Süz" }).click();
-  const row = page.locator("tbody tr", { hasText: to });
-  await expect(row).toHaveCount(1);
-  await expect(row).toContainText("Teklif talebi");
-  await expect(row).toContainText("Yeni teklif talebi");
-  await expect(row).toContainText("Gönderilmedi");
-  await expect(row).toContainText("eposta-yapilandirilmadi");
-  await expect(row.getByRole("link", { name: "TKL-2026-9999" })).toHaveAttribute("href", "/yonetim/teklifler");
 });
 
 test("oturumsuz kayıt ekranı açılmaz", async ({ page }) => {

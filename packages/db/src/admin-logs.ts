@@ -1,17 +1,19 @@
 import { and, desc, eq, gte, ilike, lt, or, sql, type SQL } from "drizzle-orm";
+import type { EmailMessage } from "@zenweld/data";
 import type { AuditDb } from "./audit";
+import { emailMessageOf } from "./email-log";
 import * as s from "./schema";
 
 /**
- * PANEL › ISLEM KAYDI VE E-POSTA KAYDI (veritabani modu; Asama 5, 6. alan;
- * KARARLAR K-81, K-98, K-99)
+ * PANEL › ISLEM KAYDI VE E-POSTA YAZISMALARI (veritabani modu; Asama 5,
+ * 6. alan; KARARLAR K-81, K-98, K-99, K-116)
  *
  * Iki ekran da yalnizca okur: islem kaydi (audit_log) panelde yapilan her
- * degisikligi ve panele giris/cikisi; e-posta kaydi (email_log) sitenin
- * gonderdigi (ya da gonderemedigi) her e-postayi gosterir. En yeni kayit
- * once, sayfa basina 50 kayit; "daha eski" icin son kaydin numarasi
- * (before) verilir. Suzgecler: tur, yonetici / durum, tarih araligi
- * (Turkiye gunu), metin.
+ * degisikligi ve panele giris/cikisi; Panel › E-posta'nin Yazismalar
+ * sekmesi (email_log) sitenin gonderdigi ve posta kutusundan aldigi her
+ * e-postayi gosterir. En yeni kayit once, sayfa basina 50 kayit; "daha
+ * eski" icin son kaydin numarasi (before) verilir. Suzgecler: tur,
+ * yonetici / durum, tarih araligi (Turkiye gunu), metin.
  */
 
 export const LOG_PAGE_SIZE = 50;
@@ -27,20 +29,6 @@ export interface AuditLogRow {
   entityLabel?: string;
   changes?: Record<string, unknown>;
   ip?: string;
-}
-
-export interface EmailLogRow {
-  id: number;
-  at: string;
-  type: string;
-  sourcePath?: string;
-  entityType?: string;
-  entityId?: string;
-  recipients: string[];
-  replyTo?: string;
-  subject: string;
-  status: "sent" | "failed" | "skipped";
-  error?: string;
 }
 
 export interface LogPage<T> {
@@ -69,6 +57,8 @@ export interface AuditLogFilter extends CommonFilter {
 export interface EmailLogFilter extends CommonFilter {
   type?: string;
   status?: string;
+  /** out: giden; in: gelen */
+  direction?: string;
 }
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -154,7 +144,8 @@ export async function auditLogFacets(db: AuditDb): Promise<{ entityTypes: string
   };
 }
 
-export async function readEmailLog(db: AuditDb, filter: EmailLogFilter = {}, limit = LOG_PAGE_SIZE): Promise<LogPage<EmailLogRow>> {
+/** Yazismalar (Panel › E-posta; KARARLAR K-116), en yeni once. Arama adreslerde, konuda, kayit numarasinda ve metinde. */
+export async function readEmailLog(db: AuditDb, filter: EmailLogFilter = {}, limit = LOG_PAGE_SIZE): Promise<LogPage<EmailMessage>> {
   const t = s.emailLog;
   const q = filter.q?.trim().slice(0, 100);
   const rows = await db
@@ -164,12 +155,15 @@ export async function readEmailLog(db: AuditDb, filter: EmailLogFilter = {}, lim
       and(
         filter.type ? eq(t.type, filter.type) : undefined,
         filter.status ? eq(t.status, filter.status) : undefined,
+        filter.direction ? eq(t.direction, filter.direction) : undefined,
         q
           ? or(
               ilike(sql`array_to_string(${t.recipients}, ' ')`, like(q)),
+              ilike(t.fromAddress, like(q)),
               ilike(t.replyTo, like(q)),
               ilike(t.subject, like(q)),
               ilike(t.entityId, like(q)),
+              ilike(t.body, like(q)),
             )
           : undefined,
         ...common({ at: t.createdAt, id: t.id }, filter),
@@ -177,20 +171,5 @@ export async function readEmailLog(db: AuditDb, filter: EmailLogFilter = {}, lim
     )
     .orderBy(desc(t.id))
     .limit(limit + 1);
-  return {
-    more: rows.length > limit,
-    entries: rows.slice(0, limit).map((r) => ({
-      id: r.id,
-      at: r.createdAt.toISOString(),
-      type: r.type,
-      sourcePath: opt(r.sourcePath),
-      entityType: opt(r.entityType),
-      entityId: opt(r.entityId),
-      recipients: r.recipients,
-      replyTo: opt(r.replyTo),
-      subject: r.subject,
-      status: r.status as EmailLogRow["status"],
-      error: opt(r.error),
-    })),
-  };
+  return { more: rows.length > limit, entries: rows.slice(0, limit).map(emailMessageOf) };
 }

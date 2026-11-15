@@ -82,7 +82,7 @@ farkları: [README](../README.md) › Demo ve veritabanı modu.
 | # | İş | Kimi bekliyor | Ayrıntı |
 |---|---|---|---|
 | 1 | **Canlı sunucu ve veritabanı:** sunucu, HTTPS, PostgreSQL 18 (canlı ve deneme), yedek, izleme, deneme ortamı; tabloların kurulması ve verinin yüklenmesi (`db:migrate`, `db:yukle canli`), ilk yönetici (`yonetici:olustur`) | BT | [Canlı sunucu](#canlı-sunucu-ve-vercel-temizliği), [Veriyi canlıya taşıma](#veriyi-canlıya-taşıma) |
-| 2 | **E-posta servisi:** Resend hesabı, `zenweld.com` DNS doğrulaması, anahtar ve gönderici adresi. Bugün hiçbir e-posta gitmiyor ([SUNUCU.md](SUNUCU.md) › 9) | BT | [Online satış](#online-satış--canlıya-çıkmadan-önce) 6 |
+| 2 | **E-posta servisi ve posta kutusu:** Resend hesabı, `zenweld.com` DNS doğrulaması, anahtar (gönderici varsayılanı info@zenweld.com; panelden türe göre değişir). Gelen yanıtlar için info@zenweld.com'un posta sağlayıcısı ve bağlantı bilgileri; zamanlayıcı. Bugün hiçbir e-posta gitmiyor ([SUNUCU.md](SUNUCU.md) › 9) | BT | [Online satış](#online-satış--canlıya-çıkmadan-önce) 6, [E-posta ve posta kutusu](#e-posta-ve-posta-kutusu--panel--e-posta) |
 | 3 | **Müşteriye e-postalar:** sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi; teklif, servis, garanti ve iade durum bildirimleri | Sahibi (hangi e-postalar ve metinleri), sonra kod | [Online satış](#online-satış--canlıya-çıkmadan-önce) 5, [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 | 4 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez. Ödeme sağlayıcısı parçası hazır (`packages/db/src/payment.ts`, K-108): kuruluşun parçası eklenir, 3D Secure için ödeme iki adıma ayrılır, ödeme sayfası kart programını sunucudan alır | Ödeme kuruluşu anlaşması | [Online satış](#online-satış--canlıya-çıkmadan-önce) 1, [SUNUCU.md](SUNUCU.md) › Kartla ödeme |
 | 5 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (bugün deneme dosyası okunuyor); zamanlayıcının kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP ekibi; canlı sunucu | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap) |
@@ -189,7 +189,8 @@ kişiye verilir; o kişi doğrudan sunucuya girer
 **Zamanlanmış işler ve izleme**
 
 - [ ] Sunucuda zamanlayıcı kurulabilir mi? (SAP stoğu 15 dakikada bir
-      okunacak, siparişler birkaç dakikada bir SAP'a gönderilecek; süresi
+      okunacak, siparişler birkaç dakikada bir SAP'a gönderilecek, posta
+      kutusu 5 dakikada bir okunacak; süresi
       dolan havale siparişleri günde bir iptal edilecek; işlem kaydının
       2 yıldan eskisi her gün silinecek.) [Sunucu]
 - [ ] Hata ve kesinti olursa kime haber gidecek (izleme)? [Karar]
@@ -210,10 +211,21 @@ kişiye verilir; o kişi doğrudan sunucuya girer
 - [ ] Site e-postaları hangi servisten gönderilecek? Bugün Resend için
       hazır; şirketin kullandığı başka bir servis varsa söylenmeli.
       [Karar] [Kod]
-- [ ] Gönderen adres ne olacak (ör. `noreply@zenweld.com`)? Bu adresin
-      alan adı doğrulaması (SPF, DKIM kayıtları) DNS'e eklenmeli.
-      [Sunucu]
+- [ ] Gönderen adres varsayılan olarak `info@zenweld.com`'dur (K-116;
+      türe göre panelden değişir). Alan adı doğrulaması (SPF, DKIM
+      kayıtları) DNS'e eklenmeli. [Sunucu]
 - [ ] Formların geldiği `info@zenweld.com` kutusunu kim okuyor? [Karar]
+- [ ] **`info@zenweld.com` hangi sağlayıcıda?** Google Workspace,
+      Microsoft 365 ya da hosting firmasının e-postası mı? Site bu kutuyu
+      okuyup sitenin e-postalarına gelen yanıtları panele alır (K-116).
+      Sağlayıcıya göre: hosting e-postasında IMAP sunucusu, kullanıcı adı ve
+      şifre yeter; Google Workspace'te IMAP açık olmalı ve uygulama şifresi
+      gerekir; Microsoft 365'te şifreyle IMAP kapalıdır, Microsoft'un
+      uygulama izniyle (Graph) bağlanan parça yazılır. Bağlantı bilgileri
+      yalnızca sunucuda ortam değişkeni olur
+      ([SUNUCU.md › Posta kutusu](SUNUCU.md#posta-kutusu)). İleride
+      `servis@zenweld.com` gibi ayrı adresler açılacaksa onlar da aynı
+      kutuya mı gelecek, ayrı kutu mu olacak? [Sunucu] [Kod]
 
 ### SAP danışmanı
 
@@ -308,6 +320,8 @@ kişiye verilir; o kişi doğrudan sunucuya girer
 - [ ] ETBİS kaydı (Ticaret Bakanlığı) ve MERSİS numarası. Unvan ve MERSİS
       sitede nerede gösterilmeli (alt bilgi, İletişim)? [Panel] [Karar]
 - [ ] Müşteri verisi yurt dışındaki bir sunucuda tutulabilir mi? [Karar]
+- [ ] Yazışmalar (K-116) metniyle saklanıyor: e-postalar ne kadar
+      saklansın, sonra kendiliğinden silinsin mi? [Karar]
 - [ ] Üye hesabını silince hangi kayıtlar silinsin, hangileri yasal süre
       boyunca saklansın (sipariş, teklif, garanti, yorum)? Ayrıntı:
       [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama).
@@ -325,9 +339,9 @@ kişiye verilir; o kişi doğrudan sunucuya girer
       geri gelir, depoda kontrol, para iadesi kaç günde ve nasıl,
       değişim olacak mı, müşteriye hangi aşamada e-posta gider? Ayrıntı:
       [İade talebi](#i̇ade-talebi) 4. [Karar]
-- [ ] Hangi formun e-postası kime gitsin (sipariş, iade, teklif, servis,
-      garanti…)? Panelde Mağaza Ayarları › E-posta Alıcıları'na girilir.
-      [Panel]
+- [ ] Hangi formun e-postası kime gitsin ve hangi adresten gitsin
+      (sipariş, iade, teklif, servis, garanti…)? Panelde Müşteriler ve
+      Servis › E-posta › (tür) › Adresler'e girilir (K-116). [Panel]
 - [ ] Panele kimler girecek? Her biri için yönetici hesabı açılır.
       [Sunucu]
 - [ ] Müşteriye gidecek e-postalar: sipariş onayı (yasal zorunlu,
@@ -657,10 +671,11 @@ temsili. Canlı için:
    (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi. (Zenweld'e
    "yeni sipariş" e-postasının kodu hazır; Resend kurulmadığı için bugün
    hiçbir e-posta gitmiyor, 6. madde.)
-6. **Form e-postaları için Resend kurulumu**: sunucuda `RESEND_API_KEY` ve
-   doğrulanmış gönderici adresi `SUPPORT_FROM` tanımlanmalı. Tanımlı değilse
-   canlıda e-posta formları (iletişim, bayilik) veritabanı
-   kaydı da yoksa ziyaretçiye hata gösterir.
+6. **Form e-postaları için Resend kurulumu**: sunucuda `RESEND_API_KEY`
+   tanımlanmalı ve `zenweld.com` Resend'de doğrulanmalı (gönderici
+   varsayılanı info@zenweld.com, K-116). Anahtar tanımlı değilse canlıda
+   e-posta formları (iletişim, bayilik) veritabanı kaydı da yoksa
+   ziyaretçiye hata gösterir.
 7. **Zamanlanmış iş**: süresi dolan havale siparişlerini iptal eden günlük iş
    (bugün sipariş sayfaları açılınca yapılıyor; veritabanı modunda
    siparişler okunurken sunucuda, `packages/db/src/orders.ts` ›
@@ -774,8 +789,10 @@ karar verilecekler:
 
 ## Müşteriye e-posta bildirimleri (sipariş dışı)
 
-Bugün müşteriye yalnızca şifre sıfırlama e-postası gider (veritabanı
-modunda, Resend kurulunca); formlar info@zenweld.com'a e-posta gönderiyor.
+Bugün müşteriye site kendiliğinden yalnızca şifre sıfırlama e-postası
+gönderir (veritabanı modunda, Resend kurulunca); formlar info@zenweld.com'a
+e-posta gönderiyor. Yönetici panelden (E-posta, Servis Talepleri, Mesajlar)
+müşteriye elle e-posta yazabilir (K-116).
 Sipariş bildirimleri "Online satış" 5'te. Ayrıca:
 
 1. Teklif talebinin durumu panelde değişince (İnceleniyor, Teklif Gönderildi…).
@@ -785,8 +802,8 @@ Sipariş bildirimleri "Online satış" 5'te. Ayrıca:
    Reddedildi).
 
 Hangi bildirimlerin gönderileceği ve metinleri kararlaştırılmalı. Yeni tür
-eklenince [VERITABANI.md](VERITABANI.md) › `email_recipients` › Müşteriye
-giden e-postalar listesine yazılır.
+eklenince [VERITABANI.md](VERITABANI.md) › `email_settings` › E-posta
+türleri listesine ve panelin tür sekmelerine (`EMAIL_KINDS`) eklenir.
 
 ### Servis talebini en yakın yetkili servise yönlendirme — e-posta taslakları
 
@@ -894,11 +911,11 @@ Veritabanı modunda üyelik, panel girişi ve şifre sıfırlama sunucuda
      aynı mesaj görünür.
    - Hesap varsa e-posta servisi (Resend) üzerinden müşterinin adresine
      "Zenweld şifre sıfırlama" konulu düz metin e-posta gider. Gönderen
-     sunucudaki `SUPPORT_FROM` adresidir (tanımlı değilse Resend'in deneme
-     adresi; canlıda `web@zenweld.com` gibi doğrulanmış bir adres
-     gerekir). Metin kodda sabittir (`packages/i18n/src/tr.ts`).
+     Panel › E-posta › Şifre Sıfırlama › Adresler'deki adrestir (yoksa
+     info@zenweld.com; K-116). Metin kodda sabittir
+     (`packages/i18n/src/tr.ts`).
    - Bağlantı 1 saat geçerli ve tek kullanımlık; aynı hesap için 15
-     dakikada bir. Gönderim `email_log`'a yazılır.
+     dakikada bir. Gönderim `email_log`'a bağlantısız yazılır.
    - E-posta servisi kurulmadığı için bugün hiçbir e-posta gitmez.
 
    Konuşulacaklar: gönderen adres ve adı (ör. "Zenweld
@@ -959,6 +976,33 @@ netleşmeli:
     - **Dikkat:** Başvurulara en geç 30 gün içinde yanıt verilmeli. Form
       yapılana kadar başvuru yolu (e-posta ya da yazılı) KVKK Aydınlatma
       Metni'nde yazmalı.
+
+## E-posta ve posta kutusu — Panel › E-posta
+
+Panel › E-posta hazır (K-116): türe göre adresler, metniyle yazışmalar,
+panelden yazma ve yanıtlama, posta kutusundan gelen yanıtlar. Kalanlar:
+
+1. **Posta kutusunun bağlanması:** info@zenweld.com'un sağlayıcısı BT'ye
+   sorulacak ([3 › BT](#bt-bilgi-i̇şlem) › E-posta). Hosting e-postası ya
+   da Google Workspace (uygulama şifresiyle) ise hazır IMAP parçası
+   yeter: `IMAP_HOST`, `IMAP_USER`, `IMAP_PASSWORD` sunucuya girilir.
+   Microsoft 365 ise Microsoft Graph ile okuyan parça yazılır
+   (`packages/db/src/mailbox.ts` › `MailboxSource`). Zamanlayıcıya
+   `/api/posta/oku` eklenir (5 dakikada bir).
+2. **Canlıda ilk e-postada denetlenecek:** Gönderilen e-postanın
+   Message-ID'si alıcıda sitenin verdiği değer mi (Resend değiştiriyor
+   mu)? Değiştiriyorsa yanıtlar yine konu ve kayıt numarasıyla eşleşir;
+   yalnızca konusu değiştirilerek yazılan ve kayıt numarası taşımayan
+   yanıt panele gelmez. Gerekirse Resend'in gönderdiği Message-ID
+   okunup saklanır. [Kod]
+3. **E-posta metinleri:** Müşteriye ve servislere gidecek e-postaların
+   metinleri sahibiyle yazılacak (servis talebi akışı sıradaki adımda).
+4. **Ekler:** Gelen e-postanın ekleri bugün posta kutusunda kalır; panelde
+   yalnızca adları görünür. İstenirse ekler dosya deposuna alınır;
+   panelden ek gönderme de istenirse eklenir. [Karar]
+5. **Saklama süresi:** yazışmalar metniyle saklanıyor; KVKK kararıyla
+   ([3 › Hukuk](#hukuk-danışmanı--kvkk)) saklama süresi ve kendiliğinden
+   silme eklenir.
 
 ## Bülten ve İYS
 

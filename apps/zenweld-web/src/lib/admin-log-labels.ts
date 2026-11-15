@@ -1,7 +1,5 @@
-import { EMAIL_RECIPIENT_TYPES } from "@zenweld/data";
-
 /**
- * ISLEM KAYDI VE E-POSTA KAYDI EKRANLARININ ADLARI (panel; Asama 5, 6. alan)
+ * ISLEM KAYDI VE E-POSTA EKRANLARININ ADLARI (panel; Asama 5, 6. alan)
  *
  * Kayitlarda tablo ve tur adlari (orders, teklif...) durur; ekran Turkce
  * adlarini gosterir. Listede olmayan ad oldugu gibi gosterilir.
@@ -30,6 +28,8 @@ export const ENTITY_LABELS: Record<string, string> = {
   sku_aliases: "Kod eşleştirme",
   settings: "Ayarlar",
   email_recipients: "E-posta alıcıları",
+  email_settings: "E-posta adresleri",
+  email_log: "E-posta",
   news: "Haber",
   events: "Etkinlik",
   blog_posts: "Blog yazısı",
@@ -82,7 +82,9 @@ export function entityHref(type: string, id: string): string | undefined {
     retailers: "/yonetim/saticilar",
     sales_reps: "/yonetim/satis-temsilcileri",
     settings: "/yonetim/magaza",
-    email_recipients: "/yonetim/magaza",
+    email_recipients: "/yonetim/e-posta?sekme=adresler",
+    email_settings: "/yonetim/e-posta?sekme=adresler",
+    email_log: "/yonetim/e-posta",
     faqs: "/yonetim/sss",
     about_page: "/yonetim/hakkimizda",
     page_seo: "/yonetim/sayfa-seo",
@@ -93,17 +95,6 @@ export function entityHref(type: string, id: string): string | undefined {
   if (detail[type]) return `${detail[type]}${type === "files" ? id : encodeURIComponent(id)}`;
   return list[type];
 }
-
-export const EMAIL_TYPE_LABELS: Record<string, string> = {
-  ...Object.fromEntries(EMAIL_RECIPIENT_TYPES.map((t) => [t.type, t.label])),
-  "sifre-sifirlama": "Şifre sıfırlama",
-};
-
-export const EMAIL_STATUS_LABELS: Record<string, string> = {
-  sent: "Gönderildi",
-  failed: "Gönderilemedi",
-  skipped: "Gönderilmedi",
-};
 
 /** Degisikligin bir degeri: kisa metin (uzunsa kirpilir). */
 export function showValue(value: unknown, max = 160): string {

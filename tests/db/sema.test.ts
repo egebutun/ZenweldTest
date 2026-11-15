@@ -266,7 +266,11 @@ describe("değer kontrolleri", () => {
       expect((await expectFailure(db, "UPDATE products SET currency = 'USD' WHERE id = 'p1'")).code).toBe("23514");
       expect((await expectFailure(db, "UPDATE category_groups SET section = 'baska'")).code).toBe("23514");
       expect(
-        (await expectFailure(db, "INSERT INTO email_recipients (type, recipients) VALUES ('teklif', ARRAY[]::text[])")).code,
+        (await expectFailure(db, "INSERT INTO email_settings (type, recipients) VALUES ('teklif', ARRAY[]::text[])")).code,
+      ).toBe("23514");
+      expect((await expectFailure(db, "INSERT INTO email_settings (type, sender) VALUES ('uydurma', 'a@b.com')")).code).toBe("23514");
+      expect(
+        (await expectFailure(db, "INSERT INTO email_log (type, direction, recipients, subject, status) VALUES ('servis', 'in', '{a}', 'x', 'sent')")).code,
       ).toBe("23514");
     });
   });

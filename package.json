@@ -26,7 +26,8 @@
     "db:studio": "npm run studio --workspace=@zenweld/db",
     "site:yenile": "node scripts/site-yenile.mjs",
     "sap:stok": "node scripts/sap-stok.mjs",
-    "sap:siparis": "node scripts/sap-siparis.mjs"
+    "sap:siparis": "node scripts/sap-siparis.mjs",
+    "posta:oku": "node scripts/posta-oku.mjs"
   },
   "engines": {
     "node": ">=20.9"

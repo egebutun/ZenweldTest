@@ -87,6 +87,9 @@ const nextConfig = {
     "@zenweld/i18n",
     "@zenweld/utils",
   ],
+  // Posta kutusu okuma (packages/db › mailbox.ts) yalnizca sunucuda calisir;
+  // bu paketler derlemeye katilmaz, Node'dan oldugu gibi yuklenir.
+  serverExternalPackages: ["imapflow", "mailparser"],
   /**
    * YONETIM PANELI (/yonetim)
    *

@@ -8,6 +8,7 @@ import { listServiceRequests, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Select, Textarea } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { RecordEmails } from "@/components/admin/EmailParts";
 import { ListPager, useListQuery } from "@/components/admin/ListControls";
 import { pageParam, serviceListPage } from "@/lib/admin-lists";
 import { useRequestActions } from "@/lib/admin-requests";
@@ -28,7 +29,8 @@ const REASON: Record<ServiceReason, string> = {
 /**
  * SERVIS TALEPLERI — sitedeki Servis Talebi formundan gelenler. Veritabani
  * modunda kayit sunucuya yazilir. Sayfa basina 50 talep; veritabani modunda
- * sunucu yalnizca bu sayfayi okur (page prop).
+ * sunucu yalnizca bu sayfayi okur (page prop). Talebin yazismalari ve
+ * "E-posta gönder" detayin altindadir (KARARLAR K-116).
  */
 export function ServiceRequestsClient({ page }: { page?: ServiceListPage }) {
   const db = useDatabase();
@@ -194,6 +196,14 @@ function RequestDetail({
           {saved && <span className="text-xs text-emerald-700">Kaydedildi</span>}
         </div>
         {error && <Alert tone="danger">{error}</Alert>}
+      </div>
+      <div className="lg:col-span-2">
+        <RecordEmails
+          emailType="servis"
+          entity={{ type: "service_requests", id: request.id }}
+          to={request.email}
+          subject={`Servis talebiniz ${request.code} hakkında`}
+        />
       </div>
     </div>
   );

@@ -426,6 +426,8 @@ export const tr = {
       mailSubject: "Zenweld şifre sıfırlama",
       mailBody:
         "Merhaba {name},\n\nZenweld hesabınız için şifre sıfırlama istendi. Yeni şifre belirlemek için aşağıdaki bağlantıyı açın. Bağlantı 1 saat geçerlidir ve bir kez kullanılabilir.\n\n{link}\n\nBu isteği siz yapmadıysanız bu e-postayı dikkate almayın; şifreniz değişmez.",
+      /** Yazismalarda baglantinin yerine (baglanti saklanmaz) */
+      linkHidden: "(sıfırlama bağlantısı; güvenlik için saklanmaz)",
     },
   },
   account: {
@@ -1058,7 +1060,10 @@ export const tr = {
     uploadDisabled: "Görsel yükleme dosya deposu kurulunca açılacak; şimdilik görsel adresi girin.",
     documentUploadDisabled: "Dosya yükleme dosya deposu kurulunca açılacak; şimdilik dosyanın adresini girin.",
     auditLogNotRecorded: "Panelde yapılan işlemler, site veritabanına bağlandığında burada listelenir.",
-    emailLogNotRecorded: "Sitenin gönderdiği e-postalar, site veritabanına bağlandığında burada listelenir.",
+    emailNotFound: "Yanıtlanan e-posta bulunamadı; sayfayı yenileyin.",
+    emailNotSent: "E-posta servisi bu sitede ayarlı olmadığı için e-posta gönderilmedi; kaydı Yazışmalar'da.",
+    mailboxMissing: "Posta kutusu bağlı değil: sunucuda posta kutusunun bağlantı bilgileri tanımlı değil.",
+    mailboxFailed: "Posta kutusu okunamadı:",
     optionsMissing: "Seçilen seçeneklerden bazıları artık yok; sayfayı yenileyip yeniden seçin.",
     categoryMissing: "Seçilen kategori artık yok; sayfayı yenileyip yeniden seçin.",
     storeMissing: "Seçilen online mağaza artık yok; sayfayı yenileyip yeniden seçin.",

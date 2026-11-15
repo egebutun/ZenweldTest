@@ -13,9 +13,7 @@ import {
   companyKey,
   defaultSettings,
   parseCompanySettings,
-  parseRecipients,
   parseShopSettings,
-  recipientsVersion,
   shopKey,
   trackingLink,
   trackingUrlError,
@@ -174,29 +172,5 @@ describe("Şirket ve iletişim", () => {
     const reordered = company({ updatedAt: "2026-11-05T10:00:00.000Z", social: { tiktok, linkedin, youtube, instagram } });
     expect(companyKey(reordered)).toBe(companyKey(company()));
     expect(companyKey(company({ mersisNo: "0123456789012345" }))).not.toBe(companyKey(company()));
-  });
-});
-
-/* docs/IS-KURALLARI.md › 18. Form e-postaları (alıcılar) */
-describe("E-posta alıcıları", () => {
-  it("virgül, noktalı virgül, boşluk ya da satır sonuyla ayrılır; küçük harfe çevrilir; aynı adres bir kez", () => {
-    expect(parseRecipients(" Satis@Zenweld.com, satis@zenweld.com;\nmuhasebe@zenweld.com ")).toEqual({
-      ok: true,
-      value: ["satis@zenweld.com", "muhasebe@zenweld.com"],
-    });
-    expect(parseRecipients("  ")).toEqual({ ok: true, value: [] });
-  });
-
-  it("geçersiz adres ve 10'dan fazla adres reddedilir", () => {
-    expect(parseRecipients("satis@zenweld")).toEqual({ ok: false, error: '"satis@zenweld" geçerli bir e-posta adresi değil.' });
-    const eleven = Array.from({ length: 11 }, (_, i) => `a${i}@zenweld.com`).join(",");
-    expect(parseRecipients(eleven)).toEqual({ ok: false, error: "En fazla 10 adres yazılabilir." });
-  });
-
-  it("listenin hali: satır sayısı ve en son değişen satır", () => {
-    expect(recipientsVersion([])).toBe("0|");
-    expect(recipientsVersion([{ updatedAt: "2026-11-05T09:00:00.000Z" }, { updatedAt: "2026-11-05T10:00:00.000Z" }])).toBe(
-      "2|2026-11-05T10:00:00.000Z",
-    );
   });
 });

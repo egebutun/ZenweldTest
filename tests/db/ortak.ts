@@ -170,8 +170,11 @@ export function sorted(db: ZenweldDatabase): ZenweldDatabase {
  * alani yoksa yayinda sayilir; sayfa SEO kaydi yoksa bos liste.
  */
 export function expected(db: ZenweldDatabase): ZenweldDatabase {
+  // Yazismalar sitenin verisine okunmaz; yalnizca panelde, email_log'dan (KARARLAR K-116).
+  const site = { ...db };
+  delete site.emailMessages;
   return {
-    ...db,
+    ...site,
     blogPosts: db.blogPosts.map((b) => ({ ...b, active: b.active ?? true })),
     pageSeo: db.pageSeo ?? {},
   };

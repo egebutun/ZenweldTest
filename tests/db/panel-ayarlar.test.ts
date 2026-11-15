@@ -3,7 +3,6 @@ import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { PoolClient } from "pg";
 import {
   COMPANY_MERSIS_INVALID,
-  EMAIL_RECIPIENT_TYPES,
   SHOP_NO_CARRIER,
   SHOP_ONE_DEFAULT,
   defaultSettings,
@@ -12,23 +11,15 @@ import {
   type ShopSettings,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
-import {
-  adminSaveCompany,
-  adminSaveEmailRecipients,
-  adminSaveShopSettings,
-  emailRecipientsFor,
-  readShopPanel,
-  type Actor,
-} from "../../packages/db/src";
+import { adminSaveCompany, adminSaveShopSettings, readShopPanel, type Actor } from "../../packages/db/src";
 import * as schema from "../../packages/db/src/schema";
-import { EMAIL_TYPES } from "../../packages/db/src/schema/system";
 import { closePool, inTransaction } from "./ortak";
 
 /*
  * PANEL › MAGAZA AYARLARI SUNUCUDA, ADIM 5.1 (packages/db/src/admin-settings.ts;
- * Asama 5, 5. alan, KARARLAR K-99, K-104): Kargo ve Ödeme sekmesi tek kayit
- * gibi kaydedilir (settings 'shop' + payment_pos, bank_accounts, carriers);
- * E-posta Alıcıları email_recipients'a yazilir. Ekran acildiktan sonra
+ * Asama 5, 5. alan, KARARLAR K-99): Kargo ve Ödeme sekmesi tek kayit
+ * gibi kaydedilir (settings 'shop' + payment_pos, bank_accounts, carriers).
+ * E-posta adresleri: eposta.test.ts. Ekran acildiktan sonra
  * degismis kayit kaydedilmez; her degisiklik audit_log'a yazilir.
  * Her test kendi isleminde calisir ve geri alinir.
  */
@@ -43,7 +34,7 @@ const T1 = new Date("2026-03-11T09:00:00.000Z");
 const T2 = new Date("2026-03-11T10:00:00.000Z");
 const stale = { ok: false, status: 409, error: tr.panel.staleRecord };
 
-/** Ornek: iki POS (A varsayilan), bir hesap, iki kargo firmasi (Aras'in takip adresi var), bir alici satiri. */
+/** Ornek: iki POS (A varsayilan), bir hesap, iki kargo firmasi (Aras'in takip adresi var). */
 async function withSettings(run: (db: Db, client: PoolClient) => Promise<void>) {
   await inTransaction(async (client) => {
     await client.query(
@@ -65,7 +56,6 @@ async function withSettings(run: (db: Db, client: PoolClient) => Promise<void>) 
          ('aras', 'Aras Kargo', 'https://kargo.ornek/{takip}', 0, $1), ('mng', 'MNG Kargo', NULL, 1, $1)`,
       [T0],
     );
-    await client.query("INSERT INTO email_recipients (type, recipients, updated_at) VALUES ('teklif', '{satis@zenweld.com}', $1)", [T0]);
     await run(drizzle(client, { schema }), client);
   });
 }
@@ -80,7 +70,7 @@ const edit = (shop: ShopSettings, patch: Partial<ShopSettings>) => {
 };
 
 describe("Mağaza Ayarları › Kargo ve Ödeme", () => {
-  it("okunur: ayarlar son değişiklik anıyla, POS'lar, hesaplar ve kargo firmaları sırasıyla, e-posta alıcıları", async () => {
+  it("okunur: ayarlar son değişiklik anıyla, POS'lar, hesaplar ve kargo firmaları sırasıyla", async () => {
     await withSettings(async (db) => {
       const data = await readShopPanel(db);
       expect(data.settings?.shop).toMatchObject({
@@ -93,7 +83,6 @@ describe("Mağaza Ayarları › Kargo ve Ödeme", () => {
         ["pos-a", true, undefined],
         ["pos-b", false, "Bonus"],
       ]);
-      expect(data.emailRecipients).toEqual([{ type: "teklif", recipients: ["satis@zenweld.com"], updatedAt: T0.toISOString() }]);
     });
   });
 
@@ -186,58 +175,6 @@ describe("Mağaza Ayarları › Kargo ve Ödeme", () => {
       });
       expect(await adminSaveShopSettings(db, admin, edit(shop, { shippingFee: -5 }), T2)).toEqual({ ok: false, status: 400, error: tr.panel.invalidRequest });
       expect(await audit(client)).toEqual([]);
-    });
-  });
-});
-
-describe("Mağaza Ayarları › E-posta Alıcıları", () => {
-  it("türler veritabanındaki listeyle aynı", () => {
-    expect(EMAIL_RECIPIENT_TYPES.map((t) => t.type).sort()).toEqual([...EMAIL_TYPES].sort());
-  });
-
-  it("eklenir, değişir, boşaltılınca silinir (varsayılan adrese döner); e-posta gönderilirken okunur; işlem kaydına yazılır", async () => {
-    await withSettings(async (db, client) => {
-      const version = `1|${T0.toISOString()}`;
-      const items = [
-        { type: "teklif", recipients: ["Satis@zenweld.com", "teklif@zenweld.com"] },
-        { type: "servis", recipients: ["servis@zenweld.com"] },
-      ];
-      expect(await adminSaveEmailRecipients(db, admin, { items, version }, T1)).toEqual({ ok: true, updatedAt: T1.toISOString() });
-      expect(await emailRecipientsFor(db, "teklif")).toEqual(["satis@zenweld.com", "teklif@zenweld.com"]);
-      expect(await emailRecipientsFor(db, "garanti")).toEqual([]);
-
-      // Ayni ekranla ikinci kayit: liste bu arada degisti.
-      expect(await adminSaveEmailRecipients(db, admin, { items, version }, T2)).toEqual(stale);
-      const next = `2|${T1.toISOString()}`;
-      expect(await adminSaveEmailRecipients(db, admin, { items: [{ type: "teklif", recipients: [] }], version: next }, T2)).toMatchObject({ ok: true });
-      expect(await emailRecipientsFor(db, "teklif")).toEqual([]);
-      // Degisiklik yok: yazilmaz.
-      expect(await adminSaveEmailRecipients(db, admin, { items: [{ type: "servis", recipients: ["servis@zenweld.com"] }], version: `1|${T1.toISOString()}` }, T2)).toEqual({
-        ok: true,
-      });
-
-      expect((await audit(client)).map((r) => [r.action, r.entity_type, r.entity_id, r.changes])).toEqual([
-        ["update", "email_recipients", "teklif", { recipients: [["satis@zenweld.com"], ["satis@zenweld.com", "teklif@zenweld.com"]] }],
-        ["create", "email_recipients", "servis", { recipients: [[], ["servis@zenweld.com"]] }],
-        ["delete", "email_recipients", "teklif", { recipients: [["satis@zenweld.com", "teklif@zenweld.com"], []] }],
-      ]);
-    });
-  });
-
-  it("geçersiz adres, bilinmeyen tür ve aynı tür iki kez reddedilir", async () => {
-    await withSettings(async (db) => {
-      const version = `1|${T0.toISOString()}`;
-      expect(await adminSaveEmailRecipients(db, admin, { items: [{ type: "servis", recipients: ["servis@"] }], version }, T1)).toEqual({
-        ok: false,
-        status: 400,
-        error: 'Servis talebi: "servis@" geçerli bir e-posta adresi değil.',
-      });
-      expect(await adminSaveEmailRecipients(db, admin, { items: [{ type: "sifre-sifirlama", recipients: [] }], version }, T1)).toMatchObject({ status: 400 });
-      const twice = [
-        { type: "servis", recipients: [] },
-        { type: "servis", recipients: [] },
-      ];
-      expect(await adminSaveEmailRecipients(db, admin, { items: twice, version }, T1)).toMatchObject({ status: 400 });
     });
   });
 });

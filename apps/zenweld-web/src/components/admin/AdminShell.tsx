@@ -30,7 +30,7 @@ import {
   Search,
   Settings,
   History,
-  MailCheck,
+  Mail,
   Menu,
   ShieldCheck,
   ShoppingCart,
@@ -111,6 +111,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/yonetim/servis-talepleri", label: "Servis Talepleri", Icon: Wrench },
       { href: "/yonetim/garantiler", label: "Garantiler", Icon: ShieldCheck },
       { href: "/yonetim/mesajlar", label: "Mesajlar", Icon: MessageSquare },
+      { href: "/yonetim/e-posta", label: "E-posta", Icon: Mail },
     ],
   },
   {
@@ -136,7 +137,6 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/yonetim/gorunum", label: "Görünüm", Icon: Palette },
       { href: "/yonetim/islem-kaydi", label: "İşlem Kaydı", Icon: History },
-      { href: "/yonetim/e-posta-kaydi", label: "E-posta Kaydı", Icon: MailCheck },
     ],
   },
 ];

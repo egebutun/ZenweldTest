@@ -3,7 +3,6 @@
 import type {
   AboutContent,
   CompanySettings,
-  EmailRecipient,
   HomeHeroSettings,
   PageSeoFields,
   RichTextStyle,
@@ -99,26 +98,6 @@ export function getCompany(db: ZenweldDatabase = getSnapshot()): CompanySettings
 export function saveCompanySettings(company: CompanySettings): boolean {
   return mutate((db) => {
     db.settings = { ...db.settings, company };
-  });
-}
-
-/* ------------------------------------------------------------------ */
-/* E-posta alicilari (KARARLAR K-104)                                  */
-/* ------------------------------------------------------------------ */
-
-/** Tur basina e-posta alicilari; listede olmayan tur varsayilan adrese gider. */
-export function getEmailRecipients(db: ZenweldDatabase = getSnapshot()): EmailRecipient[] {
-  return db.emailRecipients ?? [];
-}
-
-/**
- * Alicilari kaydeder (alicisi bos tur listeden cikar). Demo modunda e-postayi
- * sunucu gonderdigi ve bu kayit tarayicida kaldigi icin e-postalar yine
- * varsayilan adrese gider; veritabani modunda sunucu email_recipients'i okur.
- */
-export function saveEmailRecipients(list: EmailRecipient[]): boolean {
-  return mutate((db) => {
-    db.emailRecipients = list.filter((r) => r.recipients.length > 0);
   });
 }
 

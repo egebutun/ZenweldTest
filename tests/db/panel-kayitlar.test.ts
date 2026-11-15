@@ -100,7 +100,7 @@ describe("işlem kaydı", () => {
   });
 });
 
-describe("e-posta kaydı", () => {
+describe("e-posta yazışmaları", () => {
   it("en yeni önce; tür, durum, tarih ve alıcı/konu metniyle süzülür; sayfalanır", async () => {
     await inTransaction(async (client) => {
       await email(client, "2001-03-10T09:00:00Z", "teklif", `${P}-1@ornek.com`, "Yeni teklif TKL-1", "sent");
@@ -108,7 +108,7 @@ describe("e-posta kaydı", () => {
       await email(client, "2001-03-12T09:00:00Z", "teklif", `${P}-3@ornek.com`, "Yeni teklif TKL-2", "skipped");
       const db = drizzle(client, { schema });
       const to = async (filter: Parameters<typeof readEmailLog>[1]) =>
-        (await readEmailLog(db, { ...filter, q: filter?.q ?? P })).entries.map((e) => e.recipients[0]);
+        (await readEmailLog(db, { ...filter, q: filter?.q ?? P })).entries.map((e) => e.to[0]);
 
       expect(await to({})).toEqual([`${P}-3@ornek.com`, `${P}-2@ornek.com`, `${P}-1@ornek.com`]);
       expect(await to({ type: "teklif" })).toEqual([`${P}-3@ornek.com`, `${P}-1@ornek.com`]);
@@ -120,7 +120,7 @@ describe("e-posta kaydı", () => {
 
       const page = await readEmailLog(db, { q: P }, 2);
       expect(page.more).toBe(true);
-      expect((await readEmailLog(db, { q: P, before: page.entries[1].id }, 2)).entries.map((e) => e.recipients[0])).toEqual([`${P}-1@ornek.com`]);
+      expect((await readEmailLog(db, { q: P, before: Number(page.entries[1].id) }, 2)).entries.map((e) => e.to[0])).toEqual([`${P}-1@ornek.com`]);
     });
   });
 });

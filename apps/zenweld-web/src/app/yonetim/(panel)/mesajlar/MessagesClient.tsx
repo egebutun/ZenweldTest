@@ -7,6 +7,7 @@ import { listSupportMessages, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Select, Textarea } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
+import { RecordEmails } from "@/components/admin/EmailParts";
 import { ListPager, useListQuery } from "@/components/admin/ListControls";
 import { messageListFilter, messageListPage } from "@/lib/admin-lists";
 import { useRequestActions } from "@/lib/admin-requests";
@@ -28,8 +29,8 @@ const TYPE: Record<SupportMessageRecord["type"], string> = {
  * MESAJLAR (Musteriler ve Servis; KARARLAR K-100)
  *
  * Iletisim formundan ve urun sayfasindaki destek sohbetinden gelen
- * sorular. Durum ve ic not kaydedilir; yanit e-postayla ayrica verilir.
- * Mesaj silinmez.
+ * sorular. Durum ve ic not kaydedilir. Mesajin yazismalari ve "E-posta
+ * gönder" detayin altindadir (KARARLAR K-116). Mesaj silinmez.
  */
 /**
  * page: veritabani modunda sunucunun okudugu sayfa (50); demo modunda
@@ -209,17 +210,12 @@ function MessageDetail({
           <Button size="sm" disabled={actions.pending} onClick={() => void save()}>
             Kaydet
           </Button>
-          {m.email && (
-            <a
-              href={`mailto:${m.email}?subject=${encodeURIComponent(subject)}`}
-              className="text-sm font-semibold text-zw-red-700 hover:underline"
-            >
-              E-posta ile yanıtla
-            </a>
-          )}
           {saved && <span className="text-xs text-emerald-700">Kaydedildi</span>}
         </div>
         {error && <Alert tone="danger">{error}</Alert>}
+      </div>
+      <div className="lg:col-span-2">
+        <RecordEmails emailType={m.type} entity={{ type: "support_messages", id: m.id }} to={m.email} subject={subject} />
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ export * from "./news";
 export * from "./blog";
 export * from "./reviews";
 export * from "./site";
+export * from "./email";
 export * from "./legal";
 export * from "./service";
 export * from "./faqs";

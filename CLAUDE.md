@@ -84,10 +84,10 @@ ilgili belge **aynı commit'te** güncellenir:
     satış hareketleri hiç yüklenmez, hiçbir kayıt silinmez).
   - `npm run yonetici:olustur`: veritabanında yönetici hesabı açar ya da
     yöneticinin şifresini değiştirir (şifre ekranda görünmez).
-  - `npm run site:yenile` / `npm run sap:stok` / `npm run sap:siparis`:
-    çalışan siteyi beklemeden yeniler / SAP depo stoğunu bir kez okutur /
-    sıradaki siparişleri SAP'a gönderir (`REVALIDATE_SECRET` /
-    `CRON_SECRET`).
+  - `npm run site:yenile` / `npm run sap:stok` / `npm run sap:siparis` /
+    `npm run posta:oku`: çalışan siteyi beklemeden yeniler / SAP depo
+    stoğunu bir kez okutur / sıradaki siparişleri SAP'a gönderir / posta
+    kutusunu okutur (`REVALIDATE_SECRET` / `CRON_SECRET`).
 - **Testler:** `tests/unit`, `docs/IS-KURALLARI.md`'deki kuralları ve
   örnekleri dener; `tests/e2e` sitenin ve panelin tarayıcıda çalıştığını
   dener (sayfa taraması, ödeme, seçenekler, filtreler, teklif, belgeler, garanti, hesap, iade, depo stoğu, kupon, ekran genişlikleri, form kayıtları). Bir kural ya da

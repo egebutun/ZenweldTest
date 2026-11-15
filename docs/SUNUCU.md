@@ -53,6 +53,7 @@ olarak tutulur. Panelde, veritabanında, tarayıcıda ya da depoda (GitHub)
 |---|---|---|
 | Veritabanı | PostgreSQL tabloları ve veritabanı modunun bütün kodu hazır; yayındaki site demo modunda | Canlı veritabanı (PostgreSQL 18) ve sunucu; BT ekibi sağlar (K-92) |
 | E-posta (Resend) | Kodu hazır; anahtar tanımlı olmadığı için **bugün hiçbir e-posta gitmiyor** | Resend hesabı, `zenweld.com` DNS doğrulaması, anahtar ve gönderici adresi |
+| Posta kutusu (gelen yanıtlar) | Okuma işi hazır (IMAP ve deneme klasörü; K-116); bağlı posta kutusu yok | info@zenweld.com'un posta sağlayıcısı (BT) ve bağlantı bilgileri; zamanlayıcı |
 | Kartla ödeme | Temsili (para çekilmez); ödeme sağlayıcısı parçası hazır (K-108) | Ödeme kuruluşu ya da banka sanal POS'u |
 | Havale / EFT | Elle onay (panelde "Ödeme Alındı") | Aynı kalabilir; istenirse banka hareketi entegrasyonu |
 | SAP depo stoğu | Okuma işi hazır; SAP yerine deneme dosyasını okuyor | SAP bağlantısı ve zamanlayıcı |
@@ -78,19 +79,22 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 |---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | Yönetici | Sitenin adresi (ör. `https://zenweld.com`). Canonical adresler, site haritası, paylaşım önizlemesi, şifre sıfırlama bağlantısı ve **arama motorlarına açıklık** buna göre belirlenir |
 | `RESEND_API_KEY` | Yönetici (gizli) | E-posta servisi anahtarı; yoksa e-posta gönderilmez |
-| `SUPPORT_EMAIL` | Yönetici | Zenweld'e giden e-postaların varsayılan alıcısı; yoksa `info@zenweld.com`. Veritabanı modunda tür başına panelden değişir; alıcısı yazılmayan tür buraya gider (K-104) |
-| `SUPPORT_FROM` | Yönetici (canlıda zorunlu) | Resend'de doğrulanmış gönderici adresi (ör. `Zenweld Web <web@zenweld.com>`). Yoksa Resend'in deneme adresi (`onboarding@resend.dev`) kullanılır; gerçek kullanım için uygun değildir |
+| `SUPPORT_EMAIL` | Yönetici | Zenweld'e giden e-postaların varsayılan alıcısı; yoksa `info@zenweld.com`. Veritabanı modunda tür başına panelden (E-posta › Adresler) değişir; alıcısı yazılmayan tür buraya gider (K-116) |
+| `SUPPORT_FROM` | Yönetici | Varsayılan gönderici adres; yoksa `SUPPORT_EMAIL` (info@zenweld.com). Veritabanı modunda tür başına panelden değişir. E-postanın "Kimden"i `Zenweld <adres>`'tir. Adresin alan adı (zenweld.com) Resend'de doğrulanmış olmalıdır; doğrulanmamışsa Resend e-postayı reddeder (`failed`) |
+| `IMAP_HOST`, `IMAP_USER`, `IMAP_PASSWORD` | Yönetici (gizli) | Sitenin posta kutusu (K-116; [Posta kutusu](#posta-kutusu)). Üçü de doluysa okunur. İkinci kutu aynı adların sonuna `_2` eklenerek (`IMAP_HOST_2` …) tanımlanır |
+| `IMAP_PORT`, `IMAP_KLASOR` | Yönetici | Posta kutusunun portu (boşsa 993, TLS) ve okunacak klasör (boşsa `INBOX`); ikinci kutuda `_2` ekiyle |
+| `POSTA_KLASORU` | Geliştirici | Posta kutusu bağlanana kadar denemek için: `.eml` dosyalarının ad sırasıyla okunacağı klasör (deneme parçası). Canlıda boş kalır |
 | `NEXT_PUBLIC_MAIN_SITE_URL` | Yönetici (isteğe bağlı) | Panel ileride ayrı bir adrese (ör. `admin.zenweld.com`) taşınırsa ana sitenin adresi; paneldeki "Sayfayı gör" bağlantıları bunu kullanır. Bugün gerekmez |
 | `DATABASE_URL` | Yönetici (gizli) | Veritabanı (PostgreSQL) bağlantı adresi. `npm run db:*` komutları ve `DATA_SOURCE=database` ise site kullanır |
 | `DATA_SOURCE` | Yönetici | Sitenin veri kaynağı (KARARLAR K-88). Boşsa demo modu (veri tarayıcıda). `database` ise veritabanı modu: site, üyelik, siparişler, formlar ve panel veritabanından okur ve yazar ([6](#6-okuma-ve-önbellek)). Derlemede de okunur: değiştirince yeniden derlenir, derleme sırasında veritabanına erişilebilmelidir. Ayar tarayıcı paketine de yazılır (`NEXT_PUBLIC_DATA_SOURCE`, elle tanımlanmaz) |
 | `REVALIDATE_SECRET` | Yönetici (gizli) | Siteyi beklemeden yenileme anahtarı. Tanımlıysa `/api/yenile` ucu açılır; `npm run site:yenile` aynı anahtarla siteyi o anda yeniler. Boşsa uç kapalıdır. Panel ve SAP stok okuma işi siteyi kendi içinden yeniler, bu anahtara ihtiyaç duymaz |
-| `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma (`/api/sap/stok`) ve SAP sipariş aktarımı (`/api/sap/siparis`) uçları açılır; zamanlayıcı, `npm run sap:stok` ve `npm run sap:siparis` bu anahtarla çağırır. Boşsa uçlar kapalıdır |
+| `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma (`/api/sap/stok`), SAP sipariş aktarımı (`/api/sap/siparis`) ve posta kutusu okuma (`/api/posta/oku`) uçları açılır; zamanlayıcı, `npm run sap:stok`, `npm run sap:siparis` ve `npm run posta:oku` bu anahtarla çağırır. Boşsa uçlar kapalıdır |
 | `ODEME_SAGLAYICI` | Yönetici | Kartla ödemenin sağlayıcısı (K-108). Boşsa `temsili` (para çekilmez, sipariş ödenmiş sayılır; K-97). Ödeme kuruluşu bağlanınca onun adı yazılır (ör. `iyzico`); bilinmeyen ad yazılırsa sipariş alınmaz ve sunucu hata verir. Kuruluşun anahtarları ayrı değişkenlerde, yalnızca sunucuda durur |
 | `DOSYA_KLASORU` | Yönetici | Panelde yüklenen görsel ve belgelerin yazıldığı klasör (dosya deposu, K-108). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir; sunucunun yedeğine eklenmeli. Boşsa veritabanı modunda panelde dosya yüklenmez, adres girilir |
 | `SAP_STOK_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar depo stoğunun okunacağı deneme dosyası (CSV; örnek `packages/db/deneme/sap-stok.csv`). Göreli yol sitenin klasörüne göredir. Boşsa ve SAP bağlantısı da yoksa okuma işi çalışmaz |
 | `SAP_SIPARIS_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar SAP'a aktarılan siparişlerin yazılacağı deneme dosyası (her satıra bir sipariş, JSON; K-108). Göreli yol sitenin klasörüne göredir. Boşsa ve SAP bağlantısı da yoksa aktarım işi çalışmaz, siparişler sırada bekler |
 | `NEXT_DIST_DIR` | Otomatik (test) | Derleme klasörü; boşsa `.next`. Yalnızca veritabanı modunun testleri (`npm run test:e2e:db`) `.next-db` kullanır, demo derlemesi bozulmaz |
-| `SITE_URL` | Geliştirici | Yalnızca `npm run site:yenile`, `npm run sap:stok` ve `npm run sap:siparis`: sitenin adresi; boşsa `NEXT_PUBLIC_SITE_URL`, o da boşsa `http://localhost:3000` |
+| `SITE_URL` | Geliştirici | Yalnızca `npm run site:yenile`, `npm run sap:stok`, `npm run sap:siparis` ve `npm run posta:oku`: sitenin adresi; boşsa `NEXT_PUBLIC_SITE_URL`, o da boşsa `http://localhost:3000` |
 | `TEST_DATABASE_URL` | Geliştirici | Yalnızca veritabanı testleri (`npm run test:db`, `test:e2e:db`); her çalıştırmada silinip baştan kurulur, `DATABASE_URL` ile aynı olamaz |
 | `NEXT_PUBLIC_BUILD_TIME` | Otomatik (derleme) | Derleme anı; sunucu çıktısı ile tarayıcının ilk çiziminin aynı anı kullanması için |
 | `VERCEL_ENV`, `VERCEL_PROJECT_PRODUCTION_URL`, `VERCEL_URL` | Otomatik (yalnızca demo, Vercel) | Site adresi tanımlı değilse yedek; önizleme sürümleri her zaman aramaya kapalı. Canlıda yoktur (K-92) |
@@ -117,7 +121,7 @@ her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
   `apps/zenweld-web/src/lib/seo.ts` › `INDEXABLE_HOSTS` listesine eklenmeli
   ([IS-KURALLARI.md › 13](IS-KURALLARI.md#13-linkler-yönlendirme-ve-arama-motorları)).
 
-**Zamanlanmış işler:** İki iş var; ikisi de sitenin ucudur (POST,
+**Zamanlanmış işler:** Üç iş var; üçü de sitenin ucudur (POST,
 `Authorization: Bearer <CRON_SECRET>`). Canlı sunucunun zamanlayıcısına
 (cron) birer satır eklenir (K-92). Sunucu şirket ağına (VPN) bağlıysa SAP
 internete açılmadan okunur ve yazılır.
@@ -140,6 +144,14 @@ internete açılmadan okunur ve yazılır.
    siparişlerin numaralarını döndürür; aktarıcı tanımlı değilse 503.
    Gönderilemeyen sipariş işi durdurmaz, kendi sırasında yeniden denenir;
    deneme hakkı biten sipariş panelde görünür.
+3. **Posta kutusu okuma**, 5 dakikada bir (KARARLAR K-116;
+   [Posta kutusu](#posta-kutusu)):
+
+   `*/5 * * * * curl -fsS -X POST -H "Authorization: Bearer <CRON_SECRET>" https://zenweld.com/api/posta/oku`
+
+   Uç 200 ile kutu başına okunan ve panele alınan e-posta sayısını,
+   okunamayan kutu varsa 502 (hatasıyla), posta kutusu tanımlı değilse 503
+   döndürür.
 
 Henüz zamanlanmamış işler: süresi dolan havaleleri iptal (bugün sayfa
 açılınca çalışır), işlem kaydının 2 yıldan eskisini silme
@@ -222,6 +234,7 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `0012_ayar-anasayfa-tanitim.sql` | `settings.key` `home_hero` değerini de kabul eder (Anasayfa Tanıtım, K-45) |
 | `0013_welders-club-kaldirildi.sql` | Welders Club kaldırıldı: `welders_club_signups` tablosu silinir; `email_recipients` ve `email_log`'daki `welders-club` satırları silinir ve tür listesinden çıkar |
 | `0014_force-bayi.sql` | `dealers.force_dealer` (Force Bayi işareti; Force sayfasındaki harita, K-115). Var olan bayiler işaretsiz gelir |
+| `0015_eposta-bolumu.sql` | Panel › E-posta (K-116): `email_settings` (türün göndericisi ve alıcıları; `email_recipients`'taki satırlar buraya taşınır ve tablo kaldırılır), `email_log`'a yön, gönderen, metin, Message-ID, yanıtlanan e-posta, ekler ve panelden gönderen yönetici; türlere `bulten`; `mailbox_state` |
 
 **Veritabanındaki kurallar** (`0001_kurallar.sql`):
 
@@ -697,11 +710,13 @@ KARARLAR K-81; `src/forms.ts`.
 
 ### E-posta (Resend)
 
-**Ne yapar:** Sitedeki formlar gönderilince Zenweld'e (`info@zenweld.com`)
-e-posta gider. Formlar ve içerikleri:
-[IS-KURALLARI.md › 18](IS-KURALLARI.md#18-form-e-postaları). Veritabanı
-modunda müşteriye de bir e-posta gider: şifre sıfırlama bağlantısı
-([Şifre ve oturum](#şifre-ve-oturum)).
+**Ne yapar:** Sitedeki formlar gönderilince Zenweld'e (varsayılan
+`info@zenweld.com`) e-posta gider. Formlar ve içerikleri:
+[IS-KURALLARI.md › 18](IS-KURALLARI.md#18-e-postalar). Veritabanı modunda
+müşteriye de bir e-posta gider: şifre sıfırlama bağlantısı
+([Şifre ve oturum](#şifre-ve-oturum)). Panelden de e-posta yazılır ve
+yanıtlanır (Panel › E-posta, Servis Talepleri ve Mesajlar'daki E-posta
+gönder; K-116).
 
 **Bugün:** Kurulu değil; `RESEND_API_KEY` hiçbir yerde tanımlı olmadığı
 için **hiçbir e-posta gitmiyor**. Demo adresinde form yine "gönderildi"
@@ -725,18 +740,35 @@ girilir ([2](#2-ortam-değişkenleri)).
     `apps/zenweld-web/src/lib/server/notify.ts`.
 - Sunucu e-postayı Resend'in API'sine (`https://api.resend.com/emails`)
   gönderir.
-- **Alıcı** (`apps/zenweld-web/src/lib/server/mail.ts` › `recipientsFor`):
-  veritabanı modunda her e-postada türün `email_recipients` satırı okunur
-  (`emailRecipientsFor`); satır yoksa ya da okunamazsa `SUPPORT_EMAIL`.
-  `email_log.recipients` gerçek alıcılardır.
-- **E-posta kaydı** (veritabanı modu, KARARLAR K-81): sunucunun gönderdiği
-  her e-posta `email_log`'a yazılır (`logEmail`): tür, sayfa (`Referer`'dan,
-  aynı siteden geliyorsa), bağlı kayıt, alıcı, yanıt adresi, konu, sonuç
-  (`sent`; servis hatasında `failed`; anahtar yoksa ya da bot tuzağında
-  `skipped`), servisin verdiği numara ve hata. Metin yazılmaz. Kayıt
-  yazılamazsa e-posta yine gider.
-- E-posta HTML'dir: başlık, alan tablosu ve varsa uzun metin. Formdan gelen
-  her metin HTML'e zararsız hale getirilerek yazılır.
+- **Gönderici ve alıcı** (`apps/zenweld-web/src/lib/server/mail.ts` ›
+  `addressesFor`): veritabanı modunda her e-postada türün `email_settings`
+  satırı okunur (`emailSettingFor`); gönderici yoksa `SUPPORT_FROM` (o da
+  yoksa `SUPPORT_EMAIL`), alıcı yoksa `SUPPORT_EMAIL`. Satır okunamazsa
+  varsayılanlar kullanılır. "Kimden": `Zenweld <gönderici>`.
+- **Yazışmalar** (veritabanı modu, KARARLAR K-81, K-116): sunucunun
+  gönderdiği her e-posta metniyle `email_log`'a yazılır (`logEmail`): tür,
+  sayfa (`Referer`'dan, aynı siteden geliyorsa), bağlı kayıt, gönderen,
+  alıcı, yanıt adresi, konu, düz metin, sonuç (`sent`; servis hatasında
+  `failed`; anahtar yoksa ya da bot tuzağında `skipped`), servisin verdiği
+  numara, e-postaya verilen Message-ID ve hata. Kayıt yazılamazsa e-posta
+  yine gider.
+- Form bildirimi HTML ve düz metindir: başlık, alan tablosu ve varsa uzun
+  metin. Formdan gelen her metin HTML'e zararsız hale getirilerek yazılır;
+  düz metin `packages/data` › `email.ts` › `notificationText` ile
+  ("Alan: değer" satırları) üretilir ve saklanan metin odur.
+- **Panelden yazılan e-posta** (`POST /api/yonetim/eposta/gonder`,
+  `sendPanelMail`): turün göndericisinden düz metin olarak gider; yazan
+  yönetici (`actor_user_id`, `actor_name`) ve varsa yanıtlanan e-posta
+  (`parent_id`) kaydedilir; işlem kaydına `email_log` olarak yazılır.
+  Yanıtlanan e-postanın Message-ID'si varsa `In-Reply-To` ve `References`
+  başlıkları eklenir (alıcının e-posta programı yazışmayı bir arada
+  gösterir).
+- **Message-ID:** Site her e-postaya kendi Message-ID'sini verir
+  (`<rastgele@gönderici-alan-adı>`); gelen yanıt bu başlığı taşıyorsa
+  yazışmaya bağlanır. Resend'in bu başlığı değiştirip değiştirmediği
+  canlıda ilk e-postada denetlenir ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›
+  E-posta); değiştiriyorsa yanıtlar konu ve kayıt numarasıyla yine
+  eşleşir.
 - **Yanıtla** denince yanıt formu doldurana gider (geçerli e-posta varsa).
 
 **Uçların yanıtı:** `{ ok, delivered, demo }`
@@ -784,6 +816,62 @@ girilir ([2](#2-ortam-değişkenleri)).
 Kod: `apps/zenweld-web/src/lib/server/mail.ts`,
 `apps/zenweld-web/src/app/api/`, `apps/zenweld-web/src/lib/notify.ts`,
 `apps/zenweld-web/src/components/common/BotTrap.tsx`.
+
+### Posta kutusu
+
+KARARLAR K-108'deki gibi değiştirilebilir parça; K-116;
+`packages/db/src/mailbox.ts`, `packages/db/src/emails.ts`.
+
+- **Ne yapar:** Sitenin posta kutularını okur; sitenin e-postasına yanıt
+  olan ya da kayıt numarası taşıyan yeni e-postaları Panel › E-posta'ya
+  alır (`email_log`, `direction = 'in'`, `status = 'received'`). Gerisi
+  posta kutusunda kalır. Okunan e-posta kutuda olduğu gibi kalır (okundu
+  işaretlenmez, silinmez, taşınmaz); kutu salt okunur açılır.
+- **Ne zaman:** Zamanlanmış iş 5 dakikada bir ([3](#3-barındırma-zamanlanmış-işler-ve-güvenlik-başlıkları));
+  panelde **Şimdi oku** (`POST /api/yonetim/eposta/oku`, yönetici oturumu);
+  elle `npm run posta:oku`.
+- **Kaynaklar** (`mailboxSourcesFromEnv`): sunucudaki ortam
+  değişkenlerinden kurulur; bağlantı bilgileri panelde, veride ve
+  tarayıcıda durmaz.
+  - **IMAP** (ilk parça; `imapflow`): `IMAP_HOST`, `IMAP_USER`,
+    `IMAP_PASSWORD`, `IMAP_PORT` (993), `IMAP_KLASOR` (`INBOX`); ikinci ve
+    sonraki kutular `_2`, `_3` … ekiyle. Kullanıcı adı ve şifreyle girer.
+    Microsoft 365 ve Google Workspace şifreyle IMAP'e çoğu zaman izin
+    vermez (Google'da uygulama şifresi gerekir, Microsoft 365'te OAuth);
+    sağlayıcı BT'den öğrenilince gerekirse o sağlayıcının parçası
+    (Microsoft Graph ya da Gmail API) eklenir
+    ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Şirketten öğrenilecekler).
+  - **Klasör** (deneme parçası): `POSTA_KLASORU`'ndeki `.eml` dosyaları ad
+    sırasıyla.
+- **Okuma yeri** (`mailbox_state`): kutu başına en son okunan e-postanın
+  sıra numarası (IMAP UID) ve kutunun numaralama dönemi (UIDVALIDITY).
+  İlk okumada ya da dönem değişince son 7 günün e-postası okunur; bir
+  okumada kutu başına en fazla 200 e-posta (kalanı bir sonrakinde). Kutu
+  okunamazsa hatası `mailbox_state.last_error`'a yazılır, panelde görünür;
+  diğer kutular okunmaya devam eder.
+- **Çözme** (`parseRawEmail`; `mailparser`): konu, gönderen, Kime ve Bilgi,
+  düz metin (yalnızca HTML varsa HTML'den çevrilir), `In-Reply-To`,
+  `References`, Message-ID, eklerin adları (metnin içindeki görseller,
+  ör. imza logosu, ek sayılmaz). Ekler kaydedilmez; posta kutusunda kalır.
+- **Eşleştirme** (`importIncomingEmail`), sırayla:
+  1. `In-Reply-To` / `References` sitenin gönderdiği bir e-postanın
+     Message-ID'sini gösteriyorsa onun türü, kaydı ve `parent_id`'si;
+  2. gönderen, sitenin son 180 günde e-posta gönderdiği bir adresse ve
+     konu ("Re:", "YNT:", "Fwd:", "İlt:" gibi ekler ve boşluklar atılınca,
+     küçük harfle) o e-postanın konusuyla aynıysa onun türü ve kaydı;
+  3. konuda, yoksa metinde geçen kayıt numarası (`SIP-`, `IAD-`, `TKL-`,
+     `SRV-`; IS-KURALLARI › Kayıt numaraları) var olan bir kaydınsa o
+     kaydın türü ve kaydı.
+  Hiçbiri değilse e-posta alınmaz. Gönderen sitenin kendi adreslerinden
+  biriyse (varsayılan gönderici ve alıcı, panelde yazılı göndericiler)
+  alınmaz: sitenin info@'ya giden bildirimleri de aynı kutuya düşer. Aynı
+  Message-ID ikinci kez alınmaz (`email_log_incoming` benzersiz dizini).
+- Test: `tests/db/eposta.test.ts` (adresler, yazışmalar, eşleştirme
+  kuralları, klasörden okuma ve okuma yeri, IMAP ayarlarının okunması);
+  `tests/unit/eposta.test.ts` (adres, e-posta ve konu kuralları, kayıt
+  numarası bulma); `tests/e2e-db/eposta.spec.ts` (tarayıcıda: adresler,
+  yanıt, **Şimdi oku** ile gelen yanıt, talebin yazışmaları, oturumsuz
+  istek ve anahtarsız zamanlanmış okuma).
 
 ---
 
@@ -1157,15 +1245,15 @@ eşleşme kuralları: [STOK.md](STOK.md).
 
 ### Mağaza Ayarları
 
-5. alan; KARARLAR K-104, K-105; `src/admin-settings.ts`.
+5. alan; KARARLAR K-105; `src/admin-settings.ts`.
 
 - **Okuma:** `readShopPanel(db)`: ayarlar (`readSettings`; mağaza ve
   şirket ayarlarının `settings('shop'|'company').updated_at`'iyle; şirket
-  satırı yoksa başlangıç değerleri) ve `email_recipients`.
+  satırı yoksa başlangıç değerleri).
 - **Yazma:** `POST /api/yonetim/ayarlar/<işlem>`
   (`apps/zenweld-web/src/app/api/yonetim/ayarlar/[islem]/route.ts`):
-  `magaza` (Kargo ve Ödeme sekmesi), `eposta-alicilari`, `sirket` (Şirket
-  ve İletişim sekmesi), `gorunum` (aşağıda › Sayfalar ve Görünüm).
+  `magaza` (Kargo ve Ödeme sekmesi), `sirket` (Şirket ve İletişim
+  sekmesi), `gorunum` (aşağıda › Sayfalar ve Görünüm), `tanitim`.
 - **Kargo ve Ödeme:** Tek kayıt gibi kaydedilir; eski ekran denetimi
   `settings('shop').updated_at`'iyle (her kayıtta güncellenir), aynı anda
   iki kayıt `pg_advisory_xact_lock('settings:shop')` ile sıraya girer.
@@ -1195,26 +1283,17 @@ eşleşme kuralları: [STOK.md](STOK.md).
   bağımsız karşılaştırılır; değişmeyen kayıt yazılmaz. `audit_log`:
   `settings` / `company`. Ardından `refreshSite(["katalog"])` (alt bilgi,
   İletişim, sözleşmeler ayarları katalogla birlikte okur).
-- **E-posta Alıcıları:** `email_recipients`; tür başına en fazla 10 adres
-  (küçük harf, tekrarsız; `parseRecipients`). Eski ekran denetimi listenin
-  hali üzerinden (`recipientsVersion`: satır sayısı ve en son
-  `updated_at`), sıra `pg_advisory_xact_lock('email_recipients')` ile.
-  Alıcısı boşalan türün satırı silinir. `audit_log`: `email_recipients` /
-  `<tür>`, `{ recipients: [eski, yeni] }`. Önbelleğe girmez.
 - Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-settings.ts`
   (`useSettingsActions`).
 - Test: `tests/db/panel-ayarlar.test.ts` (okuma; kaydetme: varsayılan
   POS'un silinen ve kalan POS'a geçmesi, hesap ekleme/çıkarma, kargo
   firmalarının ad eşleşmesi, takip adresinin korunması, girilmesi,
   silinmesi ve kuralı, işlem kaydı; eski ekran, değişmeyen kayıt, kural
-  ihlalleri; e-posta alıcıları: türlerin şemayla aynı olması, ekleme,
-  değiştirme, boşaltma, e-postada okunma, eski ekran, geçersiz adres ve
-  tür; şirket ve iletişim: satır yokken başlangıç değerleri, ilk kayıt,
+  ihlalleri; şirket ve iletişim: satır yokken başlangıç değerleri, ilk kayıt,
   değişiklik, ofis sırası, eski ekran, değişmeyen kayıt, kural ihlali);
   `tests/unit/magaza-ayarlari.test.ts` (kurallar, takip bağlantısı);
   `tests/e2e-db/panel-ayarlar.spec.ts` (tarayıcıda: kargo ücretinin sitede
-  hemen geçerli olması ve geri alınması, iletişim formu alıcısının e-posta
-  kaydına yazılması, oturumsuz istek); `tests/e2e-db/panel-sirket.spec.ts`
+  hemen geçerli olması ve geri alınması, oturumsuz istek); `tests/e2e-db/panel-sirket.spec.ts`
   (MERSİS no sözleşmede ve telefon alt bilgide hemen görünür; kargo takip
   adresi girilince müşteri ve panel sipariş detayında bağlantı; oturumsuz
   istek).
@@ -1362,30 +1441,47 @@ Yasal Metinler, Belgeler, Sayfa SEO ve Görünüm; 5. alan; KARARLAR K-104;
   alma ve sitede giriş, aktifleştirme, silme, kendi satırı, oturumsuz
   istek).
 
-### İşlem Kaydı ve E-posta Kaydı
+### İşlem Kaydı ve E-posta
 
-6. alan; KARARLAR K-81, K-98; `src/admin-logs.ts`. Demo modunda bu
-ekranlar boştur (K-109).
+6. alan; KARARLAR K-81, K-98, K-116; `src/admin-logs.ts`, `src/emails.ts`.
+Demo modunda İşlem Kaydı boştur (K-109); E-posta tarayıcıdaki
+yazışmaları gösterir.
 
-- Yalnızca okur: `readAuditLog` (`audit_log`), `auditLogFacets` (kayıtta
-  geçen türler ve yöneticiler; yöneticinin son kayıttaki adı),
-  `readEmailLog` (`email_log`). Sunucu sayfaları
-  (`app/yonetim/(panel)/islem-kaydi/page.tsx`, `e-posta-kaydi/page.tsx`)
-  süzgeçleri adresten okur (`tur`, `yonetici`, `islem`, `durum`,
-  `baslangic`, `bitis`, `ara`, `once`); geçerli panel oturumu yoksa sayfa
-  gönderilmez.
+- İşlem Kaydı yalnızca okur: `readAuditLog` (`audit_log`),
+  `auditLogFacets` (kayıtta geçen türler ve yöneticiler; yöneticinin son
+  kayıttaki adı). E-posta › Yazışmalar: `readEmailLog` (`email_log`; tür,
+  giden/gelen, durum, tarih, metin), E-posta › Adresler:
+  `readEmailSettings`; posta kutularının son okuması: `readMailboxStates`.
+  Sunucu sayfaları (`app/yonetim/(panel)/islem-kaydi/page.tsx`,
+  `e-posta/page.tsx`) süzgeçleri adresten okur (`tur`, `yonetici`, `islem`,
+  `durum`, `yon`, `sekme`, `baslangic`, `bitis`, `ara`, `once`); geçerli
+  panel oturumu yoksa sayfa gönderilmez.
+- E-posta yazma uçları: `POST /api/yonetim/eposta/<işlem>`
+  (`apps/zenweld-web/src/app/api/yonetim/eposta/[islem]/route.ts`):
+  `adresler` (`adminSaveEmailSettings`: gönderici tek adres, alıcılar en
+  fazla 10; yalnızca müşteriye giden türde alıcı alınmaz; eski ekran
+  denetimi listenin hali üzerinden — `emailSettingsVersion`: satır sayısı
+  ve en son `updated_at` —, sıra
+  `pg_advisory_xact_lock('email_settings')` ile; gönderici ve alıcı
+  boşalınca satır silinir; `audit_log`: `email_settings` / `<tür>`),
+  `gonder` (yukarıda › Panelden yazılan e-posta), `oku` (posta kutusu).
+  `GET /api/yonetim/eposta/kayit?tur=<tablo>&id=<kimlik>&eposta=<tür>`:
+  kaydın yazışmaları (`readEntityEmails`) ve türün göndericisi; Servis
+  Talepleri ve Mesajlar ekranları kullanır. Her uç yönetici oturumu ister.
 - En yeni önce (`id` azalan), sayfa başına 50; bir fazlası okunup "daha
   eski var mı" bulunur. Sonraki sayfa: `id < once`.
 - Tarih süzgeci Türkiye günüdür (UTC+3): başlangıç gününün 00:00'ından
   bitiş gününün ertesi 00:00'ına kadar. Geçersiz tarih yok sayılır.
 - Metin araması `ILIKE` ile; `%` ve `_` harfiyen aranır. İşlem kaydında
-  kaydın adı, numarası ve yöneticinin adında; e-posta kaydında alıcılar,
-  yanıt adresi, konu ve kayıt numarasında.
-- Dizinler: `audit_log_at`, `audit_log_entity`, `email_log_type`.
+  kaydın adı, numarası ve yöneticinin adında; yazışmalarda alıcılar,
+  gönderen, yanıt adresi, konu, kayıt numarası ve metinde.
+- Dizinler: `audit_log_at`, `audit_log_entity`, `email_log_type`,
+  `email_log_entity`, `email_log_message`.
 - Test: `tests/db/panel-kayitlar.test.ts` (sıra, süzgeçler, Türkiye günü,
   `%`/`_`, sayfalama, süzgeç seçenekleri);
   `tests/e2e-db/panel-kayitlar.spec.ts` (menü, girişin kayıtta görünmesi,
-  süzgeç adreste, e-posta kaydı satırı, oturumsuz açılmama).
+  süzgeç adreste, oturumsuz açılmama); E-posta: [Posta kutusu](#posta-kutusu)
+  › Test.
 
 ### Panel ana sayfası
 
@@ -1664,6 +1760,7 @@ Dışarıya bağlanmayan, sitenin içinde çalışan başlıca kütüphaneler:
 | Vitest | İş kuralları testleri; yalnızca geliştirirken çalışır, siteye girmez |
 | Playwright | Tarayıcı testleri; yalnızca geliştirirken çalışır, siteye girmez |
 | @node-rs/argon2 | Şifre özeti (argon2id); yalnızca sunucuda (`packages/auth/src/server`) |
+| imapflow, mailparser | Posta kutusunu okuma (IMAP) ve e-postayı çözme; yalnızca sunucuda (`packages/db/src/mailbox.ts`; K-116) |
 | Drizzle ORM, pg | Veritabanı tabloları ve bağlantısı (`packages/db`); `npm run db:*` komutları, veritabanı testleri ve veritabanı modundaki site kullanır |
 | drizzle-kit, tsx | Geçiş betiklerini üretme, tablo görüntüleyici (`npm run db:studio`) ve komutları çalıştırma; yalnızca geliştirirken çalışır, siteye girmez |
 
@@ -1683,9 +1780,10 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | **SAP Business One (satış siparişi)** | Aktarım sırası ve iş hazır, SAP yerine deneme dosyasına yazıyor (`/api/sap/siparis`, `SAP_SIPARIS_DOSYASI`, `sap_order_exports`; K-108). Panelde sipariş detayında SAP Aktarımı kutusu | Siparişi SAP'a satış siparişi olarak yazan aktarıcı parça (KARARLAR K-84; `packages/db/src/sap-orders.ts` › `SapOrderExporter`). SAP'ın sipariş API'si (ör. `SALES_ORDER`), cari, KDV, kargo, kupon ve vade farkının SAP'ta nasıl yazılacağı ve bağlantı bilgileri SAP ekibinden gelecek ([YAPILACAKLAR.md › Şirketten öğrenilecekler](YAPILACAKLAR.md#3-şirketten-öğrenilecekler-kişiye-göre) › SAP danışmanı); bilgiler yalnızca sunucuda ortam değişkeni olur. Zamanlayıcının seçilen sunucuda kurulması. SAP'a geçmiş siparişin iptali ve iadesi ayrıca konuşulur |
 | **Dosya deposu** | Demo modunda görseller kaydın içinde, belgeler tarayıcıda. Veritabanı modunda dosya deposu parçası hazır (K-108): `DOSYA_KLASORU` ayarlıysa panelde görsel ve belge sunucunun diskine yüklenir, `/dosya/…` adresinden sunulur; ayarlı değilse adres girilir (K-101, K-104) | Deponun yeri ve yedeği BT ile kesinleşir (sunucunun diski ya da S3 uyumlu nesne deposu). Nesne deposu seçilirse onun parçası eklenir (`packages/db/src/file-storage.ts` › `FileStorage`). Kullanılmayan dosyaların temizliği |
 | **Ödeme kuruluşu** | Temsili (para çekilmez) | [Kartla ödeme](#kartla-ödeme) › Canlı için gerekenler |
-| **E-posta servisi** | Kodu hazır; anahtar yok, hiçbir e-posta gitmiyor | Resend kurulumu ([9](#9-formlar-ve-e-posta)); şifre sıfırlama e-postası da buna bağlı |
+| **E-posta servisi** | Kodu hazır; anahtar yok, hiçbir e-posta gitmiyor | Resend kurulumu ve `zenweld.com`'un doğrulanması ([9](#9-formlar-ve-e-posta)); şifre sıfırlama ve panelden yazılan e-postalar da buna bağlı |
+| **Posta kutusu** | Okuma işi hazır (IMAP, deneme klasörü); bağlı kutu yok | info@zenweld.com'un sağlayıcısı (BT); IMAP bilgileri ya da sağlayıcının parçası (Microsoft Graph, Gmail API); zamanlayıcı ([Posta kutusu](#posta-kutusu)) |
 | **Müşteriye e-posta** | Yalnızca şifre sıfırlama (veritabanı modu) | Sipariş onayı ve sözleşme kopyası (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi |
-| **Bülten** | Kayıt kutusu var, hiçbir yere gitmez | Bülten servisi seçilip bağlanmalı |
+| **Bülten** | Kayıt kutusu var, hiçbir yere gitmez; Panel › E-posta'da Bülten sekmesi (adresler) var | Abone listesi (sıradaki adım), İYS kaydı ve abonelikten çıkma bağlantısı; kampanya e-postası |
 | **Analitik** (ziyaret, dönüşüm, sepette bırakılan) | Yok | Google Analytics vb.; çerez onayına bağlı yüklenmeli ve adresleri güvenlik politikasına (CSP) eklenmeli. Çerez ayarları penceresine analiz/pazarlama kategorileri eklenmeli |
 | **e-Arşiv / e-Fatura** | Yok | Muhasebe yazılımı ya da entegratör |
 | **Kargo** | Takip numarası elle girilir; firmaya takip sayfasının adresi girilince müşteri ve panelde takip bağlantısı (`carriers.tracking_url`, KARARLAR K-105) | İsteğe bağlı, firma API verirse: etiket oluşturma, durum ve teslim bilgisinin firmadan okunması; firma başına sunucuda bağlantı parçası, anahtar ortam değişkeninde ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Online satış 8) |

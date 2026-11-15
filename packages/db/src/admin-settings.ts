@@ -1,7 +1,6 @@
-import { asc, eq, inArray, sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import {
   COMPANY_SOCIAL_KEYS,
-  EMAIL_RECIPIENT_TYPES,
   RICH_TEXT_COLORS,
   RICH_TEXT_LIMITS,
   bankAccountKey,
@@ -11,14 +10,11 @@ import {
   heroKey,
   parseCompanySettings,
   parseHomeHero,
-  parseRecipients,
   parseShopSettings,
   posKey,
-  recipientsVersion,
   richTextStyleError,
   type Carrier,
   type CompanySettings,
-  type EmailRecipient,
   type HomeHeroSettings,
   type RichTextStyle,
   type ShopSettings,
@@ -27,22 +23,20 @@ import {
 import { tr } from "@zenweld/i18n";
 import { changedFields, writeAudit, type Actor, type AuditChanges, type AuditDb } from "./audit";
 import { fail, newId, saved, unchanged, type PanelResult, type Saved } from "./panel";
-import { readSettings, type ReadDb } from "./read";
+import { readSettings } from "./read";
 import * as s from "./schema";
 
 /**
  * PANEL › MAGAZA AYARLARI SUNUCUDA (Asama 5, 5. alan, adim 5.1 ve 5.3; KARARLAR
  * K-99, K-104, K-105)
  *
- * Mağaza Ayarları'nin uc sekmesi:
+ * Mağaza Ayarları'nin iki sekmesi (e-posta adresleri Panel › E-posta'dadir:
+ * emails.ts):
  * - Genel: kargo sinir ve ucreti, kargo firmalari (takip adresleriyle),
  *   taksit alt siniri, banka POS'lari, havale hesaplari ve odeme suresi.
  *   Tek kayit gibi kaydedilir; "ekran acildiktan sonra degisti mi"
  *   settings('shop') satirinin updated_at'iyle denetlenir. POS'un API
  *   anahtari ve sifresi burada yoktur (CLAUDE.md › Guvenlik).
- * - E-posta Alicilari: Zenweld'e giden her e-posta turunun alicilari
- *   (email_recipients). Satiri olmayan tur varsayilan adrese
- *   (SUPPORT_EMAIL) gider.
  * - Şirket ve İletişim: unvan, MERSIS no, telefon, e-posta, ofisler ve
  *   sosyal medya; tek kayit, settings('company') satiri (adim 5.3, K-105).
  *
@@ -65,14 +59,9 @@ const lock = (db: AuditDb, name: string) => db.execute(sql`select pg_advisory_xa
 
 /* ------------------------------ Okuma ------------------------------ */
 
-async function readRecipients(db: ReadDb): Promise<EmailRecipient[]> {
-  const rows = await db.select().from(s.emailRecipients).orderBy(asc(s.emailRecipients.type));
-  return rows.map((r) => ({ type: r.type, recipients: r.recipients, updatedAt: iso(r.updatedAt) }));
-}
-
 /**
  * Mağaza Ayarları ekraninin verisi: ayarlar (magaza ve sirket ayarlarinin
- * son degisiklik anlariyla) ve e-posta alicilari. Sirket satiri yoksa
+ * son degisiklik anlariyla). Sirket satiri yoksa
  * baslangic degerleri gosterilir.
  */
 export async function readShopPanel(db: AuditDb): Promise<Partial<ZenweldDatabase>> {
@@ -88,14 +77,7 @@ export async function readShopPanel(db: AuditDb): Promise<Partial<ZenweldDatabas
       shop: { ...settings.shop, ...stamp("shop") },
       company: { ...(settings.company ?? defaultSettings.company), ...stamp("company") },
     },
-    emailRecipients: await readRecipients(db),
   };
-}
-
-/** E-posta gonderilirken: turun alicilari; satiri yoksa bos (varsayilan adrese gider). */
-export async function emailRecipientsFor(db: ReadDb, type: string): Promise<string[]> {
-  const [row] = await db.select({ recipients: s.emailRecipients.recipients }).from(s.emailRecipients).where(eq(s.emailRecipients.type, type));
-  return row?.recipients ?? [];
 }
 
 /* ------------------------------ Genel ------------------------------ */
@@ -253,61 +235,6 @@ export async function adminSaveCompany(db: AuditDb, actor: Actor, input: Input, 
     at,
   );
   return saved(at);
-}
-
-/* ------------------------------ E-posta alicilari ------------------------------ */
-
-const RECIPIENT_TYPES: readonly string[] = EMAIL_RECIPIENT_TYPES.map((t) => t.type);
-const labelOf = (type: string) => EMAIL_RECIPIENT_TYPES.find((t) => t.type === type)?.label ?? type;
-
-/**
- * E-posta alicilarini kaydeder. input: { items: [{ type, recipients }],
- * version }. version: ekranin gordugu listenin hali (recipientsVersion);
- * bu arada baska yonetici kaydettiyse 409. Alicisi bos tur silinir
- * (varsayilan adrese gider). Listede olmayan tur degismez.
- */
-export async function adminSaveEmailRecipients(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<Saved>> {
-  if (!Array.isArray(input.items) || input.items.length > RECIPIENT_TYPES.length) return invalid();
-  const items: { type: string; recipients: string[] }[] = [];
-  for (const item of input.items as unknown[]) {
-    const { type, recipients } = (item ?? {}) as Record<string, unknown>;
-    if (typeof type !== "string" || !RECIPIENT_TYPES.includes(type) || items.some((i) => i.type === type)) return invalid();
-    if (!Array.isArray(recipients) || !recipients.every((r) => typeof r === "string")) return invalid();
-    const parsed = parseRecipients(recipients.join(" "));
-    if (!parsed.ok) return fail(400, `${labelOf(type)}: ${parsed.error}`);
-    items.push({ type, recipients: parsed.value });
-  }
-
-  await lock(db, "email_recipients");
-  const current = await readRecipients(db);
-  if (recipientsVersion(current) !== input.version) return fail(409, stale);
-
-  let changed = false;
-  for (const { type, recipients } of items) {
-    const before = current.find((r) => r.type === type)?.recipients ?? [];
-    if (JSON.stringify(before) === JSON.stringify(recipients)) continue;
-    changed = true;
-    if (!recipients.length) await db.delete(s.emailRecipients).where(eq(s.emailRecipients.type, type));
-    else {
-      await db
-        .insert(s.emailRecipients)
-        .values({ type, recipients, updatedAt: at })
-        .onConflictDoUpdate({ target: s.emailRecipients.type, set: { recipients, updatedAt: at } });
-    }
-    await writeAudit(
-      db,
-      actor,
-      {
-        action: !before.length ? "create" : recipients.length ? "update" : "delete",
-        entityType: "email_recipients",
-        entityId: type,
-        entityLabel: `E-posta alıcıları: ${labelOf(type)}`,
-        changes: { recipients: [before, recipients] },
-      },
-      at,
-    );
-  }
-  return changed ? saved(at) : { ok: true };
 }
 
 /* ------------------------------ Gorunum ------------------------------ */

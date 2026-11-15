@@ -2,18 +2,9 @@
 
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import {
-  EMAIL_RECIPIENT_TYPES,
-  parseRecipients,
-  parseShopSettings,
-  recipientsVersion,
-  shopKey,
-  type BankAccount,
-  type EmailRecipient,
-  type ShopSettings,
-} from "@zenweld/data";
+import { parseShopSettings, shopKey, type BankAccount, type ShopSettings } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
-import { getEmailRecipients, getShopSettings, uid, useDatabase } from "@zenweld/store";
+import { getShopSettings, uid, useDatabase } from "@zenweld/store";
 import { Button, FormRow, Input, Tabs } from "@zenweld/ui";
 import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
 import { PaymentPosSettings } from "@/components/admin/PaymentPosSettings";
@@ -23,33 +14,30 @@ import { CompanySettingsForm } from "./CompanySettingsForm";
 import { SaveBar } from "./SaveBar";
 
 /**
- * MAGAZA AYARLARI — uc sekme:
+ * MAGAZA AYARLARI — iki sekme (e-posta adresleri Panel › E-posta'dadir;
+ * KARARLAR K-116):
  * - Kargo ve Ödeme: kargo (firmalar ve takip adresleri: CarrierSettings),
  *   taksit ve havale/EFT. Kartla taksit banka POS'u bazindadir: her POS'un
  *   musteriye sunulan taksitleri (vade farki) ve firma taksit oranlari
  *   (banka komisyonu) ayridir (bkz. components/admin/PaymentPosSettings.tsx).
- * - E-posta Alıcıları: Zenweld'e giden her e-posta turunun alicilari
- *   (KARARLAR K-104).
  * - Şirket ve İletişim: unvan, MERSIS no, telefon, e-posta, ofisler, sosyal
  *   medya (CompanySettingsForm; KARARLAR K-105).
  *
  * Veritabani modunda kayit sunucuya gider (lib/admin-settings.ts); kurallar
  * tarayici ve sunucuda ortak (packages/data › settings-rules.ts).
- * defaultRecipient: alicisi yazilmayan turun gittigi adres (SUPPORT_EMAIL).
  */
-export function ShopSettingsClient({ defaultRecipient }: { defaultRecipient: string }) {
-  const [tab, setTab] = useState<"genel" | "eposta" | "sirket">("genel");
+export function ShopSettingsClient() {
+  const [tab, setTab] = useState<"genel" | "sirket">("genel");
   return (
     <>
       <AdminPageHeader
         title="Mağaza Ayarları"
-        description="Online satışta kargo ücreti, taksit seçenekleri, havale/EFT hesapları, Zenweld'e giden e-postaların alıcıları ve şirketin iletişim bilgileri."
+        description="Online satışta kargo ücreti, taksit seçenekleri, havale/EFT hesapları ve şirketin iletişim bilgileri."
       />
       <Tabs
         className="mb-6"
         tabs={[
           { id: "genel", label: "Kargo ve Ödeme" },
-          { id: "eposta", label: "E-posta Alıcıları" },
           { id: "sirket", label: "Şirket ve İletişim" },
         ]}
         active={tab}
@@ -58,9 +46,6 @@ export function ShopSettingsClient({ defaultRecipient }: { defaultRecipient: str
       {/* Sekmeler acik kalir; sekme degisince kaydedilmemis degisiklik kaybolmaz. */}
       <div hidden={tab !== "genel"}>
         <ShopGeneral />
-      </div>
-      <div hidden={tab !== "eposta"}>
-        <EmailRecipients defaultRecipient={defaultRecipient} />
       </div>
       <div hidden={tab !== "sirket"}>
         <CompanySettingsForm />
@@ -232,91 +217,6 @@ function ShopGeneral() {
           </Button>
         </AdminCard>
       </div>
-    </>
-  );
-}
-
-/** Turun alicilari, kutuda gorundugu haliyle (virgulle ayrilmis). */
-const recipientTexts = (list: EmailRecipient[]) =>
-  Object.fromEntries(
-    EMAIL_RECIPIENT_TYPES.map((t) => [t.type, (list.find((r) => r.type === t.type)?.recipients ?? []).join(", ")]),
-  ) as Record<string, string>;
-
-function EmailRecipients({ defaultRecipient }: { defaultRecipient: string }) {
-  const db = useDatabase();
-  const actions = useSettingsActions();
-  const stored = getEmailRecipients(db);
-  const [texts, setTexts] = useState(() => recipientTexts(stored));
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Alicilar baska yerde kaydedilirse form yenilenir; kaydedilmemis degisiklik korunur.
-  const storedKey = JSON.stringify(recipientTexts(stored));
-  const formKey = JSON.stringify(texts);
-  const [syncedKey, setSyncedKey] = useState(storedKey);
-  if (syncedKey !== storedKey) {
-    setSyncedKey(storedKey);
-    if (formKey === syncedKey) setTexts(recipientTexts(stored));
-  }
-
-  const save = async () => {
-    const items: EmailRecipient[] = [];
-    for (const t of EMAIL_RECIPIENT_TYPES) {
-      const parsed = parseRecipients(texts[t.type] ?? "");
-      if (!parsed.ok) return setError(`${t.label}: ${parsed.error}`);
-      items.push({ type: t.type, recipients: parsed.value });
-    }
-    setError(null);
-    const answer = await actions.saveEmailRecipients(items, recipientsVersion(stored));
-    if (!answer.ok) return setError(answer.error);
-    setTexts(recipientTexts(items));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
-  };
-
-  return (
-    <>
-      <SaveBar
-        onSave={() => void save()}
-        disabled={actions.pending}
-        saved={saved}
-        unsaved={formKey !== storedKey}
-        error={error}
-        savedText="E-posta alıcıları kaydedildi."
-      />
-      <AdminCard>
-        <h2 className="mb-1 font-display text-xl font-bold uppercase">E-posta Alıcıları</h2>
-        <p className="mb-4 text-sm text-zw-grey-600">
-          Sitedeki formlardan ve siparişlerden Zenweld&apos;e giden e-postalar buraya yazılan adreslere gider. Birden
-          fazla adres virgülle ayrılır (en fazla 10). Boş bırakılan türün e-postası {defaultRecipient} adresine gider.
-          Müşteriye giden e-postalar (şifre sıfırlama) bu listeden etkilenmez.
-        </p>
-        <div className="overflow-x-auto rounded-[4px] border border-zw-grey-200">
-          <table className="w-full text-sm">
-            <thead className="bg-zw-grey-50 text-left text-xs uppercase tracking-wide text-zw-grey-600">
-              <tr>
-                <th className="px-3 py-2.5">E-posta</th>
-                <th className="px-3 py-2.5">Alıcılar</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zw-grey-100">
-              {EMAIL_RECIPIENT_TYPES.map((t) => (
-                <tr key={t.type}>
-                  <td className="whitespace-nowrap px-3 py-2 font-semibold">{t.label}</td>
-                  <td className="w-full px-3 py-2">
-                    <Input
-                      value={texts[t.type] ?? ""}
-                      onChange={(e) => setTexts((x) => ({ ...x, [t.type]: e.target.value }))}
-                      placeholder={defaultRecipient}
-                      aria-label={`${t.label} alıcıları`}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </AdminCard>
     </>
   );
 }

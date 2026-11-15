@@ -15,6 +15,11 @@
     "@zenweld/i18n": "*",
     "@zenweld/utils": "*",
     "drizzle-orm": "^0.45.4",
+    "imapflow": "2.10.0",
+    "mailparser": "3.14.1",
     "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@types/mailparser": "3.9.0"
   }
 }

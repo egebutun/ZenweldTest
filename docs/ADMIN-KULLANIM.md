@@ -48,8 +48,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 21. [Belgeler](#21-belgeler)
 22. [Yasal Metinler](#22-yasal-metinler)
 23. [Sayfa SEO](#23-sayfa-seo)
-24. [Görünüm](#24-görünüm) (Anasayfa Tanıtım, İşlem Kaydı ve E-posta Kaydı dahil)
-25. [Siteden panele gelenler](#25-siteden-panele-gelenler)
+24. [Görünüm](#24-görünüm) (Anasayfa Tanıtım ve İşlem Kaydı dahil)
+25. [Siteden panele gelenler](#25-siteden-panele-gelenler) (Bayilik Başvuruları, Mesajlar, E-posta dahil)
 26. [Bütün panel adresleri](#26-bütün-panel-adresleri)
 27. [Bilinen durumlar](#27-bilinen-durumlar)
 
@@ -110,7 +110,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
       Sorular, Belgeler, Yasal Metinler, Sayfa SEO
       ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
     - **Üyeler** ([Veritabanı modunda Üyeler](#veritabanı-modunda-üyeler)),
-      **İşlem Kaydı** ve **E-posta Kaydı** ([24](#24-görünüm)).
+      **İşlem Kaydı** ([24](#24-görünüm)) ve **E-posta**
+      ([25](#e-posta-yonetime-posta)).
     - **Panel ana sayfası** (özet ve grafikler; [3](#3-panel-ana-sayfa)).
   - Panele her giriş ve çıkış işlem kaydına (`audit_log`) yazılır.
 
@@ -145,9 +146,9 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 | Satış | Siparişler · Teklifler · İade Talepleri · Kuponlar · Mağaza Ayarları |
 | Ürünler | Ürünler · Kategoriler · Seçenek Tanımları · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Bayilik Başvuruları · Online Satıcılar · Satış Temsilcileri |
-| Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar |
+| Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar · E-posta |
 | İçerik | Anasayfa Tanıtım · Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
-| Ayarlar | Görünüm · İşlem Kaydı · E-posta Kaydı (son ikisi yalnızca veritabanı modunda kayıt tutar) |
+| Ayarlar | Görünüm · İşlem Kaydı (yalnızca veritabanı modunda kayıt tutar) |
 
 **Bulunamayan panel sayfası:** "Sayfa bulunamadı" ve **Panele dön**
 düğmesi.
@@ -689,12 +690,12 @@ Veritabanı modunda bu ekran veritabanıyla çalışır: [Veritabanı modunda Ta
 ## 6. Mağaza Ayarları
 
 Adres: `/yonetim/magaza`. Açıklama: "Online satışta kargo ücreti, taksit
-seçenekleri, havale/EFT hesapları, Zenweld'e giden e-postaların alıcıları
-ve şirketin iletişim bilgileri."
+seçenekleri, havale/EFT hesapları ve şirketin iletişim bilgileri."
 
-Üç sekme: **Kargo ve Ödeme**, **E-posta Alıcıları** (KARARLAR K-104) ve
-**Şirket ve İletişim** (K-105). Sekme değişince kaydedilmemiş değişiklik
-kaybolmaz.
+İki sekme: **Kargo ve Ödeme** ve **Şirket ve İletişim** (K-105). Sekme
+değişince kaydedilmemiş değişiklik kaybolmaz. E-postaların gönderici ve alıcı
+adresleri Müşteriler ve Servis › **E-posta** › Adresler'dedir
+([25](#e-posta-yonetime-posta); K-116).
 
 **Kaydetme:**
 
@@ -802,29 +803,6 @@ kaybolmaz.
 **Önemli:** Kargo ücreti, banka POS'ları (mağaza no, oranlar) ve IBAN'lar
 örnek veridir; canlıya çıkmadan gerçek değerler girilmelidir.
 
-### E-posta Alıcıları
-
-Sitedeki formlardan ve siparişlerden Zenweld'e giden e-postaların
-alıcıları, türüne göre (KARARLAR K-104).
-
-- Açıklama: "Sitedeki formlardan ve siparişlerden Zenweld'e giden e-postalar
-  buraya yazılan adreslere gider. Birden fazla adres virgülle ayrılır (en
-  fazla 10). Boş bırakılan türün e-postası <varsayılan adres> adresine
-  gider. Müşteriye giden e-postalar (şifre sıfırlama) bu listeden
-  etkilenmez."
-- Varsayılan adres sunucudaki `SUPPORT_EMAIL`'dir (yoksa
-  info@zenweld.com); kutularda soluk olarak görünür.
-- Satırlar: Yeni sipariş, İade talebi, Teklif talebi, Servis talebi,
-  Garanti kaydı, Ürün yorumu, Yeni üye, İletişim formu, Ürün destek sorusu,
-  Bayilik başvurusu.
-- Adresler virgül, noktalı virgül, boşluk ya da satır sonuyla ayrılabilir;
-  küçük harfe çevrilir, aynı adres bir kez alınır.
-- Hatalar: "<tür>: "<adres>" geçerli bir e-posta adresi değil." /
-  "<tür>: En fazla 10 adres yazılabilir."
-- Demo modunda alıcılar bu tarayıcıda saklanır; e-postaları sunucu
-  gönderdiği için e-postalar varsayılan adrese gider. Veritabanı modunda
-  her e-posta gönderilirken bu liste okunur.
-
 ### Şirket ve İletişim
 
 Şirketin unvanı, MERSİS numarası ve iletişim bilgileri (KARARLAR K-105).
@@ -839,8 +817,8 @@ motorlarına verilen kuruluş bilgisinde kullanılır.
   - **Telefon** (zorunlu): "Alt bilgide ve sözleşmelerde".
   - **E-posta** (zorunlu, geçerli adres): "Sitede görünen adres". Küçük
     harfe çevrilir.
-  - "Formlardan Zenweld'e giden e-postaların alıcıları E-posta Alıcıları
-    sekmesindedir."
+  - "Sitenin gönderdiği e-postaların gönderici ve alıcı adresleri
+    Müşteriler ve Servis › E-posta › Adresler'dedir."
 - **Sosyal Medya** kutusu: Instagram, YouTube, LinkedIn, TikTok adresleri.
   "Alt bilgide simge olarak görünür. Boş bırakılan gösterilmez." Doluysa
   `https://` ile başlamalı.
@@ -861,8 +839,8 @@ motorlarına verilen kuruluş bilgisinde kullanılır.
 
 ### Veritabanı modunda Mağaza Ayarları
 
-Veritabanı modunda üç sekme de veritabanıyla çalışır (KARARLAR K-99,
-K-104, K-105). Her açılışta ve her kayıttan sonra sunucudan okunur; her
+Veritabanı modunda iki sekme de veritabanıyla çalışır (KARARLAR K-99,
+K-105). Her açılışta ve her kayıttan sonra sunucudan okunur; her
 değişiklik işlem kaydına yazılır. Farklar:
 
 - **Kargo ve Ödeme** tek kayıt gibi kaydedilir: ekran açıldıktan sonra
@@ -879,11 +857,6 @@ değişiklik işlem kaydına yazılır. Farklar:
   yönetici kaydettiyse kaydedilmez. Kayıt sitede (alt bilgi, İletişim,
   sözleşmeler) hemen görünür. Kayıt hiç yapılmadıysa başlangıç değerleri
   gösterilir.
-- **E-posta Alıcıları:** Kayıt hemen geçerli olur; sonraki e-posta yeni
-  adreslere gider ve e-posta kaydına (`email_log`) bu adreslerle yazılır.
-  Ekran açıldıktan sonra başka bir yönetici alıcıları kaydettiyse
-  kaydedilmez ("Bu kayıt siz açtıktan sonra değişti; sayfayı
-  yenileyin.").
 
 ---
 
@@ -1931,6 +1904,10 @@ koduyla **Yeni** durumunda gelir. En yeni talep önce; sayfa başına 50 (bkz.
   - **Durum** listesi ve **İç not** ("İç not (yalnızca panelde görünür)").
     İkisi **Kaydet** ile birlikte kaydedilir; düğmenin yanında "Kaydedildi"
     yazar. Durum ya da not yeniden değiştirilince bu yazı kalkar.
+  - **Yazışmalar (<n>):** talebin e-postaları (sitenin bildirimi, panelden
+    yazılanlar, posta kutusundan gelen yanıtlar) ve **E-posta gönder**:
+    alıcı talebin e-postası, konu "Servis talebiniz <kod> hakkında"
+    ([25 › E-posta](#e-posta-yonetime-posta)).
 - Boşsa: "Henüz servis talebi yok."
 - Talep silinmez. Servis talebi müşterinin Hesabım sayfasında görünmez.
 
@@ -2460,28 +2437,6 @@ veritabanına bağlandığında burada listelenir." yazar.
 - Kayıtlar değiştirilemez ve elle silinemez; 2 yıldan eski kayıtlar her
   gün kendiliğinden silinir (VERITABANI.md › audit_log).
 
-### E-posta Kaydı (veritabanı modu)
-
-Adres: `/yonetim/e-posta-kaydi` (Ayarlar › **E-posta Kaydı**). Açıklama:
-"Sitenin gönderdiği e-postalar; en yeni önce. E-postanın metni saklanmaz."
-(KARARLAR K-98) Kayıt yalnızca veritabanı modunda tutulur; demo modunda
-ekran açılır ama tablo boştur ve "Sitenin gönderdiği e-postalar, site
-veritabanına bağlandığında burada listelenir." yazar.
-
-- **Süzgeçler:** Tür (Yeni sipariş, İade talebi, Teklif talebi … Şifre
-  sıfırlama), Durum (Gönderildi / Gönderilemedi / Gönderilmedi), başlangıç
-  ve bitiş tarihi, arama ("Adres, konu ya da kayıt no ara…": alıcı, yanıt
-  adresi, konu ya da kayıt numarası).
-- **Tablo:** Zaman; Tür (altında formun gönderildiği sayfa); Alıcı (varsa
-  "Yanıt: <adres>"); Konu (altında bağlı kayıt, ör. "Teklif: TKL-…",
-  ekranına bağlantıyla); Durum.
-- **Durumlar:**
-  - **Gönderildi:** E-posta servisi e-postayı aldı.
-  - **Gönderilemedi:** Servis hata verdi ya da ulaşılamadı; nedeni altta.
-  - **Gönderilmedi:** E-posta servisi ayarlı değil ya da form bot
-    tuzağına takıldı; nedeni altta.
-- Sayfa başına 50 kayıt; **Daha eski kayıtlar →** / **← En yeni kayıtlar**.
-
 ---
 
 ## 25. Siteden panele gelenler
@@ -2500,9 +2455,10 @@ veritabanına bağlandığında burada listelenir." yazar.
 | Bülten kaydı | — (hiçbir yere gitmez) | — |
 | Şifremi Unuttum | — (hiçbir yere gitmez) | — |
 
-- Bu formların hepsi ayrıca `info@zenweld.com`'a e-posta gönderir (bülten ve
-  şifre hariç). **Bugün:** E-posta servisi (Resend) kurulu olmadığı için
-  hiçbir e-posta gitmez ([SUNUCU.md](SUNUCU.md) › 9).
+- Bu formların hepsi ayrıca Zenweld'e e-posta gönderir (bülten ve şifre
+  hariç); alıcı ve gönderici türün E-posta › Adresler'deki adresleridir,
+  yazılmamışsa `info@zenweld.com`. **Bugün:** E-posta servisi (Resend) kurulu
+  olmadığı için hiçbir e-posta gitmez ([SUNUCU.md](SUNUCU.md) › 9).
   - E-postada **Yanıtla** denince yanıt doğrudan formu dolduran kişiye gider.
   - Sipariş e-postasına T.C. kimlik no ve kart bilgisi yazılmaz.
   - İletişim, bayilik ve ürün destek formları e-posta gönderilemezse
@@ -2518,7 +2474,9 @@ veritabanına bağlandığında burada listelenir." yazar.
     ([SUNUCU.md](SUNUCU.md) › 2). Demo adresinde anahtar yoksa formlar başarılı görünür ama
     e-posta gitmez.
   - Ayrıntı: [SUNUCU.md](SUNUCU.md) › 9.
-- Panelden müşteriye e-posta gitmez.
+- Panelden müşteriye e-posta E-posta bölümünden, Servis Talepleri ve
+  Mesajlar'daki **E-posta gönder**'den yazılır
+  ([E-posta](#e-posta-yonetime-posta)).
 
 ### Bayilik Başvuruları (`/yonetim/bayilik-basvurulari`)
 
@@ -2553,9 +2511,112 @@ Menüde Müşteriler ve Servis grubundadır. Sitedeki iletişim formundan ve
 - **Satıra tıklayınca:** Mesajın tamamı, E-posta, Telefon, Sayfa (formun
   gönderildiği sayfa; tıklayınca yeni sekmede açılır).
   - **Durum** (Yeni, Okundu, Yanıtlandı) ve iç not; **Kaydet** →
-    "Kaydedildi". E-postası olan mesajda **E-posta ile yanıtla** e-posta
-    programını açar. Yanıt panelden gönderilmez.
+    "Kaydedildi".
+  - **Yazışmalar (<n>):** mesajın e-postaları ve **E-posta gönder**: alıcı
+    mesajın e-postası, konu "Zenweld — <konu>" (ürün sorusunda "Zenweld —
+    <ürün>"); e-posta türün (İletişim ya da Ürün Sorusu) göndericisinden
+    gider ([E-posta](#e-posta-yonetime-posta)). Durum kendiliğinden değişmez.
 - Mesaj silinmez (KARARLAR K-100).
+
+### E-posta (`/yonetim/e-posta`)
+
+Menüde Müşteriler ve Servis grubundadır (KARARLAR K-116). Sitenin
+gönderdiği ve panele aldığı bütün e-postalar burada; e-posta programına
+girmeden yazılır ve yanıtlanır. Açıklama: "Sitenin gönderdiği ve panele
+aldığı e-postalar. Her e-posta türünün kendi yazışmaları ve adresleri
+vardır." (Eski Ayarlar › E-posta Kaydı ve Mağaza Ayarları › E-posta
+Alıcıları buraya taşındı.)
+
+- **Tür sekmeleri:** Sipariş · İade · Teklif · Servis · Garanti · Yorum ·
+  Üyelik · İletişim · Ürün Sorusu · Bayilik · Şifre Sıfırlama · Bülten
+  (adreste `?tur=`). Sekmenin altında sitenin bu türde bugün gönderdiği
+  e-posta yazar (ör. Servis: "Servis talebi formu gönderilince talep
+  bilgileri Zenweld'e gider."; Bülten: "Site bugün bülten e-postası
+  göndermez. Kampanya e-postası için İYS kaydı ve abonelikten çıkma
+  bağlantısı gerekir.") ve türün adresleri: "Gönderen: <adres> · Zenweld'e
+  giden e-postanın alıcıları: <adresler>" (yalnızca müşteriye giden türlerde
+  alıcı yazmaz).
+- Her türde iki alt sekme: **Yazışmalar** ve **Adresler**
+  (`?sekme=adresler`).
+
+**Yazışmalar:**
+
+- **Yeni e-posta:** Gönderen (türün göndericisi; değiştirilmez), **Kime**
+  ("Birden fazla adres virgülle ayrılır."), **Konu**, **Metin**;
+  **Gönder** / **Vazgeç**. Hatalar: "Alıcı adresi yazın." / "Konu yazın." /
+  "E-postanın metnini yazın." / ""<adres>" geçerli bir e-posta adresi
+  değil." / "En fazla 10 adres yazılabilir."
+- Gönderince sonuç yazar: "E-posta gönderildi." / "E-posta gönderilemedi:
+  <neden>. Kaydı Yazışmalar'da." / "E-posta servisi bu sitede ayarlı
+  olmadığı için e-posta gönderilmedi; kaydı Yazışmalar'da." E-posta
+  her durumda metniyle yazışmalara girer.
+- **Süzgeçler:** Giden ve gelen / Giden / Gelen; Durum (Gönderildi,
+  Gönderilemedi, Gönderilmedi, Geldi); başlangıç ve bitiş tarihi; arama
+  ("Adres, konu, kayıt no ya da metin ara…"); **Süz**.
+- **Tablo:** Zaman (altında **Giden** ya da **Gelen**); Kimden → Kime (varsa
+  "Yanıt: <formu dolduranın adresi>"); Konu (altında bağlı kayıt, ör.
+  "Servis talebi: <kimlik>", ekranına bağlantıyla); Durum. En yeni üstte;
+  boşsa "Henüz e-posta yok."
+- **Satıra tıklayınca:** e-postanın metni; gelen e-postanın ekleri
+  ("Ekler (posta kutusunda): <dosya adları>"; dosyalar posta kutusunda
+  kalır); gönderilemediyse nedeni; "Panelden gönderen: <yönetici>";
+  formun sayfası; **Yanıtla**. Metni saklanmadan önce gönderilmiş
+  e-postada: "Bu e-postanın metni saklanmamış (metinler saklanmaya
+  başlamadan önce gönderildi)."
+- **Yanıtla:** Kime gelen e-postada gönderen, sitenin bildiriminde formu
+  dolduran (Yanıt adresi); konu "Re: <konu>" (zaten yanıtsa aynı); metnin
+  altında önceki e-posta "> " ile alıntılanır. Yanıt aynı kayda bağlanır.
+- **Durumlar:** Gönderildi (e-posta servisi aldı), Gönderilemedi (servis
+  hata verdi ya da ulaşılamadı), Gönderilmedi (e-posta servisi ayarlı değil
+  ya da form bot tuzağına takıldı), Geldi (posta kutusundan alındı).
+- **Posta kutusu (veritabanı modu):** "Posta kutusu <adres>: son okuma
+  <tarih-saat>" (okunamadıysa "okunamadı: <neden>") ve **Şimdi oku** →
+  "Posta kutusu okundu: <n> yeni e-posta panele alındı." Posta kutusu
+  bağlı değilse: "Posta kutusu bağlı değil: gelen yanıtlar panele alınmaz.
+  Bağlantı sunucuda kurulur."
+- Sayfa başına 50 e-posta (veritabanı modu); **Daha eski e-postalar →** /
+  **← En yeni e-postalar**.
+
+**Panele gelen e-postalar** (veritabanı modu): site posta kutusunu
+zamanlanmış işle (5 dakikada bir) ya da **Şimdi oku** ile okur. Yalnızca şu
+e-postalar alınır; gerisi posta kutusunda kalır:
+
+1. Sitenin gönderdiği bir e-postaya yanıt (yanıt başlığı o e-postayı
+   gösteriyor);
+2. sitenin son 180 günde e-posta yazdığı kişiden, aynı konuyla ("Re:",
+   "YNT:", "Fwd:" gibi ekler atılınca) gelen e-posta;
+3. konusunda ya da metninde var olan bir kayıt numarası (SIP-, IAD-, TKL-,
+   SRV-) geçen e-posta: o kaydın türüne ve kaydına bağlanır.
+
+Sitenin kendi adreslerinden gelen e-posta (ör. info@'ya giden bildirimin
+kopyası) alınmaz; aynı e-posta iki kez alınmaz. Okunan e-posta posta
+kutusunda okunmamış kalır.
+
+**Adresler:**
+
+- "Boş bırakılan adres yerine varsayılan adres kullanılır. Gönderici adresin
+  alan adı (zenweld.com) e-posta servisinde doğrulanmış olmalıdır."
+- **Gönderici** ("Bu türdeki e-postalar bu adresten gider. Boşsa:
+  <varsayılan>") ve Zenweld'e giden türlerde **Alıcılar** ("Sitenin Zenweld'e
+  gönderdiği e-posta bu adreslere gider. Birden fazla adres virgülle
+  ayrılır (en fazla 10). Boşsa: <varsayılan>"). Varsayılan adresler
+  sunucudadır (`SUPPORT_FROM`, `SUPPORT_EMAIL`; yoksa info@zenweld.com);
+  kutularda soluk görünür. **Kaydet** → "Kaydedildi".
+- Adresler virgül, noktalı virgül, boşluk ya da satır sonuyla ayrılabilir;
+  küçük harfe çevrilir, aynı adres bir kez alınır. Hatalar: "Gönderici:
+  "<adres>" geçerli bir e-posta adresi değil." / "Alıcılar: …".
+- Veritabanı modunda kayıt hemen geçerli olur, işlem kaydına yazılır;
+  ekran açıldıktan sonra başka bir yönetici kaydettiyse kaydedilmez ("Bu
+  kayıt siz açtıktan sonra değişti; sayfayı yenileyin.").
+
+**Demo modunda:** Yazışmalar ve adresler bu tarayıcıda saklanır; örnek
+yazışmalar görünür. E-posta gönderilmez: yazılan e-posta "Gönderilmedi"
+olarak kaydedilir. Posta kutusu satırı ve **Şimdi oku** yalnızca veritabanı
+modunda vardır.
+
+**Veritabanı modunda:** Sitenin gönderdiği ve panelden yazılan her e-posta
+metniyle kaydedilir (`email_log`; K-116); panelden yazılan e-posta işlem
+kaydına da yazılır.
 
 ### Veritabanı modunda Talepler ekranları
 
@@ -2617,6 +2678,7 @@ sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 | `/yonetim/servis-talepleri` | Servis Talepleri |
 | `/yonetim/garantiler` | Garantiler |
 | `/yonetim/mesajlar` | Mesajlar |
+| `/yonetim/e-posta?tur=<tür>[&sekme=adresler]` | E-posta (Yazışmalar / Adresler) |
 | `/yonetim/haberler`, `/yeni`, `/<id>` | Haberler |
 | `/yonetim/etkinlikler`, `/yeni`, `/<id>` | Etkinlikler |
 | `/yonetim/blog`, `/yeni`, `/<id>` | Blog |
@@ -2629,7 +2691,6 @@ sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 | `/yonetim/gorunum` | Görünüm |
 | `/yonetim/tanitim` | Anasayfa Tanıtım |
 | `/yonetim/islem-kaydi` | İşlem Kaydı (veritabanı modu) |
-| `/yonetim/e-posta-kaydi` | E-posta Kaydı (veritabanı modu) |
 
 ---
 

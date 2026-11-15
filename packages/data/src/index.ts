@@ -13,6 +13,7 @@ export * from "./coupon";
 export * from "./catalog-rules";
 export * from "./network-rules";
 export * from "./settings-rules";
+export * from "./email";
 export * from "./hero-rules";
 export * from "./shipping";
 export * from "./content-rules";
@@ -54,9 +55,10 @@ import { documentPages } from "./seed/documents.seed";
 import { createSampleActivity } from "./seed/sample-activity.seed";
 import { createSampleWarehouseStock } from "./seed/warehouse.seed";
 import { createSampleCoupons } from "./seed/coupons.seed";
+import { createSampleEmails } from "./seed/emails.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 85;
+export const DB_VERSION = 86;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida
@@ -99,6 +101,16 @@ export function createSeedDatabase(now: number = Date.now()): ZenweldDatabase {
       legalPages,
       serviceRequests: sample.serviceRequests,
       returnRequests: [],
+      emailMessages: createSampleEmails(
+        {
+          serviceRequests: sample.serviceRequests,
+          quotes: [...quotes, ...sample.quotes],
+          orders: [...orders, ...sample.orders],
+          users: [...users, ...sample.users],
+          warranties: [...warranties, ...sample.warranties],
+        },
+        now,
+      ),
       // Ornek kayitlarin numaralari nextCode'da mevcut en buyuk numaradan okunur.
       recordCounters: {},
       settings: defaultSettings,

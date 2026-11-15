@@ -1,18 +1,18 @@
 "use client";
 
-import type { CompanySettings, EmailRecipient, HomeHeroSettings, RichTextStyle, ShopSettings } from "@zenweld/data";
-import { saveCompanySettings, saveEmailRecipients, saveHomeHero, saveRichTextStyle, saveShopSettings } from "@zenweld/store";
+import type { CompanySettings, HomeHeroSettings, RichTextStyle, ShopSettings } from "@zenweld/data";
+import { saveCompanySettings, saveHomeHero, saveRichTextStyle, saveShopSettings } from "@zenweld/store";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
 
 export type { PanelAnswer };
 
 /**
  * PANEL › AYAR ISLEMLERI: Mağaza Ayarları'nin Genel sekmesi (kargo,
- * taksit, POS, havale), E-posta Alicilari ve Şirket ve İletişim sekmeleri;
- * Görünüm ve Anasayfa Tanıtım ekranlari.
+ * taksit, POS, havale) ve Şirket ve İletişim sekmesi; Görünüm ve Anasayfa
+ * Tanıtım ekranlari. E-posta adresleri: lib/admin-email.ts.
  *
  * Veritabani modunda islem sunucuya gider (/api/yonetim/ayarlar; Asama 5,
- * 5. alan, KARARLAR K-99, K-104; ortak akis lib/admin-panel.ts). Demo
+ * 5. alan, KARARLAR K-99; ortak akis lib/admin-panel.ts). Demo
  * modunda tarayicidaki veriye yazilir (packages/store › repo/site.ts).
  */
 export function useSettingsActions() {
@@ -28,11 +28,6 @@ export function useSettingsActions() {
       }
       return localAnswer(saveShopSettings(shop));
     },
-    /** version: ekranin gordugu alici listesinin hali (recipientsVersion). */
-    saveEmailRecipients: (items: EmailRecipient[], version: string): Promise<PanelAnswer> =>
-      server
-        ? call("eposta-alicilari", { items: items.map(({ type, recipients }) => ({ type, recipients })), version })
-        : localAnswer(saveEmailRecipients(items)),
     /** company: denetlenmis bilgiler (parseCompanySettings); stored: ekranin gordugu kayit. */
     saveCompany: (company: CompanySettings, stored: CompanySettings): Promise<PanelAnswer> => {
       if (server) {

@@ -38,7 +38,7 @@ import * as s from "./schema";
  *
  * Yalnizca e-postaya giden formlar (iletisim, bayilik, urun destek sorusu)
  * da kendi tablolarina yazilir (KARARLAR K-81). Gonderilen
- * her e-posta email_log'a yazilir (logEmail).
+ * her e-posta email_log'a yazilir (emails.ts › logEmail).
  *
  * Yazan fonksiyonlar bir islem (transaction) icinde cagrilir.
  */
@@ -396,36 +396,4 @@ export async function saveSupportMessage(
     updatedAt: at,
   });
   return id;
-}
-
-/* ------------------------------ E-posta kaydi ------------------------------ */
-
-export interface EmailLogEntry {
-  type: string;
-  sourcePath?: string;
-  entityType?: string;
-  entityId?: string;
-  recipients: string[];
-  replyTo?: string;
-  subject: string;
-  status: "sent" | "failed" | "skipped";
-  providerMessageId?: string;
-  error?: string;
-}
-
-/** Gonderilen (ya da gonderilmeyen) e-postanin kaydi; metni saklanmaz (KARARLAR K-81). */
-export async function logEmail(db: OrderDb, entry: EmailLogEntry, at = new Date()): Promise<void> {
-  await db.insert(s.emailLog).values({
-    type: entry.type,
-    sourcePath: entry.sourcePath?.slice(0, 500) || null,
-    entityType: entry.entityType ?? null,
-    entityId: entry.entityId ?? null,
-    recipients: entry.recipients,
-    replyTo: entry.replyTo || null,
-    subject: entry.subject.slice(0, 200),
-    status: entry.status,
-    providerMessageId: entry.providerMessageId ?? null,
-    error: entry.error?.slice(0, 500) ?? null,
-    createdAt: at,
-  });
 }

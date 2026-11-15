@@ -6,14 +6,13 @@ import type {
   CompanyOffice,
   CompanySettings,
   CompanySocial,
-  EmailRecipient,
   InstallmentOption,
   PaymentPos,
   ShopSettings,
 } from "./types";
 
 /**
- * MAGAZA AYARLARI, SIRKET VE ILETISIM, E-POSTA ALICILARI KURALLARI — PANEL
+ * MAGAZA AYARLARI, SIRKET VE ILETISIM KURALLARI — PANEL
  * (demo ve veritabani modu ayni)
  *
  * Tarayici (Magaza Ayarlari ekrani) ve sunucu (packages/db ›
@@ -274,54 +273,3 @@ export const companyKey = (c: CompanySettings) =>
     c.offices.map((o) => [o.id, o.city, o.addressLines, o.phones]),
     COMPANY_SOCIAL_KEYS.map((k) => c.social[k]),
   ]);
-
-/* ------------------------------------------------------------------ */
-/* E-posta alicilari (KARARLAR K-104)                                  */
-/* ------------------------------------------------------------------ */
-
-/**
- * Zenweld'e giden e-postalarin turleri, panelde gorunen sirayla
- * (IS-KURALLARI › Form e-postalari). Veritabanindaki liste
- * (packages/db › schema/system.ts › EMAIL_TYPES) ayni turlerdir.
- */
-export const EMAIL_RECIPIENT_TYPES = [
-  { type: "siparis", label: "Yeni sipariş" },
-  { type: "iade", label: "İade talebi" },
-  { type: "teklif", label: "Teklif talebi" },
-  { type: "servis", label: "Servis talebi" },
-  { type: "garanti", label: "Garanti kaydı" },
-  { type: "yorum", label: "Ürün yorumu" },
-  { type: "uye", label: "Yeni üye" },
-  { type: "iletisim", label: "İletişim formu" },
-  { type: "urun-destek", label: "Ürün destek sorusu" },
-  { type: "bayilik", label: "Bayilik başvurusu" },
-] as const;
-
-export type EmailRecipientType = (typeof EMAIL_RECIPIENT_TYPES)[number]["type"];
-
-/** Bir turde en fazla kac alici. */
-export const MAX_RECIPIENTS = 10;
-
-
-/**
- * Yazilan alicilar: virgul, noktali virgul, bosluk ya da satir sonuyla
- * ayrilir; kucuk harfe cevrilir, ayni adres bir kez alinir. Bos = varsayilan
- * adres.
- */
-export function parseRecipients(text: string): Parsed<string[]> {
-  const list = [...new Set(text.split(/[\s,;]+/).map((a) => a.trim().toLowerCase()).filter(Boolean))];
-  const wrong = list.find((a) => !EMAIL.test(a) || a.length > 200);
-  if (wrong) return { ok: false, error: `"${wrong}" geçerli bir e-posta adresi değil.` };
-  if (list.length > MAX_RECIPIENTS) return { ok: false, error: `En fazla ${MAX_RECIPIENTS} adres yazılabilir.` };
-  return { ok: true, value: list };
-}
-
-/**
- * Alici listesinin o anki hali (ekran acildiktan sonra degisti mi): satir
- * sayisi ve en son degisen satir. Panel ekrani ve sunucu ayni fonksiyonla
- * hesaplar.
- */
-export function recipientsVersion(rows: Pick<EmailRecipient, "updatedAt">[]): string {
-  const latest = rows.map((r) => r.updatedAt ?? "").sort().pop() ?? "";
-  return `${rows.length}|${latest}`;
-}

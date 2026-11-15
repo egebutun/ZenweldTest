@@ -1,35 +1,48 @@
-import { emailRecipientsFor, logEmail } from "@zenweld/db";
+import { randomUUID } from "node:crypto";
+import { DEFAULT_EMAIL_ADDRESS, notificationText, type OutgoingEmail } from "@zenweld/data";
+import { emailSettingFor, logEmail } from "@zenweld/db";
 import { escapeHtml } from "@zenweld/utils";
 import { isNoIndex } from "@/lib/seo";
 import { database, usesDatabase } from "./db";
 
 /**
- * E-POSTA GONDERIMI (yalnizca sunucu: /api uclari)
+ * E-POSTA GONDERIMI (yalnizca sunucu: /api uclari; KARARLAR K-116)
  *
- * Sitedeki formlar Zenweld'e Resend uzerinden e-posta gonderir.
+ * Site e-postayi Resend uzerinden gonderir: formlardan Zenweld'e giden
+ * bildirimler, musteriye giden e-postalar (sifre sifirlama) ve panelden
+ * yazilan e-postalar (Panel › E-posta, kayit ekranlarindaki E-posta
+ * gonder).
  *
  * KURULUM (yayina alirken bir kez yapilir): canli site kendi sunucumuzda
  * calisir (KARARLAR K-92); asagidakiler o sunucuda ortam degiskeni olarak
  * tanimlanir (ornek: apps/zenweld-web/.env.example; docs/SUNUCU.md):
  *     RESEND_API_KEY   resend.com uzerinden alinan anahtar
  *     SUPPORT_EMAIL    (istege bagli) varsayilan alici, varsayilan info@zenweld.com
- *     SUPPORT_FROM     (istege bagli) dogrulanmis gonderici adresi
+ *     SUPPORT_FROM     (istege bagli) varsayilan gonderici, varsayilan SUPPORT_EMAIL
+ * Gonderici adresin alan adi (zenweld.com) Resend'de dogrulanmis olmalidir.
  *
  * Anahtar yoksa e-posta gonderilmez ve istek hata vermez. Demo adresinde
  * (zenweld.com disi) form basarili sayilir; canlida e-posta gitmezse
  * ziyaretciye hata gosterilir (demo: false).
  *
- * Veritabani modunda gonderilen (ya da gonderilemeyen) her e-posta
- * email_log'a yazilir: turu, sayfasi, bagli kayit ve sonucu (KARARLAR K-81;
- * Asama 5.3). Metni saklanmaz.
+ * Adresler: veritabani modunda e-postanin turune gore panelde yazilan
+ * gonderici ve alicilar (Panel › E-posta › Adresler, email_settings);
+ * yazilmamissa ya da demo modunda varsayilan adresler.
  *
- * Alicilar: veritabani modunda e-postanin turune gore panelde yazilan
- * adresler (Mağaza Ayarları > E-posta Alıcıları, email_recipients;
- * KARARLAR K-104); tur icin adres yazilmamissa ya da demo modunda
- * SUPPORT_EMAIL.
+ * Veritabani modunda gonderilen (ya da gonderilemeyen) her e-posta metniyle
+ * email_log'a yazilir: turu, sayfasi, bagli kayit ve sonucu (K-81, K-116).
  */
 
-export const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || "info@zenweld.com";
+export const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || DEFAULT_EMAIL_ADDRESS;
+
+/** "Ad <adres>" ya da "adres" -> adres. */
+const bareAddress = (value: string) => (value.match(/<([^>]+)>/)?.[1] ?? value).trim().toLowerCase();
+
+/** Turun gondericisi yazilmamissa kullanilan adres. */
+export const DEFAULT_SENDER = bareAddress(process.env.SUPPORT_FROM || SUPPORT_EMAIL);
+
+/** E-postanin "Kimden" satirinda gorunen ad. */
+const SENDER_NAME = "Zenweld";
 
 /** Tek bir alanin en fazla uzunlugu (karakter). */
 const MAX_FIELD = 5000;
@@ -111,82 +124,111 @@ export function sourcePath(request: Request): string | undefined {
 }
 
 /**
- * Zenweld'e giden e-postanin alicilari: veritabani modunda turun panelde
- * yazilan adresleri; yoksa (ya da okunamazsa) SUPPORT_EMAIL.
+ * Turun adresleri: veritabani modunda panelde yazilanlar; yazilmamissa (ya
+ * da okunamazsa) varsayilan gonderici ve alici.
  */
-export async function recipientsFor(type: string | undefined): Promise<string[]> {
-  if (!type || !usesDatabase()) return [SUPPORT_EMAIL];
-  try {
-    const list = await emailRecipientsFor(database(), type);
-    return list.length ? list : [SUPPORT_EMAIL];
-  } catch (error) {
-    console.warn("E-posta alıcıları okunamadı; varsayılan adres kullanıldı:", error instanceof Error ? error.message : error);
-    return [SUPPORT_EMAIL];
+export async function addressesFor(type: string | undefined): Promise<{ from: string; to: string[] }> {
+  let setting: { sender?: string; recipients: string[] } = { recipients: [] };
+  if (type && usesDatabase()) {
+    try {
+      setting = await emailSettingFor(database(), type);
+    } catch (error) {
+      console.warn("E-posta adresleri okunamadı; varsayılan adresler kullanıldı:", error instanceof Error ? error.message : error);
+    }
   }
-}
-
-/** Veritabani modunda e-postanin kaydi; kayit yazilamazsa e-posta yine gider. */
-async function record(meta: EmailMeta | undefined, to: string[], subject: string, replyTo: string | undefined, sent: Sent) {
-  if (!meta || !usesDatabase()) return;
-  try {
-    await logEmail(database(), {
-      type: meta.type,
-      sourcePath: meta.sourcePath,
-      entityType: meta.entity?.type,
-      entityId: meta.entity?.id,
-      recipients: to,
-      replyTo: replyTo && isEmail(replyTo) ? replyTo : undefined,
-      subject,
-      status: sent.result.delivered ? "sent" : sent.result.reason === "servis-hatasi" || sent.result.reason === "baglanti-hatasi" ? "failed" : "skipped",
-      providerMessageId: sent.providerId,
-      error: sent.error,
-    });
-  } catch (error) {
-    console.warn("E-posta kaydı yazılamadı:", error instanceof Error ? error.message : error);
-  }
-}
-
-/** Bot tuzagina takilan form: e-posta gonderilmez, kaydi "skipped" olarak yazilir. */
-export function recordBot(meta: EmailMeta): Promise<void> {
-  return record(meta, [SUPPORT_EMAIL], "(bot tuzağı)", undefined, {
-    result: { ok: true, delivered: false, demo: isNoIndex() },
-    error: "bot tuzağı",
-  });
+  return { from: setting.sender || DEFAULT_SENDER, to: setting.recipients.length ? setting.recipients : [SUPPORT_EMAIL] };
 }
 
 interface Sent {
   result: MailResult;
   providerId?: string;
+  /** E-postaya verilen Message-ID (yaniti eslestirmek icin) */
+  messageId?: string;
   error?: string;
 }
 
-/** E-postayi Resend'e verir; anahtar yoksa gonderilmez. */
+const statusOf = (sent: Sent) =>
+  sent.result.delivered ? "sent" : sent.result.reason === "servis-hatasi" || sent.result.reason === "baglanti-hatasi" ? "failed" : "skipped";
+
+/** Veritabani modunda e-postanin kaydi; kayit yazilamazsa e-posta yine gider. Kaydin numarasi doner. */
+async function record(
+  meta: EmailMeta | undefined,
+  message: { from: string; to: string[]; subject: string; text: string; replyTo?: string },
+  sent: Sent,
+  extra: { parentId?: number; actor?: { id: string; name: string } } = {},
+): Promise<number | undefined> {
+  if (!meta || !usesDatabase()) return undefined;
+  try {
+    return await logEmail(database(), {
+      type: meta.type,
+      sourcePath: meta.sourcePath,
+      entityType: meta.entity?.type,
+      entityId: meta.entity?.id,
+      from: message.from,
+      recipients: message.to,
+      replyTo: message.replyTo && isEmail(message.replyTo) ? message.replyTo : undefined,
+      subject: message.subject,
+      body: message.text,
+      status: statusOf(sent),
+      providerMessageId: sent.providerId,
+      messageId: sent.messageId,
+      error: sent.error,
+      ...extra,
+    });
+  } catch (error) {
+    console.warn("E-posta kaydı yazılamadı:", error instanceof Error ? error.message : error);
+    return undefined;
+  }
+}
+
+/** Bot tuzagina takilan form: e-posta gonderilmez, kaydi "skipped" olarak yazilir. */
+export async function recordBot(meta: EmailMeta): Promise<void> {
+  await record(
+    meta,
+    { from: DEFAULT_SENDER, to: [SUPPORT_EMAIL], subject: "(bot tuzağı)", text: "" },
+    { result: { ok: true, delivered: false, demo: isNoIndex() }, error: "bot tuzağı" },
+  );
+}
+
+/**
+ * E-postayi Resend'e verir; anahtar yoksa gonderilmez. E-postaya kendi
+ * Message-ID'si verilir; yanit bu basligi tasirsa posta kutusundan gelen
+ * yanit bu e-postaya baglanir (packages/db › emails.ts).
+ */
 async function deliver(message: {
+  from: string;
   to: string[];
   subject: string;
   html?: string;
-  text?: string;
+  text: string;
   replyTo?: string;
+  /** Yanitlanan e-postanin Message-ID'si */
+  inReplyTo?: string;
 }): Promise<Sent> {
   const demo = isNoIndex();
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { result: { ok: true, delivered: false, demo, reason: "eposta-yapilandirilmadi" } };
+  const messageId = `<${randomUUID()}@${message.from.split("@")[1] || "zenweld.com"}>`;
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: process.env.SUPPORT_FROM || "Zenweld Web <onboarding@resend.dev>",
+        from: `${SENDER_NAME} <${message.from}>`,
         to: message.to,
         reply_to: message.replyTo && isEmail(message.replyTo) ? message.replyTo : undefined,
         subject: message.subject.slice(0, 200),
         html: message.html,
         text: message.text,
+        headers: {
+          "Message-ID": messageId,
+          ...(message.inReplyTo && { "In-Reply-To": message.inReplyTo, References: message.inReplyTo }),
+        },
       }),
     });
     const answer = (await res.json().catch(() => ({}))) as { id?: string; message?: string };
     return res.ok
-      ? { result: { ok: true, delivered: true, demo }, providerId: answer.id }
+      ? { result: { ok: true, delivered: true, demo }, providerId: answer.id, messageId }
       : { result: { ok: true, delivered: false, demo, reason: "servis-hatasi" }, error: `${res.status} ${answer.message ?? ""}`.trim() };
   } catch (error) {
     return {
@@ -229,25 +271,51 @@ export async function sendMail({
     </table>
     ${note && note[1] ? `<h3>${escapeHtml(note[0])}</h3><p style="white-space:pre-wrap">${escapeHtml(note[1])}</p>` : ""}
   `;
-  const to = await recipientsFor(log?.type);
-  const sent = await deliver({ to, subject, html, replyTo });
-  await record(log, to, subject, replyTo, sent);
+  const text = notificationText({ title, rows, note });
+  const { from, to } = await addressesFor(log?.type);
+  const sent = await deliver({ from, to, subject, html, text, replyTo });
+  await record(log, { from, to, subject, text, replyTo }, sent);
   return sent.result;
 }
 
-/** Musteriye duz metin e-posta (sifre sifirlama ...). */
+/** Musteriye duz metin e-posta (sifre sifirlama ...); gonderici turun adresidir. */
 export async function sendCustomerMail({
   to,
   subject,
   text,
+  logText,
   log,
 }: {
   to: string;
   subject: string;
   text: string;
+  /** Yazismalara yazilan metin, gonderilenden farkliysa (or. sifre sifirlama baglantisi gizli) */
+  logText?: string;
   log?: EmailMeta;
 }): Promise<MailResult> {
-  const sent = await deliver({ to: [to], subject, text });
-  await record(log, [to], subject, undefined, sent);
+  const { from } = await addressesFor(log?.type);
+  const sent = await deliver({ from, to: [to], subject, text });
+  await record(log, { from, to: [to], subject, text: logText ?? text }, sent);
   return sent.result;
+}
+
+/**
+ * Panelden yazilan e-posta (veritabani modu): turun gondericisinden
+ * gonderilir, metniyle ve yazan yoneticiyle kaydedilir. parent: yanitlanan
+ * e-posta (yanit basliklari icin).
+ */
+export async function sendPanelMail(
+  email: OutgoingEmail,
+  actor: { id: string; name: string },
+  parent?: { id: string; messageId?: string },
+): Promise<{ id?: number; status: "sent" | "failed" | "skipped"; error?: string }> {
+  const { from } = await addressesFor(email.type);
+  const sent = await deliver({ from, to: email.to, subject: email.subject, text: email.body, inReplyTo: parent?.messageId });
+  const id = await record(
+    { type: email.type, entity: email.entity },
+    { from, to: email.to, subject: email.subject, text: email.body },
+    sent,
+    { parentId: parent ? Number(parent.id) : undefined, actor: { id: actor.id, name: actor.name } },
+  );
+  return { id, status: statusOf(sent), error: sent.error };
 }

@@ -79,6 +79,7 @@ npm run yonetici:olustur # veritabanında yönetici hesabı açar / şifresini d
 npm run site:yenile # veritabanındaki değişikliği sitede o anda gösterir
 npm run sap:stok    # SAP depo stoğunu beklemeden bir kez okutur
 npm run sap:siparis # sıradaki siparişleri beklemeden SAP'a gönderir
+npm run posta:oku   # posta kutusunu beklemeden okutur; yanıtlar Panel › E-posta'ya girer
 ```
 
 Veritabanı gerektiren komutların kurulumu aşağıda
@@ -127,7 +128,8 @@ herkes görür, tarayıcıya örnek veri gönderilmez. Tablolar:
 | Üyelik ve panel girişi | Şifre tarayıcıda karşılaştırılır; gerçek güvenlik değildir | Sunucuda: şifre argon2id ile özetlenir, oturum güvenli çerezde (panel 8 saat) |
 | Şifremi unuttum | Aynı mesaj çıkar, e-posta gitmez | Hesap varsa 1 saat geçerli bağlantı e-postayla gider |
 | Kartla ödeme | Para çekilmez | Para çekilmez (ödeme kuruluşu bağlanana kadar); tutar, stok ve kupon sunucuda yeniden hesaplanır |
-| İşlem Kaydı, E-posta Kaydı | Ekranlar menüdedir, tablo boştur ("site veritabanına bağlandığında burada listelenir") | Paneldeki her işlem ve gönderilen her e-posta listelenir |
+| İşlem Kaydı | Ekran menüdedir, tablo boştur ("site veritabanına bağlandığında burada listelenir") | Paneldeki her işlem listelenir |
+| E-posta (yazışmalar, adresler) | Örnek yazışmalar görünür; panelden yazılan e-posta gönderilmez, "Gönderilmedi" olarak bu tarayıcıda kaydedilir. Posta kutusu satırı ve **Şimdi oku** yoktur | Sitenin gönderdiği ve panelden yazılan her e-posta metniyle kaydedilir; posta kutusundan gelen yanıtlar panele alınır (K-116) |
 | Mesajlar, Bayilik Başvuruları | Formu gönderen tarayıcının panelinde görünür (K-109) | Sunucudadır; bütün yöneticiler görür |
 | Sipariş detayındaki SAP Aktarımı kutusu | Yoktur | Ödemesi kesinleşen siparişte görünür |
 | Aynı kaydı iki yönetici düzenlerse | Her tarayıcının kendi kopyası vardır | Sonra kaydeden uyarı alır ("sayfayı yenileyin"), kayıt değişmez |
@@ -229,6 +231,19 @@ yol) yazıp siteyi başlatın. Kartla bir sipariş verin ya da panelde havale
 siparişine **Ödeme Alındı** deyin; `npm run sap:siparis` siparişi dosyaya bir
 satır olarak yazar ve panelde sipariş detayındaki SAP Aktarımı kutusu
 "Aktarıldı" olur. Sunucuda bu iş birkaç dakikada bir çalışır.
+
+### Posta kutusu
+
+Panel › E-posta'ya gelen yanıtlar sitenin posta kutusundan okunur
+(KARARLAR K-116). Posta kutusu bağlanana kadar `.eml` dosyalarının durduğu
+bir klasörle denenir: `.env.local`'a `CRON_SECRET=<uzun bir değer>` ve
+`POSTA_KLASORU=/tmp/zenweld-posta` (depo dışında bir klasör) yazıp siteyi
+başlatın. Klasöre konusunda bir kayıt numarası (ör. `SRV-2026-0001`) geçen
+bir `.eml` dosyası koyup `npm run posta:oku` çalıştırın ya da panelde
+E-posta › Yazışmalar'da **Şimdi oku**'ya basın: e-posta o talebin
+yazışmalarına girer. Gerçek posta kutusu `IMAP_HOST`, `IMAP_USER`,
+`IMAP_PASSWORD` ile bağlanır ([docs/SUNUCU.md](docs/SUNUCU.md) › Posta
+kutusu). Sunucuda bu iş 5 dakikada bir çalışır.
 
 ### Panelden dosya yükleme
 
