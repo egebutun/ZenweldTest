@@ -107,7 +107,7 @@ test("yorumlar: onay bekleyenler adreste; servis talepleri: sayılar", async ({ 
 
   await page.goto("/yonetim/servis-talepleri");
   const fresh = db.serviceRequests.filter((r) => r.status === "new").length;
-  await expect(page.getByText(`${db.serviceRequests.length} talep · ${fresh} yeni`)).toBeVisible();
+  await expect(page.getByText(`${db.serviceRequests.length} talep · ${fresh} yetkili servis ataması bekliyor`)).toBeVisible();
   expect(problems).toEqual([]);
 });
 

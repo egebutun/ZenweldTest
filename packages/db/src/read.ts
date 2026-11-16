@@ -755,6 +755,7 @@ export async function readServiceRequests(db: ReadDb, where?: SQL, window?: RowW
     contactName: r.contactName,
     contactGsm: r.contactGsm,
     userId: opt(r.userId),
+    serviceDealerId: opt(r.serviceDealerId),
     adminNote: opt(r.adminNote),
     createdAt: iso(r.createdAt),
     updatedAt: iso(r.updatedAt),

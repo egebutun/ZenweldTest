@@ -13,9 +13,11 @@ export const DEALER_STORE_TAKEN =
   "Bu online mağaza başka bir bayiye bağlı. Bir online mağaza yalnızca bir bayiye bağlanabilir.";
 
 /** Bayi: ad, sehir ve tur (Yetkili Bayi, Yetkili Servis ya da ikisi) zorunlu. Sorun yoksa null. */
-export function dealerDraftError(dealer: Pick<Dealer, "name" | "city" | "badges">): string | null {
+export function dealerDraftError(dealer: Pick<Dealer, "name" | "city" | "badges" | "email">): string | null {
   if (!dealer.name.trim() || !dealer.city.trim()) return "Bayi adı ve şehir zorunludur.";
   if (!dealer.badges.length) return "Bayi türünü seçin: Yetkili Bayi, Yetkili Servis ya da ikisi.";
+  // E-posta isteğe bağlı; yetkili servise talep e-postaları bu adrese gider (KARARLAR K-117).
+  if (dealer.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dealer.email.trim())) return "E-posta adresi geçersiz görünüyor.";
   return null;
 }
 

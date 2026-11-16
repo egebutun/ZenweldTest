@@ -17,6 +17,7 @@ const ACCOUNT = [
   "/hesabim/adreslerim",
   "/hesabim/favorilerim",
   "/hesabim/garantilerim",
+  "/hesabim/servis-taleplerim",
   "/hesabim/siparislerim",
   "/hesabim/tekliflerim",
   "/odeme",

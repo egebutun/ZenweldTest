@@ -82,11 +82,13 @@ test("Adresler: türün göndericisi ve alıcıları kaydedilir; yanlış adres 
 
 test("Servis Talepleri: talebin yazışmaları görünür; talepten e-posta gönderilir", async ({ page }) => {
   await page.goto("/yonetim/servis-talepleri");
-  // Ornek yazismasi olan talep: listede ikinci (en yeni ikinci) talep.
+  // Ornek yazismasi olan talep: listede ikinci (en yeni ikinci) talep. Yazismalar:
+  // Zenweld'e bildirim, musteriye "talebiniz alindi", servise bildirim ve
+  // servisin yaniti, musteriye soru ve musterinin yaniti (K-117).
   await page.locator("tbody tr").nth(1).click();
   const box = page.locator("[data-kayit-yazismalari]");
-  await expect(box).toContainText("Yazışmalar (3)");
-  await expect(box.locator("tr[data-eposta]", { hasText: "Gelen" })).toHaveCount(1);
+  await expect(box).toContainText("Yazışmalar (6)");
+  await expect(box.locator("tr[data-eposta]", { hasText: "Gelen" })).toHaveCount(2);
 
   await box.getByRole("button", { name: "E-posta gönder" }).click();
   const composer = box.locator("[data-eposta-yaz]");
@@ -95,7 +97,7 @@ test("Servis Talepleri: talebin yazışmaları görünür; talepten e-posta gön
   await composer.getByLabel("Metin").fill(`Servis noktamız yarın arayacak. ${stamp}`);
   await composer.getByRole("button", { name: "Gönder" }).click();
   await expect(box.getByText(tr.panel.emailNotSent)).toBeVisible();
-  await expect(box).toContainText("Yazışmalar (4)");
+  await expect(box).toContainText("Yazışmalar (7)");
 
   // Ayni e-posta E-posta › Servis'te de gorunur.
   await page.goto("/yonetim/e-posta?tur=servis");

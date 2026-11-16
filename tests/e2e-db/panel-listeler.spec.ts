@@ -108,7 +108,7 @@ test("yorumlar ve servis talepleri: sayılar ve süzgeç veritabanından", async
     "SELECT count(*)::int AS total, count(*) FILTER (WHERE status = 'new')::int AS fresh FROM service_requests",
   );
   await page.goto("/yonetim/servis-talepleri");
-  await expect(page.getByText(`${service.total} talep · ${service.fresh} yeni`)).toBeVisible();
+  await expect(page.getByText(`${service.total} talep · ${service.fresh} yetkili servis ataması bekliyor`)).toBeVisible();
   expect(problems).toEqual([]);
 });
 

@@ -14,6 +14,7 @@ export * from "./catalog-rules";
 export * from "./network-rules";
 export * from "./settings-rules";
 export * from "./email";
+export * from "./service";
 export * from "./hero-rules";
 export * from "./shipping";
 export * from "./content-rules";
@@ -58,7 +59,7 @@ import { createSampleCoupons } from "./seed/coupons.seed";
 import { createSampleEmails } from "./seed/emails.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 86;
+export const DB_VERSION = 87;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida

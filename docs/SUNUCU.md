@@ -235,6 +235,7 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `0013_welders-club-kaldirildi.sql` | Welders Club kaldırıldı: `welders_club_signups` tablosu silinir; `email_recipients` ve `email_log`'daki `welders-club` satırları silinir ve tür listesinden çıkar |
 | `0014_force-bayi.sql` | `dealers.force_dealer` (Force Bayi işareti; Force sayfasındaki harita, K-115). Var olan bayiler işaretsiz gelir |
 | `0015_eposta-bolumu.sql` | Panel › E-posta (K-116): `email_settings` (türün göndericisi ve alıcıları; `email_recipients`'taki satırlar buraya taşınır ve tablo kaldırılır), `email_log`'a yön, gönderen, metin, Message-ID, yanıtlanan e-posta, ekler ve panelden gönderen yönetici; türlere `bulten`; `mailbox_state` |
+| `0016_servis-talebi-akisi.sql` | Servis talebi akışı (K-117): `service_requests.service_dealer_id` (talebin yetkili servisi, → `dealers`), `user_id` dizini (Hesabım › Servis Taleplerim); durumlar `new` / `assigned` / `done` (eski `in_progress` kayıtları `assigned` olur) |
 
 **Veritabanındaki kurallar** (`0001_kurallar.sql`):
 
@@ -681,7 +682,10 @@ KARARLAR K-81; `src/forms.ts`.
   - `POST /api/formlar/teklif`: `quotes` + `quote_items` (`createQuote`);
     ürün adı, kodu ve seçenek adı katalogdan; numara `TKL-<yıl>-<4 hane>`.
   - `POST /api/formlar/servis`: `service_requests` (`createServiceRequest`);
-    model adı katalogdan; numara `SRV-<yıl>-<4 hane>`.
+    model adı katalogdan; numara `SRV-<yıl>-<4 hane>`; il 81 illik
+    listeden (listedeki yazımıyla saklanır). Kayıttan sonra Zenweld'e
+    bildirim ve müşteriye "Servis talebiniz alındı" e-postası gider
+    (servis bilgisi yok; K-117).
   - `POST /api/formlar/garanti`: `warranties` (`registerWarranty`); aynı
     seri numarası (büyük harfe çevrilerek) ikinci kez yazılmaz; bitiş
     Türkiye gününe göre.
@@ -692,6 +696,9 @@ KARARLAR K-81; `src/forms.ts`.
     yalnızca sorgulama kartındaki alanlar döner.
   - `GET /api/formlar/teklifler`, `GET /api/formlar/garantiler`: üyenin
     teklifleri (`user_id`) ve garantileri (e-posta).
+  - `GET /api/formlar/servis-talepleri`: üyenin servis talepleri
+    (`user_id`; `memberServiceRequests`). İç not, atanan servis ve
+    iletişim alanları dönmez (K-117).
 - E-posta formları da kendi tablolarına yazılır: `/api/bayilik` →
   `dealer_applications`, `/api/destek` → `support_messages`
   (`urun-destek`; ürün koduna göre `product_id`), `/api/bildirim` iletişim →
@@ -713,8 +720,9 @@ KARARLAR K-81; `src/forms.ts`.
 **Ne yapar:** Sitedeki formlar gönderilince Zenweld'e (varsayılan
 `info@zenweld.com`) e-posta gider. Formlar ve içerikleri:
 [IS-KURALLARI.md › 18](IS-KURALLARI.md#18-e-postalar). Veritabanı modunda
-müşteriye de bir e-posta gider: şifre sıfırlama bağlantısı
-([Şifre ve oturum](#şifre-ve-oturum)). Panelden de e-posta yazılır ve
+müşteriye de e-posta gider: şifre sıfırlama bağlantısı
+([Şifre ve oturum](#şifre-ve-oturum)) ve servis talebi alınınca "Servis
+talebiniz alındı" (K-117). Panelden de e-posta yazılır ve
 yanıtlanır (Panel › E-posta, Servis Talepleri ve Mesajlar'daki E-posta
 gönder; K-116).
 
@@ -977,7 +985,8 @@ yazılır. Kuralların yöneticinin gördüğü hali:
 2. alan; KARARLAR K-100; `src/admin-requests.ts`.
 
 - **Okuma (sayfalı, 50; `panel-lists.ts`):** `readQuotesPage` (durum),
-  `readServicePage` (yeni talep sayısıyla), `readWarrantiesPage` (arama,
+  `readServicePage` (atanması bekleyen talep sayısıyla; ekran bayileri de
+  okur: en yakın yetkili servis önerisi, K-117), `readWarrantiesPage` (arama,
   geçerli / süresi dolan / uzatılmış — Türkiye günüyle, son değişiklik anı,
   toplam ve geçerli sayısı, yalnızca sayfadaki kayıtların üye olan
   e-postaları; yöneticiler sayılmaz), `readReviewsPage` (arama, onay
@@ -996,7 +1005,9 @@ yazılır. Kuralların yöneticinin gördüğü hali:
 - **Yazma:** `POST /api/yonetim/talepler/<işlem>`
   (`apps/zenweld-web/src/app/api/yonetim/talepler/[islem]/route.ts`):
   `teklif` (durum, atanan temsilci ya da iç not; istekte olmayan alan
-  değişmez), `teklif-sil` (satırlarıyla), `servis`, `garanti` (bitiş tarihi
+  değişmez), `teklif-sil` (satırlarıyla), `servis` (durum, yetkili servis
+  ve iç not; "atandı" servissiz, yeni seçilen servis yayında bir yetkili
+  servis değilse 400 — K-117), `garanti` (bitiş tarihi
   ya da uzatılmış garanti; +12 ay kayıttaki güncel tarihten), `garanti-sil`,
   `yorum-onay` (kaldırılan yorumun `featured`'ı da kalkar), `yorum-anasayfa`,
   `yorum-sil`, `basvuru`, `mesaj`.
@@ -1782,7 +1793,7 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | **Ödeme kuruluşu** | Temsili (para çekilmez) | [Kartla ödeme](#kartla-ödeme) › Canlı için gerekenler |
 | **E-posta servisi** | Kodu hazır; anahtar yok, hiçbir e-posta gitmiyor | Resend kurulumu ve `zenweld.com`'un doğrulanması ([9](#9-formlar-ve-e-posta)); şifre sıfırlama ve panelden yazılan e-postalar da buna bağlı |
 | **Posta kutusu** | Okuma işi hazır (IMAP, deneme klasörü); bağlı kutu yok | info@zenweld.com'un sağlayıcısı (BT); IMAP bilgileri ya da sağlayıcının parçası (Microsoft Graph, Gmail API); zamanlayıcı ([Posta kutusu](#posta-kutusu)) |
-| **Müşteriye e-posta** | Yalnızca şifre sıfırlama (veritabanı modu) | Sipariş onayı ve sözleşme kopyası (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi |
+| **Müşteriye e-posta** | Şifre sıfırlama ve servis talebi alındı (veritabanı modu) | Sipariş onayı ve sözleşme kopyası (zorunlu), havale hatırlatması, kargoya verildi, teslim edildi |
 | **Bülten** | Kayıt kutusu var, hiçbir yere gitmez; Panel › E-posta'da Bülten sekmesi (adresler) var | Abone listesi (sıradaki adım), İYS kaydı ve abonelikten çıkma bağlantısı; kampanya e-postası |
 | **Analitik** (ziyaret, dönüşüm, sepette bırakılan) | Yok | Google Analytics vb.; çerez onayına bağlı yüklenmeli ve adresleri güvenlik politikasına (CSP) eklenmeli. Çerez ayarları penceresine analiz/pazarlama kategorileri eklenmeli |
 | **e-Arşiv / e-Fatura** | Yok | Muhasebe yazılımı ya da entegratör |

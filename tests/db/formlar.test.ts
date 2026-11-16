@@ -9,6 +9,7 @@ import {
   findWarranty,
   logEmail,
   memberQuotes,
+  memberServiceRequests,
   memberWarranties,
   readCatalog,
   registerWarranty,
@@ -140,6 +141,34 @@ describe("Servis talebi", () => {
       expect(await error({ categorySlug: "baska" })).toBe("Lütfen zorunlu alanları doldurun.");
       expect(await error({ reasons: [] })).toBe("En az bir servis talep nedeni seçin.");
       expect(await error({ consent: false })).toMatch(/gizlilik sözleşmesini/);
+    });
+  });
+
+  it("il 81 illik listeden: yazılan il listedeki yazımıyla saklanır, listede olmayan kabul edilmez (K-117)", async () => {
+    await withCatalog(async (db, _client, catalog) => {
+      const at = new Date();
+      const ok = await createServiceRequest(db, null, { ...request, city: "KONYA" }, at, catalog);
+      expect(ok.ok && ok.request.city).toBe("Konya");
+      const bad = await createServiceRequest(db, null, { ...request, city: "Ostim" }, at, catalog);
+      expect(bad).toEqual({ ok: false, status: 400, error: "İli listeden seçin." });
+    });
+  });
+
+  it("Hesabım › Servis Taleplerim: yalnızca üyenin talepleri; iç not ve atanan servis gelmez (K-117)", async () => {
+    await withCatalog(async (db, client, catalog) => {
+      await user(client, "u-servis", "servis-uye@ornek.com");
+      const at = new Date();
+      const member = { id: "u-servis", role: "individual" as const, email: "servis-uye@ornek.com", firstName: "Ad", lastName: "Soyad", phone: "05550000000" };
+      const mine = await createServiceRequest(db, member, request, at, catalog);
+      await createServiceRequest(db, null, request, at, catalog);
+      if (!mine.ok) throw new Error(mine.error);
+      await client.query("UPDATE service_requests SET admin_note = 'İç not' WHERE id = $1", [mine.request.id]);
+      const list = await memberServiceRequests(db, "u-servis");
+      expect(list.map((r) => r.id)).toEqual([mine.request.id]);
+      expect(list[0]).not.toHaveProperty("adminNote");
+      expect(list[0]).not.toHaveProperty("serviceDealerId");
+      expect(list[0]).not.toHaveProperty("email");
+      expect(list[0]).toMatchObject({ code: mine.request.code, status: "new", city: "Konya" });
     });
   });
 });

@@ -100,30 +100,75 @@ describe("teklifler", () => {
 });
 
 describe("servis talepleri", () => {
-  it("durum ve iç not kaydedilir; ekran eskiyse kaydedilmez", async () => {
+  const insertRequest = (client: PoolClient) =>
+    client.query(
+      `INSERT INTO service_requests (id, code, product_name, reasons, complaint, company_name, address, city, district,
+                                     email, phone, contact_name, contact_gsm, created_at, updated_at)
+       VALUES ('s1', 'SRV-1', 'Makine', '{onarim}', 'Çalışmıyor', 'Firma', 'Adres', 'Konya', 'Selçuklu',
+               'a@ornek.com', '0555', 'Yetkili', '0555', $1, $1)`,
+      [T0],
+    );
+  const insertDealer = (client: PoolClient, id: string, badges: string[], active = true) =>
+    client.query(
+      `INSERT INTO dealers (id, name, city, district, address, phone, lat, lng, badges, working_hours, active)
+       VALUES ($1, 'Servis ' || $1, 'Konya', 'Selçuklu', 'Adres', '0332', 37.9, 32.5, $2, '', $3)`,
+      [id, badges, active],
+    );
+
+  it("durum, yetkili servis ve iç not kaydedilir; ekran eskiyse kaydedilmez", async () => {
     await withPanel(async (db, client) => {
-      await client.query(
-        `INSERT INTO service_requests (id, code, product_name, reasons, complaint, company_name, address, city, district,
-                                       email, phone, contact_name, contact_gsm, created_at, updated_at)
-         VALUES ('s1', 'SRV-1', 'Makine', '{onarim}', 'Çalışmıyor', 'Firma', 'Adres', 'Konya', 'Selçuklu',
-                 'a@ornek.com', '0555', 'Yetkili', '0555', $1, $1)`,
-        [T0],
-      );
-      expect(await adminSaveServiceRequest(db, admin, { ...ref("s1"), status: "in_progress", adminNote: "Teknisyen yolda" }, T1)).toEqual(
-        saved(T1),
-      );
+      await insertRequest(client);
+      await insertDealer(client, "d1", ["yetkili-servis"]);
+      expect(
+        await adminSaveServiceRequest(db, admin, { ...ref("s1"), status: "assigned", serviceDealerId: "d1", adminNote: "Teknisyen yolda" }, T1),
+      ).toEqual(saved(T1));
       expect(await adminSaveServiceRequest(db, admin, { ...ref("s1"), status: "done" }, T2)).toEqual(stale);
       expect(await adminSaveServiceRequest(db, admin, { ...ref("yok"), status: "done" }, T2)).toMatchObject({
         status: 404,
         error: tr.panel.recordNotFound,
       });
-      const [row] = (await client.query("SELECT status, admin_note FROM service_requests")).rows;
-      expect(row).toEqual({ status: "in_progress", admin_note: "Teknisyen yolda" });
+      const [row] = (await client.query("SELECT status, service_dealer_id, admin_note FROM service_requests")).rows;
+      expect(row).toEqual({ status: "assigned", service_dealer_id: "d1", admin_note: "Teknisyen yolda" });
       expect((await audit(client))[0]).toMatchObject({
         entity_type: "service_requests",
         entity_label: "SRV-1",
-        changes: { status: ["new", "in_progress"], adminNote: [null, "Teknisyen yolda"] },
+        changes: { status: ["new", "assigned"], serviceDealerId: [null, "d1"], adminNote: [null, "Teknisyen yolda"] },
       });
+      // Servis gonderilmezse degismez (durum tamamlandi).
+      expect(await adminSaveServiceRequest(db, admin, { ...ref("s1", T1), status: "done", adminNote: "Teknisyen yolda" }, T2)).toEqual(
+        saved(T2),
+      );
+      expect((await client.query("SELECT status, service_dealer_id FROM service_requests")).rows[0]).toEqual({
+        status: "done",
+        service_dealer_id: "d1",
+      });
+    });
+  });
+
+  it("“Yetkili servis atandı” servissiz kaydedilmez; seçilen kayıt yayındaki bir yetkili servis olmalı (K-117)", async () => {
+    await withPanel(async (db, client) => {
+      await insertRequest(client);
+      await insertDealer(client, "bayi", ["yetkili-satici"]);
+      await insertDealer(client, "kapali", ["yetkili-servis"], false);
+      expect(await adminSaveServiceRequest(db, admin, { ...ref("s1"), status: "assigned" }, T1)).toMatchObject({
+        ok: false,
+        status: 400,
+        error: expect.stringContaining("önce yetkili servisi seçin"),
+      });
+      for (const id of ["bayi", "kapali", "yok"]) {
+        expect(await adminSaveServiceRequest(db, admin, { ...ref("s1"), status: "new", serviceDealerId: id }, T1)).toMatchObject({
+          ok: false,
+          status: 400,
+          error: expect.stringContaining("yetkili servis değil"),
+        });
+      }
+      expect(await adminSaveServiceRequest(db, admin, { ...ref("s1"), status: "in_progress" }, T1)).toMatchObject({ status: 400 });
+      expect((await client.query("SELECT status, service_dealer_id FROM service_requests")).rows[0]).toEqual({
+        status: "new",
+        service_dealer_id: null,
+      });
+      // Eski durum degeri tabloya da yazilamaz.
+      await expect(client.query("UPDATE service_requests SET status = 'in_progress'")).rejects.toMatchObject({ code: "23514" });
     });
   });
 });

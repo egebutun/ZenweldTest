@@ -558,24 +558,77 @@ sunucu: `packages/db/src/forms.ts` (`createQuote`).
 
 ## 9. Servis talebi
 
-**Kısaca:** Herkes servis talebi açabilir; bütün alanlar zorunludur. Durum
-panelde izlenir; müşteriye e-posta gitmez.
+**Kısaca:** Herkes servis talebi açabilir; bütün alanlar zorunlu, il 81
+illik listeden. Müşteriye "talebiniz alındı" e-postası gider. Panel en
+yakın yetkili servisi önerir; yönetici servisle panelden yazışır. Müşteri
+durumu Hesabım › Servis Taleplerim'de görür, servis bilgisini görmez
+(KARARLAR K-117).
 
-- Herkes servis talebi oluşturabilir; üyede bilgiler hesaptan gelir.
+**Form**
+
+- Herkes servis talebi oluşturabilir; üyede bilgiler hesaptan gelir (il,
+  hesaptaki il listede varsa seçili gelir).
 - Talep nedeni en az bir tanedir: Kurulum, Bakım, Onarım, Kullanım/Bakım
   Eğitimi.
-- Durumlar: Yeni → İşlemde → Tamamlandı; panelde istenen duruma geçilir.
-- Servis talebi müşterinin Hesabım sayfasında görünmez; müşteriye e-posta
-  gitmez.
 - Bütün alanlar zorunludur; model, seçilen kategorideki yayındaki bir ürün
   olmalıdır; açıklama en fazla 400 karakter; gizlilik sözleşmesi onayı
   zorunludur.
+- İl 81 illik listeden seçilir. Sunucu yazılan ili büyük/küçük harf ve
+  Türkçe harf farkı gözetmeden listede arar ve listedeki yazımıyla saklar
+  ("KONYA" → "Konya"); listede yoksa "İli listeden seçin." Eski
+  kayıtlarda il serbest yazı olabilir.
+- Formda KVKK metni: ad, telefon, e-posta ve adres talebi üstlenecek
+  yetkili servis noktasıyla paylaşılır.
 - Veritabanı modunda talebi sunucu kaydeder, kuralları yeniden denetler ve
   numarasını (`SRV-…`) verir. Model adı katalogdan alınır.
 
-Kod: `apps/zenweld-web/src/app/(site)/servis-talebi/page.tsx`,
+**Durumlar:** Yetkili servis atanması bekleniyor → Yetkili servis atandı →
+Tamamlandı. Panelde istenen duruma geçilir; "Yetkili servis atandı" için
+talebe yetkili servis seçilmiş olmalıdır. Müşteri Hesabım › Servis
+Taleplerim'de aynı yazıyı görür.
+
+**En yakın yetkili servis (öneri)**
+
+- Adaylar: Bayiler'de "Yetkili Servis" türü olan, yayındaki kayıtlar.
+- Sıra: önce talebin ilçesindeki servis ("aynı ilçe"), sonra ilindeki
+  ("aynı il"), sonra müşterinin il merkezine kuş uçuşu en yakın servis
+  ("yaklaşık 45 km"). Aynı gruptakiler uzaklığa, sonra ada göre sıralanır.
+- İl ve ilçe büyük/küçük harf ve Türkçe harf farkı gözetmeden karşılaştırılır.
+- Uzaklık il merkezinden servisin haritadaki konumuna (enlem/boylam)
+  ölçülür; il listede yoksa uzaklık bilinmez.
+- Listenin ilki önerilen servistir; yönetici başka servis seçebilir.
+- Yeni seçilen kayıt yayındaki bir yetkili servis olmalıdır; daha önce
+  kaydedilmiş servis sonradan yayından kalksa da talepte kalır.
+
+**Örnek:** Örnek veride İstanbul'da yetkili servis yok; İstanbul'dan gelen
+talepte öneri Kocaeli / Gebze'deki servis, "yaklaşık 44 km".
+
+**E-postalar** (talebin yazışmalarında; KARARLAR K-116)
+
+- **Müşteriye, talep gelince:** "Servis talebiniz alındı — `<talep no>`";
+  "Talebiniz başarıyla oluşturulmuştur. En yakın yetkili servisimiz
+  sizinle iletişime geçecektir." Talep no, makine, talep konusu, şikayet,
+  ilçe/il. Servis bilgisi yoktur. Demo modunda gönderilmez, "Gönderilmedi"
+  olarak yazılır.
+- **Servise talep bildirimi** (panelde hazır metin): talep no, talep
+  konusu, makine, şikayet, ilçe/il ve servise uzaklık. Müşterinin adı,
+  telefonu, e-postası ve adresi yoktur. Alıcı: servisin Bayiler'deki
+  e-posta adresi.
+- **Servise müşteri bilgileri** (panelde hazır metin): talebin kayıtlı
+  durumu "Yetkili servis atandı" ya da "Tamamlandı" olunca açılır; firma /
+  ad soyad, yetkili kişi, GSM, telefon, e-posta, adres, makine ve şikayet.
+- Hazır metinler e-posta kutusunda açılır; gönderilmeden değiştirilebilir.
+  Konuda talep numarası olduğu için servisin yanıtı talebin yazışmalarına
+  girer.
+- Servisin e-posta adresi yoksa hazır metin düğmesi kapalıdır.
+
+Kod: `packages/data/src/service.ts` (il listesi, `serviceCandidates`,
+`serviceAssignmentError`, e-posta metinleri),
+`apps/zenweld-web/src/app/(site)/servis-talebi/page.tsx`,
 `packages/store/src/repo/service.ts`; sunucu: `packages/db/src/forms.ts`
-(`createServiceRequest`).
+(`createServiceRequest`, `memberServiceRequests`),
+`packages/db/src/admin-requests.ts` (`adminSaveServiceRequest`). Testler:
+`tests/unit/servis-talebi.test.ts`.
 
 ---
 

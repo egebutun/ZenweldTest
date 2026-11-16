@@ -5,15 +5,17 @@ import {
   createServiceRequest,
   findWarranty,
   memberQuotes,
+  memberServiceRequests,
   memberWarranties,
   registerWarranty,
   type FormFailure,
 } from "@zenweld/db";
+import { serviceCreatedMail } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { quoteNotice, reviewNotice, serviceNotice, warrantyNotice } from "@/lib/form-text";
 import { getDatabaseCatalog } from "@/lib/server/catalog";
 import { database, usesDatabase } from "@/lib/server/db";
-import { isBot, recordBot, sourcePath } from "@/lib/server/mail";
+import { isBot, recordBot, sendCustomerMail, sourcePath } from "@/lib/server/mail";
 import { sendNotification } from "@/lib/server/notify";
 import { siteMember } from "@/lib/server/member";
 import { json, notFound, sameOrigin } from "@/lib/server/session-cookie";
@@ -28,6 +30,7 @@ import { json, notFound, sameOrigin } from "@/lib/server/session-cookie";
  *   GET  /api/formlar/garanti?seri=...  garanti sorgulama (herkes)
  *   GET  /api/formlar/teklifler          uyenin teklifleri
  *   GET  /api/formlar/garantiler         uyenin garantileri (e-postasiyla)
+ *   GET  /api/formlar/servis-talepleri   uyenin servis talepleri (ic not ve servis yok; K-117)
  *
  * Kurallar: packages/db/src/forms.ts. Formlar ziyaretciye de aciktir;
  * giris yapmissa uye oturum cerezinden bulunur. Bot tuzagi doluysa kayit
@@ -49,9 +52,10 @@ export async function GET(request: NextRequest, context: Context) {
   if (tur === "garanti") {
     return json({ ok: true, warranty: await findWarranty(db, request.nextUrl.searchParams.get("seri")) });
   }
-  if (tur !== "teklifler" && tur !== "garantiler") return notFound();
+  if (tur !== "teklifler" && tur !== "garantiler" && tur !== "servis-talepleri") return notFound();
   const member = await siteMember(request);
   if (!member) return json({ ok: false, error: tr.auth.errors.sessionEnded }, 401);
+  if (tur === "servis-talepleri") return json({ ok: true, serviceRequests: await memberServiceRequests(db, member.id) });
   return tur === "teklifler"
     ? json({ ok: true, quotes: await memberQuotes(db, member.id) })
     : json({ ok: true, warranties: await memberWarranties(db, member.email) });
@@ -88,12 +92,13 @@ export async function POST(request: NextRequest, context: Context) {
       const result = await db.transaction((tx) => createServiceRequest(tx, member, body, at, catalog));
       if (!result.ok) return failure(result);
       const { request: record } = result;
-      after(() =>
-        sendNotification("servis", serviceNotice(record, tr), {
-          sourcePath: page,
-          entity: { type: "service_requests", id: record.id },
-        }),
-      );
+      const entity = { type: "service_requests", id: record.id };
+      // Zenweld'e bildirim ve musteriye "talebiniz alindi" (servis bilgisi yok; KARARLAR K-117).
+      const mail = serviceCreatedMail(record, catalog.categories.find((c) => c.slug === record.categorySlug)?.name);
+      after(async () => {
+        await sendNotification("servis", serviceNotice(record, tr), { sourcePath: page, entity });
+        await sendCustomerMail({ to: record.email, subject: mail.subject, text: mail.body, log: { type: "servis", entity, sourcePath: page } });
+      });
       return json({ ok: true, code: record.code });
     }
     case "garanti": {

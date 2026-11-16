@@ -91,10 +91,22 @@ test("servis talebi, garanti kaydı ve ürün yorumu sunucuda; garanti sorgulama
   });
   const { code } = (await service.json()) as { code: string };
   expect(code).toMatch(/^SRV-\d{4}-\d{4}$/);
-  expect(await sql("SELECT product_name, reasons FROM service_requests WHERE code = $1", [code])).toEqual([
-    { product_name: p.name, reasons: ["onarim"] },
+  expect(await sql("SELECT product_name, reasons, status FROM service_requests WHERE code = $1", [code])).toEqual([
+    { product_name: p.name, reasons: ["onarim"], status: "new" },
   ]);
-  // Eksik bilgi sunucuda da reddedilir.
+  // Musteriye "talebiniz alindi" e-postasi talebin yazismalarina yazilir; servis bilgisi yok (K-117).
+  await expect
+    .poll(async () => (await sql<{ to: string[]; body: string }>("SELECT recipients AS to, body FROM email_log WHERE subject = $1", [`Servis talebiniz alındı — ${code}`]))[0])
+    .toMatchObject({ to: [email], body: expect.stringContaining("En yakın yetkili servisimiz sizinle iletişime geçecektir.") });
+  // Hesabim › Servis Taleplerim: uyenin talebi; ic not ve servis gelmez.
+  const mine = (await (await page.request.get("/api/formlar/servis-talepleri")).json()) as { serviceRequests: Record<string, unknown>[] };
+  expect(mine.serviceRequests.map((r) => r.code)).toEqual([code]);
+  expect(Object.keys(mine.serviceRequests[0])).not.toContain("serviceDealerId");
+  // Il listede yoksa ve eksik bilgi sunucuda da reddedilir.
+  const otherCity = await page.request.post("/api/formlar/servis", {
+    data: { categorySlug: p.category, productId: p.id, complaint: "x", companyName: "F", address: "A", city: "Ostim", district: "D", email, phone: "0555", contactName: "Y", contactGsm: "0532", reasons: ["onarim"], consent: true },
+  });
+  expect([otherCity.status(), (await otherCity.json()).error]).toEqual([400, "İli listeden seçin."]);
   expect((await page.request.post("/api/formlar/servis", { data: { productId: p.id } })).status()).toBe(400);
 
   const serial = `E2E-${Date.now()}`;

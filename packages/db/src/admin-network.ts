@@ -115,6 +115,7 @@ const DEALER_FIELDS = [
   "address",
   "phone",
   "whatsapp",
+  "email",
   "lat",
   "lng",
   "badges",
@@ -151,6 +152,7 @@ export async function adminSaveDealer(db: AuditDb, actor: Actor, input: Input, a
     address: text(input.address, 500),
     phone: text(input.phone, 50),
     whatsapp: text(input.whatsapp, 50) || undefined,
+    email: text(input.email, 200).toLowerCase() || undefined,
     lat,
     lng,
     badges: badges as DealerBadge[],
@@ -191,7 +193,7 @@ export async function adminSaveDealer(db: AuditDb, actor: Actor, input: Input, a
     : Object.fromEntries(DEALER_FIELDS.map((key) => [key, after[key] ?? null]));
   if (row && !Object.keys(changes).length) return { ...unchanged(row), id };
 
-  const columns = { ...draft, whatsapp: draft.whatsapp ?? null, retailerId: draft.retailerId ?? null, updatedAt: at };
+  const columns = { ...draft, whatsapp: draft.whatsapp ?? null, email: draft.email ?? null, retailerId: draft.retailerId ?? null, updatedAt: at };
   if (row) await db.update(s.dealers).set(columns).where(eq(s.dealers.id, id));
   else await db.insert(s.dealers).values({ id, ...columns, createdAt: at });
   await writeAudit(db, actor, { action: row ? "update" : "create", entityType: "dealers", entityId: id, entityLabel: draft.name, changes }, at);

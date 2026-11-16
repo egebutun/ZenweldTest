@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-116).
+  K-117).
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -28,7 +28,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 4. [Satış, ödeme ve teklif](#4-satış-ödeme-ve-teklif) — K-21–K-27, K-64, K-65, K-79, K-80, K-85, K-86, K-97
 5. [Stok ve SAP; bayiler ve online satıcılar](#5-stok-ve-sap-bayiler-ve-online-satıcılar) — K-20, K-28–K-33, K-82, K-84, K-93
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap) — K-34–K-37, K-68, K-94–K-96
-7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41
+7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41, K-117
 8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56
@@ -722,6 +722,38 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   Kullanım/Bakım Eğitimi), 400 karakterlik şikayet, iletişim bilgileri ve
   zorunlu gizlilik onayı.
 - Talepler panelde Servis Talepleri'ne düşer.
+- **Ek → K-117:** il 81 illik listeden seçilir; talebin durumları ve
+  yetkili servise yönlendirme K-117'de.
+
+### K-117 · Servis talebi en yakın yetkili servise yönlendirilir
+- **Form:** İl 81 illik listeden seçilir. KVKK metni, adın, telefonun,
+  e-postanın ve adresin talebi üstlenecek yetkili servis noktasıyla
+  paylaşılacağını söyler.
+- **Müşteriye e-posta:** Talep gelince yalnızca bir e-posta gider:
+  "Talebiniz başarıyla oluşturulmuştur. En yakın yetkili servisimiz
+  sizinle iletişime geçecektir." Talep numarası ve özeti vardır; servis
+  bilgisi yoktur.
+- **Durumlar:** Yetkili servis atanması bekleniyor → Yetkili servis
+  atandı → Tamamlandı. Panelde ve müşterinin Hesabım › Servis
+  Taleplerim'inde aynı yazı görünür. Eski "İşlemde" kayıtları "Yetkili
+  servis atandı" oldu.
+- **Müşteri servis bilgisini görmez:** Hesabım'da ve e-postada servis
+  noktasının adı ve iletişim bilgisi gösterilmez; yetkili servis
+  müşteriyle kendisi iletişime geçer.
+- **Panel:** Talebin içinde en yakın yetkili servis önerilir: önce aynı
+  ilçe, sonra aynı il, yoksa müşterinin il merkezine kuş uçuşu en yakın
+  servis. Yönetici listeden başka servis seçebilir. "Yetkili servis
+  atandı" servis seçilmeden kaydedilmez.
+- **Servise e-posta:** Yönetici servisle panelden yazışır. İki hazır
+  metin vardır: önce **talep bildirimi** (talep no, makine, şikayet,
+  ilçe/il; müşterinin kişisel bilgisi yok), servis talebi üstlenip durum
+  "Yetkili servis atandı" yapılınca **müşteri bilgileri**. Servisin
+  yanıtı talebin yazışmalarına düşer (K-116).
+- Bayilerin e-posta adresi panelde (Bayiler) girilir; servis
+  e-postaları bu adrese yazılır.
+- **Neden:** Sahibinin kararı. Kişisel bilgiler yalnızca talebi üstlenen
+  servisle paylaşılsın (KVKK); müşteriye servis ataması gibi ara durumlar
+  gösterilmesin; yönetici servisle e-posta üzerinden, panelden konuşsun.
 
 ---
 

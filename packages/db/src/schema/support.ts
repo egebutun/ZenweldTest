@@ -3,6 +3,7 @@ import { boolean, check, date, index, jsonb, pgTable, smallint, text, uniqueInde
 import type { ReviewMedia } from "@zenweld/data";
 import { oneOf, subsetOf, timestamps, tstz } from "./columns";
 import { categories, products } from "./catalog";
+import { dealers } from "./network";
 import { users } from "./users";
 
 /**
@@ -32,12 +33,15 @@ export const serviceRequests = pgTable(
     contactGsm: text("contact_gsm").notNull(),
     /** Giris yapmissa */
     userId: text("user_id").references(() => users.id, { onDelete: "set null" }),
+    /** Talebin yetkili servisi (K-117); musteriye gosterilmez */
+    serviceDealerId: text("service_dealer_id").references(() => dealers.id, { onDelete: "set null" }),
     adminNote: text("admin_note"),
     ...timestamps(),
   },
   (t) => [
     index("service_requests_created").on(t.createdAt.desc()),
-    check("service_requests_status", oneOf(t.status, ["new", "in_progress", "done"])),
+    index("service_requests_user").on(t.userId),
+    check("service_requests_status", oneOf(t.status, ["new", "assigned", "done"])),
     check("service_requests_reasons", subsetOf(t.reasons, ["kurulum", "bakim", "onarim", "egitim"])),
   ],
 );

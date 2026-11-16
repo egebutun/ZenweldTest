@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Heart, Package, ShieldCheck } from "lucide-react";
+import { FileText, Heart, Package, ShieldCheck, Wrench } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import Link from "next/link";
 import { useFavourites } from "@/lib/favourites";
@@ -19,12 +19,14 @@ export default function AccountHome() {
 
   const quotes = records.ready ? records.quotes.length : "…";
   const warranties = records.ready ? records.warranties.length : "…";
+  const services = records.ready ? records.serviceRequests.length : "…";
 
   const cards = [
     { href: "/hesabim/tekliflerim", label: t.account.myQuotes, value: quotes, Icon: FileText, show: user.role !== "admin" },
     { href: "/hesabim/siparislerim", label: t.account.myOrders, value: ready ? orders.length : "…", Icon: Package, show: user.role !== "admin" },
     { href: "/hesabim/favorilerim", label: t.account.favourites, value: favourites.ids.length, Icon: Heart, show: true },
     { href: "/hesabim/garantilerim", label: t.account.warranties, value: warranties, Icon: ShieldCheck, show: user.role !== "admin" },
+    { href: "/hesabim/servis-taleplerim", label: t.account.myServiceRequests, value: services, Icon: Wrench, show: user.role !== "admin" },
   ].filter((c) => c.show);
 
   return (

@@ -65,7 +65,8 @@ export function DealersClient() {
     const problem = dealerDraftError(editing);
     if (problem) return setError(problem);
     const stored = editing.id ? db.dealers.find((d) => d.id === editing.id) : undefined;
-    const answer = await actions.saveDealer({ ...editing, name: editing.name.trim(), city: editing.city.trim() }, stored);
+    const email = editing.email?.trim().toLowerCase() || undefined;
+    const answer = await actions.saveDealer({ ...editing, name: editing.name.trim(), city: editing.city.trim(), email }, stored);
     if (!answer.ok) return setError(answer.error);
     setError(null);
     setEditing(null);
@@ -208,6 +209,16 @@ export function DealersClient() {
                 />
               </FormRow>
             </div>
+            <FormRow
+              label="E-posta"
+              hint="Sitede gösterilmez. Yetkili servisse servis taleplerinin e-postaları bu adrese gönderilir."
+            >
+              <Input
+                type="email"
+                value={editing.email ?? ""}
+                onChange={(e) => setEditing({ ...editing, email: e.target.value || undefined })}
+              />
+            </FormRow>
             <div className="grid gap-4 sm:grid-cols-2">
               <FormRow label="Enlem (lat)" hint="Google Maps'ten kopyalayabilirsiniz">
                 <Input

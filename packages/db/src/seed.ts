@@ -54,6 +54,8 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
   const userIds = new Set(data.users.map((u) => u.id));
   const productOf = (id: string | undefined) => (id && productIds.has(id) ? id : null);
   const userOf = (id: string | undefined) => (id && userIds.has(id) ? id : null);
+  const dealerIds = new Set(data.dealers.map((d) => d.id));
+  const dealerOf = (id: string | undefined) => (id && dealerIds.has(id) ? id : null);
   const groupId = new Map(data.categoryGroups.map((g) => [`${g.section}/${g.slug}`, g.id]));
   const categoryId = new Map(data.categories.map((c) => [c.slug, c.id]));
   const categoryOf = (slug: string | undefined) => (slug ? (categoryId.get(slug) ?? null) : null);
@@ -527,6 +529,7 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
     contactName: r.contactName,
     contactGsm: r.contactGsm,
     userId: userOf(r.userId),
+    serviceDealerId: dealerOf(r.serviceDealerId),
     adminNote: r.adminNote,
     createdAt: required(r.createdAt),
     updatedAt: required(r.updatedAt),

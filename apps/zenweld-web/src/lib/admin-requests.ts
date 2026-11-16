@@ -2,7 +2,9 @@
 
 import {
   featuredReviewLimitText,
+  serviceAssignmentError,
   toggledWarrantyExpiry,
+  type Dealer,
   type DealerApplication,
   type ProductReview,
   type Quote,
@@ -51,10 +53,24 @@ export function useRequestActions() {
       server ? call("teklif", { ...quote(q), ...patch }, "quotes") : (saveQuote({ ...q, ...patch }), localAnswer()),
     deleteQuote: (q: Quote) => (server ? call("teklif-sil", quote(q)) : (deleteQuote(q.id), localAnswer())),
 
-    saveServiceRequest: (r: ServiceRequest, status: ServiceRequestStatus, adminNote: string) =>
-      server
-        ? call("servis", { ...service(r), status, adminNote }, "service_requests")
-        : localAnswer(saveServiceRequest({ ...r, status, adminNote: adminNote || undefined })),
+    /**
+     * Durum, yetkili servis ve ic not. "Yetkili servis atandı" icin servis
+     * secilmis olmali (KARARLAR K-117); sunucu da ayni kurali denetler.
+     */
+    saveServiceRequest: async (
+      r: ServiceRequest,
+      next: { status: ServiceRequestStatus; serviceDealerId?: string; adminNote: string },
+      dealers: Dealer[],
+    ): Promise<PanelAnswer> => {
+      const problem = serviceAssignmentError(next.status, next.serviceDealerId, dealers, r.serviceDealerId);
+      if (problem) return { ok: false, error: problem };
+      if (server) {
+        return call("servis", { ...service(r), ...next, serviceDealerId: next.serviceDealerId ?? null }, "service_requests");
+      }
+      return localAnswer(
+        saveServiceRequest({ ...r, status: next.status, serviceDealerId: next.serviceDealerId, adminNote: next.adminNote || undefined }),
+      );
+    },
 
     setWarrantyExpiry: (w: WarrantyRecord, expiresAt: string) =>
       server ? call("garanti", { ...warranty(w), expiresAt }, "warranties") : (saveWarranty({ ...w, expiresAt }), localAnswer()),

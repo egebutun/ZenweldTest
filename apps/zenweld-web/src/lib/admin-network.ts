@@ -40,6 +40,7 @@ export function useNetworkActions() {
           address: next.address,
           phone: next.phone,
           whatsapp: next.whatsapp,
+          email: next.email,
           lat: next.lat,
           lng: next.lng,
           badges: next.badges,

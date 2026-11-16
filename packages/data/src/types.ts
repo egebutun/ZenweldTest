@@ -1058,7 +1058,8 @@ export interface ReturnRequest {
 /* ------------------------------------------------------------------ */
 
 export type ServiceReason = "kurulum" | "bakim" | "onarim" | "egitim";
-export type ServiceRequestStatus = "new" | "in_progress" | "done";
+/** Yetkili servis atanmasi bekleniyor → Yetkili servis atandi → Tamamlandi (KARARLAR K-117) */
+export type ServiceRequestStatus = "new" | "assigned" | "done";
 
 export interface ServiceRequest {
   id: string;
@@ -1080,6 +1081,12 @@ export interface ServiceRequest {
   contactGsm: string;
   /** Uye giris yapmissa */
   userId?: string;
+  /**
+   * Talebin yetkili servisi (Bayiler'deki yetkili servis kaydi). Durum
+   * "atanmasi bekleniyor"ken yonetici sectiyse sorulan servis, "atandi"da
+   * talebi ustlenen servis. Musteriye gosterilmez (KARARLAR K-117).
+   */
+  serviceDealerId?: string;
   adminNote?: string;
   createdAt: string;
   updatedAt: string;

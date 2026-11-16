@@ -1,29 +1,34 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import type { ServiceReason, ServiceRequest, ServiceRequestStatus } from "@zenweld/data";
+import {
+  SERVICE_REASON_LABELS,
+  SERVICE_STATUS_LABELS,
+  SERVICE_STATUS_LIST,
+  serviceCandidates,
+  serviceCustomerMail,
+  serviceMatchText,
+  serviceNoticeMail,
+  type Dealer,
+  type ServiceCandidate,
+  type ServiceRequest,
+  type ServiceRequestStatus,
+} from "@zenweld/data";
 import type { ServiceListPage } from "@zenweld/db";
 import { listServiceRequests, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Select, Textarea } from "@zenweld/ui";
 import { formatDateTime } from "@zenweld/utils";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
-import { RecordEmails } from "@/components/admin/EmailParts";
+import { RecordEmails, type EmailTemplate } from "@/components/admin/EmailParts";
 import { ListPager, useListQuery } from "@/components/admin/ListControls";
 import { pageParam, serviceListPage } from "@/lib/admin-lists";
 import { useRequestActions } from "@/lib/admin-requests";
 
-const STATUS: Record<ServiceRequestStatus, { label: string; tone: "amber" | "grey" | "green" }> = {
-  new: { label: "Yeni", tone: "amber" },
-  in_progress: { label: "İşlemde", tone: "grey" },
-  done: { label: "Tamamlandı", tone: "green" },
-};
-
-const REASON: Record<ServiceReason, string> = {
-  kurulum: "Kurulum",
-  bakim: "Bakım",
-  onarim: "Onarım",
-  egitim: "Kullanım/Bakım Eğitimi",
+const STATUS_TONE: Record<ServiceRequestStatus, "amber" | "grey" | "green"> = {
+  new: "amber",
+  assigned: "grey",
+  done: "green",
 };
 
 /**
@@ -31,6 +36,11 @@ const REASON: Record<ServiceReason, string> = {
  * modunda kayit sunucuya yazilir. Sayfa basina 50 talep; veritabani modunda
  * sunucu yalnizca bu sayfayi okur (page prop). Talebin yazismalari ve
  * "E-posta gönder" detayin altindadir (KARARLAR K-116).
+ *
+ * Yetkili servis (KARARLAR K-117): en yakin servis onerilir (ayni ilce, ayni
+ * il, sonra il merkezine kus ucusu); yonetici baska servis secebilir. Servise
+ * once kisisel bilgi icermeyen talep bildirimi gider; servis ustlenince durum
+ * "Yetkili servis atandı" yapilir ve musteri bilgileri gonderilir.
  */
 export function ServiceRequestsClient({ page }: { page?: ServiceListPage }) {
   const db = useDatabase();
@@ -41,12 +51,13 @@ export function ServiceRequestsClient({ page }: { page?: ServiceListPage }) {
   // Kayittan sonra detay yeniden kurulur (key: updatedAt); "Kaydedildi" bu yuzden burada tutulur.
   const [savedId, setSavedId] = useState<string | null>(null);
   const category = (slug: string) => db.categories.find((c) => c.slug === slug)?.name ?? slug;
+  const dealerName = (id?: string) => (id ? db.dealers.find((d) => d.id === id)?.name : undefined);
 
   return (
     <>
       <AdminPageHeader
         title="Servis Talepleri"
-        description={`${data.total} talep · ${data.newCount} yeni`}
+        description={`${data.total} talep · ${data.newCount} yetkili servis ataması bekliyor`}
       />
 
       <div
@@ -82,9 +93,10 @@ export function ServiceRequestsClient({ page }: { page?: ServiceListPage }) {
                     <div>{r.productName}</div>
                     <div className="text-xs text-zw-grey-500">{category(r.categorySlug)}</div>
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-zw-grey-600">{r.reasons.map((x) => REASON[x]).join(", ")}</td>
+                  <td className="px-4 py-2.5 text-xs text-zw-grey-600">{r.reasons.map((x) => SERVICE_REASON_LABELS[x]).join(", ")}</td>
                   <td className="px-4 py-2.5">
-                    <Badge tone={STATUS[r.status].tone}>{STATUS[r.status].label}</Badge>
+                    <Badge tone={STATUS_TONE[r.status]}>{SERVICE_STATUS_LABELS[r.status]}</Badge>
+                    {dealerName(r.serviceDealerId) && <div className="mt-1 text-xs text-zw-grey-500">{dealerName(r.serviceDealerId)}</div>}
                   </td>
                   <td className="px-4 py-2.5 text-right">
                     <ChevronDown size={16} className={`inline transition-transform ${open === r.id ? "rotate-180" : ""}`} />
@@ -96,6 +108,8 @@ export function ServiceRequestsClient({ page }: { page?: ServiceListPage }) {
                       <RequestDetail
                         key={r.updatedAt}
                         request={r}
+                        dealers={db.dealers}
+                        categoryName={db.categories.find((c) => c.slug === r.categorySlug)?.name}
                         saved={savedId === r.id}
                         onSaved={() => setSavedId(r.id)}
                         onEdit={() => setSavedId(null)}
@@ -122,22 +136,42 @@ export function ServiceRequestsClient({ page }: { page?: ServiceListPage }) {
 
 function RequestDetail({
   request,
+  dealers,
+  categoryName,
   saved,
   onSaved,
   onEdit,
 }: {
   request: ServiceRequest;
+  dealers: Dealer[];
+  categoryName?: string;
   saved: boolean;
   onSaved: () => void;
   onEdit: () => void;
 }) {
   const actions = useRequestActions();
+  // Yakindan uzaga yayindaki yetkili servisler; ilki onerilen servis.
+  const candidates = useMemo(() => serviceCandidates(request, dealers), [request, dealers]);
+  const suggestion = candidates[0];
+  // Kayitli servis artik yayinda degilse (ya da yetkili servis degilse) listede yine gorunur.
+  const assigned = request.serviceDealerId ? dealers.find((d) => d.id === request.serviceDealerId) : undefined;
+  const options: ServiceCandidate[] =
+    assigned && !candidates.some((c) => c.dealer.id === assigned.id)
+      ? [...candidates, ...serviceCandidates(request, [{ ...assigned, active: true, badges: ["yetkili-servis"] }])]
+      : candidates;
   const [status, setStatus] = useState(request.status);
+  const [dealerId, setDealerId] = useState(request.serviceDealerId ?? suggestion?.dealer.id ?? "");
   const [note, setNote] = useState(request.adminNote ?? "");
   const [error, setError] = useState<string | null>(null);
+  const selected = options.find((c) => c.dealer.id === dealerId);
+
   const save = async () => {
     setError(null);
-    const answer = await actions.saveServiceRequest(request, status, note.trim());
+    const answer = await actions.saveServiceRequest(
+      request,
+      { status, serviceDealerId: dealerId || undefined, adminNote: note.trim() },
+      dealers,
+    );
     if (answer.ok) onSaved();
     else setError(answer.error);
   };
@@ -147,6 +181,30 @@ function RequestDetail({
       <dd>{value}</dd>
     </div>
   );
+
+  // Servise iki hazir e-posta: talep bildirimi (kisisel bilgi yok) ve servis
+  // ustlenince musteri bilgileri (kayitli durum "atandı" ya da "tamamlandı").
+  const savedService = request.status !== "new" ? options.find((c) => c.dealer.id === request.serviceDealerId) : undefined;
+  const noEmail = "Servisin e-posta adresi yok; Bayi ve Satış Ağı › Bayiler'den ekleyin.";
+  const templates: EmailTemplate[] = [
+    {
+      label: "Servise talep bildirimi",
+      draft: { to: selected?.dealer.email ?? "", ...(selected ? serviceNoticeMail(request, selected, categoryName) : { subject: "", body: "" }) },
+      disabled: !selected ? "Önce yetkili servisi seçin." : !selected.dealer.email ? noEmail : undefined,
+    },
+    {
+      label: "Servise müşteri bilgileri",
+      draft: {
+        to: savedService?.dealer.email ?? "",
+        ...(savedService ? serviceCustomerMail(request, savedService.dealer, categoryName) : { subject: "", body: "" }),
+      },
+      disabled: !savedService
+        ? "Servis talebi üstlenince gönderilir; önce durumu “Yetkili servis atandı” yapıp kaydedin."
+        : !savedService.dealer.email
+          ? noEmail
+          : undefined,
+    },
+  ];
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -164,22 +222,52 @@ function RequestDetail({
         </dl>
       </div>
       <div className="space-y-3">
-        <div className="grid gap-3 sm:grid-cols-[180px_1fr]">
+        <div data-yetkili-servis className="space-y-2 rounded-[4px] border border-zw-grey-200 bg-white p-3 text-sm">
+          <div className="text-xs font-bold uppercase tracking-wide text-zw-grey-600">Yetkili servis</div>
+          {suggestion ? (
+            <p data-onerilen>
+              Önerilen: <span className="font-semibold">{suggestion.dealer.name}</span> — {suggestion.dealer.district} /{" "}
+              {suggestion.dealer.city} · {serviceMatchText(suggestion)}
+            </p>
+          ) : (
+            <p className="text-zw-grey-500">Yayında yetkili servis yok (Bayiler’de “Yetkili Servis” türü).</p>
+          )}
           <Select
-            aria-label="Durum"
-            value={status}
+            aria-label="Yetkili servis"
+            value={dealerId}
             onChange={(e) => {
-              setStatus(e.target.value as ServiceRequestStatus);
+              setDealerId(e.target.value);
               onEdit();
             }}
           >
-            {(Object.keys(STATUS) as ServiceRequestStatus[]).map((s) => (
-              <option key={s} value={s}>
-                {STATUS[s].label}
+            <option value="">Seçilmedi</option>
+            {options.map((c) => (
+              <option key={c.dealer.id} value={c.dealer.id}>
+                {c.dealer.name} — {c.dealer.district} / {c.dealer.city} ({serviceMatchText(c)})
               </option>
             ))}
           </Select>
+          {selected && (
+            <p className="text-xs text-zw-grey-500">
+              {selected.dealer.phone}
+              {selected.dealer.email ? ` · ${selected.dealer.email}` : " · e-posta adresi yok"}
+            </p>
+          )}
         </div>
+        <Select
+          aria-label="Durum"
+          value={status}
+          onChange={(e) => {
+            setStatus(e.target.value as ServiceRequestStatus);
+            onEdit();
+          }}
+        >
+          {SERVICE_STATUS_LIST.map((s) => (
+            <option key={s} value={s}>
+              {SERVICE_STATUS_LABELS[s]}
+            </option>
+          ))}
+        </Select>
         <Textarea
           value={note}
           onChange={(e) => {
@@ -203,6 +291,7 @@ function RequestDetail({
           entity={{ type: "service_requests", id: request.id }}
           to={request.email}
           subject={`Servis talebiniz ${request.code} hakkında`}
+          templates={templates}
         />
       </div>
     </div>

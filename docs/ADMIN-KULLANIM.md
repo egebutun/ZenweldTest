@@ -1677,6 +1677,10 @@ Bayiler sitenin müşterisi değildir; sitede bayi girişi yoktur (bkz.
 - **Bayi Adı** (zorunlu), **Şehir** (zorunlu), **İlçe**, **Adres**. Ad ve
   şehrin başındaki/sonundaki boşluklar atılır.
 - **Telefon**, **WhatsApp.**
+- **E-posta:** "Sitede gösterilmez. Yetkili servisse servis taleplerinin
+  e-postaları bu adrese gönderilir." İsteğe bağlı; yanlış adres
+  kaydedilmez: "E-posta adresi geçersiz görünüyor." Küçük harfle saklanır
+  ([16](#16-servis-talepleri), KARARLAR K-117).
 - **Enlem (lat)** ("Google Maps'ten kopyalayabilirsiniz") ve **Boylam
   (lng).** Google Maps'te konuma sağ tıklayınca koordinat kopyalanır. Yeni
   kayıtta 39.1 / 35.6 (Türkiye'nin ortası) gelir.
@@ -1885,11 +1889,15 @@ süzgeç sunucuda yapılır), şifre özeti tarayıcıya ve CSV'ye gönderilmez
 
 ## 16. Servis Talepleri
 
-Adres: `/yonetim/servis-talepleri`. Açıklama: "<N> talep · <N> yeni".
+Adres: `/yonetim/servis-talepleri`. Açıklama: "<N> talep · <N> yetkili
+servis ataması bekliyor".
 
 Sitedeki Servis Talebi formundan gelenler. Talep `SRV-<yıl>-<4 hane>`
-koduyla **Yeni** durumunda gelir. En yeni talep önce; sayfa başına 50 (bkz.
-[Uzun listeler](#2-ortak-davranışlar)).
+koduyla **Yetkili servis atanması bekleniyor** durumunda gelir; müşteriye
+"talebiniz alındı" e-postası gider. En yeni talep önce; sayfa başına 50
+(bkz. [Uzun listeler](#2-ortak-davranışlar)). Kurallar:
+[IS-KURALLARI.md › Servis talebi](IS-KURALLARI.md#9-servis-talebi)
+(KARARLAR K-117).
 
 - **Tablo:**
   - Talep: kod ve tarih-saat.
@@ -1897,19 +1905,51 @@ koduyla **Yeni** durumunda gelir. En yeni talep önce; sayfa başına 50 (bkz.
   - Makine: model adı; altında kategori adı.
   - Neden: Kurulum, Bakım, Onarım, Kullanım/Bakım Eğitimi (birden çok
     olabilir).
-  - Durum: Yeni / İşlemde / Tamamlandı.
+  - Durum: Yetkili servis atanması bekleniyor / Yetkili servis atandı /
+    Tamamlandı; talebe servis seçildiyse altında servisin adı.
 - Satıra tıklayınca açılır:
   - **Müşteri şikayeti.**
   - Adres, E-posta, Telefon, Yetkili kişi, Yetkili GSM.
-  - **Durum** listesi ve **İç not** ("İç not (yalnızca panelde görünür)").
-    İkisi **Kaydet** ile birlikte kaydedilir; düğmenin yanında "Kaydedildi"
-    yazar. Durum ya da not yeniden değiştirilince bu yazı kalkar.
-  - **Yazışmalar (<n>):** talebin e-postaları (sitenin bildirimi, panelden
-    yazılanlar, posta kutusundan gelen yanıtlar) ve **E-posta gönder**:
-    alıcı talebin e-postası, konu "Servis talebiniz <kod> hakkında"
-    ([25 › E-posta](#e-posta-yonetime-posta)).
+  - **Yetkili servis** kutusu:
+    - "Önerilen: <servis> — <ilçe> / <il> · aynı ilçe | aynı il |
+      yaklaşık <N> km". Önce aynı ilçe, sonra aynı il, sonra il merkezine
+      kuş uçuşu en yakın servis. Yayında yetkili servis yoksa "Yayında
+      yetkili servis yok (Bayiler'de “Yetkili Servis” türü)."
+    - **Yetkili servis** listesi: "Seçilmedi" ve yetkili servisler yakından
+      uzağa ("<ad> — <ilçe> / <il> (aynı ilçe | aynı il | yaklaşık <N>
+      km)"). Talepte servis yoksa önerilen servis seçili gelir. Altında
+      seçilen servisin telefonu ve e-postası ("e-posta adresi yok").
+  - **Durum** listesi (üç durum) ve **İç not** ("İç not (yalnızca panelde
+    görünür)"). Servis, durum ve not **Kaydet** ile birlikte kaydedilir;
+    düğmenin yanında "Kaydedildi" yazar. Biri yeniden değiştirilince bu
+    yazı kalkar.
+    - "Yetkili servis atandı" servis seçilmeden kaydedilmez: "“Yetkili
+      servis atandı” için önce yetkili servisi seçin."
+    - Yayında olmayan ya da yetkili servis olmayan bayi yeni seçilemez:
+      "Seçilen kayıt yayında bir yetkili servis değil."
+  - **Yazışmalar (<n>):** talebin e-postaları (Zenweld'e bildirim,
+    müşteriye "talebiniz alındı", panelden yazılanlar, posta kutusundan
+    gelen yanıtlar). Düğmeler:
+    - **Servise talep bildirimi:** seçilen servisin e-postasına, konu
+      "Zenweld servis talebi — <kod> — <ilçe> / <il>"; metinde talep no,
+      talep konusu, makine, şikayet, ilçe/il, servise uzaklık. Müşterinin
+      kişisel bilgileri yok. Servis seçilmemişse kapalı: "Önce yetkili
+      servisi seçin."
+    - **Servise müşteri bilgileri:** talebin kayıtlı servisinin
+      e-postasına, konu "Talep <kod> size verildi — <firma>"; metinde
+      müşterinin bütün iletişim bilgileri, makine ve şikayet. Kayıtlı durum
+      "Yetkili servis atandı" ya da "Tamamlandı" değilse kapalı: "Servis
+      talebi üstlenince gönderilir; önce durumu “Yetkili servis atandı”
+      yapıp kaydedin."
+    - Servisin e-posta adresi yoksa ikisi de kapalı: "Servisin e-posta
+      adresi yok; Bayi ve Satış Ağı › Bayiler'den ekleyin."
+    - **E-posta gönder:** alıcı talebin e-postası, konu "Servis talebiniz
+      <kod> hakkında".
+    - Hazır metin e-posta kutusunda açılır; gönderilmeden değiştirilebilir
+      ([25 › E-posta](#e-posta-yonetime-posta)).
 - Boşsa: "Henüz servis talebi yok."
-- Talep silinmez. Servis talebi müşterinin Hesabım sayfasında görünmez.
+- Talep silinmez. Müşteri talebini ve durumunu Hesabım › Servis
+  Taleplerim'de görür; servis bilgisini ve iç notu görmez.
 
 Veritabanı modunda bu ekran veritabanıyla çalışır: [Veritabanı modunda Talepler ekranları](#veritabanı-modunda-talepler-ekranları).
 
@@ -2531,7 +2571,8 @@ Alıcıları buraya taşındı.)
   Üyelik · İletişim · Ürün Sorusu · Bayilik · Şifre Sıfırlama · Bülten
   (adreste `?tur=`). Sekmenin altında sitenin bu türde bugün gönderdiği
   e-posta yazar (ör. Servis: "Servis talebi formu gönderilince talep
-  bilgileri Zenweld'e gider."; Bülten: "Site bugün bülten e-postası
+  bilgileri Zenweld'e, talebin alındığı müşteriye gider; yetkili servise
+  panelden yazılır."; Bülten: "Site bugün bülten e-postası
   göndermez. Kampanya e-postası için İYS kaydı ve abonelikten çıkma
   bağlantısı gerekir.") ve türün adresleri: "Gönderen: <adres> · Zenweld'e
   giden e-postanın alıcıları: <adresler>" (yalnızca müşteriye giden türlerde

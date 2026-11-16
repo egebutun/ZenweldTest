@@ -28,8 +28,9 @@ import { useEmailActions, type SendAnswer } from "@/lib/admin-email";
  *   metni, ekleri ve Yanitla.
  * - EmailComposer: Yeni e-posta / Yanitla. Gonderen, turun panelde yazili
  *   gonderici adresidir (yoksa varsayilan); degistirilmez.
- * - RecordEmails: bir kaydin (servis talebi, mesaj) yazismalari ve
- *   "E-posta gönder".
+ * - RecordEmails: bir kaydin (servis talebi, mesaj) yazismalari,
+ *   "E-posta gönder" ve kaydin hazir metinleri (or. servis talebinde
+ *   servise giden iki e-posta; KARARLAR K-117).
  */
 
 const STATUS_TONE = { sent: "green", failed: "red", skipped: "outline", received: "dark" } as const;
@@ -274,11 +275,19 @@ function useRecordEmails(emailType: EmailType, entity: { type: string; id: strin
 }
 
 /** Kayit ekranindaki yazismalar ve "E-posta gönder" (servis talebi, mesaj). */
+/** Kaydin hazir metni: dugmeye basinca taslak acilir; disabled varsa dugme kapali, nedeni yazilir. */
+export interface EmailTemplate {
+  label: string;
+  draft: Omit<Draft, "entity" | "parentId">;
+  disabled?: string;
+}
+
 export function RecordEmails({
   emailType,
   entity,
   to,
   subject,
+  templates = [],
 }: {
   emailType: EmailType;
   entity: { type: string; id: string };
@@ -286,6 +295,7 @@ export function RecordEmails({
   to?: string;
   /** Yeni e-postanin konusu */
   subject: string;
+  templates?: EmailTemplate[];
 }) {
   const { messages, from, loaded, reload } = useRecordEmails(emailType, entity);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -295,18 +305,43 @@ export function RecordEmails({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-xs font-bold uppercase tracking-wide text-zw-grey-600">Yazışmalar ({messages.length})</h3>
         {!draft && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              setResult(null);
-              setDraft({ to: to ?? "", subject, body: "", entity });
-            }}
-          >
-            E-posta gönder
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {templates.map((tpl) => (
+              <Button
+                key={tpl.label}
+                size="sm"
+                variant="outline"
+                disabled={Boolean(tpl.disabled)}
+                title={tpl.disabled}
+                onClick={() => {
+                  setResult(null);
+                  setDraft({ ...tpl.draft, entity });
+                }}
+              >
+                {tpl.label}
+              </Button>
+            ))}
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setResult(null);
+                setDraft({ to: to ?? "", subject, body: "", entity });
+              }}
+            >
+              E-posta gönder
+            </Button>
+          </div>
         )}
       </div>
+      {!draft &&
+        templates
+          .filter((tpl) => tpl.disabled)
+          .map((tpl) => (
+            <p key={tpl.label} className="text-xs text-zw-grey-500">
+              {tpl.label}: {tpl.disabled}
+            </p>
+          ))}
       {result && <Alert tone={result.tone}>{result.text}</Alert>}
       {draft && (
         <EmailComposer

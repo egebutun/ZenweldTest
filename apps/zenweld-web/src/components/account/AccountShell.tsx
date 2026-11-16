@@ -9,6 +9,7 @@ import {
   Package,
   ShieldCheck,
   User as UserIcon,
+  Wrench,
 } from "lucide-react";
 import { useAuth, ROLE_LABELS } from "@zenweld/auth";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
@@ -48,6 +49,7 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
     { href: "/hesabim/siparislerim", label: t.account.myOrders, Icon: Package },
     { href: "/hesabim/favorilerim", label: t.account.favourites, Icon: Heart },
     { href: "/hesabim/garantilerim", label: t.account.warranties, Icon: ShieldCheck },
+    { href: "/hesabim/servis-taleplerim", label: t.account.myServiceRequests, Icon: Wrench },
     { href: "/hesabim/adreslerim", label: t.account.addresses, Icon: MapPin },
   ];
 

@@ -3,8 +3,17 @@
 import { useMemo, useState } from "react";
 import { Check, Wrench } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import type { ServiceReason, User } from "@zenweld/data";
-import { createServiceRequest, listProducts, useDatabase } from "@zenweld/store";
+import {
+  DEFAULT_EMAIL_ADDRESS,
+  emailSettingOf,
+  PROVINCE_NAMES,
+  provinceName,
+  serviceCreatedMail,
+  type ServiceReason,
+  type User,
+} from "@zenweld/data";
+import { tr } from "@zenweld/i18n";
+import { addEmailMessage, createServiceRequest, getEmailSettings, listProducts, useDatabase } from "@zenweld/store";
 import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import Link from "next/link";
 import { PageHero } from "@/components/common/PageShell";
@@ -38,15 +47,17 @@ const EMPTY = {
 /**
  * SERVIS TALEBI (Destek ve Garanti > Destek)
  *
- * Talep yonetim panelindeki "Servis Talepleri" sayfasina duser. Formdaki
- * baglantilar (garanti kosullari, gizlilik sozlesmesi) yeni sekmede acilir;
- * boylece doldurulan form kaybolmaz.
+ * Talep yonetim panelindeki "Servis Talepleri" sayfasina duser; musteriye
+ * "talebiniz alindi" e-postasi gider (servis bilgisi yok). Il 81 illik
+ * listeden secilir; KVKK metni bilgilerin yetkili servisle paylasildigini
+ * soyler (KARARLAR K-117). Formdaki baglantilar (garanti kosullari, gizlilik
+ * sozlesmesi) yeni sekmede acilir; boylece doldurulan form kaybolmaz.
  */
 const memberValues = (user: User) => ({
   companyName: user.companyName || `${user.firstName} ${user.lastName}`.trim(),
   email: user.email,
   phone: user.phone ?? "",
-  city: user.city ?? "",
+  city: provinceName(user.city) ?? "",
   contactName: `${user.firstName} ${user.lastName}`.trim(),
 });
 
@@ -94,6 +105,7 @@ export default function ServiceRequestPage() {
     setError(null);
     const required = Object.keys(EMPTY) as (keyof typeof EMPTY)[];
     if (required.some((k) => !form[k].trim())) return setError(t.service.required);
+    if (!provinceName(form.city)) return setError(t.service.cityInvalid);
     if (reasons.length === 0) return setError(t.service.reasonRequired);
     if (!consent) return setError(t.service.consentRequired);
 
@@ -122,9 +134,28 @@ export default function ServiceRequestPage() {
     if (!record) return setError(t.common.storageFull);
     // Talep panelde Servis Talepleri'ne duser; info@zenweld.com'a da haber verilir.
     void notifyZenweld("servis", serviceNotice(record, t), bot.website);
+    // Musteriye "talebiniz alindi" e-postasi: demo modunda gonderilmez, talebin
+    // yazismalarina "Gonderilmedi" olarak yazilir (KARARLAR K-116, K-117).
+    const mail = serviceCreatedMail(record, db.categories.find((c) => c.slug === record.categorySlug)?.name);
+    addEmailMessage({
+      type: "servis",
+      direction: "out",
+      from: emailSettingOf(getEmailSettings(db), "servis").sender ?? DEFAULT_EMAIL_ADDRESS,
+      to: [record.email],
+      subject: mail.subject,
+      body: mail.body,
+      status: "skipped",
+      error: tr.panel.emailNotSent,
+      entityType: "service_requests",
+      entityId: record.id,
+      sourcePath: "/servis-talebi",
+    });
     setCode(record.code);
     window.scrollTo({ top: 0 });
   };
+
+  // Uye talebini Hesabim › Servis Taleplerim'de izler (yonetici hesabinda bu sayfa yok).
+  const member = Boolean(user) && user?.role !== "admin";
 
   if (code) {
     return (
@@ -135,18 +166,25 @@ export default function ServiceRequestPage() {
           </div>
           <h1 className="mt-6 font-display text-3xl font-bold uppercase">{t.service.successTitle}</h1>
           <p className="mt-3 text-zw-grey-600">{t.service.successText.replace("{code}", code)}</p>
-          <Button
-            className="mt-8"
-            variant="outline"
-            onClick={() => {
-              setCode(null);
-              setReasons([]);
-              setConsent(false);
-              setForm((f) => ({ ...f, categorySlug: "", productId: "", complaint: "" }));
-            }}
-          >
-            {t.service.newRequest}
-          </Button>
+          {member && <p className="mt-2 text-sm text-zw-grey-600">{t.service.successMember}</p>}
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            {member && (
+              <Link href="/hesabim/servis-taleplerim">
+                <Button>{t.account.myServiceRequests}</Button>
+              </Link>
+            )}
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCode(null);
+                setReasons([]);
+                setConsent(false);
+                setForm((f) => ({ ...f, categorySlug: "", productId: "", complaint: "" }));
+              }}
+            >
+              {t.service.newRequest}
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -257,7 +295,14 @@ export default function ServiceRequestPage() {
                 </FormRow>
               </div>
               <FormRow label={t.service.city} required>
-                <Input value={form.city} onChange={(e) => set("city", e.target.value)} />
+                <Select value={form.city} onChange={(e) => set("city", e.target.value)}>
+                  <option value="">{t.service.cityPlaceholder}</option>
+                  {PROVINCE_NAMES.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </Select>
               </FormRow>
               <FormRow label={t.service.district} required>
                 <Input value={form.district} onChange={(e) => set("district", e.target.value)} />
@@ -277,7 +322,10 @@ export default function ServiceRequestPage() {
             </div>
           </section>
 
-          <label className="flex items-start gap-2.5 text-sm text-zw-grey-700">
+          <p data-paylasim className="text-sm text-zw-grey-700">
+            {t.service.sharingNotice}
+          </p>
+          <label className="-mt-5 flex items-start gap-2.5 text-sm text-zw-grey-700">
             <input
               type="checkbox"
               className="mt-0.5 accent-zw-red-600"

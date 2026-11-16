@@ -1,6 +1,6 @@
 "use client";
 
-import type { ServiceRequest, ZenweldDatabase } from "@zenweld/data";
+import { memberServiceRequest, type MemberServiceRequest, type ServiceRequest, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nextCode, nowIso } from "./shared";
 import { newestFirst } from "@zenweld/utils";
@@ -11,6 +11,13 @@ import { newestFirst } from "@zenweld/utils";
 
 export function listServiceRequests(db: ZenweldDatabase = getSnapshot()): ServiceRequest[] {
   return [...db.serviceRequests].sort((a, b) => newestFirst(a.createdAt, b.createdAt));
+}
+
+/** Uyenin talepleri (Hesabim › Servis Taleplerim): ic not ve atanan servis yok (KARARLAR K-117). */
+export function serviceRequestsForUser(userId: string, db: ZenweldDatabase = getSnapshot()): MemberServiceRequest[] {
+  return listServiceRequests(db)
+    .filter((r) => r.userId === userId)
+    .map(memberServiceRequest);
 }
 
 /** Tarayici deposuna yazilamazsa (depo dolu) kayit yapilmaz ve null doner. */

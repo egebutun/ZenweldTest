@@ -486,8 +486,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Panelde askıya alınan üye giriş yapamaz; açık oturumu kapanır.
 - [ ] `/giris?next=https://baska-site` girişten sonra dış siteye gitmez.
 - [ ] Hesabım menüsü: Genel Bakış, Profil, Tekliflerim, Siparişlerim,
-      Favorilerim, Garantilerim, Adreslerim (bireysel ve kurumsal üyede
-      aynı).
+      Favorilerim, Garantilerim, Servis Taleplerim, Adreslerim (bireysel ve
+      kurumsal üyede aynı).
 - [ ] Siparişlerim'de durum geçmişi ve kargo takip numarası görünür.
 - [ ] Garantilerim'de "Yeni Garanti Kaydı" garanti kayıt sayfasına gider;
       form üyenin adı ve e-postasıyla dolu gelir.
@@ -622,7 +622,21 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Bot tuzağı alanı doldurulmuş gönderim e-posta üretmez.
 - [ ] Servis Talebi: talep nedeni seçilmeden gönderilmez; şikayet en fazla
       400 karakter; gizlilik onayı zorunlu; talep `SRV-<yıl>-<4 hane>`
-      numarasıyla panele düşer.
+      numarasıyla "Yetkili servis atanması bekleniyor" durumunda panele
+      düşer.
+- [ ] Servis Talebi: İl 81 illik açılır listedir; demo bireysel üyede
+      İstanbul seçili gelir. Onayın üstünde "Talebinizin yerine
+      getirilebilmesi için adınız, telefonunuz, e-postanız ve adresiniz,
+      talebinizi üstlenecek Zenweld yetkili servis noktasıyla paylaşılır."
+      yazar. Gönderince "Talebiniz başarıyla oluşturulmuştur. En yakın
+      yetkili servisimiz sizinle iletişime geçecektir." yazar; üyede
+      **Servis Taleplerim** düğmesi çıkar (K-117).
+- [ ] Servis talebi gönderilince panelde talebin yazışmalarında müşteriye
+      giden "Servis talebiniz alındı — <no>" e-postası görünür; metninde
+      servis bilgisi yoktur (demo: "Gönderilmedi").
+- [ ] Veritabanı modunda servis talebine API'yle listede olmayan il
+      ("Ostim") gönderilince "İli listeden seçin." döner; "KONYA" "Konya"
+      olarak saklanır.
 
 ---
 
@@ -1117,6 +1131,27 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Servis Talepleri'nde bir talep açılınca altında "Yazışmalar (<n>)"
       ve **E-posta gönder** vardır; alıcı talebin e-postası, konu "Servis
       talebiniz <kod> hakkında" gelir. Mesajlar'da da aynı kutu vardır.
+- [ ] Servis Talepleri: durumlar "Yetkili servis atanması bekleniyor /
+      Yetkili servis atandı / Tamamlandı"dır; açıklamada "<N> yetkili
+      servis ataması bekliyor" yazar. İstanbul'dan gelen talepte "Önerilen:
+      Kocaeli Endüstriyel Kaynak — Gebze / Kocaeli · yaklaşık 44 km",
+      Kayseri / Kocasinan'dan gelende "Kayseri Metal Teknik … · aynı ilçe"
+      yazar; **Yetkili servis** listesi yakından uzağa sıralıdır.
+- [ ] Servis seçilmeden "Yetkili servis atandı" kaydedilince "“Yetkili
+      servis atandı” için önce yetkili servisi seçin." çıkar. Servisle
+      kaydedilince listede durumun altında servisin adı görünür.
+- [ ] **Servise talep bildirimi** e-postasında talep no, makine, şikayet ve
+      ilçe/il vardır; müşterinin adı, telefonu, e-postası ve adresi yoktur.
+      **Servise müşteri bilgileri** durum "Yetkili servis atandı" kaydedilene
+      kadar kapalıdır; açılınca metinde müşterinin iletişim bilgileri vardır.
+- [ ] Hesabım › Servis Taleplerim'de üyenin talepleri ve durumları
+      görünür; atanmış talepte de servis noktasının adı görünmez. Demo
+      bireysel üyede üç durumdan birer talep vardır. Veritabanı modunda
+      `/api/formlar/servis-talepleri` yanıtında iç not ve atanan servis
+      yoktur.
+- [ ] Bayiler'de bayi penceresinde **E-posta** alanı vardır; yanlış adres
+      "E-posta adresi geçersiz görünüyor." ile kaydedilmez; büyük harfle
+      yazılan adres küçük harfle saklanır.
 - [ ] Veritabanı modunda: sitede teklif formu gönderilince E-posta ›
       Teklif'te satırı çıkar, açılınca e-postanın metni görünür; e-posta
       servisi ayarlı değilse durumu "Gönderilmedi"dir. Teklif numarasına

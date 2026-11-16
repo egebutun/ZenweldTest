@@ -1,7 +1,9 @@
 import { and, count, desc, eq, gte, inArray, lt, ne, sql, type SQL } from "drizzle-orm";
 import {
   FEATURED_REVIEW_LIMIT,
+  SERVICE_STATUS_LIST,
   featuredReviewLimitText,
+  serviceAssignmentError,
   isValidDateKey,
   toggledWarrantyExpiry,
   type ProductReview,
@@ -10,6 +12,7 @@ import {
   type ServiceRequest,
   type ServiceRequestStatus,
   type DealerApplication,
+  type DealerBadge,
   type SupportMessage,
   type WarrantyRecord,
 } from "@zenweld/data";
@@ -349,22 +352,46 @@ export async function adminDeleteQuote(db: AuditDb, actor: Actor, input: Input, 
 
 /* ------------------------------ Servis talepleri ------------------------------ */
 
-const SERVICE_STATUSES: ServiceRequestStatus[] = ["new", "in_progress", "done"];
-
+/**
+ * Durum, yetkili servis ve ic not. "Yetkili servis atandı" icin servis
+ * secilmis olmali; yeni secilen kayit yayindaki bir yetkili servis olmali
+ * (KARARLAR K-117; packages/data › serviceAssignmentError). serviceDealerId
+ * gonderilmezse servis degismez; bos gonderilirse kaldirilir.
+ */
 export async function adminSaveServiceRequest(
   db: AuditDb,
   actor: Actor,
   input: Input,
   at: Date,
 ): Promise<PanelResult<Saved>> {
-  const status = pick(input.status, SERVICE_STATUSES);
-  if (!status) return fail(400, tr.panel.invalidRequest);
+  const status = pick(input.status, SERVICE_STATUS_LIST as ServiceRequestStatus[]);
+  const dealerInput = input.serviceDealerId;
+  if (!status || (dealerInput !== undefined && dealerInput !== null && typeof dealerInput !== "string")) {
+    return fail(400, tr.panel.invalidRequest);
+  }
   const id = text(input.id, 100);
   const [found] = id ? await db.select().from(s.serviceRequests).where(eq(s.serviceRequests.id, id)).for("update") : [];
   const row = checkRow(found, input, notFound, stale);
   if (isFailure(row)) return row;
-  return update(db, actor, at, { table: "service_requests", row, label: row.code }, { status, adminNote: note(input.adminNote) }, (values) =>
-    db.update(s.serviceRequests).set(values).where(eq(s.serviceRequests.id, row.id)),
+  const serviceDealerId = dealerInput === undefined ? row.serviceDealerId : text(dealerInput, 100) || null;
+  const dealers =
+    serviceDealerId && serviceDealerId !== row.serviceDealerId
+      ? await db.select({ id: s.dealers.id, active: s.dealers.active, badges: s.dealers.badges }).from(s.dealers).where(eq(s.dealers.id, serviceDealerId))
+      : [];
+  const problem = serviceAssignmentError(
+    status,
+    serviceDealerId ?? undefined,
+    dealers.map((d) => ({ ...d, badges: d.badges as DealerBadge[] })),
+    row.serviceDealerId ?? undefined,
+  );
+  if (problem) return fail(400, problem);
+  return update(
+    db,
+    actor,
+    at,
+    { table: "service_requests", row, label: row.code },
+    { status, serviceDealerId, adminNote: note(input.adminNote) },
+    (values) => db.update(s.serviceRequests).set(values).where(eq(s.serviceRequests.id, row.id)),
   );
 }
 

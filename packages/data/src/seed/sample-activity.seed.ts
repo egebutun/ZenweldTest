@@ -20,6 +20,9 @@ import { products } from "./products.seed";
 import { categories } from "./categories.seed";
 import { optionDefinitions } from "./options.seed";
 import { defaultSettings } from "./settings.seed";
+import { dealers } from "./dealers.seed";
+import { users as demoUsers } from "./users.seed";
+import { SERVICE_STATUS_LIST, serviceCandidates } from "../service";
 
 /**
  * ORNEK SATIS HAREKETLERI
@@ -334,7 +337,7 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
       const category = machineCategories.find((c) => c.slug === p.categorySlug) ?? machineCategories[0];
       const reason = weighted<ServiceReason>([["onarim", 45], ["bakim", 30], ["kurulum", 15], ["egitim", 10]]);
       const status: ServiceRequestStatus =
-        daysAgo < 3 ? "new" : daysAgo < 12 ? weighted<ServiceRequestStatus>([["in_progress", 70], ["done", 30]]) : weighted<ServiceRequestStatus>([["done", 90], ["in_progress", 10]]);
+        daysAgo < 3 ? "new" : daysAgo < 12 ? weighted<ServiceRequestStatus>([["assigned", 70], ["done", 30]]) : weighted<ServiceRequestStatus>([["done", 90], ["assigned", 10]]);
       const [c, district] = city();
       const name = `${pick(FIRST)} ${pick(LAST)}`;
       return {
@@ -358,6 +361,33 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
         updatedAt: isoTR(Math.min(createdMs + between(0, 5) * DAY, nowMs - 60_000)),
       } satisfies ServiceRequest;
     });
+
+  // Demo bireysel uye: Hesabim › Servis Taleplerim bos gorunmesin; her durumdan
+  // en yeni talep onun olur (ikinci en yeni talep haric: ornek yazismalarda
+  // musteriyle yazismasi var). Rastgele sayi kullanilmaz; dagilim degismez.
+  const member = demoUsers.find((u) => u.id === "u-bireysel");
+  const newestFirst = [...serviceRequests].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const secondNewest = newestFirst[1];
+  for (const status of SERVICE_STATUS_LIST) {
+    const r = newestFirst.find((x) => x.status === status && x !== secondNewest && !x.userId);
+    if (!r || !member) continue;
+    const name = `${member.firstName} ${member.lastName}`;
+    Object.assign(r, {
+      userId: member.id,
+      companyName: name,
+      contactName: name,
+      email: member.email,
+      phone: member.phone ?? r.phone,
+      contactGsm: member.phone ?? r.contactGsm,
+      city: member.city ?? r.city,
+      district: "Maltepe",
+    });
+  }
+  // Yetkili servis: atanan ve tamamlanan talepte en yakin servis; ikinci en
+  // yeni talepte de (servise soruldu; ornek yazismalar) (KARARLAR K-117).
+  for (const r of serviceRequests) {
+    if (r.status !== "new" || r === secondNewest) r.serviceDealerId = serviceCandidates(r, dealers)[0]?.dealer.id;
+  }
 
   /* ---------------- Garanti kayitlari ---------------- */
   const warranties: WarrantyRecord[] = Array.from({ length: 52 }, () => recentDay())

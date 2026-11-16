@@ -90,7 +90,6 @@ test("servis talebi: gönderilen talep panelde Servis Talepleri listesinin en ü
     [tr.service.complaint, "Makine açılmıyor."],
     [tr.service.companyName, `Servis Deneme ${stamp}`],
     [tr.service.address, "Deneme sk. 1"],
-    [tr.service.city, "İstanbul"],
     [tr.service.district, "Kadıköy"],
     [tr.service.email, `servis-${stamp}@ornek.com`],
     [tr.service.phone, "02125550000"],
@@ -99,6 +98,7 @@ test("servis talebi: gönderilen talep panelde Servis Talepleri listesinin en ü
   ]) {
     await input(label).fill(value);
   }
+  await input(tr.service.city).selectOption("İstanbul");
   await form.getByRole("checkbox", { name: new RegExp(tr.service.consentLink) }).check();
   await form.getByRole("button", { name: tr.service.submit }).click();
   await expect(page.getByRole("heading", { name: tr.service.successTitle })).toBeVisible();

@@ -14,7 +14,10 @@ import {
   quoteCodePrefix,
   SERVICE_COMPLAINT_MAX,
   SERVICE_REASONS,
+  memberServiceRequest,
+  provinceName,
   serviceCodePrefix,
+  type MemberServiceRequest,
   warrantyExpiryDate,
   type ProductReview,
   type Quote,
@@ -175,6 +178,10 @@ export async function createServiceRequest(
   const category = catalog.categories.find((c) => c.slug === categorySlug);
   const product = catalog.products.find((p) => p.id === input.productId && p.active && p.categorySlug === categorySlug);
   if (!category || !product || Object.values(fields).some((v) => !v)) return fail(400, tr.service.required);
+  // Il 81 illik listeden (KARARLAR K-117); listedeki yazimiyla saklanir.
+  const city = provinceName(fields.city);
+  if (!city) return fail(400, tr.service.cityInvalid);
+  fields.city = city;
   if (!isEmail(fields.email)) return fail(400, tr.quote.invalidEmail);
   const reasons = SERVICE_REASONS.filter((r) => Array.isArray(input.reasons) && input.reasons.includes(r));
   if (reasons.length === 0) return fail(400, tr.service.reasonRequired);
@@ -197,6 +204,11 @@ export async function createServiceRequest(
   });
   const [request] = await readServiceRequests(db, eq(s.serviceRequests.id, id));
   return { ok: true, request };
+}
+
+/** Uyenin servis talepleri (Hesabim › Servis Taleplerim): ic not ve atanan servis yok (KARARLAR K-117). */
+export async function memberServiceRequests(db: OrderDb, userId: string): Promise<MemberServiceRequest[]> {
+  return (await readServiceRequests(db, eq(s.serviceRequests.userId, userId))).map(memberServiceRequest);
 }
 
 /* ------------------------------- Garanti ------------------------------- */

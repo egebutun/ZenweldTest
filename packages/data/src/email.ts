@@ -25,7 +25,7 @@ export const EMAIL_KINDS = [
   { type: "siparis", label: "Sipariş", zenweld: true, sends: "Yeni siparişte sipariş bilgileri Zenweld'e gider." },
   { type: "iade", label: "İade", zenweld: true, sends: "Yeni iade talebinde talep bilgileri Zenweld'e gider." },
   { type: "teklif", label: "Teklif", zenweld: true, sends: "Teklif Al formu gönderilince talep bilgileri Zenweld'e gider." },
-  { type: "servis", label: "Servis", zenweld: true, sends: "Servis talebi formu gönderilince talep bilgileri Zenweld'e gider." },
+  { type: "servis", label: "Servis", zenweld: true, sends: "Servis talebi formu gönderilince talep bilgileri Zenweld'e, talebin alındığı müşteriye gider; yetkili servise panelden yazılır." },
   { type: "garanti", label: "Garanti", zenweld: true, sends: "Garanti kaydında kayıt bilgileri Zenweld'e gider." },
   { type: "yorum", label: "Yorum", zenweld: true, sends: "Ürün yorumu yazılınca onay bekleyen yorum Zenweld'e gider." },
   { type: "uye", label: "Üyelik", zenweld: true, sends: "Yeni üyelikte üyenin bilgileri Zenweld'e gider." },

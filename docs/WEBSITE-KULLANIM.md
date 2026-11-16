@@ -1196,15 +1196,16 @@ Adres: `/hesabim/...`.
 - **Üst kısım:** "Hoş geldiniz, <Ad Soyad>" ve hesap türü rozeti (Bireysel /
   Kurumsal).
 - **Menü:** Genel Bakış, Profil, Tekliflerim, Siparişlerim, Favorilerim,
-  Garantilerim, Adreslerim. Alt sayfalarda da (ör. sipariş detayı) ilgili menü
-  seçili kalır.
+  Garantilerim, Servis Taleplerim, Adreslerim. Alt sayfalarda da (ör. sipariş
+  detayı) ilgili menü seçili kalır.
 - Bu sayfalar arama motorlarına kapalıdır.
 
 ### Genel Bakış
 
-Tekliflerim, Siparişlerim, Favorilerim ve Garantilerim için sayı kartları;
-kartlar ilgili sayfaya gider. Veritabanı modunda teklif, sipariş ve garanti
-sayısı sunucudan gelir; gelene kadar "…" yazar.
+Tekliflerim, Siparişlerim, Favorilerim, Garantilerim ve Servis Taleplerim
+için sayı kartları; kartlar ilgili sayfaya gider. Veritabanı modunda teklif,
+sipariş, garanti ve servis talebi sayısı sunucudan gelir; gelene kadar "…"
+yazar.
 
 ### Profil
 
@@ -1326,6 +1327,22 @@ sayısı sunucudan gelir; gelene kadar "…" yazar.
 - **Yeni Garanti Kaydı** düğmesi kayıt formuna gider.
 - **Boşsa:** "Kayıtlı garanti bulunamadı." ve Garanti Kaydı.
 - Veritabanı modunda garantiler sunucudan okunur.
+
+### Servis Taleplerim
+
+`/hesabim/servis-taleplerim` (KARARLAR K-117).
+
+- **Kapsam:** Üyenin giriş yapmışken gönderdiği servis talepleri, en yeni
+  önce.
+- **Kart:** Talep no, durum rozeti, tarih; Model (altında makine türü),
+  Servis Talep Nedeni, Konum (ilçe / il) ve şikayet.
+- **Durumlar:** Yetkili servis atanması bekleniyor → Yetkili servis
+  atandı → Tamamlandı (panelle aynı yazı).
+- Talebe atanan yetkili servisin adı ve iletişim bilgisi gösterilmez;
+  yetkili servis müşteriyle kendisi iletişime geçer.
+- **Boşsa:** "Henüz servis talebiniz yok." ve **Servis Talebi Oluştur**.
+- Veritabanı modunda talepler sunucudan okunur; iç not ve atanan servis
+  sunucudan da gelmez.
 
 ### Adreslerim
 
@@ -1495,20 +1512,35 @@ gelinir.
   - **Müşteri Şikayeti:** Zorunlu, en fazla 400 karakter (sayaç görünür).
 - **"Servis Talebi Bulunan Firma / Şahıs Bilgileri"** (hepsi zorunlu): Firma /
   Şahıs Adı, Adres, İl, İlçe, E-posta, Telefon, Yetkili Kişi, Yetkili Kişi GSM.
+  - **İl:** 81 illik açılır liste, alfabetik ("İl seçin"). Üyede hesaptaki
+    il listede varsa seçili gelir.
+- **KVKK metni** (onayın üstünde): "Talebinizin yerine getirilebilmesi için
+  adınız, telefonunuz, e-postanız ve adresiniz, talebinizi üstlenecek Zenweld
+  yetkili servis noktasıyla paylaşılır."
 - **Onay:** "**Gizlilik sözleşmesini** okudum, kabul ediyorum." Zorunlu;
   bağlantı yeni sekmede açılır.
 - Bot tuzağı vardır.
-- **Hata mesajları:** "Lütfen zorunlu alanları doldurun.", "En az bir servis
-  talep nedeni seçin.", "Devam etmek için gizlilik sözleşmesini onaylayın."
+- **Hata mesajları:** "Lütfen zorunlu alanları doldurun.", "İli listeden
+  seçin.", "En az bir servis talep nedeni seçin.", "Devam etmek için gizlilik
+  sözleşmesini onaylayın."
 - **Gönderince:**
-  - Talep `SRV-<yıl>-<4 haneli sıra>` numarasıyla **Yeni** durumunda kaydedilir
-    ve panelde Servis Talepleri'ne düşer.
-  - `info@zenweld.com`'a "Yeni servis talebi" e-postası gider.
-  - Ekranda "Servis talebiniz alındı — Talep numaranız <no>. Servis ekibimiz en
-    kısa sürede sizinle iletişime geçecek." yazar.
+  - Talep `SRV-<yıl>-<4 haneli sıra>` numarasıyla **Yetkili servis atanması
+    bekleniyor** durumunda kaydedilir ve panelde Servis Talepleri'ne düşer.
+  - `info@zenweld.com`'a "Yeni servis talebi" e-postası gider (türün
+    alıcıları).
+  - Müşteriye "Servis talebiniz alındı — <no>" e-postası gider: "Talebiniz
+    başarıyla oluşturulmuştur. En yakın yetkili servisimiz sizinle iletişime
+    geçecektir.", talep no ve özeti; servis bilgisi yok. Demo modunda
+    gönderilmez, panelde talebin yazışmalarına "Gönderilmedi" olarak yazılır.
+  - Ekranda "Servis talebiniz alındı — Talep numaranız <no>. Talebiniz
+    başarıyla oluşturulmuştur. En yakın yetkili servisimiz sizinle iletişime
+    geçecektir." yazar. Üyeyse "Talebinizi Hesabım › Servis Taleplerim'den
+    izleyebilirsiniz." ve **Servis Taleplerim** düğmesi.
   - **Yeni talep oluştur** düğmesi makine, model, şikayet, nedenler ve onayı
     temizler; iletişim bilgileri kalır.
   - Veritabanı modunda talebi sunucu kaydeder ve kuralları yeniden denetler.
+  - Talebin panelde en yakın yetkili servise yönlendirilmesi:
+    [IS-KURALLARI.md › Servis talebi](IS-KURALLARI.md#9-servis-talebi).
 
 ---
 
@@ -1838,7 +1870,7 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 | `/odeme` | Ödeme |
 | `/giris`, `/kayit`, `/sifremi-unuttum`, `/cikis` | Üyelik |
 | `/hesabim` | Hesabım › Genel Bakış |
-| `/hesabim/profil`, `/hesabim/tekliflerim`, `/hesabim/siparislerim`, `/hesabim/favorilerim`, `/hesabim/garantilerim`, `/hesabim/adreslerim` | Hesabım sayfaları |
+| `/hesabim/profil`, `/hesabim/tekliflerim`, `/hesabim/siparislerim`, `/hesabim/favorilerim`, `/hesabim/garantilerim`, `/hesabim/servis-taleplerim`, `/hesabim/adreslerim` | Hesabım sayfaları |
 | `/hesabim/siparislerim/<sipariş-no>` | Sipariş detayı |
 | `/teklif-al` | Teklif Al |
 | `/iletisim` | İletişim |

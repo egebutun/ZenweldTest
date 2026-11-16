@@ -499,7 +499,7 @@ Bayiler sitenin üyesi değildir; sitede bayi girişi yoktur (K-03).
 | `id` | text | anahtar | |
 | `name`, `city`, `district`, `address`, `phone`, `working_hours` | text | zorunlu | |
 | `whatsapp` | text | | |
-| `email` | text | | Kullanılmıyor ([19](#19-kullanılmayan-alanlar)) |
+| `email` | text | | Panelde girilir; sitede gösterilmez. Yetkili serviste servis taleplerinin e-postaları bu adrese yazılır (K-117) |
 | `lat`, `lng` | numeric(9,6) | zorunlu | Harita konumu |
 | `badges` | text[] | zorunlu; `yetkili-satici` (Yetkili Bayi), `yetkili-servis` (Yetkili Servis); en az biri | |
 | `retailer_id` | text | benzersiz; → `retailers` (boşalır) | Bayinin online mağazası; bir mağaza en fazla bir bayiye bağlı |
@@ -1010,15 +1010,16 @@ Kullanım sipariş kaydıyla aynı anda yazılır.
 |---|---|---|---|
 | `id` | text | anahtar | |
 | `code` | text | zorunlu; benzersiz | `SRV-<yıl>-<4 hane>` |
-| `status` | text | zorunlu; `new` (Yeni), `in_progress` (İşlemde), `done` (Tamamlandı) | |
+| `status` | text | zorunlu; `new` (Yetkili servis atanması bekleniyor), `assigned` (Yetkili servis atandı), `done` (Tamamlandı) | Müşteri de Hesabım › Servis Taleplerim'de aynı yazıyı görür (K-117). Eski `in_progress` (İşlemde) kayıtları `0016` betiğiyle `assigned` oldu |
 | `category_id` | text | → `categories` (boşalır) | Makine türü; tarayıcıdaki veride `categorySlug` |
 | `product_id` | text | → `products` (boşalır) | Model |
 | `product_name` | text | zorunlu | Kopya |
 | `reasons` | text[] | zorunlu; `kurulum`, `bakim`, `onarim`, `egitim` (Kullanım/Bakım Eğitimi); en az biri | |
 | `complaint` | text | zorunlu | Müşteri şikayeti |
-| `company_name`, `address`, `city`, `district`, `email`, `phone`, `contact_name`, `contact_gsm` | text | zorunlu | `contact_name`, `contact_gsm`: yetkili kişi |
-| `user_id` | text | → `users` (boşalır) | Üye giriş yapmışsa |
-| `admin_note` | text | | İç not |
+| `company_name`, `address`, `city`, `district`, `email`, `phone`, `contact_name`, `contact_gsm` | text | zorunlu | `contact_name`, `contact_gsm`: yetkili kişi. `city`: 81 ilden biri, listedeki yazımıyla (K-117; eski kayıtlarda serbest yazı olabilir) |
+| `user_id` | text | → `users` (boşalır); dizinli | Üye giriş yapmışsa; Hesabım › Servis Taleplerim bununla okunur |
+| `service_dealer_id` | text | → `dealers` (boşalır) | Talebin yetkili servisi (K-117). `new` iken yöneticinin sorduğu servis, `assigned`/`done`'da talebi üstlenen servis. `assigned` için dolu olmalı; yeni seçilen kayıt yayındaki bir yetkili servis olmalı (sunucu denetler). Müşteriye gösterilmez |
+| `admin_note` | text | | İç not; müşteriye gösterilmez |
 | `created_at`, `updated_at` | timestamptz | zorunlu | |
 
 Silme: panelde silinmez.
@@ -1684,7 +1685,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 **Veri sürümü (`DB_VERSION`, yalnızca demo modu):**
 
-- `packages/data/src/index.ts`'tedir (bugün 86).
+- `packages/data/src/index.ts`'tedir (bugün 87).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -1703,14 +1704,14 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 | Ürün | 40 | Hepsi Ekipmanlar'da (sahibinin listeleri; fiyat temsili, Force serisi dışında içerik örnek, KARARLAR K-73, K-75). Güvenlik, Aksesuarlar ve Dolgu Metalleri'ndeki 48 örnek ürün sahibinin isteğiyle silindi; bu bölümlerin kategorileri boş (KARARLAR K-78). 17'si seçenekli (makineler). Ekipmanların 21'inde sahibinin fotoğrafı var, Force serisinin 9'unda geçici ortak fotoğraf; soğutmalı makinede her kombinasyon kendi soğutma halinin fotoğrafını gösterir (K-77) |
 | Grup / kategori | 12 / 50 | Aksesuarlar'daki Lazer Aksesuarları grubunun 5 kategorisinde henüz ürün yok (KARARLAR K-05 eki). Ekipmanların 8 alt kategorisinde filtre var (KARARLAR K-76); ürünlere yalnızca Model Serisi eşli |
 | Seçenek tanımı | 4 | Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu (temsili), Tepe Güç |
-| Bayi / online satıcı | 29 / 9 | |
+| Bayi / online satıcı | 29 / 9 | 9 bayi yetkili servis; servislerin e-postası `servis@<bayi>.example.com` (K-117) |
 | Stok satırı (bayi / satıcı) | ~2.750 / ~415 | Veri ilk kurulduğunda o günün tarihiyle üretilir |
 | Zenweld depo stoğu (SAP kalemi) | 50 | 3'ü stoksuz ([4](#warehouse_stock-ve-sap_sync_runs--zenweld-depo-stoğu-sap-yeni)) |
 | Üye | 69 | 1 yönetici, 46 bireysel, 22 kurumsal |
 | Sipariş / teklif | 133 / 48 | |
-| Servis talebi / garanti | 34 / 54 | |
+| Servis talebi / garanti | 34 / 54 | Servis talebi durumları: 3 atanması bekleniyor, 7 atandı, 24 tamamlandı; atanan ve tamamlananın yetkili servisi en yakın servis. Demo bireysel üyenin her durumdan birer talebi var (Hesabım › Servis Taleplerim; K-117) |
 | İade talebi | 0 | Hesabım'dan açılır |
-| Yazışma | 24 | Örnek kayıtlara bağlı: servis (7 giden, 1 gelen yanıt), teklif (5 giden, 1 gelen), sipariş 4, üyelik 3, garanti 2, şifre sıfırlama 1. `db:seed` yükler, `db:yukle` yüklemez (K-116) |
+| Yazışma | 32 | Örnek kayıtlara bağlı: servis (14 giden: bildirim, müşteriye "talebiniz alındı", servise talep bildirimi, müşteriye soru; 2 gelen: servisin ve müşterinin yanıtı), teklif (5 giden, 1 gelen), sipariş 4, üyelik 3, garanti 2, şifre sıfırlama 1. `db:seed` yükler, `db:yukle` yüklemez (K-116, K-117) |
 | Kupon / kupon kullanımı | 4 / 0 | HOSGELDIN5 (%5, bütün ürünler, kişi başı 1), LAZER25000 (25.000 ₺, Lazer Kaynak Makineleri, en az 500.000 ₺, 20 kullanım, 60 gün), YAZ10 (%10, süresi dolmuş), OZEL15 (%15, kişiye özel: bir örnek kurumsal üyenin ve henüz üye olmayan bir kişinin e-postası, kişi başı 1, 30 gün); tarihler kurulum anına göre |
 | Yorum | 11 | 10'u onaylı, 1'i onay bekliyor; hepsi ekipmanlarda |
 | Blog / haber / etkinlik | 6 / 2 / 8 | |
@@ -1739,7 +1740,6 @@ bırakıldı; silinmez.
 |---|---|
 | `categories.code`, `category_groups.code` | Örnek veride kategori tablosundaki numara ("1.2.3"); ekranda yok |
 | `categories.icon` | Hiçbir kayıtta dolu değil |
-| `dealers.email` | Örnek veride dolu; sitede gösterilmiyor, panelde girilemiyor |
 | `retailers.logo_url` | Logo yerine `logo_text` kullanılıyor |
 | `quote_items.note` | Satır notu; ekranda yok |
 | `products.processes` | Kullanılıyor (Ürün Seçici, arama) ama panelde girilemiyor; bkz. [WEBSITE-KULLANIM.md › Bilinen durumlar](WEBSITE-KULLANIM.md#25-bilinen-durumlar) |

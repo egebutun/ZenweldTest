@@ -1,5 +1,7 @@
 import { formatPrice } from "@zenweld/utils";
 import { notificationText } from "../email";
+import { serviceCandidates, serviceCreatedMail, serviceNoticeMail } from "../service";
+import { dealers } from "./dealers.seed";
 import type { EmailMessage, Order, Quote, ServiceRequest, User, WarrantyRecord } from "../types";
 
 /**
@@ -56,7 +58,52 @@ export function createSampleEmails(
       entityId: r.id,
       sourcePath: "/servis-talebi",
     });
+    // Musteriye "talebiniz alindi" e-postasi (KARARLAR K-117).
+    const created = serviceCreatedMail(r);
+    list.push({
+      at: at(r.createdAt, 6_000),
+      type: "servis",
+      direction: "out",
+      from: ZENWELD,
+      to: [r.email],
+      subject: created.subject,
+      body: created.body,
+      status: "sent",
+      entityType: "service_requests",
+      entityId: r.id,
+      sourcePath: "/servis-talebi",
+    });
     if (i !== 1) return;
+    // Servise talep bildirimi ve servisin yaniti (talebi ustleniyor).
+    const candidate = serviceCandidates(r, dealers).find((c) => c.dealer.id === r.serviceDealerId);
+    if (candidate?.dealer.email) {
+      const notice = serviceNoticeMail(r, candidate);
+      list.push({
+        at: at(r.createdAt, HOUR),
+        type: "servis",
+        direction: "out",
+        from: ZENWELD,
+        to: [candidate.dealer.email],
+        subject: notice.subject,
+        body: notice.body,
+        status: "sent",
+        entityType: "service_requests",
+        entityId: r.id,
+        actorName: ADMIN,
+      });
+      list.push({
+        at: at(r.createdAt, 3 * HOUR),
+        type: "servis",
+        direction: "in",
+        from: candidate.dealer.email,
+        to: [ZENWELD],
+        subject: `Re: ${notice.subject}`,
+        body: `Merhaba,\n\nTalebi üstlenebiliriz. Müşteri bilgilerini gönderirseniz yarın gün içinde arayıp randevu veririz.\n\nİyi çalışmalar,\n${candidate.dealer.name}`,
+        status: "received",
+        entityType: "service_requests",
+        entityId: r.id,
+      });
+    }
     const subject = `Servis talebiniz ${r.code} hakkında`;
     const question = `Merhaba ${r.contactName},\n\n${r.code} numaralı servis talebiniz bize ulaştı. Yetkili servisimizi yönlendirebilmemiz için makinenizin seri numarasını ve mümkünse arızanın bir fotoğrafını bu e-postaya yanıt olarak gönderebilir misiniz?\n\nZenweld`;
     list.push({
