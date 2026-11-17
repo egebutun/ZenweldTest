@@ -604,6 +604,13 @@ formda botlar için görünmez bir tuzak alanı var
 
 2 Kasım 2026'da Next.js 16.4.4 ve React 19.3'e geçildi (KARARLAR K-87).
 
+- **Güvenlik yaması (2026-11-17):** Next.js 16.4.4 → 16.4.6
+  (`eslint-config-next` da). 16.2.0–16.4.4 arasındaki orta düzey iki açık
+  ('use cache' işlevlerinde önbellekten bilgi sızması; GHSA-mfr8-8qww-v76h,
+  GHSA-vc7v-qv4w-wrv8) kapandı. Sitede 'use cache' yok (veritabanı
+  okumaları `unstable_cache` ile önbelleğe alınıyor); büyük ihtimalle
+  etkilenmiyordu, yine de güncellendi. `npm audit --omit=dev`: 0 açık.
+
 - **Güvenlik taraması (2026-11-02):** `npm audit --omit=dev` (siteye giden
   kütüphaneler) 0 açık. Tamamı 20 orta düzey uyarı, hepsi geliştirme
   araçlarında: kod denetimi (ESLint) zincirindeki `minimatch` ve
