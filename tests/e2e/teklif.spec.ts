@@ -29,7 +29,7 @@ async function pickModel(page: Page, group: RegExp, category: RegExp, model: str
 async function sendQuote(page: Page): Promise<string> {
   await page.goto("/teklif-al");
   await toProducts(page);
-  await pickModel(page, /^Kaynak Makineleri/, /^MMA/, "Ultimate 255 MMA Elektrod Kaynak Makinesi");
+  await pickModel(page, /^Kaynak Makineleri/, /^MMA/, "Ultimate 255 MMA Elektrot Kaynak Makinesi");
   await page.getByRole("button", { name: "Teklif Listesine Ekle" }).click();
   await page.getByRole("button", { name: "İleri" }).click();
   await page.getByRole("button", { name: "İleri" }).click();

@@ -1,10 +1,10 @@
 kod;ad;miktar
-ZW30100000001;Ultimate 255 MMA Elektrod Kaynak Makinesi;3
-ZW30100000002;Ultimate 405 CEL MMA Elektrod Kaynak Makinesi;10
-ZW30100000072;ForceArc 200 MMA Elektrod Kaynak Makinesi;17
-ZW-GECICI-FORCEARC250;ForceArc 250 MMA Elektrod Kaynak Makinesi;24
-ZW-GECICI-FORCEARC280;ForceArc 280 MMA Elektrod Kaynak Makinesi;0
-ZW30100000076;ForceArc 400 CEL MMA Elektrod Kaynak Makinesi;15
+ZW30100000001;Ultimate 255 MMA Elektrot Kaynak Makinesi;3
+ZW30100000002;Ultimate 405 CEL MMA Elektrot Kaynak Makinesi;10
+ZW30100000072;ForceArc 200 MMA Elektrot Kaynak Makinesi;17
+ZW-GECICI-FORCEARC250;ForceArc 250 MMA Elektrot Kaynak Makinesi;24
+ZW-GECICI-FORCEARC280;ForceArc 280 MMA Elektrot Kaynak Makinesi;0
+ZW30100000076;ForceArc 400 CEL MMA Elektrot Kaynak Makinesi;15
 ZW30100000010;Ultimate 251 THP TIG Argon Kaynak Makinesi;22
 ZW30100000011;Ultimate 405 THP TIG Argon Kaynak Makinesi;6
 ZW30100000012;Ultimate 405 THP TIG Argon Kaynak Makinesi;6
@@ -37,10 +37,10 @@ ZW-GECICI-FORCEMIG125;ForceMIG 125 Çok Fonksiyonlu Kaynak Makinesi;17
 ZW-GECICI-FORCEMIG185MP;ForceMIG 185 MP Çok Fonksiyonlu Kaynak Makinesi;24
 ZW30100000074;ForceMIG 200 Çok Fonksiyonlu Kaynak Makinesi;8
 ZW-GECICI-FORCEMIG205DP;ForceMIG 205 DP Çok Fonksiyonlu Kaynak Makinesi;15
-ZW30100000042;Multicut 105 CNC Plazma Kesme Makinesi;22
-ZW30100000043;Multicut 85 CNC Plazma Kesme Makinesi;6
-ZW30100000044;Multicut 60 S Plazma Kesme Makinesi;13
-ZW30100000075;ForceCut 45 Plazma Kesme Makinesi;20
+ZW30100000042;Multicut 105 CNC Plazma Kesim Makinesi;22
+ZW30100000043;Multicut 85 CNC Plazma Kesim Makinesi;6
+ZW30100000044;Multicut 60 S Plazma Kesim Makinesi;13
+ZW30100000075;ForceCut 45 Plazma Kesim Makinesi;20
 ZW40100000113;Y300 QCW Lazer Kaynak Makinesi;4
 ZW40100000114;Y300 QCW Lazer Kaynak Makinesi;4
 ZW30100000059;Jasic LS-20000F Lazer Temizleme Makinesi;11

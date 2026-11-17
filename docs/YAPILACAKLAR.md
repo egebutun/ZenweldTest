@@ -1039,6 +1039,15 @@ K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler �
    ForceMIG 185 MP, ForceMIG 205 DP. SAP kodları açılınca panelden (Ürünler ›
    ürün › Ürün Kodu) değiştirilmeli; bayi ve satıcı stok dosyaları kodla
    eşleştiği için bundan önce stok dosyalarında bu ürünler eşleşmez.
+7. **Plazma ürünlerinde "kesme" kelimesi:** Ürün adları "… Plazma Kesim
+   Makinesi"dir (KARARLAR K-118). "Plazma kesme makinesi" diye arayanlar
+   için dört plazma ürününün (Multicut 105 CNC, Multicut 85 CNC, Multicut
+   60 S, ForceCut 45) açıklamasının ilk paragrafında ve Plazma Kesim
+   Makineleri kategorisinin tanıtım metninde "plazma kesme makinesi"
+   ifadesi bir kez, doğal bir cümle içinde geçmeli. Ürün adına ve teknik
+   özellikler tablosuna yazılmaz. Gerçek ürün açıklamaları girilirken
+   yapılır (panelde Ürünler › ürün › Açıklama; Kategoriler › Tanıtım
+   Metni).
 
 ## Ürün fotoğrafları — eksikler
 

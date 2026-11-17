@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-117).
+  K-118).
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -23,7 +23,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 ## İçindekiler
 
 1. [Genel](#1-genel) — K-01–K-04, K-83, K-102
-2. [Katalog ve ürün](#2-katalog-ve-ürün) — K-05–K-12, K-69, K-71–K-78
+2. [Katalog ve ürün](#2-katalog-ve-ürün) — K-05–K-12, K-69, K-71–K-78, K-118
 3. [Ürün seçenekleri](#3-ürün-seçenekleri) — K-13–K-19, K-70
 4. [Satış, ödeme ve teklif](#4-satış-ödeme-ve-teklif) — K-21–K-27, K-64, K-65, K-79, K-80, K-85, K-86, K-97
 5. [Stok ve SAP; bayiler ve online satıcılar](#5-stok-ve-sap-bayiler-ve-online-satıcılar) — K-20, K-28–K-33, K-82, K-84, K-93
@@ -180,8 +180,9 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - Ekipman ürünlerinin adı "model + ürün türü"dür. Tür, Türkiye'de aranan
   adıyla yazılır:
   - "… TIG Argon Kaynak Makinesi", "… MIG Gazaltı Kaynak Makinesi",
-    "… MMA Elektrod Kaynak Makinesi";
-  - "… Çok Fonksiyonlu Kaynak Makinesi", "… Plazma Kesme Makinesi";
+    "… MMA Elektrot Kaynak Makinesi";
+  - "… Çok Fonksiyonlu Kaynak Makinesi", "… Plazma Kesim Makinesi";
+  - İlk hali "… MMA Elektrod …" ve "… Plazma Kesme …" idi. **Değişti → K-118.**
   - "… Lazer Kaynak / Temizleme / Markalama Makinesi".
 - Kartta, ürün sayfasında, sepette ve siparişte aynı ad görünür.
 - Ürün sayfasının otomatik başlığı "<Ürün adı> | ZENWELD"dir; kategori
@@ -321,6 +322,29 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - Örnek sipariş, teklif, stok ve yorumlar ekipmanlara göre yeniden
   kuruldu. Kampanya örneklerinde %25 ve üzeri "Flaş İndirim" örneği
   ForceArc 200 MMA'dır; en az 10 onaylı yorum vardır.
+
+### K-118 · "Elektrot" ve "Plazma Kesim" yazımı, arama verisine göre
+- Ürün ve kategori adlarında "Elektrod" yerine **"Elektrot"** yazılır:
+  "… MMA Elektrot Kaynak Makinesi", "MMA (Stick) Örtülü Elektrot Kaynak
+  Makineleri", "Tungsten Elektrotlar", "Elektrot Pense ve Kitleri",
+  "Karbon Kesme Elektrot ve Penseleri". Çekimli haller ("elektrodu",
+  "elektrodun") Türkçe kurala göre "d" ile kalır.
+- Plazma ürünlerinin adı "… Plazma **Kesim** Makinesi"dir. Aksesuar
+  grubunun adı "Plazma Kesim Aksesuarları"dır.
+- Anasayfanın sayfa başlığı ve büyük başlığı "… Plazma Kesme Sistemleri"
+  olarak kalır (sahibinin tercihi).
+- Ürün, grup ve kategori linkleri değişmedi (ör.
+  `plazma-kesme-aksesuarlari`); yönlendirme gerekmez.
+- "Kesme" aramaları ürün açıklamasında ve kategorinin tanıtım metninde
+  bir kez geçirilerek karşılanır (YAPILACAKLAR.md › Ürün içeriği, madde 7).
+- **Neden:**
+  - Google Trends'te (Türkiye, Kasım 2026) "elektrot kaynak makinesi"
+    "elektrod kaynak makinesi"nden yaklaşık 5 kat çok aranıyor; TDK
+    yazımı da "elektrot".
+  - Google Ads Anahtar Kelime Planlayıcı'da (Türkiye, Kasım 2025 – Ekim
+    2026) "plazma kesim makinesi" ayda 1.000–10.000, "plazma kesme
+    makinesi" 100–1.000 kez aranıyor; kategori adı ("Plazma Kesim
+    Makineleri") zaten böyleydi.
 
 ---
 

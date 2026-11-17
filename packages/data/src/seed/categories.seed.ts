@@ -60,7 +60,7 @@ export const categoryGroups: CategoryGroup[] = [
   { id: "g3.1", code: "3.1", slug: "mig-aksesuarlari", section: "aksesuarlar", name: "MIG Aksesuarları", image: img("mig-aksesuarlari"), order: 2 },
   { id: "g3.2", code: "3.2", slug: "tig-aksesuarlari", section: "aksesuarlar", name: "TIG Aksesuarları", image: img("tig-aksesuarlari"), order: 3 },
   { id: "g3.3", code: "3.3", slug: "mma-aksesuarlari", section: "aksesuarlar", name: "MMA Aksesuarları", image: img("mma-aksesuarlari"), order: 4 },
-  { id: "g3.4", code: "3.4", slug: "plazma-kesme-aksesuarlari", section: "aksesuarlar", name: "Plazma Kesme Aksesuarları", image: img("plazma-kesme-aksesuarlari"), order: 5 },
+  { id: "g3.4", code: "3.4", slug: "plazma-kesme-aksesuarlari", section: "aksesuarlar", name: "Plazma Kesim Aksesuarları", image: img("plazma-kesme-aksesuarlari"), order: 5 },
   { id: "g3.5", code: "3.5", slug: "diger-aksesuarlar", section: "aksesuarlar", name: "Diğer Aksesuarlar", image: img("diger-aksesuarlar"), order: 6 },
 
   { id: "g4.1", code: "4.1", slug: "mig-telleri", section: "dolgu-metalleri", name: "MIG Telleri", image: img("mig-telleri"), order: 1 },
@@ -101,7 +101,7 @@ export const categories: Category[] = [
   {
     id: "c1.2.1", code: "1.2.1", slug: "mma-ortulu-elektrod-kaynak-makineleri", section: "ekipmanlar", group: "kaynak-makineleri", order: 1,
     image: img("mma-ortulu-elektrod-kaynak-makineleri"),
-    name: "MMA (Stick) Örtülü Elektrod Kaynak Makineleri",
+    name: "MMA (Stick) Örtülü Elektrot Kaynak Makineleri",
     description: "Gaz kullanmadan dış mekan kaynağı ve genel imalat için ideal.",
     filters: [modelSeries("ultimate", "force"), VOLTAGE, CURRENT],
   },
@@ -256,14 +256,14 @@ export const categories: Category[] = [
   {
     id: "c3.2.5", code: "3.2.5", slug: "tungsten-elektrodlar", section: "aksesuarlar", group: "tig-aksesuarlari", order: 5,
     image: img("tungsten-elektrodlar"),
-    name: "Tungsten Elektrodlar",
+    name: "Tungsten Elektrotlar",
     description: "Farklı malzeme ve akımlar için renk kodlu tungsten elektrodlar.",
   },
   {
     id: "c3.3.1", code: "3.3.1", slug: "elektrod-pense-ve-kitleri", section: "aksesuarlar", group: "mma-aksesuarlari", order: 1,
     image: img("elektrod-pense-ve-kitleri"),
-    name: "Elektrod Pense ve Kitleri",
-    description: "Elektrod pensleri ve kablolu hazır kitler.",
+    name: "Elektrot Pense ve Kitleri",
+    description: "Elektrot pensleri ve kablolu hazır kitler.",
   },
   {
     id: "c3.3.2", code: "3.3.2", slug: "sase-pense-ve-kitleri", section: "aksesuarlar", group: "mma-aksesuarlari", order: 2,
@@ -281,7 +281,7 @@ export const categories: Category[] = [
     id: "c3.4.2", code: "3.4.2", slug: "plazma-torc-sarf-malzemeleri", section: "aksesuarlar", group: "plazma-kesme-aksesuarlari", order: 2,
     image: img("plazma-torc-sarf-malzemeleri"),
     name: "Plazma Torç Sarf Malzemeleri",
-    description: "Elektrod, meme ve diğer plazma sarf malzemeleri.",
+    description: "Elektrot, meme ve diğer plazma sarf malzemeleri.",
   },
   {
     id: "c3.4.3", code: "3.4.3", slug: "plazma-torc-yedek-parcalari", section: "aksesuarlar", group: "plazma-kesme-aksesuarlari", order: 3,
@@ -334,7 +334,7 @@ export const categories: Category[] = [
   {
     id: "c3.5.7", code: "3.5.7", slug: "karbon-kesme-elektrod-ve-penseleri", section: "aksesuarlar", group: "diger-aksesuarlar", order: 7,
     image: img("karbon-kesme-elektrod-ve-penseleri"),
-    name: "Karbon Kesme Elektrod ve Penseleri",
+    name: "Karbon Kesme Elektrot ve Penseleri",
     description: "Oluk açma ve kaynak sökme için karbon elektrod ve penseler.",
   },
   {

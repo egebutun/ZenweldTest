@@ -167,12 +167,12 @@ const SERIES_BY_PREFIX: Record<string, string> = {
 };
 
 const machineSeeds: MachineSeed[] = [
-  { slug: "ultimate-255-mma", name: "Ultimate 255 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000001" },
-  { slug: "ultimate-405-cel-mma", name: "Ultimate 405 CEL MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000002" },
-  { slug: "forcearc-200-mma", name: "ForceArc 200 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000072" },
-  { slug: "forcearc-250-mma", name: "ForceArc 250 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC250") },
-  { slug: "forcearc-280-mma", name: "ForceArc 280 MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC280") },
-  { slug: "forcearc-400-cel-mma", name: "ForceArc 400 CEL MMA Elektrod Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000076" },
+  { slug: "ultimate-255-mma", name: "Ultimate 255 MMA Elektrot Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000001" },
+  { slug: "ultimate-405-cel-mma", name: "Ultimate 405 CEL MMA Elektrot Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000002" },
+  { slug: "forcearc-200-mma", name: "ForceArc 200 MMA Elektrot Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000072" },
+  { slug: "forcearc-250-mma", name: "ForceArc 250 MMA Elektrot Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC250") },
+  { slug: "forcearc-280-mma", name: "ForceArc 280 MMA Elektrot Kaynak Makinesi", categorySlug: MMA, sap: tempCode("FORCEARC280") },
+  { slug: "forcearc-400-cel-mma", name: "ForceArc 400 CEL MMA Elektrot Kaynak Makinesi", categorySlug: MMA, sap: "ZW30100000076" },
 
   { slug: "ultimate-251-thp", name: "Ultimate 251 THP TIG Argon Kaynak Makinesi", categorySlug: TIG, sap: "ZW30100000010", options: { torch: TIG_TORCH } },
   { slug: "ultimate-405-thp", name: "Ultimate 405 THP TIG Argon Kaynak Makinesi", categorySlug: TIG, options: { cooling: { hava: "ZW30100000011", su: "ZW30100000012" }, torch: TIG_TORCH } },
@@ -201,10 +201,10 @@ const machineSeeds: MachineSeed[] = [
   { slug: "forcemig-200", name: "ForceMIG 200 Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: "ZW30100000074" },
   { slug: "forcemig-205-dp", name: "ForceMIG 205 DP Çok Fonksiyonlu Kaynak Makinesi", categorySlug: MULTI, sap: tempCode("FORCEMIG205DP") },
 
-  { slug: "multicut-105-cnc", name: "Multicut 105 CNC Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000042" },
-  { slug: "multicut-85-cnc", name: "Multicut 85 CNC Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000043" },
-  { slug: "multicut-60-s", name: "Multicut 60 S Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000044" },
-  { slug: "forcecut-45", name: "ForceCut 45 Plazma Kesme Makinesi", categorySlug: PLASMA, sap: "ZW30100000075" },
+  { slug: "multicut-105-cnc", name: "Multicut 105 CNC Plazma Kesim Makinesi", categorySlug: PLASMA, sap: "ZW30100000042" },
+  { slug: "multicut-85-cnc", name: "Multicut 85 CNC Plazma Kesim Makinesi", categorySlug: PLASMA, sap: "ZW30100000043" },
+  { slug: "multicut-60-s", name: "Multicut 60 S Plazma Kesim Makinesi", categorySlug: PLASMA, sap: "ZW30100000044" },
+  { slug: "forcecut-45", name: "ForceCut 45 Plazma Kesim Makinesi", categorySlug: PLASMA, sap: "ZW30100000075" },
 
   { slug: "y300-qcw", name: "Y300 QCW Lazer Kaynak Makinesi", categorySlug: LASER_WELD, options: { power: { "600-w": "ZW40100000113", "1000-w": "ZW40100000114" } } },
 
@@ -253,11 +253,11 @@ function machineOptions(seed: MachineSeed): ProductOptions | undefined {
 }
 
 const TYPE_BY_CATEGORY: Record<string, string> = {
-  [MMA]: "MMA (örtülü elektrod) kaynak makinesi",
+  [MMA]: "MMA (örtülü elektrot) kaynak makinesi",
   [TIG]: "TIG (argon) kaynak makinesi",
   [MIG]: "MIG/MAG (gazaltı) kaynak makinesi",
   [MULTI]: "çok fonksiyonlu kaynak makinesi",
-  [PLASMA]: "plazma kesme makinesi",
+  [PLASMA]: "plazma kesim makinesi",
   [LASER_WELD]: "lazer kaynak makinesi",
   [LASER_CLEAN]: "lazer temizleme makinesi",
   [LASER_MARK]: "lazer markalama makinesi",

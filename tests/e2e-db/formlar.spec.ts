@@ -32,7 +32,7 @@ async function sendQuote(page: Page): Promise<string> {
   await page.getByRole("button", { name: "İleri" }).click();
   await page.getByRole("tab", { name: /^Kaynak Makineleri/ }).click();
   await page.getByRole("button", { name: /^MMA/ }).click();
-  await page.getByRole("button", { name: "Ultimate 255 MMA Elektrod Kaynak Makinesi" }).click();
+  await page.getByRole("button", { name: "Ultimate 255 MMA Elektrot Kaynak Makinesi" }).click();
   await page.getByRole("button", { name: "Teklif Listesine Ekle" }).click();
   await page.getByRole("button", { name: "İleri" }).click();
   await page.getByRole("button", { name: "İleri" }).click();
@@ -49,7 +49,7 @@ test("Teklif Al sunucuda: ziyaretçi ve üye; üyenin teklifi Tekliflerim'de; bi
   );
   expect(row).toMatchObject({ user_id: null, company_name: "Deneme Firma" });
   expect(await sql("SELECT product_name, sku, quantity FROM quote_items WHERE quote_id = $1", [row.id])).toEqual([
-    { product_name: "Ultimate 255 MMA Elektrod Kaynak Makinesi", sku: expect.any(String), quantity: 1 },
+    { product_name: "Ultimate 255 MMA Elektrot Kaynak Makinesi", sku: expect.any(String), quantity: 1 },
   ]);
   await expect.poll(async () => (await mailLog("quotes", row.id)).length).toBe(1);
   expect((await mailLog("quotes", row.id))[0]).toMatchObject({ type: "teklif", source_path: "/teklif-al" });
