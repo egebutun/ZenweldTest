@@ -1283,8 +1283,8 @@ veritabanı modunda sunucuda 301 ile yönlenir (K-120). Kalanlar:
 
 ## SEO — anahtar kelime çalışmasından kalan işler
 
-Anahtar kelime ve rakip analizi (16–17 Kasım 2026) ve sayfa sayfa öneriler
-[SEO.md](SEO.md)'dedir; ham veriler `docs/seo/analiz-2026-11-17/`.
+Anahtar kelime ve rakip analizi (16–17 Kasım 2026), sayfa sayfa öneriler
+ve SEO yol haritası [SEO.md](SEO.md)'dedir; ham veriler `docs/seo/analiz-2026-11-17/`.
 Sıra: önce teknik işler (B), sonra metinler (A); kararlar (C) sahibindedir.
 
 **B — Teknik SEO (kod işi)**
@@ -1316,15 +1316,15 @@ B1 (değişen linklerde sunucuda 301) yapıldı (KARARLAR K-120).
    Elektrot, Çok Fonksiyonlu, Plazma Kesim (Plazma'da "plazma kesme
    makinesi" bir kez; [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 7).
 3. **A3 · Ana sayfa, bölümler ve gruplar:** Sayfa SEO ve grup SEO alanları
-   (SEO.md › 5).
+   (SEO.md › 7).
 4. **A4 · Güvenlik ve Dolgu Metalleri kategorileri:** "kaynak maskesi",
    "kaynak teli" terimleriyle Tanıtım Metinleri.
 5. **A5 · Aksesuar kategorileri:** kısa Tanıtım Metinleri; aksesuar ve tel
-   ürünleri girilirken SEO.md › 6'daki ad formülü.
+   ürünleri girilirken SEO.md › 9'daki ad formülü.
 6. **A6 · Hakkımızda:** ürün gamı paragrafı ve "Zenweld hangi ülkenin
-   markası?" soru-cevabı; "60+ Ürün" sayısının kontrolü (bugün 37 makine).
-7. **A7 · Blog:** SEO.md › 9'daki 15 konu (önce lazer konuları).
-8. **A8 · Ürün açıklamaları:** gerçek ürün bilgileri gelince (SEO.md › 7).
+   markası?" soru-cevabı; "60+ Ürün" sayısının kontrolü (bugün 40 makine).
+7. **A7 · Blog:** SEO.md › 13'teki 15 konu (önce lazer konuları).
+8. **A8 · Ürün açıklamaları:** gerçek ürün bilgileri gelince (SEO.md › 10).
 9. **İç bağlantılar:** ürün → uyumlu aksesuar ve tel kategorisi; kategori ↔
    blog.
 
@@ -1338,7 +1338,7 @@ B1 (değişen linklerde sunucuda 301) yapıldı (KARARLAR K-120).
    Makineleri" diye yazıyor, bizde kısaltma önde ("MIG (GMAW) Gazaltı …").
    Değişirse link değişmez, yalnız ad.
 3. **C3 · Ürün gamı fırsatları:** örtülü elektrot, kaynak gözlüğü, kaynak
-   masası, şarjlı kaynak makinesi (SEO.md › 10); Jasic lazer kaynak
+   masası, şarjlı kaynak makinesi (SEO.md › 14); Jasic lazer kaynak
    (K-74).
 4. **C4 · Search Console doğrulaması:** alan adının DNS kaydına kimin
    erişimi var (BT).

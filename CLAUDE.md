@@ -39,6 +39,7 @@ ilgili belge **aynı commit'te** güncellenir:
 | Sahibin verdiği yeni karar | `docs/KARARLAR.md` (yeni K numarasıyla, tarihsiz, kısa maddeler) |
 | Doğrulanabilir yeni davranış | `docs/KABUL-KONTROL-LISTESI.md` |
 | Stok dosyası biçimi | `docs/STOK.md` |
+| SEO: anahtar kelimeler, sayfa metni önerileri, SEO yol haritası, eski site yönlendirmeleri | `docs/SEO.md` (yönetici özeti PDF'i: `docs/seo/analiz-…/05-Yonetici-ozeti/`) |
 | Sonraya kalan iş | `docs/YAPILACAKLAR.md` |
 | Kurulum, komutlar, demo hesaplar | `README.md` |
 
