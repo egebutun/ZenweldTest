@@ -1314,6 +1314,17 @@ B1 (değişen linklerde sunucuda 301; KARARLAR K-120) ve B2 (eski
 4. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
    Console; [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler),
    [SEO alanları ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) 3.
+5. **B7 · Sayfa içi teknik denetim (bütün sayfa türleri):** her sayfada tek
+   ana başlık (H1) ve içinde ana terim; ara başlık sırası (H2, H3); sayfa
+   başlığı (meta title, en çok 60 karakter) ve Google açıklaması (meta
+   description, 140–155 karakter) boş ya da tekrar eden sayfa olmaması;
+   görsellerin alt metni; paylaşım önizlemesi (Open Graph) ve asıl adres
+   (canonical). Denetim tarayıcı testine eklenir; bulunan eksikler
+   düzeltilir. Bugün başlık, açıklama, canonical ve paylaşım önizlemesi
+   kodda var (K-55); H1 ve ara başlık sırası denetlenmedi.
+6. **B8 · Linklerde eski yazım:** ad "Elektrot" ve "Plazma Kesim" olduğu
+   hâlde linkte eski yazım kalan 5 adres (K-118'de linkler bilerek
+   değiştirilmemişti); karar C5.
 
 **A — Metinler (panelden ya da örnek veriden; SEO.md'deki önerilerle)**
 
@@ -1333,8 +1344,21 @@ B1 (değişen linklerde sunucuda 301; KARARLAR K-120) ve B2 (eski
    markası?" soru-cevabı; "60+ Ürün" sayısının kontrolü (bugün 40 makine).
 7. **A7 · Blog:** SEO.md › 13'teki 15 konu (önce lazer konuları).
 8. **A8 · Ürün açıklamaları:** gerçek ürün bilgileri gelince (SEO.md › 10).
-9. **İç bağlantılar:** ürün → uyumlu aksesuar ve tel kategorisi; kategori ↔
-   blog.
+9. **A9 · Ürün adları:** Bugün sitede yalnızca Ekipmanlar'da ürün var (40
+   makine; adlar K-71 ve K-118'e göre). Gerçek bilgiler gelince makine
+   adları yeniden gözden geçirilir; Aksesuarlar, Güvenlik ve Dolgu
+   Metalleri ürünleri girilirken SEO.md › 9'daki ad formülleri kullanılır
+   (aksesuar: tür + tip + ölçü + uzunluk; tel: sınıf + tür + çap +
+   ağırlık).
+10. **A10 · Sitedeki bütün yazıların denetimi:** 6 blog yazısı (metinleri
+    yer tutucu), 5 haber, 9 etkinlik, SSS (iki cevap yer tutucu),
+    Hakkımızda, belge sayfaları ve yasal metinler tek tek incelenir:
+    başlık, özet, metin, SEO alanları, görsel alt metni, iç bağlantılar.
+    Bilinen sorunlar: iki İmatech etkinliğinde aynı "Zenweld Hakkında"
+    paragrafı (tekrar eden metin); etkinlik galerilerinde geçici stok
+    fotoğraflar (gerçekleri gelince değişir).
+11. **İç bağlantılar:** ürün → uyumlu aksesuar ve tel kategorisi; kategori ↔
+    blog.
 
 **C — Sahibin kararı**
 
@@ -1351,6 +1375,9 @@ B1 (değişen linklerde sunucuda 301; KARARLAR K-120) ve B2 (eski
    (K-74).
 4. **C4 · Search Console doğrulaması:** alan adının DNS kaydına kimin
    erişimi var (BT).
+5. **C5 · Linklerde eski yazım değişsin mi?** (B8) Sahibi değişmesini
+   istedi; liste onaya sunuldu. Site henüz yayında olmadığı için link
+   değişikliği Google'da bir şey kaybettirmez.
 
 ## Ürün Seçici ve arama — en son yeniden tasarlanacak
 

@@ -971,6 +971,17 @@ en büyük içeriğin görünme süresi (LCP) anasayfada **3,0 sn**, kategoride
       **Panel**
 - [ ] Yeni fotoğraflarda alt metne görünümü eklemek ("… — ön panel").
       **Panel**
+- [ ] Sayfa içi teknik denetim: her sayfada tek H1 (ana başlık) ve içinde
+      ana terim; ara başlık sırası (H2, H3); boş ya da tekrar eden sayfa
+      başlığı (meta title) ve Google açıklaması (meta description) olmaması;
+      görsel alt metinleri, paylaşım önizlemesi, canonical. Tarayıcı testine
+      eklenir (B7). **Kod**
+- [ ] Linklerde eski yazım: adı "Elektrot" ve "Plazma Kesim" olan 5 sayfanın
+      linkinde hâlâ "elektrod" ve "kesme" var (B8, C5). **Kod**, onayla
+- [ ] Ürün adları: bugün yalnızca Ekipmanlar'da ürün var (40 makine);
+      gerçek bilgiler gelince makine adları yeniden gözden geçirilir;
+      aksesuar, güvenlik ve tel ürünleri [9. bölümdeki](#9-kategoriler) ad
+      formülleriyle girilir (A9). **Panel**
 
 ### 4. İçerik
 
@@ -983,6 +994,11 @@ En büyük etken: Google, aramaya en iyi cevabı veren sayfayı üste koyar.
       yayından kaldırılmalı (KARARLAR K-54). **Panel**
 - [ ] Blog takvimi: ayda 2–4 yazı ([13. bölüm](#13-blog-ve-sss-konuları);
       A7). **Sahibi**
+- [ ] Sitedeki bütün yazıların denetimi: blog, haber, etkinlik, SSS,
+      Hakkımızda, belge sayfaları, yasal metinler; başlık, özet, metin, SEO
+      alanları, alt metin, iç bağlantı. Bilinen: iki İmatech etkinliğinde
+      aynı paragraf, etkinlik galerilerinde geçici stok fotoğraflar (A10).
+      **Panel**
 - [ ] SSS'deki yer tutucu cevaplar (şebeke, jeneratör) ve "Zenweld hangi
       ülkenin markası?" sorusu. **Panel**
 - [ ] Hakkımızda'ya ek paragraf ve soru-cevap
