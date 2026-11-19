@@ -1052,15 +1052,20 @@ K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler �
    ForceMIG 185 MP, ForceMIG 205 DP. SAP kodları açılınca panelden (Ürünler ›
    ürün › Ürün Kodu) değiştirilmeli; bayi ve satıcı stok dosyaları kodla
    eşleştiği için bundan önce stok dosyalarında bu ürünler eşleşmez.
-7. **Plazma ürünlerinde "kesme" kelimesi:** Ürün adları "… Plazma Kesim
-   Makinesi"dir (KARARLAR K-118). "Plazma kesme makinesi" diye arayanlar
-   için dört plazma ürününün (Multicut 105 CNC, Multicut 85 CNC, Multicut
-   60 S, ForceCut 45) açıklamasının ilk paragrafında ve Plazma Kesim
-   Makineleri kategorisinin tanıtım metninde "plazma kesme makinesi"
-   ifadesi bir kez, doğal bir cümle içinde geçmeli. Ürün adına ve teknik
-   özellikler tablosuna yazılmaz. Gerçek ürün açıklamaları girilirken
-   yapılır (panelde Ürünler › ürün › Açıklama; Kategoriler › Tanıtım
-   Metni).
+7. **Plazma ürünlerinde "kesme" kelimesi:** Ad ve başlıklarda "kesim"
+   (KARARLAR K-118), açıklamalarda bir kez "kesme" geçer; Google'a iki
+   yazım da gider ([SEO.md](SEO.md) › 2). Gerçek ürün açıklamaları ve
+   Tanıtım Metinleri girilirken yapılır:
+   - Dört plazma makinesinin (Multicut 105 CNC, Multicut 85 CNC, Multicut
+     60 S, ForceCut 45) açıklamasının ilk paragrafında ve Plazma Kesim
+     Makineleri kategorisinin Tanıtım Metni'nde "plazma kesme makinesi".
+   - Plazma Kesim Aksesuarları grubunun, plazma aksesuar kategorilerinin
+     (Plazma Torçları, Torç Sarf Malzemeleri, Yedek Parçaları, Aparatları)
+     Tanıtım Metni'nde ve plazma aksesuar ürünlerinin açıklamasında
+     "plazma kesme torcu / ucu / sarf malzemesi".
+   - Ürün adına, sayfa başlığına ve teknik özellikler tablosuna
+     yazılmaz; bir sayfada bir kez yeter.
+   - Panelde Ürünler › ürün › Açıklama; Kategoriler › Tanıtım Metni.
 
 ## Ürün fotoğrafları — eksikler
 

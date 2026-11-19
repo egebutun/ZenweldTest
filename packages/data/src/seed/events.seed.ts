@@ -223,7 +223,7 @@ Win Eurasia 2024 Endüstri Fuarı'nı ziyaret etmeyi planlıyorsanız, Zenweld s
 
 ## Zenweld Hakkında
 
-Zenweld, 2005 yılından beri kaynak ve kesme teknolojileri alanında faaliyet gösteren bir Türk markasıdır. Zenweld, geniş ürün yelpazesi ve uzman ekibiyle, metal işleme sektörünün farklı ihtiyaçlarına çözümler sunmaktadır. Zenweld, Türkiye'nin önde gelen sanayi kuruluşlarının tedarikçileri arasında yer almaktadır.`,
+Zenweld, 2000 yılından beri kaynak ve kesme teknolojileri alanında faaliyet gösteren bir Türk markasıdır. Zenweld, geniş ürün yelpazesi ve uzman ekibiyle, metal işleme sektörünün farklı ihtiyaçlarına çözümler sunmaktadır. Zenweld, Türkiye'nin önde gelen sanayi kuruluşlarının tedarikçileri arasında yer almaktadır.`,
     startDate: "2024-05-08",
     endDate: "2024-05-11",
     venue: "Konya Fuar Merkezi",
@@ -255,7 +255,7 @@ Zenweld Genel Müdürü Murat Zengin yaptığı açıklamada, İmatech 2024 fuar
 
 ## Zenweld Hakkında
 
-Zenweld, 2005 yılından beri kaynak ve kesme teknolojileri alanında faaliyet gösteren bir Türk markasıdır. Zenweld, geniş ürün yelpazesi ve uzman ekibiyle, metal işleme sektörünün farklı ihtiyaçlarına çözümler sunmaktadır. Zenweld, Türkiye'nin önde gelen sanayi kuruluşlarının tedarikçileri arasında yer almaktadır.
+Zenweld, 2000 yılından beri kaynak ve kesme teknolojileri alanında faaliyet gösteren bir Türk markasıdır. Zenweld, geniş ürün yelpazesi ve uzman ekibiyle, metal işleme sektörünün farklı ihtiyaçlarına çözümler sunmaktadır. Zenweld, Türkiye'nin önde gelen sanayi kuruluşlarının tedarikçileri arasında yer almaktadır.
 
 ## İmatech 2024 Hakkında
 
@@ -301,8 +301,8 @@ MIG/MAG, TIG ve MMA kaynak makineleri, plazma kesme sistemleri ve lazer teknoloj
 Bu anlamlı günümüzde bizleri yalnız bırakmayan Menderes Kaymakamı Sayın Murat Karaloğlu'na, Menderes Belediye Başkan Vekili Sayın Asuman Şen'e, Jasic heyetine, değerli iş ortaklarımıza, tüm misafirlerimize ve emeği geçen çalışma arkadaşlarımıza teşekkür ederiz.
 
 Cumhuriyetimizin ışığında üretmeye, gelişmeye ve geleceğe değer katmaya devam ediyoruz.`,
-    coverUrl: "/images/news/izmir-uretim-tesisi-acilisi-2026.webp",
-    images: ["/images/news/izmir-uretim-tesisi-acilisi-davet-2026.webp"],
+    coverUrl: "/images/news/izmir-uretim-tesisi-acilisi-davet-2026.webp",
+    images: ["/images/news/izmir-uretim-tesisi-acilisi-2026.webp"],
     publishedAt: "2026-11-10T10:00:00+03:00",
     active: true,
   },

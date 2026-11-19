@@ -103,10 +103,24 @@ elektrodu (rutil, bazik; her biri 1.000–10.000), kaynak gözlüğü
   - "makinesi" (Trends'te "makinası"nın yaklaşık 3 katı); "makinası"
     metinde bir kez geçebilir.
   - "elektrot" ve "inverter" (K-118).
-  - Plazmada ürün ve kategori adlarında "kesim" (K-118); anasayfa başlığı
-    "Plazma Kesme Sistemleri" olarak kalır. "Plazma kesme makinesi"
-    ifadesi plazma ürünlerinin açıklamasında ve Plazma Kesim Makineleri
-    kategorisinin Tanıtım Metni'nde bir kez geçer.
+  - **Plazmada iki yazım birlikte:** ad ve başlıklarda "kesim" (ürün
+    adı, kategori ve grup adı, sayfa başlığı; K-118), açıklamalarda bir
+    kez de "kesme". "Plazma kesim makinesi" ayda 1.000–10.000, "plazma
+    kesme makinesi" 100–1.000 aranıyor; Google ikisini büyük ölçüde aynı
+    sayar ama sayfada iki yazımın da geçmesi küçük ölçüde ikisinden de
+    görünürlük sağlar. Kural:
+    - Plazma makinelerinin (Multicut, ForceCut) açıklamasının ilk
+      paragrafında ve Plazma Kesim Makineleri kategorisinin Tanıtım
+      Metni'nde "plazma kesme makinesi" bir kez geçer.
+    - Plazma Kesim Aksesuarları grubunun ve plazma aksesuar
+      kategorilerinin Tanıtım Metni'nde, plazma aksesuar ürünlerinin
+      açıklamasında "plazma kesme torcu / ucu / sarf malzemesi" gibi bir
+      kez geçer.
+    - "Kesme" ürün adına, sayfa başlığına ve teknik özellikler tablosuna
+      yazılmaz; bir sayfada bir kez yeter, tekrar sıralamayı düşürür.
+    - Anasayfa başlığı "Plazma Kesme Sistemleri" ve Aksesuarlar bölüm
+      açıklamasındaki "plazma kesme aksesuarları" bu yüzden bilerek
+      "kesme" kalır.
 - Sayfa başlığı "| ZENWELD" dahil en çok 60 karakter, Google açıklaması
   140–155 karakter.
 - Alıcı önce fiyat arıyor (neredeyse her terimde Google'ın ilk önerisi
@@ -458,7 +472,7 @@ Magmaweld "Lava MIG 35-4 4 m").
 | MMA › Elektrot Pense ve Kitleri | elektrot pensesi | kaynak pensesi (1.000–10.000), kaynak maşası (1.000–10.000), elektrot tutucu | Elektrot Pensesi ve Kitleri |
 | MMA › Şase Pense ve Kitleri | şase pensesi | 200 / 300 / 400 / 500 / 600 amper, vidalı, manyetik şase | Şase Pensesi ve Kitleri |
 | Plazma › Plazma Torçları | plazma torcu | plazma kesim torcu, el plazma torcu, CNC plazma torcu | — |
-| Plazma › Plazma Torç Sarf Malzemeleri | plazma elektrot ve meme | plazma nozulu, plazma kesim ucu | — |
+| Plazma › Plazma Torç Sarf Malzemeleri | plazma elektrot ve meme | plazma nozulu, plazma kesim ucu, plazma kesme ucu (bir kez) | — |
 | Plazma › Plazma Torç Yedek Parçaları | plazma torcu yedek parça | torç gövdesi, hortum | — |
 | Plazma › Plazma Torç Aparatları | plazma daire kesme aparatı | plazma kesim pergeli, kılavuz | — |
 | Diğer › Su Soğutmalar | kaynak su soğutma ünitesi | kaynak soğutucu, torç soğutucu, kaynak soğutma sıvısı | Su Soğutma Üniteleri |
@@ -553,9 +567,10 @@ metinde.
 
 - Pazar yerleri ürün adına amper de yazıyor ("… 200 A …"); bizim adlarda
   yok, ilk cümlede ve gerekirse sayfa başlığında geçer.
-- **Plazma ürünlerinde** "plazma kesme makinesi" ifadesi açıklamanın ilk
-  paragrafında bir kez geçer ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün
-  içeriği, madde 7).
+- **Plazma ürünlerinde** "plazma kesme makinesi" (aksesuarda "plazma kesme
+  torcu / ucu") ifadesi açıklamanın ilk paragrafında bir kez geçer
+  ([2. bölüm](#2-temel-kurallar); [YAPILACAKLAR.md](YAPILACAKLAR.md) ›
+  Ürün içeriği, madde 7).
 
 **Örnek (gerçek veriden, ForceArc 200):**
 
