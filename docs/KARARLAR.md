@@ -1053,7 +1053,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   gider; canlıya örnek yorum yüklenmez (K-91). Demo modunda gitmez.
 - Seçenekli üründe her seçenek kendi kodu, fiyatı, stoğu ve linkiyle
   gider; açıklama kısa açıklama + öne çıkanlar + uzun açıklamadır.
-- Anasayfada site adı (ZENWELD) gider. Etkinliklerde Zenweld düzenleyen
+- Anasayfada site adı (ZENWELD) gider; şirket bilgisinde ad ZENWELD,
+  ticari unvan (Mağaza Ayarları'ndaki) ayrıca gider. Etkinliklerde Zenweld düzenleyen
   olarak gönderilmez (fuarların katılımcısıdır); ülke kodla, görsel
   gerçek fotoğraf ya da logo (geçici stok fotoğraf gitmez).
 - Teslim süresi, iade kargo ücreti ve barkod (GTIN) sahibinden

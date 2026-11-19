@@ -1846,7 +1846,8 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 - **Asıl adres ve önizleme:** Her sayfa kendi adresini asıl adres (canonical)
   olarak bildirir. WhatsApp, LinkedIn ve X'te paylaşınca başlık, açıklama ve
   görselle önizleme çıkar.
-- **Yapısal veri:** Anasayfada şirket bilgisi ve sık sorulan sorular; ürün
+- **Yapısal veri:** Anasayfada şirket bilgisi (marka adı ZENWELD; ticari
+  unvan Mağaza Ayarları › Şirket ve İletişim'den) ve sık sorulan sorular; ürün
   sayfasında ürün (fiyat, stok, kargo, iade, onaylı yorum varsa yıldız;
   seçenekli üründe her seçenek ayrı); anasayfada site adı (ZENWELD); blog,
   haber ve etkinlik sayfalarında yazı, haber ve etkinlik (ülke kodla;

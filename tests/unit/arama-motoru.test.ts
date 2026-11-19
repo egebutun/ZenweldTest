@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { productBrand } from "@zenweld/data";
-import { blogPostingJsonLd, countryCode, eventJsonLd, productJsonLd, productSeo, websiteJsonLd } from "@/lib/seo";
+import { defaultSettings, productBrand } from "@zenweld/data";
+import { blogPostingJsonLd, countryCode, eventJsonLd, organizationJsonLd, productJsonLd, productSeo, websiteJsonLd } from "@/lib/seo";
 import { cooling, options, product } from "./ornek";
 
 const AT = { now: new Date("2026-11-02T09:00:00Z"), inStock: true };
@@ -177,5 +177,13 @@ describe("Site adı ve etkinlik", () => {
     // Gercek fotograf yoksa logo
     expect((eventJsonLd({ ...event, images: [event.images[0]] }).image as string[])[0]).toMatch(/\/images\/events\/fuar\.png$/);
     expect([countryCode("Birleşik Arap Emirlikleri"), countryCode("Suudi Arabistan")]).toEqual(["AE", "SA"]);
+  });
+});
+
+describe("Şirket bilgisi: marka adı ve ticari unvan", () => {
+  it("ad ZENWELD; ticari unvan Mağaza Ayarları'ndan legalName olarak; boşsa gönderilmez", () => {
+    const company = { ...defaultSettings.company, legalName: "Zenweld Kaynak ve Kesme Ekip İnş San Tic A.Ş." };
+    expect(organizationJsonLd(company)).toMatchObject({ name: "ZENWELD", legalName: "Zenweld Kaynak ve Kesme Ekip İnş San Tic A.Ş." });
+    expect(organizationJsonLd({ ...company, legalName: " " }).legalName).toBeUndefined();
   });
 });

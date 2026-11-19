@@ -982,7 +982,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       aynı); yorum onaylanmadıkça sayılmaz. Blog yazısında `BlogPosting`
       (başlık, özet, tarih, yayıncı). Seçenekli üründe `ProductGroup` ve
       her seçenek kendi kodu, fiyatı ve `?secenek=` linkiyle. Anasayfada
-      `WebSite` (ZENWELD). Etkinlikte ülke `TR`, `organizer` yok, stok
+      `WebSite` (ZENWELD) ve `Organization`'da `legalName` = Mağaza
+      Ayarları'ndaki ticari unvan. Etkinlikte ülke `TR`, `organizer` yok, stok
       fotoğraf yok. Google'ın "Zengin Sonuçlar Testi"
       (search.google.com/test/rich-results) canlı adreste hatasız.
 - [ ] Eski zenweld.com adresleri (iki modda da): `curl -I

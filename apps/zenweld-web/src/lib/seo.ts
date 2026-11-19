@@ -428,6 +428,8 @@ export function organizationJsonLd(company: CompanySettings): Record<string, unk
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
+    // Ticari unvan (Magaza Ayarlari > Sirket ve Iletisim); marka adi "name"de.
+    ...(company.legalName?.trim() ? { legalName: company.legalName.trim() } : {}),
     url: absoluteUrl("/"),
     // Raster bicim: paylasim onizlemeleri ve arama motorlari PNG'yi her
     // zaman isler, SVG'yi her arac islemez.
