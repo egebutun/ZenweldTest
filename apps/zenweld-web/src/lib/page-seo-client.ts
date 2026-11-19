@@ -6,10 +6,11 @@ import { getPageSeo, useDatabase } from "@zenweld/store";
 import { isIndexablePage } from "./page-meta";
 
 /**
- * Linki panelden degismis kayit (urun, blog, haber, etkinlik, kategori):
- * eski adresle gelen ziyaretci yeni adrese (`href`) yonlenir. Demoda
- * tarayicida yapiliyor; canlida sunucu 301 ile yonlendirecek
- * (docs/YAPILACAKLAR.md).
+ * Linki panelden degismis kayit (urun, blog, haber, etkinlik, grup,
+ * kategori): eski adresle gelen ziyaretci yeni adrese (`href`) yonlenir.
+ * Veritabani modunda sunucu eski adresi zaten kalici yonlendirir
+ * (proxy.ts, lib/server/moved.ts, KARARLAR K-120); demo modunda paneldeki degisiklik
+ * yalnizca tarayicida oldugu icin yonlendirmeyi bu fonksiyon yapar.
  */
 export function useMovedRedirect(href: string | undefined) {
   const router = useRouter();

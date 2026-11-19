@@ -1847,9 +1847,11 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   (yeni ürün, değişen başlık, yeni link) hemen görünür (KARARLAR K-88).
   **Demo notu:** Demo modunda panel değişiklikleri yalnızca tarayıcıda
   kaldığı için bunlar koddaki örnek veriden üretilir.
-- **Eski linkler** iki modda da tarayıcıda yönlenir; arama motoru için
-  kalıcı (301) yönlendirme sunucuda yapılacak
-  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO alanları ve link yönlendirme).
+- **Eski linkler:** Linki panelde değişen ürün, grup, kategori, blog
+  yazısı, haber ve etkinliğin eski adresi açılınca ziyaretçi bugünkü adrese
+  gider. Veritabanı modunda bunu sunucu **301 (kalıcı)** ile yapar; Google
+  eski sonucu yeni adresle değiştirir. Demo modunda tarayıcı yönlendirir
+  (kurallar: [IS-KURALLARI.md › 13](IS-KURALLARI.md#13-linkler-yönlendirme-ve-arama-motorları)).
 
 ---
 

@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gt, inArray, isNotNull, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gt, inArray, isNotNull, sql, type SQL } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import {
   DB_VERSION,
@@ -80,6 +80,40 @@ function groupBy<T, K>(rows: T[], key: (row: T) => K): Map<K, T[]> {
 async function readRedirects(db: ReadDb) {
   const rows = await db.select().from(s.redirects).orderBy(asc(s.redirects.createdAt), asc(s.redirects.oldPath));
   return groupBy(rows, (r) => `${r.targetType}:${r.targetId}`);
+}
+
+/**
+ * Eski adresten bugunku adrese yonlendirme listesi (KARARLAR K-120): her eski
+ * adres kaydin bugunku adresine gider (zincir olusmaz). Yayinda olmayan
+ * urun, yazi, haber ve etkinligin eski adresi listede yer almaz (sayfa
+ * yok). Secenege donusen eski urun o secenekle acilir.
+ */
+export async function readMovedPaths(db: ReadDb): Promise<Map<string, string>> {
+  type Row = { old_path: string; href: string | null; variant_id: string | null };
+  const result = (await db.execute(sql`
+    select r.old_path, r.variant_id,
+      case r.target_type
+        when 'product' then '/urun/' || p.slug
+        when 'category' then '/' || cg.section || '/' || cg.slug || '/' || c.slug
+        when 'group' then '/' || g.section || '/' || g.slug
+        when 'blog' then '/blog/' || b.slug
+        when 'news' then '/haberler/' || n.slug
+        when 'event' then '/etkinlikler/' || e.slug
+      end as href
+    from ${s.redirects} r
+    left join ${s.products} p on r.target_type = 'product' and p.id = r.target_id and p.active
+    left join ${s.categories} c on r.target_type = 'category' and c.id = r.target_id
+    left join ${s.categoryGroups} cg on cg.id = c.group_id
+    left join ${s.categoryGroups} g on r.target_type = 'group' and g.id = r.target_id
+    left join ${s.blogPosts} b on r.target_type = 'blog' and b.id = r.target_id and b.active
+    left join ${s.news} n on r.target_type = 'news' and n.id = r.target_id and n.active
+    left join ${s.events} e on r.target_type = 'event' and e.id = r.target_id and e.active`)) as unknown as { rows: Row[] };
+  const moved = new Map<string, string>();
+  for (const row of result.rows) {
+    if (!row.href) continue;
+    moved.set(row.old_path, row.variant_id ? `${row.href}?secenek=${encodeURIComponent(row.variant_id)}` : row.href);
+  }
+  return moved;
 }
 
 const slugOf = (path: string, prefix: string) => (path.startsWith(prefix) ? path.slice(prefix.length) : path);

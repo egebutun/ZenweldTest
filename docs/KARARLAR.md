@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-119).
+  K-120).
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -31,7 +31,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41, K-117, K-119
 8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116
-10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56
+10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
 12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108
 13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110
@@ -1011,6 +1011,20 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - `/kesfet` öneki kaldırıldı; sayfalar üst seviyededir (`/sss`, `/blog`,
   `/garanti` …).
 - Yasal sayfalar `/yasal/...` altındadır.
+
+### K-120 · Eski linkler sunucuda 301 ile yönlenir
+- Veritabanı modunda linki değişen ürün, grup, kategori, blog, haber ve
+  etkinliğin eski adresi 301 (kalıcı) ile bugünkü adrese gider; eski
+  adresteki diğer parametreler korunur.
+- Yönlendirmeyi istek kontrolü (`proxy.ts`) yapar; eski adres listesi
+  sunucunun belleğinde en çok 30 saniye tutulur, panel kaydı listeyi hemen
+  yeniler. Her istekte veritabanına gidilmez.
+- Demo modunda yönlendirmeyi bugünkü gibi tarayıcı yapar (sunucu paneldeki
+  değişikliği bilmez).
+- **Neden:** Google 404 gören eski sonucu siler; 301 görünce yeni adresle
+  değiştirir ve sayfanın sırası yeni adrese geçer. Önce sayfanın içinde
+  308 denendi; Next önbelleğe aldığı yönlendirmeyi bazen hedef adresi
+  olmadan saklıyor, bu yüzden istek kontrolünde yapıldı.
 
 ---
 

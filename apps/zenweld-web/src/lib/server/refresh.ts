@@ -1,4 +1,5 @@
 import { revalidateTag } from "next/cache";
+import { forgetMovedPaths } from "./moved";
 import { CACHE_KINDS, CACHE_TAGS, type CacheKind } from "./tags";
 
 /**
@@ -18,5 +19,7 @@ import { CACHE_KINDS, CACHE_TAGS, type CacheKind } from "./tags";
  */
 export function refreshSite(kinds: readonly CacheKind[] = CACHE_KINDS): CacheKind[] {
   for (const kind of kinds) revalidateTag(CACHE_TAGS[kind], { expire: 0 });
+  // Link degismis olabilir: eski adres listesi yeniden okunur (lib/server/moved.ts).
+  if (kinds.includes("katalog") || kinds.includes("icerik")) forgetMovedPaths();
   return [...kinds];
 }

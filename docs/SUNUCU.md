@@ -120,6 +120,19 @@ her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
   `www.zenweld.com` adreslerinde aramaya açıktır. Gerçek alan adı farklıysa
   `apps/zenweld-web/src/lib/seo.ts` › `INDEXABLE_HOSTS` listesine eklenmeli
   ([IS-KURALLARI.md › 13](IS-KURALLARI.md#13-linkler-yönlendirme-ve-arama-motorları)).
+- **Eski linklerin yönlendirmesi (veritabanı modu, K-120):** İstek kontrolü
+  (`apps/zenweld-web/src/proxy.ts`) ürün, blog, haber, etkinlik ve dört
+  bölümün adreslerinde eski adres listesine bakar; eski adresse 301 ile
+  bugünkü adrese gönderir. Liste `redirects` tablosundan okunur
+  (`readMovedPaths`) ve sunucunun belleğinde en çok 30 saniye tutulur;
+  panel kaydı ve yenileme ucu listeyi hemen boşaltır
+  (`lib/server/moved.ts`, `lib/server/refresh.ts`). Veritabanına
+  ulaşılamazsa yönlendirme yapılmaz, sayfa her zamanki gibi açılır.
+  Yönlendirme sayfanın içinde yapılmaz: Next önbelleğe aldığı sayfanın
+  yönlendirmesini bazen hedef adresi olmadan saklıyor (Next 16.4'te
+  denendi). Liste her sunucu işleminin kendi belleğinde olduğu için site
+  tek Node.js işlemiyle (`npm start`) çalıştırılır; birden çok işlemde
+  çalışırsa panel değişikliği diğer işlemlerde en geç 30 saniyede görünür.
 
 **Zamanlanmış işler:** Üç iş var; üçü de sitenin ucudur (POST,
 `Authorization: Bearer <CRON_SECRET>`). Canlı sunucunun zamanlayıcısına

@@ -5,12 +5,13 @@ import * as schema from "../../packages/db/src/schema";
 import {
   readCatalog,
   readDatabase,
+  readMovedPaths,
   readProductStock,
   readPublishedReviews,
   readSettings,
 } from "../../packages/db/src/read";
 import { seedDatabase } from "../../packages/db/src/seed";
-import { closePool, expected, inTransaction, normalize, sorted } from "./ortak";
+import { category, closePool, expected, group, inTransaction, normalize, optionDefinition, product, sorted, variant } from "./ortak";
 
 /*
  * Okuma katmani (packages/db/src/read.ts): ornek veri tablolara yazilip geri
@@ -96,6 +97,35 @@ describe("okuma katmanı (gidiş-dönüş)", () => {
       const db = drizzle(client, { schema });
       await seedDatabase(db, data);
       expect(await readSettings(db)).toEqual(normalize(data.settings));
+    });
+  });
+});
+
+describe("eski adres listesi (readMovedPaths, KARARLAR K-120)", () => {
+  it("eski adres kaydın bugünkü adresine gider; seçeneğe dönüşen ürün seçenekle; yayında olmayan ürün listede yok", async () => {
+    await inTransaction(async (client) => {
+      const db = drizzle(client, { schema });
+      await group(client);
+      await category(client, "c1", "g1", "mig");
+      await product(client, "p1", "ZW-P1");
+      await product(client, "p2", "ZW-P2");
+      await client.query("UPDATE products SET active = false WHERE id = 'p2'");
+      await optionDefinition(client);
+      await variant(client, "p1", "3-m", "ZW-P1-3");
+      await client.query(
+        `INSERT INTO redirects (old_path, target_type, target_id, variant_id) VALUES
+          ('/urun/eski-p1', 'product', 'p1', NULL),
+          ('/urun/eski-ayri-urun', 'product', 'p1', '3-m'),
+          ('/urun/eski-p2', 'product', 'p2', NULL),
+          ('/ekipmanlar/kaynak-makineleri/eski-mig', 'category', 'c1', NULL),
+          ('/ekipmanlar/eski-grup', 'group', 'g1', NULL)`,
+      );
+      expect(Object.fromEntries(await readMovedPaths(db))).toEqual({
+        "/urun/eski-p1": "/urun/p1",
+        "/urun/eski-ayri-urun": "/urun/p1?secenek=3-m",
+        "/ekipmanlar/kaynak-makineleri/eski-mig": "/ekipmanlar/kaynak-makineleri/mig",
+        "/ekipmanlar/eski-grup": "/ekipmanlar/kaynak-makineleri",
+      });
     });
   });
 });

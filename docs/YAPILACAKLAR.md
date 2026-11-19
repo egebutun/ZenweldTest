@@ -1258,30 +1258,25 @@ sahibine hatırlatılır. Kalanlar:
 
 Panelde SEO sekmesi (ürün, blog yazısı, haber, etkinlik, grup, kategori) ve
 Sayfa SEO ekranı hazır; veritabanı modunda başlık, açıklama ve `keywords`
-tablolardan okunur, panel kaydı hemen görünür (K-88, K-99). Eski linkten
-yeni linke yönlendirme iki modda da tarayıcıda yapılıyor
-(`lib/page-seo-client.ts`). Kalanlar:
+tablolardan okunur, panel kaydı hemen görünür (K-88, K-99). Eski linkler
+veritabanı modunda sunucuda 301 ile yönlenir (K-120). Kalanlar:
 
-1. **Sunucuda 301:** Eski link sunucuda **301 (kalıcı)** ile yeni linke
-   yönlendirilmeli; Google eski sonucu yeni linkle değiştirir. Bugün sunucu
-   404 kodu döndürüyor, sayfa tarayıcıda açılıyor (eski adresler
-   `redirects` tablosunda hazır).
-2. **Site haritası:** Veritabanı modunda ürünler, gruplar, kategoriler,
+1. **Site haritası:** Veritabanı modunda ürünler, gruplar, kategoriler,
    blog, haber ve etkinlikler tablolardan gelir (en geç bir dakika
    gecikmeyle); linki değişen üründe yalnızca yeni link yer alır. Demo
    modunda site haritası örnek veriden üretilir, panelde eklenenler girmez.
-3. **Kampanya başlangıç ve bitişinde ürün sayfası yenilenmeli.** Google'a
+2. **Kampanya başlangıç ve bitişinde ürün sayfası yenilenmeli.** Google'a
    giden fiyat (yapısal veri) sayfa üretilirken yazılır. Kampanya belirlenen
    saatte kendiliğinden başlayıp bittiği için o anda kimse kayıt yapmaz;
    sayfa ya kampanyanın başlangıç/bitiş saatinde zamanlanmış bir işle ya da
    saatte bir yenilenmeli. Veritabanı modunda sayfalar 30 saniyede bir
    yeniden hazırlandığı için bu gecikme bir dakikayı geçmez; süre
    uzatılırsa bu iş gerekir.
-4. **Google Search Console:** Canlıya çıkınca alan adı Search Console'a
+3. **Google Search Console:** Canlıya çıkınca alan adı Search Console'a
    eklenip doğrulanmalı, site haritası (`/sitemap.xml`) bildirilmeli;
    dizine alma hataları ve eski adreslerin yönlenmesi oradan izlenir
    (sahibiyle konuşulacak, K-106).
-5. **Sitedeki uzun listelerin sayfalanması:** Kategori ürün listesi, blog,
+4. **Sitedeki uzun listelerin sayfalanması:** Kategori ürün listesi, blog,
    haberler, etkinlikler ve arama sonuçları bugün tek sayfada. Tasarım ve
    SEO işiyle birlikte sayfalanacak; sayfa adresi (ör. `?sayfa=2`),
    canonical etiketi ve site haritası birlikte düşünülmeli.
@@ -1294,23 +1289,23 @@ Sıra: önce teknik işler (B), sonra metinler (A); kararlar (C) sahibindedir.
 
 **B — Teknik SEO (kod işi)**
 
-1. **B1 · Değişen linklerde sunucuda 301:** [SEO alanları ve link
-   yönlendirme](#seo-alanları-ve-link-yönlendirme) 1.
-2. **B2 · Eski `zenweld.com` adresleri:** eski sitenin 67 adresi
+B1 (değişen linklerde sunucuda 301) yapıldı (KARARLAR K-120).
+
+1. **B2 · Eski `zenweld.com` adresleri:** eski sitenin 67 adresi
    ([`seo/yonlendirme-listesi.csv`](seo/yonlendirme-listesi.csv)) yeni site
    açıldığı gün 301 ile yeni karşılığına yönlenmeli. Önce C1'deki
    doğrulamalar.
-3. **B3 · Yapısal veri eksikleri:** blog yazılarında `Article`; ürün
+2. **B3 · Yapısal veri eksikleri:** blog yazılarında `Article`; ürün
    fiyatında kargo (`shippingDetails`) ve iade (`hasMerchantReturnPolicy`)
    bilgisi. Yıldız (`AggregateRating`) yalnızca gerçek müşteri yorumu
    olursa.
-4. **B4 · Uzun listelerin sayfalanması:** [SEO alanları ve link
-   yönlendirme](#seo-alanları-ve-link-yönlendirme) 5.
-5. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
+3. **B4 · Uzun listelerin sayfalanması:** [SEO alanları ve link
+   yönlendirme](#seo-alanları-ve-link-yönlendirme) 4.
+4. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
    2,5 sn altı); [Ölçüm](#ölçüm-hız).
-6. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
+5. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
    Console; [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler),
-   [SEO alanları ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) 4.
+   [SEO alanları ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) 3.
 
 **A — Metinler (panelden ya da örnek veriden; SEO.md'deki önerilerle)**
 

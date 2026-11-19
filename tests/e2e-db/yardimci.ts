@@ -55,6 +55,17 @@ export async function offerOnPage(request: APIRequestContext, path: string) {
   return { price: data?.offers?.price, availability: data?.offers?.availability };
 }
 
+/**
+ * Adresin sunucudan aldigi ilk cevap, yonlendirme izlenmeden: eski link
+ * kalici yonlendirmeyle (301) bugunku adrese gider (KARARLAR K-120).
+ */
+export async function firstAnswer(request: APIRequestContext, path: string) {
+  const response = await request.get(path, { maxRedirects: 0 });
+  const location = response.headers()["location"];
+  const target = location ? new URL(location, "http://site") : undefined;
+  return { status: response.status(), location: target && target.pathname + target.search };
+}
+
 /** Seceneksiz, stokta bir urun ve musterinin odeyecegi fiyat (satin alma testleri). */
 export async function plainProductInStock() {
   const { products, warehouseStock } = await catalog();

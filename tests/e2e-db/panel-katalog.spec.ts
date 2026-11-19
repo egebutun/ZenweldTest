@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 import { tr } from "@zenweld/i18n";
 import { demoAccount } from "../e2e/yardimci";
-import { closeDatabase, expect, offerOnPage, sql, test } from "./yardimci";
+import { closeDatabase, expect, firstAnswer, offerOnPage, sql, test } from "./yardimci";
 
 /**
  * PANEL › KATALOG VERITABANINDA, ADIM 3.1 VE 3.2 (Asama 5, 3. alan; KARARLAR K-99, K-101)
@@ -114,6 +114,11 @@ test("kategori: link değişince sitedeki eski adres yeni adrese yönlenir, yeni
     { old_path: `/ekipmanlar/${GROUP.slug}/${CATEGORY.slug}` },
   ]);
 
+  // Sunucu eski adresi kalici (301) yonlendirir (K-120).
+  expect(await firstAnswer(page.request, `/ekipmanlar/${GROUP.slug}/${CATEGORY.slug}`)).toEqual({
+    status: 301,
+    location: `/ekipmanlar/${GROUP.slug}/${NEW.slug}`,
+  });
   await page.goto(`/ekipmanlar/${GROUP.slug}/${CATEGORY.slug}`);
   await expect(page).toHaveURL(new RegExp(`/ekipmanlar/${GROUP.slug}/${NEW.slug}$`));
   await expect(page.getByRole("heading", { level: 1 })).toContainText(NEW.name);
@@ -182,6 +187,7 @@ test("ürün: görseli yüklenerek oluşturulur; fiyatı ve linki değişince si
   await expect(page.getByText("Ürün kaydedildi.")).toBeVisible();
   await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
   expect((await offerOnPage(request, `/urun/${PRODUCT.newSlug}`)).price).toBe(2400);
+  expect(await firstAnswer(request, `/urun/${PRODUCT.slug}`)).toEqual({ status: 301, location: `/urun/${PRODUCT.newSlug}` });
   await page.goto(`/urun/${PRODUCT.slug}`);
   await expect(page).toHaveURL(new RegExp(`/urun/${PRODUCT.newSlug}$`));
 

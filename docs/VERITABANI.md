@@ -484,7 +484,10 @@ kategori ve gruptaki `previousPaths`.
 | `created_at` | timestamptz | zorunlu | |
 
 Eski adres yeni bir kaydın linki olunca satır silinir; hedef kayıt
-silinince satırları da silinir.
+silinince satırları da silinir. Sitede eski adres istenince sunucu bu
+tablodan 301 ile bugünkü adrese yönlendirir (`readMovedPaths`; yayında
+olmayan ürün, blog, haber ve etkinliğin satırı yönlendirmede kullanılmaz;
+KARARLAR K-120).
 
 ---
 

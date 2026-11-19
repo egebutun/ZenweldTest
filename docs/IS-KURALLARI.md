@@ -803,10 +803,13 @@ benzersizdir.
 - Yeni link başka bir kaydın eski linkiyse eski yönlendirme kalkar; link yeni
   kaydı açar.
 - Ürün, blog, haber ve etkinlikte yalnızca **yayındaki** kayda yönlendirilir.
-- Yönlendirme bugün iki modda da tarayıcıda yapılıyor (sunucu 404 kodu
-  döndürür, sayfa tarayıcıda açılır). Canlıda sunucuda **301 (kalıcı)**
-  yönlendirme olmalı ([YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO alanları ve
-  link yönlendirme).
+- **Veritabanı modunda** sunucu eski adresi **301 (kalıcı)** ile bugünkü
+  adrese gönderir; Google eski sonucu yeni adresle değiştirir. Eski adres
+  her zaman kaydın bugünkü adresine gider (zincir olmaz); eski adresteki
+  diğer parametreler (ör. `?utm_source=…`) korunur. Panelde link değişince
+  yönlendirme hemen başlar (KARARLAR K-120).
+- **Demo modunda** paneldeki link değişikliği yalnızca tarayıcıda olduğu
+  için yönlendirmeyi tarayıcı yapar (sunucu eski adresi bilmez).
 
 **Sayfa başlığı ve açıklaması:**
 

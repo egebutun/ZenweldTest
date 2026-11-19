@@ -967,6 +967,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Kategorinin linki ya da grubu değişince sitede eski adres yeni adrese
       yönlenir ve yeni ad hemen görünür; grubun linki değişince gruptaki
       kategorilerin eski adresleri de yönlenir.
+- [ ] Linki değişen ürün, grup, kategori, blog yazısı, haber ve etkinliğin
+      eski adresine yönlendirme izlenmeden istek atılınca (ör.
+      `curl -I <adres>`) cevap **301**'dir ve `Location` bugünkü adrestir;
+      seçeneğe dönüşen eski ürün `?secenek=<değer>` ile açılır, eski
+      adresteki `?utm_source=…` gibi parametreler korunur. Hiç kullanılmamış
+      bir adres 404 döner (KARARLAR K-120).
 - [ ] Dosya deposu ayarlıyken (`DOSYA_KLASORU`, K-108) Kart Görseli
       alanında **Dosya Yükle** ile seçilen görsel yüklenir, alana
       `/dosya/gorsel/…` adresi gelir; kaydedilince sitede görünür. Depo

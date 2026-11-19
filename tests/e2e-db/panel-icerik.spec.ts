@@ -1,7 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 import { tr } from "@zenweld/i18n";
 import { demoAccount } from "../e2e/yardimci";
-import { closeDatabase, expect, sql, test } from "./yardimci";
+import { closeDatabase, expect, firstAnswer, sql, test } from "./yardimci";
 
 /**
  * PANEL › ICERIK VERITABANINDA, ADIM 5.2 (Asama 5, 5. alan; KARARLAR K-99, K-101)
@@ -64,6 +64,7 @@ test("haber: eklenir ve sitede görünür; görsel yükleme açık; linki deği�
   await expect(page.getByText("Haber kaydedildi.")).toBeVisible();
   await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
   expect(await sql("SELECT target_id FROM redirects WHERE old_path = $1", [`/haberler/${NEWS.slug}`])).toEqual([{ target_id: id }]);
+  expect(await firstAnswer(page.request, `/haberler/${NEWS.slug}`)).toEqual({ status: 301, location: `/haberler/${NEWS.renamed}` });
   await site.goto(`/haberler/${NEWS.slug}`);
   await expect(site).toHaveURL(new RegExp(`/haberler/${NEWS.renamed}$`));
   await site.close();
