@@ -59,7 +59,7 @@ import { createSampleCoupons } from "./seed/coupons.seed";
 import { createSampleEmails } from "./seed/emails.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 91;
+export const DB_VERSION = 92;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida

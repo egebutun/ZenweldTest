@@ -27,6 +27,37 @@ const logo = (slug: string, ext: "webp" | "png" = "webp") =>
 
 export const events: ZenweldEvent[] = [
   {
+    id: "e-win-eurasia-2026",
+    slug: "win-eurasia-2026",
+    title: "WIN EURASIA 2026",
+    summary:
+      "Zenweld, 10–13 Haziran 2026'da İstanbul Fuar Merkezi'nde WIN EURASIA 2026'da; Salon 5, Stant C100'de yeni nesil ürünlerinin lansmanını yapıyor.",
+    description: `Zenweld, WIN EURASIA 2026'da Yenilikçi Teknolojilerini Sektörle Buluşturuyor
+
+Zenweld Kaynak ve Kesme Ekipmanları, 10–13 Haziran 2026 tarihleri arasında İstanbul Fuar Merkezi'nde düzenlenecek WIN EURASIA 2026 Fuarı'nda ziyaretçileriyle buluşuyor.
+
+Endüstriyel üretim teknolojilerinin en önemli buluşma noktalarından biri olan WIN EURASIA'da kaynak ve kesme teknolojilerindeki en güncel çözümlerimizi sergileyecek, yeni nesil ürünlerimizin lansmanını gerçekleştireceğiz.
+
+Teknolojiye yön veren yenilikçi yaklaşımımızla müşterilerimize daha güçlü, daha verimli ve daha sürdürülebilir çözümler sunmaya devam ediyoruz. WIN EURASIA 2026'daki ürün lansmanlarımızla sektördeki dönüşüme katkı sağlamayı hedefliyoruz.
+
+Bütün iş ortaklarımızı, müşterilerimizi ve sektör profesyonellerini standımızda ağırlamaktan memnuniyet duyacağız.
+
+## Fuar Bilgileri
+
+- **Etkinlik:** WIN EURASIA 2026 — Kaynak, Robotik Kaynak, Birleştirme, Kesme ve Yüzey İşlem Teknolojileri
+- **Tarih:** 10–13 Haziran 2026
+- **Yer:** İstanbul Fuar Merkezi
+- **Zenweld Standı:** Salon 5, Stant C100 (Kaynak Uygulama Alanı)`,
+    startDate: "2026-06-10",
+    endDate: "2026-06-13",
+    venue: "İstanbul Fuar Merkezi (IFM)",
+    city: "İstanbul",
+    country: "Türkiye",
+    logoUrl: logo("win-eurasia-2026", "png"),
+    images: ["/images/events/win-eurasia-2026/1.webp"],
+    active: true,
+  },
+  {
     id: "e-big5-global-2025",
     slug: "big-5-global-2025",
     title: "Big 5 Global 2025",

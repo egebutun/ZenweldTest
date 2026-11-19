@@ -759,10 +759,10 @@ adres, yeni adres, durum, not, eski site haritasında mı).
   gider. Liste değişince JSON ve bu CSV birlikte güncellenir; ikisinin
   aynı olduğunu ve her hedefin var olduğunu
   `tests/unit/eski-site-yonlendirmeleri.test.ts` denetler.
-- **Durum:** 46 birebir; 19 birebir ve seçenekli (eski sitede ayrı sayfa
+- **Durum:** 47 birebir; 19 birebir ve seçenekli (eski sitede ayrı sayfa
   olan soğutma ya da torç halleri, yeni sitede aynı ürünün seçeneği); 17
-  ürün yeni sitede olmadığı için kategoriye; 1 haber yeni sitede olmadığı
-  için Haberler'e; 1 yakın ürün; 1 karar bekliyor.
+  ürün yeni sitede olmadığı için kategoriye; 1 yakın ürün; 1 karar
+  bekliyor.
 - **Ürünlerimiz yeni sitenin Ekipmanlar'ındakilerdir** (KARARLAR K-121):
   eski sitede olup yeni sitede olmayan ürünün (Arc 120–200S, Ultimate
   205i, Ultimate 200 TH / THP, Multicut 40 CNC / 40 COM / 65, LS-15000F,
@@ -790,7 +790,8 @@ adres, yeni adres, durum, not, eski site haritasında mı).
     ürün olan Ultimate 405 CEL'e yönlenir (öneri).
   - Eski sitedeki İzmir tesisinin açılışı ve İstanbul Hırdavat Fuarı
     2026 haberleri yeni siteye eklendi; eski adresleri onlara gider. WIN
-    Eurasia 2026 haberi yeni sitede yok, Haberler'e gider.
+    Eurasia 2026 haberi yeni sitede etkinlik olarak eklendi; eski adresi
+    `/etkinlikler/win-eurasia-2026`'ya gider.
 - **Karar bekleyen:** Anti-spatter (çapak önleyici) satılacak mı;
   şirkete sorulacak (YAPILACAKLAR › SEO, C1). Bugün Aksesuarlar'a
   yönleniyor; satılırsa ürün eklenir ve satırı ona çevrilir.
@@ -825,7 +826,7 @@ adres, yeni adres, durum, not, eski site haritasında mı).
 | Haber | `/haberler/zenweld-kaynak-ve-kesme-elipmanlairi-amp-amp-ebinc-makin-kaynak-ve-kesme-teknolojileri-tanitim-gunu` | `/haberler/kaynak-ve-kesme-teknolojileri-tanitim-gunu-van` | Birebir; Van, Ebinç Makina tanıtım günü; site haritasında yok |
 | Haber | `/haberler/zenweld-cumhuriyetimizin-103-yilinda-izmir-deki-yeni-uretim-tesisinin-acilisini-gerceklestirdi` | `/haberler/zenweld-izmir-uretim-tesisi-acildi` | Birebir; Haber yeni siteye eklendi; site haritasında yok |
 | Haber | `/haberler/zenweld-istanbul-hirdavat-fuari-2026-da-yerini-aliyor` | `/haberler/istanbul-hirdavat-fuari-2026` | Birebir; Haber yeni siteye eklendi; site haritasında yok |
-| Haber | `/haberler/zenweld-win-eurasia-2026-da-yenilikci-teknolojilerini-sektorle-bulusturuyor` | `/haberler` | Haber yeni sitede yok → haberler; Yeni siteye eklenirse ona yönlenir; site haritasında yok |
+| Haber | `/haberler/zenweld-win-eurasia-2026-da-yenilikci-teknolojilerini-sektorle-bulusturuyor` | `/etkinlikler/win-eurasia-2026` | Birebir; Yeni sitede etkinlik olarak eklendi; site haritasında yok |
 | Etkinlik | `/etkinlikler` | `/etkinlikler` | Birebir; site haritasında yok |
 | Etkinlik | `/etkinlikler/2024-uluslararasi-istanbul-hirdavat-fuari` | `/etkinlikler/istanbul-hirdavat-fuari-2024` | Birebir; site haritasında yok |
 | Etkinlik | `/etkinlikler/big-5-global-2025` | `/etkinlikler/big-5-global-2025` | Birebir; site haritasında yok |

@@ -12,6 +12,7 @@ Kart başlığında görünen etkinlik logosu. Dosya adı etkinliğin `slug`'ı 
 | `imatech-2025.png` | İmatech 2025 |
 | `istanbul-hirdavat-fuari-2024.png` | 2024 Uluslararası İstanbul Hırdavat Fuarı |
 | `win-eurasia-2024.png` | WIN EURASIA 2024 |
+| `win-eurasia-2026.png` | WIN EURASIA 2026 (2024 ve 2025 ile aynı logo) |
 | `konya-makine-teknolojileri-fuari-2024.png` | Konya Makine Teknolojileri Fuarı 2024 |
 | `imatech-2024.png` | İmatech 2024 |
 
