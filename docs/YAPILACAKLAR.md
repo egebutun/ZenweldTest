@@ -1320,6 +1320,19 @@ veri: blog yazısı, ürüne kargo, iade ve yıldız; K-123) yapıldı.
    (canonical). Denetim tarayıcı testine eklenir; bulunan eksikler
    düzeltilir. Bugün başlık, açıklama, canonical ve paylaşım önizlemesi
    kodda var (K-55); H1 ve ara başlık sırası denetlenmedi.
+5. **B8 · Yapısal veri iyileştirmeleri (öneri, sahibinin onayıyla):**
+   - Ürün açıklaması: bugün Google'a yalnızca kısa açıklama gidiyor; uzun
+     açıklama (öne çıkan özellikler dahil) gerçek metinler gelince (A2).
+   - Seçenekli ürünlerde her seçeneğin kendi kodu ve fiyatı (`ProductGroup`,
+     `hasVariant`); Google seçenekleri ayrı gösterebilir.
+   - Barkod (GTIN): ürünlerin barkodu varsa eklenir (bilgi sahibinden).
+   - Site adı (`WebSite`): Google sonuçlarında site adı "ZENWELD" görünür.
+   - Etkinlik: ülke "Türkiye" yerine kod (`TR`); "düzenleyen" bugün
+     Zenweld yazıyor ama fuarları Zenweld düzenlemiyor (katılımcı);
+     galerilerdeki geçici stok fotoğraflar etkinlik görseli olarak gidiyor.
+   - SSS (`FAQPage`): Google soru-cevap kutusunu 2023'ten beri yalnızca
+     devlet ve sağlık sitelerinde gösteriyor; kalır, getirisi az.
+
 **A — Sayfa sayfa SEO düzenlemesi (anahtar kelime haritasına göre)**
 
 Her sayfa aynı kontrol listesiyle, [SEO.md](SEO.md) › 6'daki anahtar kelime

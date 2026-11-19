@@ -1045,6 +1045,9 @@ tıklanma oranını artırır.
 - [ ] Teslim süresi (kargoya veriliş ve kargoda geçen gün) ve iade kargo
       ücretini kimin ödediği yapısal veriye eklenecek; bilgi sahibinden
       bekleniyor (C5). **Sahibi**, sonra **Kod**
+- [ ] Yapısal veri iyileştirmeleri: uzun açıklama, seçeneklerin kendi kodu
+      ve fiyatı, barkod (GTIN), site adı (`WebSite`), etkinliklerde ülke
+      kodu ve "düzenleyen" düzeltmesi (B8). **Kod**, onayla
 - [ ] Search Console › Geliştirmeler raporunda hata kontrolü. **Sahibi**
 
 ### 7. Site dışı: bağlantılar ve marka
