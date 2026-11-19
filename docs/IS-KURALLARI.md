@@ -635,7 +635,8 @@ Kod: `packages/data/src/service.ts` (il listesi, `serviceCandidates`,
 ## 10. Garanti
 
 **Kısaca:** Aynı seri numarası bir kez kaydedilir. Garanti kayıt gününden
-başlar: ürünün garanti süresi + istenirse 12 ay uzatma.
+başlar: ürünün garanti süresi + istenirse 12 ay uzatma. Zenweld ürünlerinin
+garanti süresi 12 aydır (KARARLAR K-119).
 
 **Kayıt:**
 
@@ -648,15 +649,15 @@ başlar: ürünün garanti süresi + istenirse 12 ay uzatma.
 **Bitiş tarihi:**
 
 - Satın alma tarihi sorulmadığı için garanti **kayıt tarihinden** başlar.
-- Bitiş = kayıt tarihi + ürünün garanti süresi (ay; ürün bulunamazsa 24) +
+- Bitiş = kayıt tarihi + ürünün garanti süresi (ay; ürün bulunamazsa 12) +
   uzatma istendiyse 12 ay.
 - Bitiş yalnızca tarihtir (saat yok) ve kayıt gününün **Türkiye saatine**
   göre tarihinden hesaplanır (sunucu UTC'de çalışsa da gece 00:00–03:00
   arasındaki kayıtta gün kaymaz).
 - **Bitiş günü dahil** garanti geçerlidir; ertesi gün "Süresi Doldu".
 
-**Örnek:** 15.03.2026'da kayıt, garanti 24 ay, uzatma istendi → bitiş
-15.03.2029.
+**Örnek:** 15.03.2026'da kayıt, garanti 12 ay, uzatma istendi → bitiş
+15.03.2028.
 
 **Panelde değişiklik:**
 

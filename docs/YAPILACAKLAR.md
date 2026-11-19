@@ -393,7 +393,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Jasic lazer kaynak ürünleri (2026-10-27 listesindeki 6 model; belki çok sonra) | Sahibinin seçenekleri ayrıntılı açıklaması | [Jasic lazer kaynak ürünleri](#jasic-lazer-kaynak-ürünleri--sahibi-ayrıntılı-açıklayacak) |
 | Teklif, servis, garanti ve iade durumlarında müşteriye e-posta | Hangi bildirimlerin gideceği ve metinleri | [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 | Yöneticinin kendi şifresini panelden değiştirmesi | Şimdi yapılmıyor (K-105) | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 2 |
-| SEO: eski site yönlendirmelerinin doğrulanması, kategori adı kalıbı, garanti süresi uyuşmazlığı, ürün gamı fırsatları | Sahibinin kararı | [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) C |
+| SEO: eski site yönlendirmelerinin doğrulanması, kategori adı kalıbı, ürün gamı fırsatları | Sahibinin kararı | [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) C |
 | Sitenin tasarımı | Sahibi yapacak | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
 | Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler, Force Serisi sayfası | Sahibinin göndermesi; Force sayfası ileride | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
 | Görsel düzenleyici (önizleme, sürükle, ölçekle) ve sayfa görsellerinin panelden değişmesi | Tasarımın bitmesi (fotoğrafların yeri ve sayısı kesinleşince) | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) 5 |
@@ -1342,13 +1342,10 @@ Sıra: önce teknik işler (B), sonra metinler (A); kararlar (C) sahibindedir.
 2. **C2 · Kategori adı kalıbı:** pazar "Gazaltı (MIG/MAG) Kaynak
    Makineleri" diye yazıyor, bizde kısaltma önde ("MIG (GMAW) Gazaltı …").
    Değişirse link değişmez, yalnız ad.
-3. **C3 · Garanti süresi:** SSS'de "kaynak makineleri 24 ay, aksesuar ve
-   sarf 12 ay"; ürün verisinde bütün ürünler 12 ay ve "12 ay garanti"
-   öne çıkanı. Hangisi doğru?
-4. **C4 · Ürün gamı fırsatları:** örtülü elektrot, kaynak gözlüğü, kaynak
+3. **C3 · Ürün gamı fırsatları:** örtülü elektrot, kaynak gözlüğü, kaynak
    masası, şarjlı kaynak makinesi (SEO.md › 10); Jasic lazer kaynak
    (K-74).
-5. **C5 · Search Console doğrulaması:** alan adının DNS kaydına kimin
+4. **C4 · Search Console doğrulaması:** alan adının DNS kaydına kimin
    erişimi var (BT).
 
 ## Ürün Seçici ve arama — en son yeniden tasarlanacak

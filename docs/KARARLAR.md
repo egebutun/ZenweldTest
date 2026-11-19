@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-118).
+  K-119).
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -28,7 +28,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 4. [Satış, ödeme ve teklif](#4-satış-ödeme-ve-teklif) — K-21–K-27, K-64, K-65, K-79, K-80, K-85, K-86, K-97
 5. [Stok ve SAP; bayiler ve online satıcılar](#5-stok-ve-sap-bayiler-ve-online-satıcılar) — K-20, K-28–K-33, K-82, K-84, K-93
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap) — K-34–K-37, K-68, K-94–K-96
-7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41, K-117
+7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41, K-117, K-119
 8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56
@@ -778,6 +778,15 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - **Neden:** Sahibinin kararı. Kişisel bilgiler yalnızca talebi üstlenen
   servisle paylaşılsın (KVKK); müşteriye servis ataması gibi ara durumlar
   gösterilmesin; yönetici servisle e-posta üzerinden, panelden konuşsun.
+
+### K-119 · Garanti süresi 12 ay
+- Zenweld ürünlerinin garanti süresi **12 aydır**. Sık Sorulan Sorular,
+  ürün verisi ve paneldeki yeni ürünün başlangıç değeri buna göredir;
+  ürün bulunamazsa garanti bitişi de 12 ayla hesaplanır.
+- Online kayıtta istenen 12 ay ücretsiz uzatma (K-38) ayrıca eklenir.
+- **Neden:** SSS'de "kaynak makineleri 24 ay, aksesuar ve sarf 12 ay"
+  yazıyordu, ürün verisi 12 ay diyordu; sahibi süreyi 12 ay olarak
+  belirledi.
 
 ---
 

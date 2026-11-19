@@ -398,7 +398,7 @@ export function createSampleActivity(nowMs: number = Date.now()): SampleActivity
       const extended = r() < 0.55;
       const [c, district] = city();
       const expires = new Date(ms);
-      expires.setUTCMonth(expires.getUTCMonth() + (p.warrantyMonths ?? 24) + (extended ? 12 : 0));
+      expires.setUTCMonth(expires.getUTCMonth() + (p.warrantyMonths ?? 12) + (extended ? 12 : 0));
       return {
         id: `w-ornek-${i + 1}`,
         serialNumber: `ZW-${isoTR(ms).slice(0, 4)}-${String(between(100000, 999999))}`,

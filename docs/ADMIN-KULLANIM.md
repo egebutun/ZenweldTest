@@ -909,7 +909,7 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
 - **Sekmeler** (sayı rozetli): Temel Bilgiler · Açıklamalar · Görseller ·
   Teknik Özellikler · Kutu İçeriği · Seçenekler · Filtreler · SEO.
 - **Yeni ürünün başlangıç değerleri:** Bölüm Ekipmanlar, bölümün ilk
-  kategorisi, KDV %20, garanti 24 ay; Yayında işaretli.
+  kategorisi, KDV %20, garanti 12 ay; Yayında işaretli.
 - Kayıt: "Ürün kaydedildi."
 - **Yeni ürün ve stok:** Yeni ürün hiçbir bayide ve online satıcıda stokta
   görünmez. Haritada ve online satıcılarda çıkması için bayi/satıcı stok

@@ -110,7 +110,7 @@ export function createProduct(partial: Partial<Product>): Product {
     highlights: partial.highlights ?? [],
     // Sira verilmediyse kategorisinin sonuna eklenir.
     order: partial.order ?? nextProductOrder(categorySlug),
-    warrantyMonths: partial.warrantyMonths ?? 24,
+    warrantyMonths: partial.warrantyMonths ?? 12,
     createdAt: nowIso(),
     updatedAt: nowIso(),
     active: partial.active ?? true,

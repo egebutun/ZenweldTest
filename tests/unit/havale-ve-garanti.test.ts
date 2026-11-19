@@ -33,22 +33,22 @@ describe("Havale / EFT ödeme süresi", () => {
 
 /* docs/IS-KURALLARI.md › 10. Garanti */
 describe("Garanti bitiş tarihi", () => {
-  const db = { products: [{ id: "p24", warrantyMonths: 24 }, { id: "p36", warrantyMonths: 36 }] } as ZenweldDatabase;
+  const db = { products: [{ id: "p12", warrantyMonths: 12 }, { id: "p24", warrantyMonths: 24 }] } as ZenweldDatabase;
   const registered = new Date("2026-03-15T10:00:00+03:00").toISOString();
 
-  it("örnek: 15.03.2026'da kayıt, garanti 24 ay, uzatma istendi → 15.03.2029", () => {
-    expect(warrantyExpiry(registered, "p24", true, db)).toBe("2029-03-15");
+  it("örnek: 15.03.2026'da kayıt, garanti 12 ay, uzatma istendi → 15.03.2028", () => {
+    expect(warrantyExpiry(registered, "p12", true, db)).toBe("2028-03-15");
   });
 
-  it("bitiş = kayıt tarihi + ürünün garanti süresi; ürün bulunamazsa 24 ay", () => {
+  it("bitiş = kayıt tarihi + ürünün garanti süresi; ürün bulunamazsa 12 ay", () => {
+    expect(warrantyExpiry(registered, "p12", false, db)).toBe("2027-03-15");
     expect(warrantyExpiry(registered, "p24", false, db)).toBe("2028-03-15");
-    expect(warrantyExpiry(registered, "p36", false, db)).toBe("2029-03-15");
-    expect(warrantyExpiry(registered, "silinmis-urun", false, db)).toBe("2028-03-15");
+    expect(warrantyExpiry(registered, "silinmis-urun", false, db)).toBe("2027-03-15");
   });
 
   it("bitiş Türkiye saatine göre hesaplanır (gece yarısından sonraki kayıtta gün kaymaz)", () => {
     // 15.03 00:30 Türkiye = 14.03 21:30 UTC (sunucu UTC'de çalışır).
-    expect(warrantyExpiry(new Date("2026-03-15T00:30:00+03:00").toISOString(), "p24", false, db)).toBe("2028-03-15");
+    expect(warrantyExpiry(new Date("2026-03-15T00:30:00+03:00").toISOString(), "p12", false, db)).toBe("2027-03-15");
   });
 
   it("panelde +12 ay eklenir ve kaldırılınca 12 ay çıkarılır", () => {

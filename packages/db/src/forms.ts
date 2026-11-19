@@ -255,7 +255,7 @@ export async function registerWarranty(
       productName: product.name,
       ...fields,
       registeredAt: at,
-      expiresAt: warrantyExpiryDate(at, product.warrantyMonths ?? 24, extended),
+      expiresAt: warrantyExpiryDate(at, product.warrantyMonths ?? 12, extended),
       extended,
       updatedAt: at,
     })

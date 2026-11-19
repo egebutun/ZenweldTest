@@ -645,8 +645,10 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Garanti kaydında "12 ay ücretsiz garanti uzatması" kutusu boş gelir.
 - [ ] Aynı seri numarası ikinci kez kaydedilemez: "Bu seri numarası daha önce
       kaydedilmiş." (büyük/küçük harf ve boşluk farkı önemsiz).
-- [ ] Bitiş = kayıt tarihi + ürünün garanti süresi (+ uzatma 12 ay) (24 ay +
-      uzatma → 36 ay sonrası).
+- [ ] Bitiş = kayıt tarihi + ürünün garanti süresi (+ uzatma 12 ay) (12 ay +
+      uzatma → 24 ay sonrası).
+- [ ] Sık Sorulan Sorular'da ve ürün sayfalarında garanti süresi 12 ay
+      yazar; panelde yeni ürünün garantisi 12 ay gelir.
 - [ ] Gece 00:00–03:00 arasında yapılan kayıtta bitiş tarihi bir gün erken
       çıkmaz.
 - [ ] Garanti Sorgulama seri numarasıyla kaydı bulur; bitiş günü dahil

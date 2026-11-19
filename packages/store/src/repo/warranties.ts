@@ -49,7 +49,7 @@ export function warrantyExpiry(
   extended: boolean,
   db: ZenweldDatabase = getSnapshot(),
 ): string {
-  const months = db.products.find((p) => p.id === productId)?.warrantyMonths ?? 24;
+  const months = db.products.find((p) => p.id === productId)?.warrantyMonths ?? 12;
   // Kural packages/data/src/forms.ts'te (Turkiye saatine gore gun; sunucu da kullanir).
   return warrantyExpiryDate(new Date(startDate), months, extended);
 }
