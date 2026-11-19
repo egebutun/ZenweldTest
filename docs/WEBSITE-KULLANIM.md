@@ -80,17 +80,23 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
 - **Form e-postaları:** Formlar `info@zenweld.com` adresine, bu adresten
   e-posta gönderir. Veritabanı modunda gönderici ve alıcılar türe göre
   panelden değişir (Müşteriler ve Servis › E-posta › Adresler; KARARLAR
-  K-116).
+  K-116). Bugün e-posta servisi (Resend) kurulu olmadığı için hiçbir
+  e-posta gitmez; bu belgede "e-posta gider" diye anlatılanlar servis
+  kurulunca geçerlidir ([SUNUCU.md](SUNUCU.md)).
   Hangi formun hangi bilgileri gönderdiği: [IS-KURALLARI.md](IS-KURALLARI.md).
   - Kaydı panelde tutulan formlar (sipariş, teklif, servis talebi, garanti,
     değerlendirme, üyelik) e-postanın sonucunu beklemez; kayıt her durumda
     yapılır.
-  - E-posta formları (iletişim, bayilik, ürün destek sohbeti) demo
-    modunda e-posta gidemezse ziyaretçiye hata gösterir ve
-    `info@zenweld.com`'a doğrudan yazmasını söyler; e-posta gidince kayıt
-    tarayıcıya da yazılır ve aynı tarayıcının panelinde görünür (KARARLAR
-    K-109). Veritabanı modunda bu formlar veritabanına kaydedilir; kayıt
-    yapıldıysa e-posta gitmese de hata gösterilmez.
+  - E-posta formları (iletişim, bayilik): sitenin gerçek adresinde
+    (`zenweld.com`) e-posta gidemezse ziyaretçiye hata gösterilir ve
+    `info@zenweld.com`'a doğrudan yazması söylenir. Demo adresinde
+    (vercel.app, bilgisayar) e-posta gitmese de form başarılı sayılır.
+    Demo modunda form ulaşınca kayıt tarayıcıya da yazılır ve aynı
+    tarayıcının panelinde görünür (KARARLAR K-109). Veritabanı modunda bu
+    formlar veritabanına kaydedilir; kayıt yapıldıysa e-posta gitmese de
+    hata gösterilmez.
+  - Ürün destek sohbeti hata göstermez: soru her durumda kaydedilir;
+    e-posta gitmezse "Mesajınız alındı. Acele bir durumsa…" notu çıkar.
   - **Demo notu:** Tarayıcının deposu doluysa Teklif Al, servis talebi,
     garanti kaydı ve Üye Ol kaydedilmez ve e-posta gitmez; formda
     "Gönderilemedi: tarayıcınızın deposu dolu, kayıt yapılmadı…" (Üye Ol'da
@@ -141,8 +147,8 @@ diğerine geçince menü kapanmadan içeriği değişir.
 
 - Solda bölümün grupları vardır; grup adına tıklayınca grup sayfası açılır.
 - Grubun kategorileri, her birinin ürün sayısıyla listelenir.
-- Kategorinin üzerine gelince o kategorinin ilk 6 ürünü (görsel, ad, satışta
-  öne çıkan 1–2 özellik) ve **Tümünü Gör** görünür. Kategoride 6'dan fazla
+- Kategorinin üzerine gelince o kategorinin ilk 6 ürünü (görsel, ad ve ürün
+  kartındaki gibi en fazla 3 öne çıkan özellik) ve **Tümünü Gör** görünür. Kategoride 6'dan fazla
   ürün varsa düğme "Tümünü Gör (N)" olur.
 - Boş grupta "Bu grupta henüz kategori yok.", boş kategoride "Bu kategoriye
   henüz ürün eklenmedi." yazar.
@@ -595,7 +601,7 @@ hiçbiri değilse 404 çıkar.
 | Sekme | İçerik |
 |---|---|
 | **Teknik Özellikler** | Özellik–değer tablosu. Seçenekli üründe her seçeneğin satırı ("Soğutma: Su Soğutmalı", "Torç Uzunluğu: 8 m") eklenir, kombinasyona özel değerler (ör. Ağırlık) uygulanır ve ürün kodu satırı kombinasyonun kodunu gösterir. |
-| **Ürün Açıklaması** | Uzun açıklama. Kullanım kılavuzu bağlantısı girilmişse "Kullanım Kılavuzu (PDF)". |
+| **Ürün Açıklaması** | Uzun açıklama, düz metin olarak. `## ara başlık`, `- madde`, `**kalın**` biçimleri ürün açıklamasında bugün çalışmaz, işaretler olduğu gibi görünür (bkz. [25. bölüm](#25-bilinen-durumlar)). Kullanım kılavuzu bağlantısı girilmişse "Kullanım Kılavuzu (PDF)". |
 | **Kutu İçeriği** | Madde listesi (kombinasyona göre değişebilir). Liste boşsa sekme görünmez. |
 | **Garanti** | "<N> ay garanti", bir metin (yer tutucu) ve **Garanti Kaydı →**, **Garanti Sorgula →** bağlantıları. |
 | **SSS** | Sık sorulan soruların tamamı (açılır-kapanır). |
@@ -677,7 +683,7 @@ Yalnızca ürün sayfalarında, sağ altta bir düğme olarak durur.
 - **Yapısal veri:** Google'a ürün bilgileri bildirilir: marka (ürünün Marka
   alanı, boşsa Zenweld), KDV dahil kampanyalı fiyat ve kampanya bitişi,
   stok durumu (Zenweld deposunda stok varsa "stokta", yoksa "stokta yok";
-  seçenekli üründe herhangi bir seçeneğin stoğu yeterli), "yeni ürün",
+  seçenekli üründe her seçeneğin kendi stoğu), "yeni ürün",
   teknik özellikler, konum satırı; kargo (Türkiye; ürünün fiyatı ücretsiz
   kargo sınırına ulaşıyorsa 0, değilse Mağaza Ayarları'ndaki kargo
   ücreti), iade (teslimden itibaren 14 gün, kargoyla) ve ürünün onaylı
@@ -819,8 +825,7 @@ listelenir.
 
 ## 9. Ürün Seçici
 
-> Sorular ve süzme mantığı geçicidir. Bütün ürünler kesinleşince en son
-> yeniden kurulacak; o zamana kadar sonuçların doğru olması beklenmez
+> Sorular ve süzme mantığı geçicidir; bkz. [25. bölüm](#25-bilinen-durumlar)
 > ([KARARLAR.md](KARARLAR.md) K-69).
 
 Adres: `/urun-secici`. `?malzeme=celik` gibi bir ön seçimle açılırsa
@@ -849,6 +854,8 @@ Adres: `/urun-secici`. `?malzeme=celik` gibi bir ön seçimle açılırsa
   - Elektrik altyapısına uymalı.
 - Başlıkta "Size uygun <N> ürün" yazar; ürünler kart olarak, altında
   **Yeniden başla** düğmesiyle gösterilir.
+- Bugün hiçbir üründe kaynak yöntemi girili olmadığı için sonuç her zaman
+  "Size uygun 0 ürün"dür (bkz. [25. bölüm](#25-bilinen-durumlar)).
 
 ---
 
@@ -909,7 +916,7 @@ Adres: `/sepet`. Sepet için giriş gerekmez; ödeme adımında istenir.
   - Kargo durumu: Kargo bedavaya kalan tutar varsa "<tutar> daha ekleyin, kargo
     ücretsiz olsun." yazar; yoksa "Kargonuz ücretsiz!".
   - Kargo kuralı: Ara toplamdan kupon düşüldükten sonra kalan tutar, Mağaza
-    Ayarları'ndaki eşiğin (varsayılan 5.000 ₺) üzerindeyse kargo
+    Ayarları'ndaki eşiğe (varsayılan 5.000 ₺) eşit ya da üzerindeyse kargo
     ücretsizdir; değilse kargo ücreti eklenir. Kupon kargo ücretine
     uygulanmaz.
   - Düğmeler: **Ödemeye Geç** ve **Alışverişe Devam Et**.
@@ -991,7 +998,8 @@ Adres: `/odeme`. Tek sayfada üç adım ve sağda özet vardır.
   - Kart değişince seçim Tek Çekim'e döner.
 - **Tek çekimle sınırlı durumlar:**
   - Kartın programı hiçbir bankayla eşleşmezse varsayılan bankadan yalnızca
-    tek çekim yapılır.
+    tek çekim yapılır; "Bu kartla yalnızca tek çekim yapılabilir." yazar
+    (kart programı satırında banka adı yazmaz).
   - Sepet tutarı taksit alt sınırının altındaysa: "Taksit seçenekleri <tutar>
     ve üzeri siparişlerde geçerlidir."
 - **Ödeme alınamıyorsa:** "Bu kartla şu an ödeme alınamıyor. Havale / EFT ile
@@ -1471,7 +1479,8 @@ gelinir.
   - Başarı: "Mesajınız alındı. En kısa sürede dönüş yapacağız."
   - Hata: "Mesajınız şu an gönderilemedi. Lütfen tekrar deneyin ya da
     info@zenweld.com adresine e-posta gönderin."
-- **Kayıt:** Demo modunda e-posta gidince mesaj tarayıcıya da kaydedilir ve
+- **Kayıt:** Demo modunda form ulaşınca (demo adresinde e-posta gitmese de)
+  mesaj tarayıcıya da kaydedilir ve
   aynı tarayıcıda panelin Mesajlar ekranında görünür (KARARLAR K-109).
   Veritabanı modunda mesaj veritabanına kaydedilir; kayıt
   yapıldıysa e-posta gitmese de başarı mesajı çıkar.
@@ -1496,7 +1505,7 @@ gelinir.
   - İsteğe bağlı: Eklemek İstedikleriniz.
 - KVKK notu ve bot tuzağı vardır.
 - **Kayıt:** `info@zenweld.com`'a "Bayilik başvurusu — <firma>" e-postası
-  gider. Demo modunda e-posta gidince başvuru tarayıcıya da kaydedilir ve
+  gider. Demo modunda form ulaşınca (demo adresinde e-posta gitmese de) başvuru tarayıcıya da kaydedilir ve
   aynı tarayıcıda panelin Bayilik Başvuruları ekranında görünür (KARARLAR
   K-109). Veritabanı modunda başvuru veritabanına kaydedilir;
   kayıt yapıldıysa e-posta gitmese de başarı ekranı çıkar.
@@ -1592,8 +1601,8 @@ gelinir.
   saklanır. Aynı seri numarası ikinci kez kaydedilemez: "Bu seri numarası daha
   önce kaydedilmiş."
 - E-posta küçük harfle saklanır; Garantilerim bu e-postayla eşleşir.
-- **Garanti bitişi:** Kayıt tarihi + ürünün garanti süresi (ay; girilmemişse
-  24) + uzatma istendiyse 12 ay. Ayrıntı: [IS-KURALLARI.md](IS-KURALLARI.md).
+- **Garanti bitişi:** Kayıt tarihi + ürünün garanti süresi (ay; ürün bulunamazsa
+  12; KARARLAR K-119) + uzatma istendiyse 12 ay. Ayrıntı: [IS-KURALLARI.md](IS-KURALLARI.md).
 - **Hata mesajları:** "Posta kodu 5 haneli olmalıdır.", "Satıcı VKN 10 haneli
   (şahıs firmalarında 11 haneli) olmalıdır."
 
@@ -1720,7 +1729,7 @@ hepsi tek listededir. Kurallar: [IS-KURALLARI.md › 26](IS-KURALLARI.md#26-list
 
 - **Liste (`/blog`):**
   - Yalnızca yayındaki yazılar, yayın tarihine göre yeniden eskiye.
-  - Kart: Kapak, kategori, başlık, "yazar · tarih".
+  - Kart: Kapak, kategori, başlık, özet (en fazla 3 satır), "yazar · tarih".
 - **Yazı (`/blog/<link>`):**
   - Üst kısımda başlık, "kategori · yazar · tarih" ve kapak.
   - Metin ve "← Blog" bağlantısı.
@@ -1772,7 +1781,7 @@ hepsi tek listededir. Kurallar: [IS-KURALLARI.md › 26](IS-KURALLARI.md#26-list
 - Açıklama ve **Fotoğraflar** galerisi.
 - **Yan kutu:**
   - Tarih (başlangıç — bitiş).
-  - Mekan (şehir · ülke).
+  - Mekan: mekanın adı, altında şehir · ülke.
   - **Etkinlik sitesi:** Girilmişse, yeni sekmede.
 - Yayında olmayan etkinlik 404 verir; eski link yönlenir.
 
@@ -1840,7 +1849,7 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   sürümlerinde ve bilgisayarda her sayfa "noindex" taşır ve site haritası
   bildirilmez.
 - **Her zaman kapalı sayfalar:** Yönetim paneli, Giriş, Üye Ol, Şifremi
-  Unuttum, Çıkış, Sepet, Ödeme, Arama, Hesabım ve yasal metinler (taslak).
+  Unuttum, Yeni Şifre, Çıkış, Sepet, Ödeme, Arama, Hesabım ve yasal metinler (taslak).
   Bunlar site haritasına da girmez.
 - **robots.txt:** Yalnızca `/api/` taramaya kapalıdır. Gizli sayfalar bilerek
   engellenmez; Google sayfayı okuyamazsa "noindex" etiketini de göremez.
@@ -1894,14 +1903,14 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 | `/ekipmanlar`, `/guvenlik`, `/aksesuarlar`, `/dolgu-metalleri` | Bölüm sayfaları |
 | `/<bölüm>/<grup>` | Grup sayfası |
 | `/<bölüm>/<grup>/<kategori>` | Kategori sayfası (24'ten fazla üründe `/sayfa/<n>` ile sonraki sayfalar) |
-| `/blog/sayfa/<n>`, `/haberler/sayfa/<n>`, `/etkinlikler/sayfa/<n>` | Listenin sonraki sayfaları (12'den fazla kayıtta) |
+| `/blog/sayfa/<n>`, `/haberler/sayfa/<n>`, `/etkinlikler/sayfa/<n>` | Listenin sonraki sayfaları (12'den fazla kayıtta; `…/sayfa/1` 301 ile listenin kendi adresine gider) |
 | `/urun/<link>` | Ürün sayfası (`?secenek=<değer>` ile seçenekli açılır) |
 | `/arama?q=<sorgu>` | Arama sonuçları |
 | `/urun-secici` | Ürün Seçici (`?malzeme=celik` ön seçimi) |
 | `/yetkili-bayi-ve-servis-agi` | Bayi ve servis bulucu |
 | `/sepet` | Sepet |
 | `/odeme` | Ödeme |
-| `/giris`, `/kayit`, `/sifremi-unuttum`, `/cikis` | Üyelik |
+| `/giris`, `/kayit`, `/sifremi-unuttum`, `/sifre-sifirla`, `/cikis` | Üyelik |
 | `/hesabim` | Hesabım › Genel Bakış |
 | `/hesabim/profil`, `/hesabim/tekliflerim`, `/hesabim/siparislerim`, `/hesabim/favorilerim`, `/hesabim/garantilerim`, `/hesabim/servis-taleplerim`, `/hesabim/adreslerim` | Hesabım sayfaları |
 | `/hesabim/siparislerim/<sipariş-no>` | Sipariş detayı |
@@ -1926,20 +1935,26 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 
 Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
 
-- **Teklif Al metinleri:** Sayfanın açıklaması ve anasayfadaki teklif kutusu
-  kurumsal müşteriye hitap ediyor; herkese hitap edecek şekilde yeniden
-  yazılacak. Müdür kararını bekliyor ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
-- **Bülten kaydı:** Hiçbir yere gönderilmez; bülten servisi seçilince
-  bağlanacak.
-- **Çerez ayarları penceresi:** Henüz boştur; analiz ve pazarlama
-  kategorileri sonra eklenecek.
-- **Yer tutucu metinler:** Anasayfadaki "Neden Zenweld?", ürünlerin Garanti
-  sekmesi, boş Adreslerim açıklaması, yasal
-  metinler ve örnek blog yazıları lorem ipsum'dur.
-- **Ürün fotoğrafları:** Ekipmanlardan 19 ürünün fotoğrafı yok ve 4
-  soğutmalı üründe bir soğutma halinin fotoğrafı eksik; bunlarda alt
-  kategorinin kart çizimi görünür. Force serisinin 9 ürününde ortak geçici
-  bir fotoğraf görünür (KARARLAR K-77,
+- **Teklif Al formu:** Soruları henüz tam doğru değil; sahibinin
+  göndereceği sorularla düzenlenecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›
+  Teklif Al formu).
+- **Bülten ve çerez ayarları:** Bülten kaydı bir yere gönderilmez, çerez
+  ayarları penceresi boştur; bkz. [2. bölüm](#2-sayfa-çerçevesi).
+- **Yer tutucu metinler:** Anasayfadaki "Neden Zenweld?" açıklamaları,
+  ürünlerin Garanti sekmesi, boş Adreslerim açıklaması ve örnek blog
+  yazıları lorem ipsum'dur. Ekipmanların 40 ürününden 31'inin uzun
+  açıklaması (Force serisi dışındakiler) örnek metindir. Bütün ürünlerde
+  kullanım kılavuzu bağlantısı "#"tır; "Kullanım Kılavuzu (PDF)" görünür ama
+  bir dosya açmaz. Yasal metinler örnek taslaktır; hukuk danışmanı yazacak.
+- **Ürün açıklamasında biçim:** Uzun açıklama düz metin basılır; `##` ve
+  `**` gibi işaretler çalışmaz (kategori ve grup Tanıtım Metni, blog,
+  haber ve etkinlikte çalışır). Düzeltilmesi
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO › A2'de.
+- **Ürün fotoğrafları:** Ekipmanların 40 ürününden 15'inin gerçek fotoğrafı
+  yok: 10'unda alt kategorinin kart çizimi, Force serisinin 5 ürününde
+  (ForceArc 250, 280; ForceMIG 125, 185 MP, 205 DP) ortak geçici bir
+  fotoğraf görünür. 4 soğutmalı üründe bir soğutma halinin fotoğrafı
+  eksik; o halde çizim görünür (KARARLAR K-77,
   [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ürün fotoğrafları). Güvenlik,
   Aksesuarlar ve Dolgu Metalleri'nde bugün ürün yoktur (KARARLAR K-78).
 - **Kategori filtreleri:** Şebeke Voltajı, Amper ve Güç (W) filtrelerinin
@@ -1947,9 +1962,10 @@ Bugünkü sitede bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
   (eşlenmemiş filtre sonucu daraltmaz). Değerler ürünler kesinleşince
   girilecek ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Kategori filtreleri).
 - **Ürün Seçici ve kaynak yöntemi:** Ürün Seçici ve aramadaki yöntem
-  eşleşmesi (MIG, TIG, MMA…) ürünlerdeki eski "kaynak yöntemi" bilgisine
-  bakar. Bu alan panelin ürün formunda yok, bu yüzden panelden eklenen yeni
-  ürünler Ürün Seçici sonuçlarında çıkmaz. Ürün Seçici bütün ürünler
+  eşleşmesi (MIG, TIG, MMA…) ürünlerdeki "kaynak yöntemi" bilgisine bakar.
+  Bu bilgi bugün hiçbir üründe girili değil ve panelin ürün formunda alanı
+  yok; bu yüzden Ürün Seçici bugün hiçbir ürün listelemez ("Size uygun 0
+  ürün"). Sorular ve süzme mantığı geçicidir. Ürün Seçici bütün ürünler
   kesinleşince en son yeniden tasarlanacak ([KARARLAR.md](KARARLAR.md) K-69,
   [YAPILACAKLAR.md](YAPILACAKLAR.md)).
 - **İlgili Ürünler:** Bugün aynı kategorideki ilk 4 ürün gösteriliyor; öneri
