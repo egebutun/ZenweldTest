@@ -66,9 +66,12 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       depo stoğu (STOKTA YOK, sepet ve ödeme engeli, panel sütunu), kupon
       (panelde oluşturma ve hata, sepette uygulama ve geçersiz kod, sonradan
       geçersiz kalan kuponla ödeme engeli, kuponlu sipariş ve kişi başı
-      sınır, kişiye özel kupon panelde ve sepette).
+      sınır, kişiye özel kupon panelde ve sepette), servis talebi, kategori
+      filtreleri, ekran genişlikleri, form kayıtları, liste sayfalaması,
+      yapısal veri, eski site yönlendirmeleri, Panel › E-posta, Force
+      sayfası, anasayfa ve tanıtım alanı, Destek, panel listeleri.
 - [ ] Veritabanı: boş bir PostgreSQL'de `npm run db:migrate` hatasız biter
-      ve 64 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
+      ve 65 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
       `npm run db:generate` "No schema changes" der.
 - [ ] `npm run db:seed` boş veritabanına örnek veriyi yükler ve tablo
       tablo satır sayılarını yazar (ör. products 40, orders 133); ikinci
@@ -113,7 +116,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       e-postaları; kargo gönderisi; SAP depo stoğu; form kayıtlarının sabit
       değerleri; örnek verinin tablolara hatasız yüklenmesi, satır sayıları
       ve başlıca bağlar; tablolardan geri okunan verinin örnek veriyle
-      birebir aynı olması (okuma katmanı).
+      birebir aynı olması (okuma katmanı); üyelik ve oturum, sipariş ve
+      ödeme, formlar ve e-posta yazışmaları, SAP sipariş aktarımı, veri
+      yükleme (`db:yukle`) ve panelin bütün ekranlarının sunucu kuralları.
 
 ---
 
@@ -282,8 +287,10 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       fotoğrafıyla açılır.
 - [ ] Fotoğrafı olmayan ürün (ör. Ultimate 255 MMA) ve soğutma hali (ör.
       Ultimate 405 THP'de Hava) alt kategorinin kart çizimini gösterir;
-      Force serisinin 9 ürünü (ör. ForceArc 200 MMA) ortak geçici
-      fotoğrafı, ForceArc 400 CEL MMA çizimi gösterir;
+      Force serisinin 5 ürünü (ör. ForceArc 250 MMA) ortak geçici
+      fotoğrafı; ForceArc 200 MMA, ForceTIG 200, ForceMIG 200 ve ForceCut
+      45 kendi fotoğrafını; ForceArc 400 CEL MMA alt kategorinin çizimini
+      gösterir;
       Ultimate 505 MTS'nin kartında su soğutmalı fotoğrafı görünür.
 - [ ] Kategori sayfası ürünleri listeler; aynı gruptaki diğer kategorilerin
       şeridi yoktur.
@@ -366,7 +373,8 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Favori kalbi **Sepete Ekle düğmesinin yanındadır**; tıklanınca ürün
       Favorilerim'e girer.
 - [ ] Ürün sayfasında **teklif düğmesi ya da teklif yazısı yoktur.**
-- [ ] Sepete Ekle her yayındaki üründe çalışır (Zenweld'de stok sınırı yok).
+- [ ] Sepete Ekle, depoda stoğu olan her yayındaki üründe çalışır; stoğu
+      olmayan üründe STOKTA YOK görünür (bkz. 7 › Zenweld depo stoğu).
 - [ ] Online satıcı kartları yalnızca stokta ve ürün linki olan satıcılardır;
       kart ürünün satıcıdaki sayfasına yeni sekmede gider; kartta "STOKTA"
       yazmaz, fiyat ve adet görünmez; Zenweld'in kendi mağazası en baştadır.
@@ -398,7 +406,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       satırdır ve seçenek adıyla kodu yazar.
 - [ ] Adet 1–99 arasında kalır (500 yazılınca 99 olur).
 - [ ] Ara toplam 5.000 ₺ altındaysa kargo 250 ₺ ve "ücretsiz kargoya kalan"
-      tutar görünür; 5.000 ₺ ve üzerinde kargo ücretsiz.
+      tutar görünür; 5.000 ₺ ve üzerinde kargo ücretsiz. (Örnek fiyatlar 999.999 ₺;
+      Mağaza Ayarları'nda sınır ürün fiyatının üstüne çıkarılarak ya da
+      panelde bir ürünün fiyatı düşürülerek denenir.)
 - [ ] Yayından kaldırılan ürünün satırı sepette görünmez.
 - [ ] Ürünün sepetteki seçeneği panelden kaldırılınca o satır görünmez.
 - [ ] Sepet sayfa yenilenince ve sekmeler arasında korunur.
@@ -428,9 +438,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       geçerli değil."; kod sepete kaydedilmez.
 - [ ] LAZER25000 lazer kaynak makinesi olmayan sepette "Sepetinizde bu
       kuponun geçerli olduğu ürün yok."; 500.000 ₺ altındaki sepette en az
-      tutar uyarısı verir.
+      tutar uyarısı verir (örnek fiyatlar 999.999 ₺ olduğundan panelde
+      kuponun En az sepet tutarı ürün fiyatının üstüne çıkarılarak denenir).
 - [ ] Kupon düşüldükten sonra tutar ücretsiz kargo sınırının altına inerse
-      kargo ücreti eklenir; kupon kargoya uygulanmaz.
+      kargo ücreti eklenir; kupon kargoya uygulanmaz. (Örnek fiyatlar 999.999 ₺;
+      Mağaza Ayarları'nda sınır ürün fiyatının üstüne çıkarılarak ya da
+      panelde bir ürünün fiyatı düşürülerek denenir.)
 - [ ] Kişiye özel OZEL15: girişsiz sepette uygulanır ve "ödeme adımında
       … kontrol edilir" notu çıkar; README'deki Bireysel hesapla giriş
       yapılınca "Bu kupon hesabınıza tanımlı değil…" olur ve ödemeye
@@ -454,7 +467,10 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Geçersiz kart numarası, son kullanma ya da CVC hata verir.
 - [ ] Test kartı girilince kart programı ve banka görünür; Tek Çekim her
       zaman vardır; taksitler o bankanın açık taksitleridir.
-- [ ] Toplam 1.000 ₺ altındaysa yalnızca tek çekim sunulur.
+- [ ] Toplam 1.000 ₺ altındaysa yalnızca tek çekim sunulur. (Örnek fiyatlar
+      999.999 ₺; Mağaza Ayarları'nda taksit alt sınırı ürün fiyatının
+      üstüne çıkarılarak ya da panelde bir ürünün fiyatı düşürülerek
+      denenir.)
 - [ ] Vade farklı taksitte vade farkı ayrı satırda görünür ve düğmedeki tutara
       eklenir.
 - [ ] Sözleşme onayı işaretlenmeden sipariş verilmez; bağlantılar siparişin
@@ -514,8 +530,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       Bir hesaba 10 kez yanlış şifre girilince "Çok fazla deneme yapıldı. 15
       dakika sonra tekrar deneyin." çıkar, doğru şifreyle de girilmez. İki
       tarayıcıda aynı üyeyle girilip birinde şifre değiştirilince diğerinde
-      Hesabım "Giriş Yap" kutusunu gösterir. Demo üyesinin (`bireysel@demo.com`)
-      eski şifresi ilk girişte güçlü özete çevrilir.
+      Hesabım "Giriş Yap" kutusunu gösterir. README'deki Bireysel demo
+      hesabın eski şifresi ilk girişte güçlü özete çevrilir.
 - [ ] Şifre sıfırlama (veritabanı modu, K-95): Şifremi Unuttum'da kayıtlı ve
       kayıtsız e-postayla aynı mesaj çıkar; kayıtlı üye için
       `password_reset_tokens`'a bir satır yazılır, 15 dakika içinde tekrar
@@ -707,6 +723,34 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       eski adresi yeni adrese gider; grubun linki değişince kategorilerinin
       eski adresleri de yönlenir.
 - [ ] Paylaşım önizlemesinde başlık, açıklama ve görsel vardır.
+- [ ] Yapısal veri (K-123): bir ürün sayfasının kaynağındaki
+      `application/ld+json` içinde `shippingDetails` (Türkiye; fiyat
+      ücretsiz kargo sınırına ulaşıyorsa 0, değilse kargo ücreti) ve
+      `hasMerchantReturnPolicy` (14 gün) var. Veritabanı modunda onaylı
+      yorumu olan üründe `aggregateRating` (ortalama ve sayı sitedekiyle
+      aynı); yorum onaylanmadıkça sayılmaz. Blog yazısında `BlogPosting`
+      (başlık, özet, tarih, yayıncı). Seçenekli üründe `ProductGroup` ve
+      her seçenek kendi kodu, fiyatı ve `?secenek=` linkiyle. Anasayfada
+      `WebSite` (ZENWELD) ve `Organization`'da `legalName` = Mağaza
+      Ayarları'ndaki ticari unvan. Etkinlikte ülke `TR`, `organizer` yok, stok
+      fotoğraf yok. Google'ın "Zengin Sonuçlar Testi"
+      (search.google.com/test/rich-results) canlı adreste hatasız. Test:
+      `tests/e2e/yapisal-veri.spec.ts`, `tests/e2e-db/yapisal-veri.spec.ts`.
+- [ ] Sayfalama (K-124): 12'den fazla haberde `/haberler` 12 kart ve altta
+      sayfa numaraları gösterir; **2** `/haberler/sayfa/2`'yi açar.
+      `/haberler/sayfa/2`'nin başlığı "Haberler — Sayfa 2 | ZENWELD", asıl
+      adresi kendisi; `/haberler/sayfa/1` → 301 `/haberler`. Kategoride 24'ten
+      fazla üründe aynısı; filtre seçiliyken sayfa bağlantıları filtreyi
+      korur, filtre değişince 1. sayfaya dönülür. Veritabanı modunda kayıt
+      sayısının dışındaki sayfa 404. Test: `tests/e2e/sayfalama.spec.ts`,
+      `tests/e2e-db/sayfalama.spec.ts`.
+- [ ] Eski zenweld.com adresleri (iki modda da): `curl -I
+      <site>/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali`
+      → 301, `Location: /urun/ultimate-320-thp-ipanel?secenek=su_4-m`;
+      tarayıcıda açınca ürün sayfası "Su Soğutmalı" seçili gelir.
+      `/urunler/elektrot-kaynak-makineleri/arc-200` →
+      `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri`
+      (MMA (Stick) Örtülü Elektrot Kaynak Makineleri); `/kurumsal/hakkimizda` → `/hakkimizda` (KARARLAR K-121). Test: `tests/e2e/eski-site.spec.ts`.
 
 ---
 
@@ -755,7 +799,9 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       kaynağında 51. sipariş yoktur (`tests/e2e/panel-listeler.spec.ts`,
       `tests/e2e-db/panel-listeler.spec.ts`).
 - [ ] Teklifler, Servis Talepleri, Garantiler ve Yorumlar da 50'şer
-      sayfalanır; süzgeç ve arama adrese yazılır. Garantiler'de **CSV indir**
+      sayfalanır. Teklifler'de durum süzgeci, Garantiler'de arama ve
+      süzgeç, Yorumlar'da arama ve "Onay bekleyenler" adrese yazılır;
+      Servis Talepleri'nde süzgeç ve arama yoktur. Garantiler'de **CSV indir**
       yalnızca görünen 50 kaydı değil, süzgece uyan kayıtların tamamını
       indirir (örnek veride 54 kayıt). Oturumsuz
       `/api/yonetim/csv/garantiler` 401 verir.
@@ -973,32 +1019,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       `curl -I <adres>`) cevap **301**'dir ve `Location` bugünkü adrestir;
       seçeneğe dönüşen eski ürün `?secenek=<değer>` ile açılır, eski
       adresteki `?utm_source=…` gibi parametreler korunur. Hiç kullanılmamış
-      bir adres 404 döner (KARARLAR K-120).
-- [ ] Yapısal veri (K-123): bir ürün sayfasının kaynağındaki
-      `application/ld+json` içinde `shippingDetails` (Türkiye; fiyat
-      ücretsiz kargo sınırına ulaşıyorsa 0, değilse kargo ücreti) ve
-      `hasMerchantReturnPolicy` (14 gün) var. Veritabanı modunda onaylı
-      yorumu olan üründe `aggregateRating` (ortalama ve sayı sitedekiyle
-      aynı); yorum onaylanmadıkça sayılmaz. Blog yazısında `BlogPosting`
-      (başlık, özet, tarih, yayıncı). Seçenekli üründe `ProductGroup` ve
-      her seçenek kendi kodu, fiyatı ve `?secenek=` linkiyle. Anasayfada
-      `WebSite` (ZENWELD) ve `Organization`'da `legalName` = Mağaza
-      Ayarları'ndaki ticari unvan. Etkinlikte ülke `TR`, `organizer` yok, stok
-      fotoğraf yok. Google'ın "Zengin Sonuçlar Testi"
-      (search.google.com/test/rich-results) canlı adreste hatasız.
-- [ ] Sayfalama (K-124): 12'den fazla haberde `/haberler` 12 kart ve altta
-      sayfa numaraları gösterir; **2** `/haberler/sayfa/2`'yi açar.
-      `/haberler/sayfa/2`'nin başlığı "Haberler — Sayfa 2 | ZENWELD", asıl
-      adresi kendisi; `/haberler/sayfa/1` → 301 `/haberler`. Kategoride 24'ten
-      fazla üründe aynısı; filtre seçiliyken sayfa bağlantıları filtreyi
-      korur, filtre değişince 1. sayfaya dönülür. Veritabanı modunda kayıt
-      sayısının dışındaki sayfa 404.
-- [ ] Eski zenweld.com adresleri (iki modda da): `curl -I
-      <site>/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali`
-      → 301, `Location: /urun/ultimate-320-thp-ipanel?secenek=su_4-m`;
-      tarayıcıda açınca ürün sayfası "Su Soğutmalı" seçili gelir.
-      `/urunler/elektrot-kaynak-makineleri/arc-200` → MMA Elektrot
-      kategorisi; `/kurumsal/hakkimizda` → `/hakkimizda` (KARARLAR K-121).
+      bir adres 404 döner (KARARLAR K-120; `tests/e2e-db/yonlendirme.spec.ts`).
 - [ ] Dosya deposu ayarlıyken (`DOSYA_KLASORU`, K-108) Kart Görseli
       alanında **Dosya Yükle** ile seçilen görsel yüklenir, alana
       `/dosya/gorsel/…` adresi gelir; kaydedilince sitede görünür. Depo
@@ -1243,7 +1264,7 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Hakkımızda: başlık zorunlu; rakam ve bölümler eklenip sıralanır; sitede
       görseli olan bölüm yan yana görünür.
 - [ ] SSS sırası sitedeki SSS sayfasında, ürün sekmesinde ve anasayfada (ilk
-      8) aynıdır.
+      6) aynıdır.
 - [ ] Belgeler: dosya seçicide yalnızca PDF, Word, Excel, JPG, PNG ve ZIP
       çıkar; 25 MB'tan büyük dosya yüklenmez; yayından kaldırılan belge
       sitede görünmez.
@@ -1263,10 +1284,10 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Anasayfa Tanıtım: veritabanı modunda kayıt İşlem Kaydı'na "Anasayfa
       Tanıtım" olarak girer; **Varsayılana Dön** + kaydet başlangıçtaki üç
       sayfayı geri getirir.
-- [ ] Görünüm: punto ve renk değişikliği haber, blog, Hakkımızda ve yasal
-      metinlere yansır; Varsayılana Dön + Ayarları Kaydet başlangıç
+- [ ] Görünüm: punto ve renk değişikliği haber, etkinlik, blog, Hakkımızda,
+      yasal metin ve kategori/grup tanıtım metinlerine yansır; Varsayılana Dön + Ayarları Kaydet başlangıç
       değerlerine döndürür.
-- [ ] Görünüm: renk kod kutusuna "#fff" ya da "kırmızı" yazılınca
+- [ ] Görünüm: Gövde rengi kod kutusuna "#fff" ya da "kırmızı" yazılınca
       kaydedilmez; "Gövde rengi #RRGGBB biçiminde olmalı…" uyarısı çıkar.
 
 **Veritabanı modunda içerik (KARARLAR K-99, K-101, K-104, K-108):**
@@ -1368,7 +1389,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       kartla satın alabilir. (Yukarıdaki veritabanı modu maddelerinin
       çoğunu bu test dener.)
 - [ ] **Canlıya çıkmadan:** canlı veritabanında örnek üye, sipariş, teklif,
-      servis ve garanti kaydı yoktur (`db:yukle` bunları yüklemez, K-91);
+      servis ve garanti kaydı, örnek yorum, kupon, depo stoğu ve bayi/satıcı
+      stoğu yoktur (`db:yukle canli` bunları yüklemez, K-91, K-122);
       gerçek kargo/POS/IBAN değerleri ve gerçek yasal metinler girilmiş,
       e-posta anahtarı tanımlanmıştır ([YAPILACAKLAR.md](YAPILACAKLAR.md) ›
       Canlıya giden yol).

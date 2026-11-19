@@ -13,7 +13,11 @@ sitede ne değiştiği. Tasarım (renk, yerleşim) anlatılmaz.
 - Bayi ve online satıcı stoklarının ayrıntısı: [STOK.md](STOK.md)
 - Sunucu, ödeme, e-posta ve harita servisleri: [SUNUCU.md](SUNUCU.md)
 
-Ekranlar demo modunda da veritabanı modunda da aynıdır. **Demo notu** ile
+Ekranlar iki modda büyük ölçüde aynıdır. Yalnızca veritabanı modunda
+olanlar: sipariş detayındaki SAP Aktarımı kutusu, E-posta'daki posta kutusu
+satırı ve **Şimdi oku**, İşlem Kaydı'nın dolu tablosu. Veritabanı modunda
+dosya deposu ayarlı değilse **Dosya Yükle** yerine adres alanı çıkar.
+**Demo notu** ile
 işaretli yerler yalnızca demo modunun sınırıdır (verinin tarayıcıda durması
 gibi); "Veritabanı modunda" diye başlayan maddeler sunucunun ek olarak ne
 yaptığını söyler. İki modun farkları: [README](../README.md) › Demo ve
@@ -97,21 +101,23 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     - **Talepler:** Teklifler, Servis Talepleri, Garantiler, Yorumlar ile
       Bayilik Başvuruları ve Mesajlar
       ([Veritabanı modunda Talepler ekranları](#veritabanı-modunda-talepler-ekranları)).
-    - **Katalog:** Seçenek Tanımları, Kategoriler ve gruplar, Ürünler
-      ([Veritabanı modunda Katalog ekranları](#veritabanı-modunda-katalog-ekranları)).
-    - **Bayi ağı:** Bayiler, Online Satıcılar, Satış Temsilcileri
-      ([Veritabanı modunda Bayiler, Online Satıcılar ve Satış Temsilcileri](#veritabanı-modunda-bayiler-online-satıcılar-ve-satış-temsilcileri))
-      ve Stok Matrisi ([Veritabanı modunda Stok Matrisi](#veritabanı-modunda-stok-matrisi)).
-    - **Ayarlar:** Mağaza Ayarları
-      ([Veritabanı modunda Mağaza Ayarları](#veritabanı-modunda-mağaza-ayarları))
-      ve Görünüm ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)),
-      Anasayfa Tanıtım ([24](#anasayfa-tanıtım)).
-    - **İçerik:** Haberler, Etkinlikler, Blog, Hakkımızda, Sık Sorulan
-      Sorular, Belgeler, Yasal Metinler, Sayfa SEO
+    - **Satış › Mağaza Ayarları**
+      ([Veritabanı modunda Mağaza Ayarları](#veritabanı-modunda-mağaza-ayarları)).
+    - **Ürünler:** Seçenek Tanımları, Kategoriler ve gruplar, Ürünler
+      ([Veritabanı modunda Katalog ekranları](#veritabanı-modunda-katalog-ekranları)),
+      Stok Matrisi ([Veritabanı modunda Stok Matrisi](#veritabanı-modunda-stok-matrisi)).
+    - **Bayi ve Satış Ağı:** Bayiler, Online Satıcılar, Satış Temsilcileri
+      ([Veritabanı modunda Bayiler, Online Satıcılar ve Satış Temsilcileri](#veritabanı-modunda-bayiler-online-satıcılar-ve-satış-temsilcileri)).
+    - **Müşteriler ve Servis:** Üyeler
+      ([Veritabanı modunda Üyeler](#veritabanı-modunda-üyeler)) ve
+      **E-posta** ([25](#e-posta-yonetime-posta)).
+    - **İçerik:** Anasayfa Tanıtım ([24](#anasayfa-tanıtım)), Haberler,
+      Etkinlikler, Blog, Hakkımızda, Sık Sorulan Sorular, Belgeler, Yasal
+      Metinler, Sayfa SEO
       ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
-    - **Üyeler** ([Veritabanı modunda Üyeler](#veritabanı-modunda-üyeler)),
-      **İşlem Kaydı** ([24](#24-görünüm)) ve **E-posta**
-      ([25](#e-posta-yonetime-posta)).
+    - **Ayarlar:** Görünüm
+      ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları))
+      ve **İşlem Kaydı** ([24](#i̇şlem-kaydı-veritabanı-modu)).
     - **Panel ana sayfası** (özet ve grafikler; [3](#3-panel-ana-sayfa)).
   - Panele her giriş ve çıkış işlem kaydına (`audit_log`) yazılır.
 
@@ -184,8 +190,10 @@ alan seçilir, ekran okuyucu alanı etiketiyle okur.
     "… kaydedildi." mesajı kısa süre görünür.
 - Hata olursa formun üstünde kırmızı mesaj çıkar ve form hatanın olduğu
   sekmeye geçer.
-- Pencereli ekranlarda (bayi, satıcı, temsilci, SSS, seçenek tanımı, POS)
-  pencere **Kaydet** ile kapanır, **Vazgeç** ile değişiklik atılır.
+- Pencereli ekranlarda (bayi, satıcı, temsilci, SSS, seçenek tanımı, belge)
+  pencere **Kaydet** ile kapanır, **Vazgeç** ile değişiklik atılır. Mağaza
+  Ayarları'ndaki POS ve oran pencereleri **Uygula** ile kapanır; değişiklik
+  sayfanın üstündeki Kaydet ile saklanır.
 - Listedeki küçük işlemler (yayına al/kaldır, sıra okları, durum seçimi,
   rol seçimi) anında kaydedilir.
 
@@ -257,6 +265,10 @@ Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları ve Mesajlar; kurallar
   - Satır başında `## ` ara başlık yapar.
   - Satır başında `- ` madde yapar.
   - `**kelime**` kalın görünür.
+  - `## ` ara başlık sayfada H2 olarak basılır; H3 ve bağlantı (link) bu
+    alanlarda yazılamaz (`packages/ui/src/components/RichText.tsx`).
+- Ürünün **Detaylı Açıklama**'sı biçimli metin değildir; bkz.
+  [Açıklamalar](#açıklamalar).
 - Bu metinlerin punto ve renkleri [Görünüm](#24-görünüm) ekranından
   ayarlanır.
 
@@ -279,6 +291,10 @@ Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları ve Mesajlar; kurallar
     paylaşılmış bağlantılar ve Google'daki eski sonuç çalışmaya devam eder."
   - Kayıttan sonra "Yeni linke yönlenen eski linkler" listesi görünür.
   - Yeni link başka bir kaydın eski linkiyse o eski yönlendirme kalkar.
+  - Veritabanı modunda eski adres sunucuda **301 (kalıcı)** ile kaydın
+    bugünkü adresine gider; adresteki diğer parametreler korunur ve
+    yönlendirme kayıtla hemen başlar (KARARLAR K-120). Demo modunda
+    yönlendirmeyi tarayıcı yapar.
 - **Sayfa Başlığı:** Boş bırakılırsa otomatik başlık kullanılır (kutuda
   gri yazar). Sayaç 60 karakterdir.
 - **Açıklama:** Boş bırakılırsa kaydın kısa açıklaması/özeti kullanılır.
@@ -293,9 +309,6 @@ Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları ve Mesajlar; kurallar
 
 **Arama kutuları:** Türkçe büyük/küçük harfe duyarsızdır ("İ" ve "ı"
 doğru eşleşir).
-
-**CSV indirme:** Siparişler hariç liste ekranlarındaki **CSV İndir**,
-ekrandaki süzülmüş listeyi indirir (Teklifler, Üyeler, Garantiler).
 
 **Müşteriye bildirim:** Panelde yapılan hiçbir değişiklik müşteriye
 e-posta göndermez. Müşteri sipariş, teklif ve garanti durumunu sitedeki
@@ -701,8 +714,8 @@ adresleri Müşteriler ve Servis › **E-posta** › Adresler'dedir
 
 - Her sekme kendi **Kaydet** düğmesiyle (sekmenin üstünde) saklanır.
 - "Kaydedilmemiş değişiklikler var. Saklamak için Kaydet'e basın." /
-  "Mağaza ayarları kaydedildi." / "E-posta alıcıları kaydedildi." /
-  "Şirket ve iletişim bilgileri kaydedildi."
+  "Mağaza ayarları kaydedildi." / "Şirket ve iletişim bilgileri
+  kaydedildi."
 - Ayarlar başka bir sekmede kaydedilirse ekran yenilenir; bu ekranda
   kaydedilmemiş değişiklik varsa korunur.
 - Kaydederken metinler kırpılır, IBAN büyük harfe çevrilir; aynı kargo
@@ -717,6 +730,10 @@ adresleri Müşteriler ve Servis › **E-posta** › Adresler'dedir
   kargo ücretsiz. Örnek değer 5.000 ₺.
 - **Kargo ücreti (₺, KDV dahil):** Sınırın altındaki siparişlerde. Örnek değer
   250 ₺.
+- Bu iki değer arama motorlarına giden ürün bilgisindeki kargo ücretinde de
+  kullanılır (ürünün KDV dahil fiyatı sınırı geçiyorsa 0;
+  [IS-KURALLARI.md](IS-KURALLARI.md) › 13).
+
 **Kargo Firmaları** (ayrı kutu):
 
 - Açıklama: "Sipariş kargoya verilirken firma bu listeden seçilir. Takip
@@ -743,9 +760,8 @@ adresleri Müşteriler ve Servis › **E-posta** › Adresler'dedir
   Ödeme sayfasında kart, programı eşleşen bankanın taksitleriyle çekilir;
   eşleşmeyen kartlar varsayılan POS'tan tek çekim ödenir."
 - **Taksit için en düşük sipariş tutarı (₺).** Örnek değer 1.000 ₺.
-- Ödeme sayfasında kart, programı eşleşen **ilk aktif** POS'un taksitleriyle
-  çekilir. Eşleşmeyen kartlar varsayılan POS'tan (örnek veride iyzico) tek
-  çekim ödenir.
+- Eşleşme için listede **ilk aktif** POS kullanılır; varsayılan POS örnek
+  veride iyzico'dur.
 - **POS tablosu:**
   - Sütunlar: Düzenle · Aktif (kutu) · Banka (kısa etiket) · Banka adı ·
     Mağaza no · POS adı · Firma taksit oranları (**Göster**) · Taksit
@@ -821,7 +837,8 @@ motorlarına verilen kuruluş bilgisinde kullanılır.
     Müşteriler ve Servis › E-posta › Adresler'dedir."
 - **Sosyal Medya** kutusu: Instagram, YouTube, LinkedIn, TikTok adresleri.
   "Alt bilgide simge olarak görünür. Boş bırakılan gösterilmez." Doluysa
-  `https://` ile başlamalı.
+  `https://` ile başlamalı. Adresler arama motorlarına verilen kuruluş
+  bilgisine de (`sameAs`) girer (KARARLAR K-123).
 - **Ofisler** kutusu: "İletişim sayfasında harita ve yol tarifiyle görünür.
   İlk ofis merkezdir: adresi alt bilgide ve sözleşmelerde yazar."
   - Her ofiste **Şehir** (ilkinde "Şehir (merkez)"), **Adres** ("Her
@@ -914,8 +931,10 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
 - **Yeni ürün ve stok:** Yeni ürün hiçbir bayide ve online satıcıda stokta
   görünmez. Haritada ve online satıcılarda çıkması için bayi/satıcı stok
   dosyalarında yer alması gerekir ([Stok Matrisi](#10-stok-matrisi)). Sitede
-  satın alınabilmesi için ayrıca bir şey gerekmez; yayındaki her ürün sepete
-  eklenebilir.
+  satılabilmesi için ürünün (seçenekli üründe seçilen seçeneğin) SAP
+  kaleminde Zenweld depo stoğu olmalıdır. Depo stoğu yoksa ürün sayfasında
+  STOKTA YOK yazar ve ürün sepete eklenmez; Teklif Al'a eklenebilir
+  ([IS-KURALLARI.md](IS-KURALLARI.md) › 20).
 
 #### Temel Bilgiler
 
@@ -959,6 +978,10 @@ Adres: `/yonetim/urunler`. Açıklama: "<N> ürün listeleniyor".
 #### Açıklamalar
 
 - **Kısa Açıklama**, **Detaylı Açıklama.**
+- Detaylı Açıklama sitede düz metin olarak, tek paragrafta görünür; biçimli
+  metin işaretleri (`##`, `- `, `**`, boş satır) burada çalışmaz. Ayrıca
+  ürün sayfasında Açıklama sekmesi açılmadan sayfanın HTML'inde bulunmaz.
+  Düzeltilmesi [YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO › A2'de.
 - **Öne Çıkan Özellikler:**
   - **Ekle** ile satır eklenir; oklarla sıralanır, çöple silinir.
   - "İlk 3 tanesi menüdeki ürün kartında madde madde görünür." İlk 3 satır
@@ -1103,7 +1126,9 @@ bir ürünü "X Torcu"nun 4 m seçeneği yapmak):
 1. Ayrı ürün silinir; kodu boşa çıkar.
 2. Ana ürüne değer eklenir ve o kod seçeneğe yazılır.
 3. Silinen ürünün eski linkinin seçeneğe yönlenmesi bugün panelden
-   kurulamaz (bkz. [Bilinen durumlar](#27-bilinen-durumlar)).
+   kurulamaz (bkz. [Bilinen durumlar](#27-bilinen-durumlar)). Bugün elle
+   yapılırsa eski ürünün linki 404 verir, yorumları görünmez olur, bayi ve
+   satıcı stokları bir sonraki stok dosyasına kadar boş kalır.
 
 Seçenekli ürünün sitede nasıl göründüğü (fiyat, kod ve fotoğrafın seçime göre
 değişmesi, `?secenek=` adresi, sepet ve teklif davranışı, seçime göre bayi ve
@@ -1196,7 +1221,9 @@ değiştirir."
   "Görsel yoksa kategorideki ilk ürünün fotoğrafı kullanılır."
 
 **Tanıtım Metni:** "Tanıtım metni sayfanın altında "… Hakkında" başlığıyla
-görünür; boş bırakılırsa gösterilmez." Biçimli metindir.
+görünür; boş bırakılırsa gösterilmez." Biçimli metindir: `## ` ara
+başlık sayfada H2 olarak basılır; H3 ve bağlantı yazılamaz
+([Biçimli metin alanları](#2-ortak-davranışlar)).
 
 **Seçenekler:**
 
@@ -1352,8 +1379,8 @@ değişir.
 
 Veritabanı modunda Seçenek Tanımları, Kategoriler ve gruplar (liste,
 kategori formu, grup formu) ve Ürünler (liste, ürün formu) veritabanıyla
-çalışır (KARARLAR K-99, K-101). Stok Matrisi henüz tarayıcıdaki veriyle
-çalışır (4. alan). Kurallar
+çalışır (KARARLAR K-99, K-101). Stok Matrisi de veritabanıyla çalışır:
+[Veritabanı modunda Stok Matrisi](#veritabanı-modunda-stok-matrisi). Kurallar
 [Veritabanı modunda Satış ekranları](#veritabanı-modunda-satış-ekranları)
 ile aynıdır: her açılışta ve her kayıttan sonra sunucudan okunur; aynı
 kaydı iki kişi düzenlerse sonraki kaydedilmez ("Bu kayıt siz açtıktan
@@ -1363,7 +1390,7 @@ Ekranlar ve kurallar demo moduyla aynıdır; farklar:
 - Kaydedilen, silinen, yayından kaldırılan ya da sırası değişen seçenek,
   kategori, grup ve ürün sitede (menü, bölüm, grup ve kategori sayfaları,
   ürün sayfası, site haritası) hemen değişir. Linki değişen ürün, kategori
-  ya da grubun eski adresi yeni adrese yönlenir.
+  ya da grubun eski adresi yeni adrese yönlenir (sunucuda 301; K-120).
 - **Görsel yükleme:** Ürünün Görseller sekmesinde ve Kart Görseli
   alanında **Dosya Yükle** seçilen görseli sunucunun dosya deposuna
   yükler (K-108). Dosya deposu ayarlı değilse **Dosya Yükle** yoktur;
@@ -1988,10 +2015,7 @@ sitedeki garanti sorgulamaya anında yansır (aynı veri).
     korunur.
   - Sil: "<seri no> seri numaralı kayıt silinsin mi?"
 - Boşsa: "Henüz garanti kaydı yok." / "Aramanıza uygun kayıt yok."
-- Ekranın altındaki not: "Bitiş tarihi ve uzatılmış garanti değişiklikleri
-  müşterinin “Hesabım → Garantilerim” sayfasına ve sitedeki garanti
-  sorgulamaya anında yansır. “+12 ay” işaretlenince bitiş tarihine 12 ay
-  eklenir, kaldırılınca 12 ay çıkarılır."
+- Ekranın altında bu iki kuralı hatırlatan bir not vardır.
 - 29 Şubat'a denk gelen tarihler bilinçli olarak olduğu gibi bırakıldı (bkz.
   [KARARLAR.md](KARARLAR.md)).
 
@@ -2069,7 +2093,10 @@ kullanır.
   Açıklama** (etkinlik sayfasında). Biçimli metindir.
 - **Logo & Fotoğraflar:**
   - "…Kalıcı kullanım için görselleri `public/images/events/` klasörüne
-    koyup `/images/events/dosya.png` yolunu girin."
+    koyup `/images/events/dosya.png` yolunu girin." (Bu not demo modunda
+    ve dosya deposu ayarlı veritabanı modunda da çıkar; veritabanı modunda
+    yüklenen dosya depoda kalıcıdır, klasöre koymak gerekmez. Ekrandaki
+    metin düzeltilmeli.)
   - **Etkinlik Logosu:** Yüklenen logonun çevresindeki boş beyaz kenar
     kırpılır; **Logoyu kaldır**.
   - **Fotoğraf Galerisi.**
@@ -2129,6 +2156,9 @@ Sitedeki `/hakkimizda` sayfasının bütün içeriği.
 Adres: `/yonetim/sss`. Açıklama: "SSS sayfasında, ürün sayfalarındaki SSS
 sekmesinde ve anasayfada (ilk 8 soru) bu sırayla görünür."
 
+Anasayfada ilk 6 soru görünür; Google'a giden SSS bilgisine ilk 8 soru
+girer. (Ekrandaki "ilk 8 soru" ifadesi düzeltilmeli.)
+
 - **Yeni Soru** düğmesi.
 - **Tablo:** Sıra (yukarı/aşağı okları, anında), Soru (altında cevabın
   başı), Konu rozeti, Düzenle, Sil ("Bu soru silinsin mi?").
@@ -2157,7 +2187,7 @@ Kayıt sitede (anasayfa dahil) hemen görünür. Farklar:
   da tam adres) girilir (K-101). Kayıtlı görseller görünmeye devam eder.
   Tarayıcıda tutulan dosya içeren kayıt sunucuda kaydedilmez.
 - **Link:** Haber, etkinlik ya da yazının linki değişince eski adres yeni
-  adrese yönlenir; aynı link iki kayda verilmez (iki yönetici aynı anda
+  adrese yönlenir (sunucuda 301; K-120); aynı link iki kayda verilmez (iki yönetici aynı anda
   kaydetse de). Silinen kaydın eski adres yönlendirmeleri de silinir.
 - Listeden **Yayına al / Yayından kaldır** ve **Sil** de sunucuya yazılır;
   sorun olursa listenin üstünde hata gösterilir.
@@ -2175,6 +2205,8 @@ Kayıt sitede (anasayfa dahil) hemen görünür. Farklar:
   "Bu dosya türü yüklenemez. Yüklenebilenler: PDF, Word, Excel, JPG, PNG ya
   da ZIP." (içeriği türüne uymayan dosya da), "Dosya çok büyük; en fazla
   25 MB.", "Yüklenen dosya bulunamadı; dosyayı yeniden seçin."
+  Veritabanı modunda **Sil** yalnızca kaydı siler (""<başlık>" silinsin
+  mi?"); depoya yüklenen dosya depoda kalır.
 - **Belgeler — dosya deposu ayarlı değilse** (K-104): pencerede dosya
   seçme yoktur; yerine **Dosya adresi** alanı ve "Dosya yükleme dosya
   deposu kurulunca açılacak; şimdilik dosyanın adresini girin." notu
@@ -2190,8 +2222,6 @@ Kayıt sitede (anasayfa dahil) hemen görünür. Farklar:
     gösterilmez. Uzantısı olmayan adreste dosya adı başlık olur, sitede
     türü "DOSYA" yazar.
   - **Görüntüle** (panelde ve sitede) belgeyi o adreste yeni sekmede açar.
-  - **Sil**: ""<başlık>" silinsin mi?" (yalnızca kayıt silinir; depoya
-    yüklenen dosya depoda kalır).
   - Sıra okları kaydı eskitmez; yalnızca belgenin kendi sayfasındaki sırayı
     değiştirir.
   - Sayfa metni (başlık ve açıklama) sayfa başına tek kayıttır.
@@ -2225,7 +2255,8 @@ sayfaları. Yüklenen belgeler sitede bu listedeki sırayla görünür."
   - Parti No (yalnızca Parti Sertifikaları'nda).
   - Durum: Yayında / Yayında değil; tıklayınca değişir.
   - **Görüntüle** (yeni sekmede açar), **Düzenle**, **Sil** (""<başlık>"
-    silinsin mi? Dosya da silinir.").
+    silinsin mi? Dosya da silinir."; veritabanı modunda yalnızca
+    ""<başlık>" silinsin mi?").
 - Boşsa: "Bu sayfada henüz belge yok. “Belge Ekle” ile ekleyin."
 
 **Belge Ekle / Belgeyi Düzenle penceresi:**
@@ -2257,7 +2288,7 @@ sayfaları. Yüklenen belgeler sitede bu listedeki sırayla görünür."
   - "Belge kaydedilemedi: tarayıcı deposu dolu. Değişiklik uygulanmadı."
 
 **Demo notu:** Dosyanın kendisi tarayıcının dosya deposunda (IndexedDB),
-kaydı veritabanında durur. Başka bir tarayıcıda dosya bulunmaz: "<dosya> bu
+kaydı tarayıcının yerel deposunda durur. Başka bir tarayıcıda dosya bulunmaz: "<dosya> bu
 tarayıcıda bulunamadı; dosyayı yeniden yükleyin." Veritabanı modunda dosya
 deposu ayarlıysa dosya sunucuya yüklenir, değilse adresi girilir:
 [Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları).
@@ -2329,8 +2360,8 @@ sayfalarla aynı listedir.
 | Keşfet | Hakkımızda, Satış Temsilcilerimiz, Bayilik Başvurusu, Haberler, Etkinlikler, Blog, Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları |
 | Destek ve Garanti | Destek ve Garanti, İletişim, Sık Sorulan Sorular, Yetkili Bayi ve Servis Ağı, Servis Talebi, Garanti, Garanti Kaydı, Garanti Sorgulama |
 
-- Giriş Yap, Üye Ol, Şifremi Unuttum ve Arama sayfaları aramaya kapalıdır;
-  listede yoktur.
+- Giriş Yap, Üye Ol, Şifremi Unuttum, Yeni Şifre, Çıkış, Sepet, Ödeme,
+  Arama, Hesabım ve yasal metinler aramaya kapalıdır; listede yoktur.
 - Ürün, kategori, grup, haber, etkinlik ve blog sayfalarının SEO'su kendi
   formlarındadır.
 - **Tablo:** Sayfa (ad ve yol), Sayfa Başlığı (altında "N/60"; aşınca
@@ -2474,8 +2505,9 @@ veritabanına bağlandığında burada listelenir." yazar.
   Giriş ve çıkışta değişiklik yoktur (—).
 - Sayfa başına 50 kayıt. Daha eski kayıt varsa **Daha eski kayıtlar →**;
   geri dönmek için **← En yeni kayıtlar**. Kayıt yoksa: "Kayıt yok."
-- Kayıtlar değiştirilemez ve elle silinemez; 2 yıldan eski kayıtlar her
-  gün kendiliğinden silinir (VERITABANI.md › audit_log).
+- Kayıtlar değiştirilemez ve elle silinemez. 2 yıldan eski kayıtlar
+  silinmek üzere ayrılmıştır (`purge_audit_log()`); bu işin her gün
+  çalışması için zamanlayıcı henüz kurulmadı ([SUNUCU.md](SUNUCU.md) › 3).
 
 ---
 
@@ -2485,7 +2517,7 @@ veritabanına bağlandığında burada listelenir." yazar.
 |---|---|---|
 | Ödeme (sipariş) | Siparişler | Kartta Hazırlanıyor, havalede Ödeme Bekleniyor |
 | Teklif Al | Teklifler | Yeni |
-| Servis Talebi | Servis Talepleri | Yeni |
+| Servis Talebi | Servis Talepleri | Yetkili servis atanması bekleniyor |
 | Garanti Kaydı | Garantiler | — |
 | Ürün değerlendirmesi | Yorumlar | Onay bekliyor |
 | Üye Ol | Üyeler | Aktif |
@@ -2564,8 +2596,7 @@ Menüde Müşteriler ve Servis grubundadır (KARARLAR K-116). Sitenin
 gönderdiği ve panele aldığı bütün e-postalar burada; e-posta programına
 girmeden yazılır ve yanıtlanır. Açıklama: "Sitenin gönderdiği ve panele
 aldığı e-postalar. Her e-posta türünün kendi yazışmaları ve adresleri
-vardır." (Eski Ayarlar › E-posta Kaydı ve Mağaza Ayarları › E-posta
-Alıcıları buraya taşındı.)
+vardır."
 
 - **Tür sekmeleri:** Sipariş · İade · Teklif · Servis · Garanti · Yorum ·
   Üyelik · İletişim · Ürün Sorusu · Bayilik · Şifre Sıfırlama · Bülten
@@ -2678,9 +2709,8 @@ sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 - **Garantiler:** "+12 ay" kayıttaki güncel bitiş tarihine 12 ay ekler ya da
   çıkarır. Geçersiz tarihte: "Geçerli bir tarih girin."
 - Kayıt başka bir sekmede silinmişse: "Kayıt bulunamadı; sayfayı yenileyin."
-- Garantiler ekranındaki "Üye" rozeti ve kişiye özel kupon önerileri gibi
-  üye bilgileri veritabanındaki üyelerden gelir; ürün ve kategori adları
-  sitenin katalogundan.
+- Garantiler ekranındaki "Üye" rozeti veritabanındaki üyelerden gelir;
+  ürün ve kategori adları sitenin katalogundan.
 
 ---
 
@@ -2748,10 +2778,15 @@ Bugünkü panelde bilinen, karar bekleyen ya da sonraya bırakılmış durumlar:
   işlem yok ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
 - **Müşteriye bildirim:** Sipariş, teklif, servis ve garanti durumları
   değişince müşteriye e-posta gitmiyor.
-- **Demo sınırları:**
-  - Yetki kontrolü tarayıcıda yapılıyor.
-  - Bütün veri tarayıcının yerel deposunda; başka tarayıcıda panel
-    değişiklikleri görünmez.
-  - Görseller veritabanının içine yazılıyor; belgeler tarayıcının dosya
-    deposunda.
-  - Süresi dolan havale siparişleri sayfa açılınca iptal ediliyor.
+- **Ürün açıklaması biçimsiz:** Detaylı Açıklama sitede düz metin, tek
+  paragraf basılıyor; `##`, `- `, `**` ve boş satır çalışmıyor. Açıklama
+  sekmesi açılmadan sayfanın HTML'inde de bulunmuyor. Düzeltilmesi
+  [YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO › A2'de.
+- **Havale süresi:** Süresi dolan havale siparişleri iki modda da sipariş
+  ekranları açılınca iptal ediliyor; günlük zamanlanmış iş henüz yok
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Online satış 7).
+- **Demo sınırları:** Yetki kontrolü tarayıcıda; bütün veri tarayıcının
+  yerel deposunda (yüklenen görseller kaydın içinde `data:` adresi olarak,
+  belgeler tarayıcının dosya deposunda, IndexedDB). Ayrıntı:
+  [1 › Demo notu](#1-giriş-ve-panel-çerçevesi) ve README › Demo ve
+  veritabanı modu.

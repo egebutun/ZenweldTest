@@ -2,10 +2,11 @@
 
 Bu dosya sitenin ve panelin hesaplarını ve kurallarını anlatır: fiyat ve
 KDV, kampanya, seçenekli ürün, sepet ve kargo, kartla ödeme ve taksit,
-havale süresi, sipariş ve teklif durumları, iade talebi, garanti, stok,
-ürün kodları, linkler, yorumlar, üyelik, form e-postaları, kategori
-filtreleri, Zenweld depo stoğu, kuponlar, panelde kayıt düzenleme ve
-yüklenen dosyalar. Ekranların tarifi bu dosyada yoktur; yalnızca kurallar
+havale süresi, sipariş ve teklif durumları, iade talebi, servis talebi,
+garanti, stok, ürün kodları, linkler ve eski adresler, yayında olma,
+yorumlar, üyelik, kayıt numaraları, form e-postaları, kategori filtreleri,
+Zenweld depo stoğu, kuponlar, panelde kayıt düzenleme, yüklenen dosyalar,
+panel listeleri, anasayfa tanıtım alanı ve liste sayfalaması. Ekranların tarifi bu dosyada yoktur; yalnızca kurallar
 vardır.
 
 İlgili dosyalar:
@@ -21,9 +22,8 @@ Her bölüm bir **Kısaca** özetiyle başlar; ayrıntı ve örnekler altındad�
 Kuralların koddaki yeri her bölümün sonunda yazar. Bir kural değişirse
 yalnızca o yer değişmeli; site, panel ve sipariş kaydı aynı yeri kullanır.
 
-Fiyat, kampanya, seçenek, sepet, kart ve taksit, havale süresi, garanti,
-stok, ürün kodu, kategori filtresi ve kupon kuralları ile bu dosyadaki örnekler `tests/unit`
-altında otomatik denenir (`npm test`). Kural değişince test de değişir.
+Bu dosyadaki kurallar ve örnekler `tests/unit` altında otomatik denenir
+(`npm test`). Kural değişince test de değişir.
 
 ---
 
@@ -263,7 +263,8 @@ KARARLAR K-97):
   - **Örnek:** Müşteri sayfayı 2.650 ₺ ile açtı; bu arada ürünün fiyatı
     arttı. "Öde"ye basınca sipariş alınmaz ve yeni tutar söylenir.
 - Sepetteki bir ürün satıştan kalktıysa ya da seçeneği silindiyse:
-  "Sepetinizdeki bazı ürünler değişti ya da artık satışta değil." Stoğu
+  "Sepetinizdeki bazı ürünler değişti ya da artık satışta değil. Sepetinizi
+  kontrol edin." Stoğu
   bittiyse stokta olmayan ürün mesajı ([20](#20-zenweld-depo-stoğu)).
 - Sayfadaki fiyatlar önbellekten gelir (en geç 30+30 sn eski olabilir,
   K-88); sunucu siparişte her zaman güncel fiyatı kullanır.
@@ -297,8 +298,7 @@ eklenir. Kart bilgisi saklanmaz; bugün ödeme temsilidir.
   kuralla seçilir; ödeme kuruluşu bağlanınca onun kart (BIN) sorgusundan
   gelecek.
 - **Ödeme sağlayıcısı (veritabanı modu, KARARLAR K-108):** Sunucuda kartın
-  programını ve tahsilatı ödeme sağlayıcısı verir. Bugünkü sağlayıcı
-  temsilidir (yukarıdaki sabit kural; para çekilmez, K-97). Sağlayıcı
+  programını ve tahsilatı ödeme sağlayıcısı verir. Sağlayıcı
   tahsilatı reddederse sipariş alınmaz, sipariş numarası verilmez ve
   sağlayıcının nedeni ödeme sayfasında gösterilir (ör. "Kart limiti
   yetersiz.").
@@ -345,7 +345,8 @@ sayısı, POS adı ve komisyon oranı. Tam kart numarası, son kullanma ve CVC
 **hiçbir yerde saklanmaz**, e-postaya yazılmaz. Veritabanı modunda sunucuya
 kartın yalnızca **ilk 6 ve son 4 hanesi** gider; program, marka, POS ve
 taksit sunucuda yeniden bulunur. Seçilen taksit artık sunulmuyorsa sipariş
-alınmaz: "Seçtiğiniz taksit artık sunulmuyor."
+alınmaz: "Seçtiğiniz taksit artık sunulmuyor. Taksit seçiminizi kontrol
+edin."
 
 **Temsili ödeme (K-97):** Kartla ödemede 1,5 saniyelik "3D Secure
 doğrulanıyor…" beklemesinden sonra ödeme onaylanmış sayılır; para çekilmez.
@@ -355,7 +356,8 @@ bağlanmadan çıkılmaz.
 
 Kod: `packages/data/src/checkout.ts` (`posForCard`, `cardInstallments`,
 `installmentQuote`), `packages/data/src/payment.ts` (`cardBrand`,
-`cardProgram`), `apps/zenweld-web/src/lib/payment.ts`.
+`cardProgram`), `apps/zenweld-web/src/lib/payment.ts`; ödeme sağlayıcısı:
+`packages/db/src/payment.ts`.
 
 ---
 
@@ -378,7 +380,8 @@ Kod: `packages/data/src/checkout.ts` (`posForCard`, `cardInstallments`,
 - Müşteri ödeme açıklamasına sipariş numarasını yazar.
 - **Süre kontrolü:** Demo modunda sipariş sayfaları (müşterinin
   Siparişlerim sayfası ve panel) açılınca yapılır. Veritabanı modunda üyenin
-  siparişleri sunucudan okunurken sunucu yapar ve kupon hakkını geri verir
+  siparişleri ve panelin Siparişler ekranı ile ana sayfası sunucudan
+  okunurken sunucu yapar ve kupon hakkını geri verir
   (K-97); canlıda ayrıca her gün çalışan zamanlanmış bir iş yapmalıdır
   ([YAPILACAKLAR.md](YAPILACAKLAR.md)).
 
@@ -887,7 +890,12 @@ benzersizdir.
 
 Kod: `packages/utils/src/images.ts` › `slugify`,
 `apps/zenweld-web/src/lib/seo.ts`, `apps/zenweld-web/src/lib/page-meta.ts`,
-`packages/store/src/repo/shared.ts` › `withPreviousSlugs`.
+`packages/store/src/repo/shared.ts` › `withPreviousSlugs`; sunucuda 301:
+`apps/zenweld-web/src/proxy.ts`, `apps/zenweld-web/src/lib/server/moved.ts`
+(`packages/db/src/read.ts` › `readMovedPaths`); eski site:
+`apps/zenweld-web/next.config.mjs` › `redirects`,
+`apps/zenweld-web/eski-site-yonlendirmeleri.json` (test:
+`tests/unit/eski-site-yonlendirmeleri.test.ts`).
 
 ---
 
@@ -906,6 +914,11 @@ silinmez. Zamanlanmış yayın yoktur.
   zamanlanmış yayın yoktur (karar, [KARARLAR.md](KARARLAR.md)).
 - Etkinlik, bitiş tarihi bugün ya da sonraysa "Yaklaşan", değilse "Geçmiş"
   sayılır.
+
+Kod: `packages/store/src/repo/products.ts` (`listProducts`; diğer kayıtlar
+aynı klasördeki dosyalarda `active` ile süzülür), veritabanı modunda
+`packages/db/src/read.ts`; etkinliğin tarihi
+`apps/zenweld-web/src/components/events/event-dates.ts` › `eventWindow`.
 
 ---
 
@@ -1047,7 +1060,8 @@ favoriler: `account-data.ts`).
   her yıl 1'den başlar.
 - Silinen kaydın numarası yeniden verilmez; **en son kayıt silinse de**
   numarası bir sonraki kayda verilmez ([KARARLAR.md](KARARLAR.md) K-64).
-- Yıl, Türkiye saatine göredir.
+- Yıl, veritabanı modunda Türkiye saatine göredir; demo modunda tarayıcının
+  saatine göredir.
 - Veritabanı modunda sipariş, iade talebi, teklif ve servis talebi
   numarasını sunucu verir: önek başına sayaç (`record_counters`) tek
   işlemde bir artar; aynı anda gelen iki kayıt aynı numarayı alamaz. Sayaç yoksa ya da tablodaki en
@@ -1259,14 +1273,18 @@ Kod: `packages/data/src/filters.ts`; sayfada
 kaleminde stok yoksa STOKTA YOK yazar ve ürün sepete eklenmez. Bozuk ya da
 yarım okuma uygulanmaz.
 
-Sahibinin kararı (KARARLAR K-82, K-84). Kod: `packages/data/src/warehouse.ts`.
+Sahibinin kararı (KARARLAR K-82, K-84). Kod: `packages/data/src/warehouse.ts`;
+sunucu: `packages/db/src/sap-stock.ts`,
+`apps/zenweld-web/src/app/api/sap/stok/route.ts`.
 
 **Kaynak:** Zenweld deposunun stoğu SAP'tan gelir. SAP ekibinin hazırladığı
 "kullanılabilir stok" görünümü SAP kalem kodu başına miktar verir; sunucu
 bunu 15 dakikada bir okuyup kendi veritabanına yazar (`warehouse_stock`).
-Sayfa açılırken SAP'a gidilmez. Panelden değiştirilmez. Bugün demo
-verisinde örnek stok vardır (Demo notu); SAP bağlanana kadar okuma işi bir
-deneme dosyasını okur ([SUNUCU.md](SUNUCU.md) › 11 › SAP stok
+Sayfa açılırken SAP'a gidilmez. Panelden değiştirilmez. Örnek veride ve
+deneme veritabanında örnek depo stoğu vardır; `npm run db:yukle canli` depo
+stoğunu yüklemez, canlıda stok yalnızca SAP okumasından gelir ve ilk
+okumaya kadar ürünler STOKTA YOK görünür (KARARLAR K-122). SAP bağlanana
+kadar okuma işi bir deneme dosyasını okur ([SUNUCU.md](SUNUCU.md) › 11 › SAP stok
 okuma).
 
 **SAP okuması** (`readSapStock`, `diffWarehouseStock`):
@@ -1662,6 +1680,10 @@ Kod: `packages/data/src/file-rules.ts` (türler, boyut, adres),
 
 ## 24. Panel listeleri: sayfalama ve arama
 
+**Kısaca:** Uzun panel listeleri sayfa başına 50 kayıt, yeniden eskiye
+sıralanır; sayfa, süzgeç ve arama adreste durur; arama Türkçe harf farkı
+gözetmez.
+
 Uzun panel listeleri (Siparişler, İade Talepleri, Teklifler, Servis
 Talepleri, Garantiler, Yorumlar, Üyeler, Bayilik Başvuruları ve Mesajlar)
 iki modda aynı kurallarla sayfalanır. Veritabanı modunda
@@ -1688,8 +1710,10 @@ aynı hesap tarayıcıda yapılır.
 - **Siparişler:** Arama sipariş no, müşteri adı, e-posta ve fatura firma
   adında yapılır. Sekmelerdeki durum sayıları aramadan bağımsızdır (bütün
   siparişler).
-- **İade Talepleri** ve **Servis Talepleri:** Başlıktaki "<n> talep · <n>
-  yeni" bütün talepleri sayar.
+- **İade Talepleri:** Başlıktaki "<n> talep · <n> yeni" bütün talepleri
+  sayar.
+- **Servis Talepleri:** Başlıktaki "<n> talep · <n> yetkili servis ataması
+  bekliyor" bütün talepleri sayar.
 - **Teklifler:** Durum süzgeci (`?durum=`); başlıktaki sayı süzgece uyan
   teklifler.
 - **Garantiler:** Arama seri no, sahibi ve e-postada. Süzgeç (`?durum=`):
@@ -1715,6 +1739,9 @@ aynı hesap tarayıcıda yapılır.
 - Testler: `tests/unit/panel-listeleri.test.ts` (demo modu) ile
   `tests/db/panel-satis.test.ts`, `tests/db/panel-talepler.test.ts` ve
   `tests/db/panel-uyeler.test.ts` (veritabanı) aynı örnekleri dener.
+
+Kod: `packages/utils/src/paging.ts`, `packages/db/src/panel-lists.ts`,
+`apps/zenweld-web/src/lib/admin-lists.ts`.
 
 ---
 
