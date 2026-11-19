@@ -1301,21 +1301,18 @@ sahibindedir.
 
 **B — Teknik SEO (kod işi)**
 
-B1 (değişen linklerde sunucuda 301; KARARLAR K-120) ve B2 (eski
-`zenweld.com`'un 85 adresi; K-121, [SEO.md](SEO.md) › 15) yapıldı.
+B1 (değişen linklerde sunucuda 301; KARARLAR K-120), B2 (eski
+`zenweld.com`'un 85 adresi; K-121, [SEO.md](SEO.md) › 15) ve B3 (yapısal
+veri: blog yazısı, ürüne kargo, iade ve yıldız; K-123) yapıldı.
 
-1. **B3 · Yapısal veri eksikleri:** blog yazılarında `Article`; ürün
-   fiyatında kargo (`shippingDetails`) ve iade (`hasMerchantReturnPolicy`)
-   bilgisi. Yıldız (`AggregateRating`) yalnızca gerçek müşteri yorumu
-   olursa.
-2. **B4 · Uzun listelerin sayfalanması:** [SEO alanları ve link
+1. **B4 · Uzun listelerin sayfalanması:** [SEO alanları ve link
    yönlendirme](#seo-alanları-ve-link-yönlendirme) 4.
-3. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
+2. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
    2,5 sn altı); [Ölçüm](#ölçüm-hız).
-4. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
+3. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
    Console; [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler),
    [SEO alanları ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) 3.
-5. **B7 · Sayfa içi teknik denetim (bütün sayfa türleri):** her sayfada tek
+4. **B7 · Sayfa içi teknik denetim (bütün sayfa türleri):** her sayfada tek
    ana başlık (H1) ve içinde ana terim; ara başlık sırası (H2, H3); sayfa
    başlığı (meta title, en çok 60 karakter) ve Google açıklaması (meta
    description, 140–155 karakter) boş ya da tekrar eden sayfa olmaması;
@@ -1398,6 +1395,11 @@ değişikliği bugün Google'da bir şey kaybettirmez.
    (K-74).
 4. **C4 · Search Console doğrulaması:** alan adının DNS kaydına kimin
    erişimi var (BT).
+5. **C5 · Teslim süresi ve iade kargo ücreti:** sipariş kaç iş gününde
+   kargoya verilir, kargo kaç günde ulaşır; cayma iadesinde (ve kusurlu
+   üründe) kargo ücretini kim öder? Sahibi öğrenecek; gelince Google'a
+   giden ürün bilgisine eklenir (`apps/zenweld-web/src/lib/seo.ts` ›
+   `shippingJsonLd`, `RETURN_POLICY`).
 
 ## Ürün Seçici ve arama — en son yeniden tasarlanacak
 

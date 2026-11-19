@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import {
+  RETURN_WINDOW_DAYS,
   isDiscountActive,
   productBrand,
   salePriceExVat,
@@ -11,6 +12,7 @@ import {
   type NewsItem,
   type Product,
   type SeoFields,
+  type ShopSettings,
   type ZenweldEvent,
 } from "@zenweld/data";
 import { socialLinks } from "@/lib/contact";
@@ -88,7 +90,19 @@ export const SITE_DESCRIPTION =
 export function productJsonLd(
   product: Product,
   category: Category | undefined,
-  { now, inStock }: { now: Date; inStock: boolean },
+  {
+    now,
+    inStock,
+    shop,
+    ratings = [],
+  }: {
+    now: Date;
+    inStock: boolean;
+    /** Kargo ucreti ve ucretsiz kargo siniri (Magaza Ayarlari); yoksa kargo bilgisi gonderilmez */
+    shop?: Pick<ShopSettings, "shippingFee" | "freeShippingThreshold">;
+    /** Urunun onayli yorumlarinin puanlari (1-5); bossa yildiz gonderilmez */
+    ratings?: number[];
+  },
 ): Record<string, unknown> {
   // Google'a musterinin odedigi fiyat bildirilir. Kampanyanin bitis tarihi
   // varsa priceValidUntil ile birlikte verilir; tarih gecince arama
@@ -115,12 +129,76 @@ export function productJsonLd(
       availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
       seller: { "@type": "Organization", name: SITE_NAME },
+      ...(shop ? { shippingDetails: shippingJsonLd(priceIncVat, shop) } : {}),
+      hasMerchantReturnPolicy: RETURN_POLICY,
     },
     additionalProperty: product.specs.map((spec) => ({
       "@type": "PropertyValue",
       name: spec.label,
       value: spec.value,
     })),
+    ...(ratings.length > 0 ? { aggregateRating: ratingJsonLd(ratings) } : {}),
+  };
+}
+
+/**
+ * Kargo (Google Alisveris): Turkiye'ye gonderim; urunun fiyati ucretsiz
+ * kargo sinirina ulasiyorsa ucret 0, degilse Magaza Ayarlari'ndaki kargo
+ * ucreti (sepetteki hesapla ayni kural; docs/IS-KURALLARI.md › 4).
+ * Teslim suresi sahibinden ogrenilince eklenecek (docs/YAPILACAKLAR.md › SEO).
+ */
+function shippingJsonLd(priceIncVat: number, shop: Pick<ShopSettings, "shippingFee" | "freeShippingThreshold">) {
+  return {
+    "@type": "OfferShippingDetails",
+    shippingRate: {
+      "@type": "MonetaryAmount",
+      value: priceIncVat >= shop.freeShippingThreshold ? 0 : shop.shippingFee,
+      currency: "TRY",
+    },
+    shippingDestination: { "@type": "DefinedRegion", addressCountry: "TR" },
+  };
+}
+
+/**
+ * Iade (cayma) politikasi: Turkiye, teslimden itibaren 14 gun, kargoyla
+ * (docs/IS-KURALLARI.md › 7). Iade kargo ucretini kimin odedigi sahibinden
+ * ogrenilince eklenecek (docs/YAPILACAKLAR.md › SEO).
+ */
+const RETURN_POLICY = {
+  "@type": "MerchantReturnPolicy",
+  applicableCountry: "TR",
+  returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+  merchantReturnDays: RETURN_WINDOW_DAYS,
+  returnMethod: "https://schema.org/ReturnByMail",
+};
+
+/** Yildiz: onayli yorumlarin ortalamasi (bir ondalik) ve sayisi; sitede gorunen ortalamayla ayni. */
+function ratingJsonLd(ratings: number[]) {
+  const average = Math.round((ratings.reduce((sum, r) => sum + r, 0) / ratings.length) * 10) / 10;
+  return { "@type": "AggregateRating", ratingValue: average, reviewCount: ratings.length, bestRating: 5, worstRating: 1 };
+}
+
+/**
+ * Blog yazisinin yapisal verisi (BlogPosting): baslik, ozet, tarih, gorsel,
+ * yazar ve yayinci. Haberlerdeki NewsArticle'in karsiligi.
+ */
+export function blogPostingJsonLd(post: BlogPost): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt ?? post.publishedAt,
+    inLanguage: "tr-TR",
+    ...(post.coverUrl ? { image: [absoluteUrl(post.coverUrl)] } : {}),
+    mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(`/blog/${post.slug}`) },
+    author: { "@type": "Organization", name: post.author || SITE_NAME },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      logo: { "@type": "ImageObject", url: absoluteUrl("/images/brand/zenweld-logo.png") },
+    },
   };
 }
 

@@ -98,9 +98,13 @@ export default async function ProductPage({
   const category = catalog.categories.find((c) => c.slug === product.categorySlug);
   // Yalnizca bu urunun bayi ve satici stogu, bayiler ve yorumlar (veritabani modu).
   const pageData = await getProductPageData(product.id);
+  // Yildiz: onayli yorumlar yalnizca veritabani modunda sunucudadir (demo
+  // modunda tarayicida; o modda yildiz gonderilmez).
   const jsonLd = productJsonLd(product, category, {
     now: new Date(),
     inStock: isInWarehouse(product, warehouseStockMap(catalog.warehouseStock)),
+    shop: catalog.settings.shop,
+    ratings: (pageData?.reviews ?? []).filter((r) => r.productId === product.id && r.approved).map((r) => r.rating),
   });
 
   return (

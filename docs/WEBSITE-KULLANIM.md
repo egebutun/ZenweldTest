@@ -678,7 +678,12 @@ Yalnızca ürün sayfalarında, sağ altta bir düğme olarak durur.
   alanı, boşsa Zenweld), KDV dahil kampanyalı fiyat ve kampanya bitişi,
   stok durumu (Zenweld deposunda stok varsa "stokta", yoksa "stokta yok";
   seçenekli üründe herhangi bir seçeneğin stoğu yeterli), "yeni ürün",
-  teknik özellikler, konum satırı.
+  teknik özellikler, konum satırı; kargo (Türkiye; ürünün fiyatı ücretsiz
+  kargo sınırına ulaşıyorsa 0, değilse Mağaza Ayarları'ndaki kargo
+  ücreti), iade (teslimden itibaren 14 gün, kargoyla) ve ürünün onaylı
+  yorumu varsa yıldız (ortalama puan ve yorum sayısı). **Yıldız yalnızca
+  veritabanı modunda** gider; demo modunda yorumlar tarayıcıda durur
+  (ekranda fark yoktur; KARARLAR K-123).
 - **Asıl adres (canonical):** `/urun/<link>`; seçenek linkleri ayrı sayfa
   sayılmaz.
 
@@ -1839,9 +1844,11 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   olarak bildirir. WhatsApp, LinkedIn ve X'te paylaşınca başlık, açıklama ve
   görselle önizleme çıkar.
 - **Yapısal veri:** Anasayfada şirket bilgisi ve sık sorulan sorular; ürün
-  sayfasında ürün; haber ve etkinlik sayfalarında haber ve etkinlik; katalog
-  ve ürünlerde konum satırı Google'a bildirilir (schema.org: `Organization`,
-  `FAQPage`, `Product`, `NewsArticle`, `Event`, `BreadcrumbList`).
+  sayfasında ürün (fiyat, stok, kargo, iade, onaylı yorum varsa yıldız);
+  blog, haber ve etkinlik sayfalarında yazı, haber ve etkinlik; katalog ve
+  ürünlerde konum satırı Google'a bildirilir (schema.org: `Organization`,
+  `FAQPage`, `Product`, `BlogPosting`, `NewsArticle`, `Event`,
+  `BreadcrumbList`).
 - **Panel değişiklikleri:** Veritabanı modunda site haritası ve arama
   motorunun gördüğü başlıklar tablolardan gelir; panelde yapılan değişiklik
   (yeni ürün, değişen başlık, yeni link) hemen görünür (KARARLAR K-88).

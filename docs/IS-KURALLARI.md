@@ -811,6 +811,21 @@ benzersizdir.
 - **Demo modunda** paneldeki link değişikliği yalnızca tarayıcıda olduğu
   için yönlendirmeyi tarayıcı yapar (sunucu eski adresi bilmez).
 
+**Google'a giden ürün bilgisi (yapısal veri; KARARLAR K-123):**
+
+- **Kargo:** Türkiye'ye gönderim; ücret, ürünün KDV dahil fiyatı ücretsiz
+  kargo sınırına eşit ya da büyükse 0, değilse Mağaza Ayarları'ndaki kargo
+  ücreti (sepetteki kuralın tek ürünlük hali, [4](#4-sepet-ve-kargo)).
+  - **Örnek:** Sınır 5.000 ₺, kargo 250 ₺: 4.800 ₺'lik ürün → 250 ₺;
+    5.000 ₺'lik ürün → 0.
+- **İade:** Türkiye, teslimden itibaren 14 gün, kargoyla
+  ([7](#7-sipariş-durumları)).
+- **Yıldız:** Ürünün onaylı yorumları varsa ortalama puan (bir ondalığa
+  yuvarlanmış, sitede görünenle aynı) ve yorum sayısı; yorum yoksa
+  gönderilmez. Yalnızca veritabanı modunda.
+- Teslim süresi ve iade kargo ücreti sahibinden öğrenilince eklenecek
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO, C5).
+
 **Eski sitenin (zenweld.com) adresleri** (KARARLAR K-121):
 
 - Eski sitenin 85 adresinden 80'i yeni sitedeki karşılığına **301** ile

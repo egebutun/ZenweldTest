@@ -1035,12 +1035,16 @@ tıklanma oranını artırır.
 
 - [x] Ürün: fiyat, stok, marka, teknik özellikler.
 - [x] Konum satırı, kuruluş, SSS, haber ve etkinlik verileri.
-- [ ] Blog yazılarına makale verisi (`Article`) (B3). **Kod**, küçük
-- [ ] Gerçek ürün yorumları varsa yıldız puanı (`AggregateRating`);
-      yalnızca gerçek yorumlarla (B3). **Kod**
-- [ ] Ürüne kargo ve iade bilgisi (`shippingDetails`,
-      `hasMerchantReturnPolicy`); Google Alışveriş sonuçları için (B3).
-      **Kod**
+- [x] Blog yazılarına makale verisi (`BlogPosting`) (B3; K-123, 19 Kasım
+      2026).
+- [x] Ürünün onaylı yorumları varsa yıldız (`AggregateRating`);
+      yalnızca gerçek yorumlarla, veritabanı modunda (B3; K-123).
+- [x] Ürüne kargo ve iade bilgisi (`shippingDetails`,
+      `hasMerchantReturnPolicy`); Google Alışveriş sonuçları için (B3;
+      K-123).
+- [ ] Teslim süresi (kargoya veriliş ve kargoda geçen gün) ve iade kargo
+      ücretini kimin ödediği yapısal veriye eklenecek; bilgi sahibinden
+      bekleniyor (C5). **Sahibi**, sonra **Kod**
 - [ ] Search Console › Geliştirmeler raporunda hata kontrolü. **Sahibi**
 
 ### 7. Site dışı: bağlantılar ve marka

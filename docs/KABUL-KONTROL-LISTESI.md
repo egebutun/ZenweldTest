@@ -974,6 +974,14 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       seçeneğe dönüşen eski ürün `?secenek=<değer>` ile açılır, eski
       adresteki `?utm_source=…` gibi parametreler korunur. Hiç kullanılmamış
       bir adres 404 döner (KARARLAR K-120).
+- [ ] Yapısal veri (K-123): bir ürün sayfasının kaynağındaki
+      `application/ld+json` içinde `shippingDetails` (Türkiye; fiyat
+      ücretsiz kargo sınırına ulaşıyorsa 0, değilse kargo ücreti) ve
+      `hasMerchantReturnPolicy` (14 gün) var. Veritabanı modunda onaylı
+      yorumu olan üründe `aggregateRating` (ortalama ve sayı sitedekiyle
+      aynı); yorum onaylanmadıkça sayılmaz. Blog yazısında `BlogPosting`
+      (başlık, özet, tarih, yayıncı). Google'ın "Zengin Sonuçlar Testi"
+      (search.google.com/test/rich-results) canlı adreste hatasız.
 - [ ] Eski zenweld.com adresleri (iki modda da): `curl -I
       <site>/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali`
       → 301, `Location: /urun/ultimate-320-thp-ipanel?secenek=su_4-m`;

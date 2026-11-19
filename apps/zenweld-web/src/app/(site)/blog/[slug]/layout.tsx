@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { PageData } from "@/components/common/PageData";
 import { getBlogPostPageData, getServerContent } from "@/lib/server/content";
-import { SITE_NAME, absoluteUrl, blogPostSeo, canonical, seoMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/common/JsonLd";
+import { SITE_NAME, absoluteUrl, blogPostSeo, blogPostingJsonLd, canonical, seoMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -38,7 +39,10 @@ export async function generateMetadata({
   };
 }
 
-/** Veritabani modunda yazinin govdesi yalnizca bu sayfaya gider; demo modunda null. */
+/**
+ * Yazinin yapisal verisi (BlogPosting) ve veritabani modunda yazinin
+ * govdesi (yalnizca bu sayfaya gider; demo modunda null).
+ */
 export default async function Layout({
   children,
   params,
@@ -47,5 +51,11 @@ export default async function Layout({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  return <PageData data={await getBlogPostPageData(slug)}>{children}</PageData>;
+  const post = (await getServerContent()).blogPosts.find((p) => p.active !== false && p.slug === slug);
+  return (
+    <>
+      {post && <JsonLd data={blogPostingJsonLd(post)} />}
+      <PageData data={await getBlogPostPageData(slug)}>{children}</PageData>
+    </>
+  );
 }

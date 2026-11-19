@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-122).
+  K-123).
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -31,7 +31,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41, K-117, K-119
 8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116
-10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120, K-121
+10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120, K-121, K-123
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
 12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108, K-122
 13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110
@@ -1044,6 +1044,17 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - **Neden:** Eski adreslerin Google'daki değeri ve ziyaretçisi
   kaybolmasın; ziyaretçi aradığı ürünün yeni sayfasına ya da en yakın
   kategoriye gelsin.
+
+### K-123 · Google'a kargo, iade ve yıldız bilgisi gider
+- Ürün sayfası Google'a kargo (Türkiye; ücret Mağaza Ayarları'na göre,
+  ürün ücretsiz kargo sınırını geçiyorsa 0) ve iade (14 gün, kargoyla)
+  bilgisini gönderir; blog yazıları `BlogPosting` olarak gider.
+- Yıldız (ortalama puan) yalnızca onaylı, gerçek müşteri yorumlarından
+  gider; canlıya örnek yorum yüklenmez (K-91). Demo modunda gitmez.
+- Teslim süresi ve iade kargo ücreti sahibinden öğrenilince eklenir.
+- **Neden:** Google Alışveriş ve arama sonuçlarında fiyatın yanında kargo,
+  iade ve yıldız görünmesi tıklanmayı artırır; uydurma yorumla yıldız
+  göstermek Google'ın kurallarına aykırıdır.
 
 ---
 
