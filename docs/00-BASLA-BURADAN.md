@@ -28,7 +28,8 @@ kampanya fiyatının hesabı yalnızca IS-KURALLARI'nda yazar).
 | Claude oturumlarının çalışma kuralları | [CLAUDE.md](../CLAUDE.md) (proje kökünde) |
 
 İlk kez okuyan için sıra: bu dosya → WEBSITE-KULLANIM → ADMIN-KULLANIM →
-IS-KURALLARI → VERITABANI → SUNUCU → KARARLAR → YAPILACAKLAR.
+IS-KURALLARI → VERITABANI → SUNUCU → STOK → SEO → KARARLAR →
+KABUL-KONTROL-LISTESI → YAPILACAKLAR.
 
 ---
 
@@ -39,7 +40,7 @@ Site dört işi birlikte yapar:
 
 1. **Ürün kataloğu.** Dört bölüm: Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu
    Metalleri. Katalog dört seviyelidir: bölüm › grup › kategori › ürün
-   (ör. Ekipmanlar › Kaynak Makineleri › MIG/MAG Gazaltı Kaynak Makineleri ›
+   (ör. Ekipmanlar › Kaynak Makineleri › MIG (GMAW) Gazaltı Kaynak Makineleri ›
    ürün).
 2. **Online mağaza.** Üyeler sepete ekleyip kartla (taksitli) ya da
    havale/EFT ile satın alır, siparişini Hesabım'dan izler.
@@ -53,13 +54,14 @@ Site dört işi birlikte yapar:
 - **Yönetim paneli** sitenin içindedir (`/yonetim`); kendi giriş ekranı ve
   oturumu vardır, site üyeliğinden ayrıdır.
 - **Dil:** Site ve panel yalnızca Türkçedir.
-- **Bugünkü durum:** Site iki modda çalışır; ekranlar ve kurallar ikisinde
+- **Bugünkü durum:** Site iki modda çalışır; ekranlar ve kurallar ikisinde büyük ölçüde
   aynıdır. **Demo modunda** (yayındaki adres) veriler tarayıcıda durur;
   **veritabanı modunda** bütün veri ve işlemler sunucudadır. Veritabanı
   modunun kodu hazırdır; canlı sunucu kurulunca site bu modda yayına alınır.
   Farklar: [README.md](../README.md) › Demo ve veritabanı modu. Ödeme
-  kuruluşu henüz bağlanmadı (karttan para çekilmez), e-posta servisi henüz
-  kurulmadı.
+  kuruluşu henüz bağlanmadı (karttan para çekilmez); e-posta servisi ve
+  posta kutusu henüz kurulmadı; SAP bağlanmadı (depo stoğu ve sipariş
+  aktarımı deneme dosyasıyla çalışır).
 
 ---
 
@@ -68,10 +70,10 @@ Site dört işi birlikte yapar:
 | Kim | Ne yapar |
 |---|---|
 | **Ziyaretçi** (üye değil) | Kataloğu gezer, sepete ekler, bayi haritasını kullanır, Teklif Al ve diğer formları doldurur. Ödeme için üye olması gerekir. |
-| **Bireysel üye** | Ziyaretçinin yapabildiklerine ek olarak sipariş verir; Hesabım'da siparişlerini, tekliflerini, favorilerini, garanti kayıtlarını, adreslerini ve profilini görür; teslim edilen sipariş için iade talebi açar. |
+| **Bireysel üye** | Ziyaretçinin yapabildiklerine ek olarak sipariş verir; Hesabım'da siparişlerini, tekliflerini, servis taleplerini, favorilerini, garanti kayıtlarını, adreslerini ve profilini görür; teslim edilen sipariş için iade talebi açar. |
 | **Kurumsal üye** | Bireysel üyeyle aynıdır; kayıtta firma bilgileri istenir, ödemede fatura kurumsal gelir. |
 | **Yönetici** | Yalnızca yönetim panelini kullanır: ürünler, siparişler, teklifler, stok, bayiler, içerik ve ayarlar. Sitede giriş yapamaz. |
-| **Bayi** | Sitenin üyesi değildir, siteye giriş yapmaz. Bayi olmak isteyen **Bayilik Başvurusu** formunu doldurur. Stok listesini yönetici panelden yükler. |
+| **Bayi** | Sitenin üyesi değildir, siteye giriş yapmaz. Bayi olmak isteyen **Bayilik Başvurusu** formunu doldurur. Stok listesini yönetici panelden yükler. Yetkili servis olan bayiye servis talepleri panelden e-postayla yazılır (K-117). |
 | **Online satıcı** | Zenweld ürünlerini kendi sitesinde satan mağaza. Siteye giriş yapmaz; stok listesini yönetici panelden yükler. |
 | **Zenweld ekibi** | Formlardan gelen e-postaları alır (varsayılan info@zenweld.com; alıcılar panelden). |
 
@@ -83,7 +85,7 @@ Site dört işi birlikte yapar:
 |---|---|
 | **Bölüm** | Kataloğun en üst seviyesi: Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri. Sabittir, panelden eklenmez. |
 | **Grup** | Bölümün altındaki ürün ailesi (ör. Kaynak Makineleri). Panelden yönetilir. |
-| **Kategori** | Grubun altındaki ürün listesi (ör. MIG/MAG Gazaltı Kaynak Makineleri). Ürün tek bir kategoriye bağlıdır. |
+| **Kategori** | Grubun altındaki ürün listesi (ör. MIG (GMAW) Gazaltı Kaynak Makineleri). Ürün tek bir kategoriye bağlıdır. |
 | **Ürün kodu (SKU)** | Ürünün ve her kombinasyonunun benzersiz kodu; SAP kalem koduyla aynıdır. Bayi ve satıcı stok dosyaları bu kodla eşleşir. |
 | **Seçenek tanımı** | Ürün seçeneklerinin ortak adı ve değerleri. Örnek: "Torç Uzunluğu" tanımının değerleri 3 m, 4 m, 5 m, 8 m. Bir tanım birden çok kategoride kullanılabilir. |
 | **Değer** | Seçenek tanımının bir seçeneği (ör. "5 m"). |
@@ -100,14 +102,14 @@ Site dört işi birlikte yapar:
 | **Sipariş** | Sitede ödemesi yapılan (ya da havale beklenen) satın alma. Durumu panelden ilerletilir. |
 | **Teklif** | Ekipmanlar için fiyat teklifi talebi (ödeme tercihi: vadeli, çek, havale ya da görüşelim). Kurumsal müşteriler içindir; satış ekibi panelden takip eder. |
 | **Garanti kaydı** | Müşterinin aldığı makineyi seri numarasıyla kaydetmesi. Garanti bitiş tarihi sorgulanabilir. |
-| **Servis talebi** | Kurulum, bakım, onarım ya da eğitim için gönderilen talep. Panelden takip edilir. |
+| **Servis talebi** | Kurulum, bakım, onarım ya da eğitim için gönderilen talep. Yönetici talebi en yakın yetkili servise yönlendirir; müşteri durumu Hesabım › Servis Taleplerim'de izler (K-117). |
 | **İade talebi** | Üyenin (bireysel ya da kurumsal) teslim edilen siparişindeki ürünleri geri göndermek için teslimden itibaren 14 gün içinde Hesabım'dan açtığı talep (cayma). Panelde İade Talepleri'nden takip edilir. |
 | **Bayilik başvurusu** | Bayi olmak isteyen firmanın formu. Zenweld'e e-postayla gider; panelde Bayilik Başvuruları'nda görünür. |
 | **Belgeler** | MSDS (güvenlik bilgi formları), Kaynak Rehberi ve Parti Sertifikaları sayfalarındaki dosyalar. Panelden yönetilir. |
 | **Sayfa SEO** | Sabit sayfaların (Hakkımızda, İletişim vb.) Google'da görünen başlık ve açıklaması. Panelden düzenlenir. |
 | **Yasal metinler** | KVKK, gizlilik, çerez, iade, mesafeli satış sözleşmesi gibi 11 metin. Panelden düzenlenir; bugün taslaktır. |
 | **Görünüm** | Sitedeki uzun metinlerin (blog, haber, etkinlik, Hakkımızda, yasal metinler, kategori ve grup tanıtım metinleri) punto ve renk ayarı. Panelden değişir. |
-| **Eski link yönlendirmesi** | Linki değişen sayfanın (ürün, kategori, blog vb.) eski adresi yeni adrese gider. Seçeneğe dönüştürülen eski ürünün linki de o seçenekle açılır. |
+| **Eski link yönlendirmesi** | Linki değişen sayfanın (ürün, kategori, blog vb.) eski adresi yeni adrese gider. Seçeneğe dönüştürülen eski ürünün linki de o seçenekle açılır. Veritabanı modunda sunucu 301 ile yönlendirir (K-120). Eski zenweld.com sitesinin adresleri de yeni karşılıklarına 301 ile gider (K-121; [SEO.md](SEO.md) › 15). |
 | **İşlem kaydı** | Veritabanı modunda paneldeki her değişikliğin kaydı (kim, ne zaman, eski ve yeni değer). Panelde Ayarlar › İşlem Kaydı. |
 | **Demo notu** | Belgelerde bugünkü demonun bir sınırını gösteren işaret (ör. verinin tarayıcıda durması). Yalnızca geliştiriciler içindir; sitede görünmez. |
 

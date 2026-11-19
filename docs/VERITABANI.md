@@ -10,7 +10,9 @@ olduğu ve bir kayıt silinince ne olduğu.
 - **Veritabanı modunda** (`DATA_SOURCE=database`, KARARLAR K-88) bütün
   kayıtlar sunucudaki PostgreSQL tablolarındadır. Site, üyelik, formlar ve
   panelin bütün ekranları bu tablolardan okur ve yazar.
-  Tarayıcıya örnek veri gönderilmez, tarayıcı deposuna veri yazılmaz.
+  Tarayıcıya örnek veri gönderilmez; verinin tarayıcı kopyası
+  (`zenweld.db.v1`) yazılmaz (tarayıcıda kalanlar:
+  [17](#17-tarayıcıda-tutulanlar)).
 - **Demo modunda** bütün veri tarayıcıda tek bir JSON nesnesidir
   (`zenweld.db.v1`). Şekli `packages/data/src/types.ts` › `ZenweldDatabase`
   tipidir; her dizisi bir tabloya karşılık gelir. Tablolardan farkları:
@@ -83,14 +85,18 @@ bulunan kolon ya da tablo.
 
 **Kimlik (id):**
 
-- Panelde ya da sitede yeni oluşan kayıtta kimliği uygulama verir:
-  `<önek>-<zaman><rastgele>` (ör. `p-mvjccq8u1zic2`). Önekler: ürün `p`,
-  kategori `c`, grup `g`, seçenek tanımı `opt`, haber `n`, blog `b`,
-  etkinlik `e`, SSS `f`, yorum `rv`, adres `adr`, teklif `q`, sipariş `o`,
-  servis talebi `srv`, garanti `w`, belge `doc`, stok işlemi `si`, satış
-  temsilcisi `sr`, banka hesabı `ba`, POS `pos`, Hakkımızda bölümü `a`,
-  rakam kutusu `s`.
-- Üye `u-<zaman>`, bayi `d-<zaman>`, online satıcı `r-<zaman>` biçimindedir.
+- Panelde ya da sitede yeni oluşan kayıtta kimliği uygulama verir. Demo
+  modunda `<önek>-<zaman><rastgele>` (ör. `p-mvjccq8u1zic2`); veritabanı
+  modunda `<önek>-<16 haneli rastgele onaltılık>` (üye `u-<12 hane>`).
+  Önekler: ürün `p`, kategori `c`, grup `g`, seçenek tanımı `opt`, haber
+  `n`, blog `b`, etkinlik `e`, SSS `f`, yorum `rv`, adres `adr`, teklif `q`,
+  sipariş `o`, servis talebi `srv`, garanti `w`, iade talebi `iad`, belge
+  `doc`, stok işlemi `si`, kupon `cpn`, kupon kullanımı `cpr`, bayilik
+  başvurusu `bas`, mesaj `msg`, yazışma `eml`, ofis `ofis`, banka hesabı
+  `ba`, POS `pos`, Hakkımızda bölümü `a`, rakam kutusu `s`, üye `u`, bayi
+  `d`, online satıcı `r`; satış temsilcisi demoda `sr`, veritabanında
+  `rep`. Veritabanında ayrıca ödeme `pay`, kargo kaydı `shp`, kargo firması
+  `kargo`.
 - Örnek veride kimlikler okunabilir yazılmıştır (`p-ultimate-250-mtc`,
   `d-basak-hirdavat`, `u-admin`).
 - Kimlik yalnızca bağlantı içindir, ekranda gösterilmez.
@@ -608,6 +614,9 @@ SAP'a gidilmez (hız, K-83). Okuma işi:
 - Demoda örnek veridir (koddaki `warehouseStock`): her SAP kalemine örnek
   adet; ForceArc 280 MMA ve UV-5 ile Ultimate 405 MTS'nin su soğutmalı
   kalemi stoksuzdur (`packages/data/src/seed/warehouse.seed.ts`).
+- `npm run db:yukle canli` depo stoğunu yüklemez; canlıda ilk SAP okumasına
+  kadar tablo boştur ve ürünler STOKTA YOK görünür (K-122). Deneme
+  yüklemesine örnek stok girer.
 
 `warehouse_stock`:
 
@@ -688,7 +697,8 @@ siparişleri bulması için.
 - En az bir aktif yönetici her zaman kalmalıdır.
 
 Silme: adresleri, oturumları ve favorileri silinir; sipariş, teklif, servis,
-iade, garanti ve yorumlardaki bağ boşalır. Son aktif yönetici silinemez.
+iade, yorum, kupon kullanımı, bayilik başvurusu ve mesajlardaki bağ boşalır;
+garanti kayıtları üyeye e-postayla bağlı olduğu için olduğu gibi kalır. Son aktif yönetici silinemez.
 
 ### `addresses` — üye adresleri
 
@@ -1057,7 +1067,7 @@ Garanti kaydında üye kimliği tutulmaz; üyeyle e-posta üzerinden eşleşir
 | `rating` | smallint | zorunlu; 1–5 | |
 | `title` | text | | |
 | `body` | text | zorunlu | |
-| `media` | jsonb | zorunlu | `[{ url, kind: image|video }]` (video en fazla 2 MB); dosyalar dosya deposunda |
+| `media` | jsonb | zorunlu | `[{ url, kind: image|video }]` (video en fazla 2 MB); dosyalar bugün kaydın içinde (`data:` adresi) durur; dosya deposuna taşınması sonraya ([SUNUCU.md › Görseller ve dosyalar](SUNUCU.md#12-görseller-ve-dosyalar)) |
 | `verified_purchase` | boolean | | "Doğrulanmış alıcı" rozeti. Bugün giriş yapmış her üyede işaretlenir; gerçekte üyenin o ürünü satın almasıyla eşleşmeli |
 | `approved` | boolean | zorunlu | Yalnızca onaylılar yayında; yeni yorum onaysız gelir |
 | `featured` | boolean | zorunlu | Anasayfa şeridi; en fazla 10, yalnızca onaylı yorumda |
@@ -1413,7 +1423,7 @@ info@zenweld.com'dur. Panelde E-posta › (tür) › Adresler'den değişir.
 | `siparis` | Sipariş | Yeni sipariş (Zenweld'e) |
 | `iade` | İade | İade talebi (Zenweld'e) |
 | `teklif` | Teklif | Teklif Al (Zenweld'e) |
-| `servis` | Servis | Servis Talebi (Zenweld'e) |
+| `servis` | Servis | Servis Talebi (Zenweld'e; müşteriye "talebiniz alındı"); yetkili servise panelden yazılır (K-117) |
 | `garanti` | Garanti | Garanti Kaydı (Zenweld'e) |
 | `yorum` | Yorum | Ürün değerlendirmesi (Zenweld'e) |
 | `uye` | Üyelik | Üye Ol (Zenweld'e) |
@@ -1497,8 +1507,9 @@ Koddaki: `recordCounters` (ön ek → sayı, ör. `"TKL-2026-": 49`).
   (K-64; [IS-KURALLARI.md › 17](IS-KURALLARI.md#17-kayıt-numaraları)).
 - Numara kayıt anında, tek bir işlemde artırılıp okunur; aynı anda gelen
   iki kayıt aynı numarayı alamaz.
-- Sipariş ve iade talebi numarasını veren sunucu sayaç yoksa ya
-  da tablodaki en büyük numaranın gerisindeyse o numaradan devam eder
+- Sipariş, iade, teklif ve servis talebi numarasını veren sunucu
+  (`nextRecordCode`), sayaç yoksa ya da tablodaki en büyük numaranın
+  gerisindeyse o numaradan devam eder
   (örnek veriyle yüklenen siparişlerde sayaç boştur).
 
 ### `audit_log` — panel değişiklik kaydı (yeni)
@@ -1522,8 +1533,9 @@ Ayarlar › İşlem Kaydı'nda listelenir; demo modunda kayıt tutulmaz (K-109).
 - Kayıt, değişiklikle aynı işlemde yazılır; değişiklik yapılıp kaydı
   düşmemesi olamaz.
 - Kayıtlar sonradan değiştirilemez ve elle silinemez (yalnızca eklenir).
-- **2 yıl** saklanır; daha eski kayıtlar her gün kendiliğinden silinir
-  (sahibinin kararı, K-81).
+- **2 yıl** saklanır (sahibinin kararı, K-81). Daha eski kayıtları
+  `purge_audit_log()` siler; bunun her gün çalışması için zamanlayıcı henüz
+  kurulmadı ([SUNUCU.md › 3](SUNUCU.md#3-barındırma-zamanlanmış-işler-ve-güvenlik-başlıkları)).
 - Şifre özeti ve oturum bilgisi `changes`'e yazılmaz.
 - Aranır: kayda göre (`entity_type`, `entity_id`) ve tarihe göre.
 
@@ -1642,15 +1654,15 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 |---|---|---|
 | Ürün | — | Bayi ve satıcı stok satırları, kod eşleştirmeleri, varyantlar, favoriler, yönlendirmeler, kuponların kapsamındaki ürün. Belgelerdeki ürün bağı kalkar (belge kalır). Sipariş, teklif, iade, garanti, servis ve yorum kayıtları kalır (bağ boşalır) |
 | Ürünün bir varyantı (kombinasyonu) | — | O varyantın stok satırları ve kod eşleştirmeleri; eski ürün linki yönlendirmesi. Ürünün seçenek listesi (tanımları) değişirse bütün varyantlı stok satırları |
-| Kategori | İçinde ürün varsa silinmez | Kuponların kapsamındaki kategori |
+| Kategori | İçinde ürün varsa silinmez | Kuponların kapsamındaki kategori; servis talebi ve garantideki kategori bağı boşalır |
 | Kupon | Siparişte kullanıldıysa silinmez (pasife alınır) | — |
 | Kategori filtresi ya da filtre değeri | — (kaç üründe işaretli olduğu söylenip onay istenir) | Kategorinin ürünlerindeki o filtre ya da değer |
 | Grup | İçinde kategori varsa silinmez | — |
 | Seçenek tanımı | Bir üründe kullanılıyorsa silinmez | Kategorilerdeki bağı |
 | Seçenek değeri | Bir üründe kullanılıyorsa silinmez | — |
-| Bayi | — | Stok satırları, stok işlemleri, kod eşleştirmeleri |
+| Bayi | — | Stok satırları, stok işlemleri, kod eşleştirmeleri; servis taleplerindeki yetkili servis bağı (`service_dealer_id`) ve başvurudaki bayi bağı boşalır |
 | Online satıcı | — | Stok satırları, stok işlemleri, kod eşleştirmeleri; bağlı bayinin `retailer_id`'si boşalır |
-| Üye (panelden ya da üyenin kendisi Hesabım'dan) | Son aktif yönetici silinemez; panelde yönetici satırı silinemez | Kayıtlı adresleri, oturumları ve favorileri. Siparişleri, teklifleri, servis talepleri, iade talepleri, garanti kayıtları ve yorumları kalır (geçmiş kayıt; bağ boşalır) |
+| Üye (panelden ya da üyenin kendisi Hesabım'dan) | Son aktif yönetici silinemez; panelde yönetici satırı silinemez | Kayıtlı adresleri, oturumları ve favorileri. Siparişleri, teklifleri, servis talepleri, iade talepleri, yorumları, kupon kullanımları, bayilik başvuruları ve mesajları kalır (geçmiş kayıt; bağ boşalır); garanti kayıtları üyeye e-postayla bağlı olduğu için olduğu gibi kalır |
 | Teklif | — | Satırları; numarası boşta kalır (yeniden verilmez) |
 | Garanti, yorum, SSS, temsilci, haber, blog, etkinlik | — | Blog, haber ve etkinliğin yönlendirmeleri |
 | Belge | — | Dosyası (adresi girilen belgede yalnızca kayıt) |
@@ -1688,7 +1700,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 **Veri sürümü (`DB_VERSION`, yalnızca demo modu):**
 
-- `packages/data/src/index.ts`'tedir (bugün 87).
+- `packages/data/src/index.ts`'tedir (bugün 92).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -1704,7 +1716,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 | Kayıt | Sayı | Not |
 |---|---|---|
-| Ürün | 40 | Hepsi Ekipmanlar'da (sahibinin listeleri; fiyat temsili, Force serisi dışında içerik örnek, KARARLAR K-73, K-75). Güvenlik, Aksesuarlar ve Dolgu Metalleri'ndeki 48 örnek ürün sahibinin isteğiyle silindi; bu bölümlerin kategorileri boş (KARARLAR K-78). 17'si seçenekli (makineler). Ekipmanların 21'inde sahibinin fotoğrafı var, Force serisinin 9'unda geçici ortak fotoğraf; soğutmalı makinede her kombinasyon kendi soğutma halinin fotoğrafını gösterir (K-77) |
+| Ürün | 40 | Hepsi Ekipmanlar'da (sahibinin listeleri; fiyat temsili, Force serisi dışında içerik örnek, KARARLAR K-73, K-75). Güvenlik, Aksesuarlar ve Dolgu Metalleri'ndeki 48 örnek ürün sahibinin isteğiyle silindi; bu bölümlerin kategorileri boş (KARARLAR K-78). 17'si seçenekli (makineler). Ekipmanların 25'inde sahibinin fotoğrafı var, Force serisinin 5'inde geçici ortak fotoğraf, 10'unda kategori çizimi; soğutmalı makinede her kombinasyon kendi soğutma halinin fotoğrafını gösterir (K-77) |
 | Grup / kategori | 12 / 50 | Aksesuarlar'daki Lazer Aksesuarları grubunun 5 kategorisinde henüz ürün yok (KARARLAR K-05 eki). Ekipmanların 8 alt kategorisinde filtre var (KARARLAR K-76); ürünlere yalnızca Model Serisi eşli |
 | Seçenek tanımı | 4 | Soğutma, Torç Uzunluğu, Ara Paket Uzunluğu (temsili), Tepe Güç |
 | Bayi / online satıcı | 29 / 9 | 9 bayi yetkili servis; servislerin e-postası `servis@<bayi>.example.com` (K-117) |
@@ -1717,7 +1729,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 | Yazışma | 32 | Örnek kayıtlara bağlı: servis (14 giden: bildirim, müşteriye "talebiniz alındı", servise talep bildirimi, müşteriye soru; 2 gelen: servisin ve müşterinin yanıtı), teklif (5 giden, 1 gelen), sipariş 4, üyelik 3, garanti 2, şifre sıfırlama 1. `db:seed` yükler, `db:yukle` yüklemez (K-116, K-117) |
 | Kupon / kupon kullanımı | 4 / 0 | HOSGELDIN5 (%5, bütün ürünler, kişi başı 1), LAZER25000 (25.000 ₺, Lazer Kaynak Makineleri, en az 500.000 ₺, 20 kullanım, 60 gün), YAZ10 (%10, süresi dolmuş), OZEL15 (%15, kişiye özel: bir örnek kurumsal üyenin ve henüz üye olmayan bir kişinin e-postası, kişi başı 1, 30 gün); tarihler kurulum anına göre |
 | Yorum | 11 | 10'u onaylı, 1'i onay bekliyor; hepsi ekipmanlarda |
-| Blog / haber / etkinlik | 6 / 2 / 8 | |
+| Blog / haber / etkinlik | 6 / 4 / 9 | Eski sitenin İzmir tesisi ve Hırdavat Fuarı 2026 haberleri ile WIN EURASIA 2026 etkinliği dahil (K-121) |
 | SSS / temsilci / yasal metin | 8 / 11 / 11 | |
 | Belge | 0 | Panelden yüklenir |
 | Mağaza ayarları | — | 9 POS, 2 havale hesabı, 6 kargo firması; kargo ücretsiz sınırı 5.000 ₺, kargo 250 ₺, stok geçerlilik süresi 3 gün |

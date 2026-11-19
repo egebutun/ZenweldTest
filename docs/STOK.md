@@ -59,10 +59,10 @@ Türkçe karakter farkı önemsizdir):
 
 | Sütun | Tanınan başlıklar | Zorunlu |
 |---|---|---|
-| Kod | SKU, Ürün Kodu, Stok Kodu, Kod, Malzeme Kodu, Model Kodu | Evet |
-| Adet | Adet, Stok, Stok Adedi, Miktar, Mevcut, Stok Miktarı | Evet |
-| Fiyat | Fiyat, Satış Fiyatı, KDV Dahil Fiyat | Hayır |
-| Link | Link, URL, Ürün Linki, Ürün Adresi (yalnızca online satıcılar ve online mağazası olan bayiler; diğer bayilerde okunmaz) | Hayır; ama yoksa online kartta görünmez |
+| Kod | SKU, Ürün Kodu, Stok Kodu, Kod, Ürün Kod, Malzeme Kodu, Model Kodu, Code, Product Code | Evet |
+| Adet | Adet, Stok, Stok Adedi, Miktar, Mevcut, Stok Miktarı, Quantity, Qty, Stock | Evet |
+| Fiyat | Fiyat, Satış Fiyatı, Fiyat TL, KDV Dahil Fiyat, Price | Hayır |
+| Link | Link, URL, Ürün Linki, Ürün Adresi, Ürün URL, Adres, Bağlantı (yalnızca online satıcılar ve online mağazası olan bayiler; diğer bayilerde okunmaz) | Hayır; ama yoksa online kartta görünmez |
 
 Diğer sütunlar (ürün adı vb.) yok sayılır. Başlık bulunamazsa dosya uygulanmaz;
 sütun sırası tahmin edilmez (şablonda 2. sütun ürün adıdır, tahmin adet yerine adı

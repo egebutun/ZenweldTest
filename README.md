@@ -136,6 +136,7 @@ herkes görür, tarayıcıya örnek veri gönderilmez. Tablolar:
 | Görsel ve belge yükleme | Görsel kaydın içine, belge tarayıcının dosya deposuna yazılır | `DOSYA_KLASORU` ayarlıysa sunucuya yüklenir (`/dosya/…`); değilse adres girilir |
 | Favoriler, adresler | Yalnızca o tarayıcıda (favoriler üyeye değil tarayıcıya bağlı) | Üyeye bağlı; başka cihazda da aynısı görünür |
 | SAP depo stoğu okuma | Yoktur; depo stoğu örnek veridir | Zamanlayıcıyla okunur (bugün deneme dosyasından) |
+| Linki değişen sayfanın eski adresi | Tarayıcı yeni adrese götürür (sunucu bilmez) | Sunucu 301 ile yönlendirir (K-120) |
 
 ---
 
@@ -266,7 +267,8 @@ ZenweldTest/
 │   ├── src/app/api/       Sunucu uçları (formlar, sipariş, panel işlemleri, SAP)
 │   ├── src/components/    Ekran parçaları
 │   ├── src/lib/           Sayfa kodları; lib/server/ yalnızca sunucuda çalışır
-│   └── public/images/     Ürün fotoğrafları (products/), kategori ve grup kartları (categories/), logo (brand/)
+│   ├── src/proxy.ts       İstek kontrolü (eski linklerin 301'i)
+│   └── public/images/     Ürün fotoğrafları (products/), kategori ve grup kartları (categories/), anasayfa (home/, hero/), Force (force/), haber ve etkinlik (news/, events/), logo (brand/)
 ├── packages/
 │   ├── data/              Kayıt tipleri, ortak kurallar (fiyat, kupon, stok…), örnek veri (seed/)
 │   ├── db/                Veritabanı: şema, geçiş betikleri, sunucu işlemleri, komutlar

@@ -5,8 +5,10 @@ SAP, harita, dosya deposu) ve hangi ayarları istedikleri, sunucunun
 veritabanından nasıl okuyup yazdığı, panelin işlemleri, zamanlanmış işler,
 betikler ve komutlar.
 
-- **Demo modunda** sunucu yalnızca e-postaları gönderir (`/api/bildirim`,
-  `/api/bayilik`, `/api/destek`); bütün veri tarayıcıdadır.
+- **Demo modunda** sunucu e-postaları gönderir (`/api/bildirim`,
+  `/api/bayilik`, `/api/destek`) ve sabit adres yönlendirmelerini yapar
+  ([3](#3-barındırma-zamanlanmış-işler-ve-güvenlik-başlıkları)); bütün veri
+  tarayıcıdadır.
 - **Veritabanı modunda** (`DATA_SOURCE=database`, KARARLAR K-88) site,
   üyelik, siparişler, formlar ve panelin bütün işlemleri sunucudan,
   veritabanından yapılır. İki modun farkları:
@@ -62,7 +64,7 @@ olarak tutulur. Panelde, veritabanında, tarayıcıda ya da depoda (GitHub)
 | Bayi haritası | **Bağlı** (Leaflet + OpenStreetMap) | Trafik artarsa ticari harita sağlayıcısı değerlendirilmeli |
 | Ofis haritası ve yol tarifi | **Bağlı** (Google Haritalar gömme ve bağlantı; anahtar gerekmez) | — |
 | Telefon, WhatsApp, e-posta, sosyal medya | **Bağlı** (bağlantılar ve paylaşım önizlemesi) | — |
-| Bülten, müşteriye e-posta, analitik, e-Fatura, kargo API'si | Yok | [15](#15-henüz-bağlanmayanlar) |
+| Bülten, müşteriye sipariş e-postaları, analitik, e-Fatura, kargo API'si | Yok (müşteriye yalnızca şifre sıfırlama ve "servis talebiniz alındı" gidiyor) | [15](#15-henüz-bağlanmayanlar) |
 
 ---
 
@@ -108,9 +110,11 @@ değişkenleri → `http://localhost:3000`.
 
 **Barındırma:** Bugün demo Vercel'de yayında. Canlı: kendi sunucumuz ve
 kendi alan adımız (KARARLAR K-92). Proje standart bir Next.js projesidir;
-her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
+her Node.js sunucusunda `npm run build` ve
+`npm run start --workspace apps/zenweld-web` (uygulama klasöründe
+`npm start`) ile çalışır.
 
-- Node.js: 22 (`.nvmrc`); en az 20 (`package.json` › `engines`).
+- Node.js: 22 (`.nvmrc`); en az 20.9 (`package.json` › `engines`).
 - Sunucunun yeri (KVKK), kurulumu ve demo Vercel'den kalkınca kaldırılacak
   parçalar: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Canlı sunucu.
 - **Panel** sitenin içinde `/yonetim` adresinde çalışır; ayrı bir proje ya
@@ -123,7 +127,9 @@ her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
 - **Eski sitenin adresleri (K-121):** `apps/zenweld-web/next.config.mjs`
   › `redirects()`; liste `apps/zenweld-web/eski-site-yonlendirmeleri.json`
   (80 kural, 301). Sayfadan ve istek kontrolünden önce çalışır, veritabanına
-  gitmez; iki modda da aynıdır. Liste değişince site yeniden derlenir.
+  gitmez; iki modda da aynıdır. Liste değişince site yeniden derlenir. Aynı
+  yerde sayfalı listelerin `/sayfa/1` adresi listenin kendi adresine 301
+  ile gider (K-124).
 - **Eski linklerin yönlendirmesi (veritabanı modu, K-120):** İstek kontrolü
   (`apps/zenweld-web/src/proxy.ts`) ürün, blog, haber, etkinlik ve dört
   bölümün adreslerinde eski adres listesine bakar; eski adresse 301 ile
@@ -135,7 +141,8 @@ her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
   Yönlendirme sayfanın içinde yapılmaz: Next önbelleğe aldığı sayfanın
   yönlendirmesini bazen hedef adresi olmadan saklıyor (Next 16.4'te
   denendi). Liste her sunucu işleminin kendi belleğinde olduğu için site
-  tek Node.js işlemiyle (`npm start`) çalıştırılır; birden çok işlemde
+  tek Node.js işlemiyle (`npm run start --workspace apps/zenweld-web`)
+  çalıştırılır; birden çok işlemde
   çalışırsa panel değişikliği diğer işlemlerde en geç 30 saniyede görünür.
 
 **Zamanlanmış işler:** Üç iş var; üçü de sitenin ucudur (POST,
@@ -210,7 +217,7 @@ konsolda "Content Security Policy" uyarısı çıkar.
 
 | Yer | İçerik |
 |---|---|
-| `src/schema/` | Tabloların tanımı (Drizzle ORM), konuya göre dosyalar: `catalog`, `network` (bayi, satıcı, stok), `users`, `sales` (teklif, sipariş, kargo gönderisi, iade), `coupons`, `sap` (depo stoğu), `support` (servis, garanti, yorum), `content`, `settings` (ayarlar, POS, banka, kargo firmaları), `forms` (bayilik, destek mesajları), `system` (e-postalar, numaralar, değişiklik kaydı) |
+| `src/schema/` | Tabloların tanımı (Drizzle ORM), konuya göre dosyalar: `catalog`, `network` (bayi, satıcı, stok), `users`, `sales` (teklif, sipariş, kargo gönderisi, iade), `coupons`, `sap` (depo stoğu, SAP'a sipariş aktarım sırası), `support` (servis, garanti, yorum), `content`, `settings` (ayarlar, POS, banka, kargo firmaları), `forms` (bayilik, destek mesajları), `system` (e-postalar, numaralar, değişiklik kaydı) |
 | `migrations/` | Geçiş betikleri (aşağıda) |
 | `src/client.ts` | Bağlantı (`DATABASE_URL`) |
 | `src/migrate.ts` | Betikleri çalıştırma ve sıfırlama |
@@ -218,8 +225,10 @@ konsolda "Content Security Policy" uyarısı çıkar.
 | `src/load.ts` | Bugünkü veriyi canlı ya da deneme veritabanına yükleme (`npm run db:yukle`) |
 | `src/read.ts` | Okuma katmanı: tablolardaki kayıtları sitenin kayıt yapısına çevirir ([6](#6-okuma-ve-önbellek)) |
 | `src/orders.ts`, `src/payment.ts` | Siparişler ve ödeme sağlayıcısı ([8](#8-siparişler-ve-ödeme)) |
-| `src/forms.ts` | Formlar ve e-posta kaydı ([9](#9-formlar-ve-e-posta)) |
-| `src/admin-*.ts`, `src/audit.ts`, `src/panel.ts`, `src/links.ts` | Panelin okuma ve yazma işlemleri ([10](#10-panel)) |
+| `src/forms.ts` | Formlar ([9](#9-formlar-ve-e-posta)) |
+| `src/email-log.ts`, `src/emails.ts` | E-posta kaydı, türlerin adresleri, gelen e-postanın eşleştirilmesi ([9](#9-formlar-ve-e-posta)) |
+| `src/mailbox.ts` | Posta kutusunu okuma ([Posta kutusu](#posta-kutusu)) |
+| `src/admin-*.ts`, `src/audit.ts`, `src/panel.ts`, `src/panel-lists.ts`, `src/links.ts` | Panelin okuma ve yazma işlemleri ([10](#10-panel)) |
 | `src/sap-stock.ts`, `src/sap-orders.ts` | SAP stok okuma ve sipariş aktarımı ([11](#11-sap)) |
 | `src/file-storage.ts` | Dosya deposu ([12](#12-görseller-ve-dosyalar)) |
 | `src/codes.ts` | Kayıt numarası (`nextRecordCode`; sipariş, iade, teklif, servis) |
@@ -264,7 +273,7 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `product_filter_values_category`, `products_category_moved` (tetikleyici) | Ürüne yalnızca kendi kategorisinin filtre değeri işaretlenir; ürün başka kategoriye taşınınca eski değerler silinir |
 | `audit_log_guard`, `audit_log_no_truncate` (tetikleyici) | Değişiklik kaydı değiştirilemez ve silinemez |
 | `purge_audit_log()` | 2 yıldan eski değişiklik kayıtlarını siler; silinen sayıyı döndürür. Canlıda her gün çalıştırılmalı ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Veriyi canlıya taşıma) |
-| `next_record_number(önek)` | Kayıt numarasını tek işlemde artırıp döndürür (`next_record_number('TKL-2026-')` → 50) |
+| `next_record_number(önek)` | Kayıt numarasını tek işlemde artırıp döndürür (`next_record_number('TKL-2026-')` → 50). Bugün uygulama kullanmaz; numarayı `src/codes.ts` › `nextRecordCode` verir |
 
 **Kayıt katmanının sağladıkları** (veritabanında değil, sunucu kodunda):
 üyenin tam bir varsayılan adresi olması (`packages/auth/src/server/account-data.ts`),
@@ -288,6 +297,7 @@ varyantın ürünün her seçeneğinden tam bir değer alması.
 | `npm run site:yenile [tür]` | Çalışan siteyi beklemeden yeniler (`REVALIDATE_SECRET`; türler: katalog, depo-stogu, stok, bayiler, yorumlar, icerik) |
 | `npm run sap:stok [zorla]` | SAP depo stoğunu beklemeden bir kez okutur (sitenin `/api/sap/stok` ucunu çağırır). `zorla`: yarım okuma korumasına takılan okumayı uygular |
 | `npm run sap:siparis` | Sıradaki siparişleri beklemeden SAP'a gönderir (sitenin `/api/sap/siparis` ucunu çağırır) |
+| `npm run posta:oku` | Posta kutusunu beklemeden bir kez okutur (sitenin `/api/posta/oku` ucunu çağırır; `CRON_SECRET`) |
 
 ---
 
@@ -362,8 +372,8 @@ kurulmamışsa komut bunu söyler. Bağlantı `DATABASE_URL`'dir.
   için her yüklemede güncellenir. Site değişikliği en geç bir dakikada
   gösterir; hemen görmek için `npm run site:yenile`.
 - Test (`tests/db/yukleme.test.ts`): canlı yüklemede veritabanı okununca
-  bugünkü veriyle (satış hareketleri, örnek yorum, kupon ve bayi stoğu
-  hariç) birebir aynı; deneme yüklemesi; tekrar çalıştırınca değişiklik
+  bugünkü veriyle (satış hareketleri, örnek yorum, kupon, bayi stoğu ve
+  depo stoğu hariç) birebir aynı; deneme yüklemesi; tekrar çalıştırınca değişiklik
   olmaması; güncelleme ve ekleme, silmeme; `eksikler`; stoğun üzerine
   yazılmaması; çakışmada anlaşılır hata.
 
@@ -1150,7 +1160,8 @@ yazılır. Kuralların yöneticinin gördüğü hali:
   `stock_imports` (kaynağın geçmişi) ve `sku_aliases` (kaynağın kod
   eşleştirmeleri) sunucuda silinir. Satıcı silinince bağlı bayinin
   `retailer_id`'si boşalır ve `updated_at`'i değişir. Silinen bayinin
-  `dealer_applications.dealer_id`'si tablo kuralıyla boşalır. İşlem kaydına
+  `dealer_applications.dealer_id`'si ve `service_requests.service_dealer_id`'si
+  tablo kuralıyla boşalır. İşlem kaydına
   kaydın son hali ve silinen stok satırı sayısı yazılır.
 - **Temsilci:** Yeni temsilci listenin sonuna eklenir.
 - Tarayıcı tarafı: `apps/zenweld-web/src/lib/admin-network.ts`
@@ -1460,8 +1471,10 @@ Yasal Metinler, Belgeler, Sayfa SEO ve Görünüm; 5. alan; KARARLAR K-104;
   aynı anda birbirini askıya alamaz. Yönetici hesabı silinmez (400).
 - **Silme:** `users` satırı silinir; `addresses`, `sessions`,
   `favourites`, `password_reset_tokens` tablo kurallarıyla silinir;
-  `orders`, `quotes`, `service_requests`, `return_requests`, `warranties`,
-  `reviews`'daki `user_id` boşalır. `audit_log`'a üyenin son hali yazılır
+  `orders`, `quotes`, `service_requests`, `return_requests`, `reviews`,
+  `coupon_redemptions`, `dealer_applications`, `support_messages`'taki
+  `user_id` boşalır (garanti kaydı üyeye e-postayla bağlıdır, kimlik
+  tutmaz). `audit_log`'a üyenin son hali yazılır
   (şifre özeti yazılmaz).
 - Rol ya da durum değişince oturum bir sonraki istekte geçersiz olur.
 - Test: `tests/db/panel-uyeler.test.ts` (okuma, rol ve durum, değişmeyen
@@ -1644,8 +1657,9 @@ toplanması, eksi miktar, geçersiz okuma):
 
 - **Ürünler:** Ekipmanların fotoğrafları sahibinden gelir ve depodadır
   (`apps/zenweld-web/public/images/products/`); fotoğrafı henüz olmayan
-  ekipman alt kategorisinin kart çizimini, Force serisinin 9 ürünü ortak
-  geçici bir fotoğrafı gösterir (KARARLAR K-77). Güvenlik, Aksesuarlar ve
+  ekipman alt kategorisinin kart çizimini, Force serisinin 5 ürünü
+  (ForceArc 250, 280; ForceMIG 125, 185 MP, 205 DP) ortak geçici bir
+  fotoğrafı gösterir (KARARLAR K-77). Güvenlik, Aksesuarlar ve
   Dolgu Metalleri'nde bugün ürün yok; eklenen ürünün fotoğrafı panelden
   verilir.
 - **Blog, haber, etkinlik ve Hakkımızda görselleri**
@@ -1817,6 +1831,6 @@ listesi [YAPILACAKLAR.md](YAPILACAKLAR.md)'dedir.
 | **e-Arşiv / e-Fatura** | Yok | Muhasebe yazılımı ya da entegratör |
 | **Kargo** | Takip numarası elle girilir; firmaya takip sayfasının adresi girilince müşteri ve panelde takip bağlantısı (`carriers.tracking_url`, KARARLAR K-105) | İsteğe bağlı, firma API verirse: etiket oluşturma, durum ve teslim bilgisinin firmadan okunması; firma başına sunucuda bağlantı parçası, anahtar ortam değişkeninde ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Online satış 8) |
 | **ETBİS ve MERSİS** | MERSİS no panelden girilir, sözleşmelere yazılır (K-105); ETBİS yok | Ticaret Bakanlığı kaydı; gerçek MERSİS no |
-| **Zamanlanmış görevler** | SAP işleri uçta hazır; havale iptali sayfa açılınca çalışıyor | Zamanlayıcının kurulması; havale süresi dolan siparişleri iptal; işlem kaydının 2 yıldan eskisini silme (`purge_audit_log()`); kampanya başlangıç/bitişinde ürün sayfasını yenileme |
+| **Zamanlanmış görevler** | SAP işleri ve posta kutusu okuma uçta hazır; havale iptali sayfa açılınca çalışıyor | Zamanlayıcının kurulması; havale süresi dolan siparişleri iptal; işlem kaydının 2 yıldan eskisini silme (`purge_audit_log()`); kampanya başlangıç/bitişinde ürün sayfasını yenileme |
 | **Bayi B2B uygulaması** | Yok | Ayrı uygulama ([YAPILACAKLAR.md](YAPILACAKLAR.md)) |
 | **Doğrulanmış alıcı** | Giriş yapmış her üye | Yorum, üyenin o ürünü satın almasıyla eşleşmeli |
