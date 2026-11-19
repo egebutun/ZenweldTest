@@ -76,11 +76,12 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       db:studio`'da ürünler, siparişler ve kuponlar görünür.
 - [ ] Veri yükleme (KARARLAR K-91): yalnızca `npm run db:migrate`
       çalışmış bir veritabanında `npm run db:yukle canli` katalog, içerik,
-      ayarlar, bayiler ve depo stoğunu yükler ve tablo tablo eklenenleri
-      yazar; `users`, `orders`, `reviews`, `coupons` ve `dealer_stock` boş
-      kalır. Aynı komut ikinci kez çalışınca her satır "zaten var"dır.
-      `npm run db:yukle deneme` ayrıca yorum, kupon ve bayi stoklarını
-      ekler. `db:studio`'da bir ürünün fiyatı değiştirilince
+      ayarlar ve bayileri yükler ve tablo tablo eklenenleri yazar;
+      `users`, `orders`, `reviews`, `coupons`, `dealer_stock` ve
+      `warehouse_stock` boş kalır (depo stoğu SAP okumasından gelir,
+      K-122). Aynı komut ikinci kez çalışınca her satır "zaten var"dır.
+      `npm run db:yukle deneme` ayrıca yorum, kupon, depo ve bayi
+      stoklarını ekler. `db:studio`'da bir ürünün fiyatı değiştirilince
       `npm run db:yukle canli` ona dokunmaz, `npm run db:yukle canli
       guncelle` eski fiyata döndürür (ekrana "panelde yapılan değişiklikler
       kaybolur" yazar). `npm run db:yukle canli eksikler` kullanım

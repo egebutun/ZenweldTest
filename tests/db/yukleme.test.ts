@@ -44,7 +44,7 @@ const ACTIVITY = [
 const SAMPLES = ["reviews", "coupons", "dealer_stock", "retailer_stock", "stock_imports"];
 
 describe("veri yükleme (db:yukle)", () => {
-  it("canlı: bugünkü veri satış hareketleri, örnek yorum, kupon ve bayi stoğu olmadan birebir yüklenir", async () => {
+  it("canlı: bugünkü veri satış hareketleri, örnek yorum, kupon, bayi stoğu ve depo stoğu olmadan birebir yüklenir", async () => {
     await inTransaction(async (client) => {
       await load(client, "canli");
       for (const table of [...ACTIVITY, ...SAMPLES]) expect(await count(client, table), table).toBe(0);
@@ -54,7 +54,9 @@ describe("veri yükleme (db:yukle)", () => {
       const want = normalize(sorted(expected(loadableData(data, "canli")))) as Record<string, unknown>;
       for (const key of Object.keys(want)) expect(read[key], key).toEqual(want[key]);
       expect((want.products as unknown[]).length).toBe(data.products.length);
-      expect((want.warehouseStock as unknown[]).length).toBe(data.warehouseStock.length);
+      // Depo stogu canlida yalnizca SAP okumasindan gelir (K-122).
+      expect(await count(client, "warehouse_stock")).toBe(0);
+      expect(data.warehouseStock.length).toBeGreaterThan(0);
     });
   });
 
@@ -67,6 +69,7 @@ describe("veri yükleme (db:yukle)", () => {
       expect(await count(client, "dealer_stock")).toBe(data.dealerStock.length);
       expect(await count(client, "retailer_stock")).toBe(data.retailerStock.length);
       expect(await count(client, "reviews WHERE user_id IS NOT NULL")).toBe(0);
+      expect(await count(client, "warehouse_stock")).toBe(data.warehouseStock.length);
     });
   });
 

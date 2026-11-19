@@ -13,8 +13,10 @@ import { loadData, type LoadMode, type LoadTarget } from "../src/load";
  * yazilarak onay verilir.
  */
 const USAGE = `Kullanım: npm run db:yukle <canli|deneme> [guncelle]
-  canli     katalog, içerik, mağaza ayarları, bayiler, satıcılar, depo stoğu
-  deneme    bunlara ek olarak örnek yorumlar, kuponlar ve bayi stok listeleri
+  canli     katalog, içerik, mağaza ayarları, bayiler, satıcılar
+            (depo stoğu canlıda yalnızca SAP okumasından gelir)
+  deneme    bunlara ek olarak örnek yorumlar, kuponlar, depo stoğu ve bayi
+            stok listeleri
   guncelle  veritabanında olup farklı olan kayıtları da bugünkü veriyle
             değiştirir: panelde yapılan değişiklikler kaybolur
             (verilmezse yalnızca olmayan kayıtlar eklenir, var olana dokunulmaz)`;

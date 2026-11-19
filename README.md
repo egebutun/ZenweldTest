@@ -202,7 +202,8 @@ npm run start --workspace apps/zenweld-web
 kayıtlar eklenir; `guncelle` eklenirse paneldeki değişikliklerin üzerine
 yazılır. Üyeler ve satış hareketleri hiç yüklenmez, hiçbir kayıt silinmez;
 bilgisayar dışındaki veritabanına yüklemeden önce adı yazılarak onay verilir.
-Neyin nereye yüklendiği: KARARLAR K-91 ve
+Canlıya depo stoğu da yüklenmez; ilk SAP okumasıyla gelir (K-122).
+Neyin nereye yüklendiği: KARARLAR K-91, K-122 ve
 [docs/SUNUCU.md](docs/SUNUCU.md) › 5.
 
 ### Yönetici hesabı

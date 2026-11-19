@@ -92,7 +92,7 @@ farkları: [README](../README.md) › Demo ve veritabanı modu.
 | 8 | **Dosya deposu:** panelden görsel ve belge yükleme hazır (sunucunun diski, `DOSYA_KLASORU`; K-108). Kalan: deponun yeri ve yedeği, istenirse S3 uyumlu depo parçası, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları | BT (depo seçimi) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
 | 9 | **Hukuk ve muhasebe:** yasal metinler (bugün taslak), ETBİS kaydı, gerçek MERSİS no, kurumsal alıcının iade hakkının metinlere işlenmesi, KVKK saklama süreleri; e-Arşiv / e-Fatura | Hukuk danışmanı, mali müşavir | [Online satış](#online-satış--canlıya-çıkmadan-önce) 2–4, [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) |
 | 10 | **Gerçek içerik ve değerler:** ürün bilgileri, fotoğraflar, fiyatlar; kargo ücreti, POS'lar ve vade farkları, IBAN'lar; blog yazıları | Sahibi | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler), [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler), [Online satış](#online-satış--canlıya-çıkmadan-önce) 9, [Blog yazıları](#blog-yazıları--yayına-girmeden-önce) |
-| 11 | **Canlıya hazırlık (kod):** zamanlanmış işler (havale iptali, işlem kaydı temizliği, kampanya yenilemesi), hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, eski linklerin sunucuda 301 ile yönlenmesi, ölçümün canlıda tekrarı, örnek verinin koddan kaldırılması (canlıya zaten yüklenmez, K-91) | Sunucu kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 7, [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme), [Ölçüm](#ölçüm-hız) |
+| 11 | **Canlıya hazırlık (kod):** zamanlanmış işler (havale iptali, işlem kaydı temizliği, kampanya yenilemesi), hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, ölçümün canlıda tekrarı, örnek verinin koddan kaldırılması (canlıya zaten yüklenmez, K-91) | Sunucu kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 7, [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme), [Ölçüm](#ölçüm-hız) |
 
 Kime ne sorulacağı: [3](#3-şirketten-öğrenilecekler-kişiye-göre).
 
@@ -449,7 +449,9 @@ kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
 - **Veri:** Tablolar kurulduktan sonra `npm run db:yukle canli` (deneme
   veritabanı için `deneme`) bugünkü veriyi yükler (KARARLAR K-91); komut
   onay için veritabanının adını sorar. Örnek üye, sipariş, teklif, servis,
-  garanti, yorum, kupon ve bayi stok listeleri canlıya yüklenmez. Panel
+  garanti, yorum, kupon, depo stoğu ve bayi stok listeleri canlıya
+  yüklenmez; depo stoğu ilk SAP okumasıyla gelir (K-122), o zamana kadar
+  ürünler "STOKTA YOK" görünür. Panel
   veritabanına yazdığı için veri doğrudan panelden girilir; komut yalnızca
   eksik kayıtları ekler, `guncelle` yazılırsa paneldeki değişikliklerin
   üzerine yazar ([SUNUCU.md › Veri yükleme](SUNUCU.md#veri-yükleme)).

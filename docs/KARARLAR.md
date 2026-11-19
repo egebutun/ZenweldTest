@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-121).
+  K-122).
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -33,7 +33,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120, K-121
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
-12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108
+12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108, K-122
 13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110
 
 ---
@@ -1208,10 +1208,10 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 
 ### K-91 · Canlıya ve denemeye ne yüklenir
 - Veri yükleme komutu (`npm run db:yukle`) iki hedefle çalışır:
-  - **Canlı:** katalog, içerik, mağaza ayarları, bayiler, satıcılar ve
-    depo stoğu.
-  - **Deneme:** bunlara ek olarak örnek yorumlar, kuponlar ve bayi/satıcı
-    stok listeleri (site dolu görünsün, her şey denenebilsin).
+  - **Canlı:** katalog, içerik, mağaza ayarları, bayiler ve satıcılar.
+    (İlk hali depo stoğunu da içeriyordu. **Değişti → K-122.**)
+  - **Deneme:** bunlara ek olarak örnek yorumlar, kuponlar, depo stoğu ve
+    bayi/satıcı stok listeleri (site dolu görünsün, her şey denenebilsin).
   - **Hiçbir yere:** demo hesaplar ve örnek üyeler, adresler, siparişler,
     teklifler, iadeler, servis talepleri, garantiler.
 - Komut hiçbir kaydı silmez ve tekrar çalıştırılabilir.
@@ -1229,6 +1229,15 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   - Örnek yorumlar gerçek müşteri yorumu değildir; canlıda yayınlamak
     yanıltıcıdır. Örnek kuponlar canlıda gerçekten indirim verir. Örnek
     bayi stokları uydurmadır; gerçek listeler bayilerden dosyayla gelir.
+
+### K-122 · Canlıya örnek depo stoğu yüklenmez
+- `npm run db:yukle canli` Zenweld depo stoğunu yüklemez; canlıda depo
+  stoğu yalnızca SAP okumasından gelir (SAP ekibinin "kullanılabilir stok"
+  görünümü, `AVAILABLE_STOCK`: kalem kodu ve miktar; 15 dakikada bir).
+- Deneme veritabanına örnek depo stoğu yüklenmeye devam eder.
+- **Neden:** SAP bağlanmadan site açılırsa örnek (gerçek olmayan) stok
+  adetleri görünmesin; ilk SAP okumasına kadar ürünler "STOKTA YOK"
+  görünür.
 
 ### K-92 · Canlı site kendi sunucumuzda, kendi alan adımızla
 - Canlı site Vercel'de yayınlanmaz; kendi sunucumuzda ve kendi alan

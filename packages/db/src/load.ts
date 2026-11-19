@@ -14,6 +14,9 @@ import { seedTables } from "./seed";
  *   garantiler, kayit numarasi sayaclari.
  * - Ornek yorumlar, kuponlar ve bayi/satici stok listeleri yalnizca deneme
  *   veritabanina yuklenir.
+ * - Zenweld depo stogu da yalnizca denemeye yuklenir; canlida yalnizca
+ *   SAP okumasindan gelir (KARARLAR K-122): SAP baglanmadan site acilsa
+ *   bile ornek (gercek olmayan) stok adetleri gorunmez.
  * - Tekrar calistirilabilir: kayit kimligiyle eslesir; olmayan eklenir, farkli
  *   olan guncellenir ("tam") ya da hic dokunulmaz ("eksikler"). Hicbir kayit
  *   silinmez; veride olmayan kayit veritabaninda kalir.
@@ -51,6 +54,7 @@ export function loadableData(data: ZenweldDatabase, target: LoadTarget): Zenweld
     ...withoutActivity,
     reviews: [],
     coupons: [],
+    warehouseStock: [],
     dealerStock: [],
     retailerStock: [],
     stockImports: [],
