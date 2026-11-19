@@ -1,0 +1,45 @@
+ZENWELD SEO VE ANAHTAR KELIME ANALIZI - 17 KASIM 2026
+=====================================================
+
+Bu klasor analizin ham verileridir; ileride yapilacak analizlerle
+karsilastirmak icin degistirilmeden saklanir. Analiz tekrarlaninca yeni
+tarihli bir klasor (docs/seo/analiz-YYYY-AA-GG/) acilir.
+
+Sonuclar ve sayfa sayfa oneriler: docs/SEO.md
+Eski zenweld.com adreslerinin yonlendirme listesi: docs/seo/yonlendirme-listesi.csv
+Kalan isler: docs/YAPILACAKLAR.md > SEO - anahtar kelime calismasindan kalan isler
+
+01-Google-arama-onerileri
+  google-arama-onerileri-tam-liste.csv : Google ve YouTube arama kutusunun onerileri,
+    2026-11-16, Turkiye/Turkce, 6.613 sorgu, 36.071 satir. Her satirda: aranan ifade,
+    oneri, sira, Google puani, kaynak (google/youtube), grup, listeden cikarildiysa nedeni.
+  ilk-tarama-google-arama-onerileri.csv : ilk, daha dar tarama (435 sorgu).
+
+02-Anahtar-Kelime-Planlayici
+  planlayiciya-yuklenen-liste.csv : Google Ads Anahtar Kelime Planlayici'ya yuklenen 7.701 terim.
+  planlayici-ham-sonuc-2026-11-17.csv : Planlayici'nin indirilen ham dosyasi (UTF-16,
+    sekmeyle ayrilmis; Turkiye, Kasim 2025 - Ekim 2026, aylik ortalama arama).
+  planlayici-sonuclari-gruplu.csv : temizlenmis ve gruplanmis sonuc, en cok arananlar ustte.
+  Not: Reklam harcamasi olmayan hesaplarda Google aylik aramayi aralik olarak verir
+  (10-100, 100-1.000, 1.000-10.000, 10.000-100.000). Planlayici yazim farklarini
+  (makinesi / makinasi gibi) tek satirda birlestirir.
+
+03-Rakip-siteler-Planlayici
+  Magmaweld, Askaynak, Gedik (gedik.com.tr/kaynak sayfasi, "Yalnizca bu sayfayi kullan"),
+  ESAB, Nuris ve zenweld.com icin Planlayici "Bir web sitesiyle baslayin" sonuclari (ham)
+  ve rakip-siteleri-birlesik.csv (tum siteler birlesik, hangi sitede ciktigi ve
+  bizim listede olup olmadigi).
+
+04-Google-Trends
+  Turkiye, son 12 ay. 1: makine turleri (+iller), 2: makinesi/makinasi yazimi,
+  3: elektrot/elektrod/inverter, 4: lazer urunleri, 5: markalar (+iller).
+  Degerler goreli (grubun en yuksegi = 100).
+
+05-Yonetici-ozeti
+  CEO icin yazili ozet (PDF ve Word), 17 Kasim 2026 hali. SEO calismasi
+  ilerledikce guncellenir; her guncellemede bu dosyalar da yenilenir.
+
+06-Yontem-betikleri
+  google-oneri-taramasi.py : 01'deki taramayi yapan betik (Python 3, ek paket gerekmez).
+  google-oneri-temizleme.py : taramayi temizleyip Planlayici'ya yuklenecek listeyi uretir.
+  Kullanim ve sirasi: docs/SEO.md > 12. Analizin tekrarlanmasi.

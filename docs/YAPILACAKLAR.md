@@ -47,7 +47,8 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Teklif Al formu](#teklif-al-formu--sorular-düzenlenecek) ·
      [Force sayfası](#force-sayfası--panelden-yönetim-fotoğraf-ve-videolar) ·
      [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) ·
-     [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme)
+     [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) ·
+     [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler)
    - **İleride:** [Ürün Seçici](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) ·
      [Ürün önerileri](#ürün-önerileri--ürün-sayfasındaki-i̇lgili-ürünler-yeniden-kurgulanacak) ·
      [Bayilik başvurusundan bayi açma](#bayilik-başvurusundan-bayi-açma--sahibiyle-birlikte-tasarlanacak) ·
@@ -392,6 +393,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Jasic lazer kaynak ürünleri (2026-10-27 listesindeki 6 model; belki çok sonra) | Sahibinin seçenekleri ayrıntılı açıklaması | [Jasic lazer kaynak ürünleri](#jasic-lazer-kaynak-ürünleri--sahibi-ayrıntılı-açıklayacak) |
 | Teklif, servis, garanti ve iade durumlarında müşteriye e-posta | Hangi bildirimlerin gideceği ve metinleri | [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 | Yöneticinin kendi şifresini panelden değiştirmesi | Şimdi yapılmıyor (K-105) | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 2 |
+| SEO: eski site yönlendirmelerinin doğrulanması, kategori adı kalıbı, garanti süresi uyuşmazlığı, ürün gamı fırsatları | Sahibinin kararı | [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) C |
 | Sitenin tasarımı | Sahibi yapacak | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
 | Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler, Force Serisi sayfası | Sahibinin göndermesi; Force sayfası ileride | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
 | Görsel düzenleyici (önizleme, sürükle, ölçekle) ve sayfa görsellerinin panelden değişmesi | Tasarımın bitmesi (fotoğrafların yeri ve sayısı kesinleşince) | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) 5 |
@@ -1283,6 +1285,71 @@ yeni linke yönlendirme iki modda da tarayıcıda yapılıyor
    haberler, etkinlikler ve arama sonuçları bugün tek sayfada. Tasarım ve
    SEO işiyle birlikte sayfalanacak; sayfa adresi (ör. `?sayfa=2`),
    canonical etiketi ve site haritası birlikte düşünülmeli.
+
+## SEO — anahtar kelime çalışmasından kalan işler
+
+Anahtar kelime ve rakip analizi (16–17 Kasım 2026) ve sayfa sayfa öneriler
+[SEO.md](SEO.md)'dedir; ham veriler `docs/seo/analiz-2026-11-17/`.
+Sıra: önce teknik işler (B), sonra metinler (A); kararlar (C) sahibindedir.
+
+**B — Teknik SEO (kod işi)**
+
+1. **B1 · Değişen linklerde sunucuda 301:** [SEO alanları ve link
+   yönlendirme](#seo-alanları-ve-link-yönlendirme) 1.
+2. **B2 · Eski `zenweld.com` adresleri:** eski sitenin 67 adresi
+   ([`seo/yonlendirme-listesi.csv`](seo/yonlendirme-listesi.csv)) yeni site
+   açıldığı gün 301 ile yeni karşılığına yönlenmeli. Önce C1'deki
+   doğrulamalar.
+3. **B3 · Yapısal veri eksikleri:** blog yazılarında `Article`; ürün
+   fiyatında kargo (`shippingDetails`) ve iade (`hasMerchantReturnPolicy`)
+   bilgisi. Yıldız (`AggregateRating`) yalnızca gerçek müşteri yorumu
+   olursa.
+4. **B4 · Uzun listelerin sayfalanması:** [SEO alanları ve link
+   yönlendirme](#seo-alanları-ve-link-yönlendirme) 5.
+5. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
+   2,5 sn altı); [Ölçüm](#ölçüm-hız).
+6. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
+   Console; [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler),
+   [SEO alanları ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) 4.
+
+**A — Metinler (panelden ya da örnek veriden; SEO.md'deki önerilerle)**
+
+1. **A1 · Lazer kategorileri:** Lazer Kaynak, Lazer Temizleme, Lazer
+   Markalama; Tanıtım Metni, sayfa başlığı, Google açıklaması (en çok
+   aranan yeni alan).
+2. **A2 · Diğer makine kategorileri:** MIG Gazaltı, TIG Argon, MMA
+   Elektrot, Çok Fonksiyonlu, Plazma Kesim (Plazma'da "plazma kesme
+   makinesi" bir kez; [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 7).
+3. **A3 · Ana sayfa, bölümler ve gruplar:** Sayfa SEO ve grup SEO alanları
+   (SEO.md › 5).
+4. **A4 · Güvenlik ve Dolgu Metalleri kategorileri:** "kaynak maskesi",
+   "kaynak teli" terimleriyle Tanıtım Metinleri.
+5. **A5 · Aksesuar kategorileri:** kısa Tanıtım Metinleri; aksesuar ve tel
+   ürünleri girilirken SEO.md › 6'daki ad formülü.
+6. **A6 · Hakkımızda:** ürün gamı paragrafı ve "Zenweld hangi ülkenin
+   markası?" soru-cevabı; "60+ Ürün" sayısının kontrolü (bugün 37 makine).
+7. **A7 · Blog:** SEO.md › 9'daki 15 konu (önce lazer konuları).
+8. **A8 · Ürün açıklamaları:** gerçek ürün bilgileri gelince (SEO.md › 7).
+9. **İç bağlantılar:** ürün → uyumlu aksesuar ve tel kategorisi; kategori ↔
+   blog.
+
+**C — Sahibin kararı**
+
+1. **C1 · Yönlendirme listesindeki doğrulamalar:** eski Ultimate 320 THP /
+   320 MTC / 400 ACDC = yeni "… iPanel" mi; Ultimate 400 CEL ve 405 MV CEL
+   karşılıkları; eski Arc 120–200S, Ultimate 205i, 200 TH/THP, Multicut
+   40/65 yeni katalogda var mı; anti-spatter satılacak mı.
+2. **C2 · Kategori adı kalıbı:** pazar "Gazaltı (MIG/MAG) Kaynak
+   Makineleri" diye yazıyor, bizde kısaltma önde ("MIG (GMAW) Gazaltı …").
+   Değişirse link değişmez, yalnız ad.
+3. **C3 · Garanti süresi:** SSS'de "kaynak makineleri 24 ay, aksesuar ve
+   sarf 12 ay"; ürün verisinde bütün ürünler 12 ay ve "12 ay garanti"
+   öne çıkanı. Hangisi doğru?
+4. **C4 · Ürün gamı fırsatları:** örtülü elektrot, kaynak gözlüğü, kaynak
+   masası, şarjlı kaynak makinesi (SEO.md › 10); Jasic lazer kaynak
+   (K-74).
+5. **C5 · Search Console doğrulaması:** alan adının DNS kaydına kimin
+   erişimi var (BT).
 
 ## Ürün Seçici ve arama — en son yeniden tasarlanacak
 

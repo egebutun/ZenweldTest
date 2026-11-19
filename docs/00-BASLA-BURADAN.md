@@ -20,6 +20,7 @@ kampanya fiyatının hesabı yalnızca IS-KURALLARI'nda yazar).
 | Hangi bilgi hangi tabloda ve kolonda saklanır? | [VERITABANI.md](VERITABANI.md) |
 | Sunucu nasıl çalışır; ödeme, e-posta, SAP, dosya deposu, ortam değişkenleri? | [SUNUCU.md](SUNUCU.md) |
 | Bayi ve satıcı stok dosyası nasıl hazırlanır ve yüklenir? | [STOK.md](STOK.md) (bayilere de gönderilebilir) |
+| Hangi sayfa hangi arama terimini hedefler; sayfa metni nasıl yazılır; eski site adresleri nereye yönlenir? | [SEO.md](SEO.md) (ham analiz verileri: `seo/analiz-2026-11-17/`) |
 | Bir şey neden böyle yapıldı? | [KARARLAR.md](KARARLAR.md) |
 | Bir özellik doğru çalışıyor mu, nasıl denenir? | [KABUL-KONTROL-LISTESI.md](KABUL-KONTROL-LISTESI.md) |
 | Ne kaldı, kimi bekliyor; şirketten ne öğrenilecek? | [YAPILACAKLAR.md](YAPILACAKLAR.md) |
