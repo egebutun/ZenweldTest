@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { defaultSettings, productBrand } from "@zenweld/data";
-import { blogPostingJsonLd, countryCode, eventJsonLd, organizationJsonLd, productJsonLd, productSeo, websiteJsonLd } from "@/lib/seo";
+import { createSeedDatabase, defaultSettings, HOME_FAQ_COUNT, productBrand } from "@zenweld/data";
+import { blogPostingJsonLd, countryCode, faqJsonLd, eventJsonLd, organizationJsonLd, productJsonLd, productSeo, websiteJsonLd } from "@/lib/seo";
 import { cooling, options, product } from "./ornek";
 
 const AT = { now: new Date("2026-11-02T09:00:00Z"), inStock: true };
@@ -185,5 +185,14 @@ describe("Şirket bilgisi: marka adı ve ticari unvan", () => {
     const company = { ...defaultSettings.company, legalName: "Zenweld Kaynak ve Kesme Ekip İnş San Tic A.Ş." };
     expect(organizationJsonLd(company)).toMatchObject({ name: "ZENWELD", legalName: "Zenweld Kaynak ve Kesme Ekip İnş San Tic A.Ş." });
     expect(organizationJsonLd({ ...company, legalName: " " }).legalName).toBeUndefined();
+  });
+});
+
+describe("anasayfanin SSS bilgisi", () => {
+  it("Google'a anasayfada gorunen sorularin aynisi gider (6 soru)", () => {
+    const faqs = createSeedDatabase(Date.now()).faqs;
+    expect(HOME_FAQ_COUNT).toBe(6);
+    const sent = faqJsonLd(faqs).mainEntity as { name: string }[];
+    expect(sent.map((q) => q.name)).toEqual(faqs.slice(0, 6).map((f) => f.question));
   });
 });

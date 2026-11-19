@@ -51,6 +51,9 @@ export const faqDraftError = (draft: Pick<FaqItem, "question" | "answer">): stri
   draft.question.trim() && draft.answer.trim() ? null : "Soru ve cevap zorunludur.";
 
 /** SSS konulari (sitedeki suzgecle ayni). */
+/** Anasayfada gorunen (ve Google'a SSS olarak giden) soru sayisi. */
+export const HOME_FAQ_COUNT = 6;
+
 export const FAQ_TOPICS: FaqItem["topic"][] = ["genel", "siparis", "garanti", "teknik"];
 
 /** Hakkimizda: sayfa basligi zorunlu. Sorun yoksa null. */

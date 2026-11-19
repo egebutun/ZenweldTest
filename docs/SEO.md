@@ -780,9 +780,8 @@ adres, yeni adres, durum, not, eski site haritasında mı).
   aynı olduğunu ve her hedefin var olduğunu
   `tests/unit/eski-site-yonlendirmeleri.test.ts` denetler.
 - **Durum:** 47 birebir; 19 birebir ve seçenekli (eski sitede ayrı sayfa
-  olan soğutma ya da torç halleri, yeni sitede aynı ürünün seçeneği); 17
-  ürün yeni sitede olmadığı için kategoriye; 1 yakın ürün; 1 karar
-  bekliyor.
+  olan soğutma ya da torç halleri, yeni sitede aynı ürünün seçeneği); 18
+  ürün yeni sitede olmadığı için kategoriye; 1 karar bekliyor.
 - **Ürünlerimiz yeni sitenin Ekipmanlar'ındakilerdir** (KARARLAR K-121):
   eski sitede olup yeni sitede olmayan ürünün (Arc 120–200S, Ultimate
   205i, Ultimate 200 TH / THP, Multicut 40 CNC / 40 COM / 65, LS-15000F,
@@ -806,8 +805,8 @@ adres, yeni adres, durum, not, eski site haritasında mı).
     ama sayfaları temizleme özelliklerini anlatıyor; LS-20000F yeni
     sitedeki "Jasic LS-20000F Lazer Temizleme Makinesi"ne, 1500 W'lık
     LS-15000F Lazer Temizleme kategorisine gider.
-  - Eski "Ultimate 405 MV CEL" (çok voltajlı) yeni sitede yok; en yakın
-    ürün olan Ultimate 405 CEL'e yönlenir (öneri).
+  - Eski "Ultimate 405 MV CEL" (çok voltajlı) yeni sitede yok; kuralı
+    gereği MMA Elektrot kategorisine yönlenir.
   - Eski sitedeki İzmir tesisinin açılışı ve İstanbul Hırdavat Fuarı
     2026 haberleri yeni siteye eklendi; eski adresleri onlara gider. WIN
     Eurasia 2026 haberi yeni sitede etkinlik olarak eklendi; eski adresi
@@ -865,7 +864,7 @@ adres, yeni adres, durum, not, eski site haritasında mı).
 | Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-255` | `/urun/ultimate-255-mma` | Birebir |
 | Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-405-cel` | `/urun/ultimate-405-cel-mma` | Birebir |
 | Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-400-cel` | `/urun/forcearc-400-cel-mma` | Birebir; Eski adı Ultimate 400 CEL; yeni sitede ForceArc 400 CEL |
-| Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-405-mv-cel` | `/urun/ultimate-405-cel-mma` | Yakın ürün; 405 MV CEL (çok voltajlı) yeni sitede yok; en yakını Ultimate 405 CEL |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-405-mv-cel` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori; 405 MV CEL (çok voltajlı) yeni sitede yok |
 | Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-205i` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori |
 | Elektrot | `/urunler/elektrot-kaynak-makineleri/arc-120` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404) |
 | Elektrot | `/urunler/elektrot-kaynak-makineleri/arc-140` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404) |

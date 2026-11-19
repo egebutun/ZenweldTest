@@ -1060,8 +1060,7 @@ favoriler: `account-data.ts`).
   her yıl 1'den başlar.
 - Silinen kaydın numarası yeniden verilmez; **en son kayıt silinse de**
   numarası bir sonraki kayda verilmez ([KARARLAR.md](KARARLAR.md) K-64).
-- Yıl, veritabanı modunda Türkiye saatine göredir; demo modunda tarayıcının
-  saatine göredir.
+- Yıl, iki modda da Türkiye saatine göredir.
 - Veritabanı modunda sipariş, iade talebi, teklif ve servis talebi
   numarasını sunucu verir: önek başına sayaç (`record_counters`) tek
   işlemde bir artar; aynı anda gelen iki kayıt aynı numarayı alamaz. Sayaç yoksa ya da tablodaki en

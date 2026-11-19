@@ -1278,8 +1278,9 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - Canlı site Vercel'de yayınlanmaz; kendi sunucumuzda ve kendi alan
   adımızla çalışır. Bugünkü demo Vercel'de kalır.
 - Site sunucuda standart Node.js uygulaması olarak çalışır
-  (`npm run build` + `npm start`). Sunucunun yeri (KVKK) ve kurulumu
-  (HTTPS, yedek, izleme) BT ile belirlenir.
+  (`npm run build` + `npm run start --workspace apps/zenweld-web`).
+  Sunucunun yeri (KVKK) ve kurulumu (HTTPS, yedek, izleme) BT ile
+  belirlenir.
 - Zamanlanmış işler (ör. SAP stok okuma) sunucunun kendi zamanlayıcısıyla
   çalışır.
 - Tek sunucuda Next'in kendi önbelleği yeterlidir; birden fazla sunucu

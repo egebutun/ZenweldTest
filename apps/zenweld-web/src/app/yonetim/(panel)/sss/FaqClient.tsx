@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from "lucide-react";
-import { faqDraftError, type FaqItem } from "@zenweld/data";
+import { faqDraftError, HOME_FAQ_COUNT, type FaqItem } from "@zenweld/data";
 import { useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, FormRow, Input, Modal, Select, Textarea } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
@@ -26,7 +26,7 @@ const EMPTY: FaqItem = {
  * SIK SORULAN SORULAR
  *
  * Sorular sitede bu listedeki sirayla gosterilir: SSS sayfasi (konuya gore
- * suzulebilir), urun sayfalarindaki SSS sekmesi ve anasayfadaki ilk 8 soru.
+ * suzulebilir), urun sayfalarindaki SSS sekmesi ve anasayfadaki ilk HOME_FAQ_COUNT (6) soru.
  * Veritabani modunda islemler sunucuya yazilir (lib/admin-content.ts).
  */
 export function FaqClient() {
@@ -63,7 +63,7 @@ export function FaqClient() {
     <>
       <AdminPageHeader
         title="Sık Sorulan Sorular"
-        description="SSS sayfasında, ürün sayfalarındaki SSS sekmesinde ve anasayfada (ilk 8 soru) bu sırayla görünür."
+        description={`SSS sayfasında, ürün sayfalarındaki SSS sekmesinde ve anasayfada (ilk ${HOME_FAQ_COUNT} soru) bu sırayla görünür.`}
         action={
           <Button leftIcon={<Plus size={17} />} onClick={() => setEditing({ ...EMPTY })}>
             Yeni Soru

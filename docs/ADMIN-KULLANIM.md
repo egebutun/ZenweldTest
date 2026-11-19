@@ -2092,11 +2092,9 @@ kullanır.
 - **Açıklamalar:** **Kısa Açıklama** (etkinlik kartında) ve **Detaylı
   Açıklama** (etkinlik sayfasında). Biçimli metindir.
 - **Logo & Fotoğraflar:**
-  - "…Kalıcı kullanım için görselleri `public/images/events/` klasörüne
-    koyup `/images/events/dosya.png` yolunu girin." (Bu not demo modunda
-    ve dosya deposu ayarlı veritabanı modunda da çıkar; veritabanı modunda
-    yüklenen dosya depoda kalıcıdır, klasöre koymak gerekmez. Ekrandaki
-    metin düzeltilmeli.)
+  - "Logo ve fotoğraflar için URL girebilir veya dosya
+    yükleyebilirsiniz. Yüklenen dosyalar otomatik olarak küçültülüp
+    WebP'ye çevrilir; boyutla uğraşmanıza gerek yok."
   - **Etkinlik Logosu:** Yüklenen logonun çevresindeki boş beyaz kenar
     kırpılır; **Logoyu kaldır**.
   - **Fotoğraf Galerisi.**
@@ -2154,10 +2152,8 @@ Sitedeki `/hakkimizda` sayfasının bütün içeriği.
 ## 20. Sık Sorulan Sorular
 
 Adres: `/yonetim/sss`. Açıklama: "SSS sayfasında, ürün sayfalarındaki SSS
-sekmesinde ve anasayfada (ilk 8 soru) bu sırayla görünür."
-
-Anasayfada ilk 6 soru görünür; Google'a giden SSS bilgisine ilk 8 soru
-girer. (Ekrandaki "ilk 8 soru" ifadesi düzeltilmeli.)
+sekmesinde ve anasayfada (ilk 6 soru) bu sırayla görünür." Google'a
+giden SSS bilgisine de anasayfadaki aynı 6 soru girer.
 
 - **Yeni Soru** düğmesi.
 - **Tablo:** Sıra (yukarı/aşağı okları, anında), Soru (altında cevabın

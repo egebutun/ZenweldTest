@@ -1,6 +1,6 @@
 "use client";
 
-import { canRequestReturn, returnableQuantities, type ReturnRequest, type ZenweldDatabase } from "@zenweld/data";
+import { canRequestReturn, turkeyYear, returnableQuantities, type ReturnRequest, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nextCode, nowIso } from "./shared";
 import { newestFirst } from "@zenweld/utils";
@@ -39,7 +39,7 @@ export function createReturnRequest(input: NewReturnRequest): ReturnRequest | fa
       Number.isInteger(item.quantity) && item.quantity >= 1 && item.quantity <= (left[item.line] ?? 0);
     if (!input.items.length || !input.items.every(valid)) return;
     // Numara kayit aninda en guncel listeden verilir.
-    record.code = nextCode(draft, draft.returnRequests.map((r) => r.code), `IAD-${new Date().getFullYear()}-`, 4);
+    record.code = nextCode(draft, draft.returnRequests.map((r) => r.code), `IAD-${turkeyYear(new Date())}-`, 4);
     draft.returnRequests.unshift({ ...record });
     created = true;
   });

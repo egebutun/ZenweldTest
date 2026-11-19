@@ -1,6 +1,6 @@
 "use client";
 
-import { isTransferExpired, PAYMENT_EXPIRED_NOTE, type Order, type OrderStatus, type Quote, type ZenweldDatabase } from "@zenweld/data";
+import { isTransferExpired, turkeyYear, PAYMENT_EXPIRED_NOTE, type Order, type OrderStatus, type Quote, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nextCode, nowIso } from "./shared";
 import { addRedemption, releaseRedemption } from "./coupons";
@@ -27,7 +27,7 @@ export function createQuote(quote: Omit<Quote, "id" | "code" | "createdAt" | "up
   const record: Quote = { ...quote, id: uid("q"), code: "", createdAt: at, updatedAt: at };
   const saved = mutate((draft) => {
     // Numara kayit aninda en guncel listeden verilir.
-    record.code = nextCode(draft, draft.quotes.map((q) => q.code), `TKL-${new Date().getFullYear()}-`, 4);
+    record.code = nextCode(draft, draft.quotes.map((q) => q.code), `TKL-${turkeyYear(new Date())}-`, 4);
     draft.quotes.unshift({ ...record });
   });
   return saved ? record : null;
@@ -86,7 +86,7 @@ export function placeOrder(order: NewOrder): Order {
   };
   mutate((draft) => {
     // Numara kayit aninda en guncel listeden verilir.
-    record.code = nextCode(draft, draft.orders.map((o) => o.code), `SIP-${new Date().getFullYear()}-`, 5);
+    record.code = nextCode(draft, draft.orders.map((o) => o.code), `SIP-${turkeyYear(new Date())}-`, 5);
     draft.orders.unshift({ ...record });
     addRedemption(draft, record);
   });

@@ -5,7 +5,7 @@ import { ArrowRight, Award, Compass, Factory, Flame, Handshake, Headphones, Truc
 import type { Product } from "@zenweld/data";
 import { listBlogPosts, listProducts, useDatabase, useNow } from "@zenweld/store";
 import { Accordion, ProductImage } from "@zenweld/ui";
-import { discountPercent, isDiscountActive } from "@zenweld/data";
+import { discountPercent, HOME_FAQ_COUNT, isDiscountActive } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
 import Link from "next/link";
 import { ProductMarquee } from "@/components/product/ProductMarquee";
@@ -332,7 +332,7 @@ function CtaCard({
 export function FaqAndBlog() {
   const t = useT();
   const db = useDatabase();
-  const faqs = useMemo(() => db.faqs.slice(0, 6), [db]);
+  const faqs = useMemo(() => db.faqs.slice(0, HOME_FAQ_COUNT), [db]);
   const posts = useMemo(() => listBlogPosts(db).slice(0, 3), [db]);
 
   return (

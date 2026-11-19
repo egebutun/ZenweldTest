@@ -3,6 +3,7 @@ import {
   RETURN_WINDOW_DAYS,
   pagePath,
   pagedTitle,
+  HOME_FAQ_COUNT,
   isDiscountActive,
   isInWarehouse,
   productBrand,
@@ -511,12 +512,12 @@ export function placeholderPageMetadata(opts: { path: string; title: string; des
  * Anasayfadaki sik sorulan sorular icin FAQPage yapisal verisi.
  * Google bu sorulari arama sonucunda dogrudan gosterebiliyor.
  */
-/** Anasayfadaki ilk 8 soru (sitede gorunenlerle ayni). */
+/** Anasayfadaki sorular (sitede gorunenlerle ayni, HOME_FAQ_COUNT). */
 export function faqJsonLd(faqs: FaqItem[]): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.slice(0, 8).map((item) => ({
+    mainEntity: faqs.slice(0, HOME_FAQ_COUNT).map((item) => ({
       "@type": "Question",
       name: item.question,
       acceptedAnswer: { "@type": "Answer", text: item.answer },

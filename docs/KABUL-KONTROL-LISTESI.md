@@ -1264,7 +1264,8 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Hakkımızda: başlık zorunlu; rakam ve bölümler eklenip sıralanır; sitede
       görseli olan bölüm yan yana görünür.
 - [ ] SSS sırası sitedeki SSS sayfasında, ürün sekmesinde ve anasayfada (ilk
-      6) aynıdır.
+      6) aynıdır; anasayfanın Google'a giden SSS bilgisinde de aynı 6 soru
+      vardır.
 - [ ] Belgeler: dosya seçicide yalnızca PDF, Word, Excel, JPG, PNG ve ZIP
       çıkar; 25 MB'tan büyük dosya yüklenmez; yayından kaldırılan belge
       sitede görünmez.

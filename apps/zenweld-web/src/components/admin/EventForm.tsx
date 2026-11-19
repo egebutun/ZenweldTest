@@ -191,16 +191,8 @@ export function EventForm({ event }: { event?: ZenweldEvent }) {
       {form.tab === "gorseller" && (
         <FormPanel>
           <Alert tone="info">
-            {actions.uploadNote ? (
-              actions.uploadNote
-            ) : (
-              <>
-                Logo ve fotoğraflar için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar
-                otomatik olarak küçültülüp WebP&apos;ye çevrilir; boyutla uğraşmanıza gerek yok. Kalıcı
-                kullanım için görselleri <code>public/images/events/</code> klasörüne koyup
-                <code> /images/events/dosya.png</code> yolunu girin.
-              </>
-            )}
+            {actions.uploadNote ??
+              "Logo ve fotoğraflar için URL girebilir veya dosya yükleyebilirsiniz. Yüklenen dosyalar otomatik olarak küçültülüp WebP'ye çevrilir; boyutla uğraşmanıza gerek yok."}
           </Alert>
 
           <div>

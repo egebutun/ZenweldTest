@@ -1,6 +1,6 @@
 "use client";
 
-import { memberServiceRequest, type MemberServiceRequest, type ServiceRequest, type ZenweldDatabase } from "@zenweld/data";
+import { memberServiceRequest, turkeyYear, type MemberServiceRequest, type ServiceRequest, type ZenweldDatabase } from "@zenweld/data";
 import { getSnapshot, mutate, uid } from "../database";
 import { nextCode, nowIso } from "./shared";
 import { newestFirst } from "@zenweld/utils";
@@ -35,7 +35,7 @@ export function createServiceRequest(
   };
   const saved = mutate((draft) => {
     // Numara kayit aninda en guncel listeden verilir.
-    record.code = nextCode(draft, draft.serviceRequests.map((r) => r.code), `SRV-${new Date().getFullYear()}-`, 4);
+    record.code = nextCode(draft, draft.serviceRequests.map((r) => r.code), `SRV-${turkeyYear(new Date())}-`, 4);
     draft.serviceRequests.unshift({ ...record });
   });
   return saved ? record : null;
