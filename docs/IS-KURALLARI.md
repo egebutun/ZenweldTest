@@ -823,8 +823,17 @@ benzersizdir.
 - **Yıldız:** Ürünün onaylı yorumları varsa ortalama puan (bir ondalığa
   yuvarlanmış, sitede görünenle aynı) ve yorum sayısı; yorum yoksa
   gönderilmez. Yalnızca veritabanı modunda.
+- **Açıklama:** kısa açıklama, öne çıkan özellikler ve uzun açıklama
+  sırayla; HTML ve biçim işaretleri (`##`, `**`, `- `) temizlenir; en çok
+  5.000 karakter.
+- **Seçenekli ürün:** ürün grubu; her seçenek "<Ürün adı> — <seçenek>"
+  adı, kendi kodu, fiyatı (fiyat farkıyla, kampanyalı, KDV dahil), stoğu
+  ve `/urun/<link>?secenek=<seçenek>` linkiyle.
+  - **Örnek:** 1.000 ₺ + KDV ürün, su soğutmalı seçeneğin farkı +500 ₺ →
+    hava 1.200 ₺, su 1.800 ₺.
 - Teslim süresi ve iade kargo ücreti sahibinden öğrenilince eklenecek
-  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO, C5).
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO, C5); barkod (GTIN) varsa
+  eklenecek (C6).
 
 **Eski sitenin (zenweld.com) adresleri** (KARARLAR K-121):
 

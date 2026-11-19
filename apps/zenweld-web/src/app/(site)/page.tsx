@@ -1,5 +1,5 @@
 import { JsonLd } from "@/components/common/JsonLd";
-import { faqJsonLd, organizationJsonLd } from "@/lib/seo";
+import { faqJsonLd, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 import { ReviewMarquee } from "@/components/home/ReviewMarquee";
 import { PageData } from "@/components/common/PageData";
 import { defaultSettings } from "@zenweld/data";
@@ -36,6 +36,7 @@ export default async function HomePage() {
 
   return (
     <PageData data={pageData}>
+      <JsonLd data={websiteJsonLd()} />
       <JsonLd data={organizationJsonLd(company)} />
       {/* Sorular arama sonuclarinda acilir baslik olarak cikabilsin */}
       <JsonLd data={faqJsonLd(faqs)} />

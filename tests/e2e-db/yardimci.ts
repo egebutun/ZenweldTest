@@ -38,21 +38,34 @@ export async function catalog() {
   return { ...(await readCatalog(db)), warehouseStock: await readWarehouseStock(db) };
 }
 
-/** Musterinin odeyecegi fiyat (KDV dahil, kampanyali) ve stok durumu. */
-export function expectedOffer(product: Product, stock: WarehouseStockRow[], now = new Date()) {
+/** Musterinin odeyecegi fiyat (KDV dahil, kampanyali) ve stok durumu; secenek verilirse o secenegin. */
+export function expectedOffer(product: Product, stock: WarehouseStockRow[], now = new Date(), variantId?: string) {
+  const variant = product.options?.variants.find((v) => v.id === variantId);
+  const priceExVat = product.priceExVat + (variant?.priceDeltaExVat ?? 0);
   return {
-    price: Math.round(salePriceExVat(product, now) * (1 + product.vatRate / 100)),
-    inStock: isInWarehouse(product, warehouseStockMap(stock)),
+    price: Math.round(salePriceExVat({ ...product, priceExVat }, now) * (1 + product.vatRate / 100)),
+    inStock: isInWarehouse(product, warehouseStockMap(stock), variantId),
   };
 }
 
-/** Urun sayfasinin arama motoruna verdigi fiyat ve stok bilgisi (yapisal veri). */
+type Offer = { price?: number; availability?: string; url?: string };
+
+/**
+ * Urun sayfasinin arama motoruna verdigi fiyat ve stok bilgisi (yapisal
+ * veri). Secenekli urunde (ProductGroup) her secenegin teklifi `variants`'ta
+ * (secenek kimligi linkteki ?secenek= degeri).
+ */
 export async function offerOnPage(request: APIRequestContext, path: string) {
   const html = await (await request.get(path)).text();
   const data = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)]
-    .map((m) => JSON.parse(m[1]) as { "@type"?: string; offers?: { price?: number; availability?: string } })
-    .find((d) => d["@type"] === "Product");
-  return { price: data?.offers?.price, availability: data?.offers?.availability };
+    .map((m) => JSON.parse(m[1]) as { "@type"?: string; offers?: Offer; hasVariant?: { offers: Offer }[] })
+    .find((d) => d["@type"] === "Product" || d["@type"] === "ProductGroup");
+  const variants = (data?.hasVariant ?? []).map((v) => ({
+    id: new URL(v.offers.url ?? "", "http://site").searchParams.get("secenek") ?? "",
+    price: v.offers.price,
+    availability: v.offers.availability,
+  }));
+  return { price: data?.offers?.price, availability: data?.offers?.availability, variants };
 }
 
 /**

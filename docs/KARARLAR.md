@@ -1051,7 +1051,13 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   bilgisini gönderir; blog yazıları `BlogPosting` olarak gider.
 - Yıldız (ortalama puan) yalnızca onaylı, gerçek müşteri yorumlarından
   gider; canlıya örnek yorum yüklenmez (K-91). Demo modunda gitmez.
-- Teslim süresi ve iade kargo ücreti sahibinden öğrenilince eklenir.
+- Seçenekli üründe her seçenek kendi kodu, fiyatı, stoğu ve linkiyle
+  gider; açıklama kısa açıklama + öne çıkanlar + uzun açıklamadır.
+- Anasayfada site adı (ZENWELD) gider. Etkinliklerde Zenweld düzenleyen
+  olarak gönderilmez (fuarların katılımcısıdır); ülke kodla, görsel
+  gerçek fotoğraf ya da logo (geçici stok fotoğraf gitmez).
+- Teslim süresi, iade kargo ücreti ve barkod (GTIN) sahibinden
+  öğrenilince eklenir.
 - **Neden:** Google Alışveriş ve arama sonuçlarında fiyatın yanında kargo,
   iade ve yıldız görünmesi tıklanmayı artırır; uydurma yorumla yıldız
   göstermek Google'ın kurallarına aykırıdır.

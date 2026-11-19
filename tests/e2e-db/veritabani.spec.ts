@@ -60,10 +60,16 @@ test("bütün ürünlerin fiyatı ve stok durumu veritabanıyla aynı", async ({
   const active = products.filter((p) => p.active);
   expect(active.length).toBeGreaterThan(10);
   for (const product of active) {
-    const want = expectedOffer(product, warehouseStock);
     const got = await offerOnPage(request, `/urun/${product.slug}`);
-    expect.soft(got.price, `${product.slug}: fiyat`).toBe(want.price);
-    expect.soft(got.availability, `${product.slug}: stok`).toBe(want.inStock ? ONLINE : OUT);
+    // Secenekli urun: her secenek kendi fiyati ve stoguyla (ProductGroup, K-123).
+    const ids = product.options?.variants.map((v) => v.id) ?? [];
+    if (ids.length) expect.soft(got.variants.map((v) => v.id).sort(), `${product.slug}: secenekler`).toEqual([...ids].sort());
+    for (const id of ids.length ? ids : [undefined]) {
+      const want = expectedOffer(product, warehouseStock, new Date(), id);
+      const offer = id ? got.variants.find((v) => v.id === id) : got;
+      expect.soft(offer?.price, `${product.slug} ${id ?? ""}: fiyat`).toBe(want.price);
+      expect.soft(offer?.availability, `${product.slug} ${id ?? ""}: stok`).toBe(want.inStock ? ONLINE : OUT);
+    }
   }
 });
 

@@ -681,7 +681,10 @@ Yalnızca ürün sayfalarında, sağ altta bir düğme olarak durur.
   teknik özellikler, konum satırı; kargo (Türkiye; ürünün fiyatı ücretsiz
   kargo sınırına ulaşıyorsa 0, değilse Mağaza Ayarları'ndaki kargo
   ücreti), iade (teslimden itibaren 14 gün, kargoyla) ve ürünün onaylı
-  yorumu varsa yıldız (ortalama puan ve yorum sayısı). **Yıldız yalnızca
+  yorumu varsa yıldız (ortalama puan ve yorum sayısı). Açıklama olarak
+  kısa açıklama, öne çıkan özellikler ve uzun açıklama gider. Seçenekli
+  üründe her seçenek kendi adı ("… — Su Soğutmalı · 8 m"), kodu, fiyatı,
+  stoğu ve seçenekli linkiyle ayrı gider (ürün grubu). **Yıldız yalnızca
   veritabanı modunda** gider; demo modunda yorumlar tarayıcıda durur
   (ekranda fark yoktur; KARARLAR K-123).
 - **Asıl adres (canonical):** `/urun/<link>`; seçenek linkleri ayrı sayfa
@@ -1844,11 +1847,16 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   olarak bildirir. WhatsApp, LinkedIn ve X'te paylaşınca başlık, açıklama ve
   görselle önizleme çıkar.
 - **Yapısal veri:** Anasayfada şirket bilgisi ve sık sorulan sorular; ürün
-  sayfasında ürün (fiyat, stok, kargo, iade, onaylı yorum varsa yıldız);
-  blog, haber ve etkinlik sayfalarında yazı, haber ve etkinlik; katalog ve
-  ürünlerde konum satırı Google'a bildirilir (schema.org: `Organization`,
-  `FAQPage`, `Product`, `BlogPosting`, `NewsArticle`, `Event`,
-  `BreadcrumbList`).
+  sayfasında ürün (fiyat, stok, kargo, iade, onaylı yorum varsa yıldız;
+  seçenekli üründe her seçenek ayrı); anasayfada site adı (ZENWELD); blog,
+  haber ve etkinlik sayfalarında yazı, haber ve etkinlik (ülke kodla;
+  etkinlik görseli olarak gerçek fotoğraflar, yoksa logo; geçici stok
+  fotoğraflar gitmez); katalog ve ürünlerde konum satırı Google'a
+  bildirilir (schema.org: `WebSite`, `Organization`, `FAQPage`,
+  `Product`, `ProductGroup`, `BlogPosting`, `NewsArticle`, `Event`,
+  `BreadcrumbList`). Hepsi sayfa hazırlanırken sitedeki veriden üretilir:
+  ürün, fiyat, stok, ayar ya da yazı değişince Google'a giden bilgi de
+  değişir (Google sayfayı bir sonraki taramasında görür).
 - **Panel değişiklikleri:** Veritabanı modunda site haritası ve arama
   motorunun gördüğü başlıklar tablolardan gelir; panelde yapılan değişiklik
   (yeni ürün, değişen başlık, yeni link) hemen görünür (KARARLAR K-88).

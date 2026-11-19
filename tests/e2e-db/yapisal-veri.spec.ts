@@ -18,6 +18,6 @@ test("ürün: onaylı yorumların ortalaması ve sayısı yıldız olarak gider;
   const html = await (await request.get(`/urun/${row.slug}`)).text();
   const product = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)]
     .map((m) => JSON.parse(m[1]) as Record<string, unknown>)
-    .find((d) => d["@type"] === "Product")!;
+    .find((d) => d["@type"] === "Product" || d["@type"] === "ProductGroup")!;
   expect(product.aggregateRating).toMatchObject({ ratingValue: row.average, reviewCount: row.count });
 });

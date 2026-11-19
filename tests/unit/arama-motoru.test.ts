@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { productBrand } from "@zenweld/data";
-import { blogPostingJsonLd, productJsonLd, productSeo } from "@/lib/seo";
-import { product } from "./ornek";
+import { blogPostingJsonLd, countryCode, eventJsonLd, productJsonLd, productSeo, websiteJsonLd } from "@/lib/seo";
+import { cooling, options, product } from "./ornek";
 
 const AT = { now: new Date("2026-11-02T09:00:00Z"), inStock: true };
 
@@ -101,5 +101,81 @@ describe("Blog yazısının yapısal verisi (BlogPosting)", () => {
     });
     expect((data.image as string[])[0]).toMatch(/\/images\/blog\/gaz\.webp$/);
     expect(blogPostingJsonLd({ ...post, updatedAt: "2026-02-01T10:00:00Z" }).dateModified).toBe("2026-02-01T10:00:00Z");
+  });
+});
+
+describe("Seçenekli ürün: her seçenek kendi kodu, fiyatı, stoğu ve linkiyle (ProductGroup)", () => {
+  const machine = product({
+    slug: "ultimate-300-thp",
+    sku: "ZW-300",
+    options: options([cooling.id], [
+      [["hava"], "ZW-300-H"],
+      [["su"], "ZW-300-S", { priceDeltaExVat: 500 }],
+    ]),
+  });
+  const stock = new Map([["ZW-300-S", 2]]);
+  const data = productJsonLd(machine, undefined, { ...AT, stock, definitions: [cooling] });
+  const variants = data.hasVariant as Record<string, Record<string, unknown>>[];
+
+  it("ürün grubu; seçenek adı, kodu ve seçenekli linki", () => {
+    expect([data["@type"], data.productGroupID]).toEqual(["ProductGroup", "ZW-300"]);
+    expect(variants.map((v) => [v.name, v.sku, v.offers.url])).toEqual([
+      ["Örnek Ürün — Hava Soğutmalı", "ZW-300-H", expect.stringMatching(/\/urun\/ultimate-300-thp\?secenek=hava$/)],
+      ["Örnek Ürün — Su Soğutmalı", "ZW-300-S", expect.stringMatching(/\/urun\/ultimate-300-thp\?secenek=su$/)],
+    ]);
+  });
+
+  it("seçeneğin fiyatı (fiyat farkıyla, KDV dahil) ve kendi stoğu", () => {
+    expect(variants.map((v) => [v.offers.price, v.offers.availability])).toEqual([
+      [1200, "https://schema.org/OutOfStock"],
+      [1800, "https://schema.org/InStock"],
+    ]);
+  });
+
+  it("seçeneksiz ürün tek ürün olarak gider", () => {
+    expect(productJsonLd(product(), undefined, AT)["@type"]).toBe("Product");
+  });
+});
+
+describe("Ürün açıklaması: kısa açıklama, öne çıkanlar ve uzun açıklama (biçim temizlenir)", () => {
+  it("üçü sırayla birleşir; HTML ve biçim işaretleri gitmez", () => {
+    const data = productJsonLd(
+      product({ shortDescription: "Kısa.", highlights: ["200 A", "3,5 kg"], description: "<p>## Başlık</p><p>**Uzun** metin.</p>" }),
+      undefined,
+      AT,
+    );
+    expect(data.description).toBe("Kısa. 200 A. 3,5 kg Başlık Uzun metin.");
+  });
+});
+
+describe("Site adı ve etkinlik", () => {
+  it("site adı ZENWELD (WebSite)", () => {
+    expect(websiteJsonLd()).toMatchObject({ "@type": "WebSite", name: "ZENWELD" });
+  });
+
+  const event = {
+    id: "e1",
+    slug: "fuar-2026",
+    title: "Fuar",
+    summary: "Özet",
+    description: "",
+    startDate: "2026-06-10",
+    endDate: "2026-06-13",
+    venue: "İstanbul Fuar Merkezi",
+    city: "İstanbul",
+    country: "Türkiye",
+    logoUrl: "/images/events/fuar.png",
+    images: ["https://images.unsplash.com/photo-1?w=1", "/images/events/fuar/1.webp"],
+    active: true,
+  };
+
+  it("ülke kodla gider; düzenleyen verilmez (Zenweld katılımcı); geçici stok fotoğraf gitmez", () => {
+    const data = eventJsonLd(event);
+    expect((data.location as { address: { addressCountry: string } }).address.addressCountry).toBe("TR");
+    expect(data.organizer).toBeUndefined();
+    expect((data.image as string[]).map((u) => u.replace(/^https?:\/\/[^/]+/, ""))).toEqual(["/images/events/fuar/1.webp"]);
+    // Gercek fotograf yoksa logo
+    expect((eventJsonLd({ ...event, images: [event.images[0]] }).image as string[])[0]).toMatch(/\/images\/events\/fuar\.png$/);
+    expect([countryCode("Birleşik Arap Emirlikleri"), countryCode("Suudi Arabistan")]).toEqual(["AE", "SA"]);
   });
 });

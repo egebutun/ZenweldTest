@@ -17,7 +17,7 @@ async function jsonLd(request: APIRequestContext, path: string): Promise<Record<
 }
 
 test("ürün: kargo (Türkiye, ücret Mağaza Ayarları'na göre) ve 14 günlük iade bilgisi gider; demoda yıldız gitmez", async ({ request }) => {
-  const product = seed.products.find((p) => p.active)!;
+  const product = seed.products.find((p) => p.active && !p.options?.variants.length)!;
   const data = (await jsonLd(request, `/urun/${product.slug}`)).find((d) => d["@type"] === "Product")!;
   const offer = data.offers as { price: number; shippingDetails: { shippingRate: { value: number }; shippingDestination: unknown }; hasMerchantReturnPolicy: Record<string, unknown> };
   const { shippingFee, freeShippingThreshold } = seed.settings.shop;
@@ -36,4 +36,20 @@ test("blog yazısı: başlık, özet, tarih ve yayıncıyla BlogPosting gider", 
     datePublished: post.publishedAt,
     publisher: { "@type": "Organization", name: "ZENWELD" },
   });
+});
+
+test("seçenekli ürün: ürün grubu; her seçenek kendi kodu ve seçenekli linkiyle", async ({ request }) => {
+  const product = seed.products.find((p) => p.active && (p.options?.variants.length ?? 0) > 1)!;
+  const data = (await jsonLd(request, `/urun/${product.slug}`)).find((d) => d["@type"] === "ProductGroup")!;
+  const variants = data.hasVariant as { sku: string; offers: { url: string } }[];
+  expect(variants.map((v) => v.sku).sort()).toEqual(product.options!.variants.map((v) => v.sku).sort());
+  for (const v of variants) expect(v.offers.url).toMatch(new RegExp(`/urun/${product.slug}\\?secenek=`));
+});
+
+test("anasayfada site adı (WebSite); etkinlikte ülke kodu, düzenleyen yok", async ({ request }) => {
+  expect((await jsonLd(request, "/")).find((d) => d["@type"] === "WebSite")).toMatchObject({ name: "ZENWELD" });
+  const event = seed.events.find((e) => e.active && e.country === "Türkiye")!;
+  const data = (await jsonLd(request, `/etkinlikler/${event.slug}`)).find((d) => d["@type"] === "Event")!;
+  expect((data.location as { address: { addressCountry: string } }).address.addressCountry).toBe("TR");
+  expect(data.organizer).toBeUndefined();
 });

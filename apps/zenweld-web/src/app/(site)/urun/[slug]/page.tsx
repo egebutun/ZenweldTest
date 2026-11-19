@@ -100,9 +100,12 @@ export default async function ProductPage({
   const pageData = await getProductPageData(product.id);
   // Yildiz: onayli yorumlar yalnizca veritabani modunda sunucudadir (demo
   // modunda tarayicida; o modda yildiz gonderilmez).
+  const stock = warehouseStockMap(catalog.warehouseStock);
   const jsonLd = productJsonLd(product, category, {
     now: new Date(),
-    inStock: isInWarehouse(product, warehouseStockMap(catalog.warehouseStock)),
+    inStock: isInWarehouse(product, stock),
+    stock,
+    definitions: catalog.optionDefinitions,
     shop: catalog.settings.shop,
     ratings: (pageData?.reviews ?? []).filter((r) => r.productId === product.id && r.approved).map((r) => r.rating),
   });

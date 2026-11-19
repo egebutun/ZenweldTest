@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getServerContent } from "@/lib/server/content";
 import { JsonLd } from "@/components/common/JsonLd";
 import { EventDetail } from "@/components/events/EventDetail";
-import { SITE_NAME, absoluteUrl, canonical, eventSeo, seoMetadata } from "@/lib/seo";
+import { SITE_NAME, absoluteUrl, canonical, eventJsonLd, eventSeo, seoMetadata } from "@/lib/seo";
 
 /** Etkinlikler sunucunun iceriginden: veritabani ya da ornek veri (lib/server/content.ts). */
 async function findEvent(slug: string) {
@@ -59,29 +59,7 @@ export default async function EventDetailPage({
 
   return (
     <>
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Event",
-          name: event.title,
-          description: event.summary,
-          startDate: event.startDate,
-          endDate: event.endDate,
-          eventStatus: "https://schema.org/EventScheduled",
-          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-          image: event.images.map((i) => absoluteUrl(i)),
-          location: {
-            "@type": "Place",
-            name: event.venue,
-            address: {
-              "@type": "PostalAddress",
-              addressLocality: event.city,
-              addressCountry: event.country,
-            },
-          },
-          organizer: { "@type": "Organization", name: SITE_NAME },
-        }}
-      />
+      <JsonLd data={eventJsonLd(event)} />
       <EventDetail slug={slug} />
     </>
   );

@@ -2,14 +2,18 @@ import type { Metadata } from "next";
 import {
   RETURN_WINDOW_DAYS,
   isDiscountActive,
+  isInWarehouse,
   productBrand,
+  productOptionsView,
   salePriceExVat,
+  variantPriceExVat,
   type BlogPost,
   type Category,
   type CategoryGroup,
   type CompanySettings,
   type FaqItem,
   type NewsItem,
+  type OptionDefinition,
   type Product,
   type SeoFields,
   type ShopSettings,
@@ -93,45 +97,53 @@ export function productJsonLd(
   {
     now,
     inStock,
+    stock,
+    definitions = [],
     shop,
     ratings = [],
   }: {
     now: Date;
+    /** Urun stokta mi (secenekli urunde herhangi bir secenek) */
     inStock: boolean;
+    /** Depo stogu (SAP kalem kodu -> adet); seceneklerin stogu buradan */
+    stock?: ReadonlyMap<string, number>;
+    /** Secenek tanimlari; secenekli urunde her secenek ayri gider */
+    definitions?: OptionDefinition[];
     /** Kargo ucreti ve ucretsiz kargo siniri (Magaza Ayarlari); yoksa kargo bilgisi gonderilmez */
     shop?: Pick<ShopSettings, "shippingFee" | "freeShippingThreshold">;
     /** Urunun onayli yorumlarinin puanlari (1-5); bossa yildiz gonderilmez */
     ratings?: number[];
   },
 ): Record<string, unknown> {
-  // Google'a musterinin odedigi fiyat bildirilir. Kampanyanin bitis tarihi
-  // varsa priceValidUntil ile birlikte verilir; tarih gecince arama
-  // sonucunda eski indirimli fiyat gosterilmez.
-  const priceIncVat = Math.round(salePriceExVat(product, now) * (1 + product.vatRate / 100));
   const endsAt = isDiscountActive(product, now) ? product.discount?.endsAt : undefined;
+  const url = absoluteUrl(`/urun/${product.slug}`);
 
-  return {
+  // Google'a musterinin odedigi fiyat bildirilir (KDV dahil, kampanyali).
+  // Kampanyanin bitis tarihi varsa priceValidUntil ile birlikte verilir;
+  // tarih gecince arama sonucunda eski indirimli fiyat gosterilmez.
+  const offer = (priceExVat: number, available: boolean, offerUrl: string) => {
+    const price = Math.round(salePriceExVat({ ...product, priceExVat }, now) * (1 + product.vatRate / 100));
+    return {
+      "@type": "Offer",
+      url: offerUrl,
+      priceCurrency: "TRY",
+      price,
+      ...(endsAt ? { priceValidUntil: endsAt.slice(0, 10) } : {}),
+      availability: available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+      seller: { "@type": "Organization", name: SITE_NAME },
+      ...(shop ? { shippingDetails: shippingJsonLd(price, shop) } : {}),
+      hasMerchantReturnPolicy: RETURN_POLICY,
+    };
+  };
+
+  const common = {
     "@context": "https://schema.org",
-    "@type": "Product",
     name: product.name,
-    description: product.shortDescription,
-    sku: product.sku,
-    mpn: product.modelCode ?? product.sku,
+    description: productDescription(product),
     image: product.images.map((img) => absoluteUrl(img.url)),
     brand: { "@type": "Brand", name: productBrand(product) },
     category: category?.name,
-    offers: {
-      "@type": "Offer",
-      url: absoluteUrl(`/urun/${product.slug}`),
-      priceCurrency: "TRY",
-      price: priceIncVat,
-      ...(endsAt ? { priceValidUntil: endsAt.slice(0, 10) } : {}),
-      availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      itemCondition: "https://schema.org/NewCondition",
-      seller: { "@type": "Organization", name: SITE_NAME },
-      ...(shop ? { shippingDetails: shippingJsonLd(priceIncVat, shop) } : {}),
-      hasMerchantReturnPolicy: RETURN_POLICY,
-    },
     additionalProperty: product.specs.map((spec) => ({
       "@type": "PropertyValue",
       name: spec.label,
@@ -139,6 +151,60 @@ export function productJsonLd(
     })),
     ...(ratings.length > 0 ? { aggregateRating: ratingJsonLd(ratings) } : {}),
   };
+
+  // Secenekli urun (ornegin su sogutmali / 8 m torc): urun grubu; her
+  // secenek kendi kodu, fiyati, stogu ve secenekli linkiyle ayri urun olarak
+  // gider (sitede ayni sayfa, ?secenek= ile acilir).
+  const view = productOptionsView(product, definitions);
+  if (view) {
+    return {
+      ...common,
+      "@type": "ProductGroup",
+      url,
+      productGroupID: product.sku,
+      hasVariant: view.variants.map((v) => ({
+        "@type": "Product",
+        name: `${product.name} — ${v.label}`,
+        sku: v.sku,
+        ...(v.image ? { image: [absoluteUrl(v.image)] } : {}),
+        additionalProperty: v.parts.map((part) => ({ "@type": "PropertyValue", name: part.group, value: part.value })),
+        offers: offer(
+          variantPriceExVat(product, v),
+          stock ? isInWarehouse(product, stock, v.id) : inStock,
+          `${url}?secenek=${encodeURIComponent(v.id)}`,
+        ),
+      })),
+    };
+  }
+
+  return {
+    ...common,
+    "@type": "Product",
+    sku: product.sku,
+    mpn: product.modelCode ?? product.sku,
+    offers: offer(product.priceExVat, inStock, url),
+  };
+}
+
+/**
+ * Urunun Google'a giden aciklamasi: kisa aciklama, one cikan ozellikler ve
+ * uzun aciklama (bicim isaretleri ve HTML temizlenir; en cok 5.000 karakter).
+ */
+function productDescription(product: Product): string {
+  const plain = (text: string) =>
+    text
+      .replace(/^\s*-\s+/gm, "")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/(^|\s)#{1,6}\s+/g, "$1")
+      .replace(/\*\*/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  const highlights = product.highlights.filter((h) => h.trim()).join(". ");
+  return [product.shortDescription, highlights, product.description]
+    .map((part) => plain(part ?? ""))
+    .filter(Boolean)
+    .join(" ")
+    .slice(0, 5000);
 }
 
 /**
@@ -299,6 +365,64 @@ export function breadcrumbJsonLd(
 }
 
 /** Arama motorlarina kurulus bilgisi; sirket bilgileri Magaza Ayarlari > Sirket ve Iletisim'den (K-105). */
+/**
+ * Site adi: Google arama sonucunda adresin ustunde "ZENWELD" yazsin
+ * (adres yerine marka). Anasayfada bir kez verilir.
+ */
+export function websiteJsonLd(): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    alternateName: ["Zenweld", "zenweld.com"],
+    url: absoluteUrl("/"),
+  };
+}
+
+/** Etkinlik ulkesinin Google'in bekledigi kodu (ISO 3166-1); bilinmeyen ad oldugu gibi kalir. */
+const COUNTRY_CODES: Record<string, string> = {
+  "Türkiye": "TR",
+  "Birleşik Arap Emirlikleri": "AE",
+  "Suudi Arabistan": "SA",
+  "Almanya": "DE",
+  "Irak": "IQ",
+  "Azerbaycan": "AZ",
+};
+export const countryCode = (country: string) => COUNTRY_CODES[country.trim()] ?? country;
+
+/** Gecici stok fotograf (Unsplash): Google'a etkinlik gorseli olarak gonderilmez. */
+const isStockPhoto = (url: string) => url.startsWith("https://images.unsplash.com/");
+
+/**
+ * Etkinlik (fuar) yapisal verisi. Zenweld fuarlarin duzenleyicisi degil,
+ * katilimcisidir; bu yuzden "organizer" verilmez. Gorsel: etkinligin gercek
+ * fotograflari, yoksa logosu (gecici stok fotograflar gitmez).
+ */
+export function eventJsonLd(event: ZenweldEvent): Record<string, unknown> {
+  const photos = event.images.filter((i) => !isStockPhoto(i));
+  return {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: event.title,
+    description: event.summary,
+    startDate: event.startDate,
+    endDate: event.endDate,
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    image: (photos.length ? photos : [event.logoUrl]).filter(Boolean).map((i) => absoluteUrl(i)),
+    url: absoluteUrl(`/etkinlikler/${event.slug}`),
+    location: {
+      "@type": "Place",
+      name: event.venue,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: event.city,
+        addressCountry: countryCode(event.country),
+      },
+    },
+  };
+}
+
 export function organizationJsonLd(company: CompanySettings): Record<string, unknown> {
   return {
     "@context": "https://schema.org",

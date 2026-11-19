@@ -1303,7 +1303,8 @@ sahibindedir.
 
 B1 (değişen linklerde sunucuda 301; KARARLAR K-120), B2 (eski
 `zenweld.com`'un 85 adresi; K-121, [SEO.md](SEO.md) › 15) ve B3 (yapısal
-veri: blog yazısı, ürüne kargo, iade ve yıldız; K-123) yapıldı.
+veri: blog yazısı, ürüne kargo, iade, yıldız, seçenekler, açıklama, site
+adı ve etkinlik düzeltmeleri; K-123) yapıldı.
 
 1. **B4 · Uzun listelerin sayfalanması:** [SEO alanları ve link
    yönlendirme](#seo-alanları-ve-link-yönlendirme) 4.
@@ -1320,18 +1321,6 @@ veri: blog yazısı, ürüne kargo, iade ve yıldız; K-123) yapıldı.
    (canonical). Denetim tarayıcı testine eklenir; bulunan eksikler
    düzeltilir. Bugün başlık, açıklama, canonical ve paylaşım önizlemesi
    kodda var (K-55); H1 ve ara başlık sırası denetlenmedi.
-5. **B8 · Yapısal veri iyileştirmeleri (öneri, sahibinin onayıyla):**
-   - Ürün açıklaması: bugün Google'a yalnızca kısa açıklama gidiyor; uzun
-     açıklama (öne çıkan özellikler dahil) gerçek metinler gelince (A2).
-   - Seçenekli ürünlerde her seçeneğin kendi kodu ve fiyatı (`ProductGroup`,
-     `hasVariant`); Google seçenekleri ayrı gösterebilir.
-   - Barkod (GTIN): ürünlerin barkodu varsa eklenir (bilgi sahibinden).
-   - Site adı (`WebSite`): Google sonuçlarında site adı "ZENWELD" görünür.
-   - Etkinlik: ülke "Türkiye" yerine kod (`TR`); "düzenleyen" bugün
-     Zenweld yazıyor ama fuarları Zenweld düzenlemiyor (katılımcı);
-     galerilerdeki geçici stok fotoğraflar etkinlik görseli olarak gidiyor.
-   - SSS (`FAQPage`): Google soru-cevap kutusunu 2023'ten beri yalnızca
-     devlet ve sağlık sitelerinde gösteriyor; kalır, getirisi az.
 
 **A — Sayfa sayfa SEO düzenlemesi (anahtar kelime haritasına göre)**
 
@@ -1413,6 +1402,9 @@ değişikliği bugün Google'da bir şey kaybettirmez.
    üründe) kargo ücretini kim öder? Sahibi öğrenecek; gelince Google'a
    giden ürün bilgisine eklenir (`apps/zenweld-web/src/lib/seo.ts` ›
    `shippingJsonLd`, `RETURN_POLICY`).
+6. **C6 · Barkod (GTIN):** ürünlerin barkodu var mı? Varsa Google
+   Alışveriş eşleşmesi için ürün bilgisine eklenir (ürüne ve seçeneğe
+   "Barkod" alanı gerekir: panel, veri ve veritabanı değişikliği).
 
 ## Ürün Seçici ve arama — en son yeniden tasarlanacak
 
