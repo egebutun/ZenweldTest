@@ -15,8 +15,9 @@ güncellenir; tek ve güncel kaynak budur.
   SEO işi ilerledikçe güncellenir.
 - **Kaynaklar:** 17 site incelemesi, Google arama önerileri (6.613 sorgu →
   7.701 terim), Google Ads Anahtar Kelime Planlayıcı (7.236 terim;
-  Türkiye, Kasım 2025 – Ekim 2026), 6 rakip sitenin Planlayıcı listesi
-  (2.989 terim) ve 7 Google Trends karşılaştırması.
+  Türkiye, Kasım 2025 – Ekim 2026), 6 sitenin (5 rakip ve eski
+  zenweld.com) Planlayıcı listesi (2.989 terim) ve 5 Google Trends
+  karşılaştırması (ve 2 il dağılımı).
 - **Sitenin teknik SEO'su** (site haritası, canonical, noindex, yapısal
   veri, eski link yönlendirmesi) nasıl çalışır:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md) › 23,
@@ -26,7 +27,9 @@ güncellenir; tek ve güncel kaynak budur.
   [16. bölümünde](#16-seo-yol-haritası).
 - **Bu çalışmadan çıkan kararlar:** K-118 ("Elektrot" ve "Plazma Kesim"
   yazımı), K-119 (garanti 12 ay), K-120 (eski linkler sunucuda 301),
-  K-121 (eski zenweld.com adreslerinin eşleştirmesi).
+  K-121 (eski zenweld.com adreslerinin eşleştirmesi), K-123 (Google'a
+  kargo, iade, yıldız ve blog bilgisi), K-124 (uzun listelerin
+  sayfalanması).
 
 ---
 
@@ -310,7 +313,7 @@ sıralıdır (Planlayıcı, Türkiye).
 | alüminyum kaynak makinesi | AC/DC argon, alüminyum kaynak | TIG Argon kategorisi, AC/DC ürünleri | 1.000–10.000 |
 | plazma kesim makinesi | plazma kesme makinesi, CNC plazma, el plazması | Plazma Kesim kategorisi | 1.000–10.000 |
 | lazer markalama makinesi | lazer markalama, fiber / UV lazer markalama | Lazer Markalama | 1.000–10.000 |
-| zenweld | zenweld kaynak makinesi, eski model adları | Ana sayfa, Hakkımızda | 1.000–10.000 |
+| zenweld | zenweld kaynak makinesi, eski model adları | Ana sayfa (Hakkımızda'da yan terim) | 1.000–10.000 |
 | kaynak maskesi | otomatik kararan kaynak maskesi, kaynak maskesi fiyat, colormatik | Kaynak Maskeleri | 1.000–10.000 |
 | kaynak eldiveni | kaynakçı eldiveni, deri, argon eldiveni | Kaynak Eldivenleri | 1.000–10.000 |
 | kaynak teli | gazsız gazaltı kaynak teli, alüminyum kaynak teli, SG2 | MIG Telleri grubu | 1.000–10.000 |
@@ -345,15 +348,21 @@ sekmesinden girilir.
 | Lazer Makineleri (grup) | Lazer Makineleri: Kaynak, Temizleme, Markalama \| ZENWELD | El tipi lazer kaynak, lazer pas ve boya temizleme, fiber ve UV lazer markalama makineleri. Kurulum, eğitim ve servis. |
 | Force Serisi | Force Serisi Çanta Tipi Kaynak Makineleri \| ZENWELD | ForceMIG, ForceTIG, ForceArc ve ForceCut: 220 V prizde çalışan hafif çanta tipi kaynak ve plazma kesim makineleri. |
 
+Ana sayfa başlığı önerisi K-118'e bağlıdır: bugünkü "… Plazma Kesme
+Sistemleri" başlığı sahibinin tercihidir; değişmesi sahibine sorulur.
+
 **Sayfada geçmesi gerekenler:**
 
 - **Ana sayfa:** gazaltı, argon, elektrot, lazer kaynak, plazma (her biri
   kategori bağlantısı olarak); "Türk markası", "İzmir fabrikası"; taksit,
   yetkili bayi ve servis.
-- **Bölüm ve grup sayfaları:** Tanıtım Metni'nde 100–150 kelime; her
-  kategoriye ana terimiyle bağlantı. Kaynak Makineleri grubunda "hangi
-  kaynak makinesini seçmeliyim" kısa rehberi (gazaltı / argon / elektrot
-  farkı) ve Ürün Seçici'ye bağlantı.
+- **Grup sayfaları:** Tanıtım Metni'nde 100–150 kelime; her kategoriye
+  ana terimiyle bağlantı. Kaynak Makineleri grubunda "hangi kaynak
+  makinesini seçmeliyim" kısa rehberi (gazaltı / argon / elektrot farkı)
+  ve Ürün Seçici'ye bağlantı. Bugün metinlerde bağlantı yazılamıyor
+  (önce kod işi; [YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO › A8).
+- **Bölüm sayfaları:** Tanıtım Metni alanı yok; görünen açıklama kodda
+  (`SECTION_DESCRIPTIONS`). Bölüm metni için kod işi gerekir (A4).
 - **Force Serisi:** "çanta tipi", "220 volt", "taşınabilir", her modelin
   amperi.
 
@@ -571,6 +580,11 @@ metinde.
   torcu / ucu") ifadesi açıklamanın ilk paragrafında bir kez geçer
   ([2. bölüm](#2-temel-kurallar); [YAPILACAKLAR.md](YAPILACAKLAR.md) ›
   Ürün içeriği, madde 7).
+- **Bugün uzun açıklama sayfada düz metin** ve yalnızca Açıklama sekmesine
+  tıklanınca basılıyor (sayfanın HTML'inde yok; yalnızca yapısal veride
+  gidiyor). Ara başlık, madde, bağlantı ve yukarıdaki kuralların sayfaya
+  yansıması için önce kod işi gerekir ([YAPILACAKLAR.md](YAPILACAKLAR.md)
+  › SEO › A2).
 
 **Örnek (gerçek veriden, ForceArc 200):**
 
@@ -610,8 +624,9 @@ verisi henüz gelmedi.
 
 **Görseller:** dosya adları ürün linkiyle aynı (ör.
 `ultimate-405-thp-su-sogutmali.webp`) ve alt metin ürün adı; bu doğru. Ek
-fotoğraflar gelince alt metne görünümü eklenir: "Ultimate 405 MTS — tel
-sürme ünitesi ve ara paket".
+fotoğraflar gelince alt metne görünümü eklenmeli: "Ultimate 405 MTS — tel
+sürme ünitesi ve ara paket". Panelde alt metin alanı yok (alt metin
+yüklenirken ürün adından verilir); önce kod işi gerekir.
 
 ## 11. Hakkımızda
 
@@ -653,7 +668,10 @@ aksesuar ve teller eklenene kadar güncellenmeli.
 
 ## 12. Diğer sayfalar
 
-Hepsi panelde İçerik › Sayfa SEO'dan girilir. Google "zenweld" adını
+Sayfa başlığı ve Google açıklaması panelde İçerik › Sayfa SEO'dan
+girilir. Sayfadaki metin Hakkımızda, SSS, belge sayfaları ve yasal
+metinlerde panelden (K-45), diğer sabit sayfalarda kodda
+(`packages/i18n/src/tr.ts`) değişir. Google "zenweld" adını
 şehirlerle (Ankara, Bursa, Konya, İzmir, İstanbul) ve "bayileri" ile
 öneriyor; bayi ve satış temsilcisi sayfalarında il adları metin olarak
 geçmeli.
@@ -676,7 +694,9 @@ geçmeli.
 **İç bağlantılar:** ürün açıklamaları uyumlu torç, sarf ve tel
 kategorisine; kategori metinleri ilgili blog yazısına; blog yazıları
 kategori ve ürüne bağlanır. Bağlantı metni hedef sayfanın ana terimidir
-("buraya tıklayın" değil, "argon kaynak makineleri").
+("buraya tıklayın" değil, "argon kaynak makineleri"). Bugün Tanıtım
+Metni, blog ve ürün açıklamasında bağlantı yazılamıyor; önce kod işi
+gerekir ([YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO › A8).
 
 ## 13. Blog ve SSS konuları
 
@@ -898,7 +918,7 @@ Google'da üst sıralara çıkmak için yapılacakların tam listesi. İşaretli
 maddeler bugün hazır; işaretsizler sırayla yapılıp işaretlenir. Her
 maddenin sonunda kimin yapacağı yazar: **Panel** (sahibi, yönetim
 panelinden), **Kod** (sahibinin onayıyla, kod değişikliği), **Sahibi**
-(site dışı işler). Kod işlerinin sırası ve numarası (B1–B7, A1–A8, C1–C4):
+(site dışı işler). SEO işlerinin sırası ve numarası (B1–B7, A1–A8, C1–C6):
 [YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO — anahtar kelime çalışmasından
 kalan işler.
 
@@ -940,10 +960,11 @@ en büyük içeriğin görünme süresi (LCP) anasayfada **3,0 sn**, kategoride
 üzerinde ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Ölçüm).
 
 - [x] Mobil uyum: ekran genişlikleri tarayıcı testlerinde deneniyor.
-- [x] Ürün fotoğrafları WebP biçiminde (en büyüğü yaklaşık 43 KB).
+- [x] Ürün fotoğrafları WebP biçiminde (en büyüğü yaklaşık 43 KB). 15
+      üründe gerçek fotoğraf yok (kategori çizimi ya da geçici fotoğraf).
 - [ ] Anasayfanın LCP'sini 2,5 sn'nin altına indirmek; başlıca nedenler
       görseller ve her sayfada inen ~300 KB JavaScript (B5). **Kod**
-- [ ] Görsel optimizasyonu (A5): sahibinin kararıyla zorunlu değil,
+- [ ] Görsel optimizasyonu ([YAPILACAKLAR.md](YAPILACAKLAR.md#görsel-optimizasyonu--önerilen-zorunlu-değil)): sahibinin kararıyla zorunlu değil,
       ertelendi (KARARLAR K-102); hız için önerilir. **Karar sahibinde**
 - [ ] Canlı sunucuda sıkıştırma ve önbellek ayarları; ölçümün canlıda
       tekrarı. **Sunucu**
@@ -952,10 +973,14 @@ en büyük içeriğin görünme süresi (LCP) anasayfada **3,0 sn**, kategoride
 
 ### 3. Sayfa içi SEO
 
-- [x] Sayfa başlığı, açıklama ve link alanları panelde: ürün, kategori,
-      grup, blog, haber, etkinlik ve sabit sayfalar (KARARLAR K-55).
-- [x] Ürün adı model + tür (KARARLAR K-71); görsel dosya adı ve alt metni
-      ürün adı.
+- [x] Altyapı: sayfa başlığı, açıklama ve link alanları panelde var
+      (ürün, kategori, grup, blog, haber, etkinlik ve sabit sayfalar;
+      KARARLAR K-55). İçerik hazır değil: bugün hiçbir kayıtta SEO başlığı
+      ya da açıklaması girili değil; doldurulmaları sayfa sayfa
+      düzenlemede (A2–A6).
+- [x] Altyapı: ürün adları model + tür kuralıyla yazılı (KARARLAR K-71);
+      görsel dosya adı ürün linki, alt metni ürün adından otomatik. Ad
+      kalıbının son hali (halk arası ad önde mi, amper) A1'de (C2).
 - [x] Konum satırı (Ekipmanlar › Kaynak Makineleri › …) her katalog
       sayfasında.
 - [x] "Elektrot" ve "Plazma Kesim" yazımı ürün ve kategori adlarında
@@ -963,29 +988,36 @@ en büyük içeriğin görünme süresi (LCP) anasayfada **3,0 sn**, kategoride
 - [ ] **Sayfa sayfa düzenleme** (her sayfa, anahtar kelime haritasındaki
       [6. bölüm](#6-anahtar-kelime-haritası) hedef terimine göre aynı
       kontrol listesiyle: ad ve H1, link, meta title, meta description,
-      H2/H3'lü metin, ürünlerde teknik özellik etiketleri ve öne çıkan
+      ara başlıklı metin, ürünlerde teknik özellik etiketleri ve öne çıkan
       bilgiler, görsel alt metni, iç bağlantılar, yapısal veri). Sıra:
       - Ad, başlık ve link kalıbı kararı: ürün ve kategori adlarında halk
         arası ad mı önde ("Argon (TIG)" / bugünkü "TIG Argon"), ürün
         adında amper olsun mu, linkler adla birlikte değişsin mi; linkinde
         eski yazım kalan 5 sayfa ("elektrod", "kesme") bu adımda düzelir
         (A1, C2). **Sahibi**
-      - Ürün sayfaları; bugün yalnızca Ekipmanlar'da 40 makine (A2).
-        **Panel / Kod**, metinler gerçek bilgiler gelince
+      - Ürün sayfaları; bugün yalnızca Ekipmanlar'da 40 makine (A2). Önce
+        kod işi: uzun açıklama bugün düz metin ve Açıklama sekmesine
+        tıklanmadan sayfanın HTML'inde yok. **Kod**, sonra **Panel**;
+        metinler gerçek bilgiler gelince
       - 50 kategori ve 12 grup; önce lazer ve makine kategorileri
         ([7.](#7-ana-sayfa-bölüm-ve-grup-sayfaları)–[9. bölüm](#9-kategoriler);
         A3). **Panel**
       - Ana sayfa, bölümler, Force (A4) ve sabit sayfalar (A5). **Panel**
+        (başlık ve açıklama; Hakkımızda, SSS, belge ve yasal metinler) /
+        **Kod** (bölüm, ana sayfa, Force ve diğer sabit sayfaların metni)
 - [ ] İç bağlantılar: ürün → uyumlu torç, sarf ve tel; kategori → blog;
       blog → kategori ve ürün. Bağlantı metni hedef sayfanın ana terimi
-      (A8). **Panel**
-- [ ] Yeni fotoğraflarda alt metne görünümü eklemek ("… — ön panel").
+      (A8). **Kod** (metin biçimlendiricisine bağlantı desteği), sonra
       **Panel**
+- [ ] Yeni fotoğraflarda alt metne görünümü eklemek ("… — ön panel").
+      **Kod** (panelde görsel alt metni alanı yok; alt metin ürün adından
+      otomatik), sonra **Panel**
 - [ ] Sayfa içi teknik denetim: her sayfada tek H1 (ana başlık) ve içinde
       ana terim; ara başlık sırası (H2, H3); boş ya da tekrar eden sayfa
       başlığı (meta title) ve Google açıklaması (meta description) olmaması;
-      görsel alt metinleri, paylaşım önizlemesi, canonical. Tarayıcı testine
-      eklenir (B7). **Kod**
+      görsel alt metinleri, paylaşım önizlemesi, canonical. Biçimli
+      metinde bugün yalnızca H2 (`## `) yazılabilir, H3 yok. Tarayıcı
+      testine eklenir (B7). **Kod**
 
 ### 4. İçerik
 
@@ -1000,8 +1032,8 @@ En büyük etken: Google, aramaya en iyi cevabı veren sayfayı üste koyar.
       A7). **Sahibi**
 - [ ] Sitedeki bütün yazıların denetimi: blog, haber, etkinlik, SSS,
       Hakkımızda, belge sayfaları, yasal metinler; başlık, özet, metin, SEO
-      alanları, alt metin, iç bağlantı. Bilinen: iki İmatech etkinliğinde
-      aynı paragraf, etkinlik galerilerinde geçici stok fotoğraflar (A6).
+      alanları, alt metin, iç bağlantı. Bilinen: Konya Makine 2024 ve
+      İmatech 2024 etkinliklerinde aynı paragraf, etkinlik galerilerinde geçici stok fotoğraflar (A6).
       **Panel**
 - [ ] SSS'deki yer tutucu cevaplar (şebeke, jeneratör) ve "Zenweld hangi
       ülkenin markası?" sorusu. **Panel**
@@ -1034,7 +1066,9 @@ gerçek olup olmadığına bakar.
 Google sonuçlarında fiyat, stok, yıldız ve soru-cevap görünmesini sağlar;
 tıklanma oranını artırır.
 
-- [x] Ürün: fiyat, stok, marka, teknik özellikler.
+- [x] Ürün yapısal verisi (altyapı): fiyat, stok, marka, teknik
+      özellikler. Bugün fiyatlar temsili, 31 üründe açıklama ve teknik
+      özellikler örnek; gerçek değerler A2'de.
 - [x] Konum satırı, kuruluş, SSS, haber ve etkinlik verileri.
 - [x] Blog yazılarına makale verisi (`BlogPosting`) (B3; K-123, 19 Kasım
       2026).
@@ -1048,7 +1082,8 @@ tıklanma oranını artırır.
       bekleniyor (C5). **Sahibi**, sonra **Kod**
 - [x] Uzun açıklama ve öne çıkanlar, seçeneklerin kendi kodu, fiyatı ve
       stoğu (`ProductGroup`), site adı (`WebSite`), etkinliklerde ülke kodu,
-      "düzenleyen" düzeltmesi ve stok fotoğrafın gitmemesi (K-123).
+      "düzenleyen" düzeltmesi ve stok fotoğrafın gitmemesi (K-123). Altyapı;
+      açıklamanın içeriği A2'de.
 - [ ] Barkod (GTIN): ürünlerin barkodu varsa eklenecek (C6). **Sahibi**,
       sonra **Kod**
 - [ ] Search Console › Geliştirmeler raporunda hata kontrolü. **Sahibi**
@@ -1078,7 +1113,7 @@ sinyal.
 
 - [ ] Google İşletme Profili: İstanbul merkez ve İzmir fabrika
       ([17. bölüm](#17-googleın-ücretsiz-araçları-ve-analizin-tekrarlanması)
-      › 4). İstanbul ve İzmir profillerinde yönetici yetkisi alındı;
+      › 5). İstanbul ve İzmir profillerinde yönetici yetkisi alındı;
       bilgiler tamamlanacak. **Sahibi**
 - [ ] Şirket adı, adres ve telefon her yerde aynı yazılmalı (site, profil,
       bayi listeleri, pazar yerleri). **Sahibi**

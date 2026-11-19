@@ -30,6 +30,7 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Kuponlar](#kuponlar) · [İade talebi](#i̇ade-talebi) ·
      [Müşterinin siparişi iptal etmesi](#müşterinin-siparişi-iptal-etmesi--ileride-düşünülecek) ·
      [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) ·
+     [E-posta ve posta kutusu](#e-posta-ve-posta-kutusu--panel--e-posta) ·
      [Bayi ve satıcı stokları](#bayi-ve-satıcı-stokları) ·
      [Bağlantıların durumu panelde](#bağlantıların-durumu-panelde--öneri)
    - **Üyelik ve yasal:** [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) ·
@@ -55,14 +56,14 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Zenweld – bayi B2B](#zenweld--bayi-b2b-uygulaması) ·
      [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) ·
      [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) ·
-     [Erişilebilirlik (A4)](#erişilebilirlik-a4--önerilen-zorunlu-değil) ·
-     [Görseller (A5)](#görseller-a5--önerilen-zorunlu-değil)
+     [Erişilebilirlik](#erişilebilirlik--önerilen-zorunlu-değil) ·
+     [Görsel optimizasyonu](#görsel-optimizasyonu--önerilen-zorunlu-değil)
 
 ---
 
 ## 1. Canlıya giden yol
 
-Son güncelleme: 2026-11-06.
+Son güncelleme: 2026-11-19.
 
 **Hedef:** Site ve panel kendi sunucumuzda çalışır (K-92); bütün veri
 sunucudaki PostgreSQL'de durur; stok SAP'tan okunur, siparişler SAP'a satış
@@ -82,7 +83,7 @@ farkları: [README](../README.md) › Demo ve veritabanı modu.
 
 | # | İş | Kimi bekliyor | Ayrıntı |
 |---|---|---|---|
-| 1 | **Canlı sunucu ve veritabanı:** sunucu, HTTPS, PostgreSQL 18 (canlı ve deneme), yedek, izleme, deneme ortamı; tabloların kurulması ve verinin yüklenmesi (`db:migrate`, `db:yukle canli`), ilk yönetici (`yonetici:olustur`) | BT | [Canlı sunucu](#canlı-sunucu-ve-vercel-temizliği), [Veriyi canlıya taşıma](#veriyi-canlıya-taşıma) |
+| 1 | **Canlı sunucu ve veritabanı:** sunucu, HTTPS, PostgreSQL 18 (canlı ve deneme), yedek, izleme, deneme ortamı; tabloların kurulması ve verinin yüklenmesi (`db:migrate`, `db:yukle canli`), ilk yönetici (`yonetici:olustur`); `www` ve `http` adreslerinin `https://zenweld.com`'a 301'i ve canlıya geçiş günü SEO adımları ([SEO.md](SEO.md) › 16 › 10) | BT | [Canlı sunucu](#canlı-sunucu-ve-vercel-temizliği), [Veriyi canlıya taşıma](#veriyi-canlıya-taşıma) |
 | 2 | **E-posta servisi ve posta kutusu:** Resend hesabı, `zenweld.com` DNS doğrulaması, anahtar (gönderici varsayılanı info@zenweld.com; panelden türe göre değişir). Gelen yanıtlar için info@zenweld.com'un posta sağlayıcısı ve bağlantı bilgileri; zamanlayıcı. Bugün hiçbir e-posta gitmiyor ([SUNUCU.md](SUNUCU.md) › 9) | BT | [Online satış](#online-satış--canlıya-çıkmadan-önce) 6, [E-posta ve posta kutusu](#e-posta-ve-posta-kutusu--panel--e-posta) |
 | 3 | **Müşteriye e-postalar:** sipariş onayı ve sözleşme kopyası (yasal zorunlu), havale hatırlatma, kargo bildirimi; teklif, servis, garanti ve iade durum bildirimleri | Sahibi (hangi e-postalar ve metinleri), sonra kod | [Online satış](#online-satış--canlıya-çıkmadan-önce) 5, [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 | 4 | **Gerçek ödeme:** sanal POS ya da ödeme kuruluşu, 3D Secure; kart bilgisi sunucumuza gelmez. Ödeme sağlayıcısı parçası hazır (`packages/db/src/payment.ts`, K-108): kuruluşun parçası eklenir, 3D Secure için ödeme iki adıma ayrılır, ödeme sayfası kart programını sunucudan alır | Ödeme kuruluşu anlaşması | [Online satış](#online-satış--canlıya-çıkmadan-önce) 1, [SUNUCU.md](SUNUCU.md) › Kartla ödeme |
@@ -106,20 +107,20 @@ geçişi bittikten sonra (bitti) sahibiyle tek tek konuşulup düzenlenecek. O
 zamana kadar bugünkü düzen kalır; bu konularda kendiliğinden ayar ya da
 tasarım yapılmaz. Bir adımda bu konulardan biri gerekirse o adımın ihtiyacı
 kadarı, ileride gelecek bağlantılara (API) açık ve genişletilebilir yapılır
-(K-107; ör. 5.3'te kargo takip bağlantısı).
+(K-107; ör. kargo takip bağlantısı, K-105).
 
 | Konu | Bugün | Ayrıntılı notlar |
 |---|---|---|
 | **Fotoğraflar** (boyut, sıkıştırma, depolama, hız) | Örnek görseller sitenin klasöründe; veritabanı modunda panelde görsel dosya deposu ayarlıysa yüklenir, değilse adres girilir (K-101, K-108); iyileştirme sahibi söyleyince (K-102) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar), [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler), [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) |
 | **Belgeler** (MSDS, sertifikalar, rehber) | Demo modunda dosya tarayıcıda; veritabanı modunda dosya deposu ayarlıysa yüklenir, değilse adres girilir (K-104, K-108) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
-| **SEO** | Ürün, kategori, grup, blog, haber, etkinlik ve sabit sayfalarda SEO alanları; eski adres yönlendirmesi (tarayıcıda); site haritası | [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) |
+| **SEO** | Ürün, kategori, grup, blog, haber, etkinlik ve sabit sayfalarda SEO alanları; eski linkler veritabanı modunda sunucuda 301 (K-120), demo modunda tarayıcıda; eski zenweld.com'un 85 adresi 301 (K-121); site haritası, yapısal veri (K-123), sayfalama (K-124) | [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme), [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) |
 | **Kargo** (ücret, firmalar, takip, entegrasyon) | Sabit ücret ve ücretsiz kargo sınırı, firma listesi, takip numarası elle girilir; firmaya takip adresi girilince müşteri ve panelde takip bağlantısı (K-105); kargo firması API'si yok | [Online satış](#online-satış--canlıya-çıkmadan-önce) 8–9 |
 | **İade** | Üye (bireysel ya da kurumsal) 14 gün içinde talep açar; panelde durum; para iadesi elle | [İade talebi](#i̇ade-talebi) 2–4 |
 | **SAP ayarları ve stok kontrolü** | Depo stoğu deneme dosyasından 15 dakikada bir okunur; stokta olmayan ürün sepete eklenmez; bayi stoğunda geçerlilik süresi | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap), [Bayi ve satıcı stokları](#bayi-ve-satıcı-stokları) |
 | **SAP'a sipariş kaydı** | Veritabanı modunda aktarım sırası hazır (K-108): ödemesi kesinleşen sipariş sıraya girer, iş gönderir, başarısızsa yeniden dener, panelde durum ve **Yeniden sıraya al**; SAP yerine deneme dosyasına yazıyor | [1](#1-canlıya-giden-yol) › 6, [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap) |
 | **API ayarları** (SAP, ödeme, e-posta, kargo bağlantıları) | Bağlantı bilgileri yalnızca sunucuda ortam değişkeni; panelde yok (güvenlik kuralı) | [SUNUCU.md](SUNUCU.md), [Bağlantıların durumu](#bağlantıların-durumu-panelde--öneri) |
 | **Banka ve ödeme ayarları** | Mağaza Ayarları'nda POS tablosu, taksitler ve havale hesapları; ödeme temsili | [Online satış](#online-satış--canlıya-çıkmadan-önce) 1, 9; [SUNUCU.md](SUNUCU.md) › Kartla ödeme |
-| **E-postalar** (gönderen, metinler, müşteri bildirimleri) | Alıcılar panelde (K-104); servis kurulmadı, hiçbir e-posta gitmiyor | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 1, [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
+| **E-postalar** (gönderen, metinler, müşteri bildirimleri) | Gönderici ve alıcılar Panel › E-posta › Adresler'de (K-116); servis kurulmadı, hiçbir e-posta gitmiyor | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 1, [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 
 ---
 
@@ -331,7 +332,7 @@ kişiye verilir; o kişi doğrudan sunucuya girer
       kullanılacaksa onay metni. [Karar]
 - [ ] Ticari ileti (bülten) için İYS kaydı. [Karar]
 - [ ] AB'ye satış yapılacak mı? (Erişilebilirlik zorunluluğu buna göre
-      değişebilir; [Erişilebilirlik](#erişilebilirlik-a4--önerilen-zorunlu-değil).)
+      değişebilir; [Erişilebilirlik](#erişilebilirlik--önerilen-zorunlu-değil).)
       [Karar]
 
 ### Satış ve müşteri hizmetleri (şirket içi süreçler)
@@ -387,9 +388,9 @@ olanlar ilgili bölüme bağlanmıştır.
 | Kargo firması API'si (etiket, durum) | Kargo firması ve entegrasyon kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 8 |
 | Müşterinin siparişini sitede iptal etmesi | İleride düşünülecek | [Müşterinin siparişi iptal etmesi](#müşterinin-siparişi-iptal-etmesi--ileride-düşünülecek) |
 | KVKK başvuru formu (2b) | İleride düşünülecek; hesap silme için 2a (Hesabımı Sil) seçildi | [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) 10 |
-| Erişilebilirlik (A4) | Sahibin sıralaması; zorunlu değil | [Erişilebilirlik](#erişilebilirlik-a4--önerilen-zorunlu-değil) |
-| Görsel optimizasyonu (A5) | Sahibin sıralaması; zorunlu değil. Görseller sahibi söyleyince; dosya deposu, gerçek fotoğraflar ve canlıya hazırlıkta hatırlatılır (KARARLAR K-102) | [Görseller](#görseller-a5--önerilen-zorunlu-değil) |
-| Ekipmanların eksik fotoğrafları (19 ürün ve 4 soğutma hali) ve diğer bölümlerin ürün fotoğrafları | Sahibinin bulup göndermesi | [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) |
+| Erişilebilirlik | Sahibin sıralaması; zorunlu değil | [Erişilebilirlik](#erişilebilirlik--önerilen-zorunlu-değil) |
+| Görsel optimizasyonu | Sahibin sıralaması; zorunlu değil. Görseller sahibi söyleyince; dosya deposu, gerçek fotoğraflar ve canlıya hazırlıkta hatırlatılır (KARARLAR K-102) | [Görsel optimizasyonu](#görsel-optimizasyonu--önerilen-zorunlu-değil) |
+| Ekipmanların eksik fotoğrafları (15 ürün ve 4 ürünün bir soğutma hali) ve diğer bölümlerin ürün fotoğrafları | Sahibinin bulup göndermesi | [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) |
 | Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi (Force serisi 9 ürün geldi) | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 2 |
 | Geçici ürün kodlarının (`ZW-GECICI-…`) SAP kodlarıyla değiştirilmesi | SAP kodlarının açılması | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 6 |
 | Ekipmanların gerçek fiyatları ve seçenek fiyat farkları | Sahibinin göndermesi | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 3 |
@@ -397,9 +398,9 @@ olanlar ilgili bölüme bağlanmıştır.
 | Jasic lazer kaynak ürünleri (2026-10-27 listesindeki 6 model; belki çok sonra) | Sahibinin seçenekleri ayrıntılı açıklaması | [Jasic lazer kaynak ürünleri](#jasic-lazer-kaynak-ürünleri--sahibi-ayrıntılı-açıklayacak) |
 | Teklif, servis, garanti ve iade durumlarında müşteriye e-posta | Hangi bildirimlerin gideceği ve metinleri | [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 | Yöneticinin kendi şifresini panelden değiştirmesi | Şimdi yapılmıyor (K-105) | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 2 |
-| SEO: anti-spatter satılacak mı (eski site yönlendirmesi), kategori adı kalıbı, ürün gamı fırsatları | Sahibinin kararı | [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) C |
+| SEO: anti-spatter (C1), ad, başlık ve link kalıbı (C2), ürün gamı fırsatları (C3), Search Console doğrulaması (C4), teslim süresi ve iade kargo ücreti (C5), barkod (C6) | Sahibinin kararı ya da bilgisi; C4 için BT | [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) C |
 | Sitenin tasarımı | Sahibi yapacak | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
-| Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler, Force Serisi sayfası | Sahibinin göndermesi; Force sayfası ileride | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
+| Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler | Sahibinin göndermesi | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
 | Görsel düzenleyici (önizleme, sürükle, ölçekle) ve sayfa görsellerinin panelden değişmesi | Tasarımın bitmesi (fotoğrafların yeri ve sayısı kesinleşince) | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) 5 |
 
 ---
@@ -421,8 +422,9 @@ kendi sunucumuzda ve kendi alan adımızla yayınlanır. Demo şu an Vercel'de
   `NEXT_PUBLIC_SITE_URL` = `https://zenweld.com` tanımlanır; site bu alan
   adında kendiliğinden arama motorlarına açılır. Alan adı `zenweld.com`
   değilse `src/lib/seo.ts` içindeki `INDEXABLE_HOSTS` güncellenmeli.
-- **Görseller:** Next'in görsel küçültmesi sunucuda çalışır (`sharp`);
-  sunucuda kurulu olmalı.
+- **Görseller:** Bugün Next'in görsel küçültmesi kullanılmıyor
+  ([Görsel optimizasyonu](#görsel-optimizasyonu--önerilen-zorunlu-değil)).
+  Yapılırsa sunucuda `sharp` kurulu olmalı.
 - **Önbellek:** Tek sunucuda Next'in kendi önbelleği (diskte) yeterli.
   Birden fazla sunucu çalışırsa önbellek ortak bir yerde (ör. Redis)
   tutulmalı; yoksa yenileme yalnızca isteği alan sunucuda olur.
@@ -537,7 +539,7 @@ Boyutlar sıkıştırılmış (ağdan inen) boyuttur. Ölçüm bilgisayarda yap�
   Gerçek üye ve sipariş verisi hiçbir zaman tarayıcı paketine girmemeli.
   Gerisi sitenin kendisi (Next.js ve React, harita, arama, simgeler).
 - Anasayfa ve sepette en büyük içeriğin geç görünmesinin başlıca nedeni
-  görseller ve JavaScript; görsel küçültme (A5) ve canlı sunucuda
+  görseller ve JavaScript; görsel küçültme ([Görsel optimizasyonu](#görsel-optimizasyonu--önerilen-zorunlu-değil)) ve canlı sunucuda
   sıkıştırma/önbellek ayarları canlıdan önce ele alınmalı.
 
 ## Güvenlik başlıkları — canlıya çıkarken
@@ -599,8 +601,7 @@ formda botlar için görünmez bir tuzak alanı var
 3. **Bildirim ucu:** Kayıt tutan formlar (teklif, servis talebi, garanti,
    yorum, üyelik, sipariş, iade) veritabanı modunda sunucuda veritabanına
    yazılıyor ve e-posta bu kayıttan gidiyor. Kalan: canlıda `/api/bildirim`
-   yalnızca kaydı olmayan türü (iletişim) ve üyelik
-   bildirimini kabul etmeli; bugün bu uca sahte bir bildirim (ör. "yeni
+   yalnızca iletişim formunu ve üyelik bildirimini kabul etmeli; bugün bu uca sahte bir bildirim (ör. "yeni
    sipariş") de gönderilebilir. Sipariş e-postası ödeme kuruluşunun
    onayından sonra gönderilmeli.
 4. Veritabanı modunda formlar veritabanına yazıldığı için 1 ve 2 canlıdan
@@ -611,13 +612,6 @@ formda botlar için görünmez bir tuzak alanı var
 ## Next.js 16
 
 2 Kasım 2026'da Next.js 16.4.4 ve React 19.3'e geçildi (KARARLAR K-87).
-
-- **Güvenlik yaması (2026-11-17):** Next.js 16.4.4 → 16.4.6
-  (`eslint-config-next` da). 16.2.0–16.4.4 arasındaki orta düzey iki açık
-  ('use cache' işlevlerinde önbellekten bilgi sızması; GHSA-mfr8-8qww-v76h,
-  GHSA-vc7v-qv4w-wrv8) kapandı. Sitede 'use cache' yok (veritabanı
-  okumaları `unstable_cache` ile önbelleğe alınıyor); büyük ihtimalle
-  etkilenmiyordu, yine de güncellendi. `npm audit --omit=dev`: 0 açık.
 
 - **Güvenlik taraması (2026-11-02):** `npm audit --omit=dev` (siteye giden
   kütüphaneler) 0 açık. Tamamı 20 orta düzey uyarı, hepsi geliştirme
@@ -941,7 +935,7 @@ netleşmeli:
       gönderir, başvuru info@zenweld.com'a gider, gereğini yönetici yapar.
     - **2a'dan farkı:** Silmenin yanında KVKK'daki diğer hakları da (verilerini
       öğrenme, düzeltme, itiraz) kapsar; neyin silinip neyin saklanacağına
-      (1–8) bir insan başvuru başvuru karar verir. 2a ile birlikte
+      (1–8) bir insan başvuru başına karar verir. 2a ile birlikte
       kullanılabilir; birbirinin yerine geçmez.
     - **Dikkat:** Başvurulara en geç 30 gün içinde yanıt verilmeli. Form
       yapılana kadar başvuru yolu (e-posta ya da yazılı) KVKK Aydınlatma
@@ -966,7 +960,7 @@ panelden yazma ve yanıtlama, posta kutusundan gelen yanıtlar. Kalanlar:
    yanıt panele gelmez. Gerekirse Resend'in gönderdiği Message-ID
    okunup saklanır. [Kod]
 3. **E-posta metinleri:** Müşteriye ve servislere gidecek e-postaların
-   metinleri sahibiyle yazılacak (servis talebi akışı sıradaki adımda).
+   metinleri taslaktır; sahibiyle yazılacak ([Servis talebini en yakın yetkili servise yönlendirme](#servis-talebini-en-yakın-yetkili-servise-yönlendirme) 1).
 4. **Ekler:** Gelen e-postanın ekleri bugün posta kutusunda kalır; panelde
    yalnızca adları görünür. İstenirse ekler dosya deposuna alınır;
    panelden ek gönderme de istenirse eklenir. [Karar]
@@ -1034,8 +1028,9 @@ K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler �
    (öneri). Diğer ekipmanlarda kısa ve uzun açıklama (seçeneklerden
    üretilen bir cümle ve lorem ipsum), teknik özellikler (yalnızca Marka,
    Ürün Kodu, Ürün Türü), kutu içeriği (ana ünite, torç, kullanım kılavuzu),
-   öne çıkan özellikler (seçenekler ve garanti) ve kullanım kılavuzu
-   bağlantısı (`#`, hiçbir yere gitmiyor). Amper, devrede kalma, ağırlık gibi
+   öne çıkan özellikler (seçenekler ve garanti). Kullanım kılavuzu
+   bağlantısı Force serisi dahil 40 ürünün hepsinde `#` (hiçbir yere
+   gitmiyor). Amper, devrede kalma, ağırlık gibi
    teknik değerler bilerek uydurulmadı; gerçekleri girilmeli.
 3. **Fiyatlar (temsili):** Ekipmanların hepsi 999.999 ₺ + KDV (KDV dahil
    1.199.998,80 ₺); seçenekler arasında fiyat farkı yok. Örnek siparişler,
@@ -1068,6 +1063,9 @@ K-72). Aşağıdakiler gerçekleri gelince değiştirilmeli: panelde Ürünler �
    - Ürün adına, sayfa başlığına ve teknik özellikler tablosuna
      yazılmaz; bir sayfada bir kez yeter.
    - Panelde Ürünler › ürün › Açıklama; Kategoriler › Tanıtım Metni.
+   - Ürün açıklamasındaki ifadenin sayfada görünmesi için önce
+     [SEO](#seo--anahtar-kelime-çalışmasından-kalan-işler) A2'deki kod işi
+     gerekir (açıklama bugün sekme açılmadan sayfanın HTML'inde yok).
 
 ## Ürün fotoğrafları — eksikler
 
@@ -1201,7 +1199,7 @@ kesinleşince yeniden kurulur (KARARLAR K-102). Kalanlar:
    gerçek ürün/uygulama fotoğrafları gelince panelden (Ürünler → Kategoriler →
    Kart Görseli) değiştirilmeli.
 2. Grup ve kategorilerin tanıtım metinleri (sayfanın altındaki "… Hakkında")
-   ve SEO alanları panelden yazılmalı; şu an hepsi boş.
+   ve SEO alanları bugün boş: [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) A3.
 3. **Lazer Aksesuarları** (Aksesuarlar'ın ilk grubu, KARARLAR K-05 eki): 5
    kategorinin ürünleri sahibinden gelince girilecek; bugün kategoriler
    boş ("Bu kategoriye henüz ürün eklenmedi.").
@@ -1234,10 +1232,10 @@ Force sayfası (`/force`, KARARLAR K-114) bugün çalışıyor; sonra yapılacak
       Bugünkü dört makine görseli sahibinin fotoğraflarından zemini
       kaldırılarak hazırlandı; açılıştaki kaynak ustası Force fuar
       davetiyesindeki karikatürden kesildi (`public/images/force/`). [Karar]
-- [ ] **Teknik değerler:** Makine bölümlerindeki rakamlar ürünlerin bugünkü
-      teknik özelliklerinden yazıldı; gerçek değerler gelince yazılar da
-      güncellenir. Tabloda ForceArc 400 CEL'in teknik özellikleri yok
-      (kolonu "—"; bkz. [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler)).
+- [ ] **Teknik değerler:** Makine bölümlerindeki rakamlar ve Teknik
+      Özellikler tablosu sahibinin Force kataloğundan kodda yazılı
+      (K-114); ürün kayıtlarındaki teknik özellikler ayrıdır. Katalog
+      değişirse kodda güncellenir.
 
 ## Görseller ve yüklenen dosyalar
 
@@ -1272,21 +1270,15 @@ Sayfa SEO ekranı hazır; veritabanı modunda başlık, açıklama ve `keywords`
 tablolardan okunur, panel kaydı hemen görünür (K-88, K-99). Eski linkler
 veritabanı modunda sunucuda 301 ile yönlenir (K-120). Kalanlar:
 
-1. **Site haritası:** Veritabanı modunda ürünler, gruplar, kategoriler,
-   blog, haber ve etkinlikler tablolardan gelir (en geç bir dakika
-   gecikmeyle); linki değişen üründe yalnızca yeni link yer alır. Demo
-   modunda site haritası örnek veriden üretilir, panelde eklenenler girmez.
-2. **Kampanya başlangıç ve bitişinde ürün sayfası yenilenmeli.** Google'a
+1. **Kampanya başlangıç ve bitişinde ürün sayfası yenilenmeli.** Google'a
    giden fiyat (yapısal veri) sayfa üretilirken yazılır. Kampanya belirlenen
    saatte kendiliğinden başlayıp bittiği için o anda kimse kayıt yapmaz;
    sayfa ya kampanyanın başlangıç/bitiş saatinde zamanlanmış bir işle ya da
    saatte bir yenilenmeli. Veritabanı modunda sayfalar 30 saniyede bir
    yeniden hazırlandığı için bu gecikme bir dakikayı geçmez; süre
    uzatılırsa bu iş gerekir.
-3. **Google Search Console:** Canlıya çıkınca alan adı Search Console'a
-   eklenip doğrulanmalı, site haritası (`/sitemap.xml`) bildirilmeli;
-   dizine alma hataları ve eski adreslerin yönlenmesi oradan izlenir
-   (sahibiyle konuşulacak, K-106).
+2. **Google Search Console:** [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler)
+   C4 ve [SEO.md](SEO.md) › 16 › 10'da.
 
 ## SEO — anahtar kelime çalışmasından kalan işler
 
@@ -1305,9 +1297,9 @@ K-124) yapıldı.
 
 1. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
    2,5 sn altı); [Ölçüm](#ölçüm-hız).
-2. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
-   Console; [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler),
-   [SEO alanları ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) 3.
+2. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4;
+   [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler). Search
+   Console C4'te.
 3. **B7 · Sayfa içi teknik denetim (bütün sayfa türleri):** her sayfada tek
    ana başlık (H1) ve içinde ana terim; ara başlık sırası (H2, H3); sayfa
    başlığı (meta title, en çok 60 karakter) ve Google açıklaması (meta
@@ -1315,7 +1307,9 @@ K-124) yapıldı.
    görsellerin alt metni; paylaşım önizlemesi (Open Graph) ve asıl adres
    (canonical). Denetim tarayıcı testine eklenir; bulunan eksikler
    düzeltilir. Bugün başlık, açıklama, canonical ve paylaşım önizlemesi
-   kodda var (K-55); H1 ve ara başlık sırası denetlenmedi.
+   kodda var (K-55); H1 ve ara başlık sırası denetlenmedi. Biçimli
+   metinlerde (`packages/ui/src/components/RichText.tsx`) yalnızca `## `
+   ara başlığı (H2) yazılabilir; H3 bugün yazılamaz, gerekirse eklenir.
 
 **A — Sayfa sayfa SEO düzenlemesi (anahtar kelime haritasına göre)**
 
@@ -1324,7 +1318,7 @@ haritasında o sayfaya verilen hedef terime göre düzenlenir:
 
 - ad ve ana başlık (H1), link (URL);
 - sayfa başlığı (meta title) ve Google açıklaması (meta description);
-- sayfa metni ve ara başlıkları (H2, H3); ürünlerde teknik özellik
+- sayfa metni ve ara başlıkları (`## ` ile H2); ürünlerde teknik özellik
   etiketleri ve öne çıkan bilgiler;
 - görsel dosya adı ve alt metni, iç bağlantılar, yapısal veri.
 
@@ -1343,9 +1337,16 @@ değişikliği bugün Google'da bir şey kaybettirmez.
    `elektrod-pense-ve-kitleri`, `karbon-kesme-elektrod-…`,
    `plazma-kesme-aksesuarlari`) bu adımda düzelir.
 2. **A2 · Ürün sayfaları (bugün 40 makine; yalnızca Ekipmanlar'da ürün
-   var):** kalıba göre ad, link, H1, meta title ve description; teknik
-   özellik etiketleri ve birimleri; öne çıkan 3 madde; kısa ve uzun
-   açıklama (H2/H3 yapısı, [SEO.md](SEO.md) › 10); plazmada "kesme" kuralı
+   var):** Önce kod işi: ürün sayfasında uzun açıklama bugün düz metin
+   basılıyor (`apps/zenweld-web/src/app/(site)/urun/[slug]/ProductPageClient.tsx`
+   › `<p>{product.description}</p>`; `##`, madde ve kalın çalışmıyor) ve
+   varsayılan sekme Teknik Özellikler olduğu için Açıklama sekmesine
+   tıklanmadan sayfanın HTML'inde hiç yok (yalnızca yapısal veride gidiyor,
+   K-123). Açıklama biçimli gösterilmeli (Tanıtım Metni gibi) ve sekme
+   kapalıyken de sayfanın HTML'inde bulunmalı. [Kod] Sonra: kalıba göre ad,
+   link, H1, meta title ve description; teknik özellik etiketleri ve
+   birimleri; öne çıkan 3 madde; kısa ve uzun açıklama (ara başlıklı,
+   [SEO.md](SEO.md) › 10); plazmada "kesme" kuralı
    ([Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler)
    7); görsel alt metni; uyumlu torç, sarf ve tel bağlantıları. Ad, link ve
    başlıklar kalıp kararından sonra; metinler gerçek bilgiler gelince.
@@ -1353,27 +1354,37 @@ değişikliği bugün Google'da bir şey kaybettirmez.
    formülleri (aksesuar: tür + tip + ölçü + uzunluk; tel: sınıf + tür +
    çap + ağırlık).
 3. **A3 · Kategoriler (50) ve gruplar (12):** ad, link, Tanıtım Metni
-   (H2/H3), kısa açıklama, meta title ve description. Sıra: lazer (3),
+   (`## ` ara başlıklar H2 olarak basılır; H3 bugün yazılamaz), kısa açıklama, meta title ve description. Sıra: lazer (3),
    diğer makine kategorileri (5; plazmada "kesme" kuralı), güvenlik ve
    dolgu metalleri ("kaynak maskesi", "kaynak teli"), aksesuarlar
    ([SEO.md](SEO.md) › 8–9).
 4. **A4 · Ana sayfa, bölüm sayfaları ve Force:** sayfa başlığı, açıklama,
-   sayfadaki metin ve bağlantılar ([SEO.md](SEO.md) › 7).
+   sayfadaki metin ve bağlantılar ([SEO.md](SEO.md) › 7). Başlık ve
+   açıklama panelden (İçerik › Sayfa SEO); bölüm sayfalarında Tanıtım
+   Metni alanı yok, görünen açıklama kodda
+   (`apps/zenweld-web/src/lib/catalog.ts` › `SECTION_DESCRIPTIONS`); ana
+   sayfa ve Force metinleri de kodda (`packages/i18n/src/tr.ts`). Bunlar
+   için kod işi gerekir.
 5. **A5 · Sabit sayfalar:** Hakkımızda (ürün gamı paragrafı, "Zenweld
    hangi ülkenin markası?" soru-cevabı, "60+ Ürün" sayısı; bugün 40
    makine), bayi ve servis ağı, satış temsilcileri (il adları), teklif,
    servis, garanti, SSS, kaynak rehberi, ürün seçici, MSDS, parti
-   sertifikaları, iletişim ([SEO.md](SEO.md) › 11–12).
+   sertifikaları, iletişim ([SEO.md](SEO.md) › 11–12). Başlık ve açıklama
+   panelden; Hakkımızda, SSS, belge sayfaları ve yasal metinlerin metni
+   panelden (K-45), diğer sabit sayfaların metni kodda (`tr.ts`).
 6. **A6 · Sitedeki mevcut yazılar:** 6 blog yazısı (metinleri yer
-   tutucu), 5 haber, 9 etkinlik, SSS (iki cevap yer tutucu), belge
+   tutucu), 4 haber, 9 etkinlik, SSS (iki cevap yer tutucu), belge
    sayfaları ve yasal metinler tek tek incelenir: başlık, özet, metin,
    ara başlıklar, SEO alanları, görsel alt metni, iç bağlantılar. Bilinen
-   sorunlar: iki İmatech etkinliğinde aynı "Zenweld Hakkında" paragrafı
-   (tekrar eden metin); etkinlik galerilerinde geçici stok fotoğraflar.
+   sorunlar: Konya Makine 2024 ve İmatech 2024 etkinliklerinde aynı
+   "Zenweld Hakkında" paragrafı (tekrar eden metin); etkinlik galerilerinde geçici stok fotoğraflar.
 7. **A7 · Yeni blog yazıları:** [SEO.md](SEO.md) › 13'teki 15 konu (önce
    lazer konuları), ayda 2–4 yazı.
 8. **A8 · İç bağlantılar:** ürün → uyumlu aksesuar ve tel kategorisi;
-   kategori ↔ blog; bağlantı metni hedef sayfanın ana terimi.
+   kategori ↔ blog; bağlantı metni hedef sayfanın ana terimi. Bugün
+   Tanıtım Metni, blog ve ürün açıklamasında bağlantı yazılamıyor
+   (biçimlendirici yalnızca `## `, `- `, `**` tanıyor); önce kod işi
+   gerekir: metin biçimlendiricisine bağlantı desteği. [Kod]
 
 **C — Sahibin kararı**
 
@@ -1543,7 +1554,7 @@ yapılacak; bugünkü görünüm geçicidir. Tasarım yapılırken:
 2. Tasarımdan sonra tarayıcı testleri (`npm run test:e2e`) ve kabul kontrol
    listesi çalıştırılmalı. Testler alanları etiketiyle bulur; etiket
    metinleri değişirse testler de güncellenmeli.
-3. Renk karşıtlığı bu aşamada ele alınacak ("Erişilebilirlik (A4)" 4).
+3. Renk karşıtlığı bu aşamada ele alınacak ([Erişilebilirlik](#erişilebilirlik--önerilen-zorunlu-değil) 4).
 4. Tasarım öncesi kodun yedeği GitHub'da `yedek/2026-10-22-tasarim-oncesi`
    dalında.
 5. **Görsel düzenleyici ve sayfa görselleri** (sahibinin isteği; tasarım
@@ -1602,15 +1613,12 @@ Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
 4. **Gerçek metinler:** Neden Zenweld? maddelerinin açıklamaları (bugün
    lorem ipsum) sahibiyle yazılacak; tanıtım alanındaki Force Serisi ve
    Jasic Lazer metinleri panelden (Anasayfa Tanıtım) değiştirilir.
-5. **Force Serisi sayfası:** İleride Force Serisi için ayrı bir sayfa
-   yapılacak. Bugün tanıtım alanındaki **Force Serisini İncele** ve Force
-   şeridindeki **Tümünü Gör** "Force" arama sonuçlarına gidiyor.
-6. **Fotoğraflar:** Lazer Temizleme ve Lazer Markalama kartlarında ürün
+5. **Fotoğraflar:** Lazer Temizleme ve Lazer Markalama kartlarında ürün
    fotoğrafı olmadığı için kategori çizimi görünüyor; Jasic lazer kaynak
    modelleri eklenince (K-74) Jasic şeridine ve kartlara kendiliğinden
    girer ([Ürün fotoğrafları](#ürün-fotoğrafları--eksikler)).
 
-## Erişilebilirlik (A4) — önerilen, zorunlu değil
+## Erişilebilirlik — önerilen, zorunlu değil
 
 Türkiye'de özel e-ticaret siteleri için genel bir erişilebilirlik
 zorunluluğu bilinmiyor; AB'ye satış yapılırsa durum değişebilir (hukukçuyla
@@ -1627,7 +1635,7 @@ teyit edilmeli). Yapılacaklar:
    denetlenmeli.
 4. Renk karşıtlığı tasarım aşamasında ele alınacak.
 
-## Görseller (A5) — önerilen, zorunlu değil
+## Görsel optimizasyonu — önerilen, zorunlu değil
 
 1. **Görsel optimizasyonu (`next/image`):** Bugün görseller olduğu gibi
    yükleniyor (`ProductImage`, `<img loading="lazy">`). Next.js'in görsel
