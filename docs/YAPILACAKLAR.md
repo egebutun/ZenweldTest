@@ -345,6 +345,10 @@ kişiye verilir; o kişi doğrudan sunucuya girer
       Servis › E-posta › (tür) › Adresler'e girilir (K-116). [Panel]
 - [ ] Panele kimler girecek? Her biri için yönetici hesabı açılır.
       [Sunucu]
+- [ ] **Anti-spatter (çapak önleyici) satılacak mı?** Eski sitede vardı;
+      yeni sitede kimyasal kategorisi yok. Cevaba göre eski adresi ürüne
+      ya da Aksesuarlar'a yönlenir ([SEO](#seo--anahtar-kelime-çalışmasından-kalan-işler)
+      C1). [Karar]
 - [ ] Müşteriye gidecek e-postalar: sipariş onayı (yasal zorunlu,
       sözleşme kopyasıyla), havale hatırlatma, kargoya verildi, teslim
       edildi, şifre sıfırlama. Gönderen adı ve metinler. [Karar]
@@ -393,7 +397,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Jasic lazer kaynak ürünleri (2026-10-27 listesindeki 6 model; belki çok sonra) | Sahibinin seçenekleri ayrıntılı açıklaması | [Jasic lazer kaynak ürünleri](#jasic-lazer-kaynak-ürünleri--sahibi-ayrıntılı-açıklayacak) |
 | Teklif, servis, garanti ve iade durumlarında müşteriye e-posta | Hangi bildirimlerin gideceği ve metinleri | [Müşteriye e-posta bildirimleri](#müşteriye-e-posta-bildirimleri-sipariş-dışı) |
 | Yöneticinin kendi şifresini panelden değiştirmesi | Şimdi yapılmıyor (K-105) | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 2 |
-| SEO: eski site yönlendirmelerinin doğrulanması, kategori adı kalıbı, ürün gamı fırsatları | Sahibinin kararı | [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) C |
+| SEO: anti-spatter satılacak mı (eski site yönlendirmesi), kategori adı kalıbı, ürün gamı fırsatları | Sahibinin kararı | [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) C |
 | Sitenin tasarımı | Sahibi yapacak | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
 | Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler, Force Serisi sayfası | Sahibinin göndermesi; Force sayfası ileride | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
 | Görsel düzenleyici (önizleme, sürükle, ölçekle) ve sayfa görsellerinin panelden değişmesi | Tasarımın bitmesi (fotoğrafların yeri ve sayısı kesinleşince) | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) 5 |
@@ -1291,10 +1295,11 @@ Sıra: önce teknik işler (B), sonra metinler (A); kararlar (C) sahibindedir.
 
 B1 (değişen linklerde sunucuda 301) yapıldı (KARARLAR K-120).
 
-1. **B2 · Eski `zenweld.com` adresleri:** eski sitenin 67 adresi
-   ([`seo/yonlendirme-listesi.csv`](seo/yonlendirme-listesi.csv)) yeni site
-   açıldığı gün 301 ile yeni karşılığına yönlenmeli. Önce C1'deki
-   doğrulamalar.
+1. **B2 · Eski `zenweld.com` adresleri:** eski sitenin 85 adresi
+   ([`seo/yonlendirme-listesi.csv`](seo/yonlendirme-listesi.csv),
+   [SEO.md](SEO.md) › 15) yeni site açıldığı gün 301 ile yeni karşılığına
+   yönlenmeli. Eşleştirme bitti (K-121); yalnızca anti-spatter satırı C1'i
+   bekliyor.
 2. **B3 · Yapısal veri eksikleri:** blog yazılarında `Article`; ürün
    fiyatında kargo (`shippingDetails`) ve iade (`hasMerchantReturnPolicy`)
    bilgisi. Yıldız (`AggregateRating`) yalnızca gerçek müşteri yorumu
@@ -1330,10 +1335,10 @@ B1 (değişen linklerde sunucuda 301) yapıldı (KARARLAR K-120).
 
 **C — Sahibin kararı**
 
-1. **C1 · Yönlendirme listesindeki doğrulamalar:** eski Ultimate 320 THP /
-   320 MTC / 400 ACDC = yeni "… iPanel" mi; Ultimate 400 CEL ve 405 MV CEL
-   karşılıkları; eski Arc 120–200S, Ultimate 205i, 200 TH/THP, Multicut
-   40/65 yeni katalogda var mı; anti-spatter satılacak mı.
+1. **C1 · Anti-spatter (çapak önleyici) satılacak mı?** Sahibi şirkete
+   sorup öğrenecek. Satılırsa ürün eklenir ve eski adresi
+   (`/urunler/kimyasallar/anti-spatter`) ona yönlenir; satılmazsa
+   Aksesuarlar'a yönlenir.
 2. **C2 · Kategori adı kalıbı:** pazar "Gazaltı (MIG/MAG) Kaynak
    Makineleri" diye yazıyor, bizde kısaltma önde ("MIG (GMAW) Gazaltı …").
    Değişirse link değişmez, yalnız ad.

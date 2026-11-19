@@ -25,7 +25,8 @@ güncellenir; tek ve güncel kaynak budur.
   kelime çalışmasından kalan işler, ayrıntısı bu belgenin
   [16. bölümünde](#16-seo-yol-haritası).
 - **Bu çalışmadan çıkan kararlar:** K-118 ("Elektrot" ve "Plazma Kesim"
-  yazımı), K-119 (garanti 12 ay), K-120 (eski linkler sunucuda 301).
+  yazımı), K-119 (garanti 12 ay), K-120 (eski linkler sunucuda 301),
+  K-121 (eski zenweld.com adreslerinin eşleştirmesi).
 
 ---
 
@@ -176,7 +177,7 @@ ve açıklamalarından incelendi.
 | [Kemppi](https://www.kemppi.com/tr/) | Rakip | Türkçe adresi İngilizce içerik gösteriyor; lazer kaynağa ağırlık veriyor | Sayfa açıldı |
 | Nuriş | Rakip (lazerde güçlü) | Akakçe'de NL1200A–NL3000W lazer kaynak serisi; Google "nuriş lazer kaynak" öneriyor | Akakçe ve Google önerileri |
 | [Rgwel](https://www.makinaturkiye.com/rgwel-lazer-kaynak-makinesi-c-155712-383001) | Lazer rakibi | "El Tipi Fiber Lazer Kaynak Makinesi"; Türkçe arayüz ve 72 saatte servis vurgusu | Arama sonucu |
-| [zenweld.com](https://www.zenweld.com/) (eski site) | Kendi sitemiz | Kategori adları doğru ("Gazaltı Kaynak Makineleri"), metinler zayıf; 67 adres ([15. bölüm](#15-eski-sitenin-adresleri-yönlendirme-listesi)) | Sayfa açıldı |
+| [zenweld.com](https://www.zenweld.com/) (eski site) | Kendi sitemiz | Kategori adları doğru ("Gazaltı Kaynak Makineleri"), metinler zayıf; 85 adres ([15. bölüm](#15-eski-sitenin-adresleri-yönlendirme-listesi)) | Sayfa açıldı |
 | Google otomatik tamamlama | Gerçek aramalar | 6.613 sorgu (Google ve YouTube), temizlenince 7.701 terim | Doğrudan |
 
 **Ortak bulgular**
@@ -721,32 +722,151 @@ Ayrıca: Jasic lazer kaynak ürünleri katalogda yok (KARARLAR K-74);
 
 ## 15. Eski sitenin adresleri (yönlendirme listesi)
 
-Yeni site `zenweld.com`'da açıldığı gün eski sitenin 67 adresinin her biri
-yeni adrese kalıcı (301) olarak yönlenir. Liste:
-[`seo/yonlendirme-listesi.csv`](seo/yonlendirme-listesi.csv) (eski adres,
-yeni adres, durum). Eski sitenin site haritasından (16 Kasım 2026)
-çıkarıldı; eski sitede bugün açılmayan (404) adresler de listede, çünkü
-Google'da hâlâ aranıyorlar ("zenweld arc 200").
+Yeni site `zenweld.com`'da açıldığı gün eski sitenin **85 adresinin** her
+biri yeni sitedeki karşılığına kalıcı (301) olarak yönlenir. Liste:
+[`seo/yonlendirme-listesi.csv`](seo/yonlendirme-listesi.csv) (grup, eski
+adres, yeni adres, durum, not, eski site haritasında mı).
 
-- **Durum:** 43 birebir; 16'sı ürün yeni katalogda olmadığı için
-  kategoriye; 7'si yakın ürüne (doğrulanmalı); 1'i karar bekliyor.
-- **Sahibinden beklenenler:**
-  - "Yakın ürün — doğrulanmalı" satırları: eski model ile yeni model aynı
-    mı? Eski Ultimate 320 THP / 320 MTC / 400 ACDC = yeni "… iPanel" mi?
-    "Ultimate 400 CEL" = ForceArc 400 CEL mi? "Ultimate 405 MV CEL"in
-    karşılığı (MV yeni katalogda yok)?
-  - Arc 120 / 140 / 160 / 200 / 200S, Ultimate 205i, Ultimate 200 TH /
-    THP, Multicut 40 / 65: yeni katalogda karşılığı var mı (ör. Arc 200 →
-    ForceArc 200)? Varsa kategori yerine o ürüne yönlenir.
-  - Anti-spatter (kimyasal): yeni sitede satılacak mı?
-- Aynı adres `www.zenweld.com` ile de yönlenmeli; eski site bugün
+- **Nasıl çıkarıldı (19 Kasım 2026):** eski sitenin site haritası (67
+  adres) ve bütün sayfalarındaki iç bağlantılar tarandı; site haritasında
+  olmayan 18 sayfa daha bulundu (2 lazer ürünü, Etkinlikler ve 8 etkinlik,
+  4 haber, Garanti Koşulları, Servis Talep, Fiziki Güvenlik Aydınlatma
+  Metni). Her ürün sayfası açılıp adı, ürün kodu, teknik değerleri,
+  soğutma tipi ve standart torcu okundu; eşleştirme buna göre yapıldı.
+  Eski sitede bugün açılmayan (404) adresler de listede, çünkü Google'da
+  hâlâ aranıyorlar ("zenweld arc 200").
+- **Durum:** 44 birebir; 19 birebir ve seçenekli (eski sitede ayrı sayfa
+  olan soğutma ya da torç halleri, yeni sitede aynı ürünün seçeneği); 17
+  ürün yeni sitede olmadığı için kategoriye; 3 haber yeni sitede olmadığı
+  için Haberler'e; 1 yakın ürün; 1 karar bekliyor.
+- **Ürünlerimiz yeni sitenin Ekipmanlar'ındakilerdir** (KARARLAR K-121):
+  eski sitede olup yeni sitede olmayan ürünün (Arc 120–200S, Ultimate
+  205i, Ultimate 200 TH / THP, Multicut 40 CNC / 40 COM / 65, LS-15000F,
+  Jasic lazer kaynak modelleri) eski adresi kategorisine yönlenir.
+- **Seçenekli ürünler:** Eski sitede "… (Su Soğutmalı - Arabalı)" gibi ayrı
+  sayfa olan haller yeni sitede aynı ürünün seçeneğidir; iki eski adres de
+  aynı ürün sayfasına, ilgili seçenek seçili olarak gider (ör.
+  `/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp` →
+  `/urun/ultimate-320-thp-ipanel?secenek=hava_4-m`,
+  `…/ultimate-320-thp-su-sogutmali-arabali` → `…?secenek=su_4-m`).
+  Torç boyu eski sayfadaki standart torca göre seçildi. Google için iki
+  adres de tek sayfadır: ürün sayfasının asıl adresi (canonical) seçeneksiz
+  `/urun/<link>`.
+- **Eşleştirmede bulunanlar:**
+  - Eski "Ultimate 320 THP", "Ultimate 400 ACDC" ve "Ultimate 320 MTC"
+    yeni sitedeki iPanel modelleridir (eski 320 THP ve 400 ACDC
+    sayfalarının metninde "I-Panel" geçiyor).
+  - Eski "Ultimate 400 CEL" yeni sitedeki **ForceArc 400 CEL**'dir
+    (K-121).
+  - Eski LS-15000F ve LS-20000F eski sitede "Lazer Kaynak" kategorisinde
+    ama sayfaları temizleme özelliklerini anlatıyor; LS-20000F yeni
+    sitedeki "Jasic LS-20000F Lazer Temizleme Makinesi"ne, 1500 W'lık
+    LS-15000F Lazer Temizleme kategorisine gider.
+  - Eski "Ultimate 405 MV CEL" (çok voltajlı) yeni sitede yok; en yakın
+    ürün olan Ultimate 405 CEL'e yönlenir (öneri).
+  - Eski sitedeki 3 haber yeni sitede yok (İzmir tesisinin açılışı,
+    İstanbul Hırdavat Fuarı 2026, WIN Eurasia 2026); yeni siteye
+    eklenirse onlara yönlenir.
+- **Karar bekleyen:** Anti-spatter (çapak önleyici) satılacak mı;
+  şirkete sorulacak (YAPILACAKLAR › SEO, C1). Satılırsa ürününe, satılmazsa
+  Aksesuarlar'a yönlenir.
+- Aynı adresler `www.zenweld.com` ile de yönlenmeli; eski site bugün
   `zenweld.com`'u `www.zenweld.com`'a yönlendiriyor.
 - `zenweld.vercel.app` eski sitenin Vercel'deki ikinci adresidir; bu
   projeye ait değildir, kapatılmalı ya da `zenweld.com`'a yönlenmeli
   ([16. bölüm](#16-seo-yol-haritası) › 1).
 - Panelde linki değişen kayıtların yönlendirmesi ayrı iştir ve yapıldı
-  (KARARLAR K-120). Bu 67 adres canlıya çıkış günü sunucuda kurulur
-  (YAPILACAKLAR › SEO, B2).
+  (KARARLAR K-120). Bu 85 adres canlıya çıkış günü sunucuda kurulur
+  (YAPILACAKLAR › SEO, B2). Yeni sitede ürünün linki ya da seçeneği
+  değişirse liste de güncellenir.
+
+| Grup | Eski adres (zenweld.com) | Yeni adres | Durum ve not |
+|---|---|---|---|
+| Genel | `/` | `/` | Birebir |
+| Genel | `/urunler` | `/ekipmanlar` | Birebir |
+| Kurumsal | `/kurumsal/hakkimizda` | `/hakkimizda` | Birebir |
+| Kurumsal | `/kurumsal/bize-ulasin` | `/iletisim` | Birebir |
+| Kurumsal | `/kurumsal/yetkili-servislerimiz` | `/yetkili-bayi-ve-servis-agi` | Birebir |
+| Kurumsal | `/kurumsal/satis-ekibimiz` | `/satis-temsilcilerimiz` | Birebir |
+| Kurumsal | `/kurumsal/garanti-baslatma` | `/garanti/kayit` | Birebir |
+| Kurumsal | `/kurumsal/garanti-kosullari` | `/garanti/kosullar` | Birebir; site haritasında yok |
+| Kurumsal | `/kurumsal/servis-talep` | `/servis-talebi` | Birebir; site haritasında yok |
+| Yasal | `/kurumsal/gizlilik-sozlesmesi` | `/yasal/gizlilik` | Birebir |
+| Yasal | `/kurumsal/cerez-politikalari` | `/yasal/cerez-politikasi` | Birebir |
+| Yasal | `/kurumsal/kis-isel-verilerin-i-s-lenmesi-politikasi` | `/yasal/kisisel-verilerin-islenmesi-politikasi` | Birebir |
+| Yasal | `/kurumsal/kisisel-veri-saklama-ve-imha-politikasi` | `/yasal/kisisel-veri-saklama-ve-imha-politikasi` | Birebir |
+| Yasal | `/kurumsal/kvkk-aydinlatma-metni` | `/yasal/kvkk` | Birebir |
+| Yasal | `/kurumsal/fiziki-guvenlik-sureclerine-yonelik-aydinlatma-metni` | `/yasal/fiziksel-guvenlik-aydinlatma-metni` | Birebir; site haritasında yok |
+| Haber | `/haberler` | `/haberler` | Birebir |
+| Haber | `/haberler/zenweld-kaynak-akademi` | `/haberler/zenweld-kaynak-akademi` | Birebir |
+| Haber | `/haberler/zenweld-kaynak-ve-kesme-elipmanlairi-amp-amp-ebinc-makin-kaynak-ve-kesme-teknolojileri-tanitim-gunu` | `/haberler/kaynak-ve-kesme-teknolojileri-tanitim-gunu-van` | Birebir; Van, Ebinç Makina tanıtım günü; site haritasında yok |
+| Haber | `/haberler/zenweld-cumhuriyetimizin-103-yilinda-izmir-deki-yeni-uretim-tesisinin-acilisini-gerceklestirdi` | `/haberler` | Haber yeni sitede yok → haberler; İzmir tesisinin açılışı; yeni siteye eklenirse ona yönlenir; site haritasında yok |
+| Haber | `/haberler/zenweld-istanbul-hirdavat-fuari-2026-da-yerini-aliyor` | `/haberler` | Haber yeni sitede yok → haberler; Yeni siteye eklenirse ona yönlenir; site haritasında yok |
+| Haber | `/haberler/zenweld-win-eurasia-2026-da-yenilikci-teknolojilerini-sektorle-bulusturuyor` | `/haberler` | Haber yeni sitede yok → haberler; Yeni siteye eklenirse ona yönlenir; site haritasında yok |
+| Etkinlik | `/etkinlikler` | `/etkinlikler` | Birebir; site haritasında yok |
+| Etkinlik | `/etkinlikler/2024-uluslararasi-istanbul-hirdavat-fuari` | `/etkinlikler/istanbul-hirdavat-fuari-2024` | Birebir; site haritasında yok |
+| Etkinlik | `/etkinlikler/big-5-global-2025` | `/etkinlikler/big-5-global-2025` | Birebir; site haritasında yok |
+| Etkinlik | `/etkinlikler/imatech-2024-2-endustriyel-uretim-teknolojileri-fuari` | `/etkinlikler/imatech-2024` | Birebir; site haritasında yok |
+| Etkinlik | `/etkinlikler/imatech-2025-3-endustriyel-uretim-teknolojileri-fuari` | `/etkinlikler/imatech-2025` | Birebir; site haritasında yok |
+| Etkinlik | `/etkinlikler/international-hardware-riyad` | `/etkinlikler/international-hardware-riyadh-2025` | Birebir; site haritasında yok |
+| Etkinlik | `/etkinlikler/konya-makine-teknolojileri-fuari` | `/etkinlikler/konya-makine-teknolojileri-fuari-2024` | Birebir; 8–11 Mayıs 2024; site haritasında yok |
+| Etkinlik | `/etkinlikler/win-eurasia-2025-otomasyon-ve-makine-teknolojileri-fuari` | `/etkinlikler/win-eurasia-2025` | Birebir; site haritasında yok |
+| Etkinlik | `/etkinlikler/win-eurasia-endustri-fuari` | `/etkinlikler/win-eurasia-2024` | Birebir; 5–8 Haziran 2024; site haritasında yok |
+| Kategori | `/urunler/lazer-kaynak-makineleri` | `/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri` | Birebir |
+| Kategori | `/urunler/elektrot-kaynak-makineleri` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Birebir |
+| Kategori | `/urunler/argon-kaynak-makineleri-dc` | `/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri` | Birebir |
+| Kategori | `/urunler/argon-kaynak-makineleri-ac-dc` | `/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri` | Birebir; AC/DC ve DC yeni sitede tek kategoride |
+| Kategori | `/urunler/gazalti-kaynak-makineleri` | `/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri` | Birebir |
+| Kategori | `/urunler/plazma-kesme-makineleri` | `/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri` | Birebir |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-255` | `/urun/ultimate-255-mma` | Birebir |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-405-cel` | `/urun/ultimate-405-cel-mma` | Birebir |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-400-cel` | `/urun/forcearc-400-cel-mma` | Birebir; Eski adı Ultimate 400 CEL; yeni sitede ForceArc 400 CEL |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-405-mv-cel` | `/urun/ultimate-405-cel-mma` | Yakın ürün; 405 MV CEL (çok voltajlı) yeni sitede yok; en yakını Ultimate 405 CEL |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/ultimate-205i` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/arc-120` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404) |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/arc-140` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404) |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/arc-160` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404) |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/arc-200` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404); Google'da "zenweld arc 200" aranıyor |
+| Elektrot | `/urunler/elektrot-kaynak-makineleri/arc-200s` | `/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404) |
+| Argon DC | `/urunler/argon-kaynak-makineleri-dc/ultimate-251-thp` | `/urun/ultimate-251-thp?secenek=4-m` | Birebir, seçenekli; 4 m torç (eski sayfada standart TIG 26 4 m) |
+| Argon DC | `/urunler/argon-kaynak-makineleri-dc/ultimate-300-thp` | `/urun/ultimate-300-thp?secenek=hava_4-m` | Birebir, seçenekli; Hava soğutmalı, 4 m torç |
+| Argon DC | `/urunler/argon-kaynak-makineleri-dc/ultimate-300-thp-su-sogutmali-arabali` | `/urun/ultimate-300-thp?secenek=su_4-m` | Birebir, seçenekli; Su soğutmalı, 4 m torç |
+| Argon DC | `/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp` | `/urun/ultimate-320-thp-ipanel?secenek=hava_4-m` | Birebir, seçenekli; Eski sayfa "320 THP I-Panel" diyor; hava soğutmalı, 4 m torç |
+| Argon DC | `/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali` | `/urun/ultimate-320-thp-ipanel?secenek=su_4-m` | Birebir, seçenekli; Su soğutmalı, 4 m torç |
+| Argon DC | `/urunler/argon-kaynak-makineleri-dc/ultimate-405-thp-su-sogutmali-arabali` | `/urun/ultimate-405-thp?secenek=su_4-m` | Birebir, seçenekli; Su soğutmalı, 4 m torç |
+| Argon DC | `/urunler/argon-kaynak-makineleri-dc/ultimate-200-th` | `/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri` | Ürün yeni sitede yok → kategori |
+| Argon DC | `/urunler/argon-kaynak-makineleri-dc/ultimate-200-thp` | `/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri` | Ürün yeni sitede yok → kategori |
+| Argon AC/DC | `/urunler/argon-kaynak-makineleri-ac-dc/ultimate-205-acdc` | `/urun/ultimate-205-ac-dc?secenek=4-m` | Birebir, seçenekli; 4 m torç |
+| Argon AC/DC | `/urunler/argon-kaynak-makineleri-ac-dc/ultimate-320-acdc` | `/urun/ultimate-320-ac-dc?secenek=hava_4-m` | Birebir, seçenekli; Hava soğutmalı, 4 m torç |
+| Argon AC/DC | `/urunler/argon-kaynak-makineleri-ac-dc/ultimate-320-acdc-su-sogutmali-arabali` | `/urun/ultimate-320-ac-dc?secenek=su_4-m` | Birebir, seçenekli; Su soğutmalı, 4 m torç |
+| Argon AC/DC | `/urunler/argon-kaynak-makineleri-ac-dc/ultimate-400-acdc` | `/urun/ultimate-400-ac-dc-ipanel?secenek=hava_4-m` | Birebir, seçenekli; Eski sayfa "i-Panel" diyor; hava soğutmalı, 4 m torç |
+| Argon AC/DC | `/urunler/argon-kaynak-makineleri-ac-dc/ultimate-400-acdc-su-sogutmali-arabali` | `/urun/ultimate-400-ac-dc-ipanel?secenek=su_4-m` | Birebir, seçenekli; Su soğutmalı, 4 m torç |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/ultimate-250-mtc` | `/urun/ultimate-250-mtc?secenek=3-m` | Birebir, seçenekli; 3 m torç (eski sayfada standart MIG 15 3 m) |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/ultimate-255-mtc` | `/urun/ultimate-255-mtc?secenek=3-m` | Birebir, seçenekli; 3 m torç (standart MIG 25 3 m) |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/ultimate-355-mtc` | `/urun/ultimate-355-mtc?secenek=4-m` | Birebir, seçenekli; 4 m torç (standart MIG 36 4 m) |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/ultimate-320-mtc` | `/urun/ultimate-320-mtc-ipanel?secenek=4-m` | Birebir, seçenekli; Yeni sitedeki iPanel modeli; 4 m torç (standart MIG 36 4 m) |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/ultimate-405-mts-hava-sogutmali-arabali` | `/urun/ultimate-405-mts?secenek=hava_4-m_5-m` | Birebir, seçenekli; Hava soğutmalı, 4 m torç; ara paket eski sayfada yazmıyor, 5 m seçildi |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/ultimate-405-mts-su-sogutmali-arabali` | `/urun/ultimate-405-mts?secenek=su_4-m_5-m` | Birebir, seçenekli; Su soğutmalı, 4 m torç; ara paket 5 m |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/ultimate-505-mts-su-sogutmali-arabali` | `/urun/ultimate-505-mts?secenek=su_4-m_5-m` | Birebir, seçenekli; Su soğutmalı, 4 m torç; ara paket 5 m |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/evomig-405-p` | `/urun/evomig-405-p?secenek=su_4-m_5-m` | Birebir, seçenekli; Eski sayfa "su soğutmalı arabalı" diyor; torç ve ara paket yazmıyor, 4 m ve 5 m seçildi |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/evomig-555-p` | `/urun/evomig-555-p` | Birebir; Eski sayfada seçenek bilgisi yok; ürün sayfası ilk seçenekle açılır |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/evomig-255-p` | `/urun/evomig-255-p` | Birebir; Eski sayfada seçenek bilgisi yok |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/evomig-205-p` | `/urun/evomig-205-p` | Birebir; Yeni sitede Çok Fonksiyonlu kategorisinde |
+| Gazaltı | `/urunler/gazalti-kaynak-makineleri/ultimate-205-mte-pro` | `/urun/ultimate-205-mte-pro` | Birebir; Yeni sitede Çok Fonksiyonlu kategorisinde |
+| Plazma | `/urunler/plazma-kesme-makineleri/multicut-60-s` | `/urun/multicut-60-s` | Birebir |
+| Plazma | `/urunler/plazma-kesme-makineleri/multicut-85-cnc` | `/urun/multicut-85-cnc` | Birebir |
+| Plazma | `/urunler/plazma-kesme-makineleri/multicut-105-cnc` | `/urun/multicut-105-cnc` | Birebir |
+| Plazma | `/urunler/plazma-kesme-makineleri/multicut-40-cnc` | `/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri` | Ürün yeni sitede yok → kategori |
+| Plazma | `/urunler/plazma-kesme-makineleri/multicut-40-com` | `/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri` | Ürün yeni sitede yok → kategori |
+| Plazma | `/urunler/plazma-kesme-makineleri/multicut-65` | `/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri` | Ürün yeni sitede yok → kategori |
+| Lazer | `/urunler/lazer-kaynak-makineleri/ls-20000f` | `/urun/jasic-ls-20000f-lazer-temizleme` | Birebir; Eski sitede lazer kaynak kategorisinde ama sayfası temizleme özelliklerini anlatıyor; yeni sitede Lazer Temizleme; site haritasında yok |
+| Lazer | `/urunler/lazer-kaynak-makineleri/ls-15000f` | `/ekipmanlar/lazer-makineleri/lazer-temizleme` | Ürün yeni sitede yok → kategori; 1500 W lazer temizleme; yeni sitede yok; site haritasında yok |
+| Lazer | `/urunler/lazer-kaynak-makineleri/ls-20000-dual-wire-3-in-1` | `/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Jasic lazer kaynak ürünleri sonra eklenecek (K-74); eklenince ona yönlenir |
+| Lazer | `/urunler/lazer-kaynak-makineleri/ls-15000m` | `/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404); K-74 |
+| Lazer | `/urunler/lazer-kaynak-makineleri/ls-20000m` | `/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404); K-74 |
+| Lazer | `/urunler/lazer-kaynak-makineleri/lw-1500` | `/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404); K-74 |
+| Lazer | `/urunler/lazer-kaynak-makineleri/lw-2000` | `/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri` | Ürün yeni sitede yok → kategori; Eski sitede de açılmıyor (404); K-74 |
+| Kimyasal | `/urunler/kimyasallar/anti-spatter` | `/aksesuarlar` | Karar bekliyor; Anti-spatter satılacak mı şirkete sorulacak (YAPILACAKLAR); eski sitede de açılmıyor (404) |
 
 ## 16. SEO yol haritası
 
@@ -776,7 +896,7 @@ içeriğe rağmen geride kalır.
       (`/urun/ultimate-405-thp`).
 - [x] Panelde linki değişen kaydın eski adresi sunucuda 301 ile yeni
       adrese gider (veritabanı modu; KARARLAR K-120, 19 Kasım 2026).
-- [ ] `zenweld.com`'un 67 eski adresi yeni adreslere 301
+- [ ] `zenweld.com`'un 85 eski adresi yeni adreslere 301
       ([15. bölüm](#15-eski-sitenin-adresleri-yönlendirme-listesi)).
       **Kod**, canlıya çıkış günü (B2).
 - [ ] Tek adres: `www.zenweld.com` ile `zenweld.com`'dan biri diğerine,
@@ -930,7 +1050,7 @@ sinyal.
 
 1. Sitenin adresi `https://zenweld.com` yapılır (`NEXT_PUBLIC_SITE_URL`;
    [SUNUCU.md](SUNUCU.md)); site o anda arama motorlarına açılır.
-2. 67 eski adres 301 ile yeni adreslere yönlenir.
+2. 85 eski adres 301 ile yeni adreslere yönlenir.
 3. `www` ve `http` adresleri tek adrese yönlenir.
 4. Search Console'a site haritası bildirilir; ana sayfa ve ana
    kategoriler için "URL denetimi › Dizine eklenmeyi iste".
@@ -1025,7 +1145,7 @@ açılınca aynı mülk kullanılır.
 1. Search Console › **Site haritaları** › `https://zenweld.com/sitemap.xml`.
 2. **Google Merchant Center** (ücretsiz): ürünler Google Alışveriş
    sekmesinde ücretsiz listelenebilir.
-3. Yönlendirme listesindeki 67 adres aynı gün sunucuda kurulur
+3. Yönlendirme listesindeki 85 adres aynı gün sunucuda kurulur
    ([16. bölüm](#16-seo-yol-haritası) › 10).
 
 ## 18. Kaynaklar

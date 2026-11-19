@@ -1,68 +1,86 @@
-eski_adres,yeni_adres,durum
-/,/,Birebir
-/kurumsal/hakkimizda,/hakkimizda,Birebir
-/urunler,/ekipmanlar,Birebir
-/haberler,/haberler,Birebir
-/haberler/zenweld-kaynak-akademi,/haberler/zenweld-kaynak-akademi,Birebir
-/kurumsal/bize-ulasin,/iletisim,Birebir
-/kurumsal/yetkili-servislerimiz,/yetkili-bayi-ve-servis-agi,Birebir
-/kurumsal/satis-ekibimiz,/satis-temsilcilerimiz,Birebir
-/kurumsal/garanti-baslatma,/garanti/kayit,Birebir
-/kurumsal/gizlilik-sozlesmesi,/yasal/gizlilik,Birebir
-/kurumsal/cerez-politikalari,/yasal/cerez-politikasi,Birebir
-/kurumsal/kis-isel-verilerin-i-s-lenmesi-politikasi,/yasal/kisisel-verilerin-islenmesi-politikasi,Birebir
-/kurumsal/kisisel-veri-saklama-ve-imha-politikasi,/yasal/kisisel-veri-saklama-ve-imha-politikasi,Birebir
-/kurumsal/kvkk-aydinlatma-metni,/yasal/kvkk,Birebir
-/urunler/lazer-kaynak-makineleri,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,Birebir
-/urunler/elektrot-kaynak-makineleri,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Birebir
-/urunler/argon-kaynak-makineleri-dc,/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri,Birebir
-/urunler/argon-kaynak-makineleri-ac-dc,/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri,Birebir (AC/DC ve DC tek kategoride)
-/urunler/gazalti-kaynak-makineleri,/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri,Birebir
-/urunler/plazma-kesme-makineleri,/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri,Birebir
-/urunler/lazer-kaynak-makineleri/ls-15000m,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,"Kategoriye (Jasic lazer kaynak ürünleri henüz eklenmedi, K-74)"
-/urunler/lazer-kaynak-makineleri/ls-20000-dual-wire-3-in-1,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,"Kategoriye (Jasic lazer kaynak ürünleri henüz eklenmedi, K-74)"
-/urunler/lazer-kaynak-makineleri/ls-20000m,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,"Kategoriye (Jasic lazer kaynak ürünleri henüz eklenmedi, K-74) · eski sitede bugün 404"
-/urunler/lazer-kaynak-makineleri/lw-1500,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,"Kategoriye (Jasic lazer kaynak ürünleri henüz eklenmedi, K-74) · eski sitede bugün 404"
-/urunler/lazer-kaynak-makineleri/lw-2000,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,"Kategoriye (Jasic lazer kaynak ürünleri henüz eklenmedi, K-74)"
-/urunler/elektrot-kaynak-makineleri/arc-120,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Kategoriye (ürün yeni katalogda yok)
-/urunler/elektrot-kaynak-makineleri/arc-140,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Kategoriye (ürün yeni katalogda yok)
-/urunler/elektrot-kaynak-makineleri/arc-160,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Kategoriye (ürün yeni katalogda yok)
-/urunler/elektrot-kaynak-makineleri/arc-200,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,"Kategoriye (ürün yeni katalogda yok) · Google'da ""zenweld arc 200"" aranıyor · eski sitede 404"
-/urunler/elektrot-kaynak-makineleri/arc-200s,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Kategoriye (ürün yeni katalogda yok) · eski sitede 404
-/urunler/elektrot-kaynak-makineleri/ultimate-205i,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Kategoriye (ürün yeni katalogda yok)
-/urunler/elektrot-kaynak-makineleri/ultimate-255,/urun/ultimate-255-mma,Birebir
-/urunler/elektrot-kaynak-makineleri/ultimate-400-cel,/urun/forcearc-400-cel-mma,Yakın ürün — doğrulanmalı (ForceArc 400 CEL mi?)
-/urunler/elektrot-kaynak-makineleri/ultimate-405-mv-cel,/urun/ultimate-405-cel-mma,Yakın ürün — doğrulanmalı (MV yeni katalogda yok)
-/urunler/elektrot-kaynak-makineleri/ultimate-405-cel,/urun/ultimate-405-cel-mma,Birebir
-/urunler/argon-kaynak-makineleri-dc/ultimate-200-th,/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri,Kategoriye (ürün yeni katalogda yok)
-/urunler/argon-kaynak-makineleri-dc/ultimate-200-thp,/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri,Kategoriye (ürün yeni katalogda yok)
-/urunler/argon-kaynak-makineleri-dc/ultimate-251-thp,/urun/ultimate-251-thp,Birebir
-/urunler/argon-kaynak-makineleri-dc/ultimate-300-thp,/urun/ultimate-300-thp,Birebir
-/urunler/argon-kaynak-makineleri-dc/ultimate-300-thp-su-sogutmali-arabali,/urun/ultimate-300-thp,Birebir (su soğutmalı seçenek ürün sayfasında)
-/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp,/urun/ultimate-320-thp-ipanel,Yakın ürün — doğrulanmalı (iPanel aynı model mi?)
-/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali,/urun/ultimate-320-thp-ipanel,Yakın ürün — doğrulanmalı
-/urunler/argon-kaynak-makineleri-dc/ultimate-405-thp-su-sogutmali-arabali,/urun/ultimate-405-thp,Birebir
-/urunler/argon-kaynak-makineleri-ac-dc/ultimate-205-acdc,/urun/ultimate-205-ac-dc,Birebir
-/urunler/argon-kaynak-makineleri-ac-dc/ultimate-320-acdc,/urun/ultimate-320-ac-dc,Birebir
-/urunler/argon-kaynak-makineleri-ac-dc/ultimate-320-acdc-su-sogutmali-arabali,/urun/ultimate-320-ac-dc,Birebir
-/urunler/argon-kaynak-makineleri-ac-dc/ultimate-400-acdc,/urun/ultimate-400-ac-dc-ipanel,Yakın ürün — doğrulanmalı (iPanel aynı model mi?)
-/urunler/argon-kaynak-makineleri-ac-dc/ultimate-400-acdc-su-sogutmali-arabali,/urun/ultimate-400-ac-dc-ipanel,Yakın ürün — doğrulanmalı
-/urunler/gazalti-kaynak-makineleri/evomig-205-p,/urun/evomig-205-p,Birebir
-/urunler/gazalti-kaynak-makineleri/evomig-255-p,/urun/evomig-255-p,Birebir
-/urunler/gazalti-kaynak-makineleri/evomig-405-p,/urun/evomig-405-p,Birebir
-/urunler/gazalti-kaynak-makineleri/evomig-555-p,/urun/evomig-555-p,Birebir
-/urunler/gazalti-kaynak-makineleri/ultimate-250-mtc,/urun/ultimate-250-mtc,Birebir
-/urunler/gazalti-kaynak-makineleri/ultimate-255-mtc,/urun/ultimate-255-mtc,Birebir
-/urunler/gazalti-kaynak-makineleri/ultimate-355-mtc,/urun/ultimate-355-mtc,Birebir
-/urunler/gazalti-kaynak-makineleri/ultimate-205-mte-pro,/urun/ultimate-205-mte-pro,Birebir
-/urunler/gazalti-kaynak-makineleri/ultimate-320-mtc,/urun/ultimate-320-mtc-ipanel,Yakın ürün — doğrulanmalı (iPanel aynı model mi?)
-/urunler/gazalti-kaynak-makineleri/ultimate-405-mts-hava-sogutmali-arabali,/urun/ultimate-405-mts,Birebir
-/urunler/gazalti-kaynak-makineleri/ultimate-405-mts-su-sogutmali-arabali,/urun/ultimate-405-mts,Birebir
-/urunler/gazalti-kaynak-makineleri/ultimate-505-mts-su-sogutmali-arabali,/urun/ultimate-505-mts,Birebir
-/urunler/plazma-kesme-makineleri/multicut-40-cnc,/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri,Kategoriye (ürün yeni katalogda yok)
-/urunler/plazma-kesme-makineleri/multicut-40-com,/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri,Kategoriye (ürün yeni katalogda yok)
-/urunler/plazma-kesme-makineleri/multicut-65,/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri,Kategoriye (ürün yeni katalogda yok)
-/urunler/plazma-kesme-makineleri/multicut-60-s,/urun/multicut-60-s,Birebir
-/urunler/plazma-kesme-makineleri/multicut-85-cnc,/urun/multicut-85-cnc,Birebir
-/urunler/plazma-kesme-makineleri/multicut-105-cnc,/urun/multicut-105-cnc,Birebir
-/urunler/kimyasallar/anti-spatter,/aksesuarlar,Karşılığı yok — karar (kimyasal kategorisi yok) · eski sitede 404
+grup,eski_adres,yeni_adres,durum,not,eski_site_haritasinda
+Genel,/,/,Birebir,,evet
+Genel,/urunler,/ekipmanlar,Birebir,,evet
+Kurumsal,/kurumsal/hakkimizda,/hakkimizda,Birebir,,evet
+Kurumsal,/kurumsal/bize-ulasin,/iletisim,Birebir,,evet
+Kurumsal,/kurumsal/yetkili-servislerimiz,/yetkili-bayi-ve-servis-agi,Birebir,,evet
+Kurumsal,/kurumsal/satis-ekibimiz,/satis-temsilcilerimiz,Birebir,,evet
+Kurumsal,/kurumsal/garanti-baslatma,/garanti/kayit,Birebir,,evet
+Kurumsal,/kurumsal/garanti-kosullari,/garanti/kosullar,Birebir,,hayır
+Kurumsal,/kurumsal/servis-talep,/servis-talebi,Birebir,,hayır
+Yasal,/kurumsal/gizlilik-sozlesmesi,/yasal/gizlilik,Birebir,,evet
+Yasal,/kurumsal/cerez-politikalari,/yasal/cerez-politikasi,Birebir,,evet
+Yasal,/kurumsal/kis-isel-verilerin-i-s-lenmesi-politikasi,/yasal/kisisel-verilerin-islenmesi-politikasi,Birebir,,evet
+Yasal,/kurumsal/kisisel-veri-saklama-ve-imha-politikasi,/yasal/kisisel-veri-saklama-ve-imha-politikasi,Birebir,,evet
+Yasal,/kurumsal/kvkk-aydinlatma-metni,/yasal/kvkk,Birebir,,evet
+Yasal,/kurumsal/fiziki-guvenlik-sureclerine-yonelik-aydinlatma-metni,/yasal/fiziksel-guvenlik-aydinlatma-metni,Birebir,,hayır
+Haber,/haberler,/haberler,Birebir,,evet
+Haber,/haberler/zenweld-kaynak-akademi,/haberler/zenweld-kaynak-akademi,Birebir,,evet
+Haber,/haberler/zenweld-kaynak-ve-kesme-elipmanlairi-amp-amp-ebinc-makin-kaynak-ve-kesme-teknolojileri-tanitim-gunu,/haberler/kaynak-ve-kesme-teknolojileri-tanitim-gunu-van,Birebir,"Van, Ebinç Makina tanıtım günü",hayır
+Haber,/haberler/zenweld-cumhuriyetimizin-103-yilinda-izmir-deki-yeni-uretim-tesisinin-acilisini-gerceklestirdi,/haberler,Haber yeni sitede yok → haberler,İzmir tesisinin açılışı; yeni siteye eklenirse ona yönlenir,hayır
+Haber,/haberler/zenweld-istanbul-hirdavat-fuari-2026-da-yerini-aliyor,/haberler,Haber yeni sitede yok → haberler,Yeni siteye eklenirse ona yönlenir,hayır
+Haber,/haberler/zenweld-win-eurasia-2026-da-yenilikci-teknolojilerini-sektorle-bulusturuyor,/haberler,Haber yeni sitede yok → haberler,Yeni siteye eklenirse ona yönlenir,hayır
+Etkinlik,/etkinlikler,/etkinlikler,Birebir,,hayır
+Etkinlik,/etkinlikler/2024-uluslararasi-istanbul-hirdavat-fuari,/etkinlikler/istanbul-hirdavat-fuari-2024,Birebir,,hayır
+Etkinlik,/etkinlikler/big-5-global-2025,/etkinlikler/big-5-global-2025,Birebir,,hayır
+Etkinlik,/etkinlikler/imatech-2024-2-endustriyel-uretim-teknolojileri-fuari,/etkinlikler/imatech-2024,Birebir,,hayır
+Etkinlik,/etkinlikler/imatech-2025-3-endustriyel-uretim-teknolojileri-fuari,/etkinlikler/imatech-2025,Birebir,,hayır
+Etkinlik,/etkinlikler/international-hardware-riyad,/etkinlikler/international-hardware-riyadh-2025,Birebir,,hayır
+Etkinlik,/etkinlikler/konya-makine-teknolojileri-fuari,/etkinlikler/konya-makine-teknolojileri-fuari-2024,Birebir,8–11 Mayıs 2024,hayır
+Etkinlik,/etkinlikler/win-eurasia-2025-otomasyon-ve-makine-teknolojileri-fuari,/etkinlikler/win-eurasia-2025,Birebir,,hayır
+Etkinlik,/etkinlikler/win-eurasia-endustri-fuari,/etkinlikler/win-eurasia-2024,Birebir,5–8 Haziran 2024,hayır
+Kategori,/urunler/lazer-kaynak-makineleri,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,Birebir,,evet
+Kategori,/urunler/elektrot-kaynak-makineleri,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Birebir,,evet
+Kategori,/urunler/argon-kaynak-makineleri-dc,/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri,Birebir,,evet
+Kategori,/urunler/argon-kaynak-makineleri-ac-dc,/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri,Birebir,AC/DC ve DC yeni sitede tek kategoride,evet
+Kategori,/urunler/gazalti-kaynak-makineleri,/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri,Birebir,,evet
+Kategori,/urunler/plazma-kesme-makineleri,/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri,Birebir,,evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/ultimate-255,/urun/ultimate-255-mma,Birebir,,evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/ultimate-405-cel,/urun/ultimate-405-cel-mma,Birebir,,evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/ultimate-400-cel,/urun/forcearc-400-cel-mma,Birebir,Eski adı Ultimate 400 CEL; yeni sitede ForceArc 400 CEL,evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/ultimate-405-mv-cel,/urun/ultimate-405-cel-mma,Yakın ürün,405 MV CEL (çok voltajlı) yeni sitede yok; en yakını Ultimate 405 CEL,evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/ultimate-205i,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Ürün yeni sitede yok → kategori,,evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/arc-120,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Ürün yeni sitede yok → kategori,Eski sitede de açılmıyor (404),evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/arc-140,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Ürün yeni sitede yok → kategori,Eski sitede de açılmıyor (404),evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/arc-160,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Ürün yeni sitede yok → kategori,Eski sitede de açılmıyor (404),evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/arc-200,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Ürün yeni sitede yok → kategori,"Eski sitede de açılmıyor (404); Google'da ""zenweld arc 200"" aranıyor",evet
+Elektrot,/urunler/elektrot-kaynak-makineleri/arc-200s,/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri,Ürün yeni sitede yok → kategori,Eski sitede de açılmıyor (404),evet
+Argon DC,/urunler/argon-kaynak-makineleri-dc/ultimate-251-thp,/urun/ultimate-251-thp?secenek=4-m,"Birebir, seçenekli",4 m torç (eski sayfada standart TIG 26 4 m),evet
+Argon DC,/urunler/argon-kaynak-makineleri-dc/ultimate-300-thp,/urun/ultimate-300-thp?secenek=hava_4-m,"Birebir, seçenekli","Hava soğutmalı, 4 m torç",evet
+Argon DC,/urunler/argon-kaynak-makineleri-dc/ultimate-300-thp-su-sogutmali-arabali,/urun/ultimate-300-thp?secenek=su_4-m,"Birebir, seçenekli","Su soğutmalı, 4 m torç",evet
+Argon DC,/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp,/urun/ultimate-320-thp-ipanel?secenek=hava_4-m,"Birebir, seçenekli","Eski sayfa ""320 THP I-Panel"" diyor; hava soğutmalı, 4 m torç",evet
+Argon DC,/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali,/urun/ultimate-320-thp-ipanel?secenek=su_4-m,"Birebir, seçenekli","Su soğutmalı, 4 m torç",evet
+Argon DC,/urunler/argon-kaynak-makineleri-dc/ultimate-405-thp-su-sogutmali-arabali,/urun/ultimate-405-thp?secenek=su_4-m,"Birebir, seçenekli","Su soğutmalı, 4 m torç",evet
+Argon DC,/urunler/argon-kaynak-makineleri-dc/ultimate-200-th,/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri,Ürün yeni sitede yok → kategori,,evet
+Argon DC,/urunler/argon-kaynak-makineleri-dc/ultimate-200-thp,/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri,Ürün yeni sitede yok → kategori,,evet
+Argon AC/DC,/urunler/argon-kaynak-makineleri-ac-dc/ultimate-205-acdc,/urun/ultimate-205-ac-dc?secenek=4-m,"Birebir, seçenekli",4 m torç,evet
+Argon AC/DC,/urunler/argon-kaynak-makineleri-ac-dc/ultimate-320-acdc,/urun/ultimate-320-ac-dc?secenek=hava_4-m,"Birebir, seçenekli","Hava soğutmalı, 4 m torç",evet
+Argon AC/DC,/urunler/argon-kaynak-makineleri-ac-dc/ultimate-320-acdc-su-sogutmali-arabali,/urun/ultimate-320-ac-dc?secenek=su_4-m,"Birebir, seçenekli","Su soğutmalı, 4 m torç",evet
+Argon AC/DC,/urunler/argon-kaynak-makineleri-ac-dc/ultimate-400-acdc,/urun/ultimate-400-ac-dc-ipanel?secenek=hava_4-m,"Birebir, seçenekli","Eski sayfa ""i-Panel"" diyor; hava soğutmalı, 4 m torç",evet
+Argon AC/DC,/urunler/argon-kaynak-makineleri-ac-dc/ultimate-400-acdc-su-sogutmali-arabali,/urun/ultimate-400-ac-dc-ipanel?secenek=su_4-m,"Birebir, seçenekli","Su soğutmalı, 4 m torç",evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/ultimate-250-mtc,/urun/ultimate-250-mtc?secenek=3-m,"Birebir, seçenekli",3 m torç (eski sayfada standart MIG 15 3 m),evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/ultimate-255-mtc,/urun/ultimate-255-mtc?secenek=3-m,"Birebir, seçenekli",3 m torç (standart MIG 25 3 m),evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/ultimate-355-mtc,/urun/ultimate-355-mtc?secenek=4-m,"Birebir, seçenekli",4 m torç (standart MIG 36 4 m),evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/ultimate-320-mtc,/urun/ultimate-320-mtc-ipanel?secenek=4-m,"Birebir, seçenekli",Yeni sitedeki iPanel modeli; 4 m torç (standart MIG 36 4 m),evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/ultimate-405-mts-hava-sogutmali-arabali,/urun/ultimate-405-mts?secenek=hava_4-m_5-m,"Birebir, seçenekli","Hava soğutmalı, 4 m torç; ara paket eski sayfada yazmıyor, 5 m seçildi",evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/ultimate-405-mts-su-sogutmali-arabali,/urun/ultimate-405-mts?secenek=su_4-m_5-m,"Birebir, seçenekli","Su soğutmalı, 4 m torç; ara paket 5 m",evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/ultimate-505-mts-su-sogutmali-arabali,/urun/ultimate-505-mts?secenek=su_4-m_5-m,"Birebir, seçenekli","Su soğutmalı, 4 m torç; ara paket 5 m",evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/evomig-405-p,/urun/evomig-405-p?secenek=su_4-m_5-m,"Birebir, seçenekli","Eski sayfa ""su soğutmalı arabalı"" diyor; torç ve ara paket yazmıyor, 4 m ve 5 m seçildi",evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/evomig-555-p,/urun/evomig-555-p,Birebir,Eski sayfada seçenek bilgisi yok; ürün sayfası ilk seçenekle açılır,evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/evomig-255-p,/urun/evomig-255-p,Birebir,Eski sayfada seçenek bilgisi yok,evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/evomig-205-p,/urun/evomig-205-p,Birebir,Yeni sitede Çok Fonksiyonlu kategorisinde,evet
+Gazaltı,/urunler/gazalti-kaynak-makineleri/ultimate-205-mte-pro,/urun/ultimate-205-mte-pro,Birebir,Yeni sitede Çok Fonksiyonlu kategorisinde,evet
+Plazma,/urunler/plazma-kesme-makineleri/multicut-60-s,/urun/multicut-60-s,Birebir,,evet
+Plazma,/urunler/plazma-kesme-makineleri/multicut-85-cnc,/urun/multicut-85-cnc,Birebir,,evet
+Plazma,/urunler/plazma-kesme-makineleri/multicut-105-cnc,/urun/multicut-105-cnc,Birebir,,evet
+Plazma,/urunler/plazma-kesme-makineleri/multicut-40-cnc,/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri,Ürün yeni sitede yok → kategori,,evet
+Plazma,/urunler/plazma-kesme-makineleri/multicut-40-com,/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri,Ürün yeni sitede yok → kategori,,evet
+Plazma,/urunler/plazma-kesme-makineleri/multicut-65,/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri,Ürün yeni sitede yok → kategori,,evet
+Lazer,/urunler/lazer-kaynak-makineleri/ls-20000f,/urun/jasic-ls-20000f-lazer-temizleme,Birebir,Eski sitede lazer kaynak kategorisinde ama sayfası temizleme özelliklerini anlatıyor; yeni sitede Lazer Temizleme,hayır
+Lazer,/urunler/lazer-kaynak-makineleri/ls-15000f,/ekipmanlar/lazer-makineleri/lazer-temizleme,Ürün yeni sitede yok → kategori,1500 W lazer temizleme; yeni sitede yok,hayır
+Lazer,/urunler/lazer-kaynak-makineleri/ls-20000-dual-wire-3-in-1,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,Ürün yeni sitede yok → kategori,Jasic lazer kaynak ürünleri sonra eklenecek (K-74); eklenince ona yönlenir,evet
+Lazer,/urunler/lazer-kaynak-makineleri/ls-15000m,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,Ürün yeni sitede yok → kategori,Eski sitede de açılmıyor (404); K-74,evet
+Lazer,/urunler/lazer-kaynak-makineleri/ls-20000m,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,Ürün yeni sitede yok → kategori,Eski sitede de açılmıyor (404); K-74,evet
+Lazer,/urunler/lazer-kaynak-makineleri/lw-1500,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,Ürün yeni sitede yok → kategori,Eski sitede de açılmıyor (404); K-74,evet
+Lazer,/urunler/lazer-kaynak-makineleri/lw-2000,/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri,Ürün yeni sitede yok → kategori,Eski sitede de açılmıyor (404); K-74,evet
+Kimyasal,/urunler/kimyasallar/anti-spatter,/aksesuarlar,Karar bekliyor,Anti-spatter satılacak mı şirkete sorulacak (YAPILACAKLAR); eski sitede de açılmıyor (404),evet

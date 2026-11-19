@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-120).
+  K-121).
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -31,7 +31,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41, K-117, K-119
 8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116
-10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120
+10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120, K-121
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
 12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108
 13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110
@@ -1025,6 +1025,20 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   değiştirir ve sayfanın sırası yeni adrese geçer. Önce sayfanın içinde
   308 denendi; Next önbelleğe aldığı yönlendirmeyi bazen hedef adresi
   olmadan saklıyor, bu yüzden istek kontrolünde yapıldı.
+
+### K-121 · Eski zenweld.com adreslerinin eşleştirmesi
+- Ürünlerimiz yeni sitenin Ekipmanlar'ındakilerdir. Eski sitede olup yeni
+  sitede olmayan ürünün eski adresi kategorisine yönlenir.
+- Eski sitede ayrı sayfa olan haller (su soğutmalı - arabalı gibi) yeni
+  sitede aynı ürünün seçeneğidir; eski adresleri aynı ürün sayfasına,
+  ilgili seçenekle yönlenir.
+- Eski "Ultimate 400 CEL" yeni sitedeki ForceArc 400 CEL'dir. "Ultimate
+  405 MV CEL" yeni sitede yoktur.
+- Liste: `docs/seo/yonlendirme-listesi.csv` (85 adres); ayrıntı
+  [SEO.md](SEO.md) › 15.
+- **Neden:** Eski adreslerin Google'daki değeri ve ziyaretçisi
+  kaybolmasın; ziyaretçi aradığı ürünün yeni sayfasına ya da en yakın
+  kategoriye gelsin.
 
 ---
 
