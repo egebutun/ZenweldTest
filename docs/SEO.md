@@ -898,7 +898,7 @@ Google'da üst sıralara çıkmak için yapılacakların tam listesi. İşaretli
 maddeler bugün hazır; işaretsizler sırayla yapılıp işaretlenir. Her
 maddenin sonunda kimin yapacağı yazar: **Panel** (sahibi, yönetim
 panelinden), **Kod** (sahibinin onayıyla, kod değişikliği), **Sahibi**
-(site dışı işler). Kod işlerinin sırası ve numarası (B1–B6, A1–A8, C1–C4):
+(site dışı işler). Kod işlerinin sırası ve numarası (B1–B7, A1–A8, C1–C4):
 [YAPILACAKLAR.md](YAPILACAKLAR.md) › SEO — anahtar kelime çalışmasından
 kalan işler.
 
@@ -959,16 +959,25 @@ en büyük içeriğin görünme süresi (LCP) anasayfada **3,0 sn**, kategoride
       sayfasında.
 - [x] "Elektrot" ve "Plazma Kesim" yazımı ürün ve kategori adlarında
       (KARARLAR K-118).
-- [ ] Ana sayfa, bölüm, grup ve kategori başlık ve açıklamalarının
-      girilmesi ([7.](#7-ana-sayfa-bölüm-ve-grup-sayfaları) ve
-      [9. bölüm](#9-kategoriler); A1–A5). **Panel**
-- [ ] Kategori adı kalıbı kararı: "Gazaltı (MIG/MAG)", "Argon (TIG)",
-      "Elektrot (MMA)" ([9. bölüm](#9-kategoriler); C2). **Sahibi**
-- [ ] 50 kategoriye Tanıtım Metni; önce lazer ve ana makine kategorileri
-      (A1, A2). **Panel**
+- [ ] **Sayfa sayfa düzenleme** (her sayfa, anahtar kelime haritasındaki
+      [6. bölüm](#6-anahtar-kelime-haritası) hedef terimine göre aynı
+      kontrol listesiyle: ad ve H1, link, meta title, meta description,
+      H2/H3'lü metin, ürünlerde teknik özellik etiketleri ve öne çıkan
+      bilgiler, görsel alt metni, iç bağlantılar, yapısal veri). Sıra:
+      - Ad, başlık ve link kalıbı kararı: ürün ve kategori adlarında halk
+        arası ad mı önde ("Argon (TIG)" / bugünkü "TIG Argon"), ürün
+        adında amper olsun mu, linkler adla birlikte değişsin mi; linkinde
+        eski yazım kalan 5 sayfa ("elektrod", "kesme") bu adımda düzelir
+        (A1, C2). **Sahibi**
+      - Ürün sayfaları; bugün yalnızca Ekipmanlar'da 40 makine (A2).
+        **Panel / Kod**, metinler gerçek bilgiler gelince
+      - 50 kategori ve 12 grup; önce lazer ve makine kategorileri
+        ([7.](#7-ana-sayfa-bölüm-ve-grup-sayfaları)–[9. bölüm](#9-kategoriler);
+        A3). **Panel**
+      - Ana sayfa, bölümler, Force (A4) ve sabit sayfalar (A5). **Panel**
 - [ ] İç bağlantılar: ürün → uyumlu torç, sarf ve tel; kategori → blog;
-      blog → kategori ve ürün. Bağlantı metni hedef sayfanın ana terimi.
-      **Panel**
+      blog → kategori ve ürün. Bağlantı metni hedef sayfanın ana terimi
+      (A8). **Panel**
 - [ ] Yeni fotoğraflarda alt metne görünümü eklemek ("… — ön panel").
       **Panel**
 - [ ] Sayfa içi teknik denetim: her sayfada tek H1 (ana başlık) ve içinde
@@ -976,19 +985,13 @@ en büyük içeriğin görünme süresi (LCP) anasayfada **3,0 sn**, kategoride
       başlığı (meta title) ve Google açıklaması (meta description) olmaması;
       görsel alt metinleri, paylaşım önizlemesi, canonical. Tarayıcı testine
       eklenir (B7). **Kod**
-- [ ] Linklerde eski yazım: adı "Elektrot" ve "Plazma Kesim" olan 5 sayfanın
-      linkinde hâlâ "elektrod" ve "kesme" var (B8, C5). **Kod**, onayla
-- [ ] Ürün adları: bugün yalnızca Ekipmanlar'da ürün var (40 makine);
-      gerçek bilgiler gelince makine adları yeniden gözden geçirilir;
-      aksesuar, güvenlik ve tel ürünleri [9. bölümdeki](#9-kategoriler) ad
-      formülleriyle girilir (A9). **Panel**
 
 ### 4. İçerik
 
 En büyük etken: Google, aramaya en iyi cevabı veren sayfayı üste koyar.
 
 - [ ] 31 üründeki örnek metin (lorem ipsum) gerçek açıklama ve teknik
-      tabloyla değişmeli; Google bu sayfaları değersiz sayar (A8).
+      tabloyla değişmeli; Google bu sayfaları değersiz sayar (A2).
       **Panel**, ürün bilgileri gelince
 - [ ] 6 blog yazısının metni yer tutucu; canlıdan önce yazılmalı ya da
       yayından kaldırılmalı (KARARLAR K-54). **Panel**
@@ -997,12 +1000,12 @@ En büyük etken: Google, aramaya en iyi cevabı veren sayfayı üste koyar.
 - [ ] Sitedeki bütün yazıların denetimi: blog, haber, etkinlik, SSS,
       Hakkımızda, belge sayfaları, yasal metinler; başlık, özet, metin, SEO
       alanları, alt metin, iç bağlantı. Bilinen: iki İmatech etkinliğinde
-      aynı paragraf, etkinlik galerilerinde geçici stok fotoğraflar (A10).
+      aynı paragraf, etkinlik galerilerinde geçici stok fotoğraflar (A6).
       **Panel**
 - [ ] SSS'deki yer tutucu cevaplar (şebeke, jeneratör) ve "Zenweld hangi
       ülkenin markası?" sorusu. **Panel**
 - [ ] Hakkımızda'ya ek paragraf ve soru-cevap
-      ([11. bölüm](#11-hakkımızda); A6). **Panel**
+      ([11. bölüm](#11-hakkımızda); A5). **Panel**
 - [ ] Kullanım kılavuzu PDF'leri; bugün bütün ürünlerde kılavuz linki yer
       tutucu (`#`). **Panel**
 - [ ] Ürün kullanım ve ayar videoları (YouTube); "nasıl kullanılır",

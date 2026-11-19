@@ -1296,7 +1296,8 @@ veritabanı modunda sunucuda 301 ile yönlenir (K-120). Kalanlar:
 
 Anahtar kelime ve rakip analizi (16–17 Kasım 2026), sayfa sayfa öneriler
 ve SEO yol haritası [SEO.md](SEO.md)'dedir; ham veriler `docs/seo/analiz-2026-11-17/`.
-Sıra: önce teknik işler (B), sonra metinler (A); kararlar (C) sahibindedir.
+Sıra: önce teknik işler (B), sonra sayfa sayfa düzenleme (A); kararlar (C)
+sahibindedir.
 
 **B — Teknik SEO (kod işi)**
 
@@ -1322,43 +1323,63 @@ B1 (değişen linklerde sunucuda 301; KARARLAR K-120) ve B2 (eski
    (canonical). Denetim tarayıcı testine eklenir; bulunan eksikler
    düzeltilir. Bugün başlık, açıklama, canonical ve paylaşım önizlemesi
    kodda var (K-55); H1 ve ara başlık sırası denetlenmedi.
-6. **B8 · Linklerde eski yazım:** ad "Elektrot" ve "Plazma Kesim" olduğu
-   hâlde linkte eski yazım kalan 5 adres (K-118'de linkler bilerek
-   değiştirilmemişti); karar C5.
+**A — Sayfa sayfa SEO düzenlemesi (anahtar kelime haritasına göre)**
 
-**A — Metinler (panelden ya da örnek veriden; SEO.md'deki önerilerle)**
+Her sayfa aynı kontrol listesiyle, [SEO.md](SEO.md) › 6'daki anahtar kelime
+haritasında o sayfaya verilen hedef terime göre düzenlenir:
 
-1. **A1 · Lazer kategorileri:** Lazer Kaynak, Lazer Temizleme, Lazer
-   Markalama; Tanıtım Metni, sayfa başlığı, Google açıklaması (en çok
-   aranan yeni alan).
-2. **A2 · Diğer makine kategorileri:** MIG Gazaltı, TIG Argon, MMA
-   Elektrot, Çok Fonksiyonlu, Plazma Kesim (Plazma'da "plazma kesme
-   makinesi" bir kez; [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 7).
-3. **A3 · Ana sayfa, bölümler ve gruplar:** Sayfa SEO ve grup SEO alanları
-   (SEO.md › 7).
-4. **A4 · Güvenlik ve Dolgu Metalleri kategorileri:** "kaynak maskesi",
-   "kaynak teli" terimleriyle Tanıtım Metinleri.
-5. **A5 · Aksesuar kategorileri:** kısa Tanıtım Metinleri; aksesuar ve tel
-   ürünleri girilirken SEO.md › 9'daki ad formülü.
-6. **A6 · Hakkımızda:** ürün gamı paragrafı ve "Zenweld hangi ülkenin
-   markası?" soru-cevabı; "60+ Ürün" sayısının kontrolü (bugün 40 makine).
-7. **A7 · Blog:** SEO.md › 13'teki 15 konu (önce lazer konuları).
-8. **A8 · Ürün açıklamaları:** gerçek ürün bilgileri gelince (SEO.md › 10).
-9. **A9 · Ürün adları:** Bugün sitede yalnızca Ekipmanlar'da ürün var (40
-   makine; adlar K-71 ve K-118'e göre). Gerçek bilgiler gelince makine
-   adları yeniden gözden geçirilir; Aksesuarlar, Güvenlik ve Dolgu
-   Metalleri ürünleri girilirken SEO.md › 9'daki ad formülleri kullanılır
-   (aksesuar: tür + tip + ölçü + uzunluk; tel: sınıf + tür + çap +
-   ağırlık).
-10. **A10 · Sitedeki bütün yazıların denetimi:** 6 blog yazısı (metinleri
-    yer tutucu), 5 haber, 9 etkinlik, SSS (iki cevap yer tutucu),
-    Hakkımızda, belge sayfaları ve yasal metinler tek tek incelenir:
-    başlık, özet, metin, SEO alanları, görsel alt metni, iç bağlantılar.
-    Bilinen sorunlar: iki İmatech etkinliğinde aynı "Zenweld Hakkında"
-    paragrafı (tekrar eden metin); etkinlik galerilerinde geçici stok
-    fotoğraflar (gerçekleri gelince değişir).
-11. **İç bağlantılar:** ürün → uyumlu aksesuar ve tel kategorisi; kategori ↔
-    blog.
+- ad ve ana başlık (H1), link (URL);
+- sayfa başlığı (meta title) ve Google açıklaması (meta description);
+- sayfa metni ve ara başlıkları (H2, H3); ürünlerde teknik özellik
+  etiketleri ve öne çıkan bilgiler;
+- görsel dosya adı ve alt metni, iç bağlantılar, yapısal veri.
+
+Önce kalıp kararı (A1), sonra sayfa türleri sırayla. Gerçek bilgisi
+gelmemiş ürünlerde metinler bilgi gelince yazılır; ad, link ve başlık
+kalıbı önceden uygulanabilir. Site yayında olmadığı için link
+değişikliği bugün Google'da bir şey kaybettirmez.
+
+1. **A1 · Ad, başlık ve link kalıbı** (karar C2): ürün ve kategori adları,
+   linkler, H1, meta title ve description için tek kalıp; anahtar kelime
+   haritasına ve pazarın diline göre seçenekler sahibine örneklerle
+   sunulur. Örnek: bugünkü "Ultimate 251 THP TIG Argon Kaynak Makinesi"
+   mi, halk arası adın önde olduğu ve aranan amperin geçtiği "Ultimate 251
+   THP Argon (TIG) Kaynak Makinesi 250 A" gibi bir kalıp mı? Linkinde eski
+   yazım kalan 5 sayfa (`mma-ortulu-elektrod-…`, `tungsten-elektrodlar`,
+   `elektrod-pense-ve-kitleri`, `karbon-kesme-elektrod-…`,
+   `plazma-kesme-aksesuarlari`) bu adımda düzelir.
+2. **A2 · Ürün sayfaları (bugün 40 makine; yalnızca Ekipmanlar'da ürün
+   var):** kalıba göre ad, link, H1, meta title ve description; teknik
+   özellik etiketleri ve birimleri; öne çıkan 3 madde; kısa ve uzun
+   açıklama (H2/H3 yapısı, [SEO.md](SEO.md) › 10); plazmada "kesme" kuralı
+   ([Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler)
+   7); görsel alt metni; uyumlu torç, sarf ve tel bağlantıları. Ad, link ve
+   başlıklar kalıp kararından sonra; metinler gerçek bilgiler gelince.
+   Aksesuar, güvenlik ve tel ürünleri girilirken aynı kalıp ve SEO.md › 9
+   formülleri (aksesuar: tür + tip + ölçü + uzunluk; tel: sınıf + tür +
+   çap + ağırlık).
+3. **A3 · Kategoriler (50) ve gruplar (12):** ad, link, Tanıtım Metni
+   (H2/H3), kısa açıklama, meta title ve description. Sıra: lazer (3),
+   diğer makine kategorileri (5; plazmada "kesme" kuralı), güvenlik ve
+   dolgu metalleri ("kaynak maskesi", "kaynak teli"), aksesuarlar
+   ([SEO.md](SEO.md) › 8–9).
+4. **A4 · Ana sayfa, bölüm sayfaları ve Force:** sayfa başlığı, açıklama,
+   sayfadaki metin ve bağlantılar ([SEO.md](SEO.md) › 7).
+5. **A5 · Sabit sayfalar:** Hakkımızda (ürün gamı paragrafı, "Zenweld
+   hangi ülkenin markası?" soru-cevabı, "60+ Ürün" sayısı; bugün 40
+   makine), bayi ve servis ağı, satış temsilcileri (il adları), teklif,
+   servis, garanti, SSS, kaynak rehberi, ürün seçici, MSDS, parti
+   sertifikaları, iletişim ([SEO.md](SEO.md) › 11–12).
+6. **A6 · Sitedeki mevcut yazılar:** 6 blog yazısı (metinleri yer
+   tutucu), 5 haber, 9 etkinlik, SSS (iki cevap yer tutucu), belge
+   sayfaları ve yasal metinler tek tek incelenir: başlık, özet, metin,
+   ara başlıklar, SEO alanları, görsel alt metni, iç bağlantılar. Bilinen
+   sorunlar: iki İmatech etkinliğinde aynı "Zenweld Hakkında" paragrafı
+   (tekrar eden metin); etkinlik galerilerinde geçici stok fotoğraflar.
+7. **A7 · Yeni blog yazıları:** [SEO.md](SEO.md) › 13'teki 15 konu (önce
+   lazer konuları), ayda 2–4 yazı.
+8. **A8 · İç bağlantılar:** ürün → uyumlu aksesuar ve tel kategorisi;
+   kategori ↔ blog; bağlantı metni hedef sayfanın ana terimi.
 
 **C — Sahibin kararı**
 
@@ -1367,17 +1388,16 @@ B1 (değişen linklerde sunucuda 301; KARARLAR K-120) ve B2 (eski
    bugün Aksesuarlar'a yönleniyor; satılırsa ürün eklenir ve
    `apps/zenweld-web/eski-site-yonlendirmeleri.json` ile
    `docs/seo/yonlendirme-listesi.csv`'deki satırı ona çevrilir.
-2. **C2 · Kategori adı kalıbı:** pazar "Gazaltı (MIG/MAG) Kaynak
-   Makineleri" diye yazıyor, bizde kısaltma önde ("MIG (GMAW) Gazaltı …").
-   Değişirse link değişmez, yalnız ad.
+2. **C2 · Ad, başlık ve link kalıbı (A1):** ürün ve kategori adlarında
+   halk arası ad mı önde, kısaltma mı ("Argon (TIG)" / "TIG Argon";
+   pazar ve bizim kuralımız: halk arası ad önde); ürün adında amper olsun
+   mu; linkler adla birlikte değişsin mi (eski yazım kalan 5 link dahil).
+   Seçenekler örneklerle sunulacak.
 3. **C3 · Ürün gamı fırsatları:** örtülü elektrot, kaynak gözlüğü, kaynak
    masası, şarjlı kaynak makinesi (SEO.md › 14); Jasic lazer kaynak
    (K-74).
 4. **C4 · Search Console doğrulaması:** alan adının DNS kaydına kimin
    erişimi var (BT).
-5. **C5 · Linklerde eski yazım değişsin mi?** (B8) Sahibi değişmesini
-   istedi; liste onaya sunuldu. Site henüz yayında olmadığı için link
-   değişikliği Google'da bir şey kaybettirmez.
 
 ## Ürün Seçici ve arama — en son yeniden tasarlanacak
 
