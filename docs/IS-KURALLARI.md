@@ -54,6 +54,7 @@ altında otomatik denenir (`npm test`). Kural değişince test de değişir.
 23. [Yüklenen dosyalar](#23-yüklenen-dosyalar)
 24. [Panel listeleri: sayfalama ve arama](#24-panel-listeleri-sayfalama-ve-arama)
 25. [Anasayfa tanıtım alanı](#25-anasayfa-tanıtım-alanı)
+26. [Listelerin sayfalanması](#26-listelerin-sayfalanması)
 
 ---
 
@@ -1754,3 +1755,37 @@ sunucu tarayıcıdan geleni yeniden denetler.
   deposuna yüklenir (K-108), depo ayarlı değilse adres yazılır.
 - Testler: `tests/unit/tanitim-alani.test.ts`, `tests/db/panel-tanitim.test.ts`.
 
+---
+
+## 26. Listelerin sayfalanması
+
+**Kısaca:** Kategori ürün listesi sayfa başına 24, blog, haber ve etkinlik
+listesi 12 kayıt gösterir. Sınır aşılmazsa liste tek sayfadır. Sahibinin
+kararı (KARARLAR K-124). Kod: `packages/data/src/pagination.ts`.
+
+- **Adres:** 1. sayfa listenin kendi adresidir; sonrakiler
+  `<liste>/sayfa/<n>` (ör. `/haberler/sayfa/2`,
+  `/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri/sayfa/2`).
+  `…/sayfa/1` listenin adresine 301 ile gider. Sayı olmayan sayfa (ör.
+  `/sayfa/abc`) 404 döner.
+- **Sayfa sayısı** = kayıt sayısı ÷ sayfa başına kayıt, yukarı yuvarlanır;
+  boş liste 1 sayfadır.
+  - **Örnek:** 30 ürünlü kategori → 2 sayfa (24 + 6); 24 ürün → 1 sayfa.
+- **Arama motoru:** Her sayfanın asıl adresi (canonical) kendisidir; 2.
+  sayfadan itibaren başlığa " — Sayfa <n>" eklenir ("Haberler — Sayfa 2 |
+  ZENWELD"). Sayfa numaraları gerçek bağlantıdır. Site haritasında yalnızca
+  1. sayfa vardır.
+- **Kategori filtreleri:** Sayfalama filtrelenmiş listeye uygulanır; sayfa
+  bağlantıları filtreleri korur; filtre değişince liste 1. sayfaya döner.
+- **Etkinlikler:** Varsayılan görünüm (filtresiz, yeniden eskiye)
+  sayfalanır; durum ya da ülke filtresi ya da sıralama seçilince eşleşen
+  etkinliklerin hepsi tek listede gösterilir.
+- **Arama sonuçları:** Ürün sonuçları sayfa başına 24 (`/arama?q=…&sayfa=2`;
+  arama sayfası Google'a kapalı); diğer sonuçlar tek liste.
+- **Var olmayan sayfa:** Veritabanı modunda kayıt sayısının dışındaki sayfa
+  404 döner. Demo modunda panelde eklenen kayıtlar yalnızca tarayıcıda
+  olduğu için o sayfa açılır ve "Bu sayfada kayıt yok. İlk sayfaya dön"
+  yazar.
+
+Testler: `tests/unit/sayfalama.test.ts`, `tests/e2e/sayfalama.spec.ts`,
+`tests/e2e-db/sayfalama.spec.ts`.

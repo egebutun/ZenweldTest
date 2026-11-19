@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import type { TopLevelSection } from "@zenweld/data";
+import { pagedTitle, type TopLevelSection } from "@zenweld/data";
 import { findMovedCatalogPath, useDatabase } from "@zenweld/store";
 import { findGroup, groupDescription } from "@/lib/catalog";
 import { categorySeo, groupSeo } from "@/lib/seo";
@@ -34,10 +34,13 @@ export function CategoryPage({
   section,
   groupSlug,
   categorySlug,
+  page = 1,
 }: {
   section: TopLevelSection;
   groupSlug: string;
   categorySlug: string;
+  /** Urun listesinin sayfasi (/…/sayfa/<n>; K-124) */
+  page?: number;
 }) {
   const db = useDatabase();
   // Kategori yalnizca kendi grubunun adresinde acilir (her sayfanin tek adresi).
@@ -46,11 +49,11 @@ export function CategoryPage({
   );
   const moved = category ? undefined : findMovedCatalogPath(`/${section}/${groupSlug}/${categorySlug}`, db);
   useMovedRedirect(moved);
-  useSeoTitle(category && categorySeo(category).title);
+  useSeoTitle(category && pagedTitle(categorySeo(category).title, page));
 
   if (!category) {
     if (moved) return null;
     notFound();
   }
-  return <CategoryListing section={section} categorySlug={categorySlug} />;
+  return <CategoryListing section={section} categorySlug={categorySlug} page={page} />;
 }

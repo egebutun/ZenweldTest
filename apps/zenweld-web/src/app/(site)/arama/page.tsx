@@ -3,10 +3,12 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search } from "lucide-react";
+import { PRODUCTS_PER_PAGE, pageCount, pageItems, parsePageNumber } from "@zenweld/data";
 import { findProductById, useDatabase } from "@zenweld/store";
 import { Button, EmptyState, ProductImage } from "@zenweld/ui";
 import Link from "next/link";
 import { ProductGrid } from "@/components/product/ProductGrid";
+import { Pager } from "@/components/common/Pager";
 import { useSearch } from "@/lib/search/use-search";
 import { useT } from "@/lib/i18n-client";
 
@@ -32,6 +34,9 @@ function SearchPageInner() {
   const products = productHits
     .map((h) => findProductById(h.id.replace("product:", ""), db))
     .filter((p): p is NonNullable<typeof p> => Boolean(p));
+  // Urun sonuclari sayfa basina 24 (?sayfa=<n>; arama sayfasi Google'a kapali; K-124).
+  const page = Math.min(parsePageNumber(params.get("sayfa")) ?? 1, pageCount(products.length, PRODUCTS_PER_PAGE));
+  const pageHref = (n: number) => `/arama?q=${encodeURIComponent(query)}${n > 1 ? `&sayfa=${n}` : ""}`;
 
   return (
     <div className="zw-container py-10">
@@ -103,7 +108,8 @@ function SearchPageInner() {
       {products.length > 0 && (
         <div className="mt-8">
           <h2 className="mb-4 font-display text-2xl font-bold uppercase">{t.search.products}</h2>
-          <ProductGrid products={products} />
+          <ProductGrid products={pageItems(products, page, PRODUCTS_PER_PAGE)} />
+          <Pager page={page} pageCount={pageCount(products.length, PRODUCTS_PER_PAGE)} basePath="/arama" hrefFor={pageHref} />
         </div>
       )}
 

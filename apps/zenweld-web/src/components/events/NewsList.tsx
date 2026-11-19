@@ -1,29 +1,34 @@
 "use client";
 
 import { useMemo } from "react";
+import { POSTS_PER_PAGE, pageCount, pageItems } from "@zenweld/data";
 import { listNews, useDatabase } from "@zenweld/store";
 import { EmptyState, ProductImage } from "@zenweld/ui";
 import Link from "next/link";
 import { PageHero } from "@/components/common/PageShell";
+import { EmptyPage, Pager } from "@/components/common/Pager";
 import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";
 
 /**
  * Haberler sayfasi: Blog ile ayni kart duzeni, hepsi ayni boyutta (manset yok).
  * Haber gorselleri afis ve genis fotograflar oldugu icin kirpilmaz.
+ * Sayfa basina 12 haber; sonraki sayfalar /haberler/sayfa/<n> (K-124).
  */
-export function NewsList() {
+export function NewsList({ page = 1 }: { page?: number }) {
   const t = useT();
   const db = useDatabase();
 
-  const items = useMemo(() => listNews(db), [db]);
+  const all = useMemo(() => listNews(db), [db]);
+  const items = pageItems(all, page, POSTS_PER_PAGE);
+  const pages = pageCount(all.length, POSTS_PER_PAGE);
 
   return (
     <>
       <PageHero title={t.news.title} subtitle={t.news.subtitle} />
 
       <div className="zw-container py-12">
-        {items.length === 0 && <EmptyState title={t.news.empty} />}
+        {all.length === 0 && <EmptyState title={t.news.empty} />}
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
@@ -50,6 +55,8 @@ export function NewsList() {
             </Link>
           ))}
         </div>
+        {page > 1 && items.length === 0 && <EmptyPage basePath="/haberler" />}
+        <Pager page={page} pageCount={pages} basePath="/haberler" />
       </div>
     </>
   );

@@ -314,7 +314,7 @@ Katalog dört seviyelidir: **bölüm › grup › kategori › ürün**.
 |---|---|---|
 | Bölüm | `/ekipmanlar`, `/guvenlik`, `/aksesuarlar`, `/dolgu-metalleri` | Bölümün grupları kart olarak |
 | Grup | `/ekipmanlar/kaynak-makineleri` | Grubun kategorileri kart olarak |
-| Kategori | `/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri` | Kategorinin ürünleri; varsa filtreleri |
+| Kategori | `/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri` | Kategorinin ürünleri; varsa filtreleri; sayfa başına 24 ürün, fazlası `/sayfa/2`'de (filtreler korunur, filtre değişince 1. sayfa) |
 | Ürün | `/urun/<ürün-linki>` | Ürün sayfası (kısa ve kalıcı adres; ürün başka kategoriye taşınsa da değişmez) |
 
 Her seviyede üstte konum satırı (ör. Ekipmanlar › Kaynak Makineleri ›
@@ -775,7 +775,7 @@ listelenir.
 
 - **Kutu:** Arama kutusu ve **Ara** düğmesi.
 - **Sonuç sayısı:** "\"<sorgu>\" için <N> sonuç" (en fazla 60).
-- **Ürünler:** Kart olarak.
+- **Ürünler:** Kart olarak; sayfa başına 24 (`&sayfa=2`, sayfa numaralarıyla).
 - **Diğer sonuçlar:** Liste olarak (görsel ya da simge, başlık, alt başlık).
 - **Sonuç yoksa:** "Sonuç bulunamadı — Farklı bir kelime deneyin veya
   kategorilere göz atın." ve öneriler.
@@ -1711,6 +1711,11 @@ sayfayı açar.
 İçeriklerin metni panelde basit biçimlendirmeyle yazılır: `## ara başlık`,
 `- madde`, `**kalın**`. Punto ve renk panelin Görünüm ekranından değişir.
 
+Blog, haber ve etkinlik listeleri sayfa başına 12 kayıt gösterir; fazlası
+sonraki sayfalara geçer (`/blog/sayfa/2`), listenin altında sayfa numaraları
+(‹ 1 2 3 ›) çıkar. Etkinliklerde filtre ya da sıralama seçilince eşleşenlerin
+hepsi tek listededir. Kurallar: [IS-KURALLARI.md › 26](IS-KURALLARI.md#26-listelerin-sayfalanması).
+
 ### Blog
 
 - **Liste (`/blog`):**
@@ -1843,6 +1848,9 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 - **Site haritası (`/sitemap.xml`):** Aramaya açık sabit sayfalar, gruplar,
   kategoriler, yayındaki ürünler (son değişiklik tarihiyle), blog yazıları ve
   haberler (yayın tarihiyle) ve etkinlikler.
+- **Sayfalı listeler:** 2. ve sonraki sayfaların asıl adresi kendisidir,
+  başlığına " — Sayfa <n>" eklenir; site haritasında yalnızca 1. sayfa var
+  (K-124).
 - **Asıl adres ve önizleme:** Her sayfa kendi adresini asıl adres (canonical)
   olarak bildirir. WhatsApp, LinkedIn ve X'te paylaşınca başlık, açıklama ve
   görselle önizleme çıkar.
@@ -1885,7 +1893,8 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 | `/force` | Force Serisi |
 | `/ekipmanlar`, `/guvenlik`, `/aksesuarlar`, `/dolgu-metalleri` | Bölüm sayfaları |
 | `/<bölüm>/<grup>` | Grup sayfası |
-| `/<bölüm>/<grup>/<kategori>` | Kategori sayfası |
+| `/<bölüm>/<grup>/<kategori>` | Kategori sayfası (24'ten fazla üründe `/sayfa/<n>` ile sonraki sayfalar) |
+| `/blog/sayfa/<n>`, `/haberler/sayfa/<n>`, `/etkinlikler/sayfa/<n>` | Listenin sonraki sayfaları (12'den fazla kayıtta) |
 | `/urun/<link>` | Ürün sayfası (`?secenek=<değer>` ile seçenekli açılır) |
 | `/arama?q=<sorgu>` | Arama sonuçları |
 | `/urun-secici` | Ürün Seçici (`?malzeme=celik` ön seçimi) |

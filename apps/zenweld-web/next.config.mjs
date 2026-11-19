@@ -120,7 +120,11 @@ const nextConfig = {
    * modda da aynidir.
    */
   async redirects() {
-    return oldSiteRedirects.map(({ eski, yeni }) => ({ source: eski, destination: yeni, statusCode: 301 }));
+    return [
+      ...oldSiteRedirects.map(({ eski, yeni }) => ({ source: eski, destination: yeni, statusCode: 301 })),
+      // Sayfali listenin 1. sayfasi listenin kendi adresidir (KARARLAR K-124).
+      { source: "/:path*/sayfa/1", destination: "/:path*", statusCode: 301 },
+    ];
   },
   images: {
     // hostname: "**" acikti; bu, /_next/image ucunu herkesin kullanabilecegi

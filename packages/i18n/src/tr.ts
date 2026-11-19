@@ -31,6 +31,15 @@ export const tr = {
     storageFull:
       "Gönderilemedi: tarayıcınızın deposu dolu, kayıt yapılmadı. Tarayıcının bu siteye ait verilerini temizleyip tekrar deneyin.",
   },
+  /** Sitedeki listelerin sayfa numaralari (KARARLAR K-124) */
+  pagination: {
+    label: "Sayfalar",
+    previous: "Önceki sayfa",
+    next: "Sonraki sayfa",
+    page: "Sayfa {page}",
+    empty: "Bu sayfada kayıt yok.",
+    first: "İlk sayfaya dön",
+  },
   nav: {
     force: "FORCE",
     equipment: "Ekipmanlar",

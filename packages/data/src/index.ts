@@ -8,6 +8,7 @@ export * from "./catalog";
 export * from "./variants";
 export * from "./filters";
 export * from "./returns";
+export * from "./pagination";
 export * from "./warehouse";
 export * from "./coupon";
 export * from "./catalog-rules";

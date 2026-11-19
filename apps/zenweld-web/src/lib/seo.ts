@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import {
   RETURN_WINDOW_DAYS,
+  pagePath,
+  pagedTitle,
   isDiscountActive,
   isInWarehouse,
   productBrand,
@@ -73,6 +75,26 @@ export function absoluteUrl(path: string): string {
 /** Sayfanin kalici (canonical) adresi. */
 export function canonical(path: string): { canonical: string } {
   return { canonical: absoluteUrl(path) };
+}
+
+/**
+ * Sayfali listenin 2. ve sonraki sayfasi (KARARLAR K-124): baslik
+ * " — Sayfa <n>" alir, asil adres (canonical) sayfanin kendi adresidir
+ * (1. sayfayi gostermez; Google'in onerisi), paylasim onizlemesi de oyle.
+ */
+export function pagedMetadata(meta: Metadata, basePath: string, page: number): Metadata {
+  if (page <= 1) return meta;
+  const raw = meta.title;
+  const base = typeof raw === "string" ? raw : raw && "absolute" in raw ? raw.absolute : SITE_NAME;
+  const title = pagedTitle(base, page);
+  const path = pagePath(basePath, page);
+  return {
+    ...meta,
+    title: { absolute: title },
+    alternates: canonical(path),
+    ...(meta.openGraph ? { openGraph: { ...meta.openGraph, title, url: absoluteUrl(path) } } : {}),
+    ...(meta.twitter ? { twitter: { ...meta.twitter, title } } : {}),
+  };
 }
 
 export const SITE_NAME = "ZENWELD";

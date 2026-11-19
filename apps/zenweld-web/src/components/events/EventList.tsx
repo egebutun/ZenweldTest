@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { CalendarDays } from "lucide-react";
+import { POSTS_PER_PAGE, pageCount, pageItems } from "@zenweld/data";
 import { listEvents, useDatabase, useNow } from "@zenweld/store";
 import { Button, EmptyState, FormRow, Select } from "@zenweld/ui";
+import { EmptyPage, Pager } from "@/components/common/Pager";
 import { EventCard } from "./EventCard";
 import { eventWindow } from "./event-dates";
 import { useT } from "@/lib/i18n-client";
@@ -16,8 +18,12 @@ type StatusFilter = "" | "upcoming" | "past";
  * Tum etkinlikler tek bir izgarada listelenir; yaklasan/gecmis ayrimi
  * baslik yerine filtre olarak sunulur. Varsayilan siralama tarihe gore
  * yeniden eskiye dogrudur.
+ *
+ * Sayfa basina 12 etkinlik; sonraki sayfalar /etkinlikler/sayfa/<n>
+ * (K-124). Filtre ya da siralama secilince eslesen etkinliklerin hepsi tek
+ * listede gosterilir.
  */
-export function EventList() {
+export function EventList({ page = 1 }: { page?: number }) {
   const t = useT();
   const db = useDatabase();
 
@@ -53,6 +59,9 @@ export function EventList() {
   }, [all, country, status, sort, now]);
 
   const hasFilter = Boolean(status || country);
+  // Varsayilan gorunum sayfalanir; filtre ya da siralama secilince hepsi.
+  const paged = !hasFilter && sort === "newest";
+  const shown = paged ? pageItems(events, page, POSTS_PER_PAGE) : events;
   const clearFilters = () => {
     setStatus("");
     setCountry("");
@@ -106,7 +115,9 @@ export function EventList() {
         )}
       </div>
 
-      {events.length === 0 ? (
+      {paged && page > 1 && shown.length === 0 ? (
+        <EmptyPage basePath="/etkinlikler" />
+      ) : events.length === 0 ? (
         <div className="mt-10">
           <EmptyState
             icon={<CalendarDays size={40} />}
@@ -117,11 +128,12 @@ export function EventList() {
         </div>
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {events.map((e) => (
+          {shown.map((e) => (
             <EventCard key={e.id} event={e} />
           ))}
         </div>
       )}
+      {paged && <Pager page={page} pageCount={pageCount(events.length, POSTS_PER_PAGE)} basePath="/etkinlikler" />}
     </div>
   );
 }

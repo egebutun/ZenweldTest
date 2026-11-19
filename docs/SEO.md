@@ -925,8 +925,9 @@ içeriğe rağmen geride kalır.
       19 Kasım 2026). Site `zenweld.com`'a geçince kendiliğinden çalışır.
 - [ ] Tek adres: `www.zenweld.com` ile `zenweld.com`'dan biri diğerine,
       `http` de `https`'e 301 ile yönlenmeli. **Sunucu ayarı**
-- [ ] Uzun listelerin (kategori ürünleri, blog, haberler, etkinlikler,
-      arama) sayfalanması (B4). **Kod**
+- [x] Uzun listelerin sayfalanması: kategori 24, blog, haber, etkinlik 12;
+      `/sayfa/<n>`, her sayfanın asıl adresi kendisi (B4; K-124, 19 Kasım
+      2026).
 - [ ] Eski sitenin ikinci adresi `zenweld.vercel.app` kapatılmalı ya da
       `zenweld.com`'a yönlenmeli (aynı içerik iki adreste). **Eski sitenin
       geliştiricisi**

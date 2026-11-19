@@ -3,8 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { PackageOpen, SlidersHorizontal, X } from "lucide-react";
 import {
+  PRODUCTS_PER_PAGE,
   applyFilterSelection,
+  categoryHref,
   filterFacets,
+  pageCount,
+  pageItems,
   selectionFromQuery,
   writeSelectionToQuery,
   type FilterSelection,
@@ -23,10 +27,13 @@ import { useT } from "@/lib/i18n-client";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { catalogTrail } from "@/lib/catalog";
 import { CatalogAbout } from "./CatalogAbout";
+import { EmptyPage, Pager } from "@/components/common/Pager";
 
 interface ListingProps {
   section: TopLevelSection;
   categorySlug: string;
+  /** Sayfa (adresteki /sayfa/<n>); filtre degisince 1. sayfaya donulur */
+  page?: number;
 }
 
 /**
@@ -34,13 +41,16 @@ interface ListingProps {
  * gruptaki diger kategoriler gosterilmez; her kategorinin kendi filtreleri
  * vardir (Category.filters). Filtre secimi adrese yazilir
  * (?calisma-modu=puls); arama motoruna sayfa filtresiz adresle gider.
+ * Sayfa basina 24 urun; sonraki sayfalar /…/sayfa/<n>, filtreler sayfa
+ * baglantilarinda korunur (K-124).
  */
-export function CategoryListing({ section, categorySlug }: ListingProps) {
+export function CategoryListing({ section, categorySlug, page: initialPage = 1 }: ListingProps) {
   const t = useT();
   const db = useDatabase();
   const now = useNow();
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [page, setPage] = useState(initialPage);
   // Adresin sorgu kismi; secim bundan kategorinin filtrelerine gore okunur
   // (panelde eklenen filtre tarayicidaki veri yuklenince taninir).
   const [query, setQuery] = useState("");
@@ -67,12 +77,23 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
     [scoped, categoryFilters, selection, filters, now],
   );
 
-  // Secim adrese yazilir: link paylasilinca ve geri donulunce ayni secimle acilir.
+  const basePath = category ? categoryHref(category) : "";
+  const shown = pageItems(filtered, page, PRODUCTS_PER_PAGE);
+
+  // Secim adrese yazilir: link paylasilinca ve geri donulunce ayni secimle
+  // acilir. Secim degisince liste 1. sayfaya doner.
   const select = (next: FilterSelection) => {
     const url = new URL(window.location.href);
     url.search = writeSelectionToQuery(url.searchParams, next, categoryFilters).toString();
+    if (page > 1 && basePath) url.pathname = basePath;
     window.history.replaceState(null, "", url);
     setQuery(url.search);
+    setPage(1);
+  };
+  const changeFilters = (next: FilterState) => {
+    if (page > 1 && basePath) window.history.replaceState(null, "", `${basePath}${window.location.search}`);
+    setPage(1);
+    setFilters(next);
   };
   const toggleValue = (filterId: string, valueId: string) => {
     const own = selection[filterId] ?? [];
@@ -80,11 +101,12 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
   };
   const clear = () => {
     setFilters(DEFAULT_FILTERS);
+    setPage(1);
     select({});
   };
   const panelProps = {
     value: filters,
-    onChange: setFilters,
+    onChange: changeFilters,
     resultCount: filtered.length,
     facets,
     onToggleValue: toggleValue,
@@ -144,9 +166,12 @@ export function CategoryListing({ section, categorySlug }: ListingProps) {
                   </Button>
                 }
               />
+            ) : page > 1 && shown.length === 0 ? (
+              <EmptyPage basePath={basePath} />
             ) : (
-              <ProductGrid products={filtered} />
+              <ProductGrid products={shown} />
             )}
+            <Pager page={page} pageCount={pageCount(filtered.length, PRODUCTS_PER_PAGE)} basePath={basePath} query={query} />
           </div>
         </div>
       </div>

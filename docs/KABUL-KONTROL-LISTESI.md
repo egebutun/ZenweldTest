@@ -986,6 +986,13 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       Ayarları'ndaki ticari unvan. Etkinlikte ülke `TR`, `organizer` yok, stok
       fotoğraf yok. Google'ın "Zengin Sonuçlar Testi"
       (search.google.com/test/rich-results) canlı adreste hatasız.
+- [ ] Sayfalama (K-124): 12'den fazla haberde `/haberler` 12 kart ve altta
+      sayfa numaraları gösterir; **2** `/haberler/sayfa/2`'yi açar.
+      `/haberler/sayfa/2`'nin başlığı "Haberler — Sayfa 2 | ZENWELD", asıl
+      adresi kendisi; `/haberler/sayfa/1` → 301 `/haberler`. Kategoride 24'ten
+      fazla üründe aynısı; filtre seçiliyken sayfa bağlantıları filtreyi
+      korur, filtre değişince 1. sayfaya dönülür. Veritabanı modunda kayıt
+      sayısının dışındaki sayfa 404.
 - [ ] Eski zenweld.com adresleri (iki modda da): `curl -I
       <site>/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali`
       → 301, `Location: /urun/ultimate-320-thp-ipanel?secenek=su_4-m`;

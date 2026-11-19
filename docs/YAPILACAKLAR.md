@@ -1287,10 +1287,6 @@ veritabanı modunda sunucuda 301 ile yönlenir (K-120). Kalanlar:
    eklenip doğrulanmalı, site haritası (`/sitemap.xml`) bildirilmeli;
    dizine alma hataları ve eski adreslerin yönlenmesi oradan izlenir
    (sahibiyle konuşulacak, K-106).
-4. **Sitedeki uzun listelerin sayfalanması:** Kategori ürün listesi, blog,
-   haberler, etkinlikler ve arama sonuçları bugün tek sayfada. Tasarım ve
-   SEO işiyle birlikte sayfalanacak; sayfa adresi (ör. `?sayfa=2`),
-   canonical etiketi ve site haritası birlikte düşünülmeli.
 
 ## SEO — anahtar kelime çalışmasından kalan işler
 
@@ -1304,16 +1300,15 @@ sahibindedir.
 B1 (değişen linklerde sunucuda 301; KARARLAR K-120), B2 (eski
 `zenweld.com`'un 85 adresi; K-121, [SEO.md](SEO.md) › 15) ve B3 (yapısal
 veri: blog yazısı, ürüne kargo, iade, yıldız, seçenekler, açıklama, site
-adı ve etkinlik düzeltmeleri; K-123) yapıldı.
+adı ve etkinlik düzeltmeleri; K-123) ve B4 (uzun listelerin sayfalanması;
+K-124) yapıldı.
 
-1. **B4 · Uzun listelerin sayfalanması:** [SEO alanları ve link
-   yönlendirme](#seo-alanları-ve-link-yönlendirme) 4.
-2. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
+1. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
    2,5 sn altı); [Ölçüm](#ölçüm-hız).
-3. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
+2. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
    Console; [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler),
    [SEO alanları ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) 3.
-4. **B7 · Sayfa içi teknik denetim (bütün sayfa türleri):** her sayfada tek
+3. **B7 · Sayfa içi teknik denetim (bütün sayfa türleri):** her sayfada tek
    ana başlık (H1) ve içinde ana terim; ara başlık sırası (H2, H3); sayfa
    başlığı (meta title, en çok 60 karakter) ve Google açıklaması (meta
    description, 140–155 karakter) boş ya da tekrar eden sayfa olmaması;

@@ -23,6 +23,8 @@ import {
 } from "@/lib/seo";
 import { pageMetadataFor } from "@/lib/server/page-metadata";
 import { getServerCatalog } from "@/lib/server/catalog";
+import { pagedRoute } from "@/lib/server/paged-route";
+import { PRODUCTS_PER_PAGE } from "@zenweld/data";
 
 /**
  * URUN BOLUMU, GRUP VE KATEGORI SAYFALARI — ORTAK KOD
@@ -147,4 +149,41 @@ export function categoryRoute(section: TopLevelSection) {
       );
     },
   };
+}
+
+/**
+ * /<bolum>/[grup]/[kategori]/sayfa/[sayfa]: kategorinin urun listesinin 2. ve
+ * sonraki sayfalari (sayfa basina 24 urun; KARARLAR K-124).
+ */
+export function categoryPagedRoute(section: TopLevelSection) {
+  type Params = { grup: string; kategori: string; sayfa: string };
+  const find = async ({ grup, kategori }: Params) => {
+    const catalog = await getServerCatalog();
+    const category = catalog.categories.find((c) => c.section === section && c.group === grup && c.slug === kategori);
+    const count = category
+      ? catalog.products.filter((p) => p.active && p.section === section && p.categorySlug === category.slug).length
+      : null;
+    return { category, count };
+  };
+  return pagedRoute<Params>({
+    basePath: ({ grup, kategori }) => `/${section}/${grup}/${kategori}`,
+    perPage: PRODUCTS_PER_PAGE,
+    count: async (p) => (await find(p)).count,
+    metadata: async (p) => {
+      const { category } = await find(p);
+      return category ? metadata(categoryHref(category), categorySeo(category)) : { title: "Kategori" };
+    },
+    staticParams: async () => {
+      const { categories, products } = await getServerCatalog();
+      return categories
+        .filter((c) => c.section === section)
+        .map((c) => ({
+          params: { grup: c.group, kategori: c.slug },
+          count: products.filter((p) => p.active && p.section === section && p.categorySlug === c.slug).length,
+        }));
+    },
+    render: ({ grup, kategori }, page) => (
+      <CategoryPage section={section} groupSlug={grup} categorySlug={kategori} page={page} />
+    ),
+  });
 }
