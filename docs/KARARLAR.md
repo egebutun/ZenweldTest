@@ -9,7 +9,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-124).
+  K-124). K-111, K-112 ve K-113 kullanılmaz (K-111 ve K-113 kaldırıldı,
+  K-112 K-47'ye katıldı); bu numaralar yeniden verilmez.
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
   [ADMIN-KULLANIM.md](ADMIN-KULLANIM.md),
@@ -1003,7 +1004,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   link, sayfa başlığı, açıklama, anahtar kelimeler, Google önizlemesi.
 - Sabit sayfalarda (Sayfa SEO ekranı) yalnızca başlık ve açıklama
   değişir; **link değişmez**, anahtar kelime alanı yoktur.
-- Linki değişen kaydın eski linki yeni linke yönlenir.
+- Linki değişen kaydın eski linki yeni linke yönlenir. **Ek → K-120:**
+  veritabanı modunda sunucuda 301 ile.
 - **Neden:** Sabit sayfaların adresleri menüye ve sayfalar arası
   bağlantılara bağlı; değişirse bağlantılar kırılır.
 
@@ -1096,7 +1098,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 
 ### K-60 · Kullanılmayan alanlar kalır
 - Kategori/grup numarası (`code`), kategori simgesi (`icon`), bayi
-  e-postası, satıcı logo adresi ve teklif satırı notu bugün kullanılmıyor
+  e-postası (**Değişti → K-117:** yetkili servise yazılırken kullanılır),
+  satıcı logo adresi ve teklif satırı notu bugün kullanılmıyor
   ama **silinmez**; ileride kullanılmak üzere veritabanında da durur
   ([VERITABANI.md](VERITABANI.md#19-kullanılmayan-alanlar)).
 
@@ -1235,7 +1238,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   (`packages/i18n/src/tr.ts`) da değişebilir.
 - Bu yüzden veri yükleme komutu bugünkü verinin tamamını yükler; örnek
   satış hareketleri (panel grafikleri için üretilen üye, sipariş, teklif,
-  servis ve garanti kayıtları) yüklenmez (K-91).
+  servis ve garanti kayıtları) yüklenmez. Canlıya ve denemeye ne
+  yüklendiği K-91 ve K-122'dedir.
 
 ### K-91 · Canlıya ve denemeye ne yüklenir
 - Veri yükleme komutu (`npm run db:yukle`) iki hedefle çalışır:
