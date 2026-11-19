@@ -1034,6 +1034,10 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   ilgili seçenekle yönlenir.
 - Eski "Ultimate 400 CEL" yeni sitedeki ForceArc 400 CEL'dir. "Ultimate
   405 MV CEL" yeni sitede yoktur.
+- Eski sitedeki İzmir tesisinin açılışı ve İstanbul Hırdavat Fuarı 2026
+  haberleri yeni siteye eklenir; eski adresleri onlara gider.
+- Yönlendirmeler canlıya çıkışı beklemeden sitede kurulur (yeni sitede bu
+  adresler zaten yoktur).
 - Liste: `docs/seo/yonlendirme-listesi.csv` (85 adres); ayrıntı
   [SEO.md](SEO.md) › 15.
 - **Neden:** Eski adreslerin Google'daki değeri ve ziyaretçisi

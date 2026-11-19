@@ -277,6 +277,63 @@ Zenweld, 2005 yılından beri kaynak ve kesme teknolojileri alanında faaliyet g
 
 export const news: NewsItem[] = [
   {
+    id: "n3",
+    slug: "zenweld-izmir-uretim-tesisi-acildi",
+    title: "Zenweld, Cumhuriyetimizin 103. Yılında İzmir'deki Yeni Üretim Tesisini Açtı",
+    summary:
+      "İzmir İTOB Organize Sanayi Bölgesi'ndeki 5.000 m² kapalı alana sahip yeni üretim tesisimiz, 29 Ekim 2026'da düzenlenen törenle açıldı.",
+    body: `Kaynak ve kesme teknolojileri sektörünün köklü markalarından Zenweld, İzmir İTOB Organize Sanayi Bölgesi'nde hayata geçirdiği yeni üretim tesisinin açılışını 29 Ekim 2026 Cumhuriyet Bayramı'nda düzenlenen törenle gerçekleştirdi.
+
+2000 yılından bu yana kaynak ve kesme teknolojileri alanında faaliyet gösteren Zenweld, üretim kapasitesini ve teknolojik altyapısını güçlendiren yatırımlarına bir yenisini ekledi. İzmir Menderes'te, İTOB Organize Sanayi Bölgesi'nde bulunan 5.000 m² kapalı alana sahip tesisin açılış törenine Menderes Kaymakamı Sayın Murat Karaloğlu, Menderes Belediye Başkan Vekili Sayın Asuman Şen, sektör temsilcileri, iş ortakları, davetliler ve Zenweld ailesi katıldı.
+
+## Cumhuriyetimizin 103. Yılında Geleceğe Güçlü Bir Adım
+
+Cumhuriyetimizin 103. yıl dönümünde gerçekleştirilen açılış, Zenweld'in Türkiye'nin sanayi gücüne, yerli üretime ve teknolojik gelişimine duyduğu güvenin anlamlı bir simgesi oldu. Yeni tesisle birlikte Zenweld, sektördeki deneyimini modern üretim altyapısıyla birleştirerek büyüme yolculuğunda önemli bir adım daha attı.
+
+## Uluslararası İş Ortaklarından Güçlü Katılım
+
+Açılış törenine Zenweld'in uluslararası iş ortağı Shenzhen Jasic Technology Co., Ltd.'nin üst yönetimi ve Jasic heyeti de katıldı. Tören, Zenweld'in küresel ölçekte geliştirdiği iş birliklerini ve teknoloji odaklı büyüme vizyonunu bir kez daha ortaya koydu.
+
+## Üretimden Geleceğe Uzanan Yolculuk
+
+MIG/MAG, TIG ve MMA kaynak makineleri, plazma kesme sistemleri ve lazer teknolojileri alanında faaliyet gösteren Zenweld, yeni tesisiyle kalite, teknoloji ve yenilik odaklı çalışmalarını daha güçlü bir üretim altyapısıyla sürdürecek. Çeyrek asrı aşan sektör deneyimiyle Türkiye sanayisine değer katmaya, üretim gücünü geliştirmeye ve uluslararası pazarlardaki varlığını güçlendirmeye devam ediyor.
+
+Bu anlamlı günümüzde bizleri yalnız bırakmayan Menderes Kaymakamı Sayın Murat Karaloğlu'na, Menderes Belediye Başkan Vekili Sayın Asuman Şen'e, Jasic heyetine, değerli iş ortaklarımıza, tüm misafirlerimize ve emeği geçen çalışma arkadaşlarımıza teşekkür ederiz.
+
+Cumhuriyetimizin ışığında üretmeye, gelişmeye ve geleceğe değer katmaya devam ediyoruz.`,
+    coverUrl: "/images/news/izmir-uretim-tesisi-acilisi-2026.webp",
+    images: ["/images/news/izmir-uretim-tesisi-acilisi-davet-2026.webp"],
+    publishedAt: "2026-11-10T10:00:00+03:00",
+    active: true,
+  },
+  {
+    id: "n4",
+    slug: "istanbul-hirdavat-fuari-2026",
+    title: "Zenweld, İstanbul Hırdavat Fuarı 2026'da",
+    summary:
+      "18–21 Kasım 2026'da İstanbul Fuar Merkezi'nde, Salon 2 Stant 2D01'de kaynak, plazma ve lazer teknolojilerimizi tanıtıyoruz.",
+    body: `Kaynak ve kesme teknolojileri sektörünün öncü Türk markalarından Zenweld Kaynak ve Kesme Ekipmanları A.Ş., 18–21 Kasım 2026 tarihleri arasında düzenlenecek İstanbul Hırdavat Fuarı'nda sektör profesyonelleriyle buluşuyor.
+
+2000 yılından bu yana kaynak ve kesme teknolojileri alanında faaliyet gösteren Zenweld, yenilikçi ürünlerini ve teknoloji çözümlerini fuar ziyaretçilerine sunacak. Standımızda MIG/MAG, TIG, MMA kaynak makineleri ve plazma kesme sistemlerinin yanı sıra yeni nesil lazer kaynak ve lazer temizleme teknolojilerimizi tanıtacağız.
+
+Canlı ürün gösterimleriyle makinelerimizin performansını yakından deneyimleme fırsatı sunarken, sektör profesyonelleriyle yeni iş birlikleri kurmayı ve iş ortaklarımızla ilişkilerimizi güçlendirmeyi hedefliyoruz.
+
+İzmir İTOB Organize Sanayi Bölgesi'ndeki 5.000 m² kapalı alana sahip üretim tesisimiz ve sürekli gelişen teknolojik altyapımızla Türk sanayisine değer katmaya ve yenilikçi çözümler üretmeye devam ediyoruz.
+
+Geleceğin kaynak teknolojilerini birlikte keşfetmek için bütün sektör profesyonellerini standımıza bekliyoruz.
+
+## Fuar Bilgileri
+
+- **Etkinlik:** İstanbul Hırdavat Fuarı
+- **Tarih:** 18–21 Kasım 2026
+- **Yer:** İstanbul Fuar Merkezi, Yeşilköy
+- **Stant:** Salon 2, Stant 2D01`,
+    coverUrl: "/images/news/istanbul-hirdavat-fuari-2026.webp",
+    images: [],
+    publishedAt: "2026-11-10T09:00:00+03:00",
+    active: true,
+  },
+  {
     id: "n1",
     slug: "kaynak-ve-kesme-teknolojileri-tanitim-gunu-van",
     title: "Kaynak ve Kesme Teknolojileri Tanıtım Günü",

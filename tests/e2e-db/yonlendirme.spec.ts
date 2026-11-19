@@ -1,3 +1,4 @@
+import oldSite from "../../apps/zenweld-web/eski-site-yonlendirmeleri.json";
 import { closeDatabase, catalog, expect, firstAnswer, refreshSite, sql, test } from "./yardimci";
 
 /**
@@ -74,4 +75,8 @@ test("eski adresler 301 ile bugünkü adrese gider; kayıtlı olmayan adres 404 
     await sql("DELETE FROM redirects WHERE old_path = ANY($1)", [rows.map((r) => r.path)]);
     await refreshSite(request);
   }
+});
+
+test("eski zenweld.com adresleri veritabanı modunda da 301 ile yeni karşılığına gider (K-121)", async ({ request }) => {
+  for (const { eski, yeni } of oldSite) expect(await firstAnswer(request, eski), eski).toEqual({ status: 301, location: yeni });
 });

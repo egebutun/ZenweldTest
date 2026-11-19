@@ -1293,22 +1293,18 @@ Sıra: önce teknik işler (B), sonra metinler (A); kararlar (C) sahibindedir.
 
 **B — Teknik SEO (kod işi)**
 
-B1 (değişen linklerde sunucuda 301) yapıldı (KARARLAR K-120).
+B1 (değişen linklerde sunucuda 301; KARARLAR K-120) ve B2 (eski
+`zenweld.com`'un 85 adresi; K-121, [SEO.md](SEO.md) › 15) yapıldı.
 
-1. **B2 · Eski `zenweld.com` adresleri:** eski sitenin 85 adresi
-   ([`seo/yonlendirme-listesi.csv`](seo/yonlendirme-listesi.csv),
-   [SEO.md](SEO.md) › 15) yeni site açıldığı gün 301 ile yeni karşılığına
-   yönlenmeli. Eşleştirme bitti (K-121); yalnızca anti-spatter satırı C1'i
-   bekliyor.
-2. **B3 · Yapısal veri eksikleri:** blog yazılarında `Article`; ürün
+1. **B3 · Yapısal veri eksikleri:** blog yazılarında `Article`; ürün
    fiyatında kargo (`shippingDetails`) ve iade (`hasMerchantReturnPolicy`)
    bilgisi. Yıldız (`AggregateRating`) yalnızca gerçek müşteri yorumu
    olursa.
-3. **B4 · Uzun listelerin sayfalanması:** [SEO alanları ve link
+2. **B4 · Uzun listelerin sayfalanması:** [SEO alanları ve link
    yönlendirme](#seo-alanları-ve-link-yönlendirme) 4.
-4. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
+3. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
    2,5 sn altı); [Ölçüm](#ölçüm-hız).
-5. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
+4. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4 ve Search
    Console; [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler),
    [SEO alanları ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) 3.
 
@@ -1336,9 +1332,10 @@ B1 (değişen linklerde sunucuda 301) yapıldı (KARARLAR K-120).
 **C — Sahibin kararı**
 
 1. **C1 · Anti-spatter (çapak önleyici) satılacak mı?** Sahibi şirkete
-   sorup öğrenecek. Satılırsa ürün eklenir ve eski adresi
-   (`/urunler/kimyasallar/anti-spatter`) ona yönlenir; satılmazsa
-   Aksesuarlar'a yönlenir.
+   sorup öğrenecek. Eski adresi (`/urunler/kimyasallar/anti-spatter`)
+   bugün Aksesuarlar'a yönleniyor; satılırsa ürün eklenir ve
+   `apps/zenweld-web/eski-site-yonlendirmeleri.json` ile
+   `docs/seo/yonlendirme-listesi.csv`'deki satırı ona çevrilir.
 2. **C2 · Kategori adı kalıbı:** pazar "Gazaltı (MIG/MAG) Kaynak
    Makineleri" diye yazıyor, bizde kısaltma önde ("MIG (GMAW) Gazaltı …").
    Değişirse link değişmez, yalnız ad.

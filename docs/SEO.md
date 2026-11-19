@@ -735,9 +735,18 @@ adres, yeni adres, durum, not, eski site haritasında mı).
   soğutma tipi ve standart torcu okundu; eşleştirme buna göre yapıldı.
   Eski sitede bugün açılmayan (404) adresler de listede, çünkü Google'da
   hâlâ aranıyorlar ("zenweld arc 200").
-- **Durum:** 44 birebir; 19 birebir ve seçenekli (eski sitede ayrı sayfa
+- **Kuruldu (19 Kasım 2026):** yönlendirmeler sitede çalışıyor
+  (`apps/zenweld-web/next.config.mjs` › `redirects()`, liste
+  `apps/zenweld-web/eski-site-yonlendirmeleri.json`). 85 adresin 80'i
+  yönlenir; 5'i (`/`, `/haberler`, `/etkinlikler`, Kaynak Akademi haberi,
+  Big 5 Global 2025 etkinliği) yeni sitede aynı adreste. Site
+  `zenweld.com`'a geçtiği an eski adresler kendiliğinden yeni sayfalara
+  gider. Liste değişince JSON ve bu CSV birlikte güncellenir; ikisinin
+  aynı olduğunu ve her hedefin var olduğunu
+  `tests/unit/eski-site-yonlendirmeleri.test.ts` denetler.
+- **Durum:** 46 birebir; 19 birebir ve seçenekli (eski sitede ayrı sayfa
   olan soğutma ya da torç halleri, yeni sitede aynı ürünün seçeneği); 17
-  ürün yeni sitede olmadığı için kategoriye; 3 haber yeni sitede olmadığı
+  ürün yeni sitede olmadığı için kategoriye; 1 haber yeni sitede olmadığı
   için Haberler'e; 1 yakın ürün; 1 karar bekliyor.
 - **Ürünlerimiz yeni sitenin Ekipmanlar'ındakilerdir** (KARARLAR K-121):
   eski sitede olup yeni sitede olmayan ürünün (Arc 120–200S, Ultimate
@@ -764,21 +773,20 @@ adres, yeni adres, durum, not, eski site haritasında mı).
     LS-15000F Lazer Temizleme kategorisine gider.
   - Eski "Ultimate 405 MV CEL" (çok voltajlı) yeni sitede yok; en yakın
     ürün olan Ultimate 405 CEL'e yönlenir (öneri).
-  - Eski sitedeki 3 haber yeni sitede yok (İzmir tesisinin açılışı,
-    İstanbul Hırdavat Fuarı 2026, WIN Eurasia 2026); yeni siteye
-    eklenirse onlara yönlenir.
+  - Eski sitedeki İzmir tesisinin açılışı ve İstanbul Hırdavat Fuarı
+    2026 haberleri yeni siteye eklendi; eski adresleri onlara gider. WIN
+    Eurasia 2026 haberi yeni sitede yok, Haberler'e gider.
 - **Karar bekleyen:** Anti-spatter (çapak önleyici) satılacak mı;
-  şirkete sorulacak (YAPILACAKLAR › SEO, C1). Satılırsa ürününe, satılmazsa
-  Aksesuarlar'a yönlenir.
+  şirkete sorulacak (YAPILACAKLAR › SEO, C1). Bugün Aksesuarlar'a
+  yönleniyor; satılırsa ürün eklenir ve satırı ona çevrilir.
 - Aynı adresler `www.zenweld.com` ile de yönlenmeli; eski site bugün
   `zenweld.com`'u `www.zenweld.com`'a yönlendiriyor.
 - `zenweld.vercel.app` eski sitenin Vercel'deki ikinci adresidir; bu
   projeye ait değildir, kapatılmalı ya da `zenweld.com`'a yönlenmeli
   ([16. bölüm](#16-seo-yol-haritası) › 1).
 - Panelde linki değişen kayıtların yönlendirmesi ayrı iştir ve yapıldı
-  (KARARLAR K-120). Bu 85 adres canlıya çıkış günü sunucuda kurulur
-  (YAPILACAKLAR › SEO, B2). Yeni sitede ürünün linki ya da seçeneği
-  değişirse liste de güncellenir.
+  (KARARLAR K-120). Yeni sitede ürünün linki ya da seçeneği değişirse bu
+  liste de güncellenir (birim testi hedef kalmazsa hata verir).
 
 | Grup | Eski adres (zenweld.com) | Yeni adres | Durum ve not |
 |---|---|---|---|
@@ -800,8 +808,8 @@ adres, yeni adres, durum, not, eski site haritasında mı).
 | Haber | `/haberler` | `/haberler` | Birebir |
 | Haber | `/haberler/zenweld-kaynak-akademi` | `/haberler/zenweld-kaynak-akademi` | Birebir |
 | Haber | `/haberler/zenweld-kaynak-ve-kesme-elipmanlairi-amp-amp-ebinc-makin-kaynak-ve-kesme-teknolojileri-tanitim-gunu` | `/haberler/kaynak-ve-kesme-teknolojileri-tanitim-gunu-van` | Birebir; Van, Ebinç Makina tanıtım günü; site haritasında yok |
-| Haber | `/haberler/zenweld-cumhuriyetimizin-103-yilinda-izmir-deki-yeni-uretim-tesisinin-acilisini-gerceklestirdi` | `/haberler` | Haber yeni sitede yok → haberler; İzmir tesisinin açılışı; yeni siteye eklenirse ona yönlenir; site haritasında yok |
-| Haber | `/haberler/zenweld-istanbul-hirdavat-fuari-2026-da-yerini-aliyor` | `/haberler` | Haber yeni sitede yok → haberler; Yeni siteye eklenirse ona yönlenir; site haritasında yok |
+| Haber | `/haberler/zenweld-cumhuriyetimizin-103-yilinda-izmir-deki-yeni-uretim-tesisinin-acilisini-gerceklestirdi` | `/haberler/zenweld-izmir-uretim-tesisi-acildi` | Birebir; Haber yeni siteye eklendi; site haritasında yok |
+| Haber | `/haberler/zenweld-istanbul-hirdavat-fuari-2026-da-yerini-aliyor` | `/haberler/istanbul-hirdavat-fuari-2026` | Birebir; Haber yeni siteye eklendi; site haritasında yok |
 | Haber | `/haberler/zenweld-win-eurasia-2026-da-yenilikci-teknolojilerini-sektorle-bulusturuyor` | `/haberler` | Haber yeni sitede yok → haberler; Yeni siteye eklenirse ona yönlenir; site haritasında yok |
 | Etkinlik | `/etkinlikler` | `/etkinlikler` | Birebir; site haritasında yok |
 | Etkinlik | `/etkinlikler/2024-uluslararasi-istanbul-hirdavat-fuari` | `/etkinlikler/istanbul-hirdavat-fuari-2024` | Birebir; site haritasında yok |
@@ -896,9 +904,9 @@ içeriğe rağmen geride kalır.
       (`/urun/ultimate-405-thp`).
 - [x] Panelde linki değişen kaydın eski adresi sunucuda 301 ile yeni
       adrese gider (veritabanı modu; KARARLAR K-120, 19 Kasım 2026).
-- [ ] `zenweld.com`'un 85 eski adresi yeni adreslere 301
-      ([15. bölüm](#15-eski-sitenin-adresleri-yönlendirme-listesi)).
-      **Kod**, canlıya çıkış günü (B2).
+- [x] `zenweld.com`'un 85 eski adresi yeni adreslere 301
+      ([15. bölüm](#15-eski-sitenin-adresleri-yönlendirme-listesi); K-121,
+      19 Kasım 2026). Site `zenweld.com`'a geçince kendiliğinden çalışır.
 - [ ] Tek adres: `www.zenweld.com` ile `zenweld.com`'dan biri diğerine,
       `http` de `https`'e 301 ile yönlenmeli. **Sunucu ayarı**
 - [ ] Uzun listelerin (kategori ürünleri, blog, haberler, etkinlikler,
@@ -1050,7 +1058,8 @@ sinyal.
 
 1. Sitenin adresi `https://zenweld.com` yapılır (`NEXT_PUBLIC_SITE_URL`;
    [SUNUCU.md](SUNUCU.md)); site o anda arama motorlarına açılır.
-2. 85 eski adres 301 ile yeni adreslere yönlenir.
+2. 85 eski adresin yeni adreslere 301 ile gittiği denenir (yönlendirmeler
+   sitede hazır; ör. `curl -I https://zenweld.com/urunler`).
 3. `www` ve `http` adresleri tek adrese yönlenir.
 4. Search Console'a site haritası bildirilir; ana sayfa ve ana
    kategoriler için "URL denetimi › Dizine eklenmeyi iste".
@@ -1145,7 +1154,7 @@ açılınca aynı mülk kullanılır.
 1. Search Console › **Site haritaları** › `https://zenweld.com/sitemap.xml`.
 2. **Google Merchant Center** (ücretsiz): ürünler Google Alışveriş
    sekmesinde ücretsiz listelenebilir.
-3. Yönlendirme listesindeki 85 adres aynı gün sunucuda kurulur
+3. Yönlendirme listesindeki 85 adresin çalıştığı denenir
    ([16. bölüm](#16-seo-yol-haritası) › 10).
 
 ## 18. Kaynaklar

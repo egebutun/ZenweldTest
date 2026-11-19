@@ -120,6 +120,10 @@ her Node.js sunucusunda `npm run build` + `npm start` ile çalışır.
   `www.zenweld.com` adreslerinde aramaya açıktır. Gerçek alan adı farklıysa
   `apps/zenweld-web/src/lib/seo.ts` › `INDEXABLE_HOSTS` listesine eklenmeli
   ([IS-KURALLARI.md › 13](IS-KURALLARI.md#13-linkler-yönlendirme-ve-arama-motorları)).
+- **Eski sitenin adresleri (K-121):** `apps/zenweld-web/next.config.mjs`
+  › `redirects()`; liste `apps/zenweld-web/eski-site-yonlendirmeleri.json`
+  (80 kural, 301). Sayfadan ve istek kontrolünden önce çalışır, veritabanına
+  gitmez; iki modda da aynıdır. Liste değişince site yeniden derlenir.
 - **Eski linklerin yönlendirmesi (veritabanı modu, K-120):** İstek kontrolü
   (`apps/zenweld-web/src/proxy.ts`) ürün, blog, haber, etkinlik ve dört
   bölümün adreslerinde eski adres listesine bakar; eski adresse 301 ile

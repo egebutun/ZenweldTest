@@ -1,0 +1,322 @@
+[
+ {
+  "eski": "/urunler",
+  "yeni": "/ekipmanlar"
+ },
+ {
+  "eski": "/kurumsal/hakkimizda",
+  "yeni": "/hakkimizda"
+ },
+ {
+  "eski": "/kurumsal/bize-ulasin",
+  "yeni": "/iletisim"
+ },
+ {
+  "eski": "/kurumsal/yetkili-servislerimiz",
+  "yeni": "/yetkili-bayi-ve-servis-agi"
+ },
+ {
+  "eski": "/kurumsal/satis-ekibimiz",
+  "yeni": "/satis-temsilcilerimiz"
+ },
+ {
+  "eski": "/kurumsal/garanti-baslatma",
+  "yeni": "/garanti/kayit"
+ },
+ {
+  "eski": "/kurumsal/garanti-kosullari",
+  "yeni": "/garanti/kosullar"
+ },
+ {
+  "eski": "/kurumsal/servis-talep",
+  "yeni": "/servis-talebi"
+ },
+ {
+  "eski": "/kurumsal/gizlilik-sozlesmesi",
+  "yeni": "/yasal/gizlilik"
+ },
+ {
+  "eski": "/kurumsal/cerez-politikalari",
+  "yeni": "/yasal/cerez-politikasi"
+ },
+ {
+  "eski": "/kurumsal/kis-isel-verilerin-i-s-lenmesi-politikasi",
+  "yeni": "/yasal/kisisel-verilerin-islenmesi-politikasi"
+ },
+ {
+  "eski": "/kurumsal/kisisel-veri-saklama-ve-imha-politikasi",
+  "yeni": "/yasal/kisisel-veri-saklama-ve-imha-politikasi"
+ },
+ {
+  "eski": "/kurumsal/kvkk-aydinlatma-metni",
+  "yeni": "/yasal/kvkk"
+ },
+ {
+  "eski": "/kurumsal/fiziki-guvenlik-sureclerine-yonelik-aydinlatma-metni",
+  "yeni": "/yasal/fiziksel-guvenlik-aydinlatma-metni"
+ },
+ {
+  "eski": "/haberler/zenweld-kaynak-ve-kesme-elipmanlairi-amp-amp-ebinc-makin-kaynak-ve-kesme-teknolojileri-tanitim-gunu",
+  "yeni": "/haberler/kaynak-ve-kesme-teknolojileri-tanitim-gunu-van"
+ },
+ {
+  "eski": "/haberler/zenweld-cumhuriyetimizin-103-yilinda-izmir-deki-yeni-uretim-tesisinin-acilisini-gerceklestirdi",
+  "yeni": "/haberler/zenweld-izmir-uretim-tesisi-acildi"
+ },
+ {
+  "eski": "/haberler/zenweld-istanbul-hirdavat-fuari-2026-da-yerini-aliyor",
+  "yeni": "/haberler/istanbul-hirdavat-fuari-2026"
+ },
+ {
+  "eski": "/haberler/zenweld-win-eurasia-2026-da-yenilikci-teknolojilerini-sektorle-bulusturuyor",
+  "yeni": "/haberler"
+ },
+ {
+  "eski": "/etkinlikler/2024-uluslararasi-istanbul-hirdavat-fuari",
+  "yeni": "/etkinlikler/istanbul-hirdavat-fuari-2024"
+ },
+ {
+  "eski": "/etkinlikler/imatech-2024-2-endustriyel-uretim-teknolojileri-fuari",
+  "yeni": "/etkinlikler/imatech-2024"
+ },
+ {
+  "eski": "/etkinlikler/imatech-2025-3-endustriyel-uretim-teknolojileri-fuari",
+  "yeni": "/etkinlikler/imatech-2025"
+ },
+ {
+  "eski": "/etkinlikler/international-hardware-riyad",
+  "yeni": "/etkinlikler/international-hardware-riyadh-2025"
+ },
+ {
+  "eski": "/etkinlikler/konya-makine-teknolojileri-fuari",
+  "yeni": "/etkinlikler/konya-makine-teknolojileri-fuari-2024"
+ },
+ {
+  "eski": "/etkinlikler/win-eurasia-2025-otomasyon-ve-makine-teknolojileri-fuari",
+  "yeni": "/etkinlikler/win-eurasia-2025"
+ },
+ {
+  "eski": "/etkinlikler/win-eurasia-endustri-fuari",
+  "yeni": "/etkinlikler/win-eurasia-2024"
+ },
+ {
+  "eski": "/urunler/lazer-kaynak-makineleri",
+  "yeni": "/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri",
+  "yeni": "/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-dc",
+  "yeni": "/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-ac-dc",
+  "yeni": "/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri",
+  "yeni": "/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/plazma-kesme-makineleri",
+  "yeni": "/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/ultimate-255",
+  "yeni": "/urun/ultimate-255-mma"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/ultimate-405-cel",
+  "yeni": "/urun/ultimate-405-cel-mma"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/ultimate-400-cel",
+  "yeni": "/urun/forcearc-400-cel-mma"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/ultimate-405-mv-cel",
+  "yeni": "/urun/ultimate-405-cel-mma"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/ultimate-205i",
+  "yeni": "/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/arc-120",
+  "yeni": "/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/arc-140",
+  "yeni": "/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/arc-160",
+  "yeni": "/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/arc-200",
+  "yeni": "/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/elektrot-kaynak-makineleri/arc-200s",
+  "yeni": "/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-dc/ultimate-251-thp",
+  "yeni": "/urun/ultimate-251-thp?secenek=4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-dc/ultimate-300-thp",
+  "yeni": "/urun/ultimate-300-thp?secenek=hava_4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-dc/ultimate-300-thp-su-sogutmali-arabali",
+  "yeni": "/urun/ultimate-300-thp?secenek=su_4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp",
+  "yeni": "/urun/ultimate-320-thp-ipanel?secenek=hava_4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali",
+  "yeni": "/urun/ultimate-320-thp-ipanel?secenek=su_4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-dc/ultimate-405-thp-su-sogutmali-arabali",
+  "yeni": "/urun/ultimate-405-thp?secenek=su_4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-dc/ultimate-200-th",
+  "yeni": "/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-dc/ultimate-200-thp",
+  "yeni": "/ekipmanlar/kaynak-makineleri/tig-argon-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-ac-dc/ultimate-205-acdc",
+  "yeni": "/urun/ultimate-205-ac-dc?secenek=4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-ac-dc/ultimate-320-acdc",
+  "yeni": "/urun/ultimate-320-ac-dc?secenek=hava_4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-ac-dc/ultimate-320-acdc-su-sogutmali-arabali",
+  "yeni": "/urun/ultimate-320-ac-dc?secenek=su_4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-ac-dc/ultimate-400-acdc",
+  "yeni": "/urun/ultimate-400-ac-dc-ipanel?secenek=hava_4-m"
+ },
+ {
+  "eski": "/urunler/argon-kaynak-makineleri-ac-dc/ultimate-400-acdc-su-sogutmali-arabali",
+  "yeni": "/urun/ultimate-400-ac-dc-ipanel?secenek=su_4-m"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/ultimate-250-mtc",
+  "yeni": "/urun/ultimate-250-mtc?secenek=3-m"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/ultimate-255-mtc",
+  "yeni": "/urun/ultimate-255-mtc?secenek=3-m"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/ultimate-355-mtc",
+  "yeni": "/urun/ultimate-355-mtc?secenek=4-m"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/ultimate-320-mtc",
+  "yeni": "/urun/ultimate-320-mtc-ipanel?secenek=4-m"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/ultimate-405-mts-hava-sogutmali-arabali",
+  "yeni": "/urun/ultimate-405-mts?secenek=hava_4-m_5-m"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/ultimate-405-mts-su-sogutmali-arabali",
+  "yeni": "/urun/ultimate-405-mts?secenek=su_4-m_5-m"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/ultimate-505-mts-su-sogutmali-arabali",
+  "yeni": "/urun/ultimate-505-mts?secenek=su_4-m_5-m"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/evomig-405-p",
+  "yeni": "/urun/evomig-405-p?secenek=su_4-m_5-m"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/evomig-555-p",
+  "yeni": "/urun/evomig-555-p"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/evomig-255-p",
+  "yeni": "/urun/evomig-255-p"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/evomig-205-p",
+  "yeni": "/urun/evomig-205-p"
+ },
+ {
+  "eski": "/urunler/gazalti-kaynak-makineleri/ultimate-205-mte-pro",
+  "yeni": "/urun/ultimate-205-mte-pro"
+ },
+ {
+  "eski": "/urunler/plazma-kesme-makineleri/multicut-60-s",
+  "yeni": "/urun/multicut-60-s"
+ },
+ {
+  "eski": "/urunler/plazma-kesme-makineleri/multicut-85-cnc",
+  "yeni": "/urun/multicut-85-cnc"
+ },
+ {
+  "eski": "/urunler/plazma-kesme-makineleri/multicut-105-cnc",
+  "yeni": "/urun/multicut-105-cnc"
+ },
+ {
+  "eski": "/urunler/plazma-kesme-makineleri/multicut-40-cnc",
+  "yeni": "/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri"
+ },
+ {
+  "eski": "/urunler/plazma-kesme-makineleri/multicut-40-com",
+  "yeni": "/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri"
+ },
+ {
+  "eski": "/urunler/plazma-kesme-makineleri/multicut-65",
+  "yeni": "/ekipmanlar/kaynak-makineleri/plazma-kesim-makineleri"
+ },
+ {
+  "eski": "/urunler/lazer-kaynak-makineleri/ls-20000f",
+  "yeni": "/urun/jasic-ls-20000f-lazer-temizleme"
+ },
+ {
+  "eski": "/urunler/lazer-kaynak-makineleri/ls-15000f",
+  "yeni": "/ekipmanlar/lazer-makineleri/lazer-temizleme"
+ },
+ {
+  "eski": "/urunler/lazer-kaynak-makineleri/ls-20000-dual-wire-3-in-1",
+  "yeni": "/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/lazer-kaynak-makineleri/ls-15000m",
+  "yeni": "/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/lazer-kaynak-makineleri/ls-20000m",
+  "yeni": "/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/lazer-kaynak-makineleri/lw-1500",
+  "yeni": "/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/lazer-kaynak-makineleri/lw-2000",
+  "yeni": "/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri"
+ },
+ {
+  "eski": "/urunler/kimyasallar/anti-spatter",
+  "yeni": "/aksesuarlar"
+ }
+]

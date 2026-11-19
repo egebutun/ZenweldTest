@@ -973,6 +973,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       seçeneğe dönüşen eski ürün `?secenek=<değer>` ile açılır, eski
       adresteki `?utm_source=…` gibi parametreler korunur. Hiç kullanılmamış
       bir adres 404 döner (KARARLAR K-120).
+- [ ] Eski zenweld.com adresleri (iki modda da): `curl -I
+      <site>/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali`
+      → 301, `Location: /urun/ultimate-320-thp-ipanel?secenek=su_4-m`;
+      tarayıcıda açınca ürün sayfası "Su Soğutmalı" seçili gelir.
+      `/urunler/elektrot-kaynak-makineleri/arc-200` → MMA Elektrot
+      kategorisi; `/kurumsal/hakkimizda` → `/hakkimizda` (KARARLAR K-121).
 - [ ] Dosya deposu ayarlıyken (`DOSYA_KLASORU`, K-108) Kart Görseli
       alanında **Dosya Yükle** ile seçilen görsel yüklenir, alana
       `/dosya/gorsel/…` adresi gelir; kaydedilince sitede görünür. Depo

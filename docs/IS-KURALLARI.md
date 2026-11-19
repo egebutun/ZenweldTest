@@ -811,6 +811,17 @@ benzersizdir.
 - **Demo modunda** paneldeki link değişikliği yalnızca tarayıcıda olduğu
   için yönlendirmeyi tarayıcı yapar (sunucu eski adresi bilmez).
 
+**Eski sitenin (zenweld.com) adresleri** (KARARLAR K-121):
+
+- Eski sitenin 85 adresinden 80'i yeni sitedeki karşılığına **301** ile
+  gider; 5'i yeni sitede aynı adreste. İki modda da aynıdır.
+- Eski sitede olup yeni sitede olmayan ürünün adresi kategorisine gider.
+- Eski sitede ayrı sayfa olan hal (ör. "Su Soğutmalı - Arabalı") aynı
+  ürünün seçeneğine gider (`/urun/<ürün>?secenek=su_4-m`).
+- Eski adresteki diğer parametreler (ör. `?utm_source=…`) korunur.
+- Liste: `docs/seo/yonlendirme-listesi.csv`; ayrıntı
+  [SEO.md](SEO.md) › 15.
+
 **Sayfa başlığı ve açıklaması:**
 
 | Sayfa | Başlık boşsa | Açıklama boşsa |

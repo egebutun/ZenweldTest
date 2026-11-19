@@ -1852,6 +1852,12 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   gider. Veritabanı modunda bunu sunucu **301 (kalıcı)** ile yapar; Google
   eski sonucu yeni adresle değiştirir. Demo modunda tarayıcı yönlendirir
   (kurallar: [IS-KURALLARI.md › 13](IS-KURALLARI.md#13-linkler-yönlendirme-ve-arama-motorları)).
+- **Eski sitenin adresleri:** Eski zenweld.com'un adresleri
+  (`/urunler/…`, `/kurumsal/…`, eski haber ve etkinlik adresleri) iki
+  modda da 301 ile yeni sitedeki karşılığına gider (ör.
+  `/urunler/argon-kaynak-makineleri-dc/ultimate-320-thp-su-sogutmali-arabali`
+  → Ultimate 320 THP iPanel ürün sayfası, Su Soğutmalı seçili). Liste:
+  [SEO.md](SEO.md) › 15.
 
 ---
 

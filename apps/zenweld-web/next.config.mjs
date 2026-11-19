@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+import oldSiteRedirects from "./eski-site-yonlendirmeleri.json" with { type: "json" };
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -106,6 +107,20 @@ const nextConfig = {
       { source: "/yonetim", headers: noindex },
       { source: "/yonetim/:path*", headers: noindex },
     ];
+  },
+  /**
+   * ESKI SITENIN ADRESLERI (KARARLAR K-121, docs/SEO.md › 15)
+   *
+   * Eski zenweld.com'un adresleri (/urunler/..., /kurumsal/...) yeni
+   * sitedeki karsiliklarina 301 (kalici) ile gider; Google eski sonucu yeni
+   * adresle degistirir. Liste eski-site-yonlendirmeleri.json'dadir;
+   * docs/seo/yonlendirme-listesi.csv ile ayni olmasini ve her hedefin yeni
+   * sitede bulunmasini tests/unit/eski-site-yonlendirmeleri.test.ts denetler.
+   * Bu kurallar sayfadan ve istek kontrolunden (proxy.ts) once calisir; iki
+   * modda da aynidir.
+   */
+  async redirects() {
+    return oldSiteRedirects.map(({ eski, yeni }) => ({ source: eski, destination: yeni, statusCode: 301 }));
   },
   images: {
     // hostname: "**" acikti; bu, /_next/image ucunu herkesin kullanabilecegi
