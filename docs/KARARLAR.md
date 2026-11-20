@@ -9,7 +9,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   işaretlenir.
 - K numaraları değişmez; koddaki ve diğer belgelerdeki notlar bu
   numaralara bakar. Yeni karar sıradaki numarayı alır (bugün son numara
-  K-124). K-111, K-112 ve K-113 kullanılmaz (K-111 ve K-113 kaldırıldı,
+  K-125). K-111, K-112 ve K-113 kullanılmaz (K-111 ve K-113 kaldırıldı,
   K-112 K-47'ye katıldı); bu numaralar yeniden verilmez.
 - Burada yalnızca karar ve nedeni yazar. Nasıl çalıştığı:
   [WEBSITE-KULLANIM.md](WEBSITE-KULLANIM.md),
@@ -30,7 +30,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 5. [Stok ve SAP; bayiler ve online satıcılar](#5-stok-ve-sap-bayiler-ve-online-satıcılar) — K-20, K-28–K-33, K-82, K-84, K-93
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap) — K-34–K-37, K-68, K-94–K-96
 7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41, K-117, K-119
-8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115
+8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115, K-125
 9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120, K-121, K-123, K-124
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
@@ -826,7 +826,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   şeridi, kategori kartları, Force Serisi ve Jasic Lazer Ürünleri
   şeritleri, Kampanyalı Ürünler, Ürün Seçici bandı, Bayi ve Servis
   haritası, Neden Zenweld?, Müşterilerimiz Ne Diyor?, kurumsal teklif ve
-  bayilik kartları, Sık Sorulan Sorular ve Blog.
+  bayilik kartları, Sık Sorulan Sorular ve Blog. **Ek → K-125:** Bayi ve
+  Servis haritasının altında videolar.
 - Kategoriye göre ürün listesi yerine kategori sayfalarına giden kartlar
   vardır.
 - Güven şeridindeki yazılar sabittir; bayilere, mağaza ayarlarına ya da
@@ -864,6 +865,17 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   haritada Force Bayi işaretli ve aktif bayiler görünür. İşaret sitenin
   başka hiçbir yerinde etiket ya da rozet olarak gösterilmez.
 - Örnek veride bütün bayiler Force Bayi işaretlidir.
+
+### K-125 · Anasayfada videolar
+- Anasayfada Bayi ve Servis haritasının hemen altında YouTube Shorts
+  videoları yan yana kayar; başlık "Gerçek İşler, Gerçek Kaynak".
+- Videolar, başlık, her videonun altındaki ürün (adı tıklanınca ürün
+  sayfası açılır) ve sıra panelden yönetilir (Anasayfa Videoları).
+  Videoların ürünleri sahibinden gelecek.
+- Video sayfa açılırken yüklenmez; ziyaretçi **Oynat**'a basınca yüklenip
+  oynar. Oynatıcı YouTube'un çerezsiz adresinden açılır.
+- **Neden:** YouTube oynatıcısı sayfayı yavaşlatır (anasayfanın hızı B5'te
+  ölçülecek); çerezsiz oynatıcı tıklanmadan çerez yazmaz.
 
 ---
 

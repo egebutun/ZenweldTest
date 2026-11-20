@@ -1197,7 +1197,7 @@ Tek bir ayar kaydının bölümleri; her bölüm bir satır.
 
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
-| `key` | text | anahtar; `shop`, `stock`, `rich_text`, `company`, `home_hero` | |
+| `key` | text | anahtar; `shop`, `stock`, `rich_text`, `company`, `home_hero`, `home_videos` | |
 | `value` | jsonb | zorunlu | Aşağıda |
 | `updated_at` | timestamptz | zorunlu | |
 | `updated_by` | text | → `users` (boşalır) (yeni) | |
@@ -1278,6 +1278,28 @@ Panel › Anasayfa Tanıtım, KARARLAR K-45; geçiş betiği
 - Kurallar tarayıcı ve sunucuda ortak (`packages/data/src/hero-rules.ts` ›
   `parseHomeHero`; [IS-KURALLARI.md › 25](IS-KURALLARI.md#25-anasayfa-tanıtım-alanı));
   sunucu yüklenen dosyayı (data:) kaydetmez.
+
+**`home_videos` — anasayfa videoları** (koddaki `settings.homeVideos`;
+Panel › Anasayfa Videoları, KARARLAR K-125; geçiş betiği
+`0017_anasayfa-videolari`):
+
+| Alan | Açıklama | Örnek değer |
+|---|---|---|
+| `title` | Bölümün başlığı (en fazla 60 karakter) | Gerçek İşler, Gerçek Kaynak |
+| `videos[]` | Videolar, sitedeki sırayla (0–12) | 5 YouTube Shorts videosu |
+| `videos[].id` | Videonun kimliği | `video-1` |
+| `videos[].youtubeId` | YouTube video kimliği (11 karakter; link değil) | `QtZ7JdNzFVo` |
+| `videos[].productId` | Altında adı görünen ürün (`products.id`); yoksa alan yok | yok (sahibi gönderecek) |
+| `videos[].cover` | Kapak görseli; yoksa alan yok (YouTube'un kapak resmi) | yok |
+| `videos[].active` | Yayında mı | evet |
+
+- Satır yoksa site başlangıç değerlerini kullanır
+  (`defaultSettings.homeVideos`).
+- Kurallar tarayıcı ve sunucuda ortak (`packages/data/src/video-rules.ts` ›
+  `parseHomeVideos`; [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-anasayfa-videoları));
+  sunucu yüklenen kapağı (data:) ve katalogda olmayan ürünü kaydetmez.
+  Ürün JSON içinde kimlikle durur (yabancı anahtar yoktur): silinen ürünün
+  videosu sitede ürünsüz görünür.
 
 ### `payment_pos` — banka sanal POS'ları
 
@@ -1700,7 +1722,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 **Veri sürümü (`DB_VERSION`, yalnızca demo modu):**
 
-- `packages/data/src/index.ts`'tedir (bugün 92).
+- `packages/data/src/index.ts`'tedir (bugün 93).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**

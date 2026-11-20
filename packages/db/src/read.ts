@@ -459,6 +459,7 @@ export async function readSettings(db: ReadDb): Promise<SiteSettings> {
     stock: value("stock") as SiteSettings["stock"],
     richText: value("rich_text") as SiteSettings["richText"],
     homeHero: (value("home_hero") as SiteSettings["homeHero"] | undefined) ?? defaultSettings.homeHero,
+    homeVideos: (value("home_videos") as SiteSettings["homeVideos"] | undefined) ?? defaultSettings.homeVideos,
     company: value("company") as SiteSettings["company"],
   };
 }

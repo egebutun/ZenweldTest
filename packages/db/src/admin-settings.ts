@@ -8,17 +8,21 @@ import {
   defaultSettings,
   heroHasUploadedFile,
   heroKey,
+  homeVideosKey,
   parseCompanySettings,
   parseHomeHero,
+  parseHomeVideos,
   parseShopSettings,
   posKey,
   richTextStyleError,
   type Carrier,
   type CompanySettings,
   type HomeHeroSettings,
+  type HomeVideoSettings,
   type RichTextStyle,
   type ShopSettings,
   type ZenweldDatabase,
+  videosHaveUploadedFile,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { changedFields, writeAudit, type Actor, type AuditChanges, type AuditDb } from "./audit";
@@ -337,6 +341,56 @@ export async function adminSaveHomeHero(db: AuditDb, actor: Actor, input: Input,
     db,
     actor,
     { action: row ? "update" : "create", entityType: "settings", entityId: "home_hero", entityLabel: "Anasayfa Tanıtım", changes },
+    at,
+  );
+  return saved(at);
+}
+
+/* ------------------------------ Anasayfa videolari ------------------------------ */
+
+/** Anasayfa Videoları ekraninin verisi: ayarlar (videolarin son degisiklik aniyla). Urunler sitenin katalogundan. */
+export async function readVideosPanel(db: AuditDb): Promise<Partial<ZenweldDatabase>> {
+  const settings = await readSettings(db);
+  const [row] = await db.select({ updatedAt: s.settings.updatedAt }).from(s.settings).where(eq(s.settings.key, "home_videos"));
+  return { settings: { ...settings, homeVideos: { ...settings.homeVideos, ...(row && { updatedAt: iso(row.updatedAt) }) } } };
+}
+
+/**
+ * Anasayfa videolarini kaydeder (KARARLAR K-125). input: { videos, updatedAt? }.
+ * Kurallar packages/data › video-rules.ts; yuklenen kapak (data:)
+ * kaydedilmez, dosya deposuna yuklenir (K-108). Secilen urun katalogda
+ * olmali. Degisen bir sey yoksa hicbir sey yazilmaz.
+ */
+export async function adminSaveHomeVideos(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<Saved>> {
+  const parsed = parseHomeVideos(input.videos);
+  if (!parsed.ok) return parsed.error ? fail(400, parsed.error) : invalid();
+  const next = parsed.value;
+  if (videosHaveUploadedFile(next)) return fail(400, tr.panel.uploadDisabled);
+  const productIds = [...new Set(next.videos.flatMap((v) => (v.productId ? [v.productId] : [])))];
+  if (productIds.length) {
+    const found = await db.select({ id: s.products.id }).from(s.products).where(inArray(s.products.id, productIds));
+    if (found.length !== productIds.length) return invalid();
+  }
+
+  await lock(db, "settings:home_videos");
+  const [row] = await db.select().from(s.settings).where(eq(s.settings.key, "home_videos"));
+  if ((row ? iso(row.updatedAt) : undefined) !== (input.updatedAt || undefined)) return fail(409, stale);
+  // jsonb alanlarin sirasini degistirir: onceki deger ayni kurallardan gecirilip karsilastirilir.
+  const stored = (row?.value as HomeVideoSettings | undefined) ?? defaultSettings.homeVideos;
+  const normalized = parseHomeVideos(stored);
+  const before = normalized.ok ? normalized.value : stored;
+  if (row && homeVideosKey(before) === homeVideosKey(next)) return unchanged(row);
+
+  const changes: AuditChanges = {};
+  if (before.title !== next.title) changes.title = [before.title, next.title];
+  if (JSON.stringify(before.videos) !== JSON.stringify(next.videos)) changes.videos = [before.videos, next.videos];
+
+  if (row) await db.update(s.settings).set({ value: next, updatedAt: at }).where(eq(s.settings.key, "home_videos"));
+  else await db.insert(s.settings).values({ key: "home_videos", value: next, updatedAt: at });
+  await writeAudit(
+    db,
+    actor,
+    { action: row ? "update" : "create", entityType: "settings", entityId: "home_videos", entityLabel: "Anasayfa Videoları", changes },
     at,
   );
   return saved(at);

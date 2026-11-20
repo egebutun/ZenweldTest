@@ -1041,7 +1041,9 @@ En büyük etken: Google, aramaya en iyi cevabı veren sayfayı üste koyar.
 - [ ] Kullanım kılavuzu PDF'leri; bugün bütün ürünlerde kılavuz linki yer
       tutucu (`#`). **Panel**
 - [ ] Ürün kullanım ve ayar videoları (YouTube); "nasıl kullanılır",
-      "ayarları" aramalarında Google video da gösteriyor. **Sahibi**
+      "ayarları" aramalarında Google video da gösteriyor. Anasayfada 5
+      YouTube Shorts videosu var (KARARLAR K-125); videonun altındaki ürün
+      bağlantısı panelden seçilir. **Sahibi**
 
 ### 5. Güven sinyalleri
 

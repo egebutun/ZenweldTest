@@ -400,7 +400,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Yöneticinin kendi şifresini panelden değiştirmesi | Şimdi yapılmıyor (K-105) | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 2 |
 | SEO: anti-spatter (C1), ad, başlık ve link kalıbı (C2), ürün gamı fırsatları (C3), Search Console doğrulaması (C4), teslim süresi ve iade kargo ücreti (C5), barkod (C6) | Sahibinin kararı ya da bilgisi; C4 için BT | [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) C |
 | Sitenin tasarımı | Sahibi yapacak | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
-| Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler | Sahibinin göndermesi | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
+| Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler, videoların ürünleri | Sahibinin göndermesi | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
 | Görsel düzenleyici (önizleme, sürükle, ölçekle) ve sayfa görsellerinin panelden değişmesi | Tasarımın bitmesi (fotoğrafların yeri ve sayısı kesinleşince) | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) 5 |
 
 ---
@@ -1296,7 +1296,9 @@ adı ve etkinlik düzeltmeleri; K-123) ve B4 (uzun listelerin sayfalanması;
 K-124) yapıldı.
 
 1. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
-   2,5 sn altı); [Ölçüm](#ölçüm-hız).
+   2,5 sn altı); [Ölçüm](#ölçüm-hız). Ölçüm anasayfa videoları (K-125)
+   eklendikten sonra yapılır; videoların oynatıcısı yalnızca Oynat'a
+   basılınca yüklenir.
 2. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4;
    [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler). Search
    Console C4'te.
@@ -1613,6 +1615,9 @@ Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
 4. **Gerçek metinler:** Neden Zenweld? maddelerinin açıklamaları (bugün
    lorem ipsum) sahibiyle yazılacak; tanıtım alanındaki Force Serisi ve
    Jasic Lazer metinleri panelden (Anasayfa Tanıtım) değiştirilir.
+5. **Videoların ürünleri:** Anasayfadaki 5 videonun (K-125) altında
+   gösterilecek ürün modellerini sahibi gönderecek; panelden (Anasayfa
+   Videoları) her videoya ürün seçilir. Bugün videolar ürünsüz.
 5. **Fotoğraflar:** Lazer Temizleme ve Lazer Markalama kartlarında ürün
    fotoğrafı olmadığı için kategori çizimi görünüyor; Jasic lazer kaynak
    modelleri eklenince (K-74) Jasic şeridine ve kartlara kendiliğinden

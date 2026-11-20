@@ -52,7 +52,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 21. [Belgeler](#21-belgeler)
 22. [Yasal Metinler](#22-yasal-metinler)
 23. [Sayfa SEO](#23-sayfa-seo)
-24. [Görünüm](#24-görünüm) (Anasayfa Tanıtım ve İşlem Kaydı dahil)
+24. [Görünüm](#24-görünüm) (Anasayfa Tanıtım, Anasayfa Videoları ve İşlem Kaydı dahil)
 25. [Siteden panele gelenler](#25-siteden-panele-gelenler) (Bayilik Başvuruları, Mesajlar, E-posta dahil)
 26. [Bütün panel adresleri](#26-bütün-panel-adresleri)
 27. [Bilinen durumlar](#27-bilinen-durumlar)
@@ -111,7 +111,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     - **Müşteriler ve Servis:** Üyeler
       ([Veritabanı modunda Üyeler](#veritabanı-modunda-üyeler)) ve
       **E-posta** ([25](#e-posta-yonetime-posta)).
-    - **İçerik:** Anasayfa Tanıtım ([24](#anasayfa-tanıtım)), Haberler,
+    - **İçerik:** Anasayfa Tanıtım ([24](#anasayfa-tanıtım)), Anasayfa
+      Videoları ([24](#anasayfa-videoları)), Haberler,
       Etkinlikler, Blog, Hakkımızda, Sık Sorulan Sorular, Belgeler, Yasal
       Metinler, Sayfa SEO
       ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
@@ -153,7 +154,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 | Ürünler | Ürünler · Kategoriler · Seçenek Tanımları · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Bayilik Başvuruları · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar · E-posta |
-| İçerik | Anasayfa Tanıtım · Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
+| İçerik | Anasayfa Tanıtım · Anasayfa Videoları · Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
 | Ayarlar | Görünüm · İşlem Kaydı (yalnızca veritabanı modunda kayıt tutar) |
 
 **Bulunamayan panel sayfası:** "Sayfa bulunamadı" ve **Panele dön**
@@ -2477,6 +2478,47 @@ görünür."
   başka bir yönetici kaydettiyse kayıt reddedilir ("Bu kayıt siz açtıktan
   sonra değişti; sayfayı yenileyin."). Demo modunda tarayıcıya yazılır.
 
+### Anasayfa Videoları
+
+Adres: `/yonetim/videolar` (menüde İçerik grubunda, Anasayfa Tanıtım'ın
+altında). Anasayfada bayi haritasının altındaki video bölümü (KARARLAR
+K-125; sitede görünüşü:
+[WEBSITE-KULLANIM.md › Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa) 9; kurallar:
+[IS-KURALLARI.md › 27](IS-KURALLARI.md#27-anasayfa-videoları)).
+Açıklama: "Anasayfada bayi bulucunun altındaki video bölümü. Videolar
+YouTube'dan gösterilir; ziyaretçi Oynat'a basınca yüklenir. Kaydedince
+sitede hemen görünür."
+
+- **Bölüm başlığı** (zorunlu, en fazla 60 karakter). Örnek veride
+  "Gerçek İşler, Gerçek Kaynak".
+- **Videolar** (her biri bir kart; numarası "<n>. video"):
+  - Solda dik önizleme: kapak görseli, yoksa YouTube'un kapak resmi.
+  - **YouTube linki** (zorunlu): Shorts ya da normal video linki
+    (`youtube.com/shorts/…`, `youtube.com/watch?v=…`, `youtu.be/…`).
+    Kaydedince linkten video kimliği alınır; ekran linki Shorts biçiminde
+    gösterir.
+  - **Ürün:** Listeden seçilir ("— Ürün yok —" seçilebilir); yayında
+    olmayan ürünün yanında "(yayında değil)" yazar. Seçilen ürünün adı
+    sitede videonun altında görünür ve ürün sayfasına gider; ürün yayında
+    değilse görünmez.
+  - **Kapak görseli** (isteğe bağlı): URL ya da dosya yükleme (dosya
+    deposu ayarlı değilse yalnızca URL). Boşsa YouTube'un kapak resmi
+    kullanılır; dik (9:16) görsel önerilir.
+  - **Yayında:** İşareti kaldırılan video sitede görünmez.
+  - Sağ üstte **Yukarı taşı**, **Aşağı taşı** ve **Videoyu sil** düğmeleri.
+    Sitede videolar bu sırayla görünür.
+- **Video Ekle:** Listenin sonuna boş bir video ekler; en fazla 12 video.
+  Hiç video yoksa "Video yok; bölüm anasayfada görünmez." yazar.
+- **Değişiklikleri Kaydet:** "Videolar kaydedildi."
+- Hatalar (kaydedilmez): "Bölüm başlığı yazılmalı." / "<n>. video: YouTube
+  linki okunamadı. Videonun adresini (ör. https://www.youtube.com/shorts/…)
+  yapıştırın." / "Aynı video iki kez eklenemez."
+- Veritabanı modunda kayıt sunucuya yazılır, İşlem Kaydı'na "Anasayfa
+  Videoları" olarak girer ve anasayfa hemen yenilenir; ekran açıldıktan
+  sonra başka bir yönetici kaydettiyse kayıt reddedilir ("Bu kayıt siz
+  açtıktan sonra değişti; sayfayı yenileyin."). Demo modunda tarayıcıya
+  yazılır.
+
 ### İşlem Kaydı (veritabanı modu)
 
 Adres: `/yonetim/islem-kaydi` (Ayarlar › **İşlem Kaydı**). Açıklama:
@@ -2757,6 +2799,7 @@ sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 | `/yonetim/sayfa-seo` | Sayfa SEO |
 | `/yonetim/gorunum` | Görünüm |
 | `/yonetim/tanitim` | Anasayfa Tanıtım |
+| `/yonetim/videolar` | Anasayfa Videoları |
 | `/yonetim/islem-kaydi` | İşlem Kaydı (veritabanı modu) |
 
 ---

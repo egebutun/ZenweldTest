@@ -9,6 +9,7 @@ import { pageMetadataFor } from "@/lib/server/page-metadata";
 import { CategoryShowcase } from "@/components/home/CategoryShowcase";
 import { HomeHeroSection } from "@/components/home/HomeHero";
 import { TrustStrip } from "@/components/home/TrustStrip";
+import { HomeVideos } from "@/components/home/HomeVideos";
 import {
   CtaCards,
   DealerStrip,
@@ -47,6 +48,7 @@ export default async function HomePage() {
       <HotSale />
       <FinderBand />
       <DealerStrip />
+      <HomeVideos />
       <WhyZenweld />
       <ReviewMarquee />
       <CtaCards />

@@ -90,7 +90,15 @@ test("bölüm sırası, kategori kartları, Force ve Jasic şeritleri", async ({
   // Bolum sirasi (KARARLAR K-47); seritler veri gelince cizilir
   await expect(page.getByRole("heading", { level: 2, name: "Kampanyalı Ürünler" })).toBeVisible();
   const titles = await page.locator("main h2").allTextContents();
-  const order = ["Ne arıyorsunuz?", "Force Serisi", "Jasic Lazer Ürünleri", "Kampanyalı Ürünler", "Hangi kaynak makinesi size uygun?"];
+  const order = [
+    "Ne arıyorsunuz?",
+    "Force Serisi",
+    "Jasic Lazer Ürünleri",
+    "Kampanyalı Ürünler",
+    "Hangi kaynak makinesi size uygun?",
+    "Size En Yakın Zenweld Bayi ve Yetkili Servisini Bulun",
+    "Gerçek İşler, Gerçek Kaynak",
+  ];
   const at = order.map((title) => titles.indexOf(title));
   expect(at.every((i) => i >= 0), titles.join(" | ")).toBe(true);
   expect(at).toEqual([...at].sort((a, b) => a - b));
@@ -131,5 +139,33 @@ test("bayi haritası yakınlaşırken sayfadan çıkılınca hata vermez", async
     // Leaflet yakinlasmayi 250 ms sonra bitirmeye calisir; harita kaldirildiysa hata vermemeli.
     await page.waitForTimeout(400);
   }
+  expect(problems).toEqual([]);
+});
+
+test("videolar: bayi bulucunun altında; açılışta oynatıcı yüklenmez, Oynat'a basınca çerezsiz YouTube açılır; oklar ve noktalar (K-125)", async ({
+  page,
+  problems,
+}) => {
+  await page.goto("/");
+  const videos = page.getByRole("region", { name: "Videolar" });
+  await expect(section(page, "Gerçek İşler, Gerçek Kaynak")).toBeVisible();
+  // 5 nokta; yandaki kartlar da tiklaninca ortaya gelir.
+  await expect(page.getByRole("button", { name: /^\d\. videoyu göster$/ })).toHaveCount(5 + 4);
+  await expect(page.locator("iframe")).toHaveCount(0);
+
+  // Ortadaki kart 1. video; sonraki ok 2. videoyu ortaya alir.
+  await expect(videos.getByRole("button", { name: "1. videoyu oynat" })).toBeVisible();
+  await page.getByRole("button", { name: "Sonraki video" }).click();
+  await expect(videos.getByRole("button", { name: "2. videoyu oynat" })).toBeVisible();
+  await page.getByRole("button", { name: "Önceki video" }).click();
+
+  await videos.getByRole("button", { name: "1. videoyu oynat" }).click();
+  const player = videos.locator("iframe");
+  await expect(player).toHaveCount(1);
+  await expect(player).toHaveAttribute("src", /^https:\/\/www\.youtube-nocookie\.com\/embed\/QtZ7JdNzFVo\?autoplay=1/);
+
+  // Baska videoya gecilince oynatici kapanir.
+  await page.getByRole("button", { name: "Sonraki video" }).click();
+  await expect(videos.locator("iframe")).toHaveCount(0);
   expect(problems).toEqual([]);
 });

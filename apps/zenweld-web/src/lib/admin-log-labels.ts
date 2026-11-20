@@ -57,6 +57,7 @@ export const ACTION_LABELS: Record<string, string> = {
 export function entityHref(type: string, id: string): string | undefined {
   // Tanitim alani ayari kendi ekranindadir.
   if (type === "settings" && id === "home_hero") return "/yonetim/tanitim";
+  if (type === "settings" && id === "home_videos") return "/yonetim/videolar";
   const detail: Record<string, string> = {
     orders: "/yonetim/siparisler/",
     coupons: "/yonetim/kuponlar/",

@@ -287,20 +287,38 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
 8. **Bayi ve servis haritası:** "Size En Yakın Zenweld Bayi ve Yetkili
    Servisini Bulun" başlığıyla bayi bulucunun anasayfa hali
    ([7. bölüm](#7-bayi-ve-servis-bulucu)).
-9. **Neden Zenweld?** Beş madde: Sanayinin Tercihi, Ödüllü Marka, Kolay
+9. **Videolar** (başlık panelden; bugün "Gerçek İşler, Gerçek Kaynak";
+   KARARLAR K-125):
+   - Panelde yayında olan YouTube videoları (Shorts), paneldeki sırayla,
+     dik kartlar olarak yan yana durur. Ortadaki kart büyük ve renkli,
+     yanlardakiler soluk; yandaki karta tıklanınca o kart ortaya gelir.
+     Liste dairesel döner: sondan sonra baştaki gelir.
+   - Altta her video için bir nokta ve **Önceki video** / **Sonraki video**
+     okları. Telefonda tek kart (yanlarda komşuların ucu) görünür,
+     parmakla kaydırılır.
+   - Sayfa açılırken yalnızca kapak resmi yüklenir (panelde seçilen kapak,
+     yoksa YouTube'un kapak resmi); YouTube oynatıcısı yüklenmez.
+     Ortadaki kartta **Oynat**'a basılınca oynatıcı YouTube'un çerezsiz
+     adresinden (`youtube-nocookie.com`) açılır ve video oynar. Başka
+     videoya geçilince oynatıcı kapanır.
+   - Videoya bir ürün seçilmişse kartın altında ürünün küçük fotoğrafı ve
+     adı görünür; tıklanınca ürün sayfası açılır. Ürün yayında değilse ya
+     da silinmişse video ürünsüz görünür.
+   - Yayında video yoksa bölüm görünmez.
+10. **Neden Zenweld?** Beş madde: Sanayinin Tercihi, Ödüllü Marka, Kolay
    Destek, Garanti Sorgula, Yetkili Bayi ve Servis Ağı; sonda **Zenweld'i
    Tanıyın** kutusu (`/hakkimizda`). Madde açıklamaları yer tutucudur
    (lorem ipsum).
-10. **Müşterilerimiz Ne Diyor?**
+11. **Müşterilerimiz Ne Diyor?**
     - Panelde "anasayfada göster" işaretlenmiş, onaylı ve ürünü yayında
       olan değerlendirmeler, en fazla 10 tane.
     - Kartta puan, başlık, yorum, yazan ve ürün adı vardır.
-11. **Kurumsal teklif ve bayilik** (yan yana iki kart):
+12. **Kurumsal teklif ve bayilik** (yan yana iki kart):
     - "Kurumsal alım mı yapacaksınız? Vadeli ödeme ve çek ile ödeme
       seçenekleri için satış ekibimizden teklif alın." → **Teklif Al**.
     - "Birlikte çalışalım — Zenweld Bayisi Olmak İster misiniz?" →
       **Bayilik Başvurusu**.
-12. **Sık Sorulan Sorular ve Blog** (yan yana): ilk 6 soru (açılır-kapanır,
+13. **Sık Sorulan Sorular ve Blog** (yan yana): ilk 6 soru (açılır-kapanır,
     "Tümünü Gör" `/sss`) ve en yeni 3 blog yazısı (kapak, kategori, başlık,
     tarih; "Tümünü Gör" `/blog`).
 

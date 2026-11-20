@@ -6,7 +6,8 @@ havale süresi, sipariş ve teklif durumları, iade talebi, servis talebi,
 garanti, stok, ürün kodları, linkler ve eski adresler, yayında olma,
 yorumlar, üyelik, kayıt numaraları, form e-postaları, kategori filtreleri,
 Zenweld depo stoğu, kuponlar, panelde kayıt düzenleme, yüklenen dosyalar,
-panel listeleri, anasayfa tanıtım alanı ve liste sayfalaması. Ekranların tarifi bu dosyada yoktur; yalnızca kurallar
+panel listeleri, anasayfa tanıtım alanı, liste sayfalaması ve anasayfa
+videoları. Ekranların tarifi bu dosyada yoktur; yalnızca kurallar
 vardır.
 
 İlgili dosyalar:
@@ -55,6 +56,7 @@ Bu dosyadaki kurallar ve örnekler `tests/unit` altında otomatik denenir
 24. [Panel listeleri: sayfalama ve arama](#24-panel-listeleri-sayfalama-ve-arama)
 25. [Anasayfa tanıtım alanı](#25-anasayfa-tanıtım-alanı)
 26. [Listelerin sayfalanması](#26-listelerin-sayfalanması)
+27. [Anasayfa videoları](#27-anasayfa-videoları)
 
 ---
 
@@ -1815,3 +1817,36 @@ kararı (KARARLAR K-124). Kod: `packages/data/src/pagination.ts`.
 
 Testler: `tests/unit/sayfalama.test.ts`, `tests/e2e/sayfalama.spec.ts`,
 `tests/e2e-db/sayfalama.spec.ts`.
+
+---
+
+## 27. Anasayfa videoları
+
+**Kısaca:** Anasayfadaki video bölümü panelden yönetilir (Panel ›
+Anasayfa Videoları; KARARLAR K-125). Sitede yayındaki videolar paneldeki
+sırayla görünür; YouTube oynatıcısı yalnızca ziyaretçi Oynat'a basınca
+yüklenir. Kod: `packages/data/src/video-rules.ts` (demo ve veritabanı modu
+aynı; sunucu tarayıcıdan geleni yeniden denetler).
+
+| Alan | Kural |
+|---|---|
+| Bölüm başlığı | Zorunlu, en fazla 60 karakter; kırpılır |
+| Video sayısı | En fazla 12; hiç olmayabilir (o zaman bölüm görünmez) |
+| YouTube linki | Zorunlu. `youtube.com/shorts/<kimlik>`, `youtube.com/watch?v=<kimlik>`, `youtu.be/<kimlik>`, `youtube.com/embed/<kimlik>` ya da yalnızca 11 karakterlik kimlik; `www.` ve `m.` kabul edilir. Yalnızca kimlik saklanır |
+| Aynı video | İki kez eklenemez (aynı kimlik) |
+| Ürün | İsteğe bağlı; katalogdaki bir ürün olmalı (veritabanı modunda sunucu denetler) |
+| Kapak görseli | İsteğe bağlı; site içi adres (`/…`), `https://…` ya da yüklenen dosya. Boşsa YouTube'un kapak resmi (`i.ytimg.com/vi/<kimlik>/hqdefault.jpg`) |
+
+- **Sitede görünen:** Yayında olan videolar. Seçilen ürün yayında değilse
+  ya da silinmişse video ürünsüz görünür.
+- **Oynatma:** Sayfa açılırken yalnızca kapak resmi (ekrana gelince)
+  yüklenir. Oynatıcı `https://www.youtube-nocookie.com/embed/<kimlik>`
+  adresinden açılır (çerezsiz; video oynatılmadan YouTube çerezi
+  yazılmaz), hemen oynar ve video bitince başka kanalların videolarını
+  önermez. Başka videoya geçilince oynatıcı kapanır.
+- Veritabanı modunda yüklenen kapak (data:) kaydedilmez; görsel dosya
+  deposuna yüklenir (K-108), depo ayarlı değilse adres yazılır.
+
+Testler: `tests/unit/anasayfa-videolari.test.ts`,
+`tests/db/panel-videolar.test.ts`, `tests/e2e/anasayfa.spec.ts`,
+`tests/e2e/videolar.spec.ts`, `tests/e2e-db/panel-videolar.spec.ts`.

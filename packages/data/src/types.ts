@@ -1347,9 +1347,33 @@ export interface HomeHeroSettings {
   updatedAt?: string;
 }
 
+/**
+ * Anasayfa videolari (panel › Anasayfa Videoları; KARARLAR K-125). Kurallar:
+ * video-rules.ts.
+ */
+export interface HomeVideo {
+  id: string;
+  /** YouTube video kimligi (11 karakter; Shorts ya da normal video) */
+  youtubeId: string;
+  /** Videonun altinda adi gorunen urun; bossa urun satiri yok */
+  productId?: string;
+  /** Kapak gorseli; bossa YouTube'un kapak resmi */
+  cover?: string;
+  active: boolean;
+}
+
+export interface HomeVideoSettings {
+  /** Bolumun basligi */
+  title: string;
+  videos: HomeVideo[];
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
+}
+
 export interface SiteSettings {
   richText: RichTextStyle;
   homeHero: HomeHeroSettings;
+  homeVideos: HomeVideoSettings;
   shop: ShopSettings;
   stock: StockSettings;
   company: CompanySettings;

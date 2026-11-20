@@ -4,6 +4,7 @@ import type {
   AboutContent,
   CompanySettings,
   HomeHeroSettings,
+  HomeVideoSettings,
   PageSeoFields,
   RichTextStyle,
   SalesRep,
@@ -45,6 +46,22 @@ export function getHomeHero(db: ZenweldDatabase = getSnapshot()): HomeHeroSettin
 export function saveHomeHero(hero: HomeHeroSettings): boolean {
   return mutate((db) => {
     db.settings = { ...db.settings, homeHero: hero };
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Anasayfa videolari (KARARLAR K-125)                                 */
+/* ------------------------------------------------------------------ */
+
+/** Videolar bolumu; eski bir localStorage kaydinda yoksa varsayilan. */
+export function getHomeVideos(db: ZenweldDatabase = getSnapshot()): HomeVideoSettings {
+  return db.settings?.homeVideos ?? defaultSettings.homeVideos;
+}
+
+/** videos: denetlenmis ayar (parseHomeVideos). */
+export function saveHomeVideos(videos: HomeVideoSettings): boolean {
+  return mutate((db) => {
+    db.settings = { ...db.settings, homeVideos: videos };
   });
 }
 

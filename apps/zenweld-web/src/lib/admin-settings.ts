@@ -1,7 +1,7 @@
 "use client";
 
-import type { CompanySettings, HomeHeroSettings, RichTextStyle, ShopSettings } from "@zenweld/data";
-import { saveCompanySettings, saveHomeHero, saveRichTextStyle, saveShopSettings } from "@zenweld/store";
+import type { CompanySettings, HomeHeroSettings, HomeVideoSettings, RichTextStyle, ShopSettings } from "@zenweld/data";
+import { saveCompanySettings, saveHomeHero, saveHomeVideos, saveRichTextStyle, saveShopSettings } from "@zenweld/store";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
 
 export type { PanelAnswer };
@@ -9,7 +9,7 @@ export type { PanelAnswer };
 /**
  * PANEL › AYAR ISLEMLERI: Mağaza Ayarları'nin Genel sekmesi (kargo,
  * taksit, POS, havale) ve Şirket ve İletişim sekmesi; Görünüm ve Anasayfa
- * Tanıtım ekranlari. E-posta adresleri: lib/admin-email.ts.
+ * Tanıtım ve Anasayfa Videoları ekranlari. E-posta adresleri: lib/admin-email.ts.
  *
  * Veritabani modunda islem sunucuya gider (/api/yonetim/ayarlar; Asama 5,
  * 5. alan, KARARLAR K-99; ortak akis lib/admin-panel.ts). Demo
@@ -53,6 +53,14 @@ export function useSettingsActions() {
         return call("tanitim", { hero, ...(ref.updatedAt && { updatedAt: ref.updatedAt }), id: "home_hero" }, "settings");
       }
       return localAnswer(saveHomeHero(hero));
+    },
+    /** Anasayfa videolari (K-125). videos: denetlenmis ayar (parseHomeVideos); stored: ekranin gordugu kayit. */
+    saveHomeVideos: (videos: HomeVideoSettings, stored: HomeVideoSettings): Promise<PanelAnswer> => {
+      if (server) {
+        const ref = recordRef("settings", { id: "home_videos", updatedAt: stored.updatedAt });
+        return call("videolar", { videos, ...(ref.updatedAt && { updatedAt: ref.updatedAt }), id: "home_videos" }, "settings");
+      }
+      return localAnswer(saveHomeVideos(videos));
     },
   };
 }

@@ -168,6 +168,15 @@ export const tr = {
     dealerTitle: "Size En Yakın Zenweld Bayi ve Yetkili Servisini Bulun",
     dealerSubtitle:
       "Türkiye genelinde 30'u aşkın yetkili satış ve servis noktamızdan ürünlerimizi inceleyebilir, satın alabilirsiniz.",
+    /** Anasayfa videolari (baslik panelden; KARARLAR K-125) */
+    videos: {
+      play: "Oynat",
+      playVideo: (n: number) => `${n}. videoyu oynat`,
+      showVideo: (n: number) => `${n}. videoyu göster`,
+      previous: "Önceki video",
+      next: "Sonraki video",
+      label: "Videolar",
+    },
     quoteBannerTitle: "Kurumsal alım mı yapacaksınız?",
     quoteBannerText:
       "Vadeli ödeme ve çek ile ödeme seçenekleri için satış ekibimizden teklif alın.",

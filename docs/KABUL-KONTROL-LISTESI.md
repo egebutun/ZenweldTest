@@ -52,7 +52,8 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 ## 1. Hazırlık
 
 - [ ] `npm install` ve `npm run build` hatasız biter.
-- [ ] `npm start` ile site açılır; anasayfa 200 döner.
+- [ ] `npm run start --workspace apps/zenweld-web` ile site açılır; anasayfa
+      200 döner.
 - [ ] Tip kontrolü (`npm run typecheck`) hatasız geçer.
 - [ ] Kod denetimi (`npm run lint`) hata ve uyarı vermez.
 - [ ] `npm audit --omit=dev` (siteye giden kütüphaneler) açık göstermez.
@@ -230,9 +231,16 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       sorulmaz.
 - [ ] Anasayfa sırası: tanıtım alanı → güven şeridi → Ne arıyorsunuz?
       (kategori kartları) → Force Serisi → Jasic Lazer Ürünleri →
-      Kampanyalı Ürünler → Ürün Seçici bandı → bayi haritası → Neden
-      Zenweld? → Müşterilerimiz Ne Diyor? → kurumsal teklif ve bayilik
+      Kampanyalı Ürünler → Ürün Seçici bandı → bayi haritası → videolar
+      ("Gerçek İşler, Gerçek Kaynak") → Neden Zenweld? → Müşterilerimiz Ne Diyor? → kurumsal teklif ve bayilik
       kartları → Sık Sorulan Sorular (ilk 6) ve Blog (en yeni 3)
+      (`tests/e2e/anasayfa.spec.ts`).
+- [ ] Anasayfa videoları (K-125): sayfa açılınca videoların yalnızca kapak
+      resmi görünür, sayfada YouTube oynatıcısı (iframe) yoktur; ortadaki
+      kartta **Oynat**'a basınca `youtube-nocookie.com` oynatıcısı açılır ve
+      video oynar; ok, nokta ya da yandaki karta tıklanınca o video ortaya
+      gelir ve oynatıcı kapanır; telefonda parmakla kaydırılır. Ürünü
+      seçilmiş videonun altındaki ad ürün sayfasını açar
       (`tests/e2e/anasayfa.spec.ts`).
 - [ ] Tanıtım alanı 7 saniyede bir sonraki sayfaya geçer (Zenweld → Force
       Serisi → Jasic Lazer); fare üzerindeyken durur; sekmeler ve oklar
@@ -1285,6 +1293,13 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Anasayfa Tanıtım: veritabanı modunda kayıt İşlem Kaydı'na "Anasayfa
       Tanıtım" olarak girer; **Varsayılana Dön** + kaydet başlangıçtaki üç
       sayfayı geri getirir.
+- [ ] Anasayfa Videoları: başlık, ürün, sıra ve yayında değişikliği
+      kaydedince anasayfada görünür; kapatılan video görünmez, hiç video
+      yayında değilse bölüm görünmez. YouTube dışı ya da bozuk link
+      kaydedilmez ("<n>. video: YouTube linki okunamadı…"); aynı video iki
+      kez eklenemez; en fazla 12 video. Veritabanı modunda kayıt İşlem
+      Kaydı'na "Anasayfa Videoları" olarak girer (iki modda;
+      `tests/e2e/videolar.spec.ts`, `tests/e2e-db/panel-videolar.spec.ts`).
 - [ ] Görünüm: punto ve renk değişikliği haber, etkinlik, blog, Hakkımızda,
       yasal metin ve kategori/grup tanıtım metinlerine yansır; Varsayılana Dön + Ayarları Kaydet başlangıç
       değerlerine döndürür.

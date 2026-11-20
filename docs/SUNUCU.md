@@ -63,6 +63,7 @@ olarak tutulur. Panelde, veritabanında, tarayıcıda ya da depoda (GitHub)
 | Dosya deposu | Demo modunda tarayıcı; veritabanı modunda sunucunun diski (`DOSYA_KLASORU`; K-108) | Deponun yeri ve yedeği (BT); istenirse nesne deposu |
 | Bayi haritası | **Bağlı** (Leaflet + OpenStreetMap) | Trafik artarsa ticari harita sağlayıcısı değerlendirilmeli |
 | Ofis haritası ve yol tarifi | **Bağlı** (Google Haritalar gömme ve bağlantı; anahtar gerekmez) | — |
+| Anasayfa videoları | **Bağlı** (YouTube'un çerezsiz oynatıcısı, yalnızca Oynat'a basılınca; kapak resmi `i.ytimg.com`'dan; anahtar gerekmez; K-125) | — |
 | Telefon, WhatsApp, e-posta, sosyal medya | **Bağlı** (bağlantılar ve paylaşım önizlemesi) | — |
 | Bülten, müşteriye sipariş e-postaları, analitik, e-Fatura, kargo API'si | Yok (müşteriye yalnızca şifre sıfırlama ve "servis talebiniz alındı" gidiyor) | [15](#15-henüz-bağlanmayanlar) |
 
@@ -199,7 +200,8 @@ Güvenlik politikasının (CSP) bugün izin verdiği dış adresler:
   girilebildiği için; harita döşemeleri ve Unsplash dahil), ayrıca
   tarayıcıda tutulan yüklenmiş görseller (`data:`, `blob:`).
 - **Çerçeve:** `maps.google.com` ve `www.google.com` (iletişim sayfasındaki
-  harita) ve sitenin kendisi (panelin Anasayfa Tanıtım ekranındaki
+  harita), `www.youtube-nocookie.com` (anasayfa videoları; oynatıcı
+  yalnızca ziyaretçi Oynat'a basınca açılır, K-125) ve sitenin kendisi (panelin Anasayfa Tanıtım ekranındaki
   önizleme çerçevesi).
 - **Kod, bağlantı (istek), yazı tipi:** yalnızca sitenin kendisi. E-posta
   servisine sunucu bağlandığı için tarayıcıya izin gerekmez.
@@ -262,6 +264,7 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `0014_force-bayi.sql` | `dealers.force_dealer` (Force Bayi işareti; Force sayfasındaki harita, K-115). Var olan bayiler işaretsiz gelir |
 | `0015_eposta-bolumu.sql` | Panel › E-posta (K-116): `email_settings` (türün göndericisi ve alıcıları; `email_recipients`'taki satırlar buraya taşınır ve tablo kaldırılır), `email_log`'a yön, gönderen, metin, Message-ID, yanıtlanan e-posta, ekler ve panelden gönderen yönetici; türlere `bulten`; `mailbox_state` |
 | `0016_servis-talebi-akisi.sql` | Servis talebi akışı (K-117): `service_requests.service_dealer_id` (talebin yetkili servisi, → `dealers`), `user_id` dizini (Hesabım › Servis Taleplerim); durumlar `new` / `assigned` / `done` (eski `in_progress` kayıtları `assigned` olur) |
+| `0017_anasayfa-videolari.sql` | `settings.key` `home_videos` değerini de kabul eder (Anasayfa Videoları, K-125) |
 
 **Veritabanındaki kurallar** (`0001_kurallar.sql`):
 
@@ -1397,15 +1400,19 @@ Yasal Metinler, Belgeler, Sayfa SEO ve Görünüm; 5. alan; KARARLAR K-104;
   `readAppearancePanel(db)`: ayarlar, `rich_text` satırının
   `updated_at`'iyle (Görünüm sayfası). `readHeroPanel(db)`: ayarlar,
   `home_hero` satırının `updated_at`'iyle (Anasayfa Tanıtım sayfası).
+  `readVideosPanel(db)`: ayarlar, `home_videos` satırının `updated_at`'iyle
+  (Anasayfa Videoları sayfası; ürün listesi sitenin katalogundan).
 - **Yazma:** `POST /api/yonetim/icerik/<işlem>`: `yasal-metin`,
   `sayfa-seo`, `belge-sayfasi`, `belge`, `belge-yayin`, `belge-sil`,
   `belge-sira`; ardından `refreshSite(["icerik"])`.
   `POST /api/yonetim/ayarlar/gorunum` ve `POST /api/yonetim/ayarlar/tanitim`
   (`adminSaveHomeHero`; kurallar `packages/data/src/hero-rules.ts`, yüklenen
-  dosya (data:) kaydedilmez); ardından `refreshSite(["katalog"])`
+  dosya (data:) kaydedilmez) ve `POST /api/yonetim/ayarlar/videolar`
+  (`adminSaveHomeVideos`; kurallar `packages/data/src/video-rules.ts`;
+  yüklenen kapak ve katalogda olmayan ürün kaydedilmez); ardından `refreshSite(["katalog"])`
   (ayarlar katalogla birlikte önbellektedir). `audit_log`: `legal_pages`,
   `page_seo`, `document_pages`, `documents`, `settings` / `rich_text`,
-  `settings` / `home_hero`.
+  `settings` / `home_hero`, `settings` / `home_videos`.
 - **Anasayfa Tanıtım önizlemesi:** Panel, `/yonetim/onizleme/tanitim`
   sayfasını bir çerçevede masaüstü (1440 px) ya da telefon (390 px)
   genişliğinde açar ve kaydedilmemiş taslağı ona mesajla (`postMessage`)

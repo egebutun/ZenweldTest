@@ -18,8 +18,9 @@ const isDev = process.env.NODE_ENV === "development";
  * - img-src https: panelden herhangi bir https gorsel adresi girilebiliyor.
  * - data:/blob: panelde yuklenen gorseller, yorum videolari ve belgeler
  *   tarayicida bu bicimde tutulur.
- * - frame-src: iletisim sayfasindaki Google Haritalar; 'self': panelin
- *   Anasayfa Tanıtım ekranindaki onizleme cercevesi.
+ * - frame-src: iletisim sayfasindaki Google Haritalar; anasayfa videolari
+ *   (cerezsiz YouTube, yalnizca Oynat'a basilinca; KARARLAR K-125); 'self':
+ *   panelin Anasayfa Tanıtım ekranindaki onizleme cercevesi.
  * - frame-ancestors 'none': site baska bir sitenin icinde (cerceve)
  *   acilamaz. Tek istisna onizleme sayfasi (asagida PREVIEW): yalnizca ayni
  *   sitenin icinde cerceveye girer.
@@ -32,7 +33,7 @@ const contentSecurityPolicy = [
   "media-src 'self' data: blob:",
   "font-src 'self' data:",
   `connect-src 'self'${isDev ? " ws:" : ""}`,
-  "frame-src 'self' https://maps.google.com https://www.google.com",
+  "frame-src 'self' https://maps.google.com https://www.google.com https://www.youtube-nocookie.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
