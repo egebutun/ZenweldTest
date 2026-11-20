@@ -1835,8 +1835,15 @@ aynı; sunucu tarayıcıdan geleni yeniden denetler).
 | YouTube linki | Zorunlu. `youtube.com/shorts/<kimlik>`, `youtube.com/watch?v=<kimlik>`, `youtu.be/<kimlik>`, `youtube.com/embed/<kimlik>` ya da yalnızca 11 karakterlik kimlik; `www.` ve `m.` kabul edilir. Yalnızca kimlik saklanır |
 | Aynı video | İki kez eklenemez (aynı kimlik) |
 | Ürün | İsteğe bağlı; katalogdaki bir ürün olmalı (veritabanı modunda sunucu denetler) |
-| Kapak görseli | İsteğe bağlı; site içi adres (`/…`), `https://…` ya da yüklenen dosya. Boşsa YouTube'un kapak resmi (`i.ytimg.com/vi/<kimlik>/hqdefault.jpg`) |
+| Kapak görseli | İsteğe bağlı; site içi adres (`/…`), `https://…` ya da yüklenen dosya. Boşsa YouTube'un kapak resmi (aşağıda) |
 
+- **YouTube'un kapak resmi:** En iyisinden başlanarak denenir:
+  Shorts'un dik kapağı (`i.ytimg.com/vi/<kimlik>/oar2.jpg`, dik olmalı),
+  yüksek çözünürlük (`maxresdefault.jpg`, 1280×720), her videoda bulunan
+  (`hqdefault.jpg`, 480×360). YouTube olmayan boyut için 120×90'lık gri bir
+  resim döndürür; o zaman sıradakine geçilir. Kapağın keskinliği videonun
+  YouTube'a yüklendiği çözünürlüğe bağlıdır; en keskin sonuç için panelden
+  dik (9:16) kapak yüklenir.
 - **Sitede görünen:** Yayında olan videolar. Seçilen ürün yayında değilse
   ya da silinmişse video ürünsüz görünür.
 - **Oynatma:** Sayfa açılırken yalnızca kapak resmi (ekrana gelince)

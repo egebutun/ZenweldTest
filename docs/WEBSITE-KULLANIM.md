@@ -290,14 +290,19 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
 9. **Videolar** (başlık panelden; bugün "Gerçek İşler, Gerçek Kaynak";
    KARARLAR K-125):
    - Panelde yayında olan YouTube videoları (Shorts), paneldeki sırayla,
-     dik kartlar olarak yan yana durur. Ortadaki kart büyük ve renkli,
-     yanlardakiler soluk; yandaki karta tıklanınca o kart ortaya gelir.
-     Liste dairesel döner: sondan sonra baştaki gelir.
+     aynı genişlikte dik kartlar olarak yan yana durur: geniş ekranda 5,
+     tablette 3, telefonda 1 kart (yanlarda komşuların ucu). Ortadaki
+     kart daha uzun ve renkli, yanlardakiler kısa ve soluk.
+   - Ok, nokta, yandaki karta tıklama ya da telefonda parmakla kaydırma
+     bütün şeridi tek parça yana kaydırır; yeni ortadaki kart uzar ve
+     renklenir. Liste sonsuz döner: sondan sonra baştaki gelir, uçtan yeni
+     kart girer.
    - Altta her video için bir nokta ve **Önceki video** / **Sonraki video**
-     okları. Telefonda tek kart (yanlarda komşuların ucu) görünür,
-     parmakla kaydırılır.
-   - Sayfa açılırken yalnızca kapak resmi yüklenir (panelde seçilen kapak,
-     yoksa YouTube'un kapak resmi); YouTube oynatıcısı yüklenmez.
+     okları.
+   - Sayfa açılırken yalnızca kapak resmi yüklenir; YouTube oynatıcısı
+     yüklenmez. Kapak, panelde seçilmişse o görsel; yoksa YouTube'un en
+     yüksek çözünürlüklü kapak resmi (önce Shorts'un dik kapağı, yoksa
+     1280×720, o da yoksa 480×360; [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-anasayfa-videoları)).
      Ortadaki kartta **Oynat**'a basılınca oynatıcı YouTube'un çerezsiz
      adresinden (`youtube-nocookie.com`) açılır ve video oynar. Başka
      videoya geçilince oynatıcı kapanır.

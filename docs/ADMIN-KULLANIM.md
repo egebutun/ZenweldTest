@@ -2502,8 +2502,10 @@ sitede hemen görünür."
     sitede videonun altında görünür ve ürün sayfasına gider; ürün yayında
     değilse görünmez.
   - **Kapak görseli** (isteğe bağlı): URL ya da dosya yükleme (dosya
-    deposu ayarlı değilse yalnızca URL). Boşsa YouTube'un kapak resmi
-    kullanılır; dik (9:16) görsel önerilir.
+    deposu ayarlı değilse yalnızca URL). Boşsa YouTube'un en yüksek
+    çözünürlüklü kapak resmi kullanılır; keskinliği videonun yüklendiği
+    çözünürlüğe bağlıdır. En keskin sonuç için dik (9:16), en az 1080×1920
+    görsel önerilir.
   - **Yayında:** İşareti kaldırılan video sitede görünmez.
   - Sağ üstte **Yukarı taşı**, **Aşağı taşı** ve **Videoyu sil** düğmeleri.
     Sitede videolar bu sırayla görünür.

@@ -48,8 +48,30 @@ export function youtubeIdFrom(input: string): string | null {
 /** Panelde ve belgede gorunen link (Shorts bicimi). */
 export const youtubeLink = (id: string) => `https://www.youtube.com/shorts/${id}`;
 
-/** YouTube'un kapak resmi (her videoda bulunan boyut). */
+/** YouTube'un kapak resmi (her videoda bulunan boyut: 480×360). */
 export const youtubeThumbnail = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+
+/**
+ * YouTube'un kapak resimleri, en iyiden baslayarak: Shorts'un dik kapagi
+ * (oar2, 1080×1920'ye kadar), yuksek cozunurluk (maxresdefault, 1280×720)
+ * ve her videoda bulunan hqdefault. Olmayan boyut icin YouTube 120×90'lik
+ * gri bir resim dondurur; sitede bu durumda siradakine gecilir
+ * (videoCoverFits).
+ */
+export const youtubeCovers = (id: string) => [
+  `https://i.ytimg.com/vi/${id}/oar2.jpg`,
+  `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`,
+  youtubeThumbnail(id),
+];
+
+/**
+ * Yuklenen kapak resmi kullanilabilir mi: YouTube'un "yok" resmi (120×90)
+ * degil; dik kapak (oar2) gercekten dik olmali.
+ */
+export function videoCoverFits(url: string, width: number, height: number): boolean {
+  if (width <= 120) return false;
+  return !url.includes("/oar2.jpg") || height > width;
+}
 
 /**
  * Oynatici adresi: cerezsiz YouTube (youtube-nocookie.com; video

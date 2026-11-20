@@ -9,6 +9,8 @@ import {
   VIDEO_NO_TITLE,
   VIDEO_TOO_MANY,
   VIDEO_TWICE,
+  videoCoverFits,
+  youtubeCovers,
   videosHaveUploadedFile,
   visibleHomeVideos,
   youtubeEmbed,
@@ -41,6 +43,16 @@ describe("YouTube linki", () => {
     for (const link of ["https://vimeo.com/123", "https://www.youtube.com/@zenweld", "https://youtu.be/kisa", "", "lorem ipsum"]) {
       expect(youtubeIdFrom(link)).toBeNull();
     }
+  });
+
+  it("kapak: önce Shorts'un dik kapağı, sonra yüksek çözünürlük, en son her videoda bulunan; YouTube'un 'yok' resmi atlanır", () => {
+    expect(youtubeCovers("QtZ7JdNzFVo").map((u) => u.split("/").pop())).toEqual(["oar2.jpg", "maxresdefault.jpg", "hqdefault.jpg"]);
+    const [oar, maxres, hq] = youtubeCovers("QtZ7JdNzFVo");
+    expect(videoCoverFits(oar, 1080, 1920)).toBe(true);
+    expect(videoCoverFits(oar, 1280, 720)).toBe(false); // dik degil
+    expect(videoCoverFits(maxres, 120, 90)).toBe(false); // YouTube'un "yok" resmi
+    expect(videoCoverFits(maxres, 1280, 720)).toBe(true);
+    expect(videoCoverFits(hq, 480, 360)).toBe(true);
   });
 
   it("oynatıcı çerezsiz YouTube adresinden, kendiliğinden oynar", () => {

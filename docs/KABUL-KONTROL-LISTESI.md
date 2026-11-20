@@ -238,8 +238,10 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Anasayfa videoları (K-125): sayfa açılınca videoların yalnızca kapak
       resmi görünür, sayfada YouTube oynatıcısı (iframe) yoktur; ortadaki
       kartta **Oynat**'a basınca `youtube-nocookie.com` oynatıcısı açılır ve
-      video oynar; ok, nokta ya da yandaki karta tıklanınca o video ortaya
-      gelir ve oynatıcı kapanır; telefonda parmakla kaydırılır. Ürünü
+      video oynar; ok, nokta ya da yandaki karta tıklanınca bütün şerit
+      kayar, o video ortaya gelir (uzar, renklenir) ve oynatıcı kapanır;
+      liste sonsuz döner; telefonda parmakla kaydırılır. Kapak resmi
+      bulanık değildir (YouTube'un yüksek çözünürlüklü kapağı). Ürünü
       seçilmiş videonun altındaki ad ürün sayfasını açar
       (`tests/e2e/anasayfa.spec.ts`).
 - [ ] Tanıtım alanı 7 saniyede bir sonraki sayfaya geçer (Zenweld → Force

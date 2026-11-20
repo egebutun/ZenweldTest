@@ -7,7 +7,6 @@ import {
   parseHomeVideos,
   youtubeIdFrom,
   youtubeLink,
-  youtubeThumbnail,
   type HomeVideo,
   type HomeVideoSettings,
 } from "@zenweld/data";
@@ -17,6 +16,7 @@ import { AdminCard, AdminPageHeader } from "@/components/admin/AdminShell";
 import { ImageField } from "@/components/admin/ImageField";
 import { useSettingsActions } from "@/lib/admin-settings";
 import { useUploads } from "@/lib/admin-files";
+import { VideoCover } from "@/components/home/VideoCover";
 
 /**
  * Ekranin taslagi: son degisiklik ani haric. youtubeId kutusunda
@@ -123,14 +123,15 @@ export function VideosClient() {
       <ol className="space-y-4">
         {draft.videos.map((video, i) => {
           const id = youtubeIdFrom(video.youtubeId);
-          const preview = video.cover || (id ? youtubeThumbnail(id) : "");
           return (
             <li key={video.id}>
               <AdminCard>
                 <div className="flex flex-col gap-5 md:flex-row">
                   <div className="flex w-28 shrink-0 items-center justify-center overflow-hidden rounded-[4px] bg-zw-ink aspect-[9/16]">
-                    {preview ? (
-                      <ProductImage src={preview} alt="" label="" className="h-full w-full object-cover" />
+                    {video.cover ? (
+                      <ProductImage src={video.cover} alt="" label="" className="h-full w-full object-cover" />
+                    ) : id ? (
+                      <VideoCover youtubeId={id} className="h-full w-full object-cover" />
                     ) : (
                       <span className="px-2 text-center text-xs text-zw-grey-400">Önizleme yok</span>
                     )}
@@ -179,7 +180,7 @@ export function VideosClient() {
                         ))}
                       </Select>
                     </FormRow>
-                    <FormRow label="Kapak görseli" hint="İsteğe bağlı. Boşsa YouTube'un kapak resmi kullanılır. Dik (9:16) görsel önerilir.">
+                    <FormRow label="Kapak görseli" hint="İsteğe bağlı. Boşsa YouTube'un en yüksek çözünürlüklü kapak resmi kullanılır. En keskin sonuç için dik (9:16), en az 1080×1920 görsel.">
                       <ImageField
                         value={video.cover}
                         onChange={(cover) => update(i, { cover })}
