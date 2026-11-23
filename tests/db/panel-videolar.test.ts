@@ -1,18 +1,30 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { PoolClient } from "pg";
-import { defaultSettings, VIDEO_BAD_LINK, type HomeVideoSettings } from "@zenweld/data";
+import { defaultSettings, VIDEO_BAD_LINK, VIDEO_TWICE } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
-import { adminSaveHomeVideos, readSettings, readVideosPanel, type Actor } from "../../packages/db/src";
+import {
+  adminDeleteVideo,
+  adminMoveVideo,
+  adminSaveHomeVideos,
+  adminSaveVideo,
+  readContent,
+  readContentPanel,
+  readSettings,
+  readVideosPanel,
+  type Actor,
+} from "../../packages/db/src";
 import * as schema from "../../packages/db/src/schema";
 import { category, closePool, group, inTransaction, product } from "./ortak";
 
 /*
- * PANEL › ANASAYFA VIDEOLARI SUNUCUDA (packages/db/src/admin-settings.ts;
- * KARARLAR K-125, K-99): tek kayit settings('home_videos'); kayit yoksa
- * varsayilan okunur; ekran acildiktan sonra degismis kayit kaydedilmez;
- * yuklenen kapak (data:) ve katalogda olmayan urun kaydedilmez; degisiklik
- * audit_log'a yazilir. Her test kendi isleminde calisir ve geri alinir.
+ * PANEL › VIDEOLAR SUNUCUDA (packages/db/src/admin-content.ts,
+ * admin-settings.ts; KARARLAR K-125, K-99): videolar videos tablosunda,
+ * position sirasiyla; ayni YouTube videosu iki kez eklenmez; yuklenen kapak
+ * (data:) ve katalogda olmayan urun kaydedilmez; ekran acildiktan sonra
+ * degismis kayit kaydedilmez; silinen urunun videosu urunsuz kalir.
+ * Anasayfa bolumunun basligi settings('home_videos'). Her test kendi
+ * isleminde calisir ve geri alinir.
  */
 
 afterAll(closePool);
@@ -23,71 +35,116 @@ const admin: Actor = { id: "u-videolar", name: "Video Yöneticisi" };
 const T1 = new Date("2026-03-11T09:00:00.000Z");
 const T2 = new Date("2026-03-11T10:00:00.000Z");
 const stale = { ok: false, status: 409, error: tr.panel.staleRecord };
-const videos = (): HomeVideoSettings => structuredClone(defaultSettings.homeVideos);
+const form = (patch: Record<string, unknown> = {}) => ({
+  source: "youtube",
+  youtubeId: "https://youtu.be/abcdefghijk",
+  title: "",
+  productId: "",
+  cover: "",
+  showOnHome: true,
+  active: true,
+  ...patch,
+});
 
-/** Video kaydi olmayan veritabani. */
-async function withoutVideos(run: (db: Db, client: PoolClient) => Promise<void>) {
+/** Bos video tablosu ve bolum basligi olmayan veritabani. */
+async function clean(run: (db: Db, client: PoolClient) => Promise<void>) {
   await inTransaction(async (client) => {
+    await client.query("DELETE FROM videos");
     await client.query("DELETE FROM settings WHERE key = 'home_videos'");
     await run(drizzle(client, { schema }), client);
   });
 }
 
 const audit = async (client: PoolClient) =>
-  (
-    await client.query("SELECT action, entity_type, entity_id, entity_label, changes FROM audit_log WHERE actor_user_id = $1 ORDER BY id", [
-      admin.id,
-    ])
-  ).rows;
+  (await client.query("SELECT action, entity_type, entity_id, entity_label, changes FROM audit_log WHERE actor_user_id = $1 ORDER BY id", [admin.id]))
+    .rows;
 
-describe("Anasayfa videoları", () => {
-  it("kayıt yoksa varsayılan okunur; ilk kayıt eklenir ve işlem kaydına yazılır; aynısı yazılmaz; eski ekrandan kayıt reddedilir", async () => {
-    await withoutVideos(async (db, client) => {
-      expect((await readSettings(db)).homeVideos).toEqual(defaultSettings.homeVideos);
-      expect((await readVideosPanel(db)).settings?.homeVideos.updatedAt).toBeUndefined();
-
+describe("Video kütüphanesi", () => {
+  it("eklenir, sırayla okunur, güncellenir, taşınır ve silinir; işlem kaydına yazılır", async () => {
+    await clean(async (db, client) => {
       await group(client);
       await category(client);
       await product(client, "p-video", "ZW-VIDEO-1");
-      const next = videos();
-      next.title = "Sahada Zenweld";
-      next.videos = [{ ...next.videos[1], productId: "p-video" }, next.videos[0]];
-      expect(await adminSaveHomeVideos(db, admin, { videos: next }, T1)).toEqual({ ok: true, updatedAt: T1.toISOString() });
 
-      const [row] = (await client.query("SELECT value FROM settings WHERE key = 'home_videos'")).rows;
-      expect(row.value).toEqual(next);
-      expect((await readSettings(db)).homeVideos).toEqual(next);
-      expect((await readVideosPanel(db)).settings?.homeVideos).toMatchObject({ title: "Sahada Zenweld", updatedAt: T1.toISOString() });
+      const first = await adminSaveVideo(db, admin, form({ title: " Sahada ", productId: "p-video" }), T1);
+      expect(first).toMatchObject({ ok: true, updatedAt: T1.toISOString() });
+      const second = await adminSaveVideo(db, admin, form({ youtubeId: "QtZ7JdNzFVo", showOnHome: false }), T1);
+      const [a, b] = [(first as { id: string }).id, (second as { id: string }).id];
 
-      // Ayni deger: yazilmaz (jsonb alan sirasi farkli olsa da).
-      expect(await adminSaveHomeVideos(db, admin, { videos: next, updatedAt: T1.toISOString() }, T2)).toEqual({
+      const content = await readContent(db);
+      expect(content.videos).toEqual([
+        { id: a, source: "youtube", youtubeId: "abcdefghijk", title: "Sahada", productId: "p-video", showOnHome: true, active: true, createdAt: T1.toISOString() },
+        { id: b, source: "youtube", youtubeId: "QtZ7JdNzFVo", showOnHome: false, active: true, createdAt: T1.toISOString() },
+      ]);
+
+      // Guncelleme: son degisiklik ani tutmali; ayni deger yazilmaz.
+      const stamped = (await readContentPanel(db)).videos!;
+      expect(stamped[0].updatedAt).toBe(T1.toISOString());
+      expect(await adminSaveVideo(db, admin, { ...form({ title: "Sahada", productId: "p-video" }), id: a, updatedAt: T1.toISOString() }, T2)).toMatchObject({
         ok: true,
         updatedAt: T1.toISOString(),
       });
-      // Ekran kayit yokken acilmisti: bu arada kaydedildigi icin reddedilir.
-      expect(await adminSaveHomeVideos(db, admin, { videos: videos() }, T2)).toEqual(stale);
+      expect(await adminSaveVideo(db, admin, { ...form({ active: false }), id: a, updatedAt: "2026-01-01T00:00:00.000Z" }, T2)).toEqual(stale);
+      expect(await adminSaveVideo(db, admin, { ...form({ active: false, productId: "p-video" }), id: a, updatedAt: T1.toISOString() }, T2)).toMatchObject({
+        ok: true,
+        updatedAt: T2.toISOString(),
+      });
+
+      expect(await adminMoveVideo(db, admin, { id: b, direction: -1 }, T2)).toEqual({ ok: true });
+      expect((await readContent(db)).videos.map((v) => v.id)).toEqual([b, a]);
+
+      // Urun silinince video urunsuz kalir.
+      await client.query("DELETE FROM products WHERE id = 'p-video'");
+      expect((await readContent(db)).videos.find((v) => v.id === a)?.productId).toBeUndefined();
+
+      expect(await adminDeleteVideo(db, admin, { id: b, updatedAt: T1.toISOString() }, T2)).toEqual({ ok: true });
+      expect((await readContent(db)).videos.map((v) => v.id)).toEqual([a]);
 
       const log = await audit(client);
-      expect(log).toHaveLength(1);
-      expect(log[0]).toMatchObject({ action: "create", entity_type: "settings", entity_id: "home_videos", entity_label: "Anasayfa Videoları" });
-      expect(log[0].changes.title).toEqual(["Gerçek İşler, Gerçek Kaynak", "Sahada Zenweld"]);
+      expect(log.map((l) => [l.action, l.entity_type, l.entity_label])).toEqual([
+        ["create", "videos", "Sahada"],
+        ["create", "videos", "QtZ7JdNzFVo"],
+        ["update", "videos", "abcdefghijk"],
+        // Sira: yalnizca yeri degisen video yazilir.
+        ["update", "videos", "abcdefghijk"],
+        ["delete", "videos", "QtZ7JdNzFVo"],
+      ]);
     });
   });
 
-  it("bozuk link, yüklenen kapak (data:), olmayan ürün ve bozuk istek reddedilir", async () => {
-    await withoutVideos(async (db, client) => {
-      const badLink = videos();
-      badLink.videos[1].youtubeId = "https://vimeo.com/1";
-      expect(await adminSaveHomeVideos(db, admin, { videos: badLink }, T1)).toEqual({ ok: false, status: 400, error: `2. video: ${VIDEO_BAD_LINK}` });
-      const uploaded = videos();
-      uploaded.videos[0].cover = "data:image/webp;base64,AAAA";
-      expect(await adminSaveHomeVideos(db, admin, { videos: uploaded }, T1)).toEqual({ ok: false, status: 400, error: tr.panel.uploadDisabled });
-      const missing = videos();
-      missing.videos[0].productId = "olmayan-urun";
-      expect(await adminSaveHomeVideos(db, admin, { videos: missing }, T1)).toEqual({ ok: false, status: 400, error: tr.panel.invalidRequest });
-      expect(await adminSaveHomeVideos(db, admin, { videos: "videolar" }, T1)).toMatchObject({ ok: false, status: 400 });
-      expect((await client.query("SELECT 1 FROM settings WHERE key = 'home_videos'")).rowCount).toBe(0);
-      expect(await audit(client)).toEqual([]);
+  it("bozuk link, aynı video, yüklenen kapak (data:), olmayan ürün ve bozuk istek reddedilir", async () => {
+    await clean(async (db, client) => {
+      expect(await adminSaveVideo(db, admin, form({ youtubeId: "https://vimeo.com/1" }), T1)).toEqual({ ok: false, status: 400, error: VIDEO_BAD_LINK });
+      expect(await adminSaveVideo(db, admin, form(), T1)).toMatchObject({ ok: true });
+      expect(await adminSaveVideo(db, admin, form({ youtubeId: "abcdefghijk" }), T1)).toEqual({ ok: false, status: 400, error: VIDEO_TWICE });
+      expect(await adminSaveVideo(db, admin, form({ youtubeId: "QtZ7JdNzFVo", cover: "data:image/webp;base64,AAAA" }), T1)).toEqual({
+        ok: false,
+        status: 400,
+        error: tr.panel.uploadDisabled,
+      });
+      expect(await adminSaveVideo(db, admin, form({ youtubeId: "QtZ7JdNzFVo", productId: "olmayan-urun" }), T1)).toEqual({
+        ok: false,
+        status: 400,
+        error: tr.panel.invalidRequest,
+      });
+      expect(await adminSaveVideo(db, admin, form({ youtubeId: "QtZ7JdNzFVo", source: "file" }), T1)).toMatchObject({ ok: false, status: 400 });
+      expect((await client.query("SELECT count(*)::int AS n FROM videos")).rows[0].n).toBe(1);
+    });
+  });
+});
+
+describe("Anasayfa video bölümünün başlığı", () => {
+  it("kayıt yoksa varsayılan okunur; kaydedilir ve işlem kaydına yazılır; eski ekrandan kayıt reddedilir", async () => {
+    await clean(async (db, client) => {
+      expect((await readSettings(db)).homeVideos).toEqual(defaultSettings.homeVideos);
+      expect((await readVideosPanel(db)).settings?.homeVideos.updatedAt).toBeUndefined();
+      expect(await adminSaveHomeVideos(db, admin, { settings: { title: " Sahada Zenweld " } }, T1)).toEqual({ ok: true, updatedAt: T1.toISOString() });
+      expect((await readSettings(db)).homeVideos).toEqual({ title: "Sahada Zenweld" });
+      expect(await adminSaveHomeVideos(db, admin, { settings: { title: "Başka" } }, T2)).toEqual(stale);
+      expect(await adminSaveHomeVideos(db, admin, { settings: { title: " " }, updatedAt: T1.toISOString() }, T2)).toMatchObject({ ok: false, status: 400 });
+      const log = await audit(client);
+      expect(log).toHaveLength(1);
+      expect(log[0]).toMatchObject({ action: "create", entity_id: "home_videos", entity_label: "Anasayfa video bölümü" });
     });
   });
 });

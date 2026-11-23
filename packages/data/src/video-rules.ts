@@ -1,22 +1,22 @@
 import { isUploadedFile } from "./catalog-rules";
 import type { Parsed } from "./settings-rules";
-import type { HomeVideo, HomeVideoSettings, Product } from "./types";
+import type { HomeVideoSettings, Product, SiteVideo } from "./types";
 
 /**
- * ANASAYFA VIDEOLARI KURALLARI — PANEL › Anasayfa Videoları (demo ve
- * veritabani modu ayni; KARARLAR K-125; docs/IS-KURALLARI.md › Anasayfa
- * videolari)
+ * VIDEO KUTUPHANESI KURALLARI — PANEL › Videolar (demo ve veritabani modu
+ * ayni; KARARLAR K-125; docs/IS-KURALLARI.md › 27)
  *
- * Tarayici (panel ekrani) ve sunucu (packages/db › admin-settings.ts) ayni
- * kurallari kullanir; sunucu tarayicidan geleni yeniden denetler.
+ * Her video bir kez eklenir ve bir urune baglanabilir: urunun sayfasinda,
+ * "Anasayfada goster" isaretliyse anasayfada gorunur. Tarayici (panel
+ * ekrani) ve sunucu (packages/db › admin-content.ts) ayni kurallari
+ * kullanir; sunucu tarayicidan geleni yeniden denetler.
  */
 
-export const VIDEO_LIMITS = { maxVideos: 12, title: 60, cover: 2000 };
+export const VIDEO_LIMITS = { sectionTitle: 60, title: 100, cover: 2000 };
 
-export const VIDEO_NO_TITLE = "Bölüm başlığı yazılmalı.";
-export const VIDEO_TOO_MANY = `En fazla ${VIDEO_LIMITS.maxVideos} video eklenebilir.`;
+export const VIDEO_NO_SECTION_TITLE = "Bölüm başlığı yazılmalı.";
 export const VIDEO_BAD_LINK = "YouTube linki okunamadı. Videonun adresini (ör. https://www.youtube.com/shorts/…) yapıştırın.";
-export const VIDEO_TWICE = "Aynı video iki kez eklenemez.";
+export const VIDEO_TWICE = "Bu YouTube videosu kütüphanede zaten var.";
 
 const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -91,58 +91,70 @@ function cover(value: unknown): string | null {
   return /^\/(?!\/)\S*$/.test(url) || /^https:\/\/\S+$/i.test(url) ? url : null;
 }
 
-function parseVideo(value: unknown, n: number): Parsed<HomeVideo> {
-  if (!isRecord(value)) return { ok: false, error: null };
-  const id = typeof value.id === "string" && value.id.length > 0 && value.id.length <= 100 ? value.id : null;
+/** Panelden gelen video bilgisi (kimlik, eklenme ani ve dosya disinda). */
+export type VideoDraft = Pick<SiteVideo, "source" | "youtubeId" | "title" | "productId" | "cover" | "showOnHome" | "active">;
+
+/**
+ * Videoyu denetler ve temizler: YouTube linki kimlige cevrilir, baslik
+ * kirpilir, bos baslik, urun ve kapak kaydedilmez. error null: istek bozuk
+ * (ekran boyle bir sey gondermez). Bugun yalnizca YouTube videosu eklenir;
+ * kendi videomuz (source "file") adim 1b'de.
+ */
+export function parseVideo(value: unknown): Parsed<VideoDraft> {
+  const bad = { ok: false as const, error: null };
+  if (!isRecord(value) || value.source !== "youtube") return bad;
+  const title = typeof value.title === "string" || value.title === undefined ? (value.title ?? "").trim() : null;
   const productId = value.productId === undefined || value.productId === "" ? "" : typeof value.productId === "string" ? value.productId : null;
   const img = cover(value.cover);
-  if (!id || typeof value.active !== "boolean" || productId === null || img === null || typeof value.youtubeId !== "string") {
-    return { ok: false, error: null };
-  }
+  if (title === null || title.length > VIDEO_LIMITS.title || productId === null || img === null) return bad;
+  if (typeof value.showOnHome !== "boolean" || typeof value.active !== "boolean" || typeof value.youtubeId !== "string") return bad;
   const youtubeId = youtubeIdFrom(value.youtubeId);
-  if (!youtubeId) return { ok: false, error: `${n}. video: ${VIDEO_BAD_LINK}` };
+  if (!youtubeId) return { ok: false, error: VIDEO_BAD_LINK };
   return {
     ok: true,
-    value: { id, youtubeId, ...(productId && { productId }), ...(img && { cover: img }), active: value.active },
+    value: {
+      source: "youtube",
+      youtubeId,
+      ...(title && { title }),
+      ...(productId && { productId }),
+      ...(img && { cover: img }),
+      showOnHome: value.showOnHome,
+      active: value.active,
+    },
   };
 }
 
-/**
- * Videolar bolumunu denetler ve temizler: baslik kirpilir, link video
- * kimligine cevrilir, bos urun ve kapak kaydedilmez. Hata varsa hangi
- * videoda oldugu yazilir. error null: istek bozuk (ekran boyle bir sey
- * gondermez). Liste bos olabilir; o zaman bolum sitede gorunmez.
- */
-export function parseHomeVideos(value: unknown): Parsed<HomeVideoSettings> {
-  if (!isRecord(value) || !Array.isArray(value.videos) || typeof value.title !== "string") return { ok: false, error: null };
-  const title = value.title.trim();
-  if (!title) return { ok: false, error: VIDEO_NO_TITLE };
-  if (title.length > VIDEO_LIMITS.title) return { ok: false, error: null };
-  if (value.videos.length > VIDEO_LIMITS.maxVideos) return { ok: false, error: VIDEO_TOO_MANY };
+/** Ayni YouTube videosu kutuphanede baska bir kayitta var mi. */
+export const videoTaken = (videos: SiteVideo[], youtubeId: string | undefined, exceptId?: string) =>
+  Boolean(youtubeId) && videos.some((v) => v.id !== exceptId && v.youtubeId === youtubeId);
 
-  const videos: HomeVideo[] = [];
-  for (const [i, raw] of value.videos.entries()) {
-    const parsed = parseVideo(raw, i + 1);
-    if (!parsed.ok) return parsed;
-    videos.push(parsed.value);
-  }
-  if (new Set(videos.map((v) => v.id)).size !== videos.length) return { ok: false, error: null };
-  if (new Set(videos.map((v) => v.youtubeId)).size !== videos.length) return { ok: false, error: VIDEO_TWICE };
-  return { ok: true, value: { title, videos } };
+/** Anasayfa bolumunun basligi: zorunlu, en fazla 60 karakter, kirpilir. */
+export function parseHomeVideoSettings(value: unknown): Parsed<HomeVideoSettings> {
+  if (!isRecord(value) || typeof value.title !== "string") return { ok: false, error: null };
+  const title = value.title.trim();
+  if (!title) return { ok: false, error: VIDEO_NO_SECTION_TITLE };
+  if (title.length > VIDEO_LIMITS.sectionTitle) return { ok: false, error: null };
+  return { ok: true, value: { title } };
 }
 
-/** Kapaklarda yuklenen dosya (data:) var mi; veritabani modunda kaydedilmez (KARARLAR K-108). */
-export const videosHaveUploadedFile = (settings: HomeVideoSettings) => settings.videos.some((v) => isUploadedFile(v.cover));
+/** Kapak yuklenen dosya (data:) mi; veritabani modunda kaydedilmez (KARARLAR K-108). */
+export const videoHasUploadedFile = (video: Pick<SiteVideo, "cover">) => isUploadedFile(video.cover);
 
-/** Karsilastirma anahtari; son degisiklik ani (updatedAt) haric. */
-export const homeVideosKey = (settings: HomeVideoSettings) => JSON.stringify([settings.title, settings.videos]);
+/** Videonun sitede ve panelde gorunen adi: kendi basligi, yoksa urunun adi. */
+export const videoTitle = (video: Pick<SiteVideo, "title">, product?: Pick<Product, "name">) =>
+  video.title || product?.name || "Zenweld videosu";
+
+/** Videoyu oynatilabilir mi: YouTube ya da hazirlanmasi bitmis kendi videomuz. */
+export const videoPlayable = (video: SiteVideo) =>
+  video.source === "youtube" ? Boolean(video.youtubeId) : video.file?.status === "ready";
 
 /**
- * Sitede gorunen videolar, paneldeki sirayla: yayinda olanlar. Urun
- * yayinda degilse ya da silinmisse video urunsuz gorunur.
+ * Anasayfada gorunen videolar, paneldeki sirayla: yayinda, "Anasayfada
+ * goster" isaretli ve oynatilabilir olanlar. Urun yayinda degilse ya da
+ * silinmisse video urunsuz gorunur.
  */
-export function visibleHomeVideos(settings: HomeVideoSettings, products: Product[]): { video: HomeVideo; product?: Product }[] {
-  return settings.videos
-    .filter((v) => v.active)
+export function homeVideos(videos: SiteVideo[], products: Product[]): { video: SiteVideo; product?: Product }[] {
+  return videos
+    .filter((v) => v.active && v.showOnHome && videoPlayable(v))
     .map((video) => ({ video, product: products.find((p) => p.active && p.id === video.productId) }));
 }

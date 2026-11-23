@@ -3,8 +3,8 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
-import { visibleHomeVideos, youtubeEmbed } from "@zenweld/data";
-import { getHomeVideos, useDatabase } from "@zenweld/store";
+import { homeVideos, youtubeEmbed } from "@zenweld/data";
+import { getHomeVideos, listVideos, useDatabase } from "@zenweld/store";
 import { ProductImage } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { VideoCover } from "./VideoCover";
@@ -36,14 +36,15 @@ const mod = (n: number, m: number) => ((n % m) + m) % m;
  * YouTube adresinden (youtube-nocookie.com) acilir. Baska videoya
  * gecilince oynatici kapanir.
  *
- * Baslik ve videolar panelden yonetilir (Anasayfa Videoları;
- * settings.homeVideos). Yayinda video yoksa bolum gorunmez.
+ * Baslik ve videolar panelden yonetilir (Videolar; baslik
+ * settings.homeVideos, videolar kutuphaneden: yayinda ve "Anasayfada
+ * goster" isaretli olanlar). Gosterilecek video yoksa bolum gorunmez.
  */
 export function HomeVideos() {
   const t = useT();
   const db = useDatabase();
   const settings = getHomeVideos(db);
-  const items = visibleHomeVideos(settings, db.products);
+  const items = homeVideos(listVideos(db), db.products);
   const [pos, setPos] = useState(0);
   const [playing, setPlaying] = useState<number | null>(null);
   const touchX = useRef<number | null>(null);
@@ -121,7 +122,7 @@ export function HomeVideos() {
                   >
                     {center && playing === slot ? (
                       <iframe
-                        src={youtubeEmbed(video.youtubeId)}
+                        src={youtubeEmbed(video.youtubeId ?? "")}
                         title={product?.name ?? `${n + 1}. video`}
                         allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                         allowFullScreen
@@ -135,7 +136,7 @@ export function HomeVideos() {
                         onClick={() => (center ? setPlaying(slot) : go(slot))}
                         className="group absolute inset-0 h-full w-full zw-focus"
                       >
-                        <VideoCover youtubeId={video.youtubeId} cover={video.cover} className="h-full w-full object-cover" />
+                        <VideoCover youtubeId={video.youtubeId ?? ""} cover={video.cover} className="h-full w-full object-cover" />
                         <span className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
                         <span
                           className={`absolute flex items-center justify-center rounded-full bg-zw-red-600 text-white shadow-lg transition-transform group-hover:scale-105 ${

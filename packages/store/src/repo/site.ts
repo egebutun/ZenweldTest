@@ -53,15 +53,15 @@ export function saveHomeHero(hero: HomeHeroSettings): boolean {
 /* Anasayfa videolari (KARARLAR K-125)                                 */
 /* ------------------------------------------------------------------ */
 
-/** Videolar bolumu; eski bir localStorage kaydinda yoksa varsayilan. */
+/** Anasayfa video bolumunun basligi; eski bir localStorage kaydinda yoksa varsayilan. */
 export function getHomeVideos(db: ZenweldDatabase = getSnapshot()): HomeVideoSettings {
   return db.settings?.homeVideos ?? defaultSettings.homeVideos;
 }
 
-/** videos: denetlenmis ayar (parseHomeVideos). */
-export function saveHomeVideos(videos: HomeVideoSettings): boolean {
+/** Anasayfa video bolumunun basligi; settings: denetlenmis ayar (parseHomeVideoSettings). */
+export function saveHomeVideos(settings: HomeVideoSettings): boolean {
   return mutate((db) => {
-    db.settings = { ...db.settings, homeVideos: videos };
+    db.settings = { ...db.settings, homeVideos: settings };
   });
 }
 

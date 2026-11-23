@@ -127,6 +127,13 @@
       "when": 1795184606986,
       "tag": "0017_anasayfa-videolari",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1795472709769,
+      "tag": "0018_video-kutuphanesi",
+      "breakpoints": true
     }
   ]
 }

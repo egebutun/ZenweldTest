@@ -110,18 +110,10 @@ export const defaultSettings: SiteSettings = {
     ],
   },
   /**
-   * Anasayfa videolari (panel › Anasayfa Videoları; KARARLAR K-125).
-   * Sahibinin gonderdigi YouTube Shorts videolari; altlarindaki urunler
-   * sonra secilecek.
+   * Anasayfanin video bolumunun basligi (panel › Videolar; KARARLAR
+   * K-125). Videolarin kendisi kutuphanede (seed/videos.seed.ts).
    */
-  homeVideos: {
-    title: "Gerçek İşler, Gerçek Kaynak",
-    videos: ["QtZ7JdNzFVo", "9CAoUSHs0R4", "CXx3PC0C4pE", "uf_ZDJGcqdQ", "YQuCaRN85n8"].map((youtubeId, i) => ({
-      id: `video-${i + 1}`,
-      youtubeId,
-      active: true,
-    })),
-  },
+  homeVideos: { title: "Gerçek İşler, Gerçek Kaynak" },
   richText: {
     headingSize: 18,
     headingColor: "#141619",

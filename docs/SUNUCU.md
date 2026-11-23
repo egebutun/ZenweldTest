@@ -264,7 +264,8 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `0014_force-bayi.sql` | `dealers.force_dealer` (Force Bayi işareti; Force sayfasındaki harita, K-115). Var olan bayiler işaretsiz gelir |
 | `0015_eposta-bolumu.sql` | Panel › E-posta (K-116): `email_settings` (türün göndericisi ve alıcıları; `email_recipients`'taki satırlar buraya taşınır ve tablo kaldırılır), `email_log`'a yön, gönderen, metin, Message-ID, yanıtlanan e-posta, ekler ve panelden gönderen yönetici; türlere `bulten`; `mailbox_state` |
 | `0016_servis-talebi-akisi.sql` | Servis talebi akışı (K-117): `service_requests.service_dealer_id` (talebin yetkili servisi, → `dealers`), `user_id` dizini (Hesabım › Servis Taleplerim); durumlar `new` / `assigned` / `done` (eski `in_progress` kayıtları `assigned` olur) |
-| `0017_anasayfa-videolari.sql` | `settings.key` `home_videos` değerini de kabul eder (Anasayfa Videoları, K-125) |
+| `0017_anasayfa-videolari.sql` | `settings.key` `home_videos` değerini de kabul eder (anasayfa video bölümü, K-125) |
+| `0018_video-kutuphanesi.sql` | `videos`: video kütüphanesi (K-125). `settings` › `home_videos` satırındaki eski video listesi tabloya taşınır; satırda yalnızca bölüm başlığı kalır |
 
 **Veritabanındaki kurallar** (`0001_kurallar.sql`):
 
@@ -1353,8 +1354,11 @@ eşleşme kuralları: [STOK.md](STOK.md).
   (`apps/zenweld-web/src/app/api/yonetim/icerik/[islem]/route.ts`):
   `haber`, `haber-yayin`, `haber-sil`, `etkinlik`, `etkinlik-yayin`,
   `etkinlik-sil`, `blog`, `blog-yayin`, `blog-sil`, `sss`, `sss-sil`,
-  `sss-sira`, `hakkimizda`. `audit_log`: `news`, `events`, `blog_posts`,
-  `faqs`, `about_page`. Başarılı işlemden sonra `refreshSite(["icerik"])`.
+  `sss-sira`, `hakkimizda`, `video`, `video-sil`, `video-sira` (video
+  kütüphanesi, K-125; kurallar `packages/data/src/video-rules.ts`, aynı
+  YouTube videosu, yüklenen kapak ve katalogda olmayan ürün kaydedilmez).
+  `audit_log`: `news`, `events`, `blog_posts`, `faqs`, `videos`,
+  `about_page`. Başarılı işlemden sonra `refreshSite(["icerik"])`.
 - **Haber, etkinlik, blog:** Kurallar tarayıcıyla ortak
   (`packages/data` › `content-rules.ts`): başlık zorunlu; link boşsa
   başlıktan (`slugify`), boş kalırsa kaydedilmez; aynı link aynı türde iki
@@ -1401,15 +1405,15 @@ Yasal Metinler, Belgeler, Sayfa SEO ve Görünüm; 5. alan; KARARLAR K-104;
   `updated_at`'iyle (Görünüm sayfası). `readHeroPanel(db)`: ayarlar,
   `home_hero` satırının `updated_at`'iyle (Anasayfa Tanıtım sayfası).
   `readVideosPanel(db)`: ayarlar, `home_videos` satırının `updated_at`'iyle
-  (Anasayfa Videoları sayfası; ürün listesi sitenin katalogundan).
+  (Videolar sayfası; videolar `readContentPanel`'den, ürün listesi sitenin
+  katalogundan).
 - **Yazma:** `POST /api/yonetim/icerik/<işlem>`: `yasal-metin`,
   `sayfa-seo`, `belge-sayfasi`, `belge`, `belge-yayin`, `belge-sil`,
   `belge-sira`; ardından `refreshSite(["icerik"])`.
   `POST /api/yonetim/ayarlar/gorunum` ve `POST /api/yonetim/ayarlar/tanitim`
   (`adminSaveHomeHero`; kurallar `packages/data/src/hero-rules.ts`, yüklenen
   dosya (data:) kaydedilmez) ve `POST /api/yonetim/ayarlar/videolar`
-  (`adminSaveHomeVideos`; kurallar `packages/data/src/video-rules.ts`;
-  yüklenen kapak ve katalogda olmayan ürün kaydedilmez); ardından `refreshSite(["katalog"])`
+  (`adminSaveHomeVideos`; yalnızca anasayfa video bölümünün başlığı); ardından `refreshSite(["katalog"])`
   (ayarlar katalogla birlikte önbellektedir). `audit_log`: `legal_pages`,
   `page_seo`, `document_pages`, `documents`, `settings` / `rich_text`,
   `settings` / `home_hero`, `settings` / `home_videos`.

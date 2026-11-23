@@ -56,7 +56,7 @@ Bu dosyadaki kurallar ve örnekler `tests/unit` altında otomatik denenir
 24. [Panel listeleri: sayfalama ve arama](#24-panel-listeleri-sayfalama-ve-arama)
 25. [Anasayfa tanıtım alanı](#25-anasayfa-tanıtım-alanı)
 26. [Listelerin sayfalanması](#26-listelerin-sayfalanması)
-27. [Anasayfa videoları](#27-anasayfa-videoları)
+27. [Videolar](#27-videolar)
 
 ---
 
@@ -1820,23 +1820,30 @@ Testler: `tests/unit/sayfalama.test.ts`, `tests/e2e/sayfalama.spec.ts`,
 
 ---
 
-## 27. Anasayfa videoları
+## 27. Videolar
 
-**Kısaca:** Anasayfadaki video bölümü panelden yönetilir (Panel ›
-Anasayfa Videoları; KARARLAR K-125). Sitede yayındaki videolar paneldeki
-sırayla görünür; YouTube oynatıcısı yalnızca ziyaretçi Oynat'a basınca
-yüklenir. Kod: `packages/data/src/video-rules.ts` (demo ve veritabanı modu
-aynı; sunucu tarayıcıdan geleni yeniden denetler).
+**Kısaca:** Videolar tek bir kütüphanede durur (Panel › Videolar; KARARLAR
+K-125). Her video bir kez eklenir; bir ürüne bağlanabilir ve "Anasayfada
+göster" ile anasayfaya çıkar. Sitede paneldeki sırayla görünür; YouTube
+oynatıcısı yalnızca ziyaretçi Oynat'a basınca yüklenir. Kod:
+`packages/data/src/video-rules.ts` (demo ve veritabanı modu aynı; sunucu
+tarayıcıdan geleni yeniden denetler).
 
 | Alan | Kural |
 |---|---|
-| Bölüm başlığı | Zorunlu, en fazla 60 karakter; kırpılır |
-| Video sayısı | En fazla 12; hiç olmayabilir (o zaman bölüm görünmez) |
+| Anasayfa bölüm başlığı | Zorunlu, en fazla 60 karakter; kırpılır |
+| Kaynak | Bugün YouTube; kendi videomuz (dosya) sıradaki adımda |
 | YouTube linki | Zorunlu. `youtube.com/shorts/<kimlik>`, `youtube.com/watch?v=<kimlik>`, `youtu.be/<kimlik>`, `youtube.com/embed/<kimlik>` ya da yalnızca 11 karakterlik kimlik; `www.` ve `m.` kabul edilir. Yalnızca kimlik saklanır |
-| Aynı video | İki kez eklenemez (aynı kimlik) |
-| Ürün | İsteğe bağlı; katalogdaki bir ürün olmalı (veritabanı modunda sunucu denetler) |
+| Aynı video | Kütüphanede iki kez olamaz (aynı kimlik) |
+| Başlık | İsteğe bağlı, en fazla 100 karakter, kırpılır; boşsa ürünün adı, ürün de yoksa "Zenweld videosu" |
+| Ürün | İsteğe bağlı; katalogdaki bir ürün olmalı (veritabanı modunda sunucu denetler). Ürün silinirse video kalır, bağı boşalır |
 | Kapak görseli | İsteğe bağlı; site içi adres (`/…`), `https://…` ya da yüklenen dosya. Boşsa YouTube'un kapak resmi (aşağıda) |
+| Anasayfada göster, Yayında | Yeni videoda ikisi de işaretli |
 
+- **Anasayfada görünen:** Yayında, "Anasayfada göster" işaretli ve
+  oynatılabilir videolar (YouTube videosu; kendi videomuz hazırlanması
+  bitince). Seçilen ürün yayında değilse ya da silinmişse video ürünsüz
+  görünür. Gösterilecek video yoksa bölüm görünmez.
 - **YouTube'un kapak resmi:** En iyisinden başlanarak denenir:
   Shorts'un dik kapağı (`i.ytimg.com/vi/<kimlik>/oar2.jpg`, dik olmalı),
   yüksek çözünürlük (`maxresdefault.jpg`, 1280×720), her videoda bulunan
@@ -1844,8 +1851,6 @@ aynı; sunucu tarayıcıdan geleni yeniden denetler).
   resim döndürür; o zaman sıradakine geçilir. Kapağın keskinliği videonun
   YouTube'a yüklendiği çözünürlüğe bağlıdır; en keskin sonuç için panelden
   dik (9:16) kapak yüklenir.
-- **Sitede görünen:** Yayında olan videolar. Seçilen ürün yayında değilse
-  ya da silinmişse video ürünsüz görünür.
 - **Oynatma:** Sayfa açılırken yalnızca kapak resmi (ekrana gelince)
   yüklenir. Oynatıcı `https://www.youtube-nocookie.com/embed/<kimlik>`
   adresinden açılır (çerezsiz; video oynatılmadan YouTube çerezi

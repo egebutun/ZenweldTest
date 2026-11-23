@@ -36,6 +36,7 @@ function demoContent(): Content {
       news: seed.news,
       events: seed.events,
       faqs: seed.faqs,
+      videos: seed.videos,
       salesReps: seed.salesReps,
       legalPages: seed.legalPages,
       about: seed.about,
@@ -65,6 +66,7 @@ async function publishedContent(): Promise<Content> {
     events: c.events.filter((e) => e.active),
     salesReps: c.salesReps.filter((r) => r.active),
     documents: c.documents.filter((d) => d.active),
+    videos: c.videos.filter((v) => v.active),
   };
 }
 
@@ -85,6 +87,7 @@ export async function getLayoutContent(): Promise<ServerData | null> {
     news: c.news,
     events: c.events,
     faqs: c.faqs,
+    videos: c.videos,
     pageSeo: c.pageSeo,
     salesReps: [],
     documentPages: [],

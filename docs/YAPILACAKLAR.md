@@ -48,6 +48,7 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Teklif Al formu](#teklif-al-formu--sorular-düzenlenecek) ·
      [Force sayfası](#force-sayfası--panelden-yönetim-fotoğraf-ve-videolar) ·
      [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) ·
+     [Video kütüphanesi](#video-kütüphanesi--kalan-adımlar) ·
      [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme) ·
      [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler)
    - **İleride:** [Ürün Seçici](#ürün-seçici-ve-arama--en-son-yeniden-tasarlanacak) ·
@@ -90,7 +91,7 @@ farkları: [README](../README.md) › Demo ve veritabanı modu.
 | 5 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (bugün deneme dosyası okunuyor); zamanlayıcının kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP ekibi; canlı sunucu | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap) |
 | 6 | **SAP satış siparişi aktarımı:** siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`; sıra, iş, yeniden deneme ve panel kutusu hazır, bugün deneme dosyasına yazıyor), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si; cari ve KDV kararları | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap), [Şirketten öğrenilecekler](#3-şirketten-öğrenilecekler-kişiye-göre) › SAP |
 | 7 | **Form güvenliği:** istek sınırı ve bot koruması (canlıdan önce şart, K-98) | Kod; bot koruması seçimi | [Formlar — güvenlik](#formlar--güvenlik) |
-| 8 | **Dosya deposu:** panelden görsel ve belge yükleme hazır (sunucunun diski, `DOSYA_KLASORU`; K-108). Kalan: deponun yeri ve yedeği, istenirse S3 uyumlu depo parçası, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları | BT (depo seçimi) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
+| 8 | **Dosya deposu (depo kararı):** panelden görsel ve belge yükleme hazır (sunucunun diski, `DOSYA_KLASORU`; K-108). Kalan: görsel ve videoların canlıda nerede duracağı (sunucunun diski ya da nesne deposu ve CDN; videolar için öneri Cloudflare R2 + CDN) ve yedeği, ürün ve içerik fotoğraflarının depoya taşınması, Unsplash fotoğraflarının kaldırılması, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları | Sahibi ve BT (depo seçimi) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
 | 9 | **Hukuk ve muhasebe:** yasal metinler (bugün taslak), ETBİS kaydı, gerçek MERSİS no, kurumsal alıcının iade hakkının metinlere işlenmesi, KVKK saklama süreleri; e-Arşiv / e-Fatura | Hukuk danışmanı, mali müşavir | [Online satış](#online-satış--canlıya-çıkmadan-önce) 2–4, [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) |
 | 10 | **Gerçek içerik ve değerler:** ürün bilgileri, fotoğraflar, fiyatlar; kargo ücreti, POS'lar ve vade farkları, IBAN'lar; blog yazıları | Sahibi | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler), [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler), [Online satış](#online-satış--canlıya-çıkmadan-önce) 9, [Blog yazıları](#blog-yazıları--yayına-girmeden-önce) |
 | 11 | **Canlıya hazırlık (kod):** zamanlanmış işler (havale iptali, işlem kaydı temizliği, kampanya yenilemesi), hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, ölçümün canlıda tekrarı, örnek verinin koddan kaldırılması (canlıya zaten yüklenmez, K-91) | Sunucu kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 7, [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme), [Ölçüm](#ölçüm-hız) |
@@ -1251,9 +1252,14 @@ iyileştirilmesi ve nasıl tutulacağı sahibi söyleyince ele alınır; dosya
 deposu kurulurken, gerçek fotoğraflar gelince ve canlıya hazırlıkta
 sahibine hatırlatılır. Kalanlar:
 
-1. **Deponun yeri ve yedeği** BT ile kesinleşir (sunucunun diski ya da S3
-   uyumlu depo; [3](#3-şirketten-öğrenilecekler-kişiye-göre) › BT); S3
-   seçilirse onun parçası eklenir (`packages/db/src/file-storage.ts`).
+1. **Depo kararı: deponun yeri ve yedeği** sahibi ve BT ile kesinleşir
+   ([3](#3-şirketten-öğrenilecekler-kişiye-göre) › BT):
+   - **Sunucunun diski:** hazır, ek ücret yok; klasör yedeğe eklenmeli,
+     birden fazla sunucuda ortak disk gerekir.
+   - **Nesne deposu ve CDN** (S3 uyumlu, ör. Cloudflare R2): dosyalar
+     ziyaretçiye en yakın noktadan gider, sunucu yorulmaz. Kendi videolarımız
+     (K-125) gelince önerilen budur. Seçilirse onun parçası eklenir
+     (`packages/db/src/file-storage.ts`); panel ve site değişmez.
 2. **Kullanılmayan dosyaların temizliği:** Kayıttan kaldırılan görselin ya
    da silinen belgenin dosyası depoda kalıyor. Hiçbir kaydın kullanmadığı
    ve belli bir süreden eski dosyaları bulup silen bir iş (önce yalnızca
@@ -1262,6 +1268,37 @@ sahibine hatırlatılır. Kalanlar:
    yorumun içinde (`media`, `data:`). Depoya taşımak için herkese açık bir
    yükleme ucu gerekir (istek sınırı ve bot koruması ile; "Formlar —
    güvenlik"); sahibiyle konuşulur.
+4. **Ürün ve içerik fotoğrafları canlıda depoda olmalı:** Bugün örnek ürün,
+   haber ve etkinlik fotoğrafları sitenin kendi dosyalarında (`/images/…`)
+   ve canlı yüklemede de orada kalıyor (K-90). Canlıda hepsi panelden
+   yönetilsin diye yükleme komutu (`db:yukle canli`) bu fotoğrafları dosya
+   deposuna kopyalayıp kayıtlardaki adresleri değiştirmeli. Logo, kategori
+   çizimleri ve Force sayfası görselleri sitenin parçası olarak kalır.
+5. **Unsplash fotoğrafları canlıda olmamalı:** Blog, bazı haber ve
+   etkinlik fotoğrafları ile Hakkımızda görselleri Unsplash'ten
+   (`packages/data/src/seed/images.ts`); gerçekleriyle değişmeli ya da
+   kaldırılmalı (listesi çıkarılacak). Canlıda bütün görseller Google'a
+   gider.
+
+## Video kütüphanesi — kalan adımlar
+
+Video kütüphanesi hazır: YouTube videoları panelden (Videolar) eklenir,
+ürüne bağlanır, anasayfada görünür (K-125). Kalanlar (sırayla):
+
+1. **Kendi videolarımız (1b):** Panelden orijinal dosya yüklenir (en fazla
+   1 GB). Sunucu web için otomatik hazırlar (ffmpeg): 1080p ve 720p sürüm
+   (H.264, hızlı başlama), kapak karesi; hazırlanırken panelde
+   "Hazırlanıyor…". Dosya deposu videoyu parça parça sunmalı (iPhone ve
+   Safari için şart, ileri sarma). Canlı sunucuda ffmpeg ve yeterli disk
+   gerekir (BT). Demo sitede (vercel.app) büyük dosya saklanamaz; orada
+   örnek bir video sitenin dosyalarına konur.
+2. **Sitede (1c):** Ürün sayfasında videolar (fotoğraf galerisinde);
+   anasayfada kategori sekmeleri ("Tümü" yok, açılışta sıradaki ilk
+   kategori; ürünsüz videolar için ayrı sekme); `/videolar` sayfası
+   (kategoriye göre gruplu, her videonun altında ürün bağlantısı); videoların
+   Google'a bildirilmesi (K-123) ve video site haritası.
+3. **Videoların ürünleri:** Sahibi gönderecek
+   ([Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) 5).
 
 ## SEO alanları ve link yönlendirme
 
@@ -1616,12 +1653,8 @@ Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
    lorem ipsum) sahibiyle yazılacak; tanıtım alanındaki Force Serisi ve
    Jasic Lazer metinleri panelden (Anasayfa Tanıtım) değiştirilir.
 5. **Videoların ürünleri:** Anasayfadaki 5 videonun (K-125) altında
-   gösterilecek ürün modellerini sahibi gönderecek; panelden (Anasayfa
-   Videoları) her videoya ürün seçilir. Bugün videolar ürünsüz.
-5. **Fotoğraflar:** Lazer Temizleme ve Lazer Markalama kartlarında ürün
-   fotoğrafı olmadığı için kategori çizimi görünüyor; Jasic lazer kaynak
-   modelleri eklenince (K-74) Jasic şeridine ve kartlara kendiliğinden
-   girer ([Ürün fotoğrafları](#ürün-fotoğrafları--eksikler)).
+   gösterilecek ürün modellerini sahibi gönderecek; panelden (Videolar)
+   her videoya ürün seçilir. Bugün videolar ürünsüz.
 
 ## Erişilebilirlik — önerilen, zorunlu değil
 

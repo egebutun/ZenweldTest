@@ -289,7 +289,8 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
    ([7. bölüm](#7-bayi-ve-servis-bulucu)).
 9. **Videolar** (başlık panelden; bugün "Gerçek İşler, Gerçek Kaynak";
    KARARLAR K-125):
-   - Panelde yayında olan YouTube videoları (Shorts), paneldeki sırayla,
+   - Video kütüphanesinde (Panel › Videolar) yayında ve "Anasayfada
+     göster" işaretli YouTube videoları (Shorts), paneldeki sırayla,
      aynı genişlikte dik kartlar olarak yan yana durur: geniş ekranda 5,
      tablette 3, telefonda 1 kart (yanlarda komşuların ucu). Ortadaki
      kart daha uzun ve renkli, yanlardakiler kısa ve soluk.
@@ -302,14 +303,14 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
    - Sayfa açılırken yalnızca kapak resmi yüklenir; YouTube oynatıcısı
      yüklenmez. Kapak, panelde seçilmişse o görsel; yoksa YouTube'un en
      yüksek çözünürlüklü kapak resmi (önce Shorts'un dik kapağı, yoksa
-     1280×720, o da yoksa 480×360; [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-anasayfa-videoları)).
+     1280×720, o da yoksa 480×360; [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)).
      Ortadaki kartta **Oynat**'a basılınca oynatıcı YouTube'un çerezsiz
      adresinden (`youtube-nocookie.com`) açılır ve video oynar. Başka
      videoya geçilince oynatıcı kapanır.
    - Videoya bir ürün seçilmişse kartın altında ürünün küçük fotoğrafı ve
      adı görünür; tıklanınca ürün sayfası açılır. Ürün yayında değilse ya
      da silinmişse video ürünsüz görünür.
-   - Yayında video yoksa bölüm görünmez.
+   - Gösterilecek video yoksa bölüm görünmez.
 10. **Neden Zenweld?** Beş madde: Sanayinin Tercihi, Ödüllü Marka, Kolay
    Destek, Garanti Sorgula, Yetkili Bayi ve Servis Ağı; sonda **Zenweld'i
    Tanıyın** kutusu (`/hakkimizda`). Madde açıklamaları yer tutucudur

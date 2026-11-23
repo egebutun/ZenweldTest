@@ -72,7 +72,7 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       yapısal veri, eski site yönlendirmeleri, Panel › E-posta, Force
       sayfası, anasayfa ve tanıtım alanı, Destek, panel listeleri.
 - [ ] Veritabanı: boş bir PostgreSQL'de `npm run db:migrate` hatasız biter
-      ve 65 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
+      ve 66 tablo kurulur; ikinci çalıştırmada bir şey değişmez.
       `npm run db:generate` "No schema changes" der.
 - [ ] `npm run db:seed` boş veritabanına örnek veriyi yükler ve tablo
       tablo satır sayılarını yazar (ör. products 40, orders 133); ikinci
@@ -1295,13 +1295,16 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
 - [ ] Anasayfa Tanıtım: veritabanı modunda kayıt İşlem Kaydı'na "Anasayfa
       Tanıtım" olarak girer; **Varsayılana Dön** + kaydet başlangıçtaki üç
       sayfayı geri getirir.
-- [ ] Anasayfa Videoları: başlık, ürün, sıra ve yayında değişikliği
-      kaydedince anasayfada görünür; kapatılan video görünmez, hiç video
-      yayında değilse bölüm görünmez. YouTube dışı ya da bozuk link
-      kaydedilmez ("<n>. video: YouTube linki okunamadı…"); aynı video iki
-      kez eklenemez; en fazla 12 video. Veritabanı modunda kayıt İşlem
-      Kaydı'na "Anasayfa Videoları" olarak girer (iki modda;
-      `tests/e2e/videolar.spec.ts`, `tests/e2e-db/panel-videolar.spec.ts`).
+- [ ] Videolar (K-125): YouTube videosu eklenir, düzenlenir (başlık, ürün,
+      kapak, Anasayfada göster, Yayında), yukarı/aşağı taşınır, silinir;
+      anasayfada sıra, başlık ve ürün adı aynıdır. Kapatılan ya da
+      "Anasayfada göster" işareti kaldırılan video anasayfada görünmez;
+      gösterilecek video yoksa bölüm görünmez. Bozuk link ("YouTube linki
+      okunamadı…") ve kütüphanede olan video ("Bu YouTube videosu
+      kütüphanede zaten var.") kaydedilmez. Anasayfa bölüm başlığı ayrı
+      kaydedilir. Veritabanı modunda İşlem Kaydı'na "Video" ve "Anasayfa
+      video bölümü" olarak girer (iki modda; `tests/e2e/videolar.spec.ts`,
+      `tests/e2e-db/panel-videolar.spec.ts`).
 - [ ] Görünüm: punto ve renk değişikliği haber, etkinlik, blog, Hakkımızda,
       yasal metin ve kategori/grup tanıtım metinlerine yansır; Varsayılana Dön + Ayarları Kaydet başlangıç
       değerlerine döndürür.

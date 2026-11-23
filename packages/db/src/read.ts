@@ -868,6 +868,7 @@ export type Content = Pick<
   | "news"
   | "events"
   | "faqs"
+  | "videos"
   | "salesReps"
   | "legalPages"
   | "about"
@@ -876,12 +877,38 @@ export type Content = Pick<
   | "documents"
 >;
 
+/** Video satiri -> sitenin video kaydi (KARARLAR K-125). */
+export function videoRecord(v: typeof s.videos.$inferSelect): ZenweldDatabase["videos"][number] {
+  return {
+    id: v.id,
+    source: v.source as ZenweldDatabase["videos"][number]["source"],
+    youtubeId: opt(v.youtubeId),
+    ...(v.fileStatus && {
+      file: {
+        status: v.fileStatus as NonNullable<ZenweldDatabase["videos"][number]["file"]>["status"],
+        hd: opt(v.fileHd),
+        sd: opt(v.fileSd),
+        durationSeconds: opt(v.durationSeconds),
+        width: opt(v.width),
+        height: opt(v.height),
+      },
+    }),
+    title: opt(v.title),
+    productId: opt(v.productId),
+    cover: opt(v.coverUrl),
+    showOnHome: v.showOnHome,
+    active: v.active,
+    createdAt: iso(v.createdAt),
+  };
+}
+
 export async function readContent(db: ReadDb): Promise<Content> {
-  const [blog, news, events, faqs, reps, legal, about, pageSeo, documentPages, documents, redirects] = await serial(
+  const [blog, news, events, faqs, videos, reps, legal, about, pageSeo, documentPages, documents, redirects] = await serial(
     () => db.select().from(s.blogPosts).orderBy(desc(s.blogPosts.publishedAt)),
     () => db.select().from(s.news).orderBy(desc(s.news.publishedAt)),
     () => db.select().from(s.events).orderBy(desc(s.events.startDate)),
     () => db.select().from(s.faqs).orderBy(asc(s.faqs.position)),
+    () => db.select().from(s.videos).orderBy(asc(s.videos.position), asc(s.videos.id)),
     () => db.select().from(s.salesReps).orderBy(asc(s.salesReps.position)),
     () => db.select().from(s.legalPages),
     () => db.select().from(s.aboutPage),
@@ -946,6 +973,7 @@ export async function readContent(db: ReadDb): Promise<Content> {
       answer: f.answer,
       topic: f.topic as ZenweldDatabase["faqs"][number]["topic"],
     })),
+    videos: videos.map(videoRecord),
     salesReps: reps.map((r) => ({
       id: r.id,
       name: r.name,

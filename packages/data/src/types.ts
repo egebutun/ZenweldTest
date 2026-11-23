@@ -1348,24 +1348,52 @@ export interface HomeHeroSettings {
 }
 
 /**
- * Anasayfa videolari (panel › Anasayfa Videoları; KARARLAR K-125). Kurallar:
- * video-rules.ts.
+ * Video kutuphanesi (panel › Videolar; KARARLAR K-125). Her video bir kez
+ * eklenir: bagli urunun sayfasinda, "Anasayfada goster" isaretliyse
+ * anasayfada ve Videolar sayfasinda gorunur. Kurallar: video-rules.ts.
  */
-export interface HomeVideo {
-  id: string;
-  /** YouTube video kimligi (11 karakter; Shorts ya da normal video) */
-  youtubeId: string;
-  /** Videonun altinda adi gorunen urun; bossa urun satiri yok */
-  productId?: string;
-  /** Kapak gorseli; bossa YouTube'un kapak resmi */
-  cover?: string;
-  active: boolean;
+export type VideoSource = "youtube" | "file";
+
+/** Kendi videomuzun sunucuda hazirlanan dosyalari (adim 1b). */
+export interface VideoFile {
+  /** Hazirlanma durumu */
+  status: "processing" | "ready" | "failed";
+  /** 1080p surumun adresi (/dosya/video/…) */
+  hd?: string;
+  /** 720p surumun adresi (telefon) */
+  sd?: string;
+  /** Sure (saniye) */
+  durationSeconds?: number;
+  width?: number;
+  height?: number;
 }
 
+export interface SiteVideo {
+  id: string;
+  source: VideoSource;
+  /** YouTube video kimligi (11 karakter); source youtube ise */
+  youtubeId?: string;
+  /** Kendi videomuz; source file ise */
+  file?: VideoFile;
+  /** Videonun basligi; bossa urunun adi */
+  title?: string;
+  /** Altinda adi gorunen urun; bossa urun satiri yok */
+  productId?: string;
+  /** Kapak gorseli; bossa YouTube'un ya da videonun kapak karesi */
+  cover?: string;
+  /** Anasayfadaki video seridinde gorunur */
+  showOnHome: boolean;
+  active: boolean;
+  /** Videonun siteye eklendigi an (Google'a "yuklenme tarihi") */
+  createdAt: string;
+  /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
+  updatedAt?: string;
+}
+
+/** Anasayfanin video bolumu (panel › Videolar › Bölüm başlığı). */
 export interface HomeVideoSettings {
   /** Bolumun basligi */
   title: string;
-  videos: HomeVideo[];
   /** Son degisiklik ani; yalnizca veritabani modunda panelin okudugu kayitta dolu (KARARLAR K-99). */
   updatedAt?: string;
 }
@@ -1404,6 +1432,8 @@ export interface ZenweldDatabase {
   events: ZenweldEvent[];
   news: NewsItem[];
   faqs: FaqItem[];
+  /** Video kutuphanesi, paneldeki sirayla (KARARLAR K-125) */
+  videos: SiteVideo[];
   documentPages: DocumentPage[];
   /** Sitede listedeki sirayla gosterilir */
   documents: DocumentFile[];

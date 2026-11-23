@@ -5,8 +5,10 @@ import {
   adminDeleteEvent,
   adminDeleteFaq,
   adminDeleteNews,
+  adminDeleteVideo,
   adminMoveDocument,
   adminMoveFaq,
+  adminMoveVideo,
   adminSaveAbout,
   adminSaveBlogPost,
   adminSaveDocument,
@@ -16,6 +18,7 @@ import {
   adminSaveLegalPage,
   adminSaveNews,
   adminSavePageSeo,
+  adminSaveVideo,
   adminSetBlogPostActive,
   adminSetDocumentActive,
   adminSetEventActive,
@@ -44,6 +47,9 @@ import { refreshSite } from "@/lib/server/refresh";
  *   POST /api/yonetim/icerik/sss-sil         {id, updatedAt}
  *   POST /api/yonetim/icerik/sss-sira        {id, direction: -1 | 1}
  *   POST /api/yonetim/icerik/hakkimizda      {about, updatedAt}
+ *   POST /api/yonetim/icerik/video           {id?, source, youtubeId, title, productId, cover, showOnHome, active, updatedAt?} (K-125)
+ *   POST /api/yonetim/icerik/video-sil       {id, updatedAt}
+ *   POST /api/yonetim/icerik/video-sira      {id, direction: -1 | 1}
  *
  * Adim 5.3 (KARARLAR K-104):
  *   POST /api/yonetim/icerik/yasal-metin     {id, title, body, updatedAt}
@@ -74,6 +80,9 @@ const ACTIONS = {
   sss: adminSaveFaq,
   "sss-sil": adminDeleteFaq,
   "sss-sira": adminMoveFaq,
+  video: adminSaveVideo,
+  "video-sil": adminDeleteVideo,
+  "video-sira": adminMoveVideo,
   hakkimizda: adminSaveAbout,
   "yasal-metin": adminSaveLegalPage,
   // Yalnizca Sayfa SEO ekranindaki (aramaya acik) sabit sayfalar.

@@ -121,7 +121,7 @@ const NAV_GROUPS: NavGroup[] = [
     Icon: Newspaper,
     items: [
       { href: "/yonetim/tanitim", label: "Anasayfa Tanıtım", Icon: GalleryHorizontal },
-      { href: "/yonetim/videolar", label: "Anasayfa Videoları", Icon: Clapperboard },
+      { href: "/yonetim/videolar", label: "Videolar", Icon: Clapperboard },
       { href: "/yonetim/haberler", label: "Haberler", Icon: Newspaper },
       { href: "/yonetim/etkinlikler", label: "Etkinlikler", Icon: CalendarDays },
       { href: "/yonetim/blog", label: "Blog", Icon: PenLine },

@@ -1107,6 +1107,29 @@ yayında işaretliyse hemen görünür (zamanlanmış yayın yoktur, K-42).
 | `position` | int | zorunlu (yeni) | Tarayıcıdaki veride listedeki sıra; sıra değişikliği `updated_at`'i değiştirmez |
 | `created_at`, `updated_at` | timestamptz | zorunlu (yeni) | |
 
+### `videos` — video kütüphanesi
+
+KARARLAR K-125; geçiş betiği `0018_video-kutuphanesi`. Her video bir kez
+eklenir: bağlı ürünün sayfasında, `show_on_home` ise anasayfada görünür.
+Kurallar: `packages/data/src/video-rules.ts`
+([IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)).
+
+| Kolon | Tür | Kural | Açıklama |
+|---|---|---|---|
+| `id` | text | anahtar | |
+| `source` | text | zorunlu; `youtube`, `file` | YouTube videosu ya da kendi videomuz (`file`, adım 1b) |
+| `youtube_id` | text | tekil; `youtube` ise zorunlu, `file` ise boş | YouTube video kimliği (11 karakter; link değil) |
+| `title` | text | | Videonun başlığı; boşsa ürünün adı kullanılır |
+| `product_id` | text | → `products`, silinince boşalır | Video bu ürünün sayfasında görünür; altındaki ad ürün sayfasına gider |
+| `cover_url` | text | | Kapak görseli; boşsa YouTube'un (ya da videonun) kapağı |
+| `show_on_home` | bool | zorunlu (varsayılan evet) | Anasayfadaki video şeridinde görünür |
+| `active` | bool | zorunlu (varsayılan evet) | Yayında |
+| `position` | int | zorunlu | Sitedeki sıra; sıra değişikliği `updated_at`'i değiştirmez |
+| `file_status` | text | `processing`, `ready`, `failed`; `file` ise zorunlu, `youtube` ise boş | Kendi videomuzun hazırlanma durumu (adım 1b) |
+| `file_hd`, `file_sd` | text | | Kendi videomuzun 1080p ve 720p sürümlerinin dosya deposundaki adresi (adım 1b) |
+| `duration_seconds`, `width`, `height` | int, smallint | | Kendi videomuzun süresi ve boyutu (adım 1b) |
+| `created_at`, `updated_at` | timestamptz | zorunlu | `created_at` videonun siteye eklendiği an |
+
 ### `sales_reps` — satış temsilcileri
 
 | Kolon | Tür | Kural | Açıklama |
@@ -1279,27 +1302,19 @@ Panel › Anasayfa Tanıtım, KARARLAR K-45; geçiş betiği
   `parseHomeHero`; [IS-KURALLARI.md › 25](IS-KURALLARI.md#25-anasayfa-tanıtım-alanı));
   sunucu yüklenen dosyayı (data:) kaydetmez.
 
-**`home_videos` — anasayfa videoları** (koddaki `settings.homeVideos`;
-Panel › Anasayfa Videoları, KARARLAR K-125; geçiş betiği
-`0017_anasayfa-videolari`):
+**`home_videos` — anasayfa video bölümü** (koddaki `settings.homeVideos`;
+Panel › Videolar, KARARLAR K-125; geçiş betikleri `0017_anasayfa-videolari`,
+`0018_video-kutuphanesi`):
 
 | Alan | Açıklama | Örnek değer |
 |---|---|---|
-| `title` | Bölümün başlığı (en fazla 60 karakter) | Gerçek İşler, Gerçek Kaynak |
-| `videos[]` | Videolar, sitedeki sırayla (0–12) | 5 YouTube Shorts videosu |
-| `videos[].id` | Videonun kimliği | `video-1` |
-| `videos[].youtubeId` | YouTube video kimliği (11 karakter; link değil) | `QtZ7JdNzFVo` |
-| `videos[].productId` | Altında adı görünen ürün (`products.id`); yoksa alan yok | yok (sahibi gönderecek) |
-| `videos[].cover` | Kapak görseli; yoksa alan yok (YouTube'un kapak resmi) | yok |
-| `videos[].active` | Yayında mı | evet |
+| `title` | Anasayfadaki bölümün başlığı (en fazla 60 karakter) | Gerçek İşler, Gerçek Kaynak |
 
-- Satır yoksa site başlangıç değerlerini kullanır
-  (`defaultSettings.homeVideos`).
-- Kurallar tarayıcı ve sunucuda ortak (`packages/data/src/video-rules.ts` ›
-  `parseHomeVideos`; [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-anasayfa-videoları));
-  sunucu yüklenen kapağı (data:) ve katalogda olmayan ürünü kaydetmez.
-  Ürün JSON içinde kimlikle durur (yabancı anahtar yoktur): silinen ürünün
-  videosu sitede ürünsüz görünür.
+- Satır yoksa site başlangıç değerini kullanır (`defaultSettings.homeVideos`).
+- Videoların kendisi `videos` tablosundadır
+  ([`videos`](#videos--video-kütüphanesi)). `0018` geçiş betiği bu satırdaki
+  eski video listesini (`videos[]`) tabloya taşıdı ve satırda yalnızca
+  başlığı bıraktı.
 
 ### `payment_pos` — banka sanal POS'ları
 
@@ -1575,11 +1590,11 @@ Ayarlar › İşlem Kaydı'nda listelenir; demo modunda kayıt tutulmaz (K-109).
 | Sipariş, kargo ve iade | `orders`, `order_items`, `order_status_history`, `payment_transactions`, `shipments`, `return_requests`, `return_request_items` | 7 |
 | Kuponlar | `coupons`, `coupon_targets`, `coupon_customers`, `coupon_redemptions` | 4 |
 | Servis, garanti, yorum | `service_requests`, `warranties`, `reviews` | 3 |
-| İçerik | `blog_posts`, `news`, `events`, `faqs`, `sales_reps`, `legal_pages`, `about_page`, `page_seo`, `document_pages`, `documents` | 10 |
+| İçerik | `blog_posts`, `news`, `events`, `faqs`, `videos`, `sales_reps`, `legal_pages`, `about_page`, `page_seo`, `document_pages`, `documents` | 11 |
 | Ayarlar, ödeme ve kargo | `settings`, `payment_pos`, `bank_accounts`, `carriers` | 4 |
 | Formlar | `dealer_applications`, `support_messages` | 2 |
 | Sistem | `email_settings`, `email_log`, `mailbox_state`, `record_counters`, `audit_log` | 5 |
-| **Toplam** | | **65** |
+| **Toplam** | | **66** |
 
 ---
 
@@ -1674,7 +1689,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 | Silinen | Engel | Birlikte silinen / değişen |
 |---|---|---|
-| Ürün | — | Bayi ve satıcı stok satırları, kod eşleştirmeleri, varyantlar, favoriler, yönlendirmeler, kuponların kapsamındaki ürün. Belgelerdeki ürün bağı kalkar (belge kalır). Sipariş, teklif, iade, garanti, servis ve yorum kayıtları kalır (bağ boşalır) |
+| Ürün | — | Bayi ve satıcı stok satırları, kod eşleştirmeleri, varyantlar, favoriler, yönlendirmeler, kuponların kapsamındaki ürün. Belgelerdeki ve videolardaki ürün bağı kalkar (belge ve video kalır). Sipariş, teklif, iade, garanti, servis ve yorum kayıtları kalır (bağ boşalır) |
 | Ürünün bir varyantı (kombinasyonu) | — | O varyantın stok satırları ve kod eşleştirmeleri; eski ürün linki yönlendirmesi. Ürünün seçenek listesi (tanımları) değişirse bütün varyantlı stok satırları |
 | Kategori | İçinde ürün varsa silinmez | Kuponların kapsamındaki kategori; servis talebi ve garantideki kategori bağı boşalır |
 | Kupon | Siparişte kullanıldıysa silinmez (pasife alınır) | — |
@@ -1722,7 +1737,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 **Veri sürümü (`DB_VERSION`, yalnızca demo modu):**
 
-- `packages/data/src/index.ts`'tedir (bugün 93).
+- `packages/data/src/index.ts`'tedir (bugün 94).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -1751,6 +1766,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 | Yazışma | 32 | Örnek kayıtlara bağlı: servis (14 giden: bildirim, müşteriye "talebiniz alındı", servise talep bildirimi, müşteriye soru; 2 gelen: servisin ve müşterinin yanıtı), teklif (5 giden, 1 gelen), sipariş 4, üyelik 3, garanti 2, şifre sıfırlama 1. `db:seed` yükler, `db:yukle` yüklemez (K-116, K-117) |
 | Kupon / kupon kullanımı | 4 / 0 | HOSGELDIN5 (%5, bütün ürünler, kişi başı 1), LAZER25000 (25.000 ₺, Lazer Kaynak Makineleri, en az 500.000 ₺, 20 kullanım, 60 gün), YAZ10 (%10, süresi dolmuş), OZEL15 (%15, kişiye özel: bir örnek kurumsal üyenin ve henüz üye olmayan bir kişinin e-postası, kişi başı 1, 30 gün); tarihler kurulum anına göre |
 | Yorum | 11 | 10'u onaylı, 1'i onay bekliyor; hepsi ekipmanlarda |
+| Video | 5 | Sahibinin YouTube Shorts videoları; ürünsüz, anasayfada (K-125) |
 | Blog / haber / etkinlik | 6 / 4 / 9 | Eski sitenin İzmir tesisi ve Hırdavat Fuarı 2026 haberleri ile WIN EURASIA 2026 etkinliği dahil (K-121) |
 | SSS / temsilci / yasal metin | 8 / 11 / 11 | |
 | Belge | 0 | Panelden yüklenir |

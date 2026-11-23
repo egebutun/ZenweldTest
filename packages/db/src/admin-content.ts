@@ -16,6 +16,9 @@ import {
   type AboutStat,
   type SeoFields,
   type ZenweldDatabase,
+  parseVideo,
+  videoHasUploadedFile,
+  VIDEO_TWICE,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { slugify } from "@zenweld/utils";
@@ -92,17 +95,19 @@ function day(value: unknown): string | null {
  */
 export async function readContentPanel(db: AuditDb): Promise<Partial<ZenweldDatabase>> {
   const content = await readContent(db);
-  const stamp = async (table: typeof s.blogPosts | typeof s.news | typeof s.events | typeof s.faqs) =>
+  const stamp = async (table: typeof s.blogPosts | typeof s.news | typeof s.events | typeof s.faqs | typeof s.videos) =>
     new Map((await db.select({ id: table.id, updatedAt: table.updatedAt }).from(table)).map((r) => [r.id, iso(r.updatedAt)]));
   const blog = await stamp(s.blogPosts);
   const news = await stamp(s.news);
   const events = await stamp(s.events);
   const faqs = await stamp(s.faqs);
+  const videos = await stamp(s.videos);
   return {
     blogPosts: content.blogPosts.map((b) => ({ ...b, updatedAt: blog.get(b.id) })),
     news: content.news.map((n) => ({ ...n, updatedAt: news.get(n.id) })),
     events: content.events.map((e) => ({ ...e, updatedAt: events.get(e.id) })),
     faqs: content.faqs.map((f) => ({ ...f, updatedAt: faqs.get(f.id) })),
+    videos: content.videos.map((v) => ({ ...v, updatedAt: videos.get(v.id) })),
     about: content.about,
   };
 }
@@ -556,6 +561,97 @@ export async function adminMoveFaq(db: AuditDb, actor: Actor, input: Input, at: 
         entityLabel: rows.find((r) => r.id === change.id)!.question,
         changes: { position: [change.before, change.after] },
       },
+      at,
+    );
+  }
+  return { ok: true };
+}
+
+/* ------------------------------ Video kutuphanesi ------------------------------ */
+
+const VIDEO_KEYS = ["youtubeId", "title", "productId", "coverUrl", "showOnHome", "active"] as const;
+
+/**
+ * Videoyu ekler (id yoksa, listenin sonuna) ya da gunceller (KARARLAR
+ * K-125). input: { id?, source, youtubeId, title, productId, cover,
+ * showOnHome, active, updatedAt? }. Kurallar packages/data ›
+ * video-rules.ts; ayni YouTube videosu iki kez eklenmez, yuklenen kapak
+ * (data:) kaydedilmez, urun katalogda olmali.
+ */
+export async function adminSaveVideo(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<{ id: string } & Saved>> {
+  const parsed = parseVideo(input);
+  if (!parsed.ok) return parsed.error ? fail(400, parsed.error) : invalid();
+  const draft = parsed.value;
+  if (videoHasUploadedFile(draft)) return uploadDisabled();
+  if (draft.productId) {
+    const [product] = await db.select({ id: s.products.id }).from(s.products).where(eq(s.products.id, draft.productId));
+    if (!product) return invalid();
+  }
+  const value = {
+    youtubeId: draft.youtubeId ?? null,
+    title: draft.title ?? null,
+    productId: draft.productId ?? null,
+    coverUrl: draft.cover ?? null,
+    showOnHome: draft.showOnHome,
+    active: draft.active,
+  };
+  const label = draft.title || draft.youtubeId || "Video";
+
+  await serialize(db, "videos");
+  const id = text(input.id, 100);
+  const [taken] = await db
+    .select({ id: s.videos.id })
+    .from(s.videos)
+    .where(id ? and(eq(s.videos.youtubeId, value.youtubeId!), ne(s.videos.id, id)) : eq(s.videos.youtubeId, value.youtubeId!));
+  if (taken) return fail(400, VIDEO_TWICE);
+  if (!id) {
+    const [{ last }] = await db.select({ last: max(s.videos.position) }).from(s.videos);
+    const created = newId("v");
+    await db.insert(s.videos).values({ id: created, source: "youtube", ...value, position: (last ?? -1) + 1, createdAt: at, updatedAt: at });
+    await writeAudit(db, actor, { action: "create", entityType: "videos", entityId: created, entityLabel: label, changes: changedFields({} as typeof value, value, VIDEO_KEYS) }, at);
+    return { ...saved(at), id: created };
+  }
+  const [row] = await db.select().from(s.videos).where(eq(s.videos.id, id)).for("update");
+  if (!row) return fail(404, notFound);
+  if (iso(row.updatedAt) !== input.updatedAt) return fail(409, stale);
+  if (row.source !== "youtube") return invalid();
+  const changes = changedFields(row as typeof value, value, VIDEO_KEYS);
+  if (!Object.keys(changes).length) return { ...unchanged(row), id };
+  await db.update(s.videos).set({ ...value, updatedAt: at }).where(eq(s.videos.id, id));
+  await writeAudit(db, actor, { action: "update", entityType: "videos", entityId: id, entityLabel: label, changes }, at);
+  return { ...saved(at), id };
+}
+
+/** Siler. input: { id, updatedAt }. */
+export async function adminDeleteVideo(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult> {
+  const id = text(input.id, 100);
+  const [row] = id ? await db.select().from(s.videos).where(eq(s.videos.id, id)).for("update") : [];
+  if (!row) return fail(404, notFound);
+  if (iso(row.updatedAt) !== input.updatedAt) return fail(409, stale);
+  await db.delete(s.videos).where(eq(s.videos.id, id));
+  const label = row.title || row.youtubeId || "Video";
+  await writeAudit(db, actor, { action: "delete", entityType: "videos", entityId: id, entityLabel: label, changes: { youtubeId: [row.youtubeId, null], title: [row.title, null] } }, at);
+  return { ok: true };
+}
+
+/** Videoyu bir yukari (-1) ya da asagi (+1) tasir. Sira degisikligi kaydi eskitmez. */
+export async function adminMoveVideo(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult> {
+  const step = direction(input.direction);
+  if (!step) return invalid();
+  await serialize(db, "videos");
+  const rows = await db
+    .select({ id: s.videos.id, title: s.videos.title, youtubeId: s.videos.youtubeId, position: s.videos.position })
+    .from(s.videos)
+    .orderBy(asc(s.videos.position), asc(s.videos.id));
+  const id = text(input.id, 100);
+  if (!rows.some((r) => r.id === id)) return fail(404, notFound);
+  for (const change of reorder(rows, id, step)) {
+    const row = rows.find((r) => r.id === change.id)!;
+    await db.update(s.videos).set({ position: change.after }).where(eq(s.videos.id, change.id));
+    await writeAudit(
+      db,
+      actor,
+      { action: "update", entityType: "videos", entityId: change.id, entityLabel: row.title || row.youtubeId || "Video", changes: { position: [change.before, change.after] } },
       at,
     );
   }

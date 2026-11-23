@@ -73,6 +73,43 @@ export const faqs = pgTable(
   (t) => [check("faqs_topic", oneOf(t.topic, ["genel", "garanti", "siparis", "teknik"]))],
 );
 
+/**
+ * Video kutuphanesi (KARARLAR K-125): YouTube videolari ve kendi
+ * videolarimiz. Urune bagli video urunun sayfasinda, show_on_home ise
+ * anasayfada gorunur; sitede position sirasiyla. Kendi videomuzun
+ * dosyalari dosya deposundadir; burada adresleri ve hazirlanma durumu
+ * (file_status) durur (adim 1b).
+ */
+export const videos = pgTable(
+  "videos",
+  {
+    id: text("id").primaryKey(),
+    source: text("source").notNull(),
+    youtubeId: text("youtube_id").unique("videos_youtube_id"),
+    title: text("title"),
+    productId: text("product_id").references(() => products.id, { onDelete: "set null" }),
+    coverUrl: text("cover_url"),
+    showOnHome: boolean("show_on_home").notNull().default(true),
+    active: boolean("active").notNull().default(true),
+    position: integer("position").notNull(),
+    fileStatus: text("file_status"),
+    fileHd: text("file_hd"),
+    fileSd: text("file_sd"),
+    durationSeconds: integer("duration_seconds"),
+    width: smallint("width"),
+    height: smallint("height"),
+    ...timestamps(),
+  },
+  (t) => [
+    check("videos_source", oneOf(t.source, ["youtube", "file"])),
+    check("videos_file_status", sql`${t.fileStatus} is null or ${t.fileStatus} in ('processing', 'ready', 'failed')`),
+    check(
+      "videos_source_fields",
+      sql`(${t.source} = 'youtube' and ${t.youtubeId} is not null and ${t.fileStatus} is null) or (${t.source} = 'file' and ${t.youtubeId} is null and ${t.fileStatus} is not null)`,
+    ),
+  ],
+);
+
 export const salesReps = pgTable("sales_reps", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),

@@ -10,7 +10,7 @@ import { refreshSite } from "@/lib/server/refresh";
  *   POST /api/yonetim/ayarlar/sirket            {company, updatedAt?}  Şirket ve İletişim sekmesi (adim 5.3, K-105)
  *   POST /api/yonetim/ayarlar/gorunum           {style, updatedAt?}  Görünüm ekrani (adim 5.3)
  *   POST /api/yonetim/ayarlar/tanitim           {hero, updatedAt?}  Anasayfa Tanıtım ekrani (K-45)
- *   POST /api/yonetim/ayarlar/videolar          {videos, updatedAt?}  Anasayfa Videoları ekrani (K-125)
+ *   POST /api/yonetim/ayarlar/videolar          {settings: {title}, updatedAt?}  Videolar ekranindaki bolum basligi (K-125)
  *
  * Kurallar: packages/db/src/admin-settings.ts. Magaza ayarlari, sirket
  * bilgileri, Görünüm, tanitim alani ve videolar degisince katalog (ayarlar dahil)

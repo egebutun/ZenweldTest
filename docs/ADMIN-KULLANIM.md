@@ -52,7 +52,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 21. [Belgeler](#21-belgeler)
 22. [Yasal Metinler](#22-yasal-metinler)
 23. [Sayfa SEO](#23-sayfa-seo)
-24. [Görünüm](#24-görünüm) (Anasayfa Tanıtım, Anasayfa Videoları ve İşlem Kaydı dahil)
+24. [Görünüm](#24-görünüm) (Anasayfa Tanıtım, Videolar ve İşlem Kaydı dahil)
 25. [Siteden panele gelenler](#25-siteden-panele-gelenler) (Bayilik Başvuruları, Mesajlar, E-posta dahil)
 26. [Bütün panel adresleri](#26-bütün-panel-adresleri)
 27. [Bilinen durumlar](#27-bilinen-durumlar)
@@ -111,8 +111,8 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
     - **Müşteriler ve Servis:** Üyeler
       ([Veritabanı modunda Üyeler](#veritabanı-modunda-üyeler)) ve
       **E-posta** ([25](#e-posta-yonetime-posta)).
-    - **İçerik:** Anasayfa Tanıtım ([24](#anasayfa-tanıtım)), Anasayfa
-      Videoları ([24](#anasayfa-videoları)), Haberler,
+    - **İçerik:** Anasayfa Tanıtım ([24](#anasayfa-tanıtım)), Videolar
+      ([24](#videolar)), Haberler,
       Etkinlikler, Blog, Hakkımızda, Sık Sorulan Sorular, Belgeler, Yasal
       Metinler, Sayfa SEO
       ([Veritabanı modunda içerik ekranları](#veritabanı-modunda-içerik-ekranları)).
@@ -154,7 +154,7 @@ Panelin giriş bilgileri yalnızca [README](../README.md)'de yazar.
 | Ürünler | Ürünler · Kategoriler · Seçenek Tanımları · Stok Matrisi · Yorumlar |
 | Bayi ve Satış Ağı | Bayiler · Bayilik Başvuruları · Online Satıcılar · Satış Temsilcileri |
 | Müşteriler ve Servis | Üyeler · Servis Talepleri · Garantiler · Mesajlar · E-posta |
-| İçerik | Anasayfa Tanıtım · Anasayfa Videoları · Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
+| İçerik | Anasayfa Tanıtım · Videolar · Haberler · Etkinlikler · Blog · Hakkımızda · Sık Sorulan Sorular · Belgeler · Yasal Metinler · Sayfa SEO |
 | Ayarlar | Görünüm · İşlem Kaydı (yalnızca veritabanı modunda kayıt tutar) |
 
 **Bulunamayan panel sayfası:** "Sayfa bulunamadı" ve **Panele dön**
@@ -2478,48 +2478,54 @@ görünür."
   başka bir yönetici kaydettiyse kayıt reddedilir ("Bu kayıt siz açtıktan
   sonra değişti; sayfayı yenileyin."). Demo modunda tarayıcıya yazılır.
 
-### Anasayfa Videoları
+### Videolar
 
 Adres: `/yonetim/videolar` (menüde İçerik grubunda, Anasayfa Tanıtım'ın
-altında). Anasayfada bayi haritasının altındaki video bölümü (KARARLAR
-K-125; sitede görünüşü:
+altında). Video kütüphanesi (KARARLAR K-125; sitede görünüşü:
 [WEBSITE-KULLANIM.md › Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa) 9; kurallar:
-[IS-KURALLARI.md › 27](IS-KURALLARI.md#27-anasayfa-videoları)).
-Açıklama: "Anasayfada bayi bulucunun altındaki video bölümü. Videolar
-YouTube'dan gösterilir; ziyaretçi Oynat'a basınca yüklenir. Kaydedince
-sitede hemen görünür."
+[IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)). Her video bir kez
+eklenir: seçilen ürünün sayfasında, "Anasayfada göster" işaretliyse
+anasayfada görünür. Açıklama: "Video kütüphanesi. Her video bir kez
+eklenir: seçilen ürünün sayfasında, “Anasayfada göster” işaretliyse
+anasayfada görünür. Sitede bu sırayla çıkar."
 
-- **Bölüm başlığı** (zorunlu, en fazla 60 karakter). Örnek veride
-  "Gerçek İşler, Gerçek Kaynak".
-- **Videolar** (her biri bir kart; numarası "<n>. video"):
-  - Solda dik önizleme: kapak görseli, yoksa YouTube'un kapak resmi.
+- **Anasayfa bölüm başlığı** (zorunlu, en fazla 60 karakter; örnek veride
+  "Gerçek İşler, Gerçek Kaynak") ve yanında **Başlığı Kaydet**: "Bölüm
+  başlığı kaydedildi." / "Bölüm başlığı yazılmalı."
+- **Liste** (sitedeki sırayla): Sıra (**yukarı taşı** / **aşağı taşı**),
+  Video (dik küçük kapak, başlık ya da yoksa ürünün adı, "YouTube · <video
+  kimliği>"), Ürün, Durum ("Yayında" / "Kapalı", "Anasayfada"), **Düzenle**
+  ve **Sil** ("Bu video silinsin mi?"). Liste boşsa "Henüz video yok;
+  anasayfada video bölümü görünmez."
+- **Yeni Video** / **Düzenle** penceresi:
   - **YouTube linki** (zorunlu): Shorts ya da normal video linki
     (`youtube.com/shorts/…`, `youtube.com/watch?v=…`, `youtu.be/…`).
     Kaydedince linkten video kimliği alınır; ekran linki Shorts biçiminde
     gösterir.
+  - **Başlık** (isteğe bağlı, en fazla 100 karakter): Boşsa ürünün adı
+    kullanılır; Google'a da bu başlık gider.
   - **Ürün:** Listeden seçilir ("— Ürün yok —" seçilebilir); yayında
-    olmayan ürünün yanında "(yayında değil)" yazar. Seçilen ürünün adı
-    sitede videonun altında görünür ve ürün sayfasına gider; ürün yayında
+    olmayan ürünün yanında "(yayında değil)" yazar. Video bu ürünün
+    sayfasında görünür, altındaki adı ürün sayfasını açar; ürün yayında
     değilse görünmez.
   - **Kapak görseli** (isteğe bağlı): URL ya da dosya yükleme (dosya
-    deposu ayarlı değilse yalnızca URL). Boşsa YouTube'un en yüksek
-    çözünürlüklü kapak resmi kullanılır; keskinliği videonun yüklendiği
-    çözünürlüğe bağlıdır. En keskin sonuç için dik (9:16), en az 1080×1920
-    görsel önerilir.
-  - **Yayında:** İşareti kaldırılan video sitede görünmez.
-  - Sağ üstte **Yukarı taşı**, **Aşağı taşı** ve **Videoyu sil** düğmeleri.
-    Sitede videolar bu sırayla görünür.
-- **Video Ekle:** Listenin sonuna boş bir video ekler; en fazla 12 video.
-  Hiç video yoksa "Video yok; bölüm anasayfada görünmez." yazar.
-- **Değişiklikleri Kaydet:** "Videolar kaydedildi."
-- Hatalar (kaydedilmez): "Bölüm başlığı yazılmalı." / "<n>. video: YouTube
-  linki okunamadı. Videonun adresini (ör. https://www.youtube.com/shorts/…)
-  yapıştırın." / "Aynı video iki kez eklenemez."
-- Veritabanı modunda kayıt sunucuya yazılır, İşlem Kaydı'na "Anasayfa
-  Videoları" olarak girer ve anasayfa hemen yenilenir; ekran açıldıktan
-  sonra başka bir yönetici kaydettiyse kayıt reddedilir ("Bu kayıt siz
-  açtıktan sonra değişti; sayfayı yenileyin."). Demo modunda tarayıcıya
-  yazılır.
+    deposu ayarlı değilse yalnızca URL); solda önizleme. Boşsa YouTube'un
+    en yüksek çözünürlüklü kapak resmi kullanılır; keskinliği videonun
+    yüklendiği çözünürlüğe bağlıdır. En keskin sonuç için dik (9:16), en az
+    1080×1920 görsel önerilir.
+  - **Anasayfada göster** ve **Yayında** (ikisi de yeni videoda işaretli).
+  - **Kaydet** / **Vazgeç**.
+- Hatalar (kaydedilmez): "YouTube linki okunamadı. Videonun adresini (ör.
+  https://www.youtube.com/shorts/…) yapıştırın." / "Bu YouTube videosu
+  kütüphanede zaten var."
+- Bugün yalnızca YouTube videosu eklenir. Kendi videolarımızın yüklenmesi
+  (en fazla 1 GB, sunucuda otomatik hazırlanır) sıradaki adımda
+  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Video kütüphanesi).
+- Veritabanı modunda video kaydı İşlem Kaydı'na "Video" (başlık ya da
+  video kimliğiyle), bölüm başlığı "Anasayfa video bölümü" olarak girer ve
+  anasayfa hemen yenilenir; ekran açıldıktan sonra başka bir yönetici
+  kaydettiyse kayıt reddedilir ("Bu kayıt siz açtıktan sonra değişti;
+  sayfayı yenileyin."). Demo modunda tarayıcıya yazılır.
 
 ### İşlem Kaydı (veritabanı modu)
 
@@ -2801,7 +2807,7 @@ sayfayı yenileyin."); her değişiklik işlem kaydına yazılır.
 | `/yonetim/sayfa-seo` | Sayfa SEO |
 | `/yonetim/gorunum` | Görünüm |
 | `/yonetim/tanitim` | Anasayfa Tanıtım |
-| `/yonetim/videolar` | Anasayfa Videoları |
+| `/yonetim/videolar` | Videolar |
 | `/yonetim/islem-kaydi` | İşlem Kaydı (veritabanı modu) |
 
 ---

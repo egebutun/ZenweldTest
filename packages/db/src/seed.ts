@@ -613,6 +613,25 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
     seo: e.seo,
   }));
   const faqs = data.faqs.map((f, i) => ({ id: f.id, question: f.question, answer: f.answer, topic: f.topic, position: i }));
+  const videos = data.videos.map((v, i) => ({
+    id: v.id,
+    source: v.source,
+    youtubeId: v.youtubeId ?? null,
+    title: v.title ?? null,
+    productId: v.productId ?? null,
+    coverUrl: v.cover ?? null,
+    showOnHome: v.showOnHome,
+    active: v.active,
+    position: i,
+    fileStatus: v.file?.status ?? null,
+    fileHd: v.file?.hd ?? null,
+    fileSd: v.file?.sd ?? null,
+    durationSeconds: v.file?.durationSeconds ?? null,
+    width: v.file?.width ?? null,
+    height: v.file?.height ?? null,
+    createdAt: new Date(v.createdAt),
+    updatedAt: new Date(v.createdAt),
+  }));
   const salesReps = data.salesReps.map((r) => ({
     id: r.id,
     name: r.name,
@@ -703,6 +722,7 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
     entry(s.news, news),
     entry(s.events, events),
     entry(s.faqs, faqs),
+    entry(s.videos, videos),
     entry(s.salesReps, salesReps),
     entry(s.legalPages, legalPages),
     entry(s.aboutPage, aboutPage),

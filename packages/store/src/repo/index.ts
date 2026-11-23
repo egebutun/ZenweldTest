@@ -21,6 +21,7 @@ export * from "./email";
 export * from "./legal";
 export * from "./service";
 export * from "./faqs";
+export * from "./videos";
 export * from "./documents";
 export * from "./categories";
 export * from "./options";

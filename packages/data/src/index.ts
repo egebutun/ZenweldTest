@@ -34,6 +34,7 @@ export { blogPosts, faqs, quotes, warranties } from "./seed/content.seed";
 export { orders } from "./seed/orders.seed";
 export { reviews } from "./seed/reviews.seed";
 export { events, news } from "./seed/events.seed";
+export { videos } from "./seed/videos.seed";
 export { stockPhotos } from "./seed/images";
 export { defaultSettings } from "./seed/settings.seed";
 export { legalPages } from "./seed/legal.seed";
@@ -51,6 +52,7 @@ import { blogPosts, faqs, quotes, warranties } from "./seed/content.seed";
 import { orders } from "./seed/orders.seed";
 import { reviews } from "./seed/reviews.seed";
 import { events, news } from "./seed/events.seed";
+import { videos } from "./seed/videos.seed";
 import { defaultSettings } from "./seed/settings.seed";
 import { about, salesReps } from "./seed/company.seed";
 import { legalPages } from "./seed/legal.seed";
@@ -61,7 +63,7 @@ import { createSampleCoupons } from "./seed/coupons.seed";
 import { createSampleEmails } from "./seed/emails.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 93;
+export const DB_VERSION = 94;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida
@@ -95,6 +97,7 @@ export function createSeedDatabase(now: number = Date.now()): ZenweldDatabase {
       events,
       news,
       faqs,
+      videos,
       documentPages,
       documents: [],
       reviews,
@@ -151,6 +154,7 @@ export function createEmptyDatabase(): ZenweldDatabase {
     events: [],
     news: [],
     faqs: [],
+    videos: [],
     documentPages: [],
     documents: [],
     reviews: [],

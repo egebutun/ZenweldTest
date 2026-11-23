@@ -866,16 +866,29 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   başka hiçbir yerinde etiket ya da rozet olarak gösterilmez.
 - Örnek veride bütün bayiler Force Bayi işaretlidir.
 
-### K-125 · Anasayfada videolar
-- Anasayfada Bayi ve Servis haritasının hemen altında YouTube Shorts
-  videoları yan yana kayar; başlık "Gerçek İşler, Gerçek Kaynak".
-- Videolar, başlık, her videonun altındaki ürün (adı tıklanınca ürün
-  sayfası açılır) ve sıra panelden yönetilir (Anasayfa Videoları).
-  Videoların ürünleri sahibinden gelecek.
+### K-125 · Videolar: tek kütüphane, ürün sayfası ve anasayfa
+- Videolar tek bir kütüphanede durur (panel › Videolar). Her video bir kez
+  eklenir: YouTube videosu ya da kendi çektiğimiz video.
+- Video bir ürüne bağlanabilir: o ürünün sayfasında görünür, altındaki
+  ürün adı ürün sayfasını açar. "Anasayfada göster" işaretli videolar
+  anasayfaya da gelir. Ürün sayfası için ayrıca yükleme yoktur.
+- **Anasayfa:** Bayi ve Servis haritasının hemen altında; başlık "Gerçek
+  İşler, Gerçek Kaynak" (panelden değişir). Videolar ürünün kategorisine
+  göre sekmelerle ayrılır; "Tümü" sekmesi yoktur, açılışta sıradaki ilk
+  kategori seçilidir. Kayan şerit sahibinin gönderdiği örnekteki gibidir:
+  kartlar aynı genişlikte, ortadaki daha uzun; geçişte bütün şerit kayar.
+- **Videolar sayfası** (`/videolar`): bütün videolar kategoriye göre
+  gruplu; her videonun altından ürün sayfasına gidilir.
+- **Kendi videolarımız:** Panelden orijinali yüklenir (en fazla 1 GB).
+  Sunucu web için otomatik hazırlar: 1080p ve 720p sürüm, kapak karesi;
+  görüntü kalitesi korunur. Dosyalar dosya deposunda durur.
 - Video sayfa açılırken yüklenmez; ziyaretçi **Oynat**'a basınca yüklenip
-  oynar. Oynatıcı YouTube'un çerezsiz adresinden açılır.
-- **Neden:** YouTube oynatıcısı sayfayı yavaşlatır (anasayfanın hızı B5'te
-  ölçülecek); çerezsiz oynatıcı tıklanmadan çerez yazmaz.
+  oynar. YouTube videoları YouTube'un çerezsiz adresinden açılır.
+- **Neden:** Video bir kez yüklenip her yerde kullanılsın; ziyaretçi
+  videodan ürüne ve alışverişe yönlensin; kategoriler ziyaretçiyi
+  videolarda kaybettirmesin. Oynatıcı sayfayı yavaşlattığı için yalnızca
+  istenince yüklenir; çerezsiz oynatıcı tıklanmadan çerez yazmaz.
+- Videoların ürünleri sahibinden gelecek.
 
 ---
 
@@ -1067,6 +1080,10 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   gider; canlıya örnek yorum yüklenmez (K-91). Demo modunda gitmez.
 - Seçenekli üründe her seçenek kendi kodu, fiyatı, stoğu ve linkiyle
   gider; açıklama kısa açıklama + öne çıkanlar + uzun açıklamadır.
+- Kendi videolarımız ve YouTube videoları Google'a video olarak bildirilir
+  (başlık, kapak, süre, eklenme tarihi; video site haritası); videoların
+  bulunduğu sayfalar (ürün, Videolar) Google'ın video sonuçlarında
+  çıkabilsin (K-125).
 - Anasayfada site adı (ZENWELD) gider; şirket bilgisinde ad ZENWELD,
   ticari unvan (Mağaza Ayarları'ndaki) ayrıca gider. Etkinliklerde Zenweld düzenleyen
   olarak gönderilmez (fuarların katılımcısıdır); ülke kodla, görsel

@@ -1,6 +1,6 @@
 "use client";
 
-import type { AboutContent, BlogPost, FaqItem, NewsItem, ZenweldEvent } from "@zenweld/data";
+import type { AboutContent, BlogPost, FaqItem, NewsItem, SiteVideo, VideoDraft, ZenweldEvent } from "@zenweld/data";
 import {
   createBlogPost,
   createEvent,
@@ -9,12 +9,15 @@ import {
   deleteEvent,
   deleteFaq,
   deleteNews,
+  deleteVideo,
   moveFaq,
+  moveVideo,
   saveAbout,
   saveBlogPost,
   saveEvent,
   saveFaq,
   saveNews,
+  saveVideo,
 } from "@zenweld/store";
 import { useUploads } from "./admin-files";
 import { localAnswer, recordRef, usePanelCall, type PanelAnswer } from "./admin-panel";
@@ -105,6 +108,26 @@ export function useContentActions() {
     moveFaq: (faq: FaqItem, direction: -1 | 1): Promise<PanelAnswer> => {
       if (server) return call("sss-sira", { id: faq.id, direction });
       moveFaq(faq.id, direction);
+      return localAnswer();
+    },
+
+    /**
+     * Video kutuphanesi (K-125). draft: denetlenmis video (parseVideo);
+     * stored yoksa yeni video, listenin sonuna.
+     */
+    saveVideo: (draft: VideoDraft, stored?: SiteVideo): Promise<PanelAnswer> => {
+      if (server) return call("video", stored ? { ...draft, ...recordRef("videos", stored) } : { ...draft }, "videos");
+      saveVideo({ ...draft, id: stored?.id ?? "", createdAt: stored?.createdAt ?? new Date().toISOString() });
+      return localAnswer();
+    },
+    deleteVideo: (video: SiteVideo): Promise<PanelAnswer> => {
+      if (server) return call("video-sil", recordRef("videos", video));
+      deleteVideo(video.id);
+      return localAnswer();
+    },
+    moveVideo: (video: SiteVideo, direction: -1 | 1): Promise<PanelAnswer> => {
+      if (server) return call("video-sira", { id: video.id, direction });
+      moveVideo(video.id, direction);
       return localAnswer();
     },
 

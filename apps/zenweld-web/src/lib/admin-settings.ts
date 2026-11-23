@@ -54,13 +54,13 @@ export function useSettingsActions() {
       }
       return localAnswer(saveHomeHero(hero));
     },
-    /** Anasayfa videolari (K-125). videos: denetlenmis ayar (parseHomeVideos); stored: ekranin gordugu kayit. */
-    saveHomeVideos: (videos: HomeVideoSettings, stored: HomeVideoSettings): Promise<PanelAnswer> => {
+    /** Anasayfa video bolumunun basligi (K-125). settings: denetlenmis ayar (parseHomeVideoSettings); stored: ekranin gordugu kayit. */
+    saveHomeVideos: (settings: HomeVideoSettings, stored: HomeVideoSettings): Promise<PanelAnswer> => {
       if (server) {
         const ref = recordRef("settings", { id: "home_videos", updatedAt: stored.updatedAt });
-        return call("videolar", { videos, ...(ref.updatedAt && { updatedAt: ref.updatedAt }), id: "home_videos" }, "settings");
+        return call("videolar", { settings, ...(ref.updatedAt && { updatedAt: ref.updatedAt }), id: "home_videos" }, "settings");
       }
-      return localAnswer(saveHomeVideos(videos));
+      return localAnswer(saveHomeVideos(settings));
     },
   };
 }
