@@ -585,6 +585,12 @@ metinde.
   gidiyor). Ara başlık, madde, bağlantı ve yukarıdaki kuralların sayfaya
   yansıması için önce kod işi gerekir ([YAPILACAKLAR.md](YAPILACAKLAR.md)
   › SEO › A2).
+- **Ürün videolarının başlığı** (Panel › Videolar; KARARLAR K-125): ürüne
+  bağlı her video, aranan ifadeyi içeren kendi başlığını alır (ör.
+  "ForceMIG 200 ile 3 mm sacda gazaltı kaynağı"). Başlık boşsa ürünün adı
+  kullanılıyor; aynı ürünün bütün videoları aynı başlıkla çıkar, bu yüzden
+  boş bırakılmaz. Videolar Google'a bildirilince (video kütüphanesi 1c) bu
+  başlık gider (A2, B5–B7'den sonra).
 
 **Örnek (gerçek veriden, ForceArc 200):**
 
@@ -705,6 +711,11 @@ nedir?" yazılarıyla topluyor. Aşağıdaki konuların hepsi Google'ın önerdi
 aramalardan geliyor. Bir yazı 800–1.500 kelime, başlıkta hedef arama, en az
 iki kategori ya da ürün bağlantısı. Sıra: önce lazer (rakip az), sonra en
 çok sorulan "nasıl" soruları. Takvim: ayda 2–4 yazı.
+
+**Ürün videoları da aynı yöntemle:** yeni çekilecek ürün videolarının
+konuları bu tablodaki gibi Google'da aranan ifadelere göre seçilir ("…
+nasıl kullanılır", "… ayarları", sac kalınlığına göre kaynak); video ilgili
+ürüne bağlanır, başlığı aranan ifadeyi içerir (A7; KARARLAR K-125).
 
 | Sıra | Yazı başlığı | Google'daki arama | Bağlanacak sayfa |
 |---|---|---|---|
@@ -1028,7 +1039,8 @@ En büyük etken: Google, aramaya en iyi cevabı veren sayfayı üste koyar.
 - [ ] 6 blog yazısının metni yer tutucu; canlıdan önce yazılmalı ya da
       yayından kaldırılmalı (KARARLAR K-54). **Panel**
 - [ ] Blog takvimi: ayda 2–4 yazı ([13. bölüm](#13-blog-ve-sss-konuları);
-      A7). **Sahibi**
+      A7). Yeni ürün videolarının konuları da aranan ifadelere göre seçilir
+      (A7). **Sahibi**
 - [ ] Sitedeki bütün yazıların denetimi: blog, haber, etkinlik, SSS,
       Hakkımızda, belge sayfaları, yasal metinler; başlık, özet, metin, SEO
       alanları, alt metin, iç bağlantı. Bilinen: Konya Makine 2024 ve
@@ -1043,7 +1055,8 @@ En büyük etken: Google, aramaya en iyi cevabı veren sayfayı üste koyar.
 - [ ] Ürün kullanım ve ayar videoları (YouTube); "nasıl kullanılır",
       "ayarları" aramalarında Google video da gösteriyor. Anasayfada 5
       YouTube Shorts videosu var (KARARLAR K-125); videonun altındaki ürün
-      bağlantısı panelden seçilir. **Sahibi**
+      bağlantısı panelden seçilir. Ürüne bağlı videoların başlıkları aranan
+      ifadeye göre yazılır (A2). **Sahibi**
 
 ### 5. Güven sinyalleri
 

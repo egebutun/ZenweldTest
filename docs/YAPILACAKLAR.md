@@ -1397,6 +1397,13 @@ değişikliği bugün Google'da bir şey kaybettirmez.
    Aksesuar, güvenlik ve tel ürünleri girilirken aynı kalıp ve SEO.md › 9
    formülleri (aksesuar: tür + tip + ölçü + uzunluk; tel: sınıf + tür +
    çap + ağırlık).
+   **Ürün videolarının başlıkları** (Panel › Videolar › Başlık; K-125):
+   ürüne bağlı her videonun başlığı aranan ifadeye göre yazılır (ör.
+   "ForceMIG 200 ile 3 mm sacda gazaltı kaynağı"); başlığı boş videolar
+   doldurulur. Bugün boş başlıkta ürünün adı kullanılıyor ve aynı ürünün
+   bütün videolarında aynı başlık çıkıyor. Videoların Google'a bildirilmesi
+   (video kütüphanesi 1c) yapılınca bu başlıklar Google'a gider
+   ([SEO.md](SEO.md) › 10).
 3. **A3 · Kategoriler (50) ve gruplar (12):** ad, link, Tanıtım Metni
    (`## ` ara başlıklar H2 olarak basılır; H3 bugün yazılamaz), kısa açıklama, meta title ve description. Sıra: lazer (3),
    diğer makine kategorileri (5; plazmada "kesme" kuralı), güvenlik ve
@@ -1422,8 +1429,11 @@ değişikliği bugün Google'da bir şey kaybettirmez.
    ara başlıklar, SEO alanları, görsel alt metni, iç bağlantılar. Bilinen
    sorunlar: Konya Makine 2024 ve İmatech 2024 etkinliklerinde aynı
    "Zenweld Hakkında" paragrafı (tekrar eden metin); etkinlik galerilerinde geçici stok fotoğraflar.
-7. **A7 · Yeni blog yazıları:** [SEO.md](SEO.md) › 13'teki 15 konu (önce
-   lazer konuları), ayda 2–4 yazı.
+7. **A7 · Yeni içerik (blog yazıları ve ürün videoları):** [SEO.md](SEO.md)
+   › 13'teki 15 konu (önce lazer konuları), ayda 2–4 yazı. Yeni çekilecek
+   ürün videolarının konuları da blog takvimi gibi Google'da aranan
+   ifadelere göre seçilir (ör. "nasıl kullanılır", "ayarları", sac
+   kalınlığına göre kaynak; SEO.md › 13).
 8. **A8 · İç bağlantılar:** ürün → uyumlu aksesuar ve tel kategorisi;
    kategori ↔ blog; bağlantı metni hedef sayfanın ana terimi. Bugün
    Tanıtım Metni, blog ve ürün açıklamasında bağlantı yazılamıyor
