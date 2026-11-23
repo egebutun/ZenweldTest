@@ -6,6 +6,7 @@ import { PanelFeatures } from "@/components/admin/PanelFeatures";
 import { database, usesDatabase } from "@/lib/server/db";
 import { fileStorage } from "@/lib/server/files";
 import { SESSION_COOKIES } from "@/lib/server/session-cookie";
+import { videoToolsAvailable } from "@/lib/server/video-worker";
 
 /**
  * Giris ekrani disindaki tum panel sayfalari bu kabugun icinde.
@@ -13,7 +14,8 @@ import { SESSION_COOKIES } from "@/lib/server/session-cookie";
  * Veritabani modunda panel sunucuda korunur (Asama 4.3): gecerli yonetici
  * oturumu yoksa (hic yok, suresi dolmus, askiya alinmis ya da yonetici
  * degil) sayfa gonderilmez, giris ekranina yonlendirilir. Dosya deposu
- * ayarliysa panelde dosya yukleme acilir (KARARLAR K-108).
+ * ayarliysa panelde dosya yukleme acilir (KARARLAR K-108); sunucuda ffmpeg
+ * de varsa kendi videolarimiz yuklenir (K-125).
  */
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   if (usesDatabase()) {
@@ -21,7 +23,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
     if (!(await readSession(database(), token, "admin"))) return <LoginRedirect />;
   }
   return (
-    <PanelFeatures uploads={fileStorage() !== null}>
+    <PanelFeatures uploads={fileStorage() !== null} videos={fileStorage() !== null && (await videoToolsAvailable())}>
       <AdminShell>{children}</AdminShell>
     </PanelFeatures>
   );

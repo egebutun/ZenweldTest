@@ -290,7 +290,8 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
 9. **Videolar** (başlık panelden; bugün "Gerçek İşler, Gerçek Kaynak";
    KARARLAR K-125):
    - Video kütüphanesinde (Panel › Videolar) yayında ve "Anasayfada
-     göster" işaretli YouTube videoları (Shorts), paneldeki sırayla,
+     göster" işaretli videolar (YouTube Shorts ya da kendi videomuz;
+     kendi videomuz sunucuda hazırlanması bitince), paneldeki sırayla,
      aynı genişlikte dik kartlar olarak yan yana durur: geniş ekranda 5,
      tablette 3, telefonda 1 kart (yanlarda komşuların ucu). Ortadaki
      kart daha uzun ve renkli, yanlardakiler kısa ve soluk.
@@ -300,13 +301,16 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
      kart girer.
    - Altta her video için bir nokta ve **Önceki video** / **Sonraki video**
      okları.
-   - Sayfa açılırken yalnızca kapak resmi yüklenir; YouTube oynatıcısı
+   - Sayfa açılırken yalnızca kapak resmi yüklenir; oynatıcı ve video
      yüklenmez. Kapak, panelde seçilmişse o görsel; yoksa YouTube'un en
      yüksek çözünürlüklü kapak resmi (önce Shorts'un dik kapağı, yoksa
-     1280×720, o da yoksa 480×360; [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)).
-     Ortadaki kartta **Oynat**'a basılınca oynatıcı YouTube'un çerezsiz
-     adresinden (`youtube-nocookie.com`) açılır ve video oynar. Başka
-     videoya geçilince oynatıcı kapanır.
+     1280×720, o da yoksa 480×360) ya da kendi videomuzun kapak karesi
+     ([IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)).
+   - Ortadaki kartta **Oynat**'a basılınca video oynar: YouTube videosu
+     YouTube'un çerezsiz oynatıcısıyla (`youtube-nocookie.com`), kendi
+     videomuz tarayıcının oynatıcısıyla (geniş ekranda 1080p, telefonda
+     720p; ileri sarılabilir, tam ekran açılır). Başka videoya geçilince
+     oynatıcı kapanır.
    - Videoya bir ürün seçilmişse kartın altında ürünün küçük fotoğrafı ve
      adı görünür; tıklanınca ürün sayfası açılır. Ürün yayında değilse ya
      da silinmişse video ürünsüz görünür.

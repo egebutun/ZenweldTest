@@ -1,6 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
+  byteRange,
+  checkUpload,
   createSeedDatabase,
+  detectFileType,
+  isUploadKey,
+  isVideoOriginalKey,
+  uploadKey,
+  uploadSizeError,
+  uploadTypeError,
+  videoEncodeArgs,
+  videoFileKey,
+  videoPoster,
   defaultSettings,
   homeVideos,
   parseHomeVideoSettings,
@@ -84,12 +95,12 @@ describe("panelde kaydetme", () => {
     expect(parsed.ok && parsed.value).toMatchObject({ title: "Sahada ForceMIG", productId: "p1", cover: "/kapak.webp", showOnHome: false });
   });
 
-  it("bozuk link hata verir; bozuk istek reddedilir; kendi videomuz bugün eklenmez (1b)", () => {
+  it("bozuk link hata verir; bozuk istek reddedilir", () => {
     expect(parseVideo(form({ youtubeId: "https://vimeo.com/1" }))).toEqual({ ok: false, error: VIDEO_BAD_LINK });
     expect(parseVideo(form({ title: "x".repeat(VIDEO_LIMITS.title + 1) }))).toEqual({ ok: false, error: null });
     expect(parseVideo(form({ cover: "javascript:1" }))).toEqual({ ok: false, error: null });
     expect(parseVideo(form({ active: "evet" }))).toEqual({ ok: false, error: null });
-    expect(parseVideo(form({ source: "file" }))).toEqual({ ok: false, error: null });
+    expect(parseVideo(form({ source: "vimeo" }))).toEqual({ ok: false, error: null });
   });
 
   it("aynı YouTube videosu iki kez eklenmez (kaydın kendisi hariç)", () => {
@@ -132,5 +143,70 @@ describe("sitede görünen videolar", () => {
     expect(videoPlayable({ ...base, source: "youtube", youtubeId: "QtZ7JdNzFVo" })).toBe(true);
     expect(videoPlayable({ ...base, source: "file", file: { status: "processing" } })).toBe(false);
     expect(videoPlayable({ ...base, source: "file", file: { status: "ready", hd: "/dosya/video/a.mp4" } })).toBe(true);
+  });
+});
+
+describe("kendi videolarımız (K-125)", () => {
+  const upload = "video/2026/11/0123456789abcdef/orijinal.mov";
+
+  it("yeni videoda yüklenen orijinal zorunlu; düzenlemede isteğe bağlı; anahtar denetlenir", () => {
+    expect(parseVideo(form({ source: "file" }))).toEqual({ ok: false, error: "Video dosyası seçilmeli." });
+    expect(parseVideo(form({ source: "file", upload }))).toEqual({ ok: true, value: { source: "file", upload, showOnHome: true, active: true } });
+    expect(parseVideo(form({ source: "file" }), false)).toEqual({ ok: true, value: { source: "file", showOnHome: true, active: true } });
+    expect(parseVideo(form({ source: "file", upload: "video/2026/11/0123456789abcdef/1080.mp4" }))).toEqual({ ok: false, error: null });
+    expect(parseVideo(form({ source: "file", upload: "../../etc/passwd" }))).toEqual({ ok: false, error: null });
+  });
+
+  it("ffmpeg ayarları: 1080p ve 720p, küçük video büyütülmez, hızlı başlama; HDR renkleri dönüştürülür", () => {
+    const hd = videoEncodeArgs("in.mov", "1080.mp4", "hd", false).join(" ");
+    expect(hd).toContain("scale=w='min(1920,iw)':h='min(1920,ih)':force_original_aspect_ratio=decrease");
+    expect(hd).toContain("-c:v libx264");
+    expect(hd).toContain("-crf 20");
+    expect(hd).toContain("-movflags +faststart");
+    expect(hd).not.toContain("tonemap");
+    const sd = videoEncodeArgs("in.mov", "720.mp4", "sd", true).join(" ");
+    expect(sd).toContain("min(1280,iw)");
+    expect(sd).toContain("-crf 23");
+    expect(sd).toContain("tonemap=hable");
+  });
+
+  it("kapak: panelde seçilen, yoksa videonun kapak karesi", () => {
+    expect(videoPoster({ cover: "/kapak.webp", file: { status: "ready", poster: "/dosya/video/x/kapak.webp" } })).toBe("/kapak.webp");
+    expect(videoPoster({ file: { status: "ready", poster: "/dosya/video/x/kapak.webp" } })).toBe("/dosya/video/x/kapak.webp");
+    expect(videoPoster({})).toBeUndefined();
+  });
+});
+
+describe("video dosyaları: tür, anahtar, parça parça sunma", () => {
+  const bytes = (...parts: (number[] | string)[]) =>
+    new Uint8Array(parts.flatMap((p) => (typeof p === "string" ? [...p].map((c) => c.charCodeAt(0)) : p)));
+
+  it("içeriğe bakarak: MP4, iPhone MOV, M4V, WebM, MKV", () => {
+    expect(detectFileType(bytes([0, 0, 0, 0x20], "ftypisom"), "a.mp4")).toBe("mp4");
+    expect(detectFileType(bytes([0, 0, 0, 0x14], "ftypqt  "), "IMG_1234.MOV")).toBe("mov");
+    expect(detectFileType(bytes([0, 0, 0, 0x14], "ftypM4V "), "a.m4v")).toBe("m4v");
+    expect(detectFileType(bytes([0x1a, 0x45, 0xdf, 0xa3]), "a.webm")).toBe("webm");
+    expect(detectFileType(bytes([0x1a, 0x45, 0xdf, 0xa3]), "a.mkv")).toBe("mkv");
+    expect(checkUpload("video", "a.mp4", bytes("%PDF-1.4"))).toEqual({ ok: false, error: uploadTypeError("video") });
+  });
+
+  it("anahtarlar: orijinal ve hazırlanan dosyalar aynı klasörde; orijinal tanınır", () => {
+    const key = uploadKey("video", new Date("2026-11-23T10:00:00Z"), "0123456789abcdef", "IMG_1.MOV", "mov");
+    expect(key).toBe("video/2026/11/0123456789abcdef/orijinal.mov");
+    expect(isVideoOriginalKey(key)).toBe(true);
+    expect(videoFileKey(key, "1080.mp4")).toBe("video/2026/11/0123456789abcdef/1080.mp4");
+    expect(isUploadKey(videoFileKey(key, "kapak.webp"))).toBe(true);
+    expect(isVideoOriginalKey(videoFileKey(key, "720.mp4"))).toBe(false);
+    expect(uploadSizeError("video")).toBe("Dosya çok büyük; en fazla 1 GB.");
+  });
+
+  it("Range: baştan, ortadan, sondan; dosyanın dışı 416", () => {
+    expect(byteRange(null, 1000)).toBeNull();
+    expect(byteRange("bytes=0-99", 1000)).toEqual({ start: 0, end: 99 });
+    expect(byteRange("bytes=900-", 1000)).toEqual({ start: 900, end: 999 });
+    expect(byteRange("bytes=-100", 1000)).toEqual({ start: 900, end: 999 });
+    expect(byteRange("bytes=0-5000", 1000)).toEqual({ start: 0, end: 999 });
+    expect(byteRange("bytes=1000-", 1000)).toBe("invalid");
+    expect(byteRange("bytes=abc", 1000)).toBe("invalid");
   });
 });

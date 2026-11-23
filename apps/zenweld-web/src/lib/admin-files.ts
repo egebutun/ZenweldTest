@@ -84,3 +84,32 @@ export function useUploads() {
     },
   };
 }
+
+/** Kendi videomuzun yuklenmesinin sonucu: depodaki orijinalin anahtari. */
+export type VideoUploadAnswer = { ok: true; upload: string; size: number } | { ok: false; error: string };
+
+/**
+ * Kendi videomuzun orijinalini sunucuya yukler (veritabani modu; en fazla
+ * 1 GB; KARARLAR K-125). Dosya oldugu gibi gonderilir (bellege alinmaz);
+ * onProgress 0-100 arasi yuzde. Sunucu cevabi: /api/yonetim/video-yukle.
+ */
+export function uploadVideoFile(file: File, onProgress: (percent: number) => void): Promise<VideoUploadAnswer> {
+  return new Promise((resolve) => {
+    const request = new XMLHttpRequest();
+    request.open("POST", "/api/yonetim/video-yukle");
+    request.setRequestHeader("x-dosya-adi", encodeURIComponent(file.name));
+    request.upload.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+    };
+    request.onload = () => {
+      try {
+        const answer = JSON.parse(request.responseText) as VideoUploadAnswer;
+        resolve(typeof answer.ok === "boolean" ? answer : { ok: false, error: tr.panel.failed });
+      } catch {
+        resolve({ ok: false, error: tr.panel.failed });
+      }
+    };
+    request.onerror = () => resolve({ ok: false, error: tr.panel.failed });
+    request.send(file);
+  });
+}

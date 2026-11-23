@@ -1,4 +1,5 @@
 import { isUploadedFile } from "./catalog-rules";
+import { isVideoOriginalKey } from "./file-rules";
 import type { Parsed } from "./settings-rules";
 import type { HomeVideoSettings, Product, SiteVideo } from "./types";
 
@@ -16,6 +17,9 @@ export const VIDEO_LIMITS = { sectionTitle: 60, title: 100, cover: 2000 };
 
 export const VIDEO_NO_SECTION_TITLE = "Bölüm başlığı yazılmalı.";
 export const VIDEO_BAD_LINK = "YouTube linki okunamadı. Videonun adresini (ör. https://www.youtube.com/shorts/…) yapıştırın.";
+export const VIDEO_NO_FILE = "Video dosyası seçilmeli.";
+export const VIDEO_NO_ORIGINAL = "Videonun orijinal dosyası bulunamadı; dosyayı yeniden yükleyin.";
+export const VIDEO_TOOL_MISSING = "Sunucuda video hazırlama aracı (ffmpeg) kurulu değil; kendi videolarımız yüklenemez.";
 export const VIDEO_TWICE = "Bu YouTube videosu kütüphanede zaten var.";
 
 const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
@@ -91,36 +95,48 @@ function cover(value: unknown): string | null {
   return /^\/(?!\/)\S*$/.test(url) || /^https:\/\/\S+$/i.test(url) ? url : null;
 }
 
-/** Panelden gelen video bilgisi (kimlik, eklenme ani ve dosya disinda). */
-export type VideoDraft = Pick<SiteVideo, "source" | "youtubeId" | "title" | "productId" | "cover" | "showOnHome" | "active">;
+/**
+ * Panelden gelen video bilgisi (kimlik, eklenme ani ve hazirlanan dosyalar
+ * disinda). upload: kendi videomuzda yeni yuklenen orijinalin depo anahtari
+ * (yeni videoda zorunlu, duzenlemede dosya degisirse).
+ */
+export type VideoDraft = Pick<SiteVideo, "source" | "youtubeId" | "title" | "productId" | "cover" | "showOnHome" | "active"> & {
+  upload?: string;
+};
 
 /**
  * Videoyu denetler ve temizler: YouTube linki kimlige cevrilir, baslik
- * kirpilir, bos baslik, urun ve kapak kaydedilmez. error null: istek bozuk
- * (ekran boyle bir sey gondermez). Bugun yalnizca YouTube videosu eklenir;
- * kendi videomuz (source "file") adim 1b'de.
+ * kirpilir, bos baslik, urun ve kapak kaydedilmez. Kendi videomuzda
+ * yuklenen orijinalin anahtari denetlenir; yeni videoda (isNew) zorunlu.
+ * error null: istek bozuk (ekran boyle bir sey gondermez).
  */
-export function parseVideo(value: unknown): Parsed<VideoDraft> {
+export function parseVideo(value: unknown, isNew = true): Parsed<VideoDraft> {
   const bad = { ok: false as const, error: null };
-  if (!isRecord(value) || value.source !== "youtube") return bad;
+  if (!isRecord(value) || (value.source !== "youtube" && value.source !== "file")) return bad;
   const title = typeof value.title === "string" || value.title === undefined ? (value.title ?? "").trim() : null;
   const productId = value.productId === undefined || value.productId === "" ? "" : typeof value.productId === "string" ? value.productId : null;
   const img = cover(value.cover);
   if (title === null || title.length > VIDEO_LIMITS.title || productId === null || img === null) return bad;
-  if (typeof value.showOnHome !== "boolean" || typeof value.active !== "boolean" || typeof value.youtubeId !== "string") return bad;
+  if (typeof value.showOnHome !== "boolean" || typeof value.active !== "boolean") return bad;
+  const common = {
+    ...(title && { title }),
+    ...(productId && { productId }),
+    ...(img && { cover: img }),
+    showOnHome: value.showOnHome,
+    active: value.active,
+  };
+  if (value.source === "file") {
+    const upload = value.upload === undefined || value.upload === "" ? "" : typeof value.upload === "string" ? value.upload : null;
+    if (upload === null || (upload && !isVideoOriginalKey(upload))) return bad;
+    if (isNew && !upload) return { ok: false, error: VIDEO_NO_FILE };
+    return { ok: true, value: { source: "file", ...common, ...(upload && { upload }) } };
+  }
+  if (typeof value.youtubeId !== "string") return bad;
   const youtubeId = youtubeIdFrom(value.youtubeId);
   if (!youtubeId) return { ok: false, error: VIDEO_BAD_LINK };
   return {
     ok: true,
-    value: {
-      source: "youtube",
-      youtubeId,
-      ...(title && { title }),
-      ...(productId && { productId }),
-      ...(img && { cover: img }),
-      showOnHome: value.showOnHome,
-      active: value.active,
-    },
+    value: { source: "youtube", youtubeId, ...common },
   };
 }
 
@@ -157,4 +173,47 @@ export function homeVideos(videos: SiteVideo[], products: Product[]): { video: S
   return videos
     .filter((v) => v.active && v.showOnHome && videoPlayable(v))
     .map((video) => ({ video, product: products.find((p) => p.active && p.id === video.productId) }));
+}
+
+/** Videonun kapagi: panelde secilen kapak, yoksa kendi videomuzun kapak karesi (YouTube'da bos: YouTube'un kapagi). */
+export const videoPoster = (video: Pick<SiteVideo, "cover" | "file">) => video.cover || video.file?.poster;
+
+/**
+ * Kendi videomuzun hazirlanmasi icin ffmpeg ayarlari (KARARLAR K-125).
+ * Kalite korunur: H.264, 1080p'de CRF 20, 720p'de CRF 23 (gozle fark
+ * edilmeyen sikistirma), en fazla 8 / 4 Mbit/sn; ses AAC 160 / 128 kbit/sn;
+ * kucuk video buyutulmez; "faststart" ile video indirilirken baslar.
+ * long: uzun kenar (piksel).
+ */
+export const VIDEO_PRESETS = {
+  hd: { long: 1920, crf: 20, maxrate: "8M", bufsize: "16M", audio: "160k" },
+  sd: { long: 1280, crf: 23, maxrate: "4M", bufsize: "8M", audio: "128k" },
+} as const;
+
+/**
+ * Bir surum icin ffmpeg argumanlari. hdr: kaynak HDR ise (iPhone HLG / PQ)
+ * renkler web'in SDR'sine donusturulur (yoksa soluk gorunur).
+ */
+export function videoEncodeArgs(input: string, output: string, preset: keyof typeof VIDEO_PRESETS, hdr: boolean): string[] {
+  const p = VIDEO_PRESETS[preset];
+  const scale = `scale=w='min(${p.long},iw)':h='min(${p.long},ih)':force_original_aspect_ratio=decrease:force_divisible_by=2`;
+  const tonemap = "zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,";
+  return [
+    "-y",
+    "-i", input,
+    "-map", "0:v:0",
+    "-map", "0:a:0?",
+    "-vf", `${hdr ? tonemap : ""}${scale},format=yuv420p`,
+    "-c:v", "libx264",
+    "-preset", "slow",
+    "-crf", String(p.crf),
+    "-maxrate", p.maxrate,
+    "-bufsize", p.bufsize,
+    "-profile:v", "high",
+    "-c:a", "aac",
+    "-b:a", p.audio,
+    "-ac", "2",
+    "-movflags", "+faststart",
+    output,
+  ];
 }

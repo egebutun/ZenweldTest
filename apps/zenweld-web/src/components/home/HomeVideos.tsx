@@ -3,11 +3,12 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
-import { homeVideos, youtubeEmbed } from "@zenweld/data";
+import { homeVideos, videoPoster, videoTitle } from "@zenweld/data";
 import { getHomeVideos, listVideos, useDatabase } from "@zenweld/store";
 import { ProductImage } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { VideoCover } from "./VideoCover";
+import { VideoPlayer } from "./VideoPlayer";
 
 /** Kartlar arasi bosluk (px). */
 const GAP = 16;
@@ -121,13 +122,7 @@ export function HomeVideos() {
                     style={{ height: center ? "var(--h)" : `calc(var(--h) * ${SIDE})` }}
                   >
                     {center && playing === slot ? (
-                      <iframe
-                        src={youtubeEmbed(video.youtubeId ?? "")}
-                        title={product?.name ?? `${n + 1}. video`}
-                        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                        allowFullScreen
-                        className="absolute inset-0 h-full w-full"
-                      />
+                      <VideoPlayer video={video} title={videoTitle(video, product)} className="absolute inset-0 h-full w-full" />
                     ) : (
                       <button
                         type="button"
@@ -136,7 +131,7 @@ export function HomeVideos() {
                         onClick={() => (center ? setPlaying(slot) : go(slot))}
                         className="group absolute inset-0 h-full w-full zw-focus"
                       >
-                        <VideoCover youtubeId={video.youtubeId ?? ""} cover={video.cover} className="h-full w-full object-cover" />
+                        <VideoCover youtubeId={video.youtubeId ?? ""} cover={videoPoster(video)} className="h-full w-full object-cover" />
                         <span className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
                         <span
                           className={`absolute flex items-center justify-center rounded-full bg-zw-red-600 text-white shadow-lg transition-transform group-hover:scale-105 ${

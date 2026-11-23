@@ -1,3 +1,7 @@
+import { execFileSync } from "node:child_process";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import type { Page } from "@playwright/test";
 import { tr } from "@zenweld/i18n";
 import { demoAccount, field } from "../e2e/yardimci";
@@ -56,6 +60,60 @@ test("video kaydedilir, işlem kaydına yazılır ve anasayfada görünür; örn
   await page.getByRole("button", { name: "Kaydet", exact: true }).click();
   await expect.poll(async () => (await sql<{ product_id: string | null }>("SELECT product_id FROM videos WHERE id = 'video-1'"))[0].product_id).toBeNull();
   await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
+});
+
+test("kendi videomuz: panelden yüklenir, sunucuda 1080p, 720p ve kapak hazırlanır; sitede parça parça oynar; silinir (K-125)", async ({ page, request }) => {
+  test.setTimeout(180_000);
+  // 3 saniyelik dik (1080x1920) sesli deneme videosu (iPhone MOV gibi).
+  const dir = mkdtempSync(join(tmpdir(), "zenweld-video-test-"));
+  const source = join(dir, "Deneme Cekim.mov");
+  execFileSync("ffmpeg", [
+    "-v", "error", "-f", "lavfi", "-i", "testsrc2=size=1080x1920:rate=30:duration=3", "-f", "lavfi", "-i", "sine=frequency=440:duration=3",
+    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", source,
+  ]);
+
+  await panelLogin(page);
+  await page.goto("/yonetim/videolar");
+  await page.getByRole("button", { name: "Yeni Video" }).click();
+  await page.getByLabel("Kendi videomuz (dosya yükle)").check();
+  await page.locator('input[type="file"][accept*="video"]').setInputFiles(source);
+  await expect(page.getByText(/^Yüklendi: Deneme Cekim\.mov/)).toBeVisible();
+  await field(page, "Başlık").fill("Kendi çekimimiz");
+  await page.getByRole("button", { name: "Kaydet", exact: true }).click();
+  const row = page.locator("tbody tr").filter({ hasText: "Kendi çekimimiz" });
+  await expect(row).toBeVisible();
+
+  // Sunucu hazirlar; ekran kendiliginden yenilenir.
+  await expect(row.getByText("Hazırlanıyor…")).toHaveCount(0, { timeout: 150_000 });
+  await expect(row).toContainText(/Kendi videomuz · 0:03 · 1080×1920/);
+  const [video] = await sql<{ file_status: string; file_hd: string; file_sd: string; file_poster: string; file_original: string | null }>(
+    "SELECT file_status, file_hd, file_sd, file_poster, file_original FROM videos WHERE title = 'Kendi çekimimiz'",
+  );
+  expect(video).toMatchObject({ file_status: "ready", file_original: null });
+  expect(video.file_hd).toMatch(/^\/dosya\/video\/\d{4}\/\d{2}\/[0-9a-f]{16}\/1080\.mp4$/);
+
+  // Parca parca sunma: 206 ve dogru aralik; orijinal sunulmaz.
+  const part = await request.get(video.file_hd, { headers: { range: "bytes=0-99" } });
+  expect(part.status()).toBe(206);
+  expect(part.headers()["content-range"]).toMatch(/^bytes 0-99\/\d+$/);
+  expect((await part.body()).length).toBe(100);
+  expect((await request.get(video.file_sd)).headers()["content-type"]).toBe("video/mp4");
+  expect((await request.get(video.file_poster)).status()).toBe(200);
+  expect((await request.get(video.file_hd.replace("1080.mp4", "orijinal.mov"))).status()).toBe(404);
+
+  // Sitede: kapak gorunur, Oynat'a basinca genis ekranda 1080p oynar.
+  await page.goto("/");
+  const videos = page.getByRole("region", { name: "Videolar" });
+  const n = (await sql<{ n: number }>("SELECT count(*)::int AS n FROM videos WHERE show_on_home AND active"))[0].n;
+  await videos.getByRole("button", { name: `${n}. videoyu göster` }).first().click();
+  await videos.getByRole("button", { name: `${n}. videoyu oynat` }).click();
+  await expect(videos.locator("video")).toHaveAttribute("src", video.file_hd);
+
+  // Temizlik
+  await page.goto("/yonetim/videolar");
+  page.once("dialog", (d) => void d.accept());
+  await page.getByRole("button", { name: `${n}. videoyu sil` }).click();
+  await expect(row).toHaveCount(0);
 });
 
 test("oturumsuz kayıt reddedilir", async ({ request }) => {

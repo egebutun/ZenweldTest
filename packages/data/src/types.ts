@@ -1354,7 +1354,10 @@ export interface HomeHeroSettings {
  */
 export type VideoSource = "youtube" | "file";
 
-/** Kendi videomuzun sunucuda hazirlanan dosyalari (adim 1b). */
+/**
+ * Kendi videomuzun sunucuda hazirlanan dosyalari (KARARLAR K-125). Orijinal
+ * dosya hazirlanana kadar dosya deposunda durur, sonra silinir.
+ */
 export interface VideoFile {
   /** Hazirlanma durumu */
   status: "processing" | "ready" | "failed";
@@ -1362,6 +1365,8 @@ export interface VideoFile {
   hd?: string;
   /** 720p surumun adresi (telefon) */
   sd?: string;
+  /** Videodan alinan kapak karesinin adresi */
+  poster?: string;
   /** Sure (saniye) */
   durationSeconds?: number;
   width?: number;

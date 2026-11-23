@@ -93,7 +93,8 @@ güncellenir (`.env.example`'a gerçek değer yazılmaz).
 | `REVALIDATE_SECRET` | Yönetici (gizli) | Siteyi beklemeden yenileme anahtarı. Tanımlıysa `/api/yenile` ucu açılır; `npm run site:yenile` aynı anahtarla siteyi o anda yeniler. Boşsa uç kapalıdır. Panel ve SAP stok okuma işi siteyi kendi içinden yeniler, bu anahtara ihtiyaç duymaz |
 | `CRON_SECRET` | Yönetici (gizli) | Zamanlanmış işlerin anahtarı. Tanımlıysa SAP stok okuma (`/api/sap/stok`), SAP sipariş aktarımı (`/api/sap/siparis`) ve posta kutusu okuma (`/api/posta/oku`) uçları açılır; zamanlayıcı, `npm run sap:stok`, `npm run sap:siparis` ve `npm run posta:oku` bu anahtarla çağırır. Boşsa uçlar kapalıdır |
 | `ODEME_SAGLAYICI` | Yönetici | Kartla ödemenin sağlayıcısı (K-108). Boşsa `temsili` (para çekilmez, sipariş ödenmiş sayılır; K-97). Ödeme kuruluşu bağlanınca onun adı yazılır (ör. `iyzico`); bilinmeyen ad yazılırsa sipariş alınmaz ve sunucu hata verir. Kuruluşun anahtarları ayrı değişkenlerde, yalnızca sunucuda durur |
-| `DOSYA_KLASORU` | Yönetici | Panelde yüklenen görsel ve belgelerin yazıldığı klasör (dosya deposu, K-108). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir; sunucunun yedeğine eklenmeli. Boşsa veritabanı modunda panelde dosya yüklenmez, adres girilir |
+| `FFMPEG_PATH`, `FFPROBE_PATH` | BT (isteğe bağlı) | Kendi videolarımızı hazırlayan aracın yolu (K-125); tanımlı değilse `ffmpeg` ve `ffprobe` komutları. Sunucuda ffmpeg yoksa panelde kendi videomuz yüklenemez |
+| `DOSYA_KLASORU` | Yönetici | Panelde yüklenen görsel, belge ve videoların yazıldığı klasör (dosya deposu, K-108). Göreli yol sitenin klasörüne (`apps/zenweld-web`) göredir; sunucunun yedeğine eklenmeli. Boşsa veritabanı modunda panelde dosya yüklenmez, adres girilir |
 | `SAP_STOK_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar depo stoğunun okunacağı deneme dosyası (CSV; örnek `packages/db/deneme/sap-stok.csv`). Göreli yol sitenin klasörüne göredir. Boşsa ve SAP bağlantısı da yoksa okuma işi çalışmaz |
 | `SAP_SIPARIS_DOSYASI` | Yönetici / geliştirici | SAP bağlanana kadar SAP'a aktarılan siparişlerin yazılacağı deneme dosyası (her satıra bir sipariş, JSON; K-108). Göreli yol sitenin klasörüne göredir. Boşsa ve SAP bağlantısı da yoksa aktarım işi çalışmaz, siparişler sırada bekler |
 | `NEXT_DIST_DIR` | Otomatik (test) | Derleme klasörü; boşsa `.next`. Yalnızca veritabanı modunun testleri (`npm run test:e2e:db`) `.next-db` kullanır, demo derlemesi bozulmaz |
@@ -266,6 +267,7 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `0016_servis-talebi-akisi.sql` | Servis talebi akışı (K-117): `service_requests.service_dealer_id` (talebin yetkili servisi, → `dealers`), `user_id` dizini (Hesabım › Servis Taleplerim); durumlar `new` / `assigned` / `done` (eski `in_progress` kayıtları `assigned` olur) |
 | `0017_anasayfa-videolari.sql` | `settings.key` `home_videos` değerini de kabul eder (anasayfa video bölümü, K-125) |
 | `0018_video-kutuphanesi.sql` | `videos`: video kütüphanesi (K-125). `settings` › `home_videos` satırındaki eski video listesi tabloya taşınır; satırda yalnızca bölüm başlığı kalır |
+| `0019_video-dosyalari.sql` | `videos.file_original` (hazırlanacak orijinal) ve `videos.file_poster` (kapak karesi; K-125) |
 
 **Veritabanındaki kurallar** (`0001_kurallar.sql`):
 
@@ -1354,7 +1356,8 @@ eşleşme kuralları: [STOK.md](STOK.md).
   (`apps/zenweld-web/src/app/api/yonetim/icerik/[islem]/route.ts`):
   `haber`, `haber-yayin`, `haber-sil`, `etkinlik`, `etkinlik-yayin`,
   `etkinlik-sil`, `blog`, `blog-yayin`, `blog-sil`, `sss`, `sss-sil`,
-  `sss-sira`, `hakkimizda`, `video`, `video-sil`, `video-sira` (video
+  `sss-sira`, `hakkimizda`, `video`, `video-sil`, `video-sira`,
+  `video-yeniden`, `video-isleyici` (video
   kütüphanesi, K-125; kurallar `packages/data/src/video-rules.ts`, aynı
   YouTube videosu, yüklenen kapak ve katalogda olmayan ürün kaydedilmez).
   `audit_log`: `news`, `events`, `blog_posts`, `faqs`, `videos`,
@@ -1717,7 +1720,9 @@ stokları).
 ve belgeler veritabanına değil dosya deposuna yazılır. Kurallar (türler,
 boyut, adres): [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar).
 
-- **Depo parçası:** `FileStorage` (`put`, `get`, `size`). Hangisinin
+- **Depo parçası:** `FileStorage` (`put`, `get`, `size`; büyük dosyalar
+  için akışla `write` ve `read`, video hazırlamada `toLocal`, `fromLocal`,
+  `remove`). Hangisinin
   kullanılacağını sunucunun ayarı seçer (`fileStorageFromEnv`); bugün tek
   depo sunucunun diskidir (`diskStorage`, `DOSYA_KLASORU`). Dosya önce
   geçici adla yazılıp yerine konur (yarım dosya sunulmaz). Anahtar biçimi
@@ -1732,9 +1737,20 @@ boyut, adres): [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar).
   içeriğinden bulunur; kabul edilmeyen tür 400, büyük dosya 413. Yükleme
   `audit_log`'a (`files`) yazılır; yanıt `{ ok, address, fileName, size }`.
   Adres kayda panelin kendi kaydetme isteğinde yazılır.
-- **Sunma:** `GET /dosya/<anahtar>` (`apps/zenweld-web/src/app/dosya/[...yol]/route.ts`):
-  depodaki dosya türüyle gönderilir; bir yıl önbellekte tutulabilir
-  (`immutable`). Geçersiz anahtar, ayarsız depo ya da olmayan dosya 404.
+- **Video yükleme:** `POST /api/yonetim/video-yukle`
+  (`apps/zenweld-web/src/app/api/yonetim/video-yukle/route.ts`; K-125):
+  gövde videonun kendisi, `X-Dosya-Adi` dosyanın adı. Video belleğe
+  alınmadan depoya yazılır (en fazla 1 GB, aşılırsa silinir, 413); tür ilk
+  baytlardan bulunur (MP4, MOV, M4V, WebM, MKV; başka tür silinir, 400).
+  Depo ya da ffmpeg yoksa 503. Yanıt `{ ok, upload, size }`; `upload`
+  videonun kaydında gönderilir ([Video hazırlama](#video-hazırlama)).
+- **Sunma:** `GET` ve `HEAD /dosya/<anahtar>`
+  (`apps/zenweld-web/src/app/dosya/[...yol]/route.ts`): depodaki dosya
+  akışla, türüyle gönderilir; bir yıl önbellekte tutulabilir
+  (`immutable`). Parça parça istek (Range) 206 ile yalnızca o bölümü
+  gönderir (iPhone ve Safari videoyu böyle oynatır); dosyanın dışını
+  isteyen aralık 416. Geçersiz anahtar, ayarsız depo, olmayan dosya ve
+  videonun orijinali 404.
 - **Panel:** Panel kabuğu depo ayarlıysa yüklemeyi açar
   (`components/admin/PanelFeatures.tsx`); görsel tarayıcıda küçültülüp
   yüklenir (`lib/admin-files.ts`).
@@ -1747,7 +1763,38 @@ boyut, adres): [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar).
 - Test: `tests/unit/yuklenen-dosyalar.test.ts` (türler, boyut, adres,
   disk deposu), `tests/db/panel-sayfalar.test.ts` (belgenin depodaki
   boyutu), `tests/e2e-db/dosya-yukleme.spec.ts` (uç, sunma),
-  `panel-katalog.spec.ts` (ürün görseli), `panel-sayfalar.spec.ts` (belge).
+  `panel-katalog.spec.ts` (ürün görseli), `panel-sayfalar.spec.ts` (belge),
+  `panel-videolar.spec.ts` (video yükleme, hazırlama, parça parça sunma).
+
+### Video hazırlama
+
+KARARLAR K-125. Kendi videolarımızın orijinali sunucuda web için hazırlanır
+(`apps/zenweld-web/src/lib/server/video-worker.ts`; ayarlar
+`packages/data/src/video-rules.ts` › `VIDEO_PRESETS`, `videoEncodeArgs`;
+kurallar [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)).
+
+- **Araç:** ffmpeg ve ffprobe (`FFMPEG_PATH`, `FFPROBE_PATH`; tanımlı
+  değilse komut adları). libx264 ve AAC gerekir; HDR dönüşümü için
+  `zscale` ve `tonemap` süzgeçleri, kapak için libwebp (yoksa JPG).
+  Ubuntu'daki `ffmpeg` paketinde hepsi var. Araç yoksa panelde kendi
+  videomuz seçeneği kapalıdır.
+- **Sıra:** `videos` tablosundaki `processing` satırları
+  (`packages/db/src/video-jobs.ts` › `nextVideoJob`, `finishVideoJob`).
+  İşleyici aynı anda bir video hazırlar; panelin istek ucundan başlatılır:
+  video kaydedilince (`icerik/video`), **Yeniden hazırla** ile
+  (`icerik/video-yeniden`) ve Videolar ekranı açılınca sırada video varsa
+  (`icerik/video-isleyici`; sunucu yeniden başladıysa yarım kalanlar).
+- **Adımlar:** orijinal depodan geçici klasöre kopyalanır, 1080p ve 720p
+  sürüm ve kapak karesi hazırlanır, depoya yazılır, satır `ready` olur ve
+  orijinal silinir; site yenilenir. Hata ya da 2 saati aşan iş: `failed`.
+  Satır bu arada değiştiyse (yeni dosya, silme) sonuç yazılmaz.
+- **Kaynak ihtiyacı:** Hazırlama işlemciyi yoğun kullanır (1 dakikalık 4K
+  video birkaç dakika sürebilir; site çalışmaya devam eder). Geçici klasöre
+  (`/tmp`) en büyük videonun birkaç katı boş alan gerekir. Depoda her video
+  için yalnızca 1080p ve 720p sürüm ve kapak kalır (dakikası yaklaşık
+  60–90 MB).
+- **Birden fazla sunucu** çalışırsa aynı video iki sunucuda birden
+  hazırlanabilir (sonuç aynıdır); o zaman iş tek sunucuya verilmeli.
 
 ---
 

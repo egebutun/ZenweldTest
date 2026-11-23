@@ -1,17 +1,20 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { PoolClient } from "pg";
-import { defaultSettings, VIDEO_BAD_LINK, VIDEO_TWICE } from "@zenweld/data";
+import { defaultSettings, VIDEO_BAD_LINK, VIDEO_NO_FILE, VIDEO_NO_ORIGINAL, VIDEO_TWICE } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import {
   adminDeleteVideo,
   adminMoveVideo,
+  adminRetryVideo,
   adminSaveHomeVideos,
   adminSaveVideo,
   readContent,
   readContentPanel,
   readSettings,
   readVideosPanel,
+  finishVideoJob,
+  nextVideoJob,
   type Actor,
 } from "../../packages/db/src";
 import * as schema from "../../packages/db/src/schema";
@@ -129,6 +132,73 @@ describe("Video kütüphanesi", () => {
       });
       expect(await adminSaveVideo(db, admin, form({ youtubeId: "QtZ7JdNzFVo", source: "file" }), T1)).toMatchObject({ ok: false, status: 400 });
       expect((await client.query("SELECT count(*)::int AS n FROM videos")).rows[0].n).toBe(1);
+    });
+  });
+});
+
+describe("Kendi videolarımız: hazırlanma sırası", () => {
+  const original = "video/2026/03/0123456789abcdef/orijinal.mov";
+  const second = "video/2026/03/fedcba9876543210/orijinal.mp4";
+  const done = {
+    ok: true as const,
+    hd: "/dosya/video/2026/03/0123456789abcdef/1080.mp4",
+    sd: "/dosya/video/2026/03/0123456789abcdef/720.mp4",
+    poster: "/dosya/video/2026/03/0123456789abcdef/kapak.webp",
+    durationSeconds: 42,
+    width: 1080,
+    height: 1920,
+  };
+
+  it("yeni video dosyasıyla siraya girer; hazırlanınca hazır ve orijinal kalkar; sitede dosyaları okunur", async () => {
+    await clean(async (db) => {
+      expect(await adminSaveVideo(db, admin, form({ source: "file", youtubeId: undefined }), T1)).toEqual({ ok: false, status: 400, error: VIDEO_NO_FILE });
+      const saved = (await adminSaveVideo(db, admin, form({ source: "file", upload: original, title: "Sahada" }), T1)) as { id: string };
+      expect((await readContent(db)).videos[0]).toMatchObject({ source: "file", title: "Sahada", file: { status: "processing" } });
+      const job = await nextVideoJob(db);
+      expect(job).toEqual({ id: saved.id, original });
+
+      expect(await finishVideoJob(db, job!, done, T2)).toBe(true);
+      expect(await nextVideoJob(db)).toBeNull();
+      expect((await readContent(db)).videos[0].file).toEqual({
+        status: "ready",
+        hd: done.hd,
+        sd: done.sd,
+        poster: done.poster,
+        durationSeconds: 42,
+        width: 1080,
+        height: 1920,
+      });
+      // Hazir videoda orijinal yok: yeniden hazirlanamaz.
+      expect(await adminRetryVideo(db, admin, { id: saved.id, updatedAt: T2.toISOString() }, T2)).toMatchObject({ ok: false, status: 400 });
+    });
+  });
+
+  it("hazırlanamayan video yeniden sıraya girer; bu arada yeni dosya yüklendiyse eski sonuç yazılmaz", async () => {
+    await clean(async (db) => {
+      const saved = (await adminSaveVideo(db, admin, form({ source: "file", upload: original }), T1)) as { id: string };
+      const job = (await nextVideoJob(db))!;
+      expect(await finishVideoJob(db, job, { ok: false }, T1)).toBe(true);
+      expect((await readContent(db)).videos[0].file?.status).toBe("failed");
+      expect(await adminRetryVideo(db, admin, { id: saved.id, updatedAt: T1.toISOString() }, T2)).toEqual({ ok: true, updatedAt: T2.toISOString() });
+      expect(await nextVideoJob(db)).toEqual(job);
+
+      // Hazirlanirken yeni dosya yuklendi: eski isin sonucu yazilmaz, yenisi siradadir.
+      expect(await adminSaveVideo(db, admin, { ...form({ source: "file", upload: second }), id: saved.id, updatedAt: T2.toISOString() }, T2)).toMatchObject({ ok: true });
+      expect(await finishVideoJob(db, job, done, T2)).toBe(false);
+      expect(await nextVideoJob(db)).toEqual({ id: saved.id, original: second });
+    });
+  });
+
+  it("orijinali olmayan video yeniden hazırlanamaz; YouTube videosu kendi videomuza çevrilemez", async () => {
+    await clean(async (db, client) => {
+      const saved = (await adminSaveVideo(db, admin, form({ source: "file", upload: original }), T1)) as { id: string };
+      await client.query("UPDATE videos SET file_status = 'failed', file_original = NULL WHERE id = $1", [saved.id]);
+      expect(await adminRetryVideo(db, admin, { id: saved.id, updatedAt: T1.toISOString() }, T2)).toEqual({ ok: false, status: 400, error: VIDEO_NO_ORIGINAL });
+      const yt = (await adminSaveVideo(db, admin, form(), T1)) as { id: string };
+      expect(await adminSaveVideo(db, admin, { ...form({ source: "file", upload: second }), id: yt.id, updatedAt: T1.toISOString() }, T2)).toMatchObject({
+        ok: false,
+        status: 400,
+      });
     });
   });
 });

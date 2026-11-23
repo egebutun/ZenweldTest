@@ -2493,12 +2493,30 @@ anasayfada görünür. Sitede bu sırayla çıkar."
   "Gerçek İşler, Gerçek Kaynak") ve yanında **Başlığı Kaydet**: "Bölüm
   başlığı kaydedildi." / "Bölüm başlığı yazılmalı."
 - **Liste** (sitedeki sırayla): Sıra (**yukarı taşı** / **aşağı taşı**),
-  Video (dik küçük kapak, başlık ya da yoksa ürünün adı, "YouTube · <video
-  kimliği>"), Ürün, Durum ("Yayında" / "Kapalı", "Anasayfada"), **Düzenle**
-  ve **Sil** ("Bu video silinsin mi?"). Liste boşsa "Henüz video yok;
+  Video (dik küçük kapak, başlık ya da yoksa ürünün adı; altında "YouTube ·
+  <video kimliği>" ya da "Kendi videomuz · <süre> · <genişlik×yükseklik>"),
+  Ürün, Durum ("Yayında" / "Kapalı", "Anasayfada"; kendi videomuzda
+  "Hazırlanıyor…" ya da "Hazırlanamadı"), **Yeniden hazırla** (yalnızca
+  hazırlanmamış kendi videomuzda), **Düzenle** ve **Sil** ("Bu video
+  silinsin mi?"). Hazırlanan video varken liste 5 saniyede bir kendiliğinden
+  yenilenir. Liste boşsa "Henüz video yok;
   anasayfada video bölümü görünmez."
 - **Yeni Video** / **Düzenle** penceresi:
-  - **YouTube linki** (zorunlu): Shorts ya da normal video linki
+  - **Kaynak** (yalnızca yeni videoda): **YouTube videosu** ya da **Kendi
+    videomuz (dosya yükle)**. Kendi videomuz yalnızca veritabanı modunda,
+    dosya deposu ve sunucuda ffmpeg varken seçilir; değilse seçenek
+    kapalıdır ve altında nedeni yazar ("Kendi videolarımız yalnızca canlı
+    sunucuda (veritabanı modu) yüklenir." / "Dosya deposu ayarlı değil;
+    kendi videolarımız yüklenemez." / "Sunucuda video hazırlama aracı
+    (ffmpeg) kurulu değil; kendi videolarımız yüklenemez.").
+  - **Video dosyası** (kendi videomuz; yeni videoda zorunlu): MP4, MOV,
+    M4V, WebM ya da MKV, en fazla 1 GB; orijinal dosya yüklenir. Dosya
+    seçilince hemen yüklenir: ilerleme çubuğu ve "Yükleniyor… %<n>
+    (<boyut>)", bitince "Yüklendi: <ad> (<boyut>). Kaydedince hazırlanır."
+    Yükleme bitmeden **Kaydet** basılamaz. Düzenlemede yeni dosya
+    seçilmezse video aynı kalır ("Şu anki video: …"); seçilirse yeniden
+    hazırlanır.
+  - **YouTube linki** (YouTube videosunda zorunlu): Shorts ya da normal video linki
     (`youtube.com/shorts/…`, `youtube.com/watch?v=…`, `youtu.be/…`).
     Kaydedince linkten video kimliği alınır; ekran linki Shorts biçiminde
     gösterir.
@@ -2510,17 +2528,25 @@ anasayfada görünür. Sitede bu sırayla çıkar."
     değilse görünmez.
   - **Kapak görseli** (isteğe bağlı): URL ya da dosya yükleme (dosya
     deposu ayarlı değilse yalnızca URL); solda önizleme. Boşsa YouTube'un
-    en yüksek çözünürlüklü kapak resmi kullanılır; keskinliği videonun
-    yüklendiği çözünürlüğe bağlıdır. En keskin sonuç için dik (9:16), en az
+    en yüksek çözünürlüklü kapak resmi (keskinliği videonun YouTube'a
+    yüklendiği çözünürlüğe bağlı) ya da kendi videomuzun 1. saniyesinden
+    alınan kare kullanılır. En keskin sonuç için dik (9:16), en az
     1080×1920 görsel önerilir.
   - **Anasayfada göster** ve **Yayında** (ikisi de yeni videoda işaretli).
   - **Kaydet** / **Vazgeç**.
 - Hatalar (kaydedilmez): "YouTube linki okunamadı. Videonun adresini (ör.
   https://www.youtube.com/shorts/…) yapıştırın." / "Bu YouTube videosu
-  kütüphanede zaten var."
-- Bugün yalnızca YouTube videosu eklenir. Kendi videolarımızın yüklenmesi
-  (en fazla 1 GB, sunucuda otomatik hazırlanır) sıradaki adımda
-  ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Video kütüphanesi).
+  kütüphanede zaten var." / "Video dosyası seçilmeli." / "Dosya çok büyük;
+  en fazla 1 GB." / "Bu dosya türü yüklenemez. Yüklenebilenler: MP4, MOV,
+  M4V, WebM ya da MKV."
+- **Kendi videomuzun hazırlanması:** Kaydedince sunucu videoyu web için
+  hazırlar (1080p ve 720p sürüm, kapak karesi; görüntü kalitesi korunur,
+  iPhone HDR renkleri dönüştürülür); süresi videonun uzunluğuna göre
+  birkaç saniyeden birkaç dakikaya kadar. Hazırlanırken video sitede
+  görünmez. Hazırlanınca orijinal dosya silinir. "Hazırlanamadı" olursa
+  **Yeniden hazırla**; orijinal yoksa "Videonun orijinal dosyası
+  bulunamadı; dosyayı yeniden yükleyin." (Kurallar:
+  [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar).)
 - Veritabanı modunda video kaydı İşlem Kaydı'na "Video" (başlık ya da
   video kimliğiyle), bölüm başlığı "Anasayfa video bölümü" olarak girer ve
   anasayfa hemen yenilenir; ekran açıldıktan sonra başka bir yönetici

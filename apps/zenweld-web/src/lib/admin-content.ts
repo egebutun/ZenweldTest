@@ -125,6 +125,10 @@ export function useContentActions() {
       deleteVideo(video.id);
       return localAnswer();
     },
+    /** Siradaki videolarin hazirlanmasini baslatir (yalnizca veritabani modu; sunucu yeniden baslayinca yarim kalanlar). */
+    resumeVideos: (): Promise<PanelAnswer> => call("video-isleyici", {}),
+    /** Hazirlanamayan kendi videomuzu yeniden siraya koyar (yalnizca veritabani modu). */
+    retryVideo: (video: SiteVideo): Promise<PanelAnswer> => call("video-yeniden", recordRef("videos", video), "videos"),
     moveVideo: (video: SiteVideo, direction: -1 | 1): Promise<PanelAnswer> => {
       if (server) return call("video-sira", { id: video.id, direction });
       moveVideo(video.id, direction);

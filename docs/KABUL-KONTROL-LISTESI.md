@@ -1305,6 +1305,16 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       kaydedilir. Veritabanı modunda İşlem Kaydı'na "Video" ve "Anasayfa
       video bölümü" olarak girer (iki modda; `tests/e2e/videolar.spec.ts`,
       `tests/e2e-db/panel-videolar.spec.ts`).
+- [ ] Kendi videomuz (veritabanı modu, dosya deposu ve ffmpeg varken): Yeni
+      Video › Kendi videomuz ile iPhone'dan bir MOV seçilince ilerleme
+      çubuğuyla yüklenir; kaydedince "Hazırlanıyor…", birkaç saniye ya da
+      dakika sonra liste kendiliğinden yenilenir ve "Kendi videomuz · süre ·
+      1080×1920" yazar. Anasayfada kapak karesi görünür; Oynat'a basınca
+      bilgisayarda 1080p, telefonda 720p oynar; iPhone Safari'de oynar ve
+      ileri sarılır. Görüntü keskin, iPhone HDR çekiminin renkleri soluk
+      değildir. 1 GB'tan büyük dosya ve video olmayan dosya yüklenmez.
+      Demo modunda seçenek kapalıdır ve nedeni yazar
+      (`tests/e2e-db/panel-videolar.spec.ts`).
 - [ ] Görünüm: punto ve renk değişikliği haber, etkinlik, blog, Hakkımızda,
       yasal metin ve kategori/grup tanıtım metinlerine yansır; Varsayılana Dön + Ayarları Kaydet başlangıç
       değerlerine döndürür.

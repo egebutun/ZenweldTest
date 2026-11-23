@@ -1109,7 +1109,8 @@ yayında işaretliyse hemen görünür (zamanlanmış yayın yoktur, K-42).
 
 ### `videos` — video kütüphanesi
 
-KARARLAR K-125; geçiş betiği `0018_video-kutuphanesi`. Her video bir kez
+KARARLAR K-125; geçiş betikleri `0018_video-kutuphanesi`,
+`0019_video-dosyalari` (`file_original`, `file_poster`). Her video bir kez
 eklenir: bağlı ürünün sayfasında, `show_on_home` ise anasayfada görünür.
 Kurallar: `packages/data/src/video-rules.ts`
 ([IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)).
@@ -1117,7 +1118,7 @@ Kurallar: `packages/data/src/video-rules.ts`
 | Kolon | Tür | Kural | Açıklama |
 |---|---|---|---|
 | `id` | text | anahtar | |
-| `source` | text | zorunlu; `youtube`, `file` | YouTube videosu ya da kendi videomuz (`file`, adım 1b) |
+| `source` | text | zorunlu; `youtube`, `file` | YouTube videosu ya da kendi videomuz (`file`) |
 | `youtube_id` | text | tekil; `youtube` ise zorunlu, `file` ise boş | YouTube video kimliği (11 karakter; link değil) |
 | `title` | text | | Videonun başlığı; boşsa ürünün adı kullanılır |
 | `product_id` | text | → `products`, silinince boşalır | Video bu ürünün sayfasında görünür; altındaki ad ürün sayfasına gider |
@@ -1125,9 +1126,10 @@ Kurallar: `packages/data/src/video-rules.ts`
 | `show_on_home` | bool | zorunlu (varsayılan evet) | Anasayfadaki video şeridinde görünür |
 | `active` | bool | zorunlu (varsayılan evet) | Yayında |
 | `position` | int | zorunlu | Sitedeki sıra; sıra değişikliği `updated_at`'i değiştirmez |
-| `file_status` | text | `processing`, `ready`, `failed`; `file` ise zorunlu, `youtube` ise boş | Kendi videomuzun hazırlanma durumu (adım 1b) |
-| `file_hd`, `file_sd` | text | | Kendi videomuzun 1080p ve 720p sürümlerinin dosya deposundaki adresi (adım 1b) |
-| `duration_seconds`, `width`, `height` | int, smallint | | Kendi videomuzun süresi ve boyutu (adım 1b) |
+| `file_status` | text | `processing`, `ready`, `failed`; `file` ise zorunlu, `youtube` ise boş | Kendi videomuzun hazırlanma durumu; `processing` satırları sunucunun hazırlama sırasıdır |
+| `file_original` | text | | Yüklenen orijinalin depo anahtarı (`video/…/orijinal.<tür>`); hazırlanınca silinir (boş) |
+| `file_hd`, `file_sd`, `file_poster` | text | | Hazırlanan 1080p, 720p sürümün ve kapak karesinin adresi (`/dosya/video/…`) |
+| `duration_seconds`, `width`, `height` | int, smallint | | Kendi videomuzun süresi ve 1080p sürümün boyutu |
 | `created_at`, `updated_at` | timestamptz | zorunlu | `created_at` videonun siteye eklendiği an |
 
 ### `sales_reps` — satış temsilcileri

@@ -1,4 +1,7 @@
-import { mkdir, readFile, rename, stat, writeFile } from "node:fs/promises";
+import { createReadStream, createWriteStream } from "node:fs";
+import { copyFile, mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
+import { Readable, Transform } from "node:stream";
+import { pipeline } from "node:stream/promises";
 import { randomBytes } from "node:crypto";
 import { dirname, resolve, sep } from "node:path";
 import { isUploadKey } from "@zenweld/data";
@@ -27,6 +30,29 @@ export interface FileStorage {
   get(key: string): Promise<Uint8Array | null>;
   /** Boyut (bayt); dosya yoksa null. */
   size(key: string): Promise<number | null>;
+  /**
+   * Buyuk dosyayi (video) bellege almadan yazar; maxBytes asilirsa yazilan
+   * kisim silinir ve FileTooLargeError atilir. Yazilan bayt sayisini dondurur.
+   */
+  write(key: string, source: ReadableStream<Uint8Array>, maxBytes: number): Promise<number>;
+  /**
+   * Dosyayi (ya da bir bolumunu: start ve end dahil) akis olarak okur;
+   * size butun dosyanin boyutudur. Dosya yoksa null.
+   */
+  read(key: string, range?: { start: number; end: number }): Promise<{ stream: ReadableStream<Uint8Array>; size: number } | null>;
+  /** Depodaki dosyayi sunucudaki gecici bir yola kopyalar (video hazirlama). */
+  toLocal(key: string, path: string): Promise<void>;
+  /** Sunucudaki gecici dosyayi depoya yazar. */
+  fromLocal(key: string, path: string): Promise<void>;
+  /** Siler; yoksa bir sey yapmaz. */
+  remove(key: string): Promise<void>;
+}
+
+/** Yazilan dosya sinirdan buyuk. */
+export class FileTooLargeError extends Error {
+  constructor() {
+    super("Dosya çok büyük.");
+  }
 }
 
 const missing = (error: unknown) => (error as NodeJS.ErrnoException).code === "ENOENT";
@@ -65,6 +91,50 @@ export function diskStorage(root: string): FileStorage {
         if (missing(error)) return null;
         throw error;
       }
+    },
+    write: async (key, source, maxBytes) => {
+      const full = path(key);
+      await mkdir(dirname(full), { recursive: true });
+      const temp = `${full}.${randomBytes(4).toString("hex")}.yukleniyor`;
+      let total = 0;
+      const limit = new Transform({
+        transform(chunk: Buffer, _encoding, done) {
+          total += chunk.length;
+          done(total > maxBytes ? new FileTooLargeError() : null, chunk);
+        },
+      });
+      try {
+        await pipeline(Readable.fromWeb(source as import("node:stream/web").ReadableStream<Uint8Array>), limit, createWriteStream(temp, { flags: "wx" }));
+      } catch (error) {
+        await rm(temp, { force: true });
+        throw error;
+      }
+      await rename(temp, full);
+      return total;
+    },
+    read: async (key, range) => {
+      let size: number;
+      try {
+        size = (await stat(path(key))).size;
+      } catch (error) {
+        if (missing(error)) return null;
+        throw error;
+      }
+      const stream = createReadStream(path(key), range ? { start: range.start, end: range.end } : undefined);
+      return { stream: Readable.toWeb(stream) as unknown as ReadableStream<Uint8Array>, size };
+    },
+    toLocal: async (key, target) => {
+      await copyFile(path(key), target);
+    },
+    fromLocal: async (key, source) => {
+      const full = path(key);
+      await mkdir(dirname(full), { recursive: true });
+      const temp = `${full}.${randomBytes(4).toString("hex")}.yukleniyor`;
+      await copyFile(source, temp);
+      await rename(temp, full);
+    },
+    remove: async (key) => {
+      await rm(path(key), { force: true });
     },
   };
 }

@@ -626,6 +626,7 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
     fileStatus: v.file?.status ?? null,
     fileHd: v.file?.hd ?? null,
     fileSd: v.file?.sd ?? null,
+    filePoster: v.file?.poster ?? null,
     durationSeconds: v.file?.durationSeconds ?? null,
     width: v.file?.width ?? null,
     height: v.file?.height ?? null,

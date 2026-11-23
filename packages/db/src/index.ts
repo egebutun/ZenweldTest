@@ -3,6 +3,7 @@ export * from "./read";
 export * from "./sap-stock";
 export * from "./sap-orders";
 export * from "./file-storage";
+export * from "./video-jobs";
 export * from "./admin-members";
 export * from "./admin-logs";
 export * from "./panel-lists";

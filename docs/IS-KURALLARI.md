@@ -1621,9 +1621,9 @@ Kod: `packages/db/src/panel.ts` (ortak kurallar), `admin-sales.ts`,
 
 ## 23. Yüklenen dosyalar
 
-**Kısaca:** Veritabanı modunda dosya deposu ayarlıysa görsel (en fazla 5 MB)
-ve belge (en fazla 25 MB) depoya yüklenir; tür dosyanın içeriğinden bulunur,
-SVG ve HTML yüklenmez.
+**Kısaca:** Veritabanı modunda dosya deposu ayarlıysa görsel (en fazla 5 MB),
+belge (en fazla 25 MB) ve kendi videomuzun orijinali (en fazla 1 GB) depoya
+yüklenir; tür dosyanın içeriğinden bulunur, SVG ve HTML yüklenmez.
 
 Veritabanı modunda panelde yüklenen görsel ve belgeler sunucunun **dosya
 deposuna** yazılır (KARARLAR K-108). Depo bugün sunucunun diskidir
@@ -1640,8 +1640,12 @@ tutulur; bu kurallar uygulanmaz.
   |---|---|---|
   | Görsel | JPG, PNG, WebP, GIF, AVIF | 5 MB |
   | Belge | PDF, Word (doc, docx), Excel (xls, xlsx), JPG, PNG, ZIP | 25 MB |
+  | Video (orijinal) | MP4, MOV (iPhone), M4V, WebM, MKV | 1 GB |
 
   Görsel önce tarayıcıda küçültülür (demo modundaki gibi), sonra yüklenir.
+  Video olduğu gibi yüklenir; sunucu web için hazırlar
+  ([27](#27-videolar)). Video sunucuda belleğe alınmadan doğrudan depoya
+  yazılır; sınır aşılırsa yazılan kısım silinir.
 - **Tür dosyanın içeriğinden bulunur:** Dosyanın adı ya da tarayıcının
   bildirdiği tür yetmez. İçeriği kabul edilen türlerden biri olmayan
   dosya yüklenmez: "Bu dosya türü yüklenemez. Yüklenebilenler: …" SVG ve
@@ -1652,7 +1656,7 @@ tutulur; bu kurallar uygulanmaz.
     tür, değilse ZIP sayılır. Eski Word/Excel (`.doc`/`.xls`) yalnızca adı
     öyleyse kabul edilir.
 - Boş dosya: "Dosya boş." Sınırı aşan: "Dosya çok büyük; en fazla 5 MB."
-  (belgede 25 MB).
+  (belgede 25 MB, videoda "en fazla 1 GB").
 - **Adres:** Dosya `/dosya/…` adresinden sunulur; her yükleme yeni bir
   adres alır (eski dosyanın üzerine yazılmaz).
   - Görsel: `/dosya/gorsel/<yıl>/<ay>/<16 hane>.<tür>`.
@@ -1661,8 +1665,15 @@ tutulur; bu kurallar uygulanmaz.
     uzantı gerçek tür).
   - **Örnek:** "MSDS ER70S-6 (2026).PDF" →
     `/dosya/belge/2026/11/0123456789abcdef/MSDS-ER70S-6-2026.pdf`.
-- **Sunma:** Görsel, PDF, JPG ve PNG tarayıcıda açılır; Word, Excel ve ZIP
-  indirilir. Adres değişmediği için tarayıcı dosyayı bir yıl saklayabilir.
+  - Video: orijinal `video/<yıl>/<ay>/<16 hane>/orijinal.<tür>` (sitede
+    sunulmaz); hazırlanan dosyalar aynı klasörde: `1080.mp4`, `720.mp4`,
+    `kapak.webp` (ffmpeg'de WebP yoksa `kapak.jpg`).
+- **Sunma:** Görsel, PDF, JPG, PNG ve video (MP4) tarayıcıda açılır; Word,
+  Excel ve ZIP indirilir. Adres değişmediği için tarayıcı dosyayı bir yıl
+  saklayabilir. Dosya parça parça istenebilir (HTTP Range: "şu bayttan şu
+  bayta"; yanıt 206); video bu sayede iPhone'da ve Safari'de oynar, ileri
+  sarınca yalnızca o noktadan sonrası iner. Dosyanın dışını isteyen
+  aralık 416 döner.
   Depoda olmayan ya da biçimi geçersiz adres "bulunamadı" (404) döner;
   depo klasörünün dışındaki bir dosya okunamaz.
 - **Belge kaydı:** Belgenin dosyası depoya yüklenen dosyaysa sunucu
@@ -1673,7 +1684,8 @@ tutulur; bu kurallar uygulanmaz.
 
 Kod: `packages/data/src/file-rules.ts` (türler, boyut, adres),
 `packages/db/src/file-storage.ts` (depo), yükleme ucu
-`apps/zenweld-web/src/app/api/yonetim/dosya/route.ts`, sunma
+`apps/zenweld-web/src/app/api/yonetim/dosya/route.ts` (video:
+`api/yonetim/video-yukle/route.ts`), sunma
 `apps/zenweld-web/src/app/dosya/[...yol]/route.ts`, panel
 `apps/zenweld-web/src/lib/admin-files.ts`.
 
@@ -1832,18 +1844,43 @@ tarayıcıdan geleni yeniden denetler).
 | Alan | Kural |
 |---|---|
 | Anasayfa bölüm başlığı | Zorunlu, en fazla 60 karakter; kırpılır |
-| Kaynak | Bugün YouTube; kendi videomuz (dosya) sıradaki adımda |
+| Kaynak | YouTube linki ya da kendi videomuz (dosya). Kaynak sonradan değişmez |
 | YouTube linki | Zorunlu. `youtube.com/shorts/<kimlik>`, `youtube.com/watch?v=<kimlik>`, `youtu.be/<kimlik>`, `youtube.com/embed/<kimlik>` ya da yalnızca 11 karakterlik kimlik; `www.` ve `m.` kabul edilir. Yalnızca kimlik saklanır |
 | Aynı video | Kütüphanede iki kez olamaz (aynı kimlik) |
 | Başlık | İsteğe bağlı, en fazla 100 karakter, kırpılır; boşsa ürünün adı, ürün de yoksa "Zenweld videosu" |
 | Ürün | İsteğe bağlı; katalogdaki bir ürün olmalı (veritabanı modunda sunucu denetler). Ürün silinirse video kalır, bağı boşalır |
 | Kapak görseli | İsteğe bağlı; site içi adres (`/…`), `https://…` ya da yüklenen dosya. Boşsa YouTube'un kapak resmi (aşağıda) |
+| Video dosyası (kendi videomuz) | Yeni videoda zorunlu ("Video dosyası seçilmeli."); düzenlemede yeni dosya seçilirse video yeniden hazırlanır. Türler ve 1 GB sınırı: [23](#23-yüklenen-dosyalar) |
 | Anasayfada göster, Yayında | Yeni videoda ikisi de işaretli |
 
 - **Anasayfada görünen:** Yayında, "Anasayfada göster" işaretli ve
   oynatılabilir videolar (YouTube videosu; kendi videomuz hazırlanması
-  bitince). Seçilen ürün yayında değilse ya da silinmişse video ürünsüz
+  bitince; hazırlanırken ya da hazırlanamadıysa görünmez). Seçilen ürün yayında değilse ya da silinmişse video ürünsüz
   görünür. Gösterilecek video yoksa bölüm görünmez.
+- **Kendi videomuzun hazırlanması** (yalnızca veritabanı modunda; dosya
+  deposu ve sunucuda ffmpeg gerekir, yoksa panelde seçenek kapalıdır):
+  - Kayıttan sonra video "Hazırlanıyor…" olur ve sıraya girer; sunucu
+    videoları tek tek hazırlar.
+  - **1080p** (uzun kenar en fazla 1920 px) ve **720p** (uzun kenar en
+    fazla 1280 px) iki sürüm: H.264, CRF 20 / 23 (gözle fark edilmeyen
+    sıkıştırma), en fazla 8 / 4 Mbit/sn; ses AAC 160 / 128 kbit/sn;
+    "hızlı başlama" (video inerken oynar). Daha küçük video büyütülmez;
+    dik ya da yatay oranı korunur.
+  - **HDR** (iPhone HLG / PQ) video, renkleri soluk görünmesin diye web'in
+    renk alanına (SDR, BT.709) dönüştürülür.
+  - **Kapak karesi:** videonun 1. saniyesinden (kısa videoda ortasından),
+    1080p sürümden, WebP. Panelde kapak seçilirse o kullanılır.
+  - Süre ve boyut kaydedilir. Hazırlanınca orijinal dosya silinir; video
+    değişecekse yeni dosya yüklenir.
+  - Hazırlanamazsa (bozuk dosya, 2 saati aşan iş) video "Hazırlanamadı"
+    olur; **Yeniden hazırla** onu sıraya geri koyar (orijinal duruyorsa;
+    yoksa "Videonun orijinal dosyası bulunamadı; dosyayı yeniden
+    yükleyin."). Sunucu yeniden başlarsa yarım kalan video, Videolar
+    ekranı açılınca yeniden hazırlanır.
+  - Hazırlanırken yeni dosya yüklenirse eski işin sonucu yazılmaz.
+- **Anasayfada oynayan dosya:** Geniş ekrana (768 px ve üstü) 1080p,
+  telefona 720p sürüm gider; tarayıcının kendi oynatıcısıyla, kapak karesi
+  önizleme olarak.
 - **YouTube'un kapak resmi:** En iyisinden başlanarak denenir:
   Shorts'un dik kapağı (`i.ytimg.com/vi/<kimlik>/oar2.jpg`, dik olmalı),
   yüksek çözünürlük (`maxresdefault.jpg`, 1280×720), her videoda bulunan
@@ -1852,13 +1889,16 @@ tarayıcıdan geleni yeniden denetler).
   YouTube'a yüklendiği çözünürlüğe bağlıdır; en keskin sonuç için panelden
   dik (9:16) kapak yüklenir.
 - **Oynatma:** Sayfa açılırken yalnızca kapak resmi (ekrana gelince)
-  yüklenir. Oynatıcı `https://www.youtube-nocookie.com/embed/<kimlik>`
+  yüklenir. YouTube oynatıcısı `https://www.youtube-nocookie.com/embed/<kimlik>`
   adresinden açılır (çerezsiz; video oynatılmadan YouTube çerezi
   yazılmaz), hemen oynar ve video bitince başka kanalların videolarını
   önermez. Başka videoya geçilince oynatıcı kapanır.
 - Veritabanı modunda yüklenen kapak (data:) kaydedilmez; görsel dosya
   deposuna yüklenir (K-108), depo ayarlı değilse adres yazılır.
 
-Testler: `tests/unit/anasayfa-videolari.test.ts`,
-`tests/db/panel-videolar.test.ts`, `tests/e2e/anasayfa.spec.ts`,
-`tests/e2e/videolar.spec.ts`, `tests/e2e-db/panel-videolar.spec.ts`.
+Hazırlama: `apps/zenweld-web/src/lib/server/video-worker.ts` (ffmpeg),
+sıra `packages/db/src/video-jobs.ts`. Testler:
+`tests/unit/anasayfa-videolari.test.ts`, `tests/db/panel-videolar.test.ts`,
+`tests/e2e/anasayfa.spec.ts`, `tests/e2e/videolar.spec.ts`,
+`tests/e2e-db/panel-videolar.spec.ts` (gerçek bir videonun yüklenip
+hazırlanması ve parça parça sunulması dahil).

@@ -888,6 +888,7 @@ export function videoRecord(v: typeof s.videos.$inferSelect): ZenweldDatabase["v
         status: v.fileStatus as NonNullable<ZenweldDatabase["videos"][number]["file"]>["status"],
         hd: opt(v.fileHd),
         sd: opt(v.fileSd),
+        poster: opt(v.filePoster),
         durationSeconds: opt(v.durationSeconds),
         width: opt(v.width),
         height: opt(v.height),

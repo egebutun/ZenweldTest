@@ -18,6 +18,7 @@ import {
   type ZenweldDatabase,
   parseVideo,
   videoHasUploadedFile,
+  VIDEO_NO_ORIGINAL,
   VIDEO_TWICE,
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
@@ -579,7 +580,8 @@ const VIDEO_KEYS = ["youtubeId", "title", "productId", "coverUrl", "showOnHome",
  * (data:) kaydedilmez, urun katalogda olmali.
  */
 export async function adminSaveVideo(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<{ id: string } & Saved>> {
-  const parsed = parseVideo(input);
+  const id = text(input.id, 100);
+  const parsed = parseVideo(input, !id);
   if (!parsed.ok) return parsed.error ? fail(400, parsed.error) : invalid();
   const draft = parsed.value;
   if (videoHasUploadedFile(draft)) return uploadDisabled();
@@ -595,31 +597,61 @@ export async function adminSaveVideo(db: AuditDb, actor: Actor, input: Input, at
     showOnHome: draft.showOnHome,
     active: draft.active,
   };
+  // Kendi videomuz: yeni yuklenen orijinal hazirlanmak uzere siraya girer (eski surumler kalkar).
+  const upload = draft.upload
+    ? { fileStatus: "processing", fileOriginal: draft.upload, fileHd: null, fileSd: null, filePoster: null, durationSeconds: null, width: null, height: null }
+    : {};
   const label = draft.title || draft.youtubeId || "Video";
 
   await serialize(db, "videos");
-  const id = text(input.id, 100);
-  const [taken] = await db
-    .select({ id: s.videos.id })
-    .from(s.videos)
-    .where(id ? and(eq(s.videos.youtubeId, value.youtubeId!), ne(s.videos.id, id)) : eq(s.videos.youtubeId, value.youtubeId!));
-  if (taken) return fail(400, VIDEO_TWICE);
+  if (draft.source === "youtube") {
+    const [taken] = await db
+      .select({ id: s.videos.id })
+      .from(s.videos)
+      .where(id ? and(eq(s.videos.youtubeId, value.youtubeId!), ne(s.videos.id, id)) : eq(s.videos.youtubeId, value.youtubeId!));
+    if (taken) return fail(400, VIDEO_TWICE);
+  }
   if (!id) {
     const [{ last }] = await db.select({ last: max(s.videos.position) }).from(s.videos);
     const created = newId("v");
-    await db.insert(s.videos).values({ id: created, source: "youtube", ...value, position: (last ?? -1) + 1, createdAt: at, updatedAt: at });
-    await writeAudit(db, actor, { action: "create", entityType: "videos", entityId: created, entityLabel: label, changes: changedFields({} as typeof value, value, VIDEO_KEYS) }, at);
+    await db.insert(s.videos).values({ id: created, source: draft.source, ...value, ...upload, position: (last ?? -1) + 1, createdAt: at, updatedAt: at });
+    const changes = changedFields({} as typeof value, value, VIDEO_KEYS);
+    if (draft.upload) changes.dosya = [null, draft.upload];
+    await writeAudit(db, actor, { action: "create", entityType: "videos", entityId: created, entityLabel: label, changes }, at);
     return { ...saved(at), id: created };
   }
   const [row] = await db.select().from(s.videos).where(eq(s.videos.id, id)).for("update");
   if (!row) return fail(404, notFound);
   if (iso(row.updatedAt) !== input.updatedAt) return fail(409, stale);
-  if (row.source !== "youtube") return invalid();
+  if (row.source !== draft.source) return invalid();
   const changes = changedFields(row as typeof value, value, VIDEO_KEYS);
+  if (draft.upload) changes.dosya = [row.fileOriginal ?? row.fileHd, draft.upload];
   if (!Object.keys(changes).length) return { ...unchanged(row), id };
-  await db.update(s.videos).set({ ...value, updatedAt: at }).where(eq(s.videos.id, id));
+  await db.update(s.videos).set({ ...value, ...upload, updatedAt: at }).where(eq(s.videos.id, id));
   await writeAudit(db, actor, { action: "update", entityType: "videos", entityId: id, entityLabel: label, changes }, at);
   return { ...saved(at), id };
+}
+
+/**
+ * Hazirlanamayan ya da yarim kalan kendi videomuzu yeniden siraya koyar.
+ * input: { id, updatedAt }. Orijinal dosya yoksa (hazirlanip silinmis)
+ * yeni dosya yuklenmeli.
+ */
+export async function adminRetryVideo(db: AuditDb, actor: Actor, input: Input, at: Date): Promise<PanelResult<Saved>> {
+  const id = text(input.id, 100);
+  const [row] = id ? await db.select().from(s.videos).where(eq(s.videos.id, id)).for("update") : [];
+  if (!row) return fail(404, notFound);
+  if (iso(row.updatedAt) !== input.updatedAt) return fail(409, stale);
+  if (row.source !== "file" || row.fileStatus === "ready") return invalid();
+  if (!row.fileOriginal) return fail(400, VIDEO_NO_ORIGINAL);
+  await db.update(s.videos).set({ fileStatus: "processing", updatedAt: at }).where(eq(s.videos.id, id));
+  await writeAudit(
+    db,
+    actor,
+    { action: "update", entityType: "videos", entityId: id, entityLabel: row.title || "Video", changes: { fileStatus: [row.fileStatus, "processing"] } },
+    at,
+  );
+  return saved(at);
 }
 
 /** Siler. input: { id, updatedAt }. */

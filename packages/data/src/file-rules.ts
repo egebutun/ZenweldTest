@@ -2,15 +2,19 @@
  * PANELDEN YUKLENEN DOSYALAR (veritabani modu; KARARLAR K-108;
  * docs/IS-KURALLARI.md › 23. Yuklenen dosyalar)
  *
- * Panelde yuklenen gorsel ve belge sunucunun dosya deposuna yazilir
+ * Panelde yuklenen gorsel, belge ve video sunucunun dosya deposuna yazilir
  * (packages/db › file-storage.ts) ve sitenin /dosya/<anahtar> adresinden
  * sunulur. Burada: hangi tur dosyanin ne buyuklukte kabul edildigi, turun
  * dosyanin icerigine bakilarak bulunmasi (adi ya da tarayicinin soyledigi
  * tur yetmez) ve dosyanin depodaki anahtari.
  */
 
-/** Yukleme turu: gorsel (urun, kategori, icerik, temsilci) ya da belge (MSDS, sertifika...). */
-export type UploadKind = "gorsel" | "belge";
+/**
+ * Yukleme turu: gorsel (urun, kategori, icerik, temsilci), belge (MSDS,
+ * sertifika...) ya da video (kendi videolarimizin orijinali; sunucu web icin
+ * hazirlar, KARARLAR K-125).
+ */
+export type UploadKind = "gorsel" | "belge" | "video";
 
 const MB = 1024 * 1024;
 
@@ -22,6 +26,7 @@ export const UPLOAD_RULES: Record<UploadKind, { extensions: readonly string[]; m
     maxBytes: 25 * MB,
     label: "PDF, Word, Excel, JPG, PNG ya da ZIP",
   },
+  video: { extensions: ["mp4", "mov", "m4v", "webm", "mkv"], maxBytes: 1024 * MB, label: "MP4, MOV, M4V, WebM ya da MKV" },
 };
 
 export const MIME_TYPES: Record<string, string> = {
@@ -36,6 +41,11 @@ export const MIME_TYPES: Record<string, string> = {
   xls: "application/vnd.ms-excel",
   xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   zip: "application/zip",
+  mp4: "video/mp4",
+  mov: "video/quicktime",
+  m4v: "video/x-m4v",
+  webm: "video/webm",
+  mkv: "video/x-matroska",
 };
 
 const startsWith = (bytes: Uint8Array, signature: number[], offset = 0) =>
@@ -60,6 +70,13 @@ export function detectFileType(bytes: Uint8Array, name: string): string | null {
   if (startsWith(bytes, ascii("RIFF")) && startsWith(bytes, ascii("WEBP"), 8)) return "webp";
   if (startsWith(bytes, ascii("GIF87a")) || startsWith(bytes, ascii("GIF89a"))) return "gif";
   if (startsWith(bytes, ascii("ftyp"), 4) && (startsWith(bytes, ascii("avif"), 8) || startsWith(bytes, ascii("avis"), 8))) return "avif";
+  // Video: ISO kabugu (MP4, iPhone MOV, M4V) ve Matroska kabugu (WebM, MKV).
+  if (startsWith(bytes, ascii("ftyp"), 4)) {
+    if (startsWith(bytes, ascii("qt  "), 8)) return "mov";
+    if (startsWith(bytes, ascii("M4V"), 8)) return "m4v";
+    return ["mov", "m4v"].includes(declared) ? declared : "mp4";
+  }
+  if (startsWith(bytes, [0x1a, 0x45, 0xdf, 0xa3])) return declared === "mkv" ? "mkv" : "webm";
   if (startsWith(bytes, ascii("%PDF-"))) return "pdf";
   if (startsWith(bytes, [0x50, 0x4b, 0x03, 0x04])) return ["docx", "xlsx"].includes(declared) ? declared : "zip";
   if (startsWith(bytes, [0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1])) return ["doc", "xls"].includes(declared) ? declared : null;
@@ -68,7 +85,10 @@ export function detectFileType(bytes: Uint8Array, name: string): string | null {
 
 export const UPLOAD_EMPTY = "Dosya boş.";
 export const uploadTypeError = (kind: UploadKind) => `Bu dosya türü yüklenemez. Yüklenebilenler: ${UPLOAD_RULES[kind].label}.`;
-export const uploadSizeError = (kind: UploadKind) => `Dosya çok büyük; en fazla ${UPLOAD_RULES[kind].maxBytes / MB} MB.`;
+export const uploadSizeError = (kind: UploadKind) =>
+  UPLOAD_RULES[kind].maxBytes >= 1024 * MB
+    ? `Dosya çok büyük; en fazla ${UPLOAD_RULES[kind].maxBytes / (1024 * MB)} GB.`
+    : `Dosya çok büyük; en fazla ${UPLOAD_RULES[kind].maxBytes / MB} MB.`;
 
 /** Yuklenen dosyanin denetimi: bossa, buyukse ya da turu kabul edilmiyorsa hata; uygunsa gercek uzanti. */
 export function checkUpload(kind: UploadKind, name: string, bytes: Uint8Array): { ok: true; ext: string } | { ok: false; error: string } {
@@ -108,14 +128,27 @@ export function uploadFileName(name: string, ext: string): string {
 /**
  * Depodaki anahtar. Gorsel: "gorsel/2026/11/<16 hane>.webp"; belge:
  * "belge/2026/11/<16 hane>/<dosya adi>" (indirilen dosya adiyla gelir).
+ * Video: "video/2026/11/<16 hane>/orijinal.<uzanti>"; sunucunun hazirladigi
+ * dosyalar ayni klasorde (videoFileKey).
  * random: 16 kucuk onaltilik hane (sunucu uretir).
  */
 export function uploadKey(kind: UploadKind, at: Date, random: string, name: string, ext: string): string {
   const month = `${at.getUTCFullYear()}/${String(at.getUTCMonth() + 1).padStart(2, "0")}`;
+  if (kind === "video") return `video/${month}/${random}/orijinal.${ext}`;
   return kind === "gorsel" ? `gorsel/${month}/${random}.${ext}` : `belge/${month}/${random}/${uploadFileName(name, ext)}`;
 }
 
-const KEY_PATTERN = /^(gorsel\/\d{4}\/\d{2}\/[0-9a-f]{16}\.[a-z]{3,4}|belge\/\d{4}\/\d{2}\/[0-9a-f]{16}\/[A-Za-z0-9][A-Za-z0-9._-]{0,90}\.[a-z]{3,4})$/;
+/** Hazirlanan video dosyalari: 1080p, 720p ve kapak karesi. */
+export type VideoOutput = "1080.mp4" | "720.mp4" | "kapak.webp" | "kapak.jpg";
+
+/** Orijinalin klasorundeki hazirlanan dosyanin anahtari. */
+export const videoFileKey = (originalKey: string, output: VideoOutput) => `${originalKey.slice(0, originalKey.lastIndexOf("/"))}/${output}`;
+
+/** Yuklenen video orijinalinin anahtari mi. */
+export const isVideoOriginalKey = (key: string) => /^video\/\d{4}\/\d{2}\/[0-9a-f]{16}\/orijinal\.(mp4|mov|m4v|webm|mkv)$/.test(key);
+
+const KEY_PATTERN =
+  /^(gorsel\/\d{4}\/\d{2}\/[0-9a-f]{16}\.[a-z]{3,4}|belge\/\d{4}\/\d{2}\/[0-9a-f]{16}\/[A-Za-z0-9][A-Za-z0-9._-]{0,90}\.[a-z]{3,4}|video\/\d{4}\/\d{2}\/[0-9a-f]{16}\/(orijinal|1080|720|kapak)\.[a-z0-9]{3,4})$/;
 
 /** Gecerli depo anahtari mi (sunma ucu baska bir yolu okumaz). */
 export const isUploadKey = (key: string) => KEY_PATTERN.test(key) && !key.includes("..") && Boolean(MIME_TYPES[fileExtension(key)]);
@@ -130,4 +163,27 @@ export function uploadKeyOf(address: string): string | null {
   if (!address.startsWith(UPLOAD_PREFIX)) return null;
   const key = address.slice(UPLOAD_PREFIX.length);
   return isUploadKey(key) ? key : null;
+}
+
+/**
+ * Parca parca sunma (HTTP Range): "bytes=0-1023", "bytes=500-",
+ * "bytes=-500" -> dahil
+ * baslangic ve bitis. Baslik yoksa null; okunamaz ya da dosyanin
+ * disindaysa "invalid" (416).
+ */
+export function byteRange(header: string | null, size: number): { start: number; end: number } | null | "invalid" {
+  if (!header) return null;
+  const match = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
+  if (!match || (!match[1] && !match[2])) return "invalid";
+  let start: number;
+  let end: number;
+  if (!match[1]) {
+    const suffix = Number(match[2]);
+    start = Math.max(size - suffix, 0);
+    end = size - 1;
+  } else {
+    start = Number(match[1]);
+    end = match[2] ? Math.min(Number(match[2]), size - 1) : size - 1;
+  }
+  return start > end || start >= size ? "invalid" : { start, end };
 }

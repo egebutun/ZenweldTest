@@ -18,6 +18,7 @@ import {
   adminSaveLegalPage,
   adminSaveNews,
   adminSavePageSeo,
+  adminRetryVideo,
   adminSaveVideo,
   adminSetBlogPostActive,
   adminSetDocumentActive,
@@ -30,6 +31,7 @@ import { isIndexablePage } from "@/lib/page-meta";
 import { runPanelAction } from "@/lib/server/admin";
 import { fileStorage } from "@/lib/server/files";
 import { refreshSite } from "@/lib/server/refresh";
+import { startVideoWorker } from "@/lib/server/video-worker";
 
 /**
  * PANEL › ICERIK (veritabani modu; Asama 5, 5. alan, adim 5.2; KARARLAR K-99, K-101)
@@ -50,6 +52,9 @@ import { refreshSite } from "@/lib/server/refresh";
  *   POST /api/yonetim/icerik/video           {id?, source, youtubeId, title, productId, cover, showOnHome, active, updatedAt?} (K-125)
  *   POST /api/yonetim/icerik/video-sil       {id, updatedAt}
  *   POST /api/yonetim/icerik/video-sira      {id, direction: -1 | 1}
+ *   POST /api/yonetim/icerik/video-yeniden   {id, updatedAt}  hazirlanamayan kendi videomuzu yeniden siraya koyar
+ *   POST /api/yonetim/icerik/video-isleyici  {}  siradaki videolari hazirlamaya baslar (Videolar ekrani acilinca)
+ *   (kendi videomuz: source "file", upload: /api/yonetim/video-yukle'nin dondurdugu anahtar; kayittan sonra hazirlanir)
  *
  * Adim 5.3 (KARARLAR K-104):
  *   POST /api/yonetim/icerik/yasal-metin     {id, title, body, updatedAt}
@@ -83,6 +88,9 @@ const ACTIONS = {
   video: adminSaveVideo,
   "video-sil": adminDeleteVideo,
   "video-sira": adminMoveVideo,
+  "video-yeniden": adminRetryVideo,
+  // Sirada video varsa isleyiciyi baslatir (sunucu yeniden baslayinca yarim kalanlar icin; Videolar ekrani acilinca).
+  "video-isleyici": async () => ({ ok: true as const }),
   hakkimizda: adminSaveAbout,
   "yasal-metin": adminSaveLegalPage,
   // Yalnizca Sayfa SEO ekranindaki (aramaya acik) sabit sayfalar.
@@ -102,7 +110,9 @@ const ACTIONS = {
 type Context = { params: Promise<{ islem: string }> };
 
 export async function POST(request: NextRequest, context: Context) {
-  return runPanelAction(request, ACTIONS, (await context.params).islem, () => {
+  return runPanelAction(request, ACTIONS, (await context.params).islem, (name) => {
     refreshSite(["icerik"]);
+    // Yeni yuklenen ya da yeniden hazirlanacak video siraya girdi (K-125).
+    if (name === "video" || name === "video-yeniden" || name === "video-isleyici") startVideoWorker();
   });
 }

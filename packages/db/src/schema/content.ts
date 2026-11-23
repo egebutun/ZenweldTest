@@ -93,8 +93,11 @@ export const videos = pgTable(
     active: boolean("active").notNull().default(true),
     position: integer("position").notNull(),
     fileStatus: text("file_status"),
+    /** Yuklenen orijinalin depo anahtari; hazirlaninca silinir (null) */
+    fileOriginal: text("file_original"),
     fileHd: text("file_hd"),
     fileSd: text("file_sd"),
+    filePoster: text("file_poster"),
     durationSeconds: integer("duration_seconds"),
     width: smallint("width"),
     height: smallint("height"),

@@ -188,6 +188,10 @@ kişiye verilir; o kişi doğrudan sunucuya girer
       alınacak? (Sunucunun diskine yazan depo hazır: `DOSYA_KLASORU`; bu
       klasör yedeğe eklenmeli. S3 uyumlu depo seçilirse onun parçası
       yazılır.) [Karar] [Kod]
+- [ ] Kendi videolarımız için sunucuya ffmpeg kurulabilir mi, video için
+      ne kadar disk ayrılır (dakikası yaklaşık 60–90 MB)? Videolar için
+      nesne deposu ve CDN (ör. Cloudflare R2) düşünülsün mü? (K-125;
+      [SUNUCU.md › Video hazırlama](SUNUCU.md#video-hazırlama)) [Karar]
 
 **Zamanlanmış işler ve izleme**
 
@@ -1282,16 +1286,17 @@ sahibine hatırlatılır. Kalanlar:
 
 ## Video kütüphanesi — kalan adımlar
 
-Video kütüphanesi hazır: YouTube videoları panelden (Videolar) eklenir,
-ürüne bağlanır, anasayfada görünür (K-125). Kalanlar (sırayla):
+Video kütüphanesi hazır: YouTube videoları ve kendi videolarımız panelden
+(Videolar) eklenir, ürüne bağlanır, anasayfada görünür; kendi videolarımız
+sunucuda web için hazırlanır ve parça parça sunulur (K-125). Kalanlar
+(sırayla):
 
-1. **Kendi videolarımız (1b):** Panelden orijinal dosya yüklenir (en fazla
-   1 GB). Sunucu web için otomatik hazırlar (ffmpeg): 1080p ve 720p sürüm
-   (H.264, hızlı başlama), kapak karesi; hazırlanırken panelde
-   "Hazırlanıyor…". Dosya deposu videoyu parça parça sunmalı (iPhone ve
-   Safari için şart, ileri sarma). Canlı sunucuda ffmpeg ve yeterli disk
-   gerekir (BT). Demo sitede (vercel.app) büyük dosya saklanamaz; orada
-   örnek bir video sitenin dosyalarına konur.
+1. **Canlı sunucuda video hazırlama aracı (BT):** ffmpeg kurulmalı
+   (Ubuntu: `apt install ffmpeg`), geçici klasörde (`/tmp`) en büyük
+   videonun birkaç katı ve dosya deposunda videolar için yer olmalı
+   ([SUNUCU.md › Video hazırlama](SUNUCU.md#video-hazırlama)). Demo sitede
+   (vercel.app) kendi videomuz yüklenemez; yalnızca canlı sunucuda
+   (veritabanı modu) çalışır.
 2. **Sitede (1c):** Ürün sayfasında videolar (fotoğraf galerisinde);
    anasayfada kategori sekmeleri ("Tümü" yok, açılışta sıradaki ilk
    kategori; ürünsüz videolar için ayrı sekme); `/videolar` sayfası
