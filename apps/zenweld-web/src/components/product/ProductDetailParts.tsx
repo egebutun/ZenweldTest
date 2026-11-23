@@ -11,6 +11,7 @@ import {
   MapPin,
   MessageCircle,
   Minus,
+  Play,
   Plus,
   ShieldCheck,
   ShoppingCart,
@@ -19,7 +20,10 @@ import {
   discountPercent,
   FLASH_DISCOUNT_THRESHOLD,
   salePriceExVat,
+  videoPoster,
+  videoTitle,
   type Product,
+  type SiteVideo,
 } from "@zenweld/data";
 import { useNow } from "@zenweld/store";
 import { Badge, Button, Modal, ProductImage } from "@zenweld/ui";
@@ -27,6 +31,8 @@ import { DealerFinder } from "@/components/dealers/DealerFinder";
 import Link from "next/link";
 import { useT } from "@/lib/i18n-client";
 import { openSupportChat } from "@/lib/support-chat";
+import { VideoCover } from "@/components/home/VideoCover";
+import { VideoPlayer } from "@/components/home/VideoPlayer";
 import { MAX_LINE_QUANTITY, useCart } from "@/lib/cart";
 import { useFavourites } from "@/lib/favourites";
 import { formatDateTime, formatPrice, priceWithVat } from "@zenweld/utils";
@@ -37,31 +43,65 @@ export function ProductGallery({
   product,
   /** Secili secenegin fotografi; galeri bu fotografla acilir */
   initialImage,
+  /** Urune bagli videolar (KARARLAR K-125): fotograflarin ardindan, kucuk resimde oynat isaretiyle */
+  videos = [],
 }: {
   product: Product;
   initialImage?: string;
+  videos?: SiteVideo[];
 }) {
+  const t = useT();
   const images = product.images.length > 0 ? product.images : [{ url: "", alt: product.name }];
   const [active, setActive] = useState(() => Math.max(0, images.findIndex((img) => img.url === initialImage)));
+  const [playing, setPlaying] = useState(false);
+  const total = images.length + videos.length;
+  const video = active >= images.length ? videos[active - images.length] : undefined;
+  const select = (i: number) => {
+    setActive(i);
+    setPlaying(false);
+  };
 
   return (
     <div className="grid gap-3">
       <div className="aspect-[5/4] overflow-hidden rounded-[4px] bg-zw-grey-50">
-        <ProductImage
-          src={images[active]?.url}
-          alt={images[active]?.alt || product.name}
-          label={product.name}
-          priority
-          className="h-full w-full object-contain p-4"
-        />
+        {video ? (
+          // Dik video: kutunun ortasinda 9:16; once kapak, Oynat'a basinca oynatici.
+          <div className="flex h-full items-center justify-center bg-zw-ink">
+            <div className="relative aspect-[9/16] h-full">
+              {playing ? (
+                <VideoPlayer video={video} title={videoTitle(video, product)} className="absolute inset-0 h-full w-full" />
+              ) : (
+                <button
+                  type="button"
+                  aria-label={t.home.videos.playVideo(active - images.length + 1)}
+                  onClick={() => setPlaying(true)}
+                  className="group absolute inset-0 h-full w-full zw-focus"
+                >
+                  <VideoCover youtubeId={video.youtubeId ?? ""} cover={videoPoster(video)} className="h-full w-full object-cover" />
+                  <span className="absolute bottom-1/2 left-1/2 flex h-16 w-16 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full bg-zw-red-600 text-white shadow-lg transition-transform group-hover:scale-105">
+                    <Play size={28} fill="currentColor" className="ml-0.5" aria-hidden="true" />
+                  </span>
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <ProductImage
+            src={images[active]?.url}
+            alt={images[active]?.alt || product.name}
+            label={product.name}
+            priority
+            className="h-full w-full object-contain p-4"
+          />
+        )}
       </div>
 
-      {images.length > 1 && (
+      {total > 1 && (
         <div className="grid grid-cols-5 gap-2">
           {images.map((img, i) => (
             <button
               key={i}
-              onClick={() => setActive(i)}
+              onClick={() => select(i)}
               className={`aspect-square overflow-hidden rounded-[4px] border-2 bg-zw-grey-50 transition-colors ${
                 i === active ? "border-zw-red-600" : "border-transparent hover:border-zw-grey-300"
               }`}
@@ -74,6 +114,27 @@ export function ProductGallery({
               />
             </button>
           ))}
+          {videos.map((v, n) => {
+            const i = images.length + n;
+            return (
+              <button
+                key={v.id}
+                type="button"
+                aria-label={t.home.videos.showVideo(n + 1)}
+                onClick={() => select(i)}
+                className={`relative aspect-square overflow-hidden rounded-[4px] border-2 bg-zw-ink transition-colors ${
+                  i === active ? "border-zw-red-600" : "border-transparent hover:border-zw-grey-300"
+                }`}
+              >
+                <VideoCover youtubeId={v.youtubeId ?? ""} cover={videoPoster(v)} className="h-full w-full object-cover" />
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zw-red-600 text-white">
+                    <Play size={14} fill="currentColor" className="ml-0.5" aria-hidden="true" />
+                  </span>
+                </span>
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

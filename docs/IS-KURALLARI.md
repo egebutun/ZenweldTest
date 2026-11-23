@@ -1853,6 +1853,30 @@ tarayıcıdan geleni yeniden denetler).
 | Video dosyası (kendi videomuz) | Yeni videoda zorunlu ("Video dosyası seçilmeli."); düzenlemede yeni dosya seçilirse video yeniden hazırlanır. Türler ve 1 GB sınırı: [23](#23-yüklenen-dosyalar) |
 | Anasayfada göster, Yayında | Yeni videoda ikisi de işaretli |
 
+- **Nerede görünür:** Ürün sayfasında o ürüne bağlı videolar (galeride,
+  fotoğrafların ardından); Videolar sayfasında (`/videolar`) bütün
+  videolar; anasayfada "Anasayfada göster" işaretliler. Üçünde de yalnızca
+  yayında ve oynatılabilir videolar, paneldeki sırayla.
+- **Kategoriye göre gruplama** (anasayfa sekmeleri ve Videolar sayfası):
+  video, bağlı ürünün kategorisine girer. Gruplar menüdeki sırayla: bölüm
+  (Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri), grubun sırası,
+  kategorinin sırası. Ürünü olmayan ya da ürünü yayında olmayan videolar en
+  sonda **Genel**. Yalnızca videosu olan gruplar görünür; "Tümü" yoktur,
+  anasayfada ilk sekme seçili gelir. Sekmedeki kısa ad: kategorinin adı,
+  sonundaki "Kaynak Makineleri" ya da "Makineleri" olmadan ("MIG (GMAW)
+  Gazaltı Kaynak Makineleri" → "MIG (GMAW) Gazaltı").
+  - **Örnek:** Plazma, TIG ve MMA ürünlerine bağlı birer video ve iki
+    ürünsüz video → sekmeler: MMA (Stick) Örtülü Elektrot, TIG (GTAW)
+    Argon, Plazma Kesim, Genel (2 video).
+- **Google'a giden bilgi** (VideoObject; K-123): başlık (yoksa ürünün adı,
+  o da yoksa "Zenweld videosu"); açıklama "<başlık>. <ürünün adı> —
+  Zenweld.", başlıksız ürün videosunda "<ürünün adı> videosu — Zenweld.",
+  ürünsüzde "<başlık> — Zenweld." ya da "Zenweld kaynak videosu."; kapak
+  (panelde seçilen, kendi videomuzun kapak karesi ya da YouTube'un
+  480×360 kapağı); siteye eklendiği tarih; kendi videomuzda 1080p dosyanın
+  adresi ve süresi, YouTube'da çerezsiz oynatıcının adresi. Ürün sayfasında
+  o ürünün, Videolar sayfasında bütün videolar gider; site haritasında da
+  aynı bilgi vardır.
 - **Anasayfada görünen:** Yayında, "Anasayfada göster" işaretli ve
   oynatılabilir videolar (YouTube videosu; kendi videomuz hazırlanması
   bitince; hazırlanırken ya da hazırlanamadıysa görünmez). Seçilen ürün yayında değilse ya da silinmişse video ürünsüz

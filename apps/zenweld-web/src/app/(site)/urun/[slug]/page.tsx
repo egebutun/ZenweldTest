@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
-import { isInWarehouse, productBrand, warehouseStockMap } from "@zenweld/data";
+import { isInWarehouse, productBrand, productVideos, warehouseStockMap } from "@zenweld/data";
 import { JsonLd } from "@/components/common/JsonLd";
 import { catalogTrail } from "@/lib/catalog";
 import { PageData } from "@/components/common/PageData";
 import { getProductPageData, getServerCatalog } from "@/lib/server/catalog";
+import { getServerContent } from "@/lib/server/content";
 import {
   SITE_NAME,
   absoluteUrl,
   breadcrumbJsonLd,
   canonical,
   productJsonLd,
+  videoJsonLd,
   productSeo,
   seoMetadata,
 } from "@/lib/seo";
@@ -110,9 +112,15 @@ export default async function ProductPage({
     ratings: (pageData?.reviews ?? []).filter((r) => r.productId === product.id && r.approved).map((r) => r.rating),
   });
 
+  // Urune bagli videolar Google'a VideoObject olarak gider (K-123, K-125).
+  const videos = productVideos((await getServerContent()).videos, product.id);
+
   return (
     <>
       <JsonLd data={jsonLd} />
+      {videos.map((v) => (
+        <JsonLd key={v.id} data={videoJsonLd(v, product)} />
+      ))}
       <JsonLd
         data={breadcrumbJsonLd([
           { name: SITE_NAME, path: "/" },

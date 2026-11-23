@@ -41,7 +41,7 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
 17. [Garanti](#17-garanti)
 18. [Belgeler: MSDS, Kaynak Rehberi, Parti Sertifikaları](#18-belgeler)
 19. [Kurumsal sayfalar: Hakkımızda, Satış Temsilcilerimiz, SSS](#19-kurumsal-sayfalar)
-20. [Blog, Haberler, Etkinlikler](#20-blog-haberler-etkinlikler)
+20. [Blog, Haberler, Etkinlikler](#20-blog-haberler-etkinlikler) (Videolar sayfası dahil)
 21. [Yasal metinler](#21-yasal-metinler)
 22. [Bulunamayan sayfa (404) ve hata sayfası](#22-bulunamayan-sayfa-404-ve-hata-sayfası)
 23. [Arama motorları (SEO)](#23-arama-motorları-seo)
@@ -130,7 +130,7 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
 | **FORCE** (ilk başlık, kırmızı) | Menüsü yoktur; tıklayınca [Force Serisi sayfası](#force-serisi-force) (`/force`) açılır. |
 | **Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri** | Başlığa tıklayınca bölüm sayfası açılır; üzerine gelince mega menü açılır. |
 | **Destek ve Garanti** | Başlığa tıklayınca [Destek ve Garanti sayfası](#destek-ve-garanti-destek) (`/destek`) açılır. Üzerine gelince menü açılır: solda başlık, kısa açıklama ve **Tümünü Gör** (`/destek`); sağda iki kolonda, sembolleriyle ve kısa açıklamalarıyla: 1. kolon İletişim, Yetkili Bayi ve Servis Bul, Servis Talebi, Sık Sorulan Sorular; 2. kolon Garanti Kaydı, Garanti Sorgulama, Garanti Koşulları, İade ve Değişim (`/yasal/iade`). |
-| **Keşfet** (en sonda) | Başlık bir sayfa açmaz; üzerine gelince ya da tıklayınca menü açılır. Solda "Keşfet" ve "Zenweld'i tanıyın; haberler, etkinlikler, rehberler ve belgeler tek yerde."; sağda üç başlıklı kolonda, sembolleriyle ve kısa açıklamalarıyla: **Kurumsal** (Hakkımızda, Satış Temsilcilerimiz, Bayimiz Olun), **Güncel** (Haberler, Etkinlikler, Blog), **Diğer** (Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları). "Tümünü Gör" yoktur. |
+| **Keşfet** (en sonda) | Başlık bir sayfa açmaz; üzerine gelince ya da tıklayınca menü açılır. Solda "Keşfet" ve "Zenweld'i tanıyın; haberler, etkinlikler, rehberler ve belgeler tek yerde."; sağda üç başlıklı kolonda, sembolleriyle ve kısa açıklamalarıyla: **Kurumsal** (Hakkımızda, Satış Temsilcilerimiz, Bayimiz Olun), **Güncel** (Haberler, Etkinlikler, Blog, Videolar), **Diğer** (Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları). "Tümünü Gör" yoktur. |
 | **Ara** kutusu | Arama penceresini açar. Klavyede **⌘K / Ctrl+K** ile de açılır. |
 | Konum simgesi | Yetkili Bayi ve Servis Ağı sayfasına gider. |
 | Sepet simgesi | Sepete gider; sepetteki toplam adet rozetle yazar (99'dan fazlaysa "99+"). |
@@ -314,6 +314,13 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
    - Videoya bir ürün seçilmişse kartın altında ürünün küçük fotoğrafı ve
      adı görünür; tıklanınca ürün sayfası açılır. Ürün yayında değilse ya
      da silinmişse video ürünsüz görünür.
+   - **Kategori sekmeleri:** Videolar ürünlerinin kategorisine göre
+     ayrılır; sekmeler menüdeki sırayla (bölüm, grup, kategori), kısa adla
+     (ör. "MIG (GMAW) Gazaltı", "Plazma Kesim"). "Tümü" sekmesi yoktur;
+     açılışta ilk sekme seçilidir. Ürünü olmayan ya da ürünü yayında
+     olmayan videolar en sondaki **Genel** sekmesindedir. Tek grup varsa
+     sekmeler görünmez. Sekme değişince şerit baştan başlar.
+   - Altta **Tüm videolar →** Videolar sayfasını (`/videolar`) açar.
    - Gösterilecek video yoksa bölüm görünmez.
 10. **Neden Zenweld?** Beş madde: Sanayinin Tercihi, Ödüllü Marka, Kolay
    Destek, Garanti Sorgula, Yetkili Bayi ve Servis Ağı; sonda **Zenweld'i
@@ -563,6 +570,11 @@ hiçbiri değilse 404 çıkar.
   - Büyük görsel ve küçük resimler; küçük resme tıklayınca büyür.
   - Seçilen seçeneğin fotoğrafı varsa galeri o fotoğrafla açılır (ör.
     soğutmalı makinede Hava ya da Su seçilince o halin fotoğrafı).
+  - **Videolar** (KARARLAR K-125): Ürüne bağlı, yayında ve oynatılabilir
+    videolar fotoğrafların ardından küçük resim olarak durur (kapak, ortada
+    oynat işareti). Seçilince büyük alanda dik (9:16) kapak ve **Oynat**;
+    basınca video orada oynar (YouTube'un çerezsiz oynatıcısı ya da kendi
+    videomuz). Başka küçük resme geçilince oynatıcı kapanır.
 - **Ürün adı ve kısa açıklama.**
 - **Bilgi satırı:**
   - "<N> ay garanti".
@@ -1813,6 +1825,25 @@ hepsi tek listededir. Kurallar: [IS-KURALLARI.md › 26](IS-KURALLARI.md#26-list
   - **Etkinlik sitesi:** Girilmişse, yeni sekmede.
 - Yayında olmayan etkinlik 404 verir; eski link yönlenir.
 
+### Videolar (`/videolar`)
+
+KARARLAR K-125. Menüde Keşfet › Güncel › **Videolar**; anasayfadaki video
+bölümünün altındaki **Tüm videolar →** de buraya gelir.
+
+- Başlık "Videolar", altında "Ürünlerimiz sahada: kategoriye göre kaynak
+  videoları". Sayfa başlığı ve Google açıklaması panelden (Sayfa SEO).
+- Video kütüphanesindeki yayında ve oynatılabilir bütün videolar ("Anasayfada
+  göster" işaretinden bağımsız), ürünlerinin kategorisine göre gruplu ve alt
+  alta: kategoriler menüdeki sırayla, her grubun başlığı kategorinin tam adı
+  ve yanında **Kategoriye git →** (kategori sayfası). Ürünsüz videolar en
+  sonda **Genel**.
+- Kartlar dik (9:16), geniş ekranda satırda 5, tablette 3, telefonda 2.
+  Kartta kapak ve oynat işareti, altında videonun başlığı (yoksa ürünün
+  adı) ve ürünün küçük fotoğrafıyla adı (ürün sayfasına gider).
+- Oynat'a basınca video kartın içinde oynar; başka videoyu oynatınca önceki
+  kapanır. Sayfa açılırken yalnızca kapaklar (ekrana gelince) yüklenir.
+- Hiç video yoksa "Henüz video yok."
+
 ---
 
 ## 21. Yasal metinler
@@ -1897,10 +1928,15 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   seçenekli üründe her seçenek ayrı); anasayfada site adı (ZENWELD); blog,
   haber ve etkinlik sayfalarında yazı, haber ve etkinlik (ülke kodla;
   etkinlik görseli olarak gerçek fotoğraflar, yoksa logo; geçici stok
-  fotoğraflar gitmez); katalog ve ürünlerde konum satırı Google'a
-  bildirilir (schema.org: `WebSite`, `Organization`, `FAQPage`,
-  `Product`, `ProductGroup`, `BlogPosting`, `NewsArticle`, `Event`,
-  `BreadcrumbList`). Hepsi sayfa hazırlanırken sitedeki veriden üretilir:
+  fotoğraflar gitmez); ürün sayfasında ürünün videoları ve Videolar
+  sayfasında bütün videolar (başlık, açıklama, kapak, siteye eklendiği
+  tarih; kendi videomuzda dosyanın adresi ve süresi, YouTube videosunda
+  çerezsiz oynatıcı adresi; K-123, K-125); katalog ve ürünlerde konum
+  satırı Google'a bildirilir (schema.org: `WebSite`, `Organization`,
+  `FAQPage`, `Product`, `ProductGroup`, `BlogPosting`, `NewsArticle`,
+  `Event`, `VideoObject`, `BreadcrumbList`). Site haritasında Videolar
+  sayfasının ve videosu olan ürün sayfalarının satırında video bilgisi de
+  vardır. Hepsi sayfa hazırlanırken sitedeki veriden üretilir:
   ürün, fiyat, stok, ayar ya da yazı değişince Google'a giden bilgi de
   değişir (Google sayfayı bir sonraki taramasında görür).
 - **Panel değişiklikleri:** Veritabanı modunda site haritası ve arama
@@ -1951,6 +1987,7 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
 | `/destek` | Destek ve Garanti |
 | `/hakkimizda`, `/satis-temsilcilerimiz`, `/sss` | Kurumsal ve destek |
 | `/blog`, `/blog/<link>` | Blog |
+| `/videolar` | Videolar (kategoriye göre gruplu; K-125) |
 | `/haberler`, `/haberler/<link>` | Haberler |
 | `/etkinlikler`, `/etkinlikler/<link>` | Etkinlikler |
 | `/yasal/<metin>` | Yasal metinler ([21. bölüm](#21-yasal-metinler)) |

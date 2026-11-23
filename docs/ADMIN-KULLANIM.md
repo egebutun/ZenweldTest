@@ -2354,7 +2354,7 @@ sayfalarla aynı listedir.
 | Grup | Sayfalar |
 |---|---|
 | Ana sayfa ve ürün bölümleri | Ana Sayfa, Force Serisi, Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri, Teklif Al |
-| Keşfet | Hakkımızda, Satış Temsilcilerimiz, Bayilik Başvurusu, Haberler, Etkinlikler, Blog, Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları |
+| Keşfet | Hakkımızda, Satış Temsilcilerimiz, Bayilik Başvurusu, Haberler, Etkinlikler, Blog, Videolar, Ürün Seçici, Ultimate Kaynak Rehberi, MSDS, Parti Sertifikaları |
 | Destek ve Garanti | Destek ve Garanti, İletişim, Sık Sorulan Sorular, Yetkili Bayi ve Servis Ağı, Servis Talebi, Garanti, Garanti Kaydı, Garanti Sorgulama |
 
 - Giriş Yap, Üye Ol, Şifremi Unuttum, Yeni Şifre, Çıkış, Sepet, Ödeme,
@@ -2482,10 +2482,12 @@ görünür."
 
 Adres: `/yonetim/videolar` (menüde İçerik grubunda, Anasayfa Tanıtım'ın
 altında). Video kütüphanesi (KARARLAR K-125; sitede görünüşü:
-[WEBSITE-KULLANIM.md › Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa) 9; kurallar:
+[WEBSITE-KULLANIM.md › Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa) 9, ürün
+sayfasının galerisi ve Videolar sayfası (`/videolar`); kurallar:
 [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)). Her video bir kez
-eklenir: seçilen ürünün sayfasında, "Anasayfada göster" işaretliyse
-anasayfada görünür. Açıklama: "Video kütüphanesi. Her video bir kez
+eklenir: seçilen ürünün sayfasında ve Videolar sayfasında (ürünün
+kategorisinin altında), "Anasayfada göster" işaretliyse anasayfada da
+(kategori sekmesinde) görünür. Açıklama: "Video kütüphanesi. Her video bir kez
 eklenir: seçilen ürünün sayfasında, “Anasayfada göster” işaretliyse
 anasayfada görünür. Sitede bu sırayla çıkar."
 

@@ -80,6 +80,12 @@ export const tr = {
     question: "Hangi kaynak makinesi size uygun?",
     cta: "Teste Başla!",
   },
+  /** Videolar sayfasi (/videolar; KARARLAR K-125) */
+  videos: {
+    empty: "Henüz video yok.",
+    toCategory: "Kategoriye git",
+    play: (title: string) => `${title} videosunu oynat`,
+  },
   explore: {
     about: "Hakkımızda",
     aboutDesc: "Türkiye'nin kaynak teknolojileri markası",
@@ -92,6 +98,8 @@ export const tr = {
     registerWarrantyDesc: "Makinenizi online kaydederek garantinizi uzatın",
     blog: "Blog",
     blogDesc: "Kaynakla ilgili ipuçları, püf noktaları ve uzman tavsiyeleri",
+    videos: "Videolar",
+    videosDesc: "Ürünlerimiz sahada: kategoriye göre kaynak videoları",
     events: "Etkinlikler",
     eventsDesc: "Katıldığımız fuarlar ve etkinlik takvimimiz",
     news: "Haberler",
@@ -176,6 +184,8 @@ export const tr = {
       previous: "Önceki video",
       next: "Sonraki video",
       label: "Videolar",
+      categories: "Video kategorileri",
+      all: "Tüm videolar",
     },
     quoteBannerTitle: "Kurumsal alım mı yapacaksınız?",
     quoteBannerText:

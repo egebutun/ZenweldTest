@@ -64,6 +64,12 @@ const PAGES = {
   "/haberler": { name: "Haberler", title: "Haberler", description: "Zenweld'den son gelişmeler, duyurular ve basın açıklamaları.", group: DISCOVER },
   "/etkinlikler": { name: "Etkinlikler", title: "Etkinlik Takvimi", description: "Zenweld'in katılacağı veya sponsor olacağı fuar ve diğer etkinlikler hakkında bilgi bulabilirsiniz.", group: DISCOVER },
   "/blog": { name: "Blog", title: "Blog", description: "Kaynak dünyasından haberler, teknik rehberler ve uzman ipuçları.", group: DISCOVER },
+  "/videolar": {
+    name: "Videolar",
+    title: "Kaynak Makinesi Videoları",
+    description: "Zenweld kaynak makineleri sahada: gazaltı, argon, elektrot, plazma ve lazer makinelerinin kullanım videoları, kategoriye göre.",
+    group: DISCOVER,
+  },
   "/urun-secici": { name: "Ürün Seçici", title: "Ürün Seçici", description: "Üç soruda ihtiyacınıza uygun Zenweld kaynak makinesini bulun.", group: DISCOVER },
   "/kaynak-rehberi": { name: "Ultimate Kaynak Rehberi", title: "Ultimate Kaynak Rehberi", description: "Ücretsiz dijital kaynak rehberini edinin veya basılı sürümü sipariş edin.", group: DISCOVER },
   "/msds": { name: "MSDS", title: "MSDS — Malzeme Güvenlik Bilgi Formları", description: "Zenweld ürünlerine ait malzeme güvenlik bilgi formlarını sorgulayın.", group: DISCOVER },

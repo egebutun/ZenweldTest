@@ -1287,9 +1287,10 @@ sahibine hatırlatılır. Kalanlar:
 ## Video kütüphanesi — kalan adımlar
 
 Video kütüphanesi hazır: YouTube videoları ve kendi videolarımız panelden
-(Videolar) eklenir, ürüne bağlanır, anasayfada görünür; kendi videolarımız
-sunucuda web için hazırlanır ve parça parça sunulur (K-125). Kalanlar
-(sırayla):
+(Videolar) eklenir ve ürüne bağlanır; ürün sayfasının galerisinde,
+anasayfada (kategori sekmeleriyle) ve Videolar sayfasında (`/videolar`)
+görünür, Google'a bildirilir; kendi videolarımız sunucuda web için
+hazırlanır ve parça parça sunulur (K-123, K-125). Kalanlar:
 
 1. **Canlı sunucuda video hazırlama aracı (BT):** ffmpeg kurulmalı
    (Ubuntu: `apt install ffmpeg`), geçici klasörde (`/tmp`) en büyük
@@ -1297,12 +1298,7 @@ sunucuda web için hazırlanır ve parça parça sunulur (K-125). Kalanlar
    ([SUNUCU.md › Video hazırlama](SUNUCU.md#video-hazırlama)). Demo sitede
    (vercel.app) kendi videomuz yüklenemez; yalnızca canlı sunucuda
    (veritabanı modu) çalışır.
-2. **Sitede (1c):** Ürün sayfasında videolar (fotoğraf galerisinde);
-   anasayfada kategori sekmeleri ("Tümü" yok, açılışta sıradaki ilk
-   kategori; ürünsüz videolar için ayrı sekme); `/videolar` sayfası
-   (kategoriye göre gruplu, her videonun altında ürün bağlantısı); videoların
-   Google'a bildirilmesi (K-123) ve video site haritası.
-3. **Videoların ürünleri:** Sahibi gönderecek
+2. **Videoların ürünleri:** Sahibi gönderecek
    ([Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) 5).
 
 ## SEO alanları ve link yönlendirme
@@ -1401,9 +1397,8 @@ değişikliği bugün Google'da bir şey kaybettirmez.
    ürüne bağlı her videonun başlığı aranan ifadeye göre yazılır (ör.
    "ForceMIG 200 ile 3 mm sacda gazaltı kaynağı"); başlığı boş videolar
    doldurulur. Bugün boş başlıkta ürünün adı kullanılıyor ve aynı ürünün
-   bütün videolarında aynı başlık çıkıyor. Videoların Google'a bildirilmesi
-   (video kütüphanesi 1c) yapılınca bu başlıklar Google'a gider
-   ([SEO.md](SEO.md) › 10).
+   bütün videolarında aynı başlık çıkıyor. Başlıklar Google'a gider
+   (videolar VideoObject olarak bildiriliyor; [SEO.md](SEO.md) › 10).
 3. **A3 · Kategoriler (50) ve gruplar (12):** ad, link, Tanıtım Metni
    (`## ` ara başlıklar H2 olarak basılır; H3 bugün yazılamaz), kısa açıklama, meta title ve description. Sıra: lazer (3),
    diğer makine kategorileri (5; plazmada "kesme" kuralı), güvenlik ve

@@ -1305,6 +1305,16 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       kaydedilir. Veritabanı modunda İşlem Kaydı'na "Video" ve "Anasayfa
       video bölümü" olarak girer (iki modda; `tests/e2e/videolar.spec.ts`,
       `tests/e2e-db/panel-videolar.spec.ts`).
+- [ ] Videolar sitede (K-125): ürüne bağlanan video o ürünün sayfasında
+      fotoğrafların ardından küçük resim olarak görünür, seçilip Oynat'a
+      basınca orada oynar. Anasayfada videolar kategori sekmelerine ayrılır
+      (menüdeki sırayla, "Tümü" yok, ilk sekme seçili, ürünsüzler "Genel"de;
+      tek grup varsa sekme yok); "Tüm videolar →" `/videolar`'ı açar.
+      `/videolar`'da bütün videolar kategoriye göre gruplu, her grupta
+      "Kategoriye git →", her kartta ürünün adı ürün sayfasına gider. Menüde
+      Keşfet › Güncel › Videolar. Sayfa kaynağında her video için
+      `VideoObject`, site haritasında video bilgisi vardır
+      (`tests/e2e/videolar.spec.ts`, `tests/e2e/yapisal-veri.spec.ts`).
 - [ ] Kendi videomuz (veritabanı modu, dosya deposu ve ffmpeg varken): Yeni
       Video › Kendi videomuz ile iPhone'dan bir MOV seçilince ilerleme
       çubuğuyla yüklenir; kaydedince "Hazırlanıyor…", birkaç saniye ya da

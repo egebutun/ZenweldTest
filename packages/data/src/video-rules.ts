@@ -1,7 +1,7 @@
 import { isUploadedFile } from "./catalog-rules";
 import { isVideoOriginalKey } from "./file-rules";
 import type { Parsed } from "./settings-rules";
-import type { HomeVideoSettings, Product, SiteVideo } from "./types";
+import type { Category, CategoryGroup, HomeVideoSettings, Product, SiteVideo, TopLevelSection } from "./types";
 
 /**
  * VIDEO KUTUPHANESI KURALLARI — PANEL › Videolar (demo ve veritabani modu
@@ -216,4 +216,85 @@ export function videoEncodeArgs(input: string, output: string, preset: keyof typ
     "-movflags", "+faststart",
     output,
   ];
+}
+
+/* ------------------------------ Kategorilere gore gruplama ------------------------------ */
+
+const SECTION_ORDER: TopLevelSection[] = ["ekipmanlar", "guvenlik", "aksesuarlar", "dolgu-metalleri"];
+
+/** Urunu olmayan (ya da urunu yayinda olmayan) videolarin grubu: en sonda. */
+export const VIDEO_GENERAL_GROUP = { key: "genel", label: "Genel", name: "Genel" } as const;
+
+export type VideoGroup = {
+  /** Kategorinin linki (slug) ya da "genel" */
+  key: string;
+  /** Sekmedeki kisa ad: kategorinin adi, sondaki "Kaynak Makineleri" / "Makineleri" olmadan */
+  label: string;
+  /** Kategorinin tam adi (Videolar sayfasindaki baslik) */
+  name: string;
+  /** Kategori sayfasinin adresi; Genel'de yok */
+  category?: Category;
+  items: { video: SiteVideo; product?: Product }[];
+};
+
+/** Sekmedeki kisa ad: "MIG (GMAW) Gazaltı Kaynak Makineleri" -> "MIG (GMAW) Gazaltı". */
+export const videoTabLabel = (name: string) => name.replace(/\s+(Kaynak\s+)?Makineleri$/u, "") || name;
+
+/**
+ * Videolari urunlerinin kategorisine gore gruplar (KARARLAR K-125):
+ * kategoriler menudeki sirayla (bolum, grup, kategori), videolar paneldeki
+ * sirayla; urunu olmayan videolar en sonda "Genel". Yalnizca videosu olan
+ * gruplar doner. items: homeVideos ya da sitedeki videolar.
+ */
+export function groupVideosByCategory(
+  items: { video: SiteVideo; product?: Product }[],
+  categories: Category[],
+  groups: CategoryGroup[],
+): VideoGroup[] {
+  const rank = (c: Category) => {
+    const g = groups.find((x) => x.slug === c.group && x.section === c.section);
+    return [SECTION_ORDER.indexOf(c.section), g?.order ?? 999, c.order];
+  };
+  const result = new Map<string, VideoGroup>();
+  for (const item of items) {
+    const category = item.product && categories.find((c) => c.slug === item.product!.categorySlug && c.section === item.product!.section);
+    const key = category ? `${category.section}/${category.slug}` : VIDEO_GENERAL_GROUP.key;
+    if (!result.has(key)) {
+      result.set(
+        key,
+        category
+          ? { key, label: videoTabLabel(category.name), name: category.name, category, items: [] }
+          : { ...VIDEO_GENERAL_GROUP, items: [] },
+      );
+    }
+    result.get(key)!.items.push(item);
+  }
+  return [...result.values()].sort((a, b) => {
+    if (!a.category) return 1;
+    if (!b.category) return -1;
+    const [x, y] = [rank(a.category), rank(b.category)];
+    return x[0] - y[0] || x[1] - y[1] || x[2] - y[2];
+  });
+}
+
+/** Sitede gorunen butun videolar (Videolar sayfasi): yayinda ve oynatilabilir olanlar, paneldeki sirayla. */
+export function siteVideos(videos: SiteVideo[], products: Product[]): { video: SiteVideo; product?: Product }[] {
+  return videos
+    .filter((v) => v.active && videoPlayable(v))
+    .map((video) => ({ video, product: products.find((p) => p.active && p.id === video.productId) }));
+}
+
+/** Urun sayfasindaki videolar: o urune bagli, yayinda ve oynatilabilir olanlar. */
+export const productVideos = (videos: SiteVideo[], productId: string) =>
+  videos.filter((v) => v.active && v.productId === productId && videoPlayable(v));
+
+/**
+ * Google'a giden video aciklamasi (KARARLAR K-123, K-125). Ornekler:
+ * "ForceMIG 200 ile 3 mm sacda gazaltı kaynağı. ForceMIG 200 Çok Fonksiyonlu
+ * Kaynak Makinesi — Zenweld." / basliksiz: "ForceMIG 200 … videosu —
+ * Zenweld." / urunsuz: "<baslik> — Zenweld." ya da "Zenweld kaynak videosu."
+ */
+export function videoDescription(video: Pick<SiteVideo, "title">, product?: Pick<Product, "name">): string {
+  if (product) return video.title ? `${video.title}. ${product.name} — Zenweld.` : `${product.name} videosu — Zenweld.`;
+  return video.title ? `${video.title} — Zenweld.` : "Zenweld kaynak videosu.";
 }

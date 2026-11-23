@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { notFound } from "next/navigation";
 import { FileText } from "lucide-react";
-import { productOptionsView } from "@zenweld/data";
-import { findProductBySlug, isProductInStock, listProducts, movedProductPath, useDatabase } from "@zenweld/store";
+import { productOptionsView, productVideos } from "@zenweld/data";
+import { findProductBySlug, isProductInStock, listProducts, listVideos, movedProductPath, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
 import Link from "next/link";
 import { OnlineRetailers } from "@/components/product/OnlineRetailers";
@@ -130,7 +130,7 @@ export function ProductPageClient({ slug }: { slug: string }) {
         <div className="grid gap-8 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-x-12 lg:gap-y-8">
           <div className="lg:col-start-1 lg:row-start-1">
             {/* Secenegin fotografi degisince galeri o fotografla yeniden acilir */}
-            <ProductGallery key={variant.image ?? ""} product={product} initialImage={variant.image} />
+            <ProductGallery key={variant.image ?? ""} product={product} initialImage={variant.image} videos={productVideos(listVideos(db), product.id)} />
           </div>
 
           <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">

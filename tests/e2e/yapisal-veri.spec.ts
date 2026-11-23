@@ -53,3 +53,18 @@ test("anasayfada site adı (WebSite); etkinlikte ülke kodu, düzenleyen yok", a
   expect((data.location as { address: { addressCountry: string } }).address.addressCountry).toBe("TR");
   expect(data.organizer).toBeUndefined();
 });
+
+test("videolar (K-123, K-125): Videolar sayfasında her video VideoObject; site haritasında video bilgisi", async ({ request }) => {
+  const videos = (await jsonLd(request, "/videolar")).filter((d) => d["@type"] === "VideoObject");
+  expect(videos).toHaveLength(seed.videos.filter((v) => v.active).length);
+  expect(videos[0]).toMatchObject({
+    name: "Zenweld videosu",
+    description: "Zenweld kaynak videosu.",
+    uploadDate: seed.videos[0].createdAt,
+    embedUrl: `https://www.youtube-nocookie.com/embed/${seed.videos[0].youtubeId}`,
+    thumbnailUrl: [`https://i.ytimg.com/vi/${seed.videos[0].youtubeId}/hqdefault.jpg`],
+  });
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  expect(sitemap).toContain("xmlns:video=");
+  expect(sitemap).toContain(`<video:player_loc>https://www.youtube-nocookie.com/embed/${seed.videos[0].youtubeId}</video:player_loc>`);
+});

@@ -158,6 +158,7 @@ function exploreColumns(t: Dictionary): MenuColumn[] {
         { label: t.explore.news, description: t.explore.newsDesc, href: "/haberler", icon: "haberler" },
         { label: t.explore.events, description: t.explore.eventsDesc, href: "/etkinlikler", icon: "etkinlikler" },
         { label: t.explore.blog, description: t.explore.blogDesc, href: "/blog", icon: "blog" },
+        { label: t.explore.videos, description: t.explore.videosDesc, href: "/videolar", icon: "videolar" },
       ],
     },
     {

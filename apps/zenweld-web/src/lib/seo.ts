@@ -10,6 +10,10 @@ import {
   productOptionsView,
   salePriceExVat,
   variantPriceExVat,
+  videoDescription,
+  videoPoster,
+  videoTitle,
+  youtubeThumbnail,
   type BlogPost,
   type Category,
   type CategoryGroup,
@@ -19,6 +23,7 @@ import {
   type OptionDefinition,
   type Product,
   type SeoFields,
+  type SiteVideo,
   type ShopSettings,
   type ZenweldEvent,
 } from "@zenweld/data";
@@ -522,5 +527,33 @@ export function faqJsonLd(faqs: FaqItem[]): Record<string, unknown> {
       name: item.question,
       acceptedAnswer: { "@type": "Answer", text: item.answer },
     })),
+  };
+}
+
+/* ------------------------------ Videolar (KARARLAR K-123, K-125) ------------------------------ */
+
+/** ISO 8601 sure ("PT1M5S"). */
+const isoDuration = (seconds: number) => `PT${Math.floor(seconds / 60) ? `${Math.floor(seconds / 60)}M` : ""}${seconds % 60}S`;
+
+/**
+ * Video icin VideoObject yapisal verisi: basligi (yoksa urunun adi),
+ * aciklamasi, kapagi, siteye eklendigi tarih; kendi videomuzda dosyanin
+ * adresi (1080p) ve suresi, YouTube videosunda cerezsiz gomme adresi.
+ * Google videoyu bu sayfanin videosu olarak gosterebilir.
+ */
+export function videoJsonLd(video: SiteVideo, product?: Product): Record<string, unknown> {
+  const own = video.source === "file";
+  const thumbnail = videoPoster(video) ?? (video.youtubeId ? youtubeThumbnail(video.youtubeId) : undefined);
+  return {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: videoTitle(video, product),
+    description: videoDescription(video, product),
+    ...(thumbnail && { thumbnailUrl: [absoluteUrl(thumbnail)] }),
+    uploadDate: video.createdAt,
+    ...(own && video.file?.hd ? { contentUrl: absoluteUrl(video.file.hd) } : {}),
+    ...(own && video.file?.durationSeconds ? { duration: isoDuration(video.file.durationSeconds) } : {}),
+    ...(!own && video.youtubeId ? { embedUrl: `https://www.youtube-nocookie.com/embed/${video.youtubeId}` } : {}),
+    publisher: { "@type": "Organization", name: SITE_NAME, logo: { "@type": "ImageObject", url: absoluteUrl("/images/brand/zenweld-logo.png") } },
   };
 }

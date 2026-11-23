@@ -23,6 +23,11 @@ import {
   videoHasUploadedFile,
   videoPlayable,
   videoTaken,
+  videoDescription,
+  videoTabLabel,
+  groupVideosByCategory,
+  siteVideos,
+  productVideos,
   videoTitle,
   youtubeCovers,
   youtubeEmbed,
@@ -208,5 +213,44 @@ describe("video dosyaları: tür, anahtar, parça parça sunma", () => {
     expect(byteRange("bytes=0-5000", 1000)).toEqual({ start: 0, end: 999 });
     expect(byteRange("bytes=1000-", 1000)).toBe("invalid");
     expect(byteRange("bytes=abc", 1000)).toBe("invalid");
+  });
+});
+
+describe("kategoriye göre gruplama, ürün sayfası, Google açıklaması (1c)", () => {
+  const db = createSeedDatabase(Date.now());
+  const bySlug = (slug: string) => db.products.find((p) => p.slug === slug)!;
+
+  it("sekmeler menüdeki sırayla, 'Tümü' yok; ürünsüz videolar en sonda 'Genel'; kısa adlar", () => {
+    const list: SiteVideo[] = structuredClone(db.videos);
+    list[0].productId = bySlug("forcecut-45").id; // Plazma
+    list[1].productId = bySlug("forcetig-200").id; // TIG
+    list[2].productId = bySlug("forcearc-200-mma").id; // MMA
+    const groups = groupVideosByCategory(siteVideos(list, db.products), db.categories, db.categoryGroups);
+    expect(groups.map((g) => g.label)).toEqual(["MMA (Stick) Örtülü Elektrot", "TIG (GTAW) Argon", "Plazma Kesim", "Genel"]);
+    expect(groups.at(-1)!.items.map((i) => i.video.id)).toEqual(["video-4", "video-5"]);
+    expect(groups[0].category?.slug).toBe(bySlug("forcearc-200-mma").categorySlug);
+    expect(videoTabLabel("Lazer Kaynak Makineleri")).toBe("Lazer");
+    expect(videoTabLabel("Lazer Temizleme")).toBe("Lazer Temizleme");
+  });
+
+  it("ürün sayfası: yalnızca o ürüne bağlı, yayında ve oynatılabilir videolar", () => {
+    const list: SiteVideo[] = structuredClone(db.videos);
+    const id = bySlug("forcemig-200").id;
+    list[0].productId = id;
+    list[1].productId = id;
+    list[1].active = false;
+    list[2].productId = id;
+    list[2].source = "file";
+    list[2].file = { status: "processing" };
+    expect(productVideos(list, id).map((v) => v.id)).toEqual(["video-1"]);
+  });
+
+  it("Google açıklaması: başlık ve ürün; başlıksız ve ürünsüzde tekrar yok", () => {
+    expect(videoDescription({ title: "ForceMIG 200 ile 3 mm sacda gazaltı kaynağı" }, { name: "ForceMIG 200" })).toBe(
+      "ForceMIG 200 ile 3 mm sacda gazaltı kaynağı. ForceMIG 200 — Zenweld.",
+    );
+    expect(videoDescription({}, { name: "ForceMIG 200" })).toBe("ForceMIG 200 videosu — Zenweld.");
+    expect(videoDescription({ title: "Fabrikamız" })).toBe("Fabrikamız — Zenweld.");
+    expect(videoDescription({})).toBe("Zenweld kaynak videosu.");
   });
 });

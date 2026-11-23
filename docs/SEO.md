@@ -589,8 +589,8 @@ metinde.
   bağlı her video, aranan ifadeyi içeren kendi başlığını alır (ör.
   "ForceMIG 200 ile 3 mm sacda gazaltı kaynağı"). Başlık boşsa ürünün adı
   kullanılıyor; aynı ürünün bütün videoları aynı başlıkla çıkar, bu yüzden
-  boş bırakılmaz. Videolar Google'a bildirilince (video kütüphanesi 1c) bu
-  başlık gider (A2, B5–B7'den sonra).
+  boş bırakılmaz. Bu başlık Google'a gider (VideoObject; A2, B5–B7'den
+  sonra).
 
 **Örnek (gerçek veriden, ForceArc 200):**
 
@@ -1086,6 +1086,9 @@ tıklanma oranını artırır.
 - [x] Konum satırı, kuruluş, SSS, haber ve etkinlik verileri.
 - [x] Blog yazılarına makale verisi (`BlogPosting`) (B3; K-123, 19 Kasım
       2026).
+- [x] Videolar (`VideoObject`): ürün sayfasında o ürünün, Videolar
+      sayfasında (`/videolar`) bütün videolar; site haritasında video
+      bilgisi (K-123, K-125). İçerik: başlıklar A2'de, yeni videolar A7'de.
 - [x] Ürünün onaylı yorumları varsa yıldız (`AggregateRating`);
       yalnızca gerçek yorumlarla, veritabanı modunda (B3; K-123).
 - [x] Ürüne kargo ve iade bilgisi (`shippingDetails`,

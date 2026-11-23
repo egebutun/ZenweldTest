@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createSeedDatabase, defaultSettings, HOME_FAQ_COUNT, productBrand } from "@zenweld/data";
-import { blogPostingJsonLd, countryCode, faqJsonLd, eventJsonLd, organizationJsonLd, productJsonLd, productSeo, websiteJsonLd } from "@/lib/seo";
+import { blogPostingJsonLd, countryCode, faqJsonLd, videoJsonLd, eventJsonLd, organizationJsonLd, productJsonLd, productSeo, websiteJsonLd } from "@/lib/seo";
 import { cooling, options, product } from "./ornek";
 
 const AT = { now: new Date("2026-11-02T09:00:00Z"), inStock: true };
@@ -194,5 +194,32 @@ describe("anasayfanin SSS bilgisi", () => {
     expect(HOME_FAQ_COUNT).toBe(6);
     const sent = faqJsonLd(faqs).mainEntity as { name: string }[];
     expect(sent.map((q) => q.name)).toEqual(faqs.slice(0, 6).map((f) => f.question));
+  });
+});
+
+describe("videonun yapısal verisi (VideoObject; K-123, K-125)", () => {
+  const base = { id: "v1", showOnHome: true, active: true, createdAt: "2026-11-23T09:00:00.000Z" };
+  it("YouTube: çerezsiz gömme adresi ve YouTube kapağı", () => {
+    const data = videoJsonLd({ ...base, source: "youtube", youtubeId: "QtZ7JdNzFVo", title: "Sahada" }, product({ name: "ForceMIG 200" }));
+    expect(data).toMatchObject({
+      "@type": "VideoObject",
+      name: "Sahada",
+      description: "Sahada. ForceMIG 200 — Zenweld.",
+      uploadDate: base.createdAt,
+      embedUrl: "https://www.youtube-nocookie.com/embed/QtZ7JdNzFVo",
+      thumbnailUrl: ["https://i.ytimg.com/vi/QtZ7JdNzFVo/hqdefault.jpg"],
+    });
+    expect(data.contentUrl).toBeUndefined();
+  });
+  it("kendi videomuz: dosyanın adresi, süresi ve kapak karesi", () => {
+    const data = videoJsonLd({
+      ...base,
+      source: "file",
+      file: { status: "ready", hd: "/dosya/video/2026/11/0123456789abcdef/1080.mp4", poster: "/dosya/video/2026/11/0123456789abcdef/kapak.webp", durationSeconds: 65 },
+    });
+    expect(data.contentUrl).toMatch(/\/dosya\/video\/2026\/11\/0123456789abcdef\/1080\.mp4$/);
+    expect(data.duration).toBe("PT1M5S");
+    expect((data.thumbnailUrl as string[])[0]).toMatch(/kapak\.webp$/);
+    expect(data.embedUrl).toBeUndefined();
   });
 });

@@ -23,6 +23,7 @@ export type MenuIconName =
   | "haberler"
   | "etkinlikler"
   | "blog"
+  | "videolar"
   | "urun-secici"
   | "kaynak-rehberi"
   | "msds"
@@ -132,6 +133,13 @@ const PATHS: Record<MenuIconName, React.ReactNode> = {
       <circle cx="15.75" cy="13.5" r="0.9" fill="currentColor" stroke="none" />
       <circle cx="8.25" cy="17" r="0.9" fill="currentColor" stroke="none" />
       <circle cx="12" cy="17" r="0.9" fill="currentColor" stroke="none" />
+    </>
+  ),
+  // Oynat isaretli ekran
+  "videolar": (
+    <>
+      <rect x="3.75" y="5.25" width="16.5" height="13.5" rx="2" />
+      <path d="m10.25 9.25 4.5 2.75-4.5 2.75Z" />
     </>
   ),
   // Kalem
