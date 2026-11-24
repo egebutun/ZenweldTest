@@ -1305,9 +1305,11 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       kaydedilir. Veritabanı modunda İşlem Kaydı'na "Video" ve "Anasayfa
       video bölümü" olarak girer (iki modda; `tests/e2e/videolar.spec.ts`,
       `tests/e2e-db/panel-videolar.spec.ts`).
-- [ ] Videolar sitede (K-125): ürüne bağlanan video o ürünün sayfasında
-      fotoğrafların ardından küçük resim olarak görünür, seçilip Oynat'a
-      basınca orada oynar. Anasayfada videolar kategori sekmelerine ayrılır
+- [ ] Videolar sitede (K-125): ürüne bağlanan ve "Ürün sayfasında göster"
+      işaretlenen video o ürünün sayfasında fotoğrafların ardından küçük
+      resim olarak görünür, seçilip Oynat'a basınca orada oynar; aynı
+      ürünün işaretsiz videosu ürün sayfasında görünmez (Videolar
+      sayfasında görünür). Ürün seçilmeden işaret konamaz. Anasayfada videolar kategori sekmelerine ayrılır
       (menüdeki sırayla, "Tümü" yok, ilk sekme seçili, ürünsüzler "Genel"de;
       tek grup varsa sekme yok); "Tüm videolar →" `/videolar`'ı açar.
       `/videolar`'da bütün videolar kategoriye göre gruplu, her grupta

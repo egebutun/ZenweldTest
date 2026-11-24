@@ -198,7 +198,7 @@ describe("anasayfanin SSS bilgisi", () => {
 });
 
 describe("videonun yapısal verisi (VideoObject; K-123, K-125)", () => {
-  const base = { id: "v1", showOnHome: true, active: true, createdAt: "2026-11-23T09:00:00.000Z" };
+  const base = { id: "v1", showOnHome: true, showOnProduct: true, active: true, createdAt: "2026-11-23T09:00:00.000Z" };
   it("YouTube: çerezsiz gömme adresi ve YouTube kapağı", () => {
     const data = videoJsonLd({ ...base, source: "youtube", youtubeId: "QtZ7JdNzFVo", title: "Sahada" }, product({ name: "ForceMIG 200" }));
     expect(data).toMatchObject({

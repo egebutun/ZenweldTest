@@ -898,6 +898,7 @@ export function videoRecord(v: typeof s.videos.$inferSelect): ZenweldDatabase["v
     productId: opt(v.productId),
     cover: opt(v.coverUrl),
     showOnHome: v.showOnHome,
+    showOnProduct: v.showOnProduct,
     active: v.active,
     createdAt: iso(v.createdAt),
   };

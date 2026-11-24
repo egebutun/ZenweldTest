@@ -90,6 +90,8 @@ export const videos = pgTable(
     productId: text("product_id").references(() => products.id, { onDelete: "set null" }),
     coverUrl: text("cover_url"),
     showOnHome: boolean("show_on_home").notNull().default(true),
+    /** Bagli urunun sayfasinda gorunur (urun yoksa false) */
+    showOnProduct: boolean("show_on_product").notNull().default(false),
     active: boolean("active").notNull().default(true),
     position: integer("position").notNull(),
     fileStatus: text("file_status"),

@@ -621,6 +621,7 @@ export function seedTables(data: ZenweldDatabase): SeedTable[] {
     productId: v.productId ?? null,
     coverUrl: v.cover ?? null,
     showOnHome: v.showOnHome,
+    showOnProduct: v.showOnProduct,
     active: v.active,
     position: i,
     fileStatus: v.file?.status ?? null,

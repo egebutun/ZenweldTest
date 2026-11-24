@@ -69,21 +69,21 @@ describe("Video kütüphanesi", () => {
       await category(client);
       await product(client, "p-video", "ZW-VIDEO-1");
 
-      const first = await adminSaveVideo(db, admin, form({ title: " Sahada ", productId: "p-video" }), T1);
+      const first = await adminSaveVideo(db, admin, form({ title: " Sahada ", productId: "p-video", showOnProduct: true }), T1);
       expect(first).toMatchObject({ ok: true, updatedAt: T1.toISOString() });
       const second = await adminSaveVideo(db, admin, form({ youtubeId: "QtZ7JdNzFVo", showOnHome: false }), T1);
       const [a, b] = [(first as { id: string }).id, (second as { id: string }).id];
 
       const content = await readContent(db);
       expect(content.videos).toEqual([
-        { id: a, source: "youtube", youtubeId: "abcdefghijk", title: "Sahada", productId: "p-video", showOnHome: true, active: true, createdAt: T1.toISOString() },
-        { id: b, source: "youtube", youtubeId: "QtZ7JdNzFVo", showOnHome: false, active: true, createdAt: T1.toISOString() },
+        { id: a, source: "youtube", youtubeId: "abcdefghijk", title: "Sahada", productId: "p-video", showOnHome: true, showOnProduct: true, active: true, createdAt: T1.toISOString() },
+        { id: b, source: "youtube", youtubeId: "QtZ7JdNzFVo", showOnHome: false, showOnProduct: false, active: true, createdAt: T1.toISOString() },
       ]);
 
       // Guncelleme: son degisiklik ani tutmali; ayni deger yazilmaz.
       const stamped = (await readContentPanel(db)).videos!;
       expect(stamped[0].updatedAt).toBe(T1.toISOString());
-      expect(await adminSaveVideo(db, admin, { ...form({ title: "Sahada", productId: "p-video" }), id: a, updatedAt: T1.toISOString() }, T2)).toMatchObject({
+      expect(await adminSaveVideo(db, admin, { ...form({ title: "Sahada", productId: "p-video", showOnProduct: true }), id: a, updatedAt: T1.toISOString() }, T2)).toMatchObject({
         ok: true,
         updatedAt: T1.toISOString(),
       });

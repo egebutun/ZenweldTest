@@ -268,6 +268,7 @@ betik üretir ve [VERITABANI.md](VERITABANI.md) aynı commit'te güncellenir.
 | `0017_anasayfa-videolari.sql` | `settings.key` `home_videos` değerini de kabul eder (anasayfa video bölümü, K-125) |
 | `0018_video-kutuphanesi.sql` | `videos`: video kütüphanesi (K-125). `settings` › `home_videos` satırındaki eski video listesi tabloya taşınır; satırda yalnızca bölüm başlığı kalır |
 | `0019_video-dosyalari.sql` | `videos.file_original` (hazırlanacak orijinal) ve `videos.file_poster` (kapak karesi; K-125) |
+| `0020_video-urun-sayfasi.sql` | `videos.show_on_product`: video bağlı ürünün sayfasında yalnızca işaretlenirse görünür (K-125). Var olan videolar işaretsiz gelir |
 
 **Veritabanındaki kurallar** (`0001_kurallar.sql`):
 

@@ -1384,6 +1384,11 @@ export interface SiteVideo {
   title?: string;
   /** Altinda adi gorunen urun; bossa urun satiri yok */
   productId?: string;
+  /**
+   * Bagli urunun sayfasinda (galeride) gorunur; secilmezse video yalnizca
+   * anasayfada (isaretliyse) ve Videolar sayfasinda gorunur. Urun yoksa false.
+   */
+  showOnProduct: boolean;
   /** Kapak gorseli; bossa YouTube'un ya da videonun kapak karesi */
   cover?: string;
   /** Anasayfadaki video seridinde gorunur */

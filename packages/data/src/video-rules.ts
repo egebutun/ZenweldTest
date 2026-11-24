@@ -100,7 +100,7 @@ function cover(value: unknown): string | null {
  * disinda). upload: kendi videomuzda yeni yuklenen orijinalin depo anahtari
  * (yeni videoda zorunlu, duzenlemede dosya degisirse).
  */
-export type VideoDraft = Pick<SiteVideo, "source" | "youtubeId" | "title" | "productId" | "cover" | "showOnHome" | "active"> & {
+export type VideoDraft = Pick<SiteVideo, "source" | "youtubeId" | "title" | "productId" | "cover" | "showOnHome" | "showOnProduct" | "active"> & {
   upload?: string;
 };
 
@@ -118,11 +118,14 @@ export function parseVideo(value: unknown, isNew = true): Parsed<VideoDraft> {
   const img = cover(value.cover);
   if (title === null || title.length > VIDEO_LIMITS.title || productId === null || img === null) return bad;
   if (typeof value.showOnHome !== "boolean" || typeof value.active !== "boolean") return bad;
+  if (value.showOnProduct !== undefined && typeof value.showOnProduct !== "boolean") return bad;
   const common = {
     ...(title && { title }),
     ...(productId && { productId }),
     ...(img && { cover: img }),
     showOnHome: value.showOnHome,
+    // Urun secilmemisse urun sayfasinda gosterilecek bir yer yok.
+    showOnProduct: Boolean(productId) && value.showOnProduct === true,
     active: value.active,
   };
   if (value.source === "file") {
@@ -284,9 +287,12 @@ export function siteVideos(videos: SiteVideo[], products: Product[]): { video: S
     .map((video) => ({ video, product: products.find((p) => p.active && p.id === video.productId) }));
 }
 
-/** Urun sayfasindaki videolar: o urune bagli, yayinda ve oynatilabilir olanlar. */
+/**
+ * Urun sayfasindaki videolar: o urune bagli, "Ürün sayfasında göster"
+ * isaretli, yayinda ve oynatilabilir olanlar, paneldeki sirayla.
+ */
 export const productVideos = (videos: SiteVideo[], productId: string) =>
-  videos.filter((v) => v.active && v.productId === productId && videoPlayable(v));
+  videos.filter((v) => v.active && v.showOnProduct && v.productId === productId && videoPlayable(v));
 
 /**
  * Google'a giden video aciklamasi (KARARLAR K-123, K-125). Ornekler:

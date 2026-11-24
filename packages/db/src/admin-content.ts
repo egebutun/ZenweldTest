@@ -570,7 +570,7 @@ export async function adminMoveFaq(db: AuditDb, actor: Actor, input: Input, at: 
 
 /* ------------------------------ Video kutuphanesi ------------------------------ */
 
-const VIDEO_KEYS = ["youtubeId", "title", "productId", "coverUrl", "showOnHome", "active"] as const;
+const VIDEO_KEYS = ["youtubeId", "title", "productId", "coverUrl", "showOnHome", "showOnProduct", "active"] as const;
 
 /**
  * Videoyu ekler (id yoksa, listenin sonuna) ya da gunceller (KARARLAR
@@ -595,6 +595,7 @@ export async function adminSaveVideo(db: AuditDb, actor: Actor, input: Input, at
     productId: draft.productId ?? null,
     coverUrl: draft.cover ?? null,
     showOnHome: draft.showOnHome,
+    showOnProduct: draft.showOnProduct,
     active: draft.active,
   };
   // Kendi videomuz: yeni yuklenen orijinal hazirlanmak uzere siraya girer (eski surumler kalkar).

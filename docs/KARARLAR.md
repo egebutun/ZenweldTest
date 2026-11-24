@@ -869,9 +869,12 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 ### K-125 · Videolar: tek kütüphane, ürün sayfası ve anasayfa
 - Videolar tek bir kütüphanede durur (panel › Videolar). Her video bir kez
   eklenir: YouTube videosu ya da kendi çektiğimiz video.
-- Video bir ürüne bağlanabilir: o ürünün sayfasında görünür, altındaki
-  ürün adı ürün sayfasını açar. "Anasayfada göster" işaretli videolar
-  anasayfaya da gelir. Ürün sayfası için ayrıca yükleme yoktur.
+- Video bir ürüne bağlanabilir: altındaki ürün adı ürün sayfasını açar,
+  Videolar sayfasında ve anasayfada ürünün kategorisinde durur. Ürünün
+  sayfasında yalnızca **"Ürün sayfasında göster"** işaretlenen videolar
+  görünür (aynı ürünün videolarından istenenler seçilir); "Anasayfada
+  göster" işaretliler anasayfaya gelir. Ürün sayfası için ayrıca yükleme
+  yoktur. Her video bir ürüne bağlanacaktır.
 - **Anasayfa:** Bayi ve Servis haritasının hemen altında; başlık "Gerçek
   İşler, Gerçek Kaynak" (panelden değişir). Videolar ürünün kategorisine
   göre sekmelerle ayrılır; "Tümü" sekmesi yoktur, açılışta sıradaki ilk

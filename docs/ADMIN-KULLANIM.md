@@ -2485,11 +2485,12 @@ altında). Video kütüphanesi (KARARLAR K-125; sitede görünüşü:
 [WEBSITE-KULLANIM.md › Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa) 9, ürün
 sayfasının galerisi ve Videolar sayfası (`/videolar`); kurallar:
 [IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)). Her video bir kez
-eklenir: seçilen ürünün sayfasında ve Videolar sayfasında (ürünün
-kategorisinin altında), "Anasayfada göster" işaretliyse anasayfada da
-(kategori sekmesinde) görünür. Açıklama: "Video kütüphanesi. Her video bir kez
-eklenir: seçilen ürünün sayfasında, “Anasayfada göster” işaretliyse
-anasayfada görünür. Sitede bu sırayla çıkar."
+eklenir ve Videolar sayfasında (ürünün kategorisinin altında) görünür;
+"Ürün sayfasında göster" işaretliyse seçilen ürünün sayfasında,
+"Anasayfada göster" işaretliyse anasayfada da (kategori sekmesinde)
+görünür. Açıklama: "Video kütüphanesi. Her video bir kez eklenir ve
+Videolar sayfasında görünür; işaretlerine göre seçilen ürünün sayfasında ve
+anasayfada da çıkar. Sitede bu sırayla görünür."
 
 - **Anasayfa bölüm başlığı** (zorunlu, en fazla 60 karakter; örnek veride
   "Gerçek İşler, Gerçek Kaynak") ve yanında **Başlığı Kaydet**: "Bölüm
@@ -2497,7 +2498,8 @@ anasayfada görünür. Sitede bu sırayla çıkar."
 - **Liste** (sitedeki sırayla): Sıra (**yukarı taşı** / **aşağı taşı**),
   Video (dik küçük kapak, başlık ya da yoksa ürünün adı; altında "YouTube ·
   <video kimliği>" ya da "Kendi videomuz · <süre> · <genişlik×yükseklik>"),
-  Ürün, Durum ("Yayında" / "Kapalı", "Anasayfada"; kendi videomuzda
+  Ürün, Durum ("Yayında" / "Kapalı", "Anasayfada", "Ürün sayfasında";
+  kendi videomuzda
   "Hazırlanıyor…" ya da "Hazırlanamadı"), **Yeniden hazırla** (yalnızca
   hazırlanmamış kendi videomuzda), **Düzenle** ve **Sil** ("Bu video
   silinsin mi?"). Hazırlanan video varken liste 5 saniyede bir kendiliğinden
@@ -2525,15 +2527,21 @@ anasayfada görünür. Sitede bu sırayla çıkar."
   - **Başlık** (isteğe bağlı, en fazla 100 karakter): Boşsa ürünün adı
     kullanılır; Google'a da bu başlık gider.
   - **Ürün:** Listeden seçilir ("— Ürün yok —" seçilebilir); yayında
-    olmayan ürünün yanında "(yayında değil)" yazar. Video bu ürünün
-    sayfasında görünür, altındaki adı ürün sayfasını açar; ürün yayında
-    değilse görünmez.
+    olmayan ürünün yanında "(yayında değil)" yazar. Videonun altında
+    ürünün adı görünür ve ürün sayfasını açar; Videolar sayfasında ve
+    anasayfada video bu ürünün kategorisinde durur. Ürün yayında değilse
+    görünmez.
   - **Kapak görseli** (isteğe bağlı): URL ya da dosya yükleme (dosya
     deposu ayarlı değilse yalnızca URL); solda önizleme. Boşsa YouTube'un
     en yüksek çözünürlüklü kapak resmi (keskinliği videonun YouTube'a
     yüklendiği çözünürlüğe bağlı) ya da kendi videomuzun 1. saniyesinden
     alınan kare kullanılır. En keskin sonuç için dik (9:16), en az
     1080×1920 görsel önerilir.
+  - **Ürün sayfasında göster:** İşaretlenirse video seçilen ürünün
+    sayfasında, fotoğrafların yanında görünür; aynı ürünün birden çok
+    videosundan yalnızca istenenler işaretlenir. Ürün seçilmeden
+    işaretlenemez; ürün kaldırılınca işaret de kalkar. Yeni videoda
+    işaretsiz.
   - **Anasayfada göster** ve **Yayında** (ikisi de yeni videoda işaretli).
   - **Kaydet** / **Vazgeç**.
 - Hatalar (kaydedilmez): "YouTube linki okunamadı. Videonun adresini (ör.

@@ -41,10 +41,11 @@ type Draft = {
   productId: string;
   cover?: string;
   showOnHome: boolean;
+  showOnProduct: boolean;
   active: boolean;
 };
 
-const EMPTY: Draft = { id: "", source: "youtube", youtubeId: "", title: "", productId: "", showOnHome: true, active: true };
+const EMPTY: Draft = { id: "", source: "youtube", youtubeId: "", title: "", productId: "", showOnHome: true, showOnProduct: false, active: true };
 
 const MB = 1024 * 1024;
 const size = (bytes: number) => (bytes >= 1024 * MB ? `${(bytes / (1024 * MB)).toFixed(1)} GB` : `${Math.max(1, Math.round(bytes / MB))} MB`);
@@ -66,6 +67,7 @@ const draftOf = (v: SiteVideo): Draft => ({
   productId: v.productId ?? "",
   cover: v.cover,
   showOnHome: v.showOnHome,
+  showOnProduct: v.showOnProduct,
   active: v.active,
 });
 
@@ -173,7 +175,7 @@ export function VideosClient() {
     <>
       <AdminPageHeader
         title="Videolar"
-        description="Video kütüphanesi. Her video bir kez eklenir: seçilen ürünün sayfasında, “Anasayfada göster” işaretliyse anasayfada görünür. Sitede bu sırayla çıkar."
+        description="Video kütüphanesi. Her video bir kez eklenir ve Videolar sayfasında görünür; işaretlerine göre seçilen ürünün sayfasında ve anasayfada da çıkar. Sitede bu sırayla görünür."
         action={
           <Button leftIcon={<Plus size={17} />} onClick={() => setEditing({ ...EMPTY })}>
             Yeni Video
@@ -264,6 +266,7 @@ export function VideosClient() {
                     <div className="flex flex-wrap gap-1">
                       <Badge tone={v.active ? "green" : "grey"}>{v.active ? "Yayında" : "Kapalı"}</Badge>
                       {v.showOnHome && <Badge tone="outline">Anasayfada</Badge>}
+                      {v.showOnProduct && v.productId && <Badge tone="outline">Ürün sayfasında</Badge>}
                       {v.file?.status === "processing" && <Badge tone="amber">Hazırlanıyor…</Badge>}
                       {v.file?.status === "failed" && <Badge tone="red">Hazırlanamadı</Badge>}
                     </div>
@@ -359,8 +362,14 @@ export function VideosClient() {
             <FormRow label="Başlık" hint={`İsteğe bağlı, en fazla ${VIDEO_LIMITS.title} karakter. Boşsa ürünün adı kullanılır. Google'a da bu başlık gider.`}>
               <Input value={editing.title} maxLength={VIDEO_LIMITS.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} />
             </FormRow>
-            <FormRow label="Ürün" hint="Video bu ürünün sayfasında görünür; altındaki adı ürün sayfasını açar. Yayında olmayan ürün sitede görünmez.">
-              <Select value={editing.productId} onChange={(e) => setEditing({ ...editing, productId: e.target.value })}>
+            <FormRow
+              label="Ürün"
+              hint="Videonun altında adı görünür, tıklanınca ürün sayfası açılır; Videolar sayfasında ve anasayfada video bu ürünün kategorisinde durur. Yayında olmayan ürün sitede görünmez."
+            >
+              <Select
+                value={editing.productId}
+                onChange={(e) => setEditing({ ...editing, productId: e.target.value, showOnProduct: e.target.value ? editing.showOnProduct : false })}
+              >
                 <option value="">— Ürün yok —</option>
                 {products.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -386,6 +395,15 @@ export function VideosClient() {
                 </div>
               </div>
             </FormRow>
+            <Checkbox
+              label="Ürün sayfasında göster"
+              checked={editing.showOnProduct}
+              disabled={!editing.productId}
+              onChange={(e) => setEditing({ ...editing, showOnProduct: e.target.checked })}
+            />
+            <p className="-mt-2 text-xs text-zw-grey-500">
+              İşaretlenirse video seçilen ürünün sayfasında, fotoğrafların yanında görünür. Önce ürün seçilmeli.
+            </p>
             <Checkbox label="Anasayfada göster" checked={editing.showOnHome} onChange={(e) => setEditing({ ...editing, showOnHome: e.target.checked })} />
             <Checkbox label="Yayında" checked={editing.active} onChange={(e) => setEditing({ ...editing, active: e.target.checked })} />
             <div className="flex gap-2 pt-2">

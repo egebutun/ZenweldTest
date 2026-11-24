@@ -1110,8 +1110,10 @@ yayında işaretliyse hemen görünür (zamanlanmış yayın yoktur, K-42).
 ### `videos` — video kütüphanesi
 
 KARARLAR K-125; geçiş betikleri `0018_video-kutuphanesi`,
-`0019_video-dosyalari` (`file_original`, `file_poster`). Her video bir kez
-eklenir: bağlı ürünün sayfasında, `show_on_home` ise anasayfada görünür.
+`0019_video-dosyalari` (`file_original`, `file_poster`),
+`0020_video-urun-sayfasi` (`show_on_product`). Her video bir kez
+eklenir: Videolar sayfasında görünür; `show_on_product` ise bağlı ürünün
+sayfasında, `show_on_home` ise anasayfada da görünür.
 Kurallar: `packages/data/src/video-rules.ts`
 ([IS-KURALLARI.md › 27](IS-KURALLARI.md#27-videolar)).
 
@@ -1124,6 +1126,7 @@ Kurallar: `packages/data/src/video-rules.ts`
 | `product_id` | text | → `products`, silinince boşalır | Video bu ürünün sayfasında görünür; altındaki ad ürün sayfasına gider |
 | `cover_url` | text | | Kapak görseli; boşsa YouTube'un (ya da videonun) kapağı |
 | `show_on_home` | bool | zorunlu (varsayılan evet) | Anasayfadaki video şeridinde görünür |
+| `show_on_product` | bool | zorunlu (varsayılan hayır) | Bağlı ürünün sayfasında (galeride) görünür; ürün yoksa hayır |
 | `active` | bool | zorunlu (varsayılan evet) | Yayında |
 | `position` | int | zorunlu | Sitedeki sıra; sıra değişikliği `updated_at`'i değiştirmez |
 | `file_status` | text | `processing`, `ready`, `failed`; `file` ise zorunlu, `youtube` ise boş | Kendi videomuzun hazırlanma durumu; `processing` satırları sunucunun hazırlama sırasıdır |
@@ -1739,7 +1742,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 **Veri sürümü (`DB_VERSION`, yalnızca demo modu):**
 
-- `packages/data/src/index.ts`'tedir (bugün 94).
+- `packages/data/src/index.ts`'tedir (bugün 95).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**

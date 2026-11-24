@@ -141,6 +141,13 @@
       "when": 1795474319854,
       "tag": "0019_video-dosyalari",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1795509932740,
+      "tag": "0020_video-urun-sayfasi",
+      "breakpoints": true
     }
   ]
 }

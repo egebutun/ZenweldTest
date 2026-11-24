@@ -25,6 +25,7 @@ test("video kütüphanesi: ekleme, düzenleme, sıra, silme, bölüm başlığı
   // 1. videoya urun; 5. video anasayfadan cikarilir
   await page.getByRole("button", { name: "1. videoyu düzenle" }).click();
   await field(page, "Ürün").selectOption({ label: "ForceArc 200 MMA Elektrot Kaynak Makinesi" });
+  await page.getByLabel("Ürün sayfasında göster").check();
   await page.getByRole("button", { name: "Kaydet", exact: true }).click();
   await expect(rows.first()).toContainText("ForceArc 200 MMA Elektrot Kaynak Makinesi");
   await page.getByRole("button", { name: "5. videoyu düzenle" }).click();
@@ -66,7 +67,7 @@ test("video kütüphanesi: ekleme, düzenleme, sıra, silme, bölüm başlığı
   await tabs.nth(1).click();
   await expect(page.getByRole("button", { name: /^\d\. videoyu göster$/ })).toHaveCount(3 + 2);
 
-  // Urun sayfasinda: fotograflarin yaninda video; Oynat'a basinca oynatici acilir.
+  // Urun sayfasinda: "Ürün sayfasında göster" isaretli video fotograflarin yaninda; Oynat'a basinca oynatici acilir.
   await page.goto("/urun/forcearc-200-mma");
   await page.getByRole("button", { name: "1. videoyu göster" }).click();
   await page.getByRole("button", { name: "1. videoyu oynat" }).click();

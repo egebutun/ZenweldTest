@@ -1851,10 +1851,12 @@ tarayıcıdan geleni yeniden denetler).
 | Ürün | İsteğe bağlı; katalogdaki bir ürün olmalı (veritabanı modunda sunucu denetler). Ürün silinirse video kalır, bağı boşalır |
 | Kapak görseli | İsteğe bağlı; site içi adres (`/…`), `https://…` ya da yüklenen dosya. Boşsa YouTube'un kapak resmi (aşağıda) |
 | Video dosyası (kendi videomuz) | Yeni videoda zorunlu ("Video dosyası seçilmeli."); düzenlemede yeni dosya seçilirse video yeniden hazırlanır. Türler ve 1 GB sınırı: [23](#23-yüklenen-dosyalar) |
+| Ürün sayfasında göster | Yalnızca ürün seçiliyse işaretlenebilir; ürün yoksa kaydedilmez (hayır). Yeni videoda işaretsiz |
 | Anasayfada göster, Yayında | Yeni videoda ikisi de işaretli |
 
-- **Nerede görünür:** Ürün sayfasında o ürüne bağlı videolar (galeride,
-  fotoğrafların ardından); Videolar sayfasında (`/videolar`) bütün
+- **Nerede görünür:** Ürün sayfasında o ürüne bağlı ve "Ürün sayfasında
+  göster" işaretli videolar (galeride, fotoğrafların ardından); aynı ürünün
+  işaretsiz videosu ürün sayfasında görünmez; Videolar sayfasında (`/videolar`) bütün
   videolar; anasayfada "Anasayfada göster" işaretliler. Üçünde de yalnızca
   yayında ve oynatılabilir videolar, paneldeki sırayla.
 - **Kategoriye göre gruplama** (anasayfa sekmeleri ve Videolar sayfası):
@@ -1875,7 +1877,8 @@ tarayıcıdan geleni yeniden denetler).
   (panelde seçilen, kendi videomuzun kapak karesi ya da YouTube'un
   480×360 kapağı); siteye eklendiği tarih; kendi videomuzda 1080p dosyanın
   adresi ve süresi, YouTube'da çerezsiz oynatıcının adresi. Ürün sayfasında
-  o ürünün, Videolar sayfasında bütün videolar gider; site haritasında da
+  o ürünün sayfasında gösterilen videoları, Videolar sayfasında bütün
+  videolar gider; site haritasında da
   aynı bilgi vardır.
 - **Anasayfada görünen:** Yayında, "Anasayfada göster" işaretli ve
   oynatılabilir videolar (YouTube videosu; kendi videomuz hazırlanması

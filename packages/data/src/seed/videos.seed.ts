@@ -11,6 +11,7 @@ export const videos: SiteVideo[] = ["QtZ7JdNzFVo", "9CAoUSHs0R4", "CXx3PC0C4pE",
   source: "youtube",
   youtubeId,
   showOnHome: true,
+  showOnProduct: false,
   active: true,
   createdAt: "2026-11-20T09:00:00.000Z",
 }));

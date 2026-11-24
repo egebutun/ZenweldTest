@@ -95,9 +95,15 @@ describe("panelde kaydetme", () => {
   });
 
   it("link kimliğe çevrilir; boş başlık, ürün ve kapak kaydedilmez; başlık kırpılır", () => {
-    expect(parseVideo(form())).toEqual({ ok: true, value: { source: "youtube", youtubeId: "QtZ7JdNzFVo", showOnHome: true, active: true } });
-    const parsed = parseVideo(form({ title: "  Sahada ForceMIG ", productId: "p1", cover: "/kapak.webp", showOnHome: false }));
-    expect(parsed.ok && parsed.value).toMatchObject({ title: "Sahada ForceMIG", productId: "p1", cover: "/kapak.webp", showOnHome: false });
+    expect(parseVideo(form())).toEqual({ ok: true, value: { source: "youtube", youtubeId: "QtZ7JdNzFVo", showOnHome: true, showOnProduct: false, active: true } });
+    const parsed = parseVideo(form({ title: "  Sahada ForceMIG ", productId: "p1", cover: "/kapak.webp", showOnHome: false, showOnProduct: true }));
+    expect(parsed.ok && parsed.value).toMatchObject({ title: "Sahada ForceMIG", productId: "p1", cover: "/kapak.webp", showOnHome: false, showOnProduct: true });
+  });
+
+  it("'Ürün sayfasında göster' yalnızca ürün seçiliyse; ürünsüz videoda kaydedilmez", () => {
+    const parsed = parseVideo(form({ productId: "", showOnProduct: true }));
+    expect(parsed.ok && parsed.value.showOnProduct).toBe(false);
+    expect(parseVideo(form({ showOnProduct: "evet" }))).toEqual({ ok: false, error: null });
   });
 
   it("bozuk link hata verir; bozuk istek reddedilir", () => {
@@ -144,7 +150,7 @@ describe("sitede görünen videolar", () => {
   });
 
   it("kendi videomuz yalnızca hazırlanması bitince oynatılır", () => {
-    const base = { id: "v", showOnHome: true, active: true, createdAt: "2026-11-23T00:00:00.000Z" };
+    const base = { id: "v", showOnHome: true, showOnProduct: false, active: true, createdAt: "2026-11-23T00:00:00.000Z" };
     expect(videoPlayable({ ...base, source: "youtube", youtubeId: "QtZ7JdNzFVo" })).toBe(true);
     expect(videoPlayable({ ...base, source: "file", file: { status: "processing" } })).toBe(false);
     expect(videoPlayable({ ...base, source: "file", file: { status: "ready", hd: "/dosya/video/a.mp4" } })).toBe(true);
@@ -156,8 +162,8 @@ describe("kendi videolarımız (K-125)", () => {
 
   it("yeni videoda yüklenen orijinal zorunlu; düzenlemede isteğe bağlı; anahtar denetlenir", () => {
     expect(parseVideo(form({ source: "file" }))).toEqual({ ok: false, error: "Video dosyası seçilmeli." });
-    expect(parseVideo(form({ source: "file", upload }))).toEqual({ ok: true, value: { source: "file", upload, showOnHome: true, active: true } });
-    expect(parseVideo(form({ source: "file" }), false)).toEqual({ ok: true, value: { source: "file", showOnHome: true, active: true } });
+    expect(parseVideo(form({ source: "file", upload }))).toEqual({ ok: true, value: { source: "file", upload, showOnHome: true, showOnProduct: false, active: true } });
+    expect(parseVideo(form({ source: "file" }), false)).toEqual({ ok: true, value: { source: "file", showOnHome: true, showOnProduct: false, active: true } });
     expect(parseVideo(form({ source: "file", upload: "video/2026/11/0123456789abcdef/1080.mp4" }))).toEqual({ ok: false, error: null });
     expect(parseVideo(form({ source: "file", upload: "../../etc/passwd" }))).toEqual({ ok: false, error: null });
   });
@@ -233,15 +239,14 @@ describe("kategoriye göre gruplama, ürün sayfası, Google açıklaması (1c)"
     expect(videoTabLabel("Lazer Temizleme")).toBe("Lazer Temizleme");
   });
 
-  it("ürün sayfası: yalnızca o ürüne bağlı, yayında ve oynatılabilir videolar", () => {
+  it("ürün sayfası: yalnızca o ürüne bağlı, 'Ürün sayfasında göster' işaretli, yayında ve oynatılabilir videolar", () => {
     const list: SiteVideo[] = structuredClone(db.videos);
     const id = bySlug("forcemig-200").id;
-    list[0].productId = id;
-    list[1].productId = id;
+    for (const v of list.slice(0, 4)) Object.assign(v, { productId: id, showOnProduct: true });
     list[1].active = false;
-    list[2].productId = id;
     list[2].source = "file";
     list[2].file = { status: "processing" };
+    list[3].showOnProduct = false; // ayni urunun ikinci videosu urun sayfasinda gosterilmiyor
     expect(productVideos(list, id).map((v) => v.id)).toEqual(["video-1"]);
   });
 

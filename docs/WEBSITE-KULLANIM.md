@@ -570,8 +570,9 @@ hiçbiri değilse 404 çıkar.
   - Büyük görsel ve küçük resimler; küçük resme tıklayınca büyür.
   - Seçilen seçeneğin fotoğrafı varsa galeri o fotoğrafla açılır (ör.
     soğutmalı makinede Hava ya da Su seçilince o halin fotoğrafı).
-  - **Videolar** (KARARLAR K-125): Ürüne bağlı, yayında ve oynatılabilir
-    videolar fotoğrafların ardından küçük resim olarak durur (kapak, ortada
+  - **Videolar** (KARARLAR K-125): Ürüne bağlı, panelde "Ürün sayfasında
+    göster" işaretli, yayında ve oynatılabilir videolar fotoğrafların
+    ardından küçük resim olarak durur (kapak, ortada
     oynat işareti). Seçilince büyük alanda dik (9:16) kapak ve **Oynat**;
     basınca video orada oynar (YouTube'un çerezsiz oynatıcısı ya da kendi
     videomuz). Başka küçük resme geçilince oynatıcı kapanır.

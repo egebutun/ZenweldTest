@@ -1,0 +1,1 @@
+ALTER TABLE "videos" ADD COLUMN "show_on_product" boolean DEFAULT false NOT NULL;
