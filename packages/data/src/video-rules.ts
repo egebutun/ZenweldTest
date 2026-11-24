@@ -240,8 +240,17 @@ export type VideoGroup = {
   items: { video: SiteVideo; product?: Product }[];
 };
 
-/** Sekmedeki kisa ad: "MIG (GMAW) Gazaltı Kaynak Makineleri" -> "MIG (GMAW) Gazaltı". */
-export const videoTabLabel = (name: string) => name.replace(/\s+(Kaynak\s+)?Makineleri$/u, "") || name;
+/**
+ * Sekmedeki kisa ad: sondaki "Kaynak Makineleri" atilir ("MIG (GMAW)
+ * Gazaltı Kaynak Makineleri" -> "MIG (GMAW) Gazaltı"); geriye tek kelime
+ * kalacaksa yalnizca "Makineleri" atilir ("Lazer Kaynak Makineleri" ->
+ * "Lazer Kaynak"). "Plazma Kesim Makineleri" -> "Plazma Kesim".
+ */
+export function videoTabLabel(name: string): string {
+  const short = name.replace(/\s+Kaynak\s+Makineleri$/u, "");
+  if (short !== name && short.trim().split(/\s+/).length > 1) return short;
+  return name.replace(/\s+Makineleri$/u, "") || name;
+}
 
 /**
  * Videolari urunlerinin kategorisine gore gruplar (KARARLAR K-125):

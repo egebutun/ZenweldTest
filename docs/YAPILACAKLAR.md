@@ -405,7 +405,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | Yöneticinin kendi şifresini panelden değiştirmesi | Şimdi yapılmıyor (K-105) | [Üyelik, oturum ve şifre](#üyelik-oturum-ve-şifre) 2 |
 | SEO: anti-spatter (C1), ad, başlık ve link kalıbı (C2), ürün gamı fırsatları (C3), Search Console doğrulaması (C4), teslim süresi ve iade kargo ücreti (C5), barkod (C6) | Sahibinin kararı ya da bilgisi; C4 için BT | [SEO — anahtar kelime çalışması](#seo--anahtar-kelime-çalışmasından-kalan-işler) C |
 | Sitenin tasarımı | Sahibi yapacak | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
-| Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler, videoların ürünleri | Sahibinin göndermesi | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
+| Anasayfa: kurumsal metin, güven şeridi bilgileri ve sayılarının kontrolü, gerçek metinler, yeni videoların ürünleri | Sahibinin göndermesi | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
 | Görsel düzenleyici (önizleme, sürükle, ölçekle) ve sayfa görsellerinin panelden değişmesi | Tasarımın bitmesi (fotoğrafların yeri ve sayısı kesinleşince) | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) 5 |
 
 ---
@@ -1298,7 +1298,8 @@ hazırlanır ve parça parça sunulur (K-123, K-125). Kalanlar:
    ([SUNUCU.md › Video hazırlama](SUNUCU.md#video-hazırlama)). Demo sitede
    (vercel.app) kendi videomuz yüklenemez; yalnızca canlı sunucuda
    (veritabanı modu) çalışır.
-2. **Videoların ürünleri:** Sahibi gönderecek
+2. **Videoların ürünleri:** Bugünkü 5 video Y300 QCW'ye bağlı; yeni
+   videoların ürünlerini sahibi gönderecek
    ([Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) 5).
 
 ## SEO alanları ve link yönlendirme
@@ -1662,9 +1663,10 @@ Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
 4. **Gerçek metinler:** Neden Zenweld? maddelerinin açıklamaları (bugün
    lorem ipsum) sahibiyle yazılacak; tanıtım alanındaki Force Serisi ve
    Jasic Lazer metinleri panelden (Anasayfa Tanıtım) değiştirilir.
-5. **Videoların ürünleri:** Anasayfadaki 5 videonun (K-125) altında
-   gösterilecek ürün modellerini sahibi gönderecek; panelden (Videolar)
-   her videoya ürün seçilir. Bugün videolar ürünsüz.
+5. **Videoların ürünleri:** Bugünkü 5 video Y300 QCW Lazer Kaynak
+   Makinesi'ne bağlandı (anasayfada ürün kartıyla yan yana, ürün
+   sayfasında değil; K-125). Yeni eklenecek videoların ürünlerini sahibi
+   gönderecek; panelden (Videolar) her videoya ürün seçilir.
 
 ## Erişilebilirlik — önerilen, zorunlu değil
 

@@ -82,6 +82,18 @@ export async function openDrawer(page: Page): Promise<Locator> {
 }
 
 /**
+ * Sekmeyi secer. Sayfa henuz hazir degilken yapilan tiklama bosa gidebilir;
+ * sekme secili olana kadar yeniden tiklanir.
+ */
+export async function selectTab(page: Page, name: string): Promise<void> {
+  const tab = page.getByRole("tab", { name, exact: true });
+  await expect(async () => {
+    await tab.click();
+    await expect(tab).toHaveAttribute("aria-selected", "true", { timeout: 1500 });
+  }).toPass({ timeout: 20_000 });
+}
+
+/**
  * Formdaki alani etiketiyle bulur. Etiketler alanlara baglidir (FormRow);
  * zorunlu alanin etiketinde "*" vardir. Ad tam eslesir: "Ad" Soyad'i bulmaz.
  */

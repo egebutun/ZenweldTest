@@ -58,8 +58,9 @@ test("videolar (K-123, K-125): Videolar sayfasında her video VideoObject; site 
   const videos = (await jsonLd(request, "/videolar")).filter((d) => d["@type"] === "VideoObject");
   expect(videos).toHaveLength(seed.videos.filter((v) => v.active).length);
   expect(videos[0]).toMatchObject({
-    name: "Zenweld videosu",
-    description: "Zenweld kaynak videosu.",
+    // Ornek veride basliksiz, Y300 QCW'ye bagli: ad urunun adi.
+    name: "Y300 QCW Lazer Kaynak Makinesi",
+    description: "Y300 QCW Lazer Kaynak Makinesi videosu — Zenweld.",
     uploadDate: seed.videos[0].createdAt,
     embedUrl: `https://www.youtube-nocookie.com/embed/${seed.videos[0].youtubeId}`,
     thumbnailUrl: [`https://i.ytimg.com/vi/${seed.videos[0].youtubeId}/hqdefault.jpg`],

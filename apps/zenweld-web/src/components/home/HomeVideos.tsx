@@ -2,13 +2,15 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
-import { groupVideosByCategory, homeVideos, videoPoster, videoTitle, type Product, type SiteVideo } from "@zenweld/data";
-import { getHomeVideos, listVideos, useDatabase } from "@zenweld/store";
+import { ChevronLeft, ChevronRight, Heart, Play } from "lucide-react";
+import { groupVideosByCategory, homeVideos, productHighlights, videoPoster, videoTitle, type Product, type SiteVideo } from "@zenweld/data";
+import { getHomeVideos, isProductInStock, listVideos, useDatabase } from "@zenweld/store";
 import { ProductImage } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { VideoCover } from "./VideoCover";
 import { VideoPlayer } from "./VideoPlayer";
+import { CardCartButton, ProductPrice } from "@/components/product/ProductCard";
+import { useFavourites } from "@/lib/favourites";
 
 /** Kartlar arasi bosluk (px). */
 const GAP = 16;
@@ -25,8 +27,8 @@ const mod = (n: number, m: number) => ((n % m) + m) % m;
  * tablette 3, telefonda 1 ve yanlarda komsularin ucu); ortadaki kart daha
  * uzun ve renkli, yanlardakiler soluk. Ok, nokta, yandaki karta tiklama ya
  * da parmakla kaydirma bütün seridi tek parca kaydirir; liste sonsuz doner
- * (sondan sonra bastaki gelir, uctan yeni kart girer). Altta videodaki
- * urunun adi (tiklaninca urun sayfasi).
+ * (sondan sonra bastaki gelir, uctan yeni kart girer). Urunu olan videonun
+ * yaninda yapisik urun karti (VideoCarousel).
  *
  * Seridin yerlesimi: her kart bir "yuva"dir (pos); yuvanin anahtari
  * mutlak sirasidir, gosterdigi video pos mod (video sayisi). Gecis yalnizca
@@ -104,7 +106,16 @@ export function HomeVideos() {
   );
 }
 
-/** Kategorinin videolari icin kayan serit (yukaridaki yerlesim). */
+/**
+ * Kategorinin videolari icin kayan serit (yukaridaki yerlesim).
+ *
+ * Videolarin urunu varsa her video, sagina yapisik urun karti ile bir
+ * "cift"tir (KARARLAR K-125): kartta fotograf, ad, one cikan ozellikler
+ * (genis ekranda), fiyat, favori ve sepete ekle (secenekli urunde
+ * "Seçenekleri Gör"); fotografa ya da ada tiklaninca urun sayfasi acilir.
+ * Serit ciftleri birlikte kaydirir; ortadaki cift renkli, yanlardakiler
+ * soluk. Urunu olmayan videolar (Genel) tek basina, ortadaki daha uzun.
+ */
 function VideoCarousel({ items }: { items: { video: SiteVideo; product?: Product }[] }) {
   const t = useT();
   const [pos, setPos] = useState(0);
@@ -113,11 +124,13 @@ function VideoCarousel({ items }: { items: { video: SiteVideo; product?: Product
 
   const count = items.length;
   const current = mod(pos, count);
-  const hasProducts = items.some((x) => x.product);
-  // Genis ekranda 5 kart tam, uclarda gecis sirasinda giren/cikan kart; az videoda tekrar yok.
+  const paired = items.every((x) => x.product);
+  // Genis ekranda ortadaki ve yanlardaki kartlar; uclarda gecis sirasinda giren/cikan kart; az videoda tekrar yok.
   const left = count >= 5 ? 3 : Math.floor((count - 1) / 2);
   const right = count >= 5 ? 3 : count - 1 - left;
   const slots = Array.from({ length: left + right + 1 }, (_, i) => pos - left + i);
+  // Yuvanin genisligi: cift (video + urun karti) ya da yalnizca video.
+  const slot = paired ? "(var(--w) * 2)" : "var(--w)";
 
   const go = (target: number) => {
     setPos(target);
@@ -146,56 +159,56 @@ function VideoCarousel({ items }: { items: { video: SiteVideo; product?: Product
           if (Math.abs(dx) > 40) go(pos + (dx < 0 ? 1 : -1));
         }}
       >
-        {/* --w: kart genisligi; --h: ortadaki kartin boyu (9:16). */}
+        {/* --w: videonun genisligi; --h: ortadaki videonun boyu (9:16). */}
         <div
-          className="relative [--w:62cqw] sm:[--w:calc((100cqw_-_32px)/3)] lg:[--w:calc((100cqw_-_64px)/5)]"
-          style={{
-            height: `calc(var(--w) * 16 / 9 + ${hasProducts ? 92 : 8}px)`,
-            ["--h" as string]: "calc(var(--w) * 16 / 9)",
-          }}
+          className={`relative ${
+            paired
+              ? "[--w:40cqw] sm:[--w:min(240px,24cqw)] lg:[--w:min(280px,20cqw)]"
+              : "[--w:62cqw] sm:[--w:calc((100cqw_-_32px)/3)] lg:[--w:calc((100cqw_-_64px)/5)]"
+          }`}
+          style={{ height: "calc(var(--w) * 16 / 9 + 8px)", ["--h" as string]: "calc(var(--w) * 16 / 9)" }}
         >
-          {slots.map((slot) => {
-            const d = slot - pos;
-            const n = mod(slot, count);
+          {slots.map((slotNo) => {
+            const d = slotNo - pos;
+            const n = mod(slotNo, count);
             const { video, product } = items[n];
             const center = d === 0;
             const reachable = Math.abs(d) <= 2;
+            // Tek videoda yanlardakiler kisa; ciftte urun karti ayni boyda kalsin diye boy degismez.
+            const short = !paired && !center;
             return (
               <div
-                key={slot}
+                key={slotNo}
                 aria-hidden={!reachable}
-                className={`absolute w-[var(--w)] transition-[left,top,opacity,filter] duration-500 ease-in-out ${
+                inert={!reachable}
+                className={`absolute flex overflow-hidden rounded-[6px] shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] transition-[left,top,height,opacity,filter] duration-500 ease-in-out ${
                   center ? "z-20" : "z-10 opacity-50 grayscale"
-                }`}
+                } ${paired ? "border border-zw-grey-200 bg-white" : "bg-zw-ink"}`}
                 style={{
-                  left: `calc(50% - var(--w) / 2 + ${d} * (var(--w) + ${GAP}px))`,
-                  top: center ? 0 : `calc(var(--h) * ${(1 - SIDE) / 2})`,
+                  width: `calc(${slot})`,
+                  left: `calc(50% - ${slot} / 2 + ${d} * (${slot} + ${GAP}px))`,
+                  top: short ? `calc(var(--h) * ${(1 - SIDE) / 2})` : 0,
+                  height: short ? `calc(var(--h) * ${SIDE})` : "var(--h)",
                 }}
               >
-                <div
-                  className="relative overflow-hidden rounded-[6px] bg-zw-ink shadow-[0_18px_40px_-20px_rgba(0,0,0,0.6)] transition-[height] duration-500 ease-in-out"
-                  style={{
-                    height: center ? "var(--h)" : `calc(var(--h) * ${SIDE})`,
-                  }}
-                >
-                  {center && playing === slot ? (
+                <div className="relative h-full w-[var(--w)] shrink-0 bg-zw-ink">
+                  {center && playing === slotNo ? (
                     <VideoPlayer video={video} title={videoTitle(video, product)} className="absolute inset-0 h-full w-full" />
                   ) : (
                     <button
                       type="button"
-                      tabIndex={reachable ? 0 : -1}
                       aria-label={center ? t.home.videos.playVideo(n + 1) : t.home.videos.showVideo(n + 1)}
-                      onClick={() => (center ? setPlaying(slot) : go(slot))}
+                      onClick={() => (center ? setPlaying(slotNo) : go(slotNo))}
                       className="group absolute inset-0 h-full w-full zw-focus"
                     >
                       <VideoCover youtubeId={video.youtubeId ?? ""} cover={videoPoster(video)} className="h-full w-full object-cover" />
                       <span className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
                       <span
                         className={`absolute flex items-center justify-center rounded-full bg-zw-red-600 text-white shadow-lg transition-transform group-hover:scale-105 ${
-                          center ? "bottom-1/2 left-1/2 h-16 w-16 -translate-x-1/2 translate-y-1/2" : "bottom-3 right-3 h-10 w-10"
+                          center ? "bottom-1/2 left-1/2 h-14 w-14 -translate-x-1/2 translate-y-1/2 sm:h-16 sm:w-16" : "bottom-3 right-3 h-10 w-10"
                         }`}
                       >
-                        <Play size={center ? 28 : 18} fill="currentColor" className="ml-0.5" aria-hidden="true" />
+                        <Play size={center ? 26 : 18} fill="currentColor" className="ml-0.5" aria-hidden="true" />
                       </span>
                       {center && (
                         <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs font-bold uppercase tracking-[0.2em] text-white">
@@ -205,21 +218,7 @@ function VideoCarousel({ items }: { items: { video: SiteVideo; product?: Product
                     </button>
                   )}
                 </div>
-
-                {product && (
-                  <Link
-                    href={`/urun/${product.slug}`}
-                    tabIndex={center ? 0 : -1}
-                    className={`mt-3 flex items-center gap-3 rounded-[4px] border bg-white p-2.5 transition-colors zw-focus ${
-                      center ? "border-zw-grey-300 hover:border-zw-red-600" : "border-zw-grey-200"
-                    }`}
-                  >
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[3px] bg-zw-grey-50">
-                      <ProductImage src={product.images[0]?.url} alt="" label="" className="h-full w-full object-contain" />
-                    </span>
-                    <span className="line-clamp-2 text-sm font-semibold leading-snug text-zw-ink">{product.name}</span>
-                  </Link>
-                )}
+                {paired && product && <VideoProductCard product={product} />}
               </div>
             );
           })}
@@ -263,5 +262,52 @@ function VideoCarousel({ items }: { items: { video: SiteVideo; product?: Product
         </div>
       )}
     </>
+  );
+}
+
+/**
+ * Videonun yanindaki urun karti: fotograf ve ad urun sayfasina gider; one
+ * cikan ozellikler (genis ekranda), fiyat, favori ve sepete ekle (secenekli
+ * urunde "Seçenekleri Gör"; depoda yoksa "Stokta Yok"). Boyu videoyla ayni;
+ * fotograf kalan yere sigar.
+ */
+function VideoProductCard({ product }: { product: Product }) {
+  const db = useDatabase();
+  const favourites = useFavourites();
+  const inStock = isProductInStock(product, undefined, db);
+  const highlights = productHighlights(product);
+  return (
+    <div className="relative flex h-full w-[var(--w)] shrink-0 flex-col border-l border-zw-grey-200 bg-white">
+      <button
+        type="button"
+        onClick={() => favourites.toggle(product.id)}
+        aria-label="Favori"
+        className="absolute right-2 top-2 z-10 rounded-full bg-white/90 p-1.5 text-zw-grey-500 transition-colors hover:text-zw-red-600"
+      >
+        <Heart size={16} className={favourites.has(product.id) ? "fill-zw-red-600 text-zw-red-600" : ""} />
+      </button>
+      <Link href={`/urun/${product.slug}`} tabIndex={-1} aria-hidden="true" className="block min-h-0 flex-1 bg-zw-grey-50">
+        <ProductImage src={product.images[0]?.url} alt="" label={product.name} className="h-full w-full object-contain p-2" />
+      </Link>
+      <div className="flex flex-col p-2.5 sm:p-3">
+        <Link href={`/urun/${product.slug}`} className="zw-focus">
+          <h3 className="line-clamp-2 font-display text-sm font-semibold leading-tight text-zw-ink hover:text-zw-red-600 sm:text-base">{product.name}</h3>
+        </Link>
+        {highlights.length > 0 && (
+          <ul className="mt-2 hidden space-y-1 lg:block">
+            {highlights.map((h, i) => (
+              <li key={i} className="flex gap-2 text-xs leading-snug text-zw-grey-600">
+                <span className="mt-[6px] h-1 w-1 shrink-0 rounded-full bg-zw-red-600" />
+                <span className="line-clamp-1">{h}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="mt-2 [&_.text-xl]:text-lg sm:mt-3 sm:[&_.text-xl]:text-xl">
+          <ProductPrice product={product} compact />
+        </div>
+        <CardCartButton product={product} inStock={inStock} />
+      </div>
+    </div>
   );
 }

@@ -2527,10 +2527,11 @@ anasayfada da çıkar. Sitede bu sırayla görünür."
   - **Başlık** (isteğe bağlı, en fazla 100 karakter): Boşsa ürünün adı
     kullanılır; Google'a da bu başlık gider.
   - **Ürün:** Listeden seçilir ("— Ürün yok —" seçilebilir); yayında
-    olmayan ürünün yanında "(yayında değil)" yazar. Videonun altında
-    ürünün adı görünür ve ürün sayfasını açar; Videolar sayfasında ve
-    anasayfada video bu ürünün kategorisinde durur. Ürün yayında değilse
-    görünmez.
+    olmayan ürünün yanında "(yayında değil)" yazar. Anasayfada videonun
+    yanında ürünün kartı (fotoğraf, fiyat, favori, sepete ekle) yapışık
+    durur; Videolar sayfasında videonun altında ürünün adı görünür; ikisi
+    de ürün sayfasını açar. Videolar sayfasında ve anasayfada video bu
+    ürünün kategorisinde durur. Ürün yayında değilse görünmez.
   - **Kapak görseli** (isteğe bağlı): URL ya da dosya yükleme (dosya
     deposu ayarlı değilse yalnızca URL); solda önizleme. Boşsa YouTube'un
     en yüksek çözünürlüklü kapak resmi (keskinliği videonun YouTube'a

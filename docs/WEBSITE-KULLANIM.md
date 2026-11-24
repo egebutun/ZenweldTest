@@ -291,12 +291,24 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
    KARARLAR K-125):
    - Video kütüphanesinde (Panel › Videolar) yayında ve "Anasayfada
      göster" işaretli videolar (YouTube Shorts ya da kendi videomuz;
-     kendi videomuz sunucuda hazırlanması bitince), paneldeki sırayla,
-     aynı genişlikte dik kartlar olarak yan yana durur: geniş ekranda 5,
-     tablette 3, telefonda 1 kart (yanlarda komşuların ucu). Ortadaki
-     kart daha uzun ve renkli, yanlardakiler kısa ve soluk.
+     kendi videomuz sunucuda hazırlanması bitince), paneldeki sırayla
+     yan yana dik kartlar olarak durur.
+   - **Video ve ürün kartı yan yana:** Ürünü olan her videonun sağına
+     yapışık o ürünün kartı durur; ikisi tek parçadır ve birlikte kayar.
+     Kartta ürünün fotoğrafı, adı, öne çıkan özellikleri (geniş ekranda),
+     fiyatı (indirim ve taksit dahil), **favorilere ekle** (kalp) ve
+     **Sepete Ekle** düğmesi (seçenekli üründe **Seçenekleri Gör**, ürün
+     sayfasına gider; stokta yoksa düğme pasif) bulunur. Fotoğrafa ya da
+     ada tıklanınca ürün sayfası açılır. Videonun altında ayrıca ürün
+     satırı yoktur.
+   - Geniş ekranda ortada bir çift (video + ürün kartı), iki yanda
+     komşu çiftlerin ucu; tablet ve telefonda da ortadaki çift tam görünür.
+     Ortadaki çift renkli, yanlardakiler soluk.
+   - Ürünü olmayan videolar (Genel sekmesi) tek başına durur: geniş
+     ekranda 5, tablette 3, telefonda 1 kart (yanlarda komşuların ucu);
+     ortadaki kart daha uzun ve renkli, yanlardakiler kısa ve soluk.
    - Ok, nokta, yandaki karta tıklama ya da telefonda parmakla kaydırma
-     bütün şeridi tek parça yana kaydırır; yeni ortadaki kart uzar ve
+     bütün şeridi tek parça yana kaydırır; yeni ortadaki çift (ya da kart)
      renklenir. Liste sonsuz döner: sondan sonra baştaki gelir, uçtan yeni
      kart girer.
    - Altta her video için bir nokta ve **Önceki video** / **Sonraki video**
@@ -311,12 +323,11 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
      videomuz tarayıcının oynatıcısıyla (geniş ekranda 1080p, telefonda
      720p; ileri sarılabilir, tam ekran açılır). Başka videoya geçilince
      oynatıcı kapanır.
-   - Videoya bir ürün seçilmişse kartın altında ürünün küçük fotoğrafı ve
-     adı görünür; tıklanınca ürün sayfası açılır. Ürün yayında değilse ya
-     da silinmişse video ürünsüz görünür.
+   - Ürün yayında değilse ya da silinmişse video ürünsüz görünür (Genel
+     sekmesinde, ürün kartı olmadan).
    - **Kategori sekmeleri:** Videolar ürünlerinin kategorisine göre
      ayrılır; sekmeler menüdeki sırayla (bölüm, grup, kategori), kısa adla
-     (ör. "MIG (GMAW) Gazaltı", "Plazma Kesim"). "Tümü" sekmesi yoktur;
+     (ör. "MIG (GMAW) Gazaltı", "Plazma Kesim", "Lazer Kaynak"). "Tümü" sekmesi yoktur;
      açılışta ilk sekme seçilidir. Ürünü olmayan ya da ürünü yayında
      olmayan videolar en sondaki **Genel** sekmesindedir. Tek grup varsa
      sekmeler görünmez. Sekme değişince şerit baştan başlar.

@@ -869,7 +869,8 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 ### K-125 · Videolar: tek kütüphane, ürün sayfası ve anasayfa
 - Videolar tek bir kütüphanede durur (panel › Videolar). Her video bir kez
   eklenir: YouTube videosu ya da kendi çektiğimiz video.
-- Video bir ürüne bağlanabilir: altındaki ürün adı ürün sayfasını açar,
+- Video bir ürüne bağlanabilir: ürünün adı (anasayfada yanındaki ürün
+  kartı) ürün sayfasını açar,
   Videolar sayfasında ve anasayfada ürünün kategorisinde durur. Ürünün
   sayfasında yalnızca **"Ürün sayfasında göster"** işaretlenen videolar
   görünür (aynı ürünün videolarından istenenler seçilir); "Anasayfada
@@ -880,6 +881,12 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   göre sekmelerle ayrılır; "Tümü" sekmesi yoktur, açılışta sıradaki ilk
   kategori seçilidir. Kayan şerit sahibinin gönderdiği örnekteki gibidir:
   kartlar aynı genişlikte, ortadaki daha uzun; geçişte bütün şerit kayar.
+- **Anasayfada video ve ürün kartı yapışık:** Ürünü olan her videonun
+  hemen yanında ürünün kartı durur (fotoğraf, öne çıkan özellikler, fiyat,
+  favorilere ekle, sepete ekle); ikisi birlikte kayar. Videonun altındaki
+  ürün satırı kaldırıldı. Fotoğrafa ya da başlığa tıklanınca ürün sayfası
+  açılır. Neden: ziyaretçi videodan ayrılmadan ürünü görüp sepete
+  ekleyebilsin.
 - **Videolar sayfası** (`/videolar`): bütün videolar kategoriye göre
   gruplu; üstte anasayfadaki gibi kategori sekmeleri, seçilen kategorinin
   videoları altında listelenir. Kategori sayfasına bağlantı seçili
@@ -894,7 +901,9 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   videodan ürüne ve alışverişe yönlensin; kategoriler ziyaretçiyi
   videolarda kaybettirmesin. Oynatıcı sayfayı yavaşlattığı için yalnızca
   istenince yüklenir; çerezsiz oynatıcı tıklanmadan çerez yazmaz.
-- Videoların ürünleri sahibinden gelecek.
+- Bugüne kadar eklenen 5 video **Y300 QCW Lazer Kaynak Makinesi**'ne
+  aittir; anasayfada görünür, ürünün sayfasında görünmez. Yeni videoların
+  ürünleri sahibinden gelecek.
 
 ---
 

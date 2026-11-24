@@ -153,8 +153,16 @@ test("videolar: bayi bulucunun altında; açılışta oynatıcı yüklenmez, Oyn
   await expect(page.getByRole("button", { name: /^\d\. videoyu göster$/ })).toHaveCount(5 + 4);
   await expect(page.locator("iframe")).toHaveCount(0);
 
-  // Ortadaki kart 1. video; sonraki ok 2. videoyu ortaya alir.
+  // Ortadaki kart 1. video; yaninda yapisik urun karti (ornek veride Y300 QCW, secenekli):
+  // ad urun sayfasina gider, fiyat, favori, "Seçenekleri Gör". Videonun altinda ayrica urun satiri yok.
   await expect(videos.getByRole("button", { name: "1. videoyu oynat" })).toBeVisible();
+  const card = videos.locator("div.z-20");
+  await expect(card.getByRole("link", { name: "Y300 QCW Lazer Kaynak Makinesi" })).toHaveAttribute("href", "/urun/y300-qcw");
+  await expect(card.getByRole("link", { name: "Seçenekleri Gör" })).toHaveAttribute("href", "/urun/y300-qcw");
+  await expect(card).toContainText("₺");
+  await card.getByRole("button", { name: "Favori" }).click();
+  await expect(card.getByRole("button", { name: "Favori" }).locator("svg")).toHaveClass(/fill-zw-red-600/);
+  await card.getByRole("button", { name: "Favori" }).click();
   await page.getByRole("button", { name: "Sonraki video" }).click();
   await expect(videos.getByRole("button", { name: "2. videoyu oynat" })).toBeVisible();
   await page.getByRole("button", { name: "Önceki video" }).click();

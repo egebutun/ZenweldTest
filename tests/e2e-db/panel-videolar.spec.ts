@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Page } from "@playwright/test";
 import { tr } from "@zenweld/i18n";
-import { demoAccount, field } from "../e2e/yardimci";
+import { demoAccount, field, selectTab } from "../e2e/yardimci";
 import { closeDatabase, expect, sql, test } from "./yardimci";
 
 /**
@@ -47,6 +47,8 @@ test("video kaydedilir, işlem kaydına yazılır ve anasayfada görünür; örn
   // Kayit sitede hemen gorunur; oynatici yalnizca Oynat'a basinca acilir.
   await page.goto("/");
   const videos = page.getByRole("region", { name: "Videolar" });
+  // Ornek veride diger videolar Y300 QCW'de (Lazer Kaynak sekmesi); bu video MMA sekmesinde.
+  await selectTab(page, "MMA (Stick) Örtülü Elektrot");
   await expect(videos.getByRole("link", { name: "ForceArc 200 MMA Elektrot Kaynak Makinesi" })).toHaveAttribute("href", "/urun/forcearc-200-mma");
   await expect(videos.locator("iframe")).toHaveCount(0);
   await videos.getByRole("button", { name: "1. videoyu oynat" }).click();
@@ -56,9 +58,9 @@ test("video kaydedilir, işlem kaydına yazılır ve anasayfada görünür; örn
   await page.goto("/yonetim/videolar");
   await page.getByRole("button", { name: "1. videoyu düzenle" }).click();
   await field(page, "Başlık").fill("");
-  await field(page, "Ürün").selectOption({ label: "— Ürün yok —" });
+  await field(page, "Ürün").selectOption({ label: "Y300 QCW Lazer Kaynak Makinesi" });
   await page.getByRole("button", { name: "Kaydet", exact: true }).click();
-  await expect.poll(async () => (await sql<{ product_id: string | null }>("SELECT product_id FROM videos WHERE id = 'video-1'"))[0].product_id).toBeNull();
+  await expect.poll(async () => (await sql<{ product_id: string | null }>("SELECT product_id FROM videos WHERE id = 'video-1'"))[0].product_id).toBe("p-y300-qcw");
   await expect(page.getByText(tr.panel.staleRecord)).toHaveCount(0);
 });
 
@@ -104,14 +106,15 @@ test("kendi videomuz: panelden yüklenir, sunucuda 1080p, 720p ve kapak hazırla
   // Sitede: kapak gorunur, Oynat'a basinca genis ekranda 1080p oynar.
   await page.goto("/");
   const videos = page.getByRole("region", { name: "Videolar" });
-  const n = (await sql<{ n: number }>("SELECT count(*)::int AS n FROM videos WHERE show_on_home AND active"))[0].n;
-  await videos.getByRole("button", { name: `${n}. videoyu göster` }).first().click();
-  await videos.getByRole("button", { name: `${n}. videoyu oynat` }).click();
+  // Urunsuz video "Genel" sekmesinde, tek video.
+  await selectTab(page, "Genel");
+  await videos.getByRole("button", { name: "1. videoyu oynat" }).click();
   await expect(videos.locator("video")).toHaveAttribute("src", video.file_hd);
 
   // Temizlik
   await page.goto("/yonetim/videolar");
   page.once("dialog", (d) => void d.accept());
+  const n = (await sql<{ n: number }>("SELECT count(*)::int AS n FROM videos"))[0].n;
   await page.getByRole("button", { name: `${n}. videoyu sil` }).click();
   await expect(row).toHaveCount(0);
 });

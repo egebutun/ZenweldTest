@@ -242,7 +242,12 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       kayar, o video ortaya gelir (uzar, renklenir) ve oynatıcı kapanır;
       liste sonsuz döner; telefonda parmakla kaydırılır. Kapak resmi
       bulanık değildir (YouTube'un yüksek çözünürlüklü kapağı). Ürünü
-      seçilmiş videonun altındaki ad ürün sayfasını açar
+      olan videonun sağında yapışık ürün kartı durur (fotoğraf, ad, geniş
+      ekranda öne çıkan özellikler, fiyat, favori, Sepete Ekle ya da
+      Seçenekleri Gör); kartın adı ve fotoğrafı ürün sayfasını açar;
+      kaydırınca video ve kart birlikte kayar; videonun altında ayrıca
+      ürün satırı yoktur. Örnek veride 5 video Y300 QCW'nin kartıyla
+      görünür, Y300 QCW'nin ürün sayfasında video yoktur
       (`tests/e2e/anasayfa.spec.ts`).
 - [ ] Tanıtım alanı 7 saniyede bir sonraki sayfaya geçer (Zenweld → Force
       Serisi → Jasic Lazer); fare üzerindeyken durur; sekmeler ve oklar

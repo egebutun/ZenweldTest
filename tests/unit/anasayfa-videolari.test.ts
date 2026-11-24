@@ -88,10 +88,11 @@ describe("YouTube linki", () => {
 });
 
 describe("panelde kaydetme", () => {
-  it("örnek veride bölüm başlığı ve sahibinin 5 videosu var: YouTube, ürünsüz, anasayfada", () => {
+  it("örnek veride bölüm başlığı ve sahibinin 5 videosu var: YouTube, Y300 QCW'ye bağlı, anasayfada, ürün sayfasında değil", () => {
     expect(defaultSettings.homeVideos).toEqual({ title: "Gerçek İşler, Gerçek Kaynak" });
     expect(seed.videos.map((v) => v.youtubeId)).toEqual(["QtZ7JdNzFVo", "9CAoUSHs0R4", "CXx3PC0C4pE", "uf_ZDJGcqdQ", "YQuCaRN85n8"]);
-    expect(seed.videos.every((v) => v.source === "youtube" && v.active && v.showOnHome && !v.productId)).toBe(true);
+    const y300 = seed.products.find((p) => p.slug === "y300-qcw")!;
+    expect(seed.videos.every((v) => v.source === "youtube" && v.active && v.showOnHome && v.productId === y300.id && !v.showOnProduct)).toBe(true);
   });
 
   it("link kimliğe çevrilir; boş başlık, ürün ve kapak kaydedilmez; başlık kırpılır", () => {
@@ -227,7 +228,7 @@ describe("kategoriye göre gruplama, ürün sayfası, Google açıklaması (1c)"
   const bySlug = (slug: string) => db.products.find((p) => p.slug === slug)!;
 
   it("sekmeler menüdeki sırayla, 'Tümü' yok; ürünsüz videolar en sonda 'Genel'; kısa adlar", () => {
-    const list: SiteVideo[] = structuredClone(db.videos);
+    const list: SiteVideo[] = structuredClone(db.videos).map((v: SiteVideo) => ({ ...v, productId: undefined }));
     list[0].productId = bySlug("forcecut-45").id; // Plazma
     list[1].productId = bySlug("forcetig-200").id; // TIG
     list[2].productId = bySlug("forcearc-200-mma").id; // MMA
@@ -235,7 +236,8 @@ describe("kategoriye göre gruplama, ürün sayfası, Google açıklaması (1c)"
     expect(groups.map((g) => g.label)).toEqual(["MMA (Stick) Örtülü Elektrot", "TIG (GTAW) Argon", "Plazma Kesim", "Genel"]);
     expect(groups.at(-1)!.items.map((i) => i.video.id)).toEqual(["video-4", "video-5"]);
     expect(groups[0].category?.slug).toBe(bySlug("forcearc-200-mma").categorySlug);
-    expect(videoTabLabel("Lazer Kaynak Makineleri")).toBe("Lazer");
+    expect(videoTabLabel("Lazer Kaynak Makineleri")).toBe("Lazer Kaynak");
+    expect(videoTabLabel("Çok Fonksiyonlu Kaynak Makineleri")).toBe("Çok Fonksiyonlu");
     expect(videoTabLabel("Lazer Temizleme")).toBe("Lazer Temizleme");
   });
 

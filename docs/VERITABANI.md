@@ -1742,7 +1742,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 **Veri sürümü (`DB_VERSION`, yalnızca demo modu):**
 
-- `packages/data/src/index.ts`'tedir (bugün 95).
+- `packages/data/src/index.ts`'tedir (bugün 96).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**
@@ -1771,7 +1771,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 | Yazışma | 32 | Örnek kayıtlara bağlı: servis (14 giden: bildirim, müşteriye "talebiniz alındı", servise talep bildirimi, müşteriye soru; 2 gelen: servisin ve müşterinin yanıtı), teklif (5 giden, 1 gelen), sipariş 4, üyelik 3, garanti 2, şifre sıfırlama 1. `db:seed` yükler, `db:yukle` yüklemez (K-116, K-117) |
 | Kupon / kupon kullanımı | 4 / 0 | HOSGELDIN5 (%5, bütün ürünler, kişi başı 1), LAZER25000 (25.000 ₺, Lazer Kaynak Makineleri, en az 500.000 ₺, 20 kullanım, 60 gün), YAZ10 (%10, süresi dolmuş), OZEL15 (%15, kişiye özel: bir örnek kurumsal üyenin ve henüz üye olmayan bir kişinin e-postası, kişi başı 1, 30 gün); tarihler kurulum anına göre |
 | Yorum | 11 | 10'u onaylı, 1'i onay bekliyor; hepsi ekipmanlarda |
-| Video | 5 | Sahibinin YouTube Shorts videoları; ürünsüz, anasayfada (K-125) |
+| Video | 5 | Sahibinin YouTube Shorts videoları; hepsi Y300 QCW'ye bağlı, anasayfada; ürün sayfasında değil (K-125) |
 | Blog / haber / etkinlik | 6 / 4 / 9 | Eski sitenin İzmir tesisi ve Hırdavat Fuarı 2026 haberleri ile WIN EURASIA 2026 etkinliği dahil (K-121) |
 | SSS / temsilci / yasal metin | 8 / 11 / 11 | |
 | Belge | 0 | Panelden yüklenir |

@@ -1865,8 +1865,11 @@ tarayıcıdan geleni yeniden denetler).
   kategorinin sırası. Ürünü olmayan ya da ürünü yayında olmayan videolar en
   sonda **Genel**. Yalnızca videosu olan gruplar görünür; "Tümü" yoktur,
   anasayfada ilk sekme seçili gelir. Sekmedeki kısa ad: kategorinin adı,
-  sonundaki "Kaynak Makineleri" ya da "Makineleri" olmadan ("MIG (GMAW)
-  Gazaltı Kaynak Makineleri" → "MIG (GMAW) Gazaltı").
+  sonundaki "Kaynak Makineleri" olmadan ("MIG (GMAW) Gazaltı Kaynak
+  Makineleri" → "MIG (GMAW) Gazaltı"); geriye tek kelime kalıyorsa
+  yalnızca "Makineleri" atılır ("Lazer Kaynak Makineleri" → "Lazer
+  Kaynak"); "Kaynak Makineleri" ile bitmiyorsa sondaki "Makineleri" atılır
+  ("Plazma Kesim Makineleri" → "Plazma Kesim").
   - **Örnek:** Plazma, TIG ve MMA ürünlerine bağlı birer video ve iki
     ürünsüz video → sekmeler: MMA (Stick) Örtülü Elektrot, TIG (GTAW)
     Argon, Plazma Kesim, Genel (2 video).
@@ -1887,6 +1890,12 @@ tarayıcıdan geleni yeniden denetler).
   oynatılabilir videolar (YouTube videosu; kendi videomuz hazırlanması
   bitince; hazırlanırken ya da hazırlanamadıysa görünmez). Seçilen ürün yayında değilse ya da silinmişse video ürünsüz
   görünür. Gösterilecek video yoksa bölüm görünmez.
+- **Anasayfada video ve ürün kartı:** Ürünü olan video, sağına yapışık
+  ürün kartıyla tek parça (çift) gösterilir ve birlikte kayar. Kartta
+  fiyat, sepete ekleme ve stok, ürün kartlarındaki kurallarla aynıdır
+  (seçenekli ürün "Seçenekleri Gör" ile ürün sayfasına gider; stokta
+  olmayan ürünün düğmesi pasif). Ürünü olmayan videolar (Genel) tek
+  başına gösterilir.
 - **Kendi videomuzun hazırlanması** (yalnızca veritabanı modunda; dosya
   deposu ve sunucuda ffmpeg gerekir, yoksa panelde seçenek kapalıdır):
   - Kayıttan sonra video "Hazırlanıyor…" olur ve sıraya girer; sunucu

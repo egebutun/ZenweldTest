@@ -54,20 +54,22 @@ test("video kütüphanesi: ekleme, düzenleme, sıra, silme, bölüm başlığı
   await page.getByRole("button", { name: "5. videoyu sil" }).click();
   await expect(rows).toHaveCount(5);
 
-  // Anasayfa: baslik; kategori sekmeleri ("Tümü" yok, ilk sekme secili): MMA (1. video) ve
-  // urunsuzlerin "Genel" sekmesi (5. anasayfada degil, 1 silindi: 3 video).
+  // Anasayfa: baslik; kategori sekmeleri ("Tümü" yok, ilk sekme secili): Lazer Kaynak (ornek
+  // veride butun videolar Y300 QCW'ye bagli; 5. anasayfada degil, yeni eklenen silindi: 3 video)
+  // ve MMA (1. video). Her video yaninda yapisik urun karti: ad urun sayfasina gider.
   await page.goto("/");
   const videos = page.getByRole("region", { name: "Videolar" });
   await expect(page.getByRole("heading", { level: 2, name: "Sahada Zenweld" })).toBeVisible();
   const tabs = page.getByRole("tablist", { name: "Video kategorileri" }).getByRole("tab");
-  await expect(tabs).toHaveText(["MMA (Stick) Örtülü Elektrot", "Genel"]);
+  await expect(tabs).toHaveText(["Lazer Kaynak", "MMA (Stick) Örtülü Elektrot"]);
   await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
   await expect(page.getByRole("tab", { name: "Tümü" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /^\d\. videoyu göster$/ })).toHaveCount(3 + 2);
+  await expect(videos.getByRole("link", { name: "Y300 QCW Lazer Kaynak Makinesi" }).first()).toHaveAttribute("href", "/urun/y300-qcw");
+  await expect(page.getByRole("link", { name: /Tüm videolar/ })).toHaveAttribute("href", "/videolar?kategori=lazer-kaynak-makineleri");
+  await tabs.nth(1).click();
   await expect(videos.getByRole("link", { name: "ForceArc 200 MMA Elektrot Kaynak Makinesi" })).toHaveAttribute("href", "/urun/forcearc-200-mma");
   await expect(page.getByRole("link", { name: /Tüm videolar/ })).toHaveAttribute("href", "/videolar?kategori=mma-ortulu-elektrod-kaynak-makineleri");
-  await tabs.nth(1).click();
-  await expect(page.getByRole("button", { name: /^\d\. videoyu göster$/ })).toHaveCount(3 + 2);
-  await expect(page.getByRole("link", { name: /Tüm videolar/ })).toHaveAttribute("href", "/videolar?kategori=genel");
 
   // Urun sayfasinda: "Ürün sayfasında göster" isaretli video fotograflarin yaninda; Oynat'a basinca oynatici acilir.
   await page.goto("/urun/forcearc-200-mma");
@@ -79,21 +81,20 @@ test("video kütüphanesi: ekleme, düzenleme, sıra, silme, bölüm başlığı
   await page.goto("/videolar");
   await expect(page.getByRole("heading", { level: 1, name: "Videolar" })).toBeVisible();
   const libraryTabs = page.getByRole("tablist", { name: "Video kategorileri" }).getByRole("tab");
-  await expect(libraryTabs).toHaveText(["MMA (Stick) Örtülü Elektrot", "Genel"]);
+  await expect(libraryTabs).toHaveText(["Lazer Kaynak", "MMA (Stick) Örtülü Elektrot"]);
   await expect(libraryTabs.first()).toHaveAttribute("aria-selected", "true");
   const panel = page.getByRole("tabpanel");
   await expect(panel).toHaveCount(1);
-  await expect(panel.getByRole("heading", { level: 2 })).toHaveText("MMA (Stick) Örtülü Elektrot Kaynak Makineleri· 1 video");
-  await expect(panel.getByRole("link", { name: "ForceArc 200 MMA Elektrot Kaynak Makinesi" })).toHaveAttribute("href", "/urun/forcearc-200-mma");
-  await expect(panel.getByRole("link", { name: /^Tüm MMA \(Stick\) Örtülü Elektrot Kaynak Makineleri/ })).toHaveAttribute(
-    "href",
-    "/ekipmanlar/kaynak-makineleri/mma-ortulu-elektrod-kaynak-makineleri",
-  );
+  // Anasayfadan cikarilan video burada da var: 4 video.
+  await expect(panel.getByRole("heading", { level: 2 })).toHaveText("Lazer Kaynak Makineleri· 4 video");
+  await expect(panel.getByRole("link", { name: /^Tüm Lazer Kaynak Makineleri/ })).toHaveAttribute("href", "/ekipmanlar/lazer-makineleri/lazer-kaynak-makineleri");
   await libraryTabs.nth(1).click();
-  await expect(page).toHaveURL(/\/videolar\?kategori=genel$/);
-  await expect(page.getByRole("tabpanel").getByRole("heading", { level: 2 })).toHaveText("Genel· 4 video"); // anasayfadan cikarilan video burada da var
+  await expect(page).toHaveURL(/\/videolar\?kategori=mma-ortulu-elektrod-kaynak-makineleri$/);
+  const mma = page.getByRole("tabpanel");
+  await expect(mma.getByRole("heading", { level: 2 })).toHaveText("MMA (Stick) Örtülü Elektrot Kaynak Makineleri· 1 video");
+  await expect(mma.getByRole("link", { name: "ForceArc 200 MMA Elektrot Kaynak Makinesi" })).toHaveAttribute("href", "/urun/forcearc-200-mma");
   // Adresle acilinca o sekme secili gelir.
-  await page.goto("/videolar?kategori=genel");
+  await page.goto("/videolar?kategori=mma-ortulu-elektrod-kaynak-makineleri");
   await expect(libraryTabs.nth(1)).toHaveAttribute("aria-selected", "true");
   expect(problems).toEqual([]);
 });
