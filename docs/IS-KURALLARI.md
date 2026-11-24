@@ -223,7 +223,19 @@ sunucu tutarı siparişte yeniden hesaplar.
 - Birim fiyat (KDV dahil) = birim KDV hariç + KDV, tam liraya yuvarlanmış.
 - Satır tutarı = birim × adet (KDV dahil ve hariç ayrı ayrı).
 - Adet **1 ile 99** arasındadır; dışındaki değer bu sınıra çekilir. Aynı ürün
-  ve seçenek tekrar eklenirse adet artar.
+  ve seçenek tekrar eklenirse adet artar (toplam en fazla 99).
+- **Ürün kartından ekleme** (KARARLAR K-126): kartta adet kutusu (1–99) ve
+  her üründe "Sepete Ekle". Seçeneksiz ürün kutudaki adetle eklenir.
+  Seçenekli üründe hızlı seçim penceresi açılır: ilk varyant seçili gelir,
+  seçim kuralları ürün sayfasıyla aynıdır ([3](#3-seçenekli-ürün)); adet
+  karttan gelir, pencerede değişebilir; seçilen varyant depoda yoksa
+  eklenmez ([20](#20-zenweld-depo-stoğu)). Eklenince kartın adedi 1'e
+  döner. Ürünün hiçbir varyantı depoda yoksa kartta yalnızca "STOKTA YOK"
+  (adet kutusu yok).
+  - **Örnek:** Ultimate 405 MTS kartında adet 2 → Sepete Ekle → pencerede
+    Hava · 3 m · 5 m → Sepete Ekle: sepete 2 adet. Yine Sepete Ekle →
+    Hava · 4 m · 10 m, adet 3 → Sepete Ekle: sepette ikinci satır, 3 adet.
+    Su Soğutmalı seçilirse (örnek veride depoda yok) düğme "STOKTA YOK".
 - Sepette fiyat saklanmaz; her açılışta ürünün güncel fiyatından
   hesaplanır. Bu yüzden kampanya sepette beklerken başlar ya da biterse
   fiyat da değişir.
@@ -1892,9 +1904,9 @@ tarayıcıdan geleni yeniden denetler).
   görünür. Gösterilecek video yoksa bölüm görünmez.
 - **Anasayfada video ve ürün kartı:** Ürünü olan video, sağına yapışık
   ürün kartıyla tek parça (çift) gösterilir ve birlikte kayar. Kartta
-  fiyat, sepete ekleme ve stok, ürün kartlarındaki kurallarla aynıdır
-  (seçenekli ürün "Seçenekleri Gör" ile ürün sayfasına gider; stokta
-  olmayan ürünün düğmesi pasif). Ürünü olmayan videolar (Genel) tek
+  fiyat, adet, sepete ekleme ve stok, ürün kartlarındaki kurallarla
+  aynıdır ([4](#4-sepet-ve-kargo) › Ürün kartından ekleme; seçenekli üründe
+  hızlı seçim penceresi; stokta olmayan ürünün düğmesi pasif). Ürünü olmayan videolar (Genel) tek
   başına gösterilir.
 - **Kendi videomuzun hazırlanması** (yalnızca veritabanı modunda; dosya
   deposu ve sunucuda ffmpeg gerekir, yoksa panelde seçenek kapalıdır):

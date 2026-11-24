@@ -111,8 +111,9 @@ export function HomeVideos() {
  *
  * Videolarin urunu varsa her video, sagina yapisik urun karti ile bir
  * "cift"tir (KARARLAR K-125): kartta fotograf, ad, one cikan ozellikler
- * (genis ekranda), fiyat, favori ve sepete ekle (secenekli urunde
- * "Seçenekleri Gör"); fotografa ya da ada tiklaninca urun sayfasi acilir.
+ * (genis ekranda), fiyat, favori, adet ve sepete ekle (secenekli urunde
+ * hizli secim penceresi; K-126); fotografa ya da ada tiklaninca urun
+ * sayfasi acilir.
  * Serit ciftleri birlikte kaydirir; ortadaki cift renkli, yanlardakiler
  * soluk. Urunu olmayan videolar (Genel) tek basina, ortadaki daha uzun.
  */
@@ -267,8 +268,8 @@ function VideoCarousel({ items }: { items: { video: SiteVideo; product?: Product
 
 /**
  * Videonun yanindaki urun karti: fotograf ve ad urun sayfasina gider; one
- * cikan ozellikler (genis ekranda), fiyat, favori ve sepete ekle (secenekli
- * urunde "Seçenekleri Gör"; depoda yoksa "Stokta Yok"). Boyu videoyla ayni;
+ * cikan ozellikler (genis ekranda), fiyat, favori, adet ve sepete ekle
+ * (urun kartlarindaki CardCartButton; K-126). Boyu videoyla ayni;
  * fotograf kalan yere sigar.
  */
 function VideoProductCard({ product }: { product: Product }) {

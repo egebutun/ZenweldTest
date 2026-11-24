@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Flame, Heart, ShoppingCart } from "lucide-react";
 import {
   discountPercent,
@@ -16,6 +16,8 @@ import { useT } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@zenweld/utils";
 import { useFavourites } from "@/lib/favourites";
 import { useCart } from "@/lib/cart";
+import { QuantityStepper } from "@/components/product/ProductDetailParts";
+import { QuickAddPanel } from "@/components/product/QuickAddPanel";
 
 export function ProductCard({
   product,
@@ -176,10 +178,23 @@ export function ProductPrice({
   );
 }
 
+/** "Sepete eklendi" onayinin suresi; sonra dugme yeniden "Sepete Ekle". */
+const ADDED_MS = 2000;
+
 /**
- * Kartin altindaki dugme. Seceneksiz urun dogrudan sepete eklenir;
- * secenekli urunde (3 m / 5 m torc gibi) once secim yapilsin diye urun
- * sayfasina gidilir.
+ * Kartin altindaki adet kutusu ve "Sepete Ekle" (KARARLAR K-126). Dugme her
+ * urunde "Sepete Ekle"dir; depoda yoksa yalnizca pasif "STOKTA YOK" (K-82).
+ *
+ * - Seceneksiz urun: kutudaki adet (1-99) dogrudan sepete eklenir.
+ * - Secenekli urun (3 m / 5 m torc gibi): hizli secim penceresi acilir
+ *   (QuickAddPanel); secenek ve adet orada secilip eklenir, pencere kapanir.
+ *
+ * Eklenince dugme 2 saniye yesil "Sepete eklendi" yazar, sonra yeniden
+ * "Sepete Ekle" olur (ayni urunden baska secenek de eklenebilsin); kutudaki
+ * adet 1'e doner. Sepete ustteki sepet simgesinden gidilir.
+ *
+ * Genis kartta adet kutusu ve dugme yan yana, dar kartta (telefon, video
+ * yanindaki kart, Force tablosu) alt alta durur.
  */
 export function CardCartButton({
   product,
@@ -193,48 +208,58 @@ export function CardCartButton({
 }) {
   const t = useT();
   const cart = useCart();
+  const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [choosing, setChoosing] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+
   const className =
-    "mt-3 flex w-full items-center justify-center gap-2 rounded-[4px] py-2.5 text-center text-xs font-bold uppercase tracking-wide text-white transition-colors";
+    "flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-[4px] px-3 text-center text-xs font-bold uppercase tracking-wide transition-colors @max-[9rem]:px-1.5";
   const solid = accent ? "bg-zw-red-600 hover:bg-zw-red-700" : "bg-zw-ink hover:bg-zw-red-600";
 
   // Depoda yok: sepete eklenmez (KARARLAR K-82).
   if (!inStock) {
     return (
-      <span aria-disabled="true" className={`${className} cursor-not-allowed bg-zw-grey-300 text-zw-grey-700`}>
+      <span aria-disabled="true" className={`${className} mt-3 w-full cursor-not-allowed bg-zw-grey-300 text-zw-grey-700`}>
         {t.product.outOfStock}
       </span>
     );
   }
 
-  if (product.options?.variants.length) {
-    return (
-      <Link href={`/urun/${product.slug}`} className={`${className} ${solid}`}>
-        {t.cart.chooseOptions}
-      </Link>
-    );
-  }
-
-  if (added) {
-    return (
-      <Link href="/sepet" className={`${className} bg-emerald-600 hover:bg-emerald-700`}>
-        <Check size={15} />
-        {t.cart.goToCart}
-      </Link>
-    );
-  }
+  const done = () => {
+    setChoosing(false);
+    setQuantity(1);
+    setAdded(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setAdded(false), ADDED_MS);
+  };
+  const add = () => {
+    if (product.options?.variants.length) setChoosing(true);
+    else {
+      cart.add(product.id, undefined, quantity);
+      done();
+    }
+  };
 
   return (
-    <button
-      type="button"
-      onClick={() => {
-        cart.add(product.id);
-        setAdded(true);
-      }}
-      className={`${className} ${solid}`}
-    >
-      <ShoppingCart size={15} />
-      {t.cart.addToCart}
-    </button>
+    <div className="@container mt-3">
+      <div className="flex flex-col gap-2 @min-[16rem]:flex-row">
+        <QuantityStepper value={quantity} onChange={setQuantity} size="sm" />
+        <button
+          type="button"
+          onClick={add}
+          className={`${className} min-w-0 grow text-white ${added ? "bg-emerald-600 hover:bg-emerald-700" : solid}`}
+        >
+          {/* Cok dar kartta (telefonda video yanindaki kart) simge gizlenir; yazi tek satir. */}
+          {added ? <Check size={15} className="shrink-0 @max-[9rem]:hidden" /> : <ShoppingCart size={15} className="shrink-0 @max-[9rem]:hidden" />}
+          {added ? t.cart.added : t.cart.addToCart}
+        </button>
+      </div>
+      <span aria-live="polite" className="sr-only">
+        {added ? t.cart.added : ""}
+      </span>
+      {choosing && <QuickAddPanel product={product} quantity={quantity} onClose={() => setChoosing(false)} onAdded={done} />}
+    </div>
   );
 }

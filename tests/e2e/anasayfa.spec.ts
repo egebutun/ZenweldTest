@@ -154,11 +154,17 @@ test("videolar: bayi bulucunun altında; açılışta oynatıcı yüklenmez, Oyn
   await expect(page.locator("iframe")).toHaveCount(0);
 
   // Ortadaki kart 1. video; yaninda yapisik urun karti (ornek veride Y300 QCW, secenekli):
-  // ad urun sayfasina gider, fiyat, favori, "Seçenekleri Gör". Videonun altinda ayrica urun satiri yok.
+  // ad urun sayfasina gider, fiyat, favori, adet ve "Sepete Ekle" (hizli secim penceresi; K-126).
+  // Videonun altinda ayrica urun satiri yok.
   await expect(videos.getByRole("button", { name: "1. videoyu oynat" })).toBeVisible();
   const card = videos.locator("div.z-20");
   await expect(card.getByRole("link", { name: "Y300 QCW Lazer Kaynak Makinesi" })).toHaveAttribute("href", "/urun/y300-qcw");
-  await expect(card.getByRole("link", { name: "Seçenekleri Gör" })).toHaveAttribute("href", "/urun/y300-qcw");
+  await card.getByRole("button", { name: "Sepete Ekle" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toContainText("Tepe Güç");
+  await expect(dialog.getByRole("button", { name: "1000 W", exact: true })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
   await expect(card).toContainText("₺");
   await card.getByRole("button", { name: "Favori" }).click();
   await expect(card.getByRole("button", { name: "Favori" }).locator("svg")).toHaveClass(/fill-zw-red-600/);

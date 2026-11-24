@@ -132,7 +132,7 @@ test("/force teknik özellikler: dört makine, katalogdaki değerler; makineler 
   // ForceMIG 200: sepete eklenir; kalp favorilere ekler
   const mig = prices.nth(0);
   await mig.getByRole("button", { name: /Sepete Ekle/i }).click();
-  await expect(mig.getByRole("link", { name: /Sepete Git/i })).toHaveAttribute("href", "/sepet");
+  await expect(mig.getByRole("button", { name: /Sepete eklendi/i })).toBeVisible();
   const heart = mig.getByRole("button", { name: "Favori" });
   await heart.click();
   await expect(heart).toHaveAttribute("aria-pressed", "true");

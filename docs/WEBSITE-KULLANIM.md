@@ -296,9 +296,10 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
    - **Video ve ürün kartı yan yana:** Ürünü olan her videonun sağına
      yapışık o ürünün kartı durur; ikisi tek parçadır ve birlikte kayar.
      Kartta ürünün fotoğrafı, adı, öne çıkan özellikleri (geniş ekranda),
-     fiyatı (indirim ve taksit dahil), **favorilere ekle** (kalp) ve
-     **Sepete Ekle** düğmesi (seçenekli üründe **Seçenekleri Gör**, ürün
-     sayfasına gider; stokta yoksa düğme pasif) bulunur. Fotoğrafa ya da
+     fiyatı (kampanyada indirimli fiyat ve üstü çizili normal fiyat),
+     **favorilere ekle** (kalp), adet kutusu ve **Sepete Ekle** düğmesi
+     ([5. Ürün kartı](#5-ürün-kartı)'ndaki gibi: seçenekli üründe hızlı
+     seçim penceresi açılır; stokta yoksa STOKTA YOK) bulunur. Fotoğrafa ya da
      ada tıklanınca ürün sayfası açılır. Videonun altında ayrıca ürün
      satırı yoktur.
    - Geniş ekranda ortada bir çift (video + ürün kartı), iki yanda
@@ -484,8 +485,8 @@ bağlantısı ürün kaydından gelir.
      testi, IGBT teknolojisi (dördünde); sinerjik program (ForceMIG 200,
      ForceTIG 200, ForceArc 200); ark gücü, sıcak başlangıç ve elektrodun
      yapışmama özelliği (ForceTIG 200, ForceArc 200).
-   - Fiyat (ürün kartındaki kuralla, KDV dahil ve hariç), **Sepete Ekle**,
-     favori kalbi, **Ürünü İncele** (ürün sayfası) ve **Teknik Özellikler**
+   - Fiyat (ürün kartındaki kuralla, KDV dahil ve hariç), adet kutusu ve
+     **Sepete Ekle** (ürün kartındaki kurallar), favori kalbi, **Ürünü İncele** (ürün sayfası) ve **Teknik Özellikler**
      (tabloya iner). Arkada yöntemin adı (MIG, TIG, ARC, CUT) silik
      yazılıdır. Ürün yayında değilse bölümde fiyat, sepet ve ürün
      bağlantısı görünmez.
@@ -528,8 +529,8 @@ bağlantısı ürün kaydından gelir.
      voltajı, Verimlilik, Koruma sınıfı, İzolasyon sınıfı, Boyutlar (Y × G
      × D), Net ağırlık. Makine kodu katalogdaki gibidir (ör. 30100000074;
      sitedeki ürün kodunun başında "ZW" vardır).
-   - Her kolonun en altında fiyat, **Sepete Ekle** ve favori kalbi (ürün
-     kartındaki kurallar: depoda yoksa "STOKTA YOK"); ürün yayında değilse
+   - Her kolonun en altında fiyat, adet kutusu, **Sepete Ekle** ve favori
+     kalbi (ürün kartındaki kurallar: depoda yoksa "STOKTA YOK"); ürün yayında değilse
      "—".
    - Telefonda tablo yana kayar; satır adları solda sabit kalır.
 
@@ -559,13 +560,34 @@ Katalogda, anasayfa şeritlerinde, aramada, Ürün Seçici'de, favorilerde ve
   - Kampanyadaysa indirimli fiyat vurgulu, normal fiyat üstü çizili
     gösterilir.
   - Altında "KDV Dahil · <tutar> KDV Hariç" yazar.
-- **Düğme:**
-  - Seçenekli üründe **Seçenekleri Gör**: Ürün sayfasına gider; seçenek orada
-    seçilir.
-  - Seçeneksiz üründe **Sepete Ekle**: 1 adet ekler; düğme **Sepete Git**'e
-    dönüşür.
-  - Ürün depoda yoksa düğme yerine devre dışı **STOKTA YOK** yazar; sepete
-    eklenmez.
+- **Adet ve Sepete Ekle** (KARARLAR K-126):
+  - Her kartta adet kutusu (– / +, 1–99; elle de yazılır) ve **Sepete Ekle**
+    düğmesi vardır. Geniş kartta yan yana, dar kartta (telefon, video
+    yanındaki kart, Force tablosu) alt alta durur.
+  - **Seçeneksiz ürün:** Sepete Ekle, kutudaki adedi doğrudan sepete ekler.
+  - **Seçenekli ürün:** Sepete Ekle, **hızlı seçim penceresini** açar
+    (başlık "Seçenek Seçin"): ürünün fotoğrafı, adı, ürün kodu, seçenek
+    düğmeleri, fiyat, adet ve **Sepete Ekle**. Seçenekler ürün sayfasındaki
+    gibidir: ilk kombinasyon seçili gelir, diğer seçimlerle satılmayan değer
+    soluk görünür; seçim değişince fotoğraf, ürün kodu ve fiyat değişir.
+    Fiyat alanı ürün sayfasındaki gibidir (KDV dahil ve hariç, KDV oranı;
+    kampanyada indirim oranı, normal fiyat ve bitiş tarihi). Adet karttan
+    gelir, pencerede değiştirilebilir. Seçilen kombinasyon depoda yoksa
+    düğme devre dışı **STOKTA YOK** olur. Sepete Ekle'ye basınca seçilen
+    kombinasyon ve adet sepete girer, pencere kapanır. Pencere ✕, Esc ya da
+    dışına tıklanınca da kapanır.
+  - Eklenince düğme 2 saniye yeşil **✓ Sepete eklendi** yazar, sonra yeniden
+    **Sepete Ekle** olur; kartın adedi 1'e döner. Böylece aynı üründen başka
+    bir seçenek de eklenebilir. Sepete üstteki sepet simgesinden gidilir
+    (sayısı hemen artar).
+  - Sepette her kombinasyon ayrı satırdır; aynı kombinasyon yeniden
+    eklenirse adet o satıra eklenir (en fazla 99).
+  - Ürün depoda yoksa adet kutusu ve düğme yerine devre dışı **STOKTA YOK**
+    yazar; sepete eklenmez.
+  - Aynı düğme kartın bulunduğu her yerdedir: kategori sayfası, arama,
+    Favorilerim, Ürün Seçici, anasayfadaki ürün şeritleri ve video
+    yanındaki ürün kartları, ürün sayfasındaki benzer ürünler, Force
+    sayfasındaki makine bölümleri ve teknik özellikler tablosu.
 
 ---
 

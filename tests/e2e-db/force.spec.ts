@@ -37,7 +37,7 @@ test("/force: teknik özelliklerde dört makine; fiyat ve stok veritabanıyla ay
   await expect(weight).toHaveText(["11,00 kg", "5,00 kg", "3,56 kg", "4,60 kg"]);
 
   await cells.nth(0).getByRole("button", { name: /Sepete Ekle/i }).click();
-  await expect(cells.nth(0).getByRole("link", { name: /Sepete Git/i })).toBeVisible();
+  await expect(cells.nth(0).getByRole("button", { name: /Sepete eklendi/i })).toBeVisible();
   expect(problems).toEqual([]);
 });
 

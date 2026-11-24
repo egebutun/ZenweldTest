@@ -822,7 +822,7 @@ export const tr = {
     addToCart: "Sepete Ekle",
     added: "Sepete eklendi",
     goToCart: "Sepete Git",
-    chooseOptions: "Seçenekleri Gör",
+    quickAdd: "Seçenek Seçin",
     empty: "Sepetiniz boş",
     emptyText: "Ürün sayfalarından sepete ürün ekleyebilirsiniz.",
     continueShopping: "Alışverişe Devam Et",

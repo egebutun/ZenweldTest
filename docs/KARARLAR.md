@@ -25,7 +25,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 
 1. [Genel](#1-genel) — K-01–K-04, K-83, K-102
 2. [Katalog ve ürün](#2-katalog-ve-ürün) — K-05–K-12, K-69, K-71–K-78, K-118
-3. [Ürün seçenekleri](#3-ürün-seçenekleri) — K-13–K-19, K-70
+3. [Ürün seçenekleri](#3-ürün-seçenekleri) — K-13–K-19, K-70, K-126
 4. [Satış, ödeme ve teklif](#4-satış-ödeme-ve-teklif) — K-21–K-27, K-64, K-65, K-79, K-80, K-85, K-86, K-97
 5. [Stok ve SAP; bayiler ve online satıcılar](#5-stok-ve-sap-bayiler-ve-online-satıcılar) — K-20, K-28–K-33, K-82, K-84, K-93
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap) — K-34–K-37, K-68, K-94–K-96
@@ -410,6 +410,23 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   WooCommerce, Magento) ortak yapısı.
 - Veritabanında tutulma biçimi: [VERITABANI.md](VERITABANI.md) › 3 ›
   Seçenekli ürün.
+
+### K-126 · Ürün kartında adet ve hızlı seçim penceresi
+- Sitedeki bütün ürün kartlarında adet kutusu (– / +) ve her üründe
+  **Sepete Ekle** düğmesi vardır; ürün depoda yoksa yalnızca **STOKTA
+  YOK**. Kartta "Seçenekleri Gör" yoktur.
+- Seçeneksiz ürün karttaki adetle doğrudan sepete eklenir.
+- Seçenekli üründe Sepete Ekle **hızlı seçim penceresini** açar:
+  seçenekler (ürün sayfasındaki kurallarla), fiyat, ürün kodu, adet ve
+  Sepete Ekle. Eklenince pencere kapanır. Pencerede ürün sayfasına ayrı
+  bağlantı yoktur: karttaki fotoğraf ve ad zaten ürün sayfasını açar.
+  Fiyatta taksit gösterilmez.
+- Eklenince düğme kısa bir süre "Sepete eklendi" yazar, sonra yeniden
+  "Sepete Ekle" olur; kartın adedi 1'e döner. "Sepete Git"e dönmez:
+  müşteri aynı ürünün başka seçeneğini de kolayca ekleyebilsin.
+- **Neden:** Ziyaretçi ürün sayfasına gitmeden seçip sepete ekleyebilsin;
+  aynı ürünün farklı seçeneklerinden farklı adetler alınabilsin. Seçenekler
+  kartta sürekli açık olsaydı dar kartlarda tasarımı boğardı.
 
 ---
 

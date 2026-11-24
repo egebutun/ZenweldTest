@@ -243,8 +243,9 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       liste sonsuz döner; telefonda parmakla kaydırılır. Kapak resmi
       bulanık değildir (YouTube'un yüksek çözünürlüklü kapağı). Ürünü
       olan videonun sağında yapışık ürün kartı durur (fotoğraf, ad, geniş
-      ekranda öne çıkan özellikler, fiyat, favori, Sepete Ekle ya da
-      Seçenekleri Gör); kartın adı ve fotoğrafı ürün sayfasını açar;
+      ekranda öne çıkan özellikler, fiyat, favori, adet ve Sepete Ekle;
+      Y300 QCW'de Sepete Ekle hızlı seçim penceresini açar, Tepe Güç
+      seçilir); kartın adı ve fotoğrafı ürün sayfasını açar;
       kaydırınca video ve kart birlikte kayar; videonun altında ayrıca
       ürün satırı yoktur. Örnek veride 5 video Y300 QCW'nin kartıyla
       görünür, Y300 QCW'nin ürün sayfasında video yoktur
@@ -420,6 +421,20 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
 - [ ] Aynı ürün ve seçenek tekrar eklenince adet artar; farklı seçenek ayrı
       satırdır ve seçenek adıyla kodu yazar.
 - [ ] Adet 1–99 arasında kalır (500 yazılınca 99 olur).
+- [ ] Ürün kartında adet ve Sepete Ekle (K-126): her kartta adet kutusu
+      (– / +) ve Sepete Ekle var, "Seçenekleri Gör" yok. Seçeneksiz üründe
+      (ForceMIG 200) adet 2 → Sepete Ekle: pencere açılmaz, sepete 2 adet
+      girer. Seçenekli üründe (Ultimate 405 MTS) Sepete Ekle "Seçenek
+      Seçin" penceresini açar; karttaki adet pencereye gelir, ilk
+      kombinasyon seçilidir; seçim değişince fotoğraf, kod ve fiyat
+      değişir; Su Soğutmalı seçilince düğme STOKTA YOK. Pencerede Sepete
+      Ekle seçilen kombinasyonu ve adedi ekler ve pencere kapanır; ✕, Esc
+      ve dışına tıklama da kapatır. Eklenince kart düğmesi 2 saniye "Sepete
+      eklendi" yazar, sonra yine Sepete Ekle; adet 1'e döner; üstteki sepet
+      sayısı artar. Aynı ürünün iki kombinasyonu sepette ayrı satırdır.
+      Telefonda, video yanındaki kartta ve Force sayfasında adet kutusu ve
+      düğme sığar (`tests/e2e/secenek.spec.ts`,
+      `tests/e2e-db/hizli-secim.spec.ts`).
 - [ ] Ara toplam 5.000 ₺ altındaysa kargo 250 ₺ ve "ücretsiz kargoya kalan"
       tutar görünür; 5.000 ₺ ve üzerinde kargo ücretsiz. (Örnek fiyatlar 999.999 ₺;
       Mağaza Ayarları'nda sınır ürün fiyatının üstüne çıkarılarak ya da
