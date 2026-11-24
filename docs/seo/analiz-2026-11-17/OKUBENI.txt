@@ -36,8 +36,10 @@ Kalan isler: docs/YAPILACAKLAR.md > SEO - anahtar kelime calismasindan kalan isl
   Degerler goreli (grubun en yuksegi = 100).
 
 05-Yonetici-ozeti
-  CEO icin yazili ozet (PDF). SEO calismasi ilerledikce guncellenir; her
-  guncellemede bu PDF yenilenir.
+  CEO icin yazili ozet (PDF): yalnizca anahtar kelime analizi ve kelimelere
+  dayali aksiyonlar; teknik SEO ve site isleri girmez (KARARLAR K-127).
+  Analiz tekrarlaninca ya da kelimelere dayali yeni bir karar olunca
+  guncellenir; her guncellemede bu PDF yenilenir.
 
 06-Yontem-betikleri
   google-oneri-taramasi.py : 01'deki taramayi yapan betik (Python 3, ek paket gerekmez).

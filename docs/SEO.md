@@ -11,8 +11,10 @@ güncellenir; tek ve güncel kaynak budur.
   `OKUBENI.txt` her dosyayı anlatır). Analiz tekrarlanınca yeni tarihli
   bir klasör açılır, eskisi silinmez.
 - **Yönetici özeti (CEO için, PDF):**
-  [`seo/analiz-2026-11-17/05-Yonetici-ozeti/`](seo/analiz-2026-11-17/05-Yonetici-ozeti/);
-  SEO işi ilerledikçe güncellenir.
+  [`seo/analiz-2026-11-17/05-Yonetici-ozeti/`](seo/analiz-2026-11-17/05-Yonetici-ozeti/).
+  Yalnızca anahtar kelime analizi ve kelimelere dayalı aksiyonlar; teknik
+  SEO ve site işleri girmez. Analiz tekrarlanınca ya da kelimelere dayalı
+  yeni bir karar olunca güncellenir (KARARLAR K-127).
 - **Kaynaklar:** 17 site incelemesi, Google arama önerileri (6.613 sorgu →
   7.701 terim), Google Ads Anahtar Kelime Planlayıcı (7.236 terim;
   Türkiye, Kasım 2025 – Ekim 2026), 6 sitenin (5 rakip ve eski

@@ -35,7 +35,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120, K-121, K-123, K-124
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
 12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108, K-122
-13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110
+13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110, K-127
 
 ---
 
@@ -1449,3 +1449,15 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   ekranlarını yayındaki (demo) sitede göremedi; ekranlar demo modunda
   kendisine söylenmeden gizlenmişti (K-109). Sahibi kuralın CLAUDE.md'ye
   eklenmesini onayladı.
+
+### K-127 · Yönetici özeti yalnızca anahtar kelime analizidir
+- Yönetici özeti (CEO için PDF,
+  `docs/seo/analiz-…/05-Yonetici-ozeti/`) yalnızca anahtar kelime
+  analizini ve kelimelere dayalı aksiyonları (ad ve yazım kararları,
+  fırsatlar, satış ve pazarlama önerileri) anlatır. Teknik SEO ve site
+  işleri (yönlendirmeler, yapısal veri, hız, garanti gibi kararlar) girmez;
+  onların kaydı `docs/SEO.md`'dedir.
+- Özet, anahtar kelime analizi tekrarlanınca ya da kelimelere dayalı yeni
+  bir karar ya da aksiyon olunca güncellenir.
+- **Neden:** Özet müdüre kelime analizini ve alınabilecek aksiyonları
+  göstermek için hazırlandı; SEO'nun bütün işleri onu gereksiz uzatır.
