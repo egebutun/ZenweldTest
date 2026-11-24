@@ -320,7 +320,8 @@ Yukarıdan aşağıya bölümler (KARARLAR K-47):
      açılışta ilk sekme seçilidir. Ürünü olmayan ya da ürünü yayında
      olmayan videolar en sondaki **Genel** sekmesindedir. Tek grup varsa
      sekmeler görünmez. Sekme değişince şerit baştan başlar.
-   - Altta **Tüm videolar →** Videolar sayfasını (`/videolar`) açar.
+   - Altta **Tüm videolar →** Videolar sayfasını seçili sekmenin
+     kategorisiyle açar (`/videolar?kategori=<kategorinin linki>`).
    - Gösterilecek video yoksa bölüm görünmez.
 10. **Neden Zenweld?** Beş madde: Sanayinin Tercihi, Ödüllü Marka, Kolay
    Destek, Garanti Sorgula, Yetkili Bayi ve Servis Ağı; sonda **Zenweld'i
@@ -1834,10 +1835,19 @@ bölümünün altındaki **Tüm videolar →** de buraya gelir.
 - Başlık "Videolar", altında "Ürünlerimiz sahada: kategoriye göre kaynak
   videoları". Sayfa başlığı ve Google açıklaması panelden (Sayfa SEO).
 - Video kütüphanesindeki yayında ve oynatılabilir bütün videolar ("Anasayfada
-  göster" işaretinden bağımsız), ürünlerinin kategorisine göre gruplu ve alt
-  alta: kategoriler menüdeki sırayla, her grubun başlığı kategorinin tam adı
-  ve yanında **Kategoriye git →** (kategori sayfası). Ürünsüz videolar en
-  sonda **Genel**.
+  göster" ve "Ürün sayfasında göster" işaretlerinden bağımsız), ürünlerinin
+  kategorisine göre gruplu.
+- **Kategori sekmeleri** (anasayfadaki gibi): menüdeki sırayla, kısa adla;
+  "Tümü" yok, açılışta ilk sekme seçili; ürünsüz videolar en sonda
+  **Genel**; tek grup varsa sekme yok. Sekme seçilince altında yalnızca o
+  kategorinin videoları görünür ve adres `/videolar?kategori=<kategorinin
+  linki>` olur (Genel'de `genel`); bu adresle açılınca o sekme seçili
+  gelir. Diğer kategorilerin videoları sayfada gizli durur (Google hepsini
+  görür; gizli kartların kapakları yüklenmez).
+- Seçili kategorinin başlık satırı: solda kategorinin tam adı ve "· <n>
+  video", sağda **Tüm <kategorinin adı> →** (kategori sayfası; ör. "Tüm
+  MIG (GMAW) Gazaltı Kaynak Makineleri →"). Telefonda bağlantı başlığın
+  altına iner.
 - Kartlar dik (9:16), geniş ekranda satırda 5, tablette 3, telefonda 2.
   Kartta kapak ve oynat işareti, altında videonun başlığı (yoksa ürünün
   adı) ve ürünün küçük fotoğrafıyla adı (ürün sayfasına gider).

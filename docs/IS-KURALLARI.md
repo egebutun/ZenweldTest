@@ -1859,7 +1859,7 @@ tarayıcıdan geleni yeniden denetler).
   işaretsiz videosu ürün sayfasında görünmez; Videolar sayfasında (`/videolar`) bütün
   videolar; anasayfada "Anasayfada göster" işaretliler. Üçünde de yalnızca
   yayında ve oynatılabilir videolar, paneldeki sırayla.
-- **Kategoriye göre gruplama** (anasayfa sekmeleri ve Videolar sayfası):
+- **Kategoriye göre gruplama** (anasayfa ve Videolar sayfası sekmeleri):
   video, bağlı ürünün kategorisine girer. Gruplar menüdeki sırayla: bölüm
   (Ekipmanlar, Güvenlik, Aksesuarlar, Dolgu Metalleri), grubun sırası,
   kategorinin sırası. Ürünü olmayan ya da ürünü yayında olmayan videolar en
@@ -1870,6 +1870,9 @@ tarayıcıdan geleni yeniden denetler).
   - **Örnek:** Plazma, TIG ve MMA ürünlerine bağlı birer video ve iki
     ürünsüz video → sekmeler: MMA (Stick) Örtülü Elektrot, TIG (GTAW)
     Argon, Plazma Kesim, Genel (2 video).
+  - Videolar sayfasında seçili sekme adreste durur: `?kategori=` kategorinin
+    linki (Genel'de `genel`). Adresteki kategori yoksa ilk sekme seçilir.
+    Anasayfadaki "Tüm videolar" seçili sekmenin kategorisiyle açar.
 - **Google'a giden bilgi** (VideoObject; K-123): başlık (yoksa ürünün adı,
   o da yoksa "Zenweld videosu"); açıklama "<başlık>. <ürünün adı> —
   Zenweld.", başlıksız ürün videosunda "<ürünün adı> videosu — Zenweld.",

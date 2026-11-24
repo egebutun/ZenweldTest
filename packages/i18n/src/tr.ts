@@ -83,7 +83,8 @@ export const tr = {
   /** Videolar sayfasi (/videolar; KARARLAR K-125) */
   videos: {
     empty: "Henüz video yok.",
-    toCategory: "Kategoriye git",
+    toCategory: (category: string) => `Tüm ${category}`,
+    count: (n: number) => `${n} video`,
     play: (title: string) => `${title} videosunu oynat`,
   },
   explore: {

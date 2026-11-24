@@ -881,7 +881,10 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   kategori seçilidir. Kayan şerit sahibinin gönderdiği örnekteki gibidir:
   kartlar aynı genişlikte, ortadaki daha uzun; geçişte bütün şerit kayar.
 - **Videolar sayfası** (`/videolar`): bütün videolar kategoriye göre
-  gruplu; her videonun altından ürün sayfasına gidilir.
+  gruplu; üstte anasayfadaki gibi kategori sekmeleri, seçilen kategorinin
+  videoları altında listelenir. Kategori sayfasına bağlantı seçili
+  kategorinin başlık satırında, sağda durur. Kart boyutu olduğu gibi kalır.
+  Her videonun altından ürün sayfasına gidilir.
 - **Kendi videolarımız:** Panelden orijinali yüklenir (en fazla 1 GB).
   Sunucu web için otomatik hazırlar: 1080p ve 720p sürüm, kapak karesi;
   görüntü kalitesi korunur. Dosyalar dosya deposunda durur.

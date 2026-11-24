@@ -1311,9 +1311,12 @@ Ultimate 405 MTS'nin su soğutmalı kalemi stoksuz; [IS-KURALLARI.md ›
       ürünün işaretsiz videosu ürün sayfasında görünmez (Videolar
       sayfasında görünür). Ürün seçilmeden işaret konamaz. Anasayfada videolar kategori sekmelerine ayrılır
       (menüdeki sırayla, "Tümü" yok, ilk sekme seçili, ürünsüzler "Genel"de;
-      tek grup varsa sekme yok); "Tüm videolar →" `/videolar`'ı açar.
-      `/videolar`'da bütün videolar kategoriye göre gruplu, her grupta
-      "Kategoriye git →", her kartta ürünün adı ürün sayfasına gider. Menüde
+      tek grup varsa sekme yok); "Tüm videolar →" `/videolar`'ı seçili
+      sekmenin kategorisiyle açar. `/videolar`'da aynı sekmeler; seçilen
+      kategorinin videoları altında, adres `?kategori=…` olur ve bu adresle
+      açılınca o sekme seçili gelir; başlık satırında "· <n> video" ve
+      sağda "Tüm <kategori adı> →"; her kartta ürünün adı ürün sayfasına
+      gider. Menüde
       Keşfet › Güncel › Videolar. Sayfa kaynağında her video için
       `VideoObject`, site haritasında video bilgisi vardır
       (`tests/e2e/videolar.spec.ts`, `tests/e2e/yapisal-veri.spec.ts`).

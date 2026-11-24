@@ -44,7 +44,8 @@ const mod = (n: number, m: number) => ((n % m) + m) % m;
  * Kategori sekmeleri: videolar urunlerinin kategorisine gore ayrilir;
  * sekmeler menudeki sirayla, "Tümü" yok, acilista ilk sekme secili; urunsuz
  * videolar en sondaki "Genel" sekmesinde. Tek grup varsa sekme gorunmez.
- * Altta "Tüm videolar" Videolar sayfasini (/videolar) acar.
+ * Altta "Tüm videolar" Videolar sayfasini (/videolar) secili sekmenin
+ * kategorisiyle acar (?kategori=<kategorinin linki>).
  */
 export function HomeVideos() {
   const t = useT();
@@ -94,7 +95,7 @@ export function HomeVideos() {
         <VideoCarousel key={group.key} items={group.items} />
 
         <div className="mt-6 text-center">
-          <Link href="/videolar" className="text-sm font-semibold text-zw-red-700 underline-offset-4 hover:underline zw-focus">
+          <Link href={`/videolar?kategori=${encodeURIComponent(group.category?.slug ?? group.key)}`} className="text-sm font-semibold text-zw-red-700 underline-offset-4 hover:underline zw-focus">
             {t.home.videos.all} →
           </Link>
         </div>
