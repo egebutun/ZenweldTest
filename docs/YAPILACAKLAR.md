@@ -1275,14 +1275,20 @@ sahibine hatırlatılır. Kalanlar:
    (ör. nginx `client_max_body_size`) yorum formundaki dosyalar (~40 MB)
    ve panelden video yükleme (1 GB) için ayarlanmalı
    ([SUNUCU.md › Görseller ve dosyalar](SUNUCU.md#12-görseller-ve-dosyalar)).
-4. **Gerçek fotoğraflar (sahibi, panelden):** Unsplash fotoğrafları örnek
+4. **Gerçek fotoğraflar (sahibi gönderir):** Unsplash fotoğrafları örnek
    veriden kaldırıldı (6 blog kapağı, 8 etkinliğin galerisindeki 15
-   fotoğraf, Hakkımızda'nın üst görseli). Yerlerine gerçekleri panelden
-   yüklenecek: blog kapakları (Blog), etkinlik fotoğrafları (Etkinlikler;
-   Big 5 Global 2025, International Hardware Riyadh 2025, WIN EURASIA 2025
-   ve 2024, İmatech 2025 ve 2024, İstanbul Hırdavat 2024, Konya Makine
-   2024) ve Hakkımızda görseli (Hakkımızda). Yüklenenler dosya deposuna
-   gider ve Google'a da gider.
+   fotoğraf, Hakkımızda'nın üst görseli). Gerçekleri gelecek: blog
+   kapakları, etkinlik fotoğrafları (Big 5 Global 2025, International
+   Hardware Riyadh 2025, WIN EURASIA 2025 ve 2024, İmatech 2025 ve 2024,
+   İstanbul Hırdavat 2024, Konya Makine 2024) ve Hakkımızda görseli.
+   - **Canlıdan önce:** Sahibi fotoğrafları gönderir; ürün fotoğraflarındaki
+     gibi sitenin dosyalarına konur, web için küçültülür (WebP), adı ve alt
+     metni verilip örnek veriye bağlanır. Canlıya yüklemede (`db:yukle`)
+     dosya deposuna kopyalanır.
+   - **Canlıdan sonra:** Panelden yüklenir (Blog, Etkinlikler, Hakkımızda);
+     doğrudan dosya deposuna gider. Örnek veriye eklenip `db:yukle
+     guncelle` ile yüklemek paneldeki değişikliklerin üzerine yazar.
+   - Hepsi Google'a da gider.
 
 ## Video kütüphanesi — kalan adımlar
 
