@@ -1052,7 +1052,8 @@ En büyük etken: Google, aramaya en iyi cevabı veren sayfayı üste koyar.
 - [ ] Sitedeki bütün yazıların denetimi: blog, haber, etkinlik, SSS,
       Hakkımızda, belge sayfaları, yasal metinler; başlık, özet, metin, SEO
       alanları, alt metin, iç bağlantı. Bilinen: Konya Makine 2024 ve
-      İmatech 2024 etkinliklerinde aynı paragraf, etkinlik galerilerinde geçici stok fotoğraflar (A6).
+      İmatech 2024 etkinliklerinde aynı paragraf (A6). Unsplash
+      fotoğrafları örnek veriden kaldırıldı; gerçekleri panelden yüklenecek.
       **Panel**
 - [ ] SSS'deki yer tutucu cevaplar (şebeke, jeneratör) ve "Zenweld hangi
       ülkenin markası?" sorusu. **Panel**
@@ -1110,7 +1111,7 @@ tıklanma oranını artırır.
       bekleniyor (C5). **Sahibi**, sonra **Kod**
 - [x] Uzun açıklama ve öne çıkanlar, seçeneklerin kendi kodu, fiyatı ve
       stoğu (`ProductGroup`), site adı (`WebSite`), etkinliklerde ülke kodu,
-      "düzenleyen" düzeltmesi ve stok fotoğrafın gitmemesi (K-123). Altyapı;
+      "düzenleyen" düzeltmesi (K-123). Altyapı;
       açıklamanın içeriği A2'de.
 - [ ] Barkod (GTIN): ürünlerin barkodu varsa eklenecek (C6). **Sahibi**,
       sonra **Kod**

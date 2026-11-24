@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PageData } from "@/components/common/PageData";
 import { getBlogPostPageData, getServerContent } from "@/lib/server/content";
 import { JsonLd } from "@/components/common/JsonLd";
-import { SITE_NAME, absoluteUrl, blogPostSeo, blogPostingJsonLd, canonical, seoMetadata } from "@/lib/seo";
+import { OG_COVER, SITE_NAME, absoluteUrl, blogPostSeo, blogPostingJsonLd, canonical, seoMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -30,9 +30,10 @@ export async function generateMetadata({
       url: absoluteUrl(`/blog/${post.slug}`),
       publishedTime: post.publishedAt,
       authors: [post.author],
-      images: [{ url: post.coverUrl, alt: post.title }],
+      // Kapak yoksa markali paylasim karti.
+      images: [post.coverUrl ? { url: post.coverUrl, alt: post.title } : OG_COVER],
     },
-    twitter: { card: "summary_large_image", title, description, images: [post.coverUrl] },
+    twitter: { card: "summary_large_image", title, description, images: [post.coverUrl || OG_COVER.url] },
     // Blog yazilari aramaya acik ve site haritasinda. Ornek yazilarin
     // govdesi hala yer tutucu (Lorem ipsum): site zenweld.com'da yayina
     // girmeden once gercek metinler yazilmali (docs/YAPILACAKLAR.md).

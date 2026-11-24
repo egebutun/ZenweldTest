@@ -1742,7 +1742,7 @@ tabloların benzersiz dizinleri ve kurallarıyla sağlanır (her tablonun
 
 **Veri sürümü (`DB_VERSION`, yalnızca demo modu):**
 
-- `packages/data/src/index.ts`'tedir (bugün 96).
+- `packages/data/src/index.ts`'tedir (bugün 97).
 - Tarayıcıdaki kaydın `version` alanı bu sayıyla tutmazsa veri silinir ve
   örnek veriyle yeniden kurulur.
 - Örnek veri ya da kayıtların şekli her değiştiğinde artırılır. **Dikkat:**

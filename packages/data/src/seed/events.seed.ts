@@ -1,5 +1,4 @@
 import type { NewsItem, ZenweldEvent } from "../types";
-import { stockPhotos } from "./images";
 
 /**
  * ETKINLIK TAKVIMI
@@ -93,7 +92,7 @@ Bizi standımızda ziyaret edin ve geleceğin kaynak teknolojilerini birlikte ke
     city: "Dubai",
     country: "Birleşik Arap Emirlikleri",
     logoUrl: logo("big-5-global-2025"),
-    images: [stockPhotos.factoryLine, stockPhotos.industrialShop],
+    images: [],
     active: true,
   },
   {
@@ -122,7 +121,7 @@ Daha fazla bilgi için bizimle iletişime geçin ve fuar boyunca bizi ziyaret et
     city: "Riyad",
     country: "Suudi Arabistan",
     logoUrl: logo("international-hardware-riyadh-2025"),
-    images: [stockPhotos.industrialShop, stockPhotos.teamTalk],
+    images: [],
     active: true,
   },
   {
@@ -150,7 +149,7 @@ Fuar boyunca, sektörel iş birlikleri, teknik danışmanlık ve ürün tanıtı
     city: "İstanbul",
     country: "Türkiye",
     logoUrl: logo("win-eurasia-2025", "png"),
-    images: [stockPhotos.factoryLine, stockPhotos.engineer, stockPhotos.teamTalk],
+    images: [],
     active: true,
   },
   {
@@ -173,7 +172,7 @@ Detaylar ve fuar sonrası haberler için bizi takip edin!`,
     city: "İzmir",
     country: "Türkiye",
     logoUrl: logo("imatech-2025"),
-    images: [stockPhotos.engineer, stockPhotos.metalWork],
+    images: [],
     active: true,
   },
   {
@@ -192,7 +191,7 @@ Fuar süresince teknik ekibimiz, ürünlerimizin özelliklerini tanıtacak, uygu
     city: "İstanbul",
     country: "Türkiye",
     logoUrl: logo("istanbul-hirdavat-fuari-2024"),
-    images: [stockPhotos.toolsFlatlay, stockPhotos.workshop],
+    images: [],
     active: true,
   },
   {
@@ -227,7 +226,7 @@ Win Eurasia 2024 Endüstri Fuarı'nı ziyaret etmeyi planlıyorsanız, Zenweld s
     city: "İstanbul",
     country: "Türkiye",
     logoUrl: logo("win-eurasia-2024", "png"),
-    images: [stockPhotos.factoryLine],
+    images: [],
     active: true,
   },
   {
@@ -261,7 +260,7 @@ Zenweld, 2000 yılından beri kaynak ve kesme teknolojileri alanında faaliyet g
     city: "Konya",
     country: "Türkiye",
     logoUrl: logo("konya-makine-teknolojileri-fuari-2024"),
-    images: [stockPhotos.workshop],
+    images: [],
     active: true,
   },
   {
@@ -297,7 +296,7 @@ Zenweld, 2000 yılından beri kaynak ve kesme teknolojileri alanında faaliyet g
     city: "İzmir",
     country: "Türkiye",
     logoUrl: logo("imatech-2024"),
-    images: [stockPhotos.metalWork, stockPhotos.teamTalk],
+    images: [],
     active: true,
   },
 ];

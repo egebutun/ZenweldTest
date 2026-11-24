@@ -198,7 +198,7 @@ açılınca çalışır), işlem kaydının 2 yıldan eskisini silme
 Güvenlik politikasının (CSP) bugün izin verdiği dış adresler:
 
 - **Görseller:** her `https` adresi (panelden herhangi bir görsel adresi
-  girilebildiği için; harita döşemeleri ve Unsplash dahil), ayrıca
+  girilebildiği için; harita döşemeleri dahil), ayrıca
   tarayıcıda tutulan yüklenmiş görseller (`data:`, `blob:`).
 - **Çerçeve:** `maps.google.com` ve `www.google.com` (iletişim sayfasındaki
   harita), `www.youtube-nocookie.com` (anasayfa videoları; oynatıcı
@@ -1677,15 +1677,16 @@ toplanması, eksi miktar, geçersiz okuma):
   fotoğrafı gösterir (KARARLAR K-77). Güvenlik, Aksesuarlar ve
   Dolgu Metalleri'nde bugün ürün yok; eklenen ürünün fotoğrafı panelden
   verilir.
-- **Blog, haber, etkinlik ve Hakkımızda görselleri**
-  **Unsplash**'ten gelir (`https://images.unsplash.com/…`,
-  `packages/data/src/seed/images.ts`). Gerçek fotoğraflarla değiştirilmeli.
+- **Blog kapakları, etkinlik galerileri ve Hakkımızda görseli:** Örnek
+  veride yok (Unsplash fotoğrafları kaldırıldı); gerçekleri panelden
+  yüklenir. Haber görselleri ve etkinlik logoları sitenin kendi
+  dosyalarındadır.
 - Tarayıcının hangi adreslerden görsel yükleyebileceğini güvenlik politikası
   belirler; bugün her `https` adresine açıktır ([3](#3-barındırma-zamanlanmış-işler-ve-güvenlik-başlıkları)).
-- `next.config.mjs` içindeki `images.remotePatterns` ayrıca yalnızca
-  `images.unsplash.com`'a açıktır. Bu ayar Next.js'in görsel küçültme
-  ucu (`/_next/image`) içindir; site bugün bu ucu kullanmıyor. Kullanılmaya
-  başlanırsa yeni görsel sunucuları buraya da eklenmeli.
+- Next.js'in görsel küçültme ucu (`/_next/image`) kullanılmıyor; bu yüzden
+  `next.config.mjs`'te dış görsel sunucusu izni (`images.remotePatterns`)
+  yok. Kullanılmaya başlanırsa izin verilecek sunucular orada tek tek
+  yazılmalı.
 - Görsel yüklenemezse markalı Zenweld yer tutucusu gösterilir.
 
 **Kategori, grup ve etkinlik logoları:** Depoda durur

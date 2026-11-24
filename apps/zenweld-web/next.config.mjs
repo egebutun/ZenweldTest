@@ -127,13 +127,6 @@ const nextConfig = {
       { source: "/:path*/sayfa/1", destination: "/:path*", statusCode: 301 },
     ];
   },
-  images: {
-    // hostname: "**" acikti; bu, /_next/image ucunu herkesin kullanabilecegi
-    // bir gorsel vekiline cevirir (baskasinin dosyasi bizim sunucumuzdan
-    // servis edilir). Uygulamada next/image kullanilmadigi icin genis izne
-    // gerek yok. Yeni bir kaynak gerekirse buraya acikca eklenir.
-    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
-  },
 };
 
 export default nextConfig;

@@ -1745,7 +1745,8 @@ gelinir.
 
 İçerik panelden (Hakkımızda) gelir:
 
-- **Üst kısım:** Başlık, alt başlık ve görsel.
+- **Üst kısım:** Başlık, alt başlık ve görsel (görsel yoksa görselsiz;
+  örnek veride görsel yok, gerçek fotoğraf panelden yüklenecek).
 - **Rakam kutuları:** Değer ve etiket.
 - **Metin bölümleri:** Sıralıdır. Her bölümde başlık, metin ve isteğe bağlı
   görsel vardır. Görselli bölümlerde metin ve görsel yan yana durur, sırayla
@@ -1809,8 +1810,12 @@ hepsi tek listededir. Kurallar: [IS-KURALLARI.md › 26](IS-KURALLARI.md#26-list
   - Üst kısımda başlık, "kategori · yazar · tarih" ve kapak.
   - Metin ve "← Blog" bağlantısı.
 - Yayında olmayan yazı 404 verir; linki değişen yazının eski adresi yönlenir.
-- Paylaşım önizlemesi yazı türündedir: yayın tarihi, yazar ve kapakla.
-- Örnek yazıların metinleri yer tutucudur.
+- Paylaşım önizlemesi yazı türündedir: yayın tarihi, yazar ve kapakla;
+  kapak yoksa Zenweld'in markalı paylaşım görseli.
+- Kapak yoksa kartta markalı yer tutucu görünür, yazı sayfasının üstü
+  görselsizdir.
+- Örnek yazıların metinleri yer tutucudur; kapakları yoktur (gerçek
+  görseller panelden yüklenir).
 
 ### Haberler
 
@@ -1853,7 +1858,9 @@ hepsi tek listededir. Kurallar: [IS-KURALLARI.md › 26](IS-KURALLARI.md#26-list
 **Etkinlik sayfası (`/etkinlikler/<link>`):**
 
 - "← Tüm etkinlikler", başlık (yazıldığı gibi; büyük harfe çevrilmez) ve logo.
-- Açıklama ve **Fotoğraflar** galerisi.
+- Açıklama ve **Fotoğraflar** galerisi (fotoğraf yoksa görünmez; örnek
+  veride yalnızca WIN EURASIA 2026'nın fotoğrafları var, diğerleri panelden
+  yüklenecek).
 - **Yan kutu:**
   - Tarih (başlangıç — bitiş).
   - Mekan: mekanın adı, altında şehir · ülke.
@@ -1971,8 +1978,7 @@ yerine "Bir sorun oluştu" sayfası çıkar; üst menü ve alt bilgi yerinde kal
   sayfasında ürün (fiyat, stok, kargo, iade, onaylı yorum varsa yıldız;
   seçenekli üründe her seçenek ayrı); anasayfada site adı (ZENWELD); blog,
   haber ve etkinlik sayfalarında yazı, haber ve etkinlik (ülke kodla;
-  etkinlik görseli olarak gerçek fotoğraflar, yoksa logo; geçici stok
-  fotoğraflar gitmez); ürün sayfasında ürünün videoları ve Videolar
+  etkinlik görseli olarak etkinliğin fotoğrafları, yoksa logo); ürün sayfasında ürünün videoları ve Videolar
   sayfasında bütün videolar (başlık, açıklama, kapak, siteye eklendiği
   tarih; kendi videomuzda dosyanın adresi ve süresi, YouTube videosunda
   çerezsiz oynatıcı adresi; K-123, K-125); katalog ve ürünlerde konum

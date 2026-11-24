@@ -49,7 +49,7 @@ export function ImagesTab({
 
       <div className="flex flex-col gap-2 sm:flex-row">
         <Input
-          placeholder="https://images.unsplash.com/…"
+          placeholder="https://…"
           value={imageUrlInput}
           onChange={(e) => setImageUrlInput(e.target.value)}
           className="flex-1"

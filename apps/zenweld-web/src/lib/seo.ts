@@ -418,16 +418,12 @@ const COUNTRY_CODES: Record<string, string> = {
 };
 export const countryCode = (country: string) => COUNTRY_CODES[country.trim()] ?? country;
 
-/** Gecici stok fotograf (Unsplash): Google'a etkinlik gorseli olarak gonderilmez. */
-const isStockPhoto = (url: string) => url.startsWith("https://images.unsplash.com/");
-
 /**
  * Etkinlik (fuar) yapisal verisi. Zenweld fuarlarin duzenleyicisi degil,
- * katilimcisidir; bu yuzden "organizer" verilmez. Gorsel: etkinligin gercek
- * fotograflari, yoksa logosu (gecici stok fotograflar gitmez).
+ * katilimcisidir; bu yuzden "organizer" verilmez. Gorsel: etkinligin
+ * fotograflari, yoksa logosu.
  */
 export function eventJsonLd(event: ZenweldEvent): Record<string, unknown> {
-  const photos = event.images.filter((i) => !isStockPhoto(i));
   return {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -437,7 +433,7 @@ export function eventJsonLd(event: ZenweldEvent): Record<string, unknown> {
     endDate: event.endDate,
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-    image: (photos.length ? photos : [event.logoUrl]).filter(Boolean).map((i) => absoluteUrl(i)),
+    image: (event.images.length ? event.images : [event.logoUrl]).filter(Boolean).map((i) => absoluteUrl(i)),
     url: absoluteUrl(`/etkinlikler/${event.slug}`),
     location: {
       "@type": "Place",

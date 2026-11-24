@@ -1,5 +1,4 @@
 import type { AboutContent, SalesRep } from "../types";
-import { stockPhotos } from "./images";
 
 /**
  * HAKKIMIZDA SAYFASI — baslangic icerigi
@@ -12,7 +11,7 @@ import { stockPhotos } from "./images";
 export const about: AboutContent = {
   heroTitle: "Hakkımızda",
   heroSubtitle: "Türkiye'nin kaynak teknolojileri markası",
-  heroImage: stockPhotos.industrialShop,
+  heroImage: "",
   stats: [
     { id: "s1", value: "30+", label: "Yetkili Bayi" },
     { id: "s2", value: "60+", label: "Ürün" },

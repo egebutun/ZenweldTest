@@ -1,17 +1,16 @@
 import type { BlogPost, FaqItem, Quote, WarrantyRecord } from "../types";
-import { stockPhotos } from "./images";
 
 const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 
 const loremShort = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.";
 
 export const blogPosts: BlogPost[] = [
-  { id: "b1", slug: "mig-kaynaginda-gaz-secimi", title: "MIG Kaynağında Doğru Gaz Seçimi", excerpt: loremShort, body: lorem, coverUrl: stockPhotos.weldingSparks, category: "Teknik Rehber", author: "Zenweld Teknik Ekip", publishedAt: "2026-08-28T10:00:00+03:00" },
-  { id: "b2", slug: "alu-kaynaginda-5-ipucu", title: "Alüminyum Kaynağında 5 Pratik İpucu", excerpt: loremShort, body: lorem, coverUrl: stockPhotos.metalWork, category: "İpuçları", author: "Zenweld Teknik Ekip", publishedAt: "2026-08-14T10:00:00+03:00" },
-  { id: "b3", slug: "plazma-kesmede-sarf-omru", title: "Plazma Kesmede Sarf Malzeme Ömrünü Uzatmak", excerpt: loremShort, body: lorem, coverUrl: stockPhotos.factoryLine, category: "Bakım", author: "Zenweld Servis", publishedAt: "2026-07-30T10:00:00+03:00" },
-  { id: "b4", slug: "kaynakci-guvenligi", title: "Atölyede Kaynakçı Güvenliği Kontrol Listesi", excerpt: loremShort, body: lorem, coverUrl: stockPhotos.welderAtWork, category: "Güvenlik", author: "Zenweld İSG", publishedAt: "2026-07-11T10:00:00+03:00" },
-  { id: "b5", slug: "pulse-mig-nedir", title: "Pulse MIG Nedir, Ne Zaman Kullanılır?", excerpt: loremShort, body: lorem, coverUrl: stockPhotos.engineer, category: "Teknik Rehber", author: "Zenweld Teknik Ekip", publishedAt: "2026-06-25T10:00:00+03:00" },
-  { id: "b6", slug: "atolye-kurulumu", title: "Sıfırdan Atölye Kurulumu: Ekipman Listesi", excerpt: loremShort, body: lorem, coverUrl: stockPhotos.workshop, category: "Rehber", author: "Zenweld", publishedAt: "2026-06-02T10:00:00+03:00" },
+  { id: "b1", slug: "mig-kaynaginda-gaz-secimi", title: "MIG Kaynağında Doğru Gaz Seçimi", excerpt: loremShort, body: lorem, coverUrl: "", category: "Teknik Rehber", author: "Zenweld Teknik Ekip", publishedAt: "2026-08-28T10:00:00+03:00" },
+  { id: "b2", slug: "alu-kaynaginda-5-ipucu", title: "Alüminyum Kaynağında 5 Pratik İpucu", excerpt: loremShort, body: lorem, coverUrl: "", category: "İpuçları", author: "Zenweld Teknik Ekip", publishedAt: "2026-08-14T10:00:00+03:00" },
+  { id: "b3", slug: "plazma-kesmede-sarf-omru", title: "Plazma Kesmede Sarf Malzeme Ömrünü Uzatmak", excerpt: loremShort, body: lorem, coverUrl: "", category: "Bakım", author: "Zenweld Servis", publishedAt: "2026-07-30T10:00:00+03:00" },
+  { id: "b4", slug: "kaynakci-guvenligi", title: "Atölyede Kaynakçı Güvenliği Kontrol Listesi", excerpt: loremShort, body: lorem, coverUrl: "", category: "Güvenlik", author: "Zenweld İSG", publishedAt: "2026-07-11T10:00:00+03:00" },
+  { id: "b5", slug: "pulse-mig-nedir", title: "Pulse MIG Nedir, Ne Zaman Kullanılır?", excerpt: loremShort, body: lorem, coverUrl: "", category: "Teknik Rehber", author: "Zenweld Teknik Ekip", publishedAt: "2026-06-25T10:00:00+03:00" },
+  { id: "b6", slug: "atolye-kurulumu", title: "Sıfırdan Atölye Kurulumu: Ekipman Listesi", excerpt: loremShort, body: lorem, coverUrl: "", category: "Rehber", author: "Zenweld", publishedAt: "2026-06-02T10:00:00+03:00" },
 ];
 
 export const faqs: FaqItem[] = [

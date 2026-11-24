@@ -165,17 +165,17 @@ describe("Site adı ve etkinlik", () => {
     city: "İstanbul",
     country: "Türkiye",
     logoUrl: "/images/events/fuar.png",
-    images: ["https://images.unsplash.com/photo-1?w=1", "/images/events/fuar/1.webp"],
+    images: ["/images/events/fuar/1.webp"],
     active: true,
   };
 
-  it("ülke kodla gider; düzenleyen verilmez (Zenweld katılımcı); geçici stok fotoğraf gitmez", () => {
+  it("ülke kodla gider; düzenleyen verilmez (Zenweld katılımcı); görsel etkinliğin fotoğrafları, yoksa logo", () => {
     const data = eventJsonLd(event);
     expect((data.location as { address: { addressCountry: string } }).address.addressCountry).toBe("TR");
     expect(data.organizer).toBeUndefined();
     expect((data.image as string[]).map((u) => u.replace(/^https?:\/\/[^/]+/, ""))).toEqual(["/images/events/fuar/1.webp"]);
-    // Gercek fotograf yoksa logo
-    expect((eventJsonLd({ ...event, images: [event.images[0]] }).image as string[])[0]).toMatch(/\/images\/events\/fuar\.png$/);
+    // Fotograf yoksa logo
+    expect((eventJsonLd({ ...event, images: [] }).image as string[])[0]).toMatch(/\/images\/events\/fuar\.png$/);
     expect([countryCode("Birleşik Arap Emirlikleri"), countryCode("Suudi Arabistan")]).toEqual(["AE", "SA"]);
   });
 });

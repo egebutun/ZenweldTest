@@ -1119,7 +1119,9 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - Anasayfada site adı (ZENWELD) gider; şirket bilgisinde ad ZENWELD,
   ticari unvan (Mağaza Ayarları'ndaki) ayrıca gider. Etkinliklerde Zenweld düzenleyen
   olarak gönderilmez (fuarların katılımcısıdır); ülke kodla, görsel
-  gerçek fotoğraf ya da logo (geçici stok fotoğraf gitmez).
+  etkinliğin fotoğrafları, yoksa logosu. (İlk hali: geçici stok fotoğraf
+  gitmez. **Değişti:** Unsplash fotoğrafları örnek veriden kaldırıldığı
+  için ayrı bir filtre kalmadı; sahibinin onayıyla.)
 - Teslim süresi, iade kargo ücreti ve barkod (GTIN) sahibinden
   öğrenilince eklenir.
 - **Neden:** Google Alışveriş ve arama sonuçlarında fiyatın yanında kargo,

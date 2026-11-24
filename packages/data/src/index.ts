@@ -35,7 +35,6 @@ export { orders } from "./seed/orders.seed";
 export { reviews } from "./seed/reviews.seed";
 export { events, news } from "./seed/events.seed";
 export { videos } from "./seed/videos.seed";
-export { stockPhotos } from "./seed/images";
 export { defaultSettings } from "./seed/settings.seed";
 export { legalPages } from "./seed/legal.seed";
 export { DOCUMENT_SECTIONS, documentPages } from "./seed/documents.seed";
@@ -63,7 +62,7 @@ import { createSampleCoupons } from "./seed/coupons.seed";
 import { createSampleEmails } from "./seed/emails.seed";
 
 /** localStorage'a yuklenecek baslangic veritabani. */
-export const DB_VERSION = 96;
+export const DB_VERSION = 97;
 
 /**
  * now: ornek hareketlerin (siparis, stok ...) tarihlendigi an. Tarayicida
