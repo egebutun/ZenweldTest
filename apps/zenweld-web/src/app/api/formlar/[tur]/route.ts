@@ -15,6 +15,7 @@ import { tr } from "@zenweld/i18n";
 import { quoteNotice, reviewNotice, serviceNotice, warrantyNotice } from "@/lib/form-text";
 import { getDatabaseCatalog } from "@/lib/server/catalog";
 import { database, usesDatabase } from "@/lib/server/db";
+import { fileStorage } from "@/lib/server/files";
 import { isBot, recordBot, sendCustomerMail, sourcePath } from "@/lib/server/mail";
 import { sendNotification } from "@/lib/server/notify";
 import { siteMember } from "@/lib/server/member";
@@ -114,7 +115,7 @@ export async function POST(request: NextRequest, context: Context) {
       return json({ ok: true, serialNumber: warranty.serialNumber });
     }
     case "yorum": {
-      const result = await createReview(db, member, body, at, catalog);
+      const result = await createReview(db, member, body, at, catalog, fileStorage());
       if (!result.ok) return failure(result);
       const { review, productName } = result;
       after(() =>

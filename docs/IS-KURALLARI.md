@@ -949,14 +949,15 @@ puan yalnızca onaylı yorumlardan hesaplanır; anasayfada en fazla 10 yorum.
 - **Anasayfa şeridi:** Panelde "Anasayfada göster" denen, onaylı ve ürünü
   yayında olan yorumlar; en yeniden eskiye, **en fazla 10**. Sınır dolunca
   yenisi eklenemez. Yayından kaldırılan yorum şeritten de çıkar.
-- Video en fazla 2 MB; fotoğraflar otomatik küçültülür.
+- Fotoğraflar otomatik küçültülür. Video en fazla 10 MB (demo modunda
+  2 MB); dosyaların kuralları: [23](#23-yüklenen-dosyalar) › Yorum
+  fotoğraf ve videoları.
 - **Not (iki modda da):** Giriş yapmış üyenin yorumu "Doğrulanmış alıcı"
   sayılır; üyenin o ürünü satın almasıyla eşleştirilmesi sonraya kaldı.
 - **Veritabanı modunda** yorumu sunucu kaydeder; ürün yayında olmalı, puan
-  1–5 tam sayı, ad ve yorum zorunlu, en fazla 10 dosya. Fotoğraf ve videolar
-  yorumun içinde veri olarak saklanır (dosya deposuna taşınması sonraya,
-  [YAPILACAKLAR.md](YAPILACAKLAR.md) › Görseller ve yüklenen dosyalar); bir
-  dosya en fazla ~3 MB (2 MB video).
+  1–5 tam sayı, ad ve yorum zorunlu. Fotoğraf ve videolar dosya deposuna
+  yazılır, kayıtta adresleri kalır (en fazla 10 dosya, toplam 30 MB;
+  [23](#23-yüklenen-dosyalar)).
 
 - **Panelde (veritabanı modu):** Onay, yayından kaldırma, anasayfa ve silme
   sunucuda yapılır; sitedeki yorumlar hemen yenilenir. Anasayfa sınırı
@@ -1693,6 +1694,27 @@ tutulur; bu kurallar uygulanmaz.
   yoksa: "Yüklenen dosya bulunamadı; dosyayı yeniden seçin."
 - Kayıttan kaldırılan ya da değiştirilen görselin eski dosyası depoda
   kalır (temizliği sonraya; [YAPILACAKLAR.md](YAPILACAKLAR.md)).
+- **Yorum fotoğraf ve videoları** (müşterinin yorumla gönderdiği;
+  KARARLAR K-128): Ayrı bir yükleme adresi yoktur; dosyalar yorum formuyla
+  gelir, sunucu yorumu kaydederken depoya yazar, kayıtta adresleri kalır
+  (`/dosya/yorum/<yıl>/<ay>/<16 hane>.<tür>`).
+
+  | Dosya | Kabul edilen | En fazla |
+  |---|---|---|
+  | Fotoğraf | JPG, PNG, WebP, GIF, AVIF (tarayıcıda küçültülür) | 5 MB |
+  | Video | MP4, MOV, M4V, WebM | 10 MB |
+  | Bir yorumda | en fazla 10 dosya | toplam 30 MB |
+
+  - Tür dosyanın içeriğinden bulunur ve gönderilen türle (fotoğraf /
+    video) uyuşmalı: "Fotoğraf JPG, PNG, WebP, GIF ya da AVIF olmalı.",
+    "Video MP4, MOV, M4V ya da WebM olmalı." Sınırı aşan: "Video en fazla
+    10 MB olabilir." (fotoğrafta 5 MB), "Dosyalar toplamda en fazla 30 MB
+    olabilir."
+  - Dosyalar, yorumun diğer alanları doğruysa yazılır. Depo ayarlı değilse
+    (yalnızca bilgisayardaki denemeler) dosyalar alınmaz, yorumun yazısı
+    kaydedilir.
+  - Demo modunda dosyalar kaydın içinde durur; tarayıcının saklama alanı
+    küçük olduğu için video en fazla 2 MB.
 
 Kod: `packages/data/src/file-rules.ts` (türler, boyut, adres),
 `packages/db/src/file-storage.ts` (depo), yükleme ucu

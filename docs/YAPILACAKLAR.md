@@ -91,7 +91,7 @@ farkları: [README](../README.md) › Demo ve veritabanı modu.
 | 5 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (bugün deneme dosyası okunuyor); zamanlayıcının kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP ekibi; canlı sunucu | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap) |
 | 6 | **SAP satış siparişi aktarımı:** siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`; sıra, iş, yeniden deneme ve panel kutusu hazır, bugün deneme dosyasına yazıyor), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si; cari ve KDV kararları | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap), [Şirketten öğrenilecekler](#3-şirketten-öğrenilecekler-kişiye-göre) › SAP |
 | 7 | **Form güvenliği:** istek sınırı ve bot koruması (canlıdan önce şart, K-98) | Kod; bot koruması seçimi | [Formlar — güvenlik](#formlar--güvenlik) |
-| 8 | **Dosya deposu (depo kararı):** panelden görsel ve belge yükleme hazır (sunucunun diski, `DOSYA_KLASORU`; K-108). Kalan: görsel ve videoların canlıda nerede duracağı (sunucunun diski ya da nesne deposu ve CDN; videolar için öneri Cloudflare R2 + CDN) ve yedeği, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları, Unsplash yerine gerçek fotoğrafların yüklenmesi (Unsplash fotoğrafları kaldırıldı) | Sahibi ve BT (depo seçimi) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
+| 8 | **Dosya deposu (depo kararı):** panelden görsel ve belge yükleme hazır (sunucunun diski, `DOSYA_KLASORU`; K-108). Kalan: görsel ve videoların canlıda nerede duracağı (sunucunun diski ya da nesne deposu ve CDN; videolar için öneri Cloudflare R2 + CDN) ve yedeği, kullanılmayan dosyaların temizliği, web sunucusunun istek sınırı, Unsplash yerine gerçek fotoğrafların yüklenmesi (Unsplash fotoğrafları kaldırıldı) | Sahibi ve BT (depo seçimi) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
 | 9 | **Hukuk ve muhasebe:** yasal metinler (bugün taslak), ETBİS kaydı, gerçek MERSİS no, kurumsal alıcının iade hakkının metinlere işlenmesi, KVKK saklama süreleri; e-Arşiv / e-Fatura | Hukuk danışmanı, mali müşavir | [Online satış](#online-satış--canlıya-çıkmadan-önce) 2–4, [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) |
 | 10 | **Gerçek içerik ve değerler:** ürün bilgileri, fotoğraflar, fiyatlar; kargo ücreti, POS'lar ve vade farkları, IBAN'lar; blog yazıları | Sahibi | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler), [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler), [Online satış](#online-satış--canlıya-çıkmadan-önce) 9, [Blog yazıları](#blog-yazıları--yayına-girmeden-önce) |
 | 11 | **Canlıya hazırlık (kod):** zamanlanmış işler (havale iptali, işlem kaydı temizliği, kampanya yenilemesi), hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, ölçümün canlıda tekrarı, örnek verinin koddan kaldırılması (canlıya zaten yüklenmez, K-91) | Sunucu kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 7, [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme), [Ölçüm](#ölçüm-hız) |
@@ -612,7 +612,9 @@ formda botlar için görünmez bir tuzak alanı var
 4. Veritabanı modunda formlar veritabanına yazıldığı için 1 ve 2 canlıdan
    önce şarttır (KARARLAR K-98); kupon deneme ucu (`/api/siparis/kupon`;
    ör. dakikada 10 yanlış kod) ve garanti sorgulama (`/api/formlar/garanti`)
-   da istek sınırına alınmalı.
+   da istek sınırına alınmalı. Yorum formu (`/api/formlar/yorum`) dosyaları
+   dosya deposuna yazdığı için (K-128) istek sınırı ve bot koruması onda
+   da şart: yoksa depo dosyayla doldurulabilir.
 
 ## Next.js 16
 
@@ -1269,10 +1271,10 @@ sahibine hatırlatılır. Kalanlar:
    da silinen belgenin dosyası depoda kalıyor. Hiçbir kaydın kullanmadığı
    ve belli bir süreden eski dosyaları bulup silen bir iş (önce yalnızca
    listeleyen) yazılabilir.
-3. **Yorum fotoğraf ve videoları:** Müşterinin yüklediği dosyalar hâlâ
-   yorumun içinde (`media`, `data:`). Depoya taşımak için herkese açık bir
-   yükleme ucu gerekir (istek sınırı ve bot koruması ile; "Formlar —
-   güvenlik"); sahibiyle konuşulur.
+3. **Web sunucusunun istek sınırı (BT):** Sunucunun önündeki web sunucusu
+   (ör. nginx `client_max_body_size`) yorum formundaki dosyalar (~40 MB)
+   ve panelden video yükleme (1 GB) için ayarlanmalı
+   ([SUNUCU.md › Görseller ve dosyalar](SUNUCU.md#12-görseller-ve-dosyalar)).
 4. **Gerçek fotoğraflar (sahibi, panelden):** Unsplash fotoğrafları örnek
    veriden kaldırıldı (6 blog kapağı, 8 etkinliğin galerisindeki 15
    fotoğraf, Hakkımızda'nın üst görseli). Yerlerine gerçekleri panelden

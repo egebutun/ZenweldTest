@@ -148,10 +148,60 @@ export const videoFileKey = (originalKey: string, output: VideoOutput) => `${ori
 export const isVideoOriginalKey = (key: string) => /^video\/\d{4}\/\d{2}\/[0-9a-f]{16}\/orijinal\.(mp4|mov|m4v|webm|mkv)$/.test(key);
 
 const KEY_PATTERN =
-  /^(gorsel\/\d{4}\/\d{2}\/[0-9a-f]{16}\.[a-z]{3,4}|belge\/\d{4}\/\d{2}\/[0-9a-f]{16}\/[A-Za-z0-9][A-Za-z0-9._-]{0,90}\.[a-z]{3,4}|video\/\d{4}\/\d{2}\/[0-9a-f]{16}\/(orijinal|1080|720|kapak)\.[a-z0-9]{3,4})$/;
+  /^(gorsel\/\d{4}\/\d{2}\/[0-9a-f]{16}\.[a-z]{3,4}|belge\/\d{4}\/\d{2}\/[0-9a-f]{16}\/[A-Za-z0-9][A-Za-z0-9._-]{0,90}\.[a-z]{3,4}|video\/\d{4}\/\d{2}\/[0-9a-f]{16}\/(orijinal|1080|720|kapak)\.[a-z0-9]{3,4}|yorum\/\d{4}\/\d{2}\/[0-9a-f]{16}\.[a-z0-9]{3,4})$/;
 
 /** Gecerli depo anahtari mi (sunma ucu baska bir yolu okumaz). */
 export const isUploadKey = (key: string) => KEY_PATTERN.test(key) && !key.includes("..") && Boolean(MIME_TYPES[fileExtension(key)]);
+
+/* ------------------------------------------------------------------ */
+/* Yorum dosyalari (IS-KURALLARI › 23; KARARLAR K-128)                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Musterinin yorumla gonderdigi fotograf ve video. Fotograf tarayicida
+ * kucultulur; video oldugu gibi gelir. Veritabani modunda sunucu dosyalari
+ * depoya yazar ("yorum/2026/11/<16 hane>.<uzanti>"), kayitta adresleri
+ * kalir. Demo modunda dosya kaydin icindedir (tarayici deposu kucuk:
+ * video en fazla 2 MB).
+ */
+export const REVIEW_MEDIA = {
+  image: { extensions: ["jpg", "png", "webp", "gif", "avif"], maxBytes: 5 * MB },
+  video: { extensions: ["mp4", "mov", "m4v", "webm"], maxBytes: 10 * MB },
+  /** Bir yorumdaki butun dosyalar en fazla */
+  totalBytes: 30 * MB,
+  /** Bir yorumda en fazla dosya */
+  maxFiles: 10,
+  /** Demo modunda video siniri (tarayici deposu) */
+  demoVideoBytes: 2 * MB,
+} as const;
+
+export type ReviewMediaKind = "image" | "video";
+
+export const reviewMediaSizeError = (kind: ReviewMediaKind) =>
+  `${kind === "video" ? "Video" : "Fotoğraf"} en fazla ${REVIEW_MEDIA[kind].maxBytes / MB} MB olabilir.`;
+
+/** Yorum dosyasinin denetimi: bossa, buyukse ya da turu turuyle (fotograf / video) uyusmuyorsa hata; uygunsa gercek uzanti. */
+export function checkReviewMedia(kind: ReviewMediaKind, bytes: Uint8Array): { ok: true; ext: string } | { ok: false; error: string } {
+  const rule = REVIEW_MEDIA[kind];
+  if (bytes.length === 0) return { ok: false, error: UPLOAD_EMPTY };
+  if (bytes.length > rule.maxBytes) return { ok: false, error: reviewMediaSizeError(kind) };
+  const ext = detectFileType(bytes, "");
+  if (!ext || !(rule.extensions as readonly string[]).includes(ext)) {
+    return { ok: false, error: kind === "video" ? "Video MP4, MOV, M4V ya da WebM olmalı." : "Fotoğraf JPG, PNG, WebP, GIF ya da AVIF olmalı." };
+  }
+  return { ok: true, ext };
+}
+
+/** Yorum dosyasinin depodaki anahtari. random: 16 kucuk onaltilik hane. */
+export function reviewMediaKey(at: Date, random: string, ext: string): string {
+  return `yorum/${at.getUTCFullYear()}/${String(at.getUTCMonth() + 1).padStart(2, "0")}/${random}.${ext}`;
+}
+
+/** Tarayicinin okudugu dosya (data:<tur>;base64,<icerik>): tur ve base64 icerik; degilse null. */
+export function parseDataUrl(url: string): { mime: string; base64: string } | null {
+  const match = /^data:([a-z]+\/[a-z0-9.+-]+)(?:;[a-z0-9=.-]+)*;base64,([A-Za-z0-9+/]*={0,2})$/i.exec(url);
+  return match ? { mime: match[1].toLowerCase(), base64: match[2] } : null;
+}
 
 /** Sitedeki adres on eki. */
 export const UPLOAD_PREFIX = "/dosya/";

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import type { Page } from "@playwright/test";
 import { field } from "../e2e/yardimci";
 import { closeDatabase, expect, registerMember, sql, test } from "./yardimci";
@@ -168,4 +170,43 @@ test("iletişim formu kendi tablosuna yazılır; bot tuzağına takılan kaydedi
   });
   expect(bot.status()).toBe(200);
   expect(await sql("SELECT 1 FROM support_messages WHERE email = 'bot@ornek.com'")).toEqual([]);
+});
+
+test("yorum fotoğrafı dosya deposuna yazılır ve sitede sunulur; formda video sınırı 10 MB (K-128)", async ({ page }) => {
+  const [p] = await sql<{ id: string; slug: string }>("SELECT id, slug FROM products WHERE active ORDER BY id LIMIT 1");
+  // Testler depo kokunden calisir (npm run test:e2e:db).
+  const photo = readFileSync(join(process.cwd(), "apps/zenweld-web/public/images/news/istanbul-hirdavat-fuari-2026.webp"));
+  const author = `Fotoğraflı ${Date.now() % 100000}`;
+  const answer = await page.request.post("/api/formlar/yorum", {
+    data: {
+      productId: p.id,
+      rating: 4,
+      authorName: author,
+      body: "Fotoğraflı yorum",
+      media: [{ kind: "image", url: `data:image/webp;base64,${photo.toString("base64")}` }],
+    },
+  });
+  expect(answer.status()).toBe(200);
+  const [row] = await sql<{ media: { url: string; kind: string }[] }>("SELECT media FROM reviews WHERE author_name = $1", [author]);
+  expect(row.media).toHaveLength(1);
+  expect(row.media[0]).toMatchObject({ kind: "image", url: expect.stringMatching(/^\/dosya\/yorum\/\d{4}\/\d{2}\/[0-9a-f]{16}\.webp$/) });
+  const file = await page.request.get(row.media[0].url);
+  expect([file.status(), file.headers()["content-type"]]).toEqual([200, "image/webp"]);
+  expect(Buffer.from(await file.body()).equals(photo)).toBe(true);
+
+  // Video sigmiyorsa ya da turu yanlissa kaydedilmez.
+  const wrong = await page.request.post("/api/formlar/yorum", {
+    data: { productId: p.id, rating: 4, authorName: author, body: "Yanlış", media: [{ kind: "video", url: `data:video/mp4;base64,${photo.toString("base64")}` }] },
+  });
+  expect([wrong.status(), (await wrong.json()).error]).toEqual([400, "Video MP4, MOV, M4V ya da WebM olmalı."]);
+
+  // Formdaki not: veritabani modunda video en fazla 10 MB.
+  await page.goto(`/urun/${p.slug}`);
+  const hint = page.getByText(/Video en fazla 10 MB olabilir/);
+  await expect(async () => {
+    await page.getByRole("button", { name: "Değerlendirme Yaz" }).click();
+    await expect(hint).toBeVisible({ timeout: 1500 });
+  }).toPass({ timeout: 20_000 });
+
+  await sql("DELETE FROM reviews WHERE author_name = $1", [author]);
 });

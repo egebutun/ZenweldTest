@@ -12,12 +12,14 @@ import {
 import { isProductInStock, useDatabase, useNow } from "@zenweld/store";
 import { Badge, FlashFrame, ProductImage } from "@zenweld/ui";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useT } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@zenweld/utils";
 import { useFavourites } from "@/lib/favourites";
 import { useCart } from "@/lib/cart";
-import { QuantityStepper } from "@/components/product/ProductDetailParts";
-import { QuickAddPanel } from "@/components/product/QuickAddPanel";
+import { QuantityStepper } from "@/components/product/QuantityStepper";
+// Hizli secim penceresi yalnizca acilinca yuklenir (kart sayfalari hafif kalsin).
+const QuickAddPanel = dynamic(() => import("@/components/product/QuickAddPanel").then((m) => m.QuickAddPanel), { ssr: false });
 
 export function ProductCard({
   product,

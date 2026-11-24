@@ -1,7 +1,12 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import type { PoolClient } from "pg";
-import { quoteCodePrefix, serviceCodePrefix } from "@zenweld/data";
+import { mkdtempSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { quoteCodePrefix, serviceCodePrefix, uploadKeyOf } from "@zenweld/data";
+import { diskStorage } from "../../packages/db/src/file-storage";
 import {
   createQuote,
   createReview,
@@ -228,21 +233,63 @@ describe("Garanti", () => {
 });
 
 describe("Ürün yorumu", () => {
-  it("onay bekler; üyenin yorumu doğrulanmış alıcı; geçersiz puan, dosya ya da ürün kabul edilmez", async () => {
+  it("onay bekler; üyenin yorumu doğrulanmış alıcı; geçersiz puan ya da ürün kabul edilmez", async () => {
     await withCatalog(async (db, client, catalog) => {
       const at = new Date();
-      const input = { productId: "p1", rating: 4, authorName: "Ad", body: "İyi", media: [{ kind: "image", url: "data:image/webp;base64,AAAA" }] };
-      const saved = await createReview(db, member, input, at, catalog);
+      const input = { productId: "p1", rating: 4, authorName: "Ad", body: "İyi", media: [] };
+      const saved = await createReview(db, member, input, at, catalog, null);
       expect(saved.ok && saved.review).toMatchObject({ approved: false, featured: false, verifiedPurchase: true, rating: 4, userId: "u-a" });
-      const guest = await createReview(db, null, input, at, catalog);
+      const guest = await createReview(db, null, input, at, catalog, null);
       expect(guest.ok && guest.review.verifiedPurchase).toBe(false);
-      expect(await createReview(db, null, { ...input, rating: 6 }, at, catalog)).toMatchObject({ error: "Lütfen puan verin." });
-      expect(await createReview(db, null, { ...input, media: [{ kind: "image", url: "https://baska.site/x.jpg" }] }, at, catalog)).toMatchObject({
-        ok: false,
-        status: 400,
-      });
-      expect(await createReview(db, null, { ...input, productId: "yok" }, at, catalog)).toMatchObject({ status: 404 });
+      expect(await createReview(db, null, { ...input, rating: 6 }, at, catalog, null)).toMatchObject({ error: "Lütfen puan verin." });
+      expect(await createReview(db, null, { ...input, productId: "yok" }, at, catalog, null)).toMatchObject({ status: 404 });
       expect((await client.query("SELECT count(*)::int AS n FROM reviews")).rows[0].n).toBe(2);
+    });
+  });
+
+  it("fotoğraf ve video dosya deposuna yazılır, kayıtta adresleri kalır; tür içerikten, boyut ve toplam denetlenir; depo yoksa yorumun yazısı kaydedilir (K-128)", async () => {
+    await withCatalog(async (db, client, catalog) => {
+      const at = new Date("2026-11-24T10:00:00Z");
+      const storage = diskStorage(mkdtempSync(join(tmpdir(), "zenweld-yorum-")));
+      const photo = await readFile(new URL("../../apps/zenweld-web/public/images/news/istanbul-hirdavat-fuari-2026.webp", import.meta.url));
+      // MP4 kabugu: "ftyp" 4. bayttan sonra.
+      const video = Buffer.concat([Buffer.from([0, 0, 0, 0x18]), Buffer.from("ftypisom"), Buffer.alloc(64)]);
+      const dataUrl = (mime: string, bytes: Buffer) => `data:${mime};base64,${bytes.toString("base64")}`;
+      const input = { productId: "p1", rating: 5, authorName: "Ad", body: "Çok iyi" };
+      const media = [
+        { kind: "image", url: dataUrl("image/webp", photo) },
+        { kind: "video", url: dataUrl("video/mp4", video) },
+      ];
+
+      const saved = await createReview(db, null, { ...input, media }, at, catalog, storage);
+      expect(saved.ok).toBe(true);
+      const stored = saved.ok ? saved.review.media : [];
+      expect(stored.map((m) => m.kind)).toEqual(["image", "video"]);
+      expect(stored[0].url).toMatch(/^\/dosya\/yorum\/2026\/11\/[0-9a-f]{16}\.webp$/);
+      expect(stored[1].url).toMatch(/^\/dosya\/yorum\/2026\/11\/[0-9a-f]{16}\.mp4$/);
+      for (const [i, bytes] of [photo, video].entries()) {
+        const key = uploadKeyOf(stored[i].url)!;
+        expect(Buffer.from((await storage.get(key))!)).toEqual(bytes);
+      }
+      const row = await client.query("SELECT media FROM reviews WHERE id = $1", [saved.ok && saved.review.id]);
+      expect(row.rows[0].media).toEqual(stored);
+
+      const fails = async (list: unknown[]) => createReview(db, null, { ...input, media: list }, at, catalog, storage);
+      // Turu iceriginden: fotograf diye gonderilen video kabul edilmez.
+      expect(await fails([{ kind: "image", url: dataUrl("image/jpeg", video) }])).toMatchObject({ status: 400, error: "Fotoğraf JPG, PNG, WebP, GIF ya da AVIF olmalı." });
+      // Baska siteden adres ya da bozuk dosya kabul edilmez.
+      expect(await fails([{ kind: "image", url: "https://baska.site/x.jpg" }])).toMatchObject({ status: 400 });
+      // Video en fazla 10 MB; toplam en fazla 30 MB; en fazla 10 dosya.
+      const big = Buffer.concat([video, Buffer.alloc(10 * 1024 * 1024)]);
+      expect(await fails([{ kind: "video", url: dataUrl("video/mp4", big) }])).toMatchObject({ status: 400, error: "Video en fazla 10 MB olabilir." });
+      const eight = { kind: "video", url: dataUrl("video/mp4", Buffer.concat([video, Buffer.alloc(8 * 1024 * 1024)])) };
+      expect(await fails([eight, eight, eight, eight])).toMatchObject({ status: 400, error: "Dosyalar toplamda en fazla 30 MB olabilir." });
+      expect(await fails(Array(11).fill(media[0]))).toMatchObject({ status: 400 });
+      expect((await client.query("SELECT count(*)::int AS n FROM reviews")).rows[0].n).toBe(1);
+
+      // Depo yoksa (bilgisayardaki deneme) dosyalar alinmaz, yorum kaydedilir.
+      const withoutStorage = await createReview(db, null, { ...input, media }, at, catalog, null);
+      expect(withoutStorage.ok && withoutStorage.review.media).toEqual([]);
     });
   });
 });

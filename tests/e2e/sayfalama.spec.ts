@@ -25,7 +25,7 @@ test("haberler: 12'den fazlası sayfalanır; 2. sayfanın başlığı ve asıl a
     }
   });
   const total = (await page.evaluate(() => JSON.parse(localStorage.getItem("zenweld.db.v1")!).news.length)) as number;
-  expect(await cards(page, "/haberler/")).toBe(12);
+  await expect.poll(() => cards(page, "/haberler/")).toBe(12);
   await page.getByRole("navigation", { name: "Sayfalar" }).getByRole("link", { name: "Sayfa 2" }).click();
   await expect(page).toHaveURL(/\/haberler\/sayfa\/2$/);
   await expect.poll(() => cards(page, "/haberler/e2e-haber-")).toBeGreaterThan(0);
@@ -50,7 +50,8 @@ test("kategori: 24'ten fazla ürün sayfalanır; 2. sayfanın başlığı ve as�
   const total = (await page.evaluate(
     () => JSON.parse(localStorage.getItem("zenweld.db.v1")!).products.filter((p: { active: boolean; categorySlug: string }) => p.active && p.categorySlug === "mig-gazalti-kaynak-makineleri").length,
   )) as number;
-  expect(await cards(page, "/urun/")).toBe(24);
+  // Sayfa tarayicida hazir olunca cogaltilmis liste gorunur.
+  await expect.poll(() => cards(page, "/urun/")).toBe(24);
   await page.getByRole("navigation", { name: "Sayfalar" }).getByRole("link", { name: "Sayfa 2" }).click();
   await expect(page).toHaveURL(new RegExp(`${base}/sayfa/2$`));
   await expect.poll(() => cards(page, "/urun/")).toBe(total - 24);

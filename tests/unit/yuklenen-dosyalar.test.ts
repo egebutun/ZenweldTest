@@ -3,8 +3,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  REVIEW_MEDIA,
   UPLOAD_EMPTY,
+  checkReviewMedia,
   checkUpload,
+  parseDataUrl,
+  reviewMediaKey,
   detectFileType,
   isUploadKey,
   uploadAddress,
@@ -117,6 +121,38 @@ describe("depodaki anahtar ve sitedeki adres", () => {
     ]) {
       expect(isUploadKey(key), key).toBe(false);
     }
+  });
+});
+
+describe("yorum dosyaları (K-128)", () => {
+  const jpg = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 0]);
+  const mp4 = new Uint8Array([0, 0, 0, 0x18, ...Buffer.from("ftypisom"), 0, 0]);
+
+  it("fotoğraf en fazla 5 MB, video 10 MB; tür içeriğinden ve gönderilen türle uyuşmalı", () => {
+    expect(checkReviewMedia("image", jpg)).toEqual({ ok: true, ext: "jpg" });
+    expect(checkReviewMedia("video", mp4)).toEqual({ ok: true, ext: "mp4" });
+    expect(checkReviewMedia("image", mp4)).toEqual({ ok: false, error: "Fotoğraf JPG, PNG, WebP, GIF ya da AVIF olmalı." });
+    expect(checkReviewMedia("video", jpg)).toEqual({ ok: false, error: "Video MP4, MOV, M4V ya da WebM olmalı." });
+    expect(checkReviewMedia("video", new Uint8Array(0))).toEqual({ ok: false, error: UPLOAD_EMPTY });
+    const big = new Uint8Array(REVIEW_MEDIA.video.maxBytes + 1);
+    big.set(mp4);
+    expect(checkReviewMedia("video", big)).toEqual({ ok: false, error: "Video en fazla 10 MB olabilir." });
+    expect([REVIEW_MEDIA.image.maxBytes, REVIEW_MEDIA.totalBytes, REVIEW_MEDIA.maxFiles, REVIEW_MEDIA.demoVideoBytes].map((n) => (n > 100 ? n / 1024 / 1024 : n))).toEqual([5, 30, 10, 2]);
+  });
+
+  it("depodaki anahtar yorum/<yıl>/<ay>/<16 hane>.<uzantı>; sitede sunulur", () => {
+    const key = reviewMediaKey(new Date("2026-11-24T10:00:00Z"), "0123456789abcdef", "mp4");
+    expect(key).toBe("yorum/2026/11/0123456789abcdef.mp4");
+    expect(isUploadKey(key)).toBe(true);
+    expect(uploadKeyOf(`/dosya/${key}`)).toBe(key);
+    expect(isUploadKey("yorum/2026/11/../x.mp4")).toBe(false);
+  });
+
+  it("tarayıcının gönderdiği dosya (data: adresi) okunur; başka adres okunmaz", () => {
+    expect(parseDataUrl("data:image/webp;base64,UklGRg==")).toEqual({ mime: "image/webp", base64: "UklGRg==" });
+    expect(parseDataUrl("data:video/quicktime;codecs=x;base64,AAAA")).toEqual({ mime: "video/quicktime", base64: "AAAA" });
+    expect(parseDataUrl("https://baska.site/x.jpg")).toBeNull();
+    expect(parseDataUrl("data:image/png,ham")).toBeNull();
   });
 });
 

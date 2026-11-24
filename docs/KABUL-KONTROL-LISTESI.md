@@ -91,6 +91,14 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       kaybolur" yazar). `npm run db:yukle canli eksikler` kullanım
       bilgisini gösterip durur. Adres `localhost` değilse komut veritabanının
       adını sorar; yanlış yazılırsa hiçbir şey yüklemez.
+- [ ] Yorum fotoğraf ve videoları (K-128; veritabanı modu): ürün
+      sayfasında Değerlendirme Yaz'da "Video en fazla 10 MB olabilir"
+      yazar (demo sitede 2 MB). Fotoğraflı yorum gönderilince `reviews.media`
+      adresi `/dosya/yorum/<yıl>/<ay>/<16 hane>.webp` olur, adres açılır;
+      video diye gönderilen fotoğraf "Video MP4, MOV, M4V ya da WebM olmalı."
+      ile reddedilir; 10 MB'tan büyük video ve toplamı 30 MB'ı aşan dosyalar
+      kaydedilmez (`tests/db/formlar.test.ts`,
+      `tests/e2e-db/formlar.spec.ts`).
 - [ ] Veri yüklemede görseller: `DOSYA_KLASORU` tanımsızken
       `npm run db:yukle canli` "Dosya deposu tanımlı değil" yazıp hiçbir şey
       yüklemez. Tanımlıyken "Görseller: 46 dosya depoya kopyalandı" yazar;

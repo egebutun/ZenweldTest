@@ -1070,7 +1070,7 @@ Garanti kaydında üye kimliği tutulmaz; üyeyle e-posta üzerinden eşleşir
 | `rating` | smallint | zorunlu; 1–5 | |
 | `title` | text | | |
 | `body` | text | zorunlu | |
-| `media` | jsonb | zorunlu | `[{ url, kind: image|video }]` (video en fazla 2 MB); dosyalar bugün kaydın içinde (`data:` adresi) durur; dosya deposuna taşınması sonraya ([SUNUCU.md › Görseller ve dosyalar](SUNUCU.md#12-görseller-ve-dosyalar)) |
+| `media` | jsonb | zorunlu | `[{ url, kind: image|video }]`; `url` dosya deposundaki adres (`/dosya/yorum/…`; en fazla 10 dosya, video 10 MB, toplam 30 MB; K-128). Örnek veride boş |
 | `verified_purchase` | boolean | | "Doğrulanmış alıcı" rozeti. Bugün giriş yapmış her üyede işaretlenir; gerçekte üyenin o ürünü satın almasıyla eşleşmeli |
 | `approved` | boolean | zorunlu | Yalnızca onaylılar yayında; yeni yorum onaysız gelir |
 | `featured` | boolean | zorunlu | Anasayfa şeridi; en fazla 10, yalnızca onaylı yorumda |

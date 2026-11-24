@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { Product } from "@zenweld/data";
+import { REVIEW_MEDIA, type Product } from "@zenweld/data";
 import { createReview, listProductReviews, reviewSummary, useDatabase } from "@zenweld/store";
 import { useAuth } from "@zenweld/auth";
 import { ProductReviews } from "@zenweld/ui";
@@ -13,8 +13,6 @@ import { accountRequest } from "@/lib/account-api";
 import { reviewNotice } from "@/lib/form-text";
 import { notifyZenweld } from "@/lib/notify";
 
-/** Yorum videosu en fazla 2 MB (tarayici deposunun siniri ~5 MB). */
-const MAX_VIDEO_BYTES = 2 * 1024 * 1024;
 
 /**
  * Urun sayfasindaki degerlendirme bolumu.
@@ -30,6 +28,10 @@ export function ProductReviewsSection({ product }: { product: Product }) {
   const bot = useBotTrap();
 
   const items = useMemo(() => listProductReviews(product.id, db), [product.id, db]);
+  // Video siniri: veritabani modunda dosya depoya gider (10 MB); demo modunda
+  // kaydin icinde tarayici deposunda durur (deposu ~5 MB oldugu icin 2 MB).
+  const maxVideoBytes = api !== null ? REVIEW_MEDIA.video.maxBytes : REVIEW_MEDIA.demoVideoBytes;
+  const maxVideoMb = String(maxVideoBytes / (1024 * 1024));
   const summary = useMemo(() => reviewSummary(product.id, db), [product.id, db]);
 
   return (
@@ -37,7 +39,7 @@ export function ProductReviewsSection({ product }: { product: Product }) {
       items={items}
       average={summary.average}
       defaultName={user ? `${user.firstName} ${user.lastName}`.trim() : ""}
-      texts={t.reviews}
+      texts={{ ...t.reviews, mediaHint: t.reviews.mediaHint.replace("{max}", maxVideoMb) }}
       notice={
         <>
           {bot.field}
@@ -75,10 +77,9 @@ export function ProductReviewsSection({ product }: { product: Product }) {
         if (!files) return;
         Array.from(files).forEach(async (file) => {
           if (file.type.startsWith("video/")) {
-            // Video tarayicida kucultulemiyor; oldugu gibi okunur. Demo
-            // verisi tarayici deposunda tutuldugu icin boyut sinirli.
-            if (file.size > MAX_VIDEO_BYTES) {
-              fail(t.reviews.mediaTooLarge.replace("{name}", file.name));
+            // Video tarayicida kucultulemiyor; oldugu gibi okunur.
+            if (file.size > maxVideoBytes) {
+              fail(t.reviews.mediaTooLarge.replace("{name}", file.name).replace("{max}", maxVideoMb));
               return;
             }
             const reader = new FileReader();

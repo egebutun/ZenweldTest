@@ -696,11 +696,14 @@ hiçbiri değilse 404 çıkar.
   - **Başlık:** İsteğe bağlı.
   - **Yorum:** Zorunlu.
   - **Fotoğraf / Video Ekle:** Görseller otomatik küçültülür; video en fazla
-    2 MB olabilir.
+    10 MB olabilir (demo sitede 2 MB). Dosyalar sunucuda dosya deposuna
+    yazılır (K-128).
   - KVKK notu ve bot tuzağı vardır.
 - **Hata mesajları:** "Lütfen puan verin.", "Lütfen adınızı girin.", "Lütfen
-  yorumunuzu yazın.", "\"<dosya>\" çok büyük. Video en fazla 2 MB olabilir.",
-  "Değerlendirmeniz kaydedilemedi; dosyalar çok büyük olabilir..."
+  yorumunuzu yazın.", "\"<dosya>\" çok büyük. Video en fazla 10 MB olabilir."
+  (demo sitede 2 MB), "Değerlendirmeniz kaydedilemedi; dosyalar çok büyük
+  olabilir..."; sunucu dosyayı kabul etmezse nedeni yazar ("Video MP4, MOV,
+  M4V ya da WebM olmalı.", "Dosyalar toplamda en fazla 30 MB olabilir.").
 - **Gönderince:**
   - "Değerlendirmeniz alındı. Yayınlanmadan önce ekibimiz tarafından kontrol
     edilecek." yazar.

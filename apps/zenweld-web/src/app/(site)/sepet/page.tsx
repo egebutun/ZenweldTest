@@ -4,7 +4,7 @@ import { ShoppingCart, Trash2 } from "lucide-react";
 import { Button, EmptyState, ProductImage } from "@zenweld/ui";
 import { formatPrice } from "@zenweld/utils";
 import Link from "next/link";
-import { QuantityStepper } from "@/components/product/ProductDetailParts";
+import { QuantityStepper } from "@/components/product/QuantityStepper";
 import { CouponField } from "@/components/shop/CouponField";
 import { OrderSummary } from "@/components/shop/OrderSummary";
 import { useCart } from "@/lib/cart";

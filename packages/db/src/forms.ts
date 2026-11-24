@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { eq, sql } from "drizzle-orm";
 import {
+  checkReviewMedia,
   dealerApplicationFields,
   findVariant,
   FORM_CODE_DIGITS,
@@ -8,10 +9,15 @@ import {
   isValidPostalCode,
   isValidSellerTaxNumber,
   normalizeSerial,
+  parseDataUrl,
   PAYMENT_PREFERENCES,
   productOptionsView,
   QUOTE_TERM_DAYS,
   quoteCodePrefix,
+  REVIEW_MEDIA,
+  reviewMediaKey,
+  reviewMediaSizeError,
+  uploadAddress,
   SERVICE_COMPLAINT_MAX,
   SERVICE_REASONS,
   memberServiceRequest,
@@ -20,6 +26,7 @@ import {
   type MemberServiceRequest,
   warrantyExpiryDate,
   type ProductReview,
+  type ReviewMedia,
   type Quote,
   type ServiceRequest,
   type WarrantyRecord,
@@ -27,6 +34,7 @@ import {
 } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";
 import { nextRecordCode } from "./codes";
+import type { FileStorage } from "./file-storage";
 import type { Member, OrderDb } from "./orders";
 import { readQuotes, readServiceRequests, readWarranties, reviewRecord } from "./read";
 import * as s from "./schema";
@@ -288,9 +296,47 @@ export const memberWarranties = (db: OrderDb, email: string) =>
 
 /* ------------------------------ Urun yorumu ------------------------------ */
 
-const MAX_MEDIA = 10;
-/** Bir dosyanin en fazla boyutu (base64 metin; 2 MB video ~2,7 MB). Dosya deposu gelince (Asama 6) degisir. */
-const MAX_MEDIA_CHARS = 3_000_000;
+/**
+ * Yorumun dosyalari (fotograf ve video; KARARLAR K-128): tarayici dosyayi
+ * data: adresi olarak gonderir; tur dosyanin iceriginden, boyut ve sayi
+ * REVIEW_MEDIA'dan denetlenir. Dosya deposu varsa dosyalar depoya yazilir,
+ * kayitta adresleri (/dosya/yorum/…) kalir; depo yoksa (yalnizca
+ * bilgisayardaki denemelerde) dosyalar alinmaz, yorumun yazisi kaydedilir.
+ */
+async function reviewMedia(
+  input: unknown,
+  storage: FileStorage | null,
+  at: Date,
+): Promise<{ ok: true; media: ReviewMedia[] } | { ok: false; error: string }> {
+  const items = Array.isArray(input) ? input.map(record) : [];
+  if (items.length > REVIEW_MEDIA.maxFiles) return { ok: false, error: tr.reviews.errorSave };
+  const files: { kind: "image" | "video"; bytes: Buffer; ext: string }[] = [];
+  for (const item of items) {
+    const kind = item.kind;
+    const data = typeof item.url === "string" ? parseDataUrl(item.url) : null;
+    if ((kind !== "image" && kind !== "video") || !data || !data.mime.startsWith(`${kind}/`)) return { ok: false, error: tr.reviews.errorSave };
+    // Base64 metin sinirin cok ustundeyse cozulmeden reddedilir.
+    if (data.base64.length > Math.ceil((REVIEW_MEDIA[kind].maxBytes * 4) / 3) + 4) return { ok: false, error: reviewMediaSizeError(kind) };
+    const bytes = Buffer.from(data.base64, "base64");
+    const checked = checkReviewMedia(kind, bytes);
+    if (!checked.ok) return checked;
+    files.push({ kind, bytes, ext: checked.ext });
+  }
+  if (files.reduce((sum, f) => sum + f.bytes.length, 0) > REVIEW_MEDIA.totalBytes) {
+    return { ok: false, error: `Dosyalar toplamda en fazla ${REVIEW_MEDIA.totalBytes / (1024 * 1024)} MB olabilir.` };
+  }
+  if (!storage) {
+    if (files.length > 0) console.warn("Dosya deposu tanımlı değil (DOSYA_KLASORU): yorumun dosyaları alınmadı.");
+    return { ok: true, media: [] };
+  }
+  const media: ReviewMedia[] = [];
+  for (const file of files) {
+    const key = reviewMediaKey(at, randomBytes(8).toString("hex"), file.ext);
+    await storage.put(key, file.bytes);
+    media.push({ url: uploadAddress(key), kind: file.kind });
+  }
+  return { ok: true, media };
+}
 
 /** Urun yorumu: yayinda olan urun, 1–5 puan, ad ve yorum zorunlu. Yorum panel onayi bekler. */
 export async function createReview(
@@ -299,6 +345,7 @@ export async function createReview(
   input: Record<string, unknown>,
   at: Date,
   catalog: FormCatalog,
+  storage: FileStorage | null,
 ): Promise<{ ok: true; review: ProductReview; productName: string } | FormFailure> {
   const product = catalog.products.find((p) => p.id === input.productId && p.active);
   if (!product) return fail(404, tr.reviews.errorSave);
@@ -308,15 +355,9 @@ export async function createReview(
   if (!authorName) return fail(400, tr.reviews.errorName);
   const body = text(input.body, 4000);
   if (!body) return fail(400, tr.reviews.errorBody);
-  const media = Array.isArray(input.media) ? input.media.map(record) : [];
-  const valid = media.every(
-    (m) =>
-      (m.kind === "image" || m.kind === "video") &&
-      typeof m.url === "string" &&
-      m.url.startsWith(`data:${m.kind}/`) &&
-      m.url.length <= MAX_MEDIA_CHARS,
-  );
-  if (media.length > MAX_MEDIA || !valid) return fail(400, tr.reviews.errorSave);
+  // Dosyalar en son, diger alanlar dogruysa depoya yazilir.
+  const files = await reviewMedia(input.media, storage, at);
+  if (!files.ok) return fail(400, files.error);
 
   const [row] = await db
     .insert(s.reviews)
@@ -328,7 +369,7 @@ export async function createReview(
       rating,
       title: text(input.title, 120) || null,
       body,
-      media: media.map((m) => ({ url: m.url as string, kind: m.kind as "image" | "video" })),
+      media: files.media,
       // Uye girisi olanlar "dogrulanmis alici" sayilir (bugunku kural).
       verifiedPurchase: Boolean(member),
       // Yeni yorumlar once yonetim panelinde onaylanir.

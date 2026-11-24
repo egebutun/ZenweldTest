@@ -31,7 +31,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 6. [Üyelik ve hesap](#6-üyelik-ve-hesap) — K-34–K-37, K-68, K-94–K-96
 7. [Garanti ve servis](#7-garanti-ve-servis) — K-38–K-41, K-117, K-119
 8. [İçerik](#8-i̇çerik) — K-42–K-47, K-114, K-115, K-125
-9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116
+9. [Formlar, yasal metinler ve e-posta](#9-formlar-yasal-metinler-ve-e-posta) — K-48–K-51, K-98, K-100, K-104, K-116, K-128
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120, K-121, K-123, K-124
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
 12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108, K-122
@@ -1033,6 +1033,21 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   birlikte görünsün; e-postalar panelden info@zenweld.com adına yönetilsin.
   Adresler türe göre esnek olsun. K-81'deki "metin saklanmaz" bu yüzden
   değişti.
+
+### K-128 · Yorum fotoğraf ve videoları dosya deposunda
+- Müşterinin yorumla gönderdiği fotoğraf ve videoları sunucu, yorumu
+  kaydederken dosya deposuna yazar; kayıtta yalnızca adresleri kalır.
+- Ayrı, herkese açık bir dosya yükleme adresi açılmaz: dosyalar yorum
+  formuyla gelir. Yorum formu canlıdan önce istek sınırına ve bot
+  korumasına alınacak ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Formlar —
+  güvenlik).
+- Video en fazla **10 MB** (sahibinin kararı); fotoğraf 5 MB, bir yorumda
+  en fazla 10 dosya ve toplam 30 MB. Tür dosyanın içeriğinden denetlenir.
+  Demo modunda video 2 MB kalır (tarayıcının saklama alanı küçük).
+- **Neden:** Dosyalar kaydın içinde metin olarak durunca veritabanı şişer;
+  canlıda bütün dosyalar aynı depoda dursun. Yeni bir yükleme adresi
+  açılsaydı biri depoyu durmadan dosyayla doldurabilirdi.
+
 ---
 
 ## 10. Arama motorları ve adresler

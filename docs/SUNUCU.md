@@ -746,9 +746,11 @@ KARARLAR K-81; `src/forms.ts`.
   - `POST /api/formlar/garanti`: `warranties` (`registerWarranty`); aynı
     seri numarası (büyük harfe çevrilerek) ikinci kez yazılmaz; bitiş
     Türkiye gününe göre.
-  - `POST /api/formlar/yorum`: `reviews` (`createReview`); onaysız. Fotoğraf
-    ve videolar dosya deposuna taşınana kadar `media`'da veri olarak
-    (`data:` adresi) durur.
+  - `POST /api/formlar/yorum`: `reviews` (`createReview`); onaysız.
+    Fotoğraf ve videolar tarayıcıdan `data:` adresi olarak gelir; sunucu
+    türünü (içerikten), boyutunu ve toplamını denetler, dosya deposuna
+    yazar (`yorum/<yıl>/<ay>/<16 hane>.<tür>`), `media`'ya adreslerini
+    yazar (K-128). Depo yoksa dosyalar alınmaz, yorum kaydedilir.
   - `GET /api/formlar/garanti?seri=…`: garanti sorgulama (`findWarranty`);
     yalnızca sorgulama kartındaki alanlar döner.
   - `GET /api/formlar/teklifler`, `GET /api/formlar/garantiler`: üyenin
@@ -1730,8 +1732,17 @@ deposuna yüklenir; yükleme sunucuda tür (içeriğe bakılarak) ve boyut
 (25 MB) kontrolünden geçer
 ([IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar)).
 
-**Yorum fotoğraf ve videoları:** Kaydın içinde (`data:`) durur (video en
-fazla 2 MB); dosya deposuna taşınması sonraya.
+**Yorum fotoğraf ve videoları:** Veritabanı modunda dosya deposuna
+yazılır, kayıtta adresleri kalır (`/dosya/yorum/…`; video en fazla 10 MB,
+bir yorumda toplam 30 MB; K-128). Demo modunda kaydın içinde (`data:`)
+durur (video en fazla 2 MB).
+
+**Web sunucusunun istek sınırı (BT):** Sunucunun önündeki web sunucusu
+(ör. nginx `client_max_body_size`) büyük istekleri baştan keser. Yorum
+formu dosyaları metin olarak gönderdiği için bir istek ~40 MB'a,
+panelden video yükleme 1 GB'a çıkabilir; sınır bunlara göre ayarlanmalı
+(ör. yorum formu ve genel için 50 MB, `/api/yonetim/video-yukle` için
+1100 MB).
 
 **Stok dosyaları:** Panelde tarayıcıda okunur (en fazla 5 MB; CSV ya da
 XLSX). Orijinal dosya bugün saklanmaz; denetim için dosya deposuna
