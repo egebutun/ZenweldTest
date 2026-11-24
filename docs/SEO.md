@@ -29,7 +29,8 @@ güncellenir; tek ve güncel kaynak budur.
   yazımı), K-119 (garanti 12 ay), K-120 (eski linkler sunucuda 301),
   K-121 (eski zenweld.com adreslerinin eşleştirmesi), K-123 (Google'a
   kargo, iade, yıldız ve blog bilgisi), K-124 (uzun listelerin
-  sayfalanması).
+  sayfalanması). Video kütüphanesinin SEO'su (Google'a video bilgisi,
+  video başlıkları): K-125.
 
 ---
 
@@ -693,6 +694,7 @@ geçmeli.
 | Sık Sorulan Sorular | Kaynak Makineleri Sık Sorulan Sorular \| ZENWELD | garanti, şebeke (220 V / 380 V), jeneratör, "hangi ülkenin markası" |
 | Ultimate Kaynak Rehberi | Ücretsiz Kaynak Rehberi (PDF) \| ZENWELD | kaynak ayarları, amper tablosu, gazaltı / argon / elektrot |
 | Ürün Seçici | Hangi Kaynak Makinesi? Ürün Seçici \| ZENWELD | "hangi kaynak makinesini almalıyım" |
+| Videolar | Kaynak Makinesi Videoları \| ZENWELD | kullanım videoları, makine türleri (gazaltı, argon, elektrot, plazma, lazer) |
 | MSDS | MSDS – Güvenlik Bilgi Formları \| ZENWELD | kaynak teli MSDS, ürün koduyla sorgulama |
 | Parti Sertifikaları | Kaynak Teli Parti Sertifikaları \| ZENWELD | parti numarasıyla indirme |
 | İletişim | İletişim: İstanbul Merkez ve İzmir Fabrika \| ZENWELD | adres, telefon, harita |
@@ -972,6 +974,10 @@ en büyük içeriğin görünme süresi (LCP) anasayfada **3,0 sn**, kategoride
 - [x] Mobil uyum: ekran genişlikleri tarayıcı testlerinde deneniyor.
 - [x] Ürün fotoğrafları WebP biçiminde (en büyüğü yaklaşık 43 KB). 15
       üründe gerçek fotoğraf yok (kategori çizimi ya da geçici fotoğraf).
+- [x] Videolar sayfayı yavaşlatmaz: sayfa açılırken yalnızca kapak
+      resmi yüklenir, oynatıcı ve video Oynat'a basınca gelir; YouTube
+      çerezsiz adresten açılır; kendi videolarımız sunucuda 1080p ve 720p
+      hazırlanır ve parça parça sunulur (KARARLAR K-125).
 - [ ] Anasayfanın LCP'sini 2,5 sn'nin altına indirmek; başlıca nedenler
       görseller ve her sayfada inen ~300 KB JavaScript (B5). **Kod**
 - [ ] Görsel optimizasyonu ([YAPILACAKLAR.md](YAPILACAKLAR.md#görsel-optimizasyonu--önerilen-zorunlu-değil)): sahibinin kararıyla zorunlu değil,
@@ -1052,11 +1058,14 @@ En büyük etken: Google, aramaya en iyi cevabı veren sayfayı üste koyar.
       ([11. bölüm](#11-hakkımızda); A5). **Panel**
 - [ ] Kullanım kılavuzu PDF'leri; bugün bütün ürünlerde kılavuz linki yer
       tutucu (`#`). **Panel**
-- [ ] Ürün kullanım ve ayar videoları (YouTube); "nasıl kullanılır",
-      "ayarları" aramalarında Google video da gösteriyor. Anasayfada 5
-      YouTube Shorts videosu var (KARARLAR K-125); videonun altındaki ürün
-      bağlantısı panelden seçilir. Ürüne bağlı videoların başlıkları aranan
-      ifadeye göre yazılır (A2). **Sahibi**
+- [ ] Ürün kullanım ve ayar videoları (YouTube ya da kendi çektiğimiz
+      video; panelden yüklenir); "nasıl kullanılır", "ayarları"
+      aramalarında Google video da gösteriyor. Video kütüphanesi hazır
+      (KARARLAR K-125): bugün 5 YouTube Shorts videosu var, hepsi Y300
+      QCW'ye bağlı; anasayfada videonun yanında ürün kartı durur, Videolar
+      sayfasında (`/videolar`) kategoriye göre listelenir. Ürüne bağlı
+      videoların başlıkları aranan ifadeye göre yazılır (A2); yeni
+      videoların konuları A7'de. **Sahibi**
 
 ### 5. Güven sinyalleri
 
