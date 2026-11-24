@@ -91,7 +91,7 @@ farkları: [README](../README.md) › Demo ve veritabanı modu.
 | 5 | **SAP stok bağlantısı:** okuma işine SAP'tan okuyan kaynağın eklenmesi (bugün deneme dosyası okunuyor); zamanlayıcının kurulması. Küçük iş; bilgiler gelince sırası beklenmeden yapılır | SAP ekibi; canlı sunucu | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap) |
 | 6 | **SAP satış siparişi aktarımı:** siparişi SAP'a yazan aktarıcı parça (`packages/db/src/sap-orders.ts` › `SapOrderExporter`; sıra, iş, yeniden deneme ve panel kutusu hazır, bugün deneme dosyasına yazıyor), zamanlayıcının kurulması; SAP'a aktarılmış siparişin iptali ve iadesinin SAP'a bildirilmesi | SAP sipariş API'si; cari ve KDV kararları | [Zenweld depo stoğu (SAP)](#zenweld-depo-stoğu-sap), [Şirketten öğrenilecekler](#3-şirketten-öğrenilecekler-kişiye-göre) › SAP |
 | 7 | **Form güvenliği:** istek sınırı ve bot koruması (canlıdan önce şart, K-98) | Kod; bot koruması seçimi | [Formlar — güvenlik](#formlar--güvenlik) |
-| 8 | **Dosya deposu (depo kararı):** panelden görsel ve belge yükleme hazır (sunucunun diski, `DOSYA_KLASORU`; K-108). Kalan: görsel ve videoların canlıda nerede duracağı (sunucunun diski ya da nesne deposu ve CDN; videolar için öneri Cloudflare R2 + CDN) ve yedeği, ürün ve içerik fotoğraflarının depoya taşınması, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları, Unsplash yerine gerçek fotoğrafların yüklenmesi (Unsplash fotoğrafları kaldırıldı) | Sahibi ve BT (depo seçimi) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
+| 8 | **Dosya deposu (depo kararı):** panelden görsel ve belge yükleme hazır (sunucunun diski, `DOSYA_KLASORU`; K-108). Kalan: görsel ve videoların canlıda nerede duracağı (sunucunun diski ya da nesne deposu ve CDN; videolar için öneri Cloudflare R2 + CDN) ve yedeği, kullanılmayan dosyaların temizliği, yorum fotoğraf ve videoları, Unsplash yerine gerçek fotoğrafların yüklenmesi (Unsplash fotoğrafları kaldırıldı) | Sahibi ve BT (depo seçimi) | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) |
 | 9 | **Hukuk ve muhasebe:** yasal metinler (bugün taslak), ETBİS kaydı, gerçek MERSİS no, kurumsal alıcının iade hakkının metinlere işlenmesi, KVKK saklama süreleri; e-Arşiv / e-Fatura | Hukuk danışmanı, mali müşavir | [Online satış](#online-satış--canlıya-çıkmadan-önce) 2–4, [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) |
 | 10 | **Gerçek içerik ve değerler:** ürün bilgileri, fotoğraflar, fiyatlar; kargo ücreti, POS'lar ve vade farkları, IBAN'lar; blog yazıları | Sahibi | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler), [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler), [Online satış](#online-satış--canlıya-çıkmadan-önce) 9, [Blog yazıları](#blog-yazıları--yayına-girmeden-önce) |
 | 11 | **Canlıya hazırlık (kod):** zamanlanmış işler (havale iptali, işlem kaydı temizliği, kampanya yenilemesi), hata izleme, yedekten geri dönme denemesi, performans ve güvenlik testleri, ölçümün canlıda tekrarı, örnek verinin koddan kaldırılması (canlıya zaten yüklenmez, K-91) | Sunucu kararı | [Online satış](#online-satış--canlıya-çıkmadan-önce) 7, [SEO ve link yönlendirme](#seo-alanları-ve-link-yönlendirme), [Ölçüm](#ölçüm-hız) |
@@ -1249,7 +1249,8 @@ deposuna (`DOSYA_KLASORU`) yazılıyor, kayıtta yalnızca adres (`/dosya/…`)
 kalıyor; depo ayarlı değilse adres giriliyor (K-101, K-104, K-108;
 [SUNUCU.md › Dosya deposu](SUNUCU.md#dosya-deposu)). Demo modunda yüklenen
 görseller kaydın içinde (`data:`), belgeler tarayıcıda; bu görseller canlı
-veriye taşınmaz (canlı yüklemede görseller `/images/…` adresindedir, K-90).
+veriye taşınmaz. Canlı ve deneme yüklemesinde (`db:yukle`) ürün, haber,
+etkinlik ve anasayfa görselleri dosya deposuna kopyalanır (K-91).
 
 **Sahibin kararı (K-102):** Görsellerin hız, görünürlük ve performans için
 iyileştirilmesi ve nasıl tutulacağı sahibi söyleyince ele alınır; dosya
@@ -1272,13 +1273,7 @@ sahibine hatırlatılır. Kalanlar:
    yorumun içinde (`media`, `data:`). Depoya taşımak için herkese açık bir
    yükleme ucu gerekir (istek sınırı ve bot koruması ile; "Formlar —
    güvenlik"); sahibiyle konuşulur.
-4. **Ürün ve içerik fotoğrafları canlıda depoda olmalı:** Bugün örnek ürün,
-   haber ve etkinlik fotoğrafları sitenin kendi dosyalarında (`/images/…`)
-   ve canlı yüklemede de orada kalıyor (K-90). Canlıda hepsi panelden
-   yönetilsin diye yükleme komutu (`db:yukle canli`) bu fotoğrafları dosya
-   deposuna kopyalayıp kayıtlardaki adresleri değiştirmeli. Logo, kategori
-   çizimleri ve Force sayfası görselleri sitenin parçası olarak kalır.
-5. **Gerçek fotoğraflar (sahibi, panelden):** Unsplash fotoğrafları örnek
+4. **Gerçek fotoğraflar (sahibi, panelden):** Unsplash fotoğrafları örnek
    veriden kaldırıldı (6 blog kapağı, 8 etkinliğin galerisindeki 15
    fotoğraf, Hakkımızda'nın üst görseli). Yerlerine gerçekleri panelden
    yüklenecek: blog kapakları (Blog), etkinlik fotoğrafları (Etkinlikler;

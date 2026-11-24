@@ -1318,6 +1318,12 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
   - `guncelle` yazılırsa farklı olan kayıtları bugünkü veriyle değiştirir
     (paneldeki değişiklikler kaybolur).
   - Depo ve bayi stoğunun üzerine hiç yazmaz.
+- **Görseller:** Ürün, haber, etkinlik ve anasayfa görselleri yüklenirken
+  dosya deposuna kopyalanır, kayıtlara depo adresi yazılır; depo tanımlı
+  değilse komut durur (sahibinin onayıyla, canlıya hazırlık). Logo,
+  kategori çizimleri ve Force sayfası görselleri sitenin parçası olarak
+  kalır. Neden: canlıda bütün içerik görselleri panelden yüklenenlerle aynı
+  yerde, panelden yönetilsin ve uzun süre önbellekte dursun.
 - **Neden:**
   - Demo hesapların şifreleri README'de (GitHub'da) yazılı; canlıda panele
     herkes girebilirdi.

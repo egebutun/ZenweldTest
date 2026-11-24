@@ -91,6 +91,13 @@ ya da canlıya çıkmadan önce baştan sona uygulanır.
       kaybolur" yazar). `npm run db:yukle canli eksikler` kullanım
       bilgisini gösterip durur. Adres `localhost` değilse komut veritabanının
       adını sorar; yanlış yazılırsa hiçbir şey yüklemez.
+- [ ] Veri yüklemede görseller: `DOSYA_KLASORU` tanımsızken
+      `npm run db:yukle canli` "Dosya deposu tanımlı değil" yazıp hiçbir şey
+      yüklemez. Tanımlıyken "Görseller: 46 dosya depoya kopyalandı" yazar;
+      ürünlerin, haberlerin, etkinliklerin ve anasayfa tanıtımının görsel
+      adresleri `/dosya/gorsel/…` olur, kategori çizimleri `/images/…`
+      kalır; sitede görseller açılır. İkinci çalıştırmada "0 dosya depoya
+      kopyalandı, 49 dosya zaten depodaydı" (`tests/db/yukleme.test.ts`).
 - [ ] Yönetici hesabı (`npm run yonetici:olustur`): boş bir veritabanında
       e-posta, ad, soyad, telefon ve iki kez şifre sorar; şifre ekranda
       görünmez; 8 karakterden kısa şifre ve eşleşmeyen tekrar kabul

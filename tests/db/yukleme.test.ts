@@ -1,7 +1,14 @@
+import { mkdtempSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 import { drizzle } from "drizzle-orm/node-postgres";
 import type { PoolClient } from "pg";
-import { createSeedDatabase, type ZenweldDatabase } from "@zenweld/data";
+import { createSeedDatabase, uploadKeyOf, type ZenweldDatabase } from "@zenweld/data";
+import { diskStorage } from "../../packages/db/src/file-storage";
+import { isContentImage, storeSiteImages } from "../../packages/db/src/site-images";
 import * as schema from "../../packages/db/src/schema";
 import { loadableData, loadData, type LoadMode, type LoadResult, type LoadTarget } from "../../packages/db/src/load";
 import { readDatabase } from "../../packages/db/src/read";
@@ -160,5 +167,66 @@ describe("veri yükleme (db:yukle)", () => {
       );
       expect(error).toMatch(/Ürün kodu başka bir üründe ya da seçenekte kullanılıyor/);
     });
+  });
+});
+
+describe("görseller dosya deposuna (db:yukle; packages/db/src/site-images.ts)", () => {
+  const site = fileURLToPath(new URL("../../apps/zenweld-web/public", import.meta.url));
+  const readSiteFile = (path: string) => readFile(join(site, path));
+  const strings = (value: unknown): string[] =>
+    typeof value === "string"
+      ? [value]
+      : Array.isArray(value)
+        ? value.flatMap(strings)
+        : value && typeof value === "object"
+          ? Object.values(value).flatMap(strings)
+          : [];
+
+  it("ürün, haber, etkinlik ve anasayfa görselleri depoya kopyalanır, adresleri depo adresi olur; tasarım görselleri kalır; tekrar yüklemede aynı adres", async () => {
+    const root = mkdtempSync(join(tmpdir(), "zenweld-yukleme-"));
+    const storage = diskStorage(root);
+    const before = new Set(strings(data).filter(isContentImage));
+    expect(before.size).toBeGreaterThan(40);
+
+    const first = await storeSiteImages(data, storage, readSiteFile);
+    // Her adres bir kez okunur; icerigi ayni olan iki dosya tek dosya olarak yazilir.
+    expect(first.copied + first.existing).toBe(before.size);
+    expect(first.copied).toBeGreaterThan(40);
+    expect(strings(first.data).filter(isContentImage)).toEqual([]);
+
+    // Urun fotografi: depo adresi, dosya birebir.
+    const original = data.products.find((p) => p.images[0]?.url.startsWith("/images/products/"))!;
+    const moved = first.data.products.find((p) => p.id === original.id)!;
+    expect(moved.images[0].url).toMatch(/^\/dosya\/gorsel\/2026\/11\/[0-9a-f]{16}\.webp$/);
+    const key = uploadKeyOf(moved.images[0].url)!;
+    expect(Buffer.from((await storage.get(key))!)).toEqual(await readSiteFile(original.images[0].url));
+    // Haber kapagi, etkinlik logosu ve anasayfa tanitim gorseli de tasinir.
+    expect(first.data.news[0].coverUrl).toMatch(/^\/dosya\/gorsel\//);
+    expect(first.data.events.every((e) => !e.logoUrl.startsWith("/images/"))).toBe(true);
+    // Tasarim gorselleri sitede kalir: kategori ve grup cizimleri, cizimli urunler.
+    expect(first.data.categories.map((c) => c.image)).toEqual(data.categories.map((c) => c.image));
+    expect(first.data.categoryGroups.map((g) => g.image)).toEqual(data.categoryGroups.map((g) => g.image));
+    expect(strings(first.data).some((s) => s.startsWith("/images/categories/"))).toBe(true);
+    // Veri degismez (kopyasi doner).
+    expect(data.products.find((p) => p.id === original.id)!.images[0].url).toBe(original.images[0].url);
+
+    // Tekrar: hicbir dosya yeniden yazilmaz, adresler ayni.
+    const second = await storeSiteImages(data, storage, readSiteFile);
+    expect([second.copied, second.existing]).toEqual([0, before.size]);
+    expect(second.data).toEqual(first.data);
+
+    // Yuklenince veritabaninda depo adresi.
+    await inTransaction(async (client) => {
+      await load(client, "canli", "tam", first.data);
+      const row = await client.query("SELECT images FROM products WHERE id = $1", [original.id]);
+      expect(row.rows[0].images[0].url).toBe(moved.images[0].url);
+      expect(await count(client, "products WHERE images::text LIKE '%/images/products/%'")).toBe(0);
+    });
+  });
+
+  it("sitede olmayan dosya yüklemeyi durdurur", async () => {
+    const storage = diskStorage(mkdtempSync(join(tmpdir(), "zenweld-yukleme-")));
+    const broken = { ...data, news: [{ ...data.news[0], coverUrl: "/images/news/olmayan.webp" }] };
+    await expect(storeSiteImages(broken, storage, readSiteFile)).rejects.toThrow(/ENOENT/);
   });
 });

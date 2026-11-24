@@ -4,7 +4,9 @@ import { Readable, Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { randomBytes } from "node:crypto";
 import { dirname, resolve, sep } from "node:path";
-import { isUploadKey } from "@zenweld/data";
+// Dogrudan kendi dosyasindan: db:yukle (tsx) @zenweld/data'yi CommonJS yukler ve
+// paketin yeniden disa aktardigi adlar (export *) orada gorunmez.
+import { isUploadKey } from "@zenweld/data/src/file-rules";
 
 /**
  * DOSYA DEPOSU — DEGISTIRILEBILIR PARCA (KARARLAR K-108; docs/SUNUCU.md

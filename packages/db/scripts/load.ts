@@ -1,8 +1,13 @@
 import "./env";
+import { readFile } from "node:fs/promises";
+import { isAbsolute, join, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
+import { fileURLToPath } from "node:url";
 import { createSeedDatabase } from "@zenweld/data";
 import { createDb } from "../src/client";
+import { fileStorageFromEnv } from "../src/file-storage";
 import { loadData, type LoadMode, type LoadTarget } from "../src/load";
+import { storeSiteImages } from "../src/site-images";
 
 /**
  * npm run db:yukle <canli|deneme> [guncelle] — sitenin bugunku verisini
@@ -11,6 +16,10 @@ import { loadData, type LoadMode, type LoadTarget } from "../src/load";
  * yazdigi icin (Asama 5) panelde yapilan degisikliklerin uzerine yazilmaz.
  * Bilgisayar disindaki bir veritabanina yuklemeden once veritabaninin adi
  * yazilarak onay verilir.
+ *
+ * Urun, haber, etkinlik ve anasayfa gorselleri once dosya deposuna
+ * kopyalanir, kayitlara depo adresi yazilir (src/site-images.ts); depo
+ * tanimli degilse (DOSYA_KLASORU) hicbir sey yuklenmez.
  */
 const USAGE = `Kullanım: npm run db:yukle <canli|deneme> [guncelle]
   canli     katalog, içerik, mağaza ayarları, bayiler, satıcılar
@@ -19,7 +28,9 @@ const USAGE = `Kullanım: npm run db:yukle <canli|deneme> [guncelle]
             stok listeleri
   guncelle  veritabanında olup farklı olan kayıtları da bugünkü veriyle
             değiştirir: panelde yapılan değişiklikler kaybolur
-            (verilmezse yalnızca olmayan kayıtlar eklenir, var olana dokunulmaz)`;
+            (verilmezse yalnızca olmayan kayıtlar eklenir, var olana dokunulmaz)
+Ürün, haber, etkinlik ve anasayfa görselleri dosya deposuna kopyalanır;
+dosya deposu tanımlı olmalı (DOSYA_KLASORU).`;
 
 const args = process.argv.slice(2);
 const target = args[0] as LoadTarget;
@@ -34,6 +45,15 @@ if (!url) {
   console.error("DATABASE_URL tanımlı değil (README › Veritabanı).");
   process.exit(1);
 }
+// Dosya deposu: goreli klasor sitenin klasorune (apps/zenweld-web) gore (sitedeki gibi).
+const site = fileURLToPath(new URL("../../../apps/zenweld-web/", import.meta.url));
+const folder = process.env.DOSYA_KLASORU;
+const storage = fileStorageFromEnv({ DOSYA_KLASORU: folder && (isAbsolute(folder) ? folder : resolve(site, folder)) });
+if (!storage) {
+  console.error("Dosya deposu tanımlı değil (DOSYA_KLASORU): görseller depoya kopyalanamaz; hiçbir şey yüklenmedi (docs/SUNUCU.md › Dosya deposu).");
+  process.exit(1);
+}
+
 const { hostname } = new URL(url);
 const name = decodeURIComponent(new URL(url).pathname.slice(1));
 const local = ["localhost", "127.0.0.1", "[::1]"].includes(hostname);
@@ -64,9 +84,13 @@ if (!local) {
   }
 }
 
+// Gorseller once depoya; veritabani yuklemesi sonra (yarida kalirsa depoda fazladan dosya kalir, kayit degismez).
+const images = await storeSiteImages(createSeedDatabase(), storage, (path) => readFile(join(site, "public", path)));
+console.log(`Görseller: ${images.copied} dosya depoya kopyalandı, ${images.existing} dosya zaten depodaydı.`);
+
 const { db, pool } = createDb(url);
 try {
-  const results = await db.transaction((tx) => loadData(tx, createSeedDatabase(), { target, mode }));
+  const results = await db.transaction((tx) => loadData(tx, images.data, { target, mode }));
   const third = mode === "tam" ? "Değişmeyen" : "Zaten var";
   const width = Math.max(...results.map((r) => r.table.length), 5);
   const row = (cells: (string | number)[]) =>

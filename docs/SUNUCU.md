@@ -295,7 +295,7 @@ varyantın ürünün her seçeneğinden tam bir değer alması.
 | `npm run db:migrate` | Henüz çalışmamış betikleri çalıştırır |
 | `npm run db:reset` | Bilgisayardaki veritabanını silip tabloları baştan kurar; yalnızca `localhost` adresinde çalışır |
 | `npm run db:seed` | Sitenin örnek verisini boş veritabanına yükler; yalnızca `localhost` adresinde çalışır ([5](#5-örnek-veri-ve-veri-yükleme)) |
-| `npm run db:yukle <canli\|deneme> [guncelle]` | Bugünkü veriyi canlı ya da deneme veritabanına yükler; varsayılan yalnızca eksik kayıtları ekler; bilgisayar dışındaki veritabanında onay ister ([Veri yükleme](#veri-yükleme)) |
+| `npm run db:yukle <canli\|deneme> [guncelle]` | Bugünkü veriyi canlı ya da deneme veritabanına yükler; içerik görsellerini önce dosya deposuna kopyalar (`DOSYA_KLASORU` gerekir); varsayılan yalnızca eksik kayıtları ekler; bilgisayar dışındaki veritabanında onay ister ([Veri yükleme](#veri-yükleme)) |
 | `npm run db:generate` | Şema değişince yeni geçiş betiği üretir |
 | `npm run db:studio` | Tabloları tarayıcıda gösterir (Drizzle Studio); veriler bilgisayardaki veritabanından gelir |
 | `npm run test:db` | Veritabanı testleri (`tests/db`); test veritabanını her seferinde baştan kurar. Tablo listesinin ve kolonların VERITABANI.md ile aynı olduğunu da dener: belgeye yazılmayan bir tablo ya da kolon eklenirse test düşer |
@@ -350,6 +350,26 @@ kurulmamışsa komut bunu söyler. Bağlantı `DATABASE_URL`'dir.
 | Örnek yorumlar, kuponlar (kapsam ve kişiye özel e-postalarıyla), bayi ve satıcı stok listeleri ve yükleme geçmişi | — | Yüklenir |
 | Demo hesaplar ve örnek üyeler, adresler, teklifler, siparişler, iadeler, kupon kullanımları, servis talepleri, garantiler, kayıt numarası sayaçları | — | — |
 
+- **Görseller dosya deposuna** (`src/site-images.ts`): Ürün, haber,
+  etkinlik ve anasayfa tanıtım görselleri (bugün 49 dosya; sitenin
+  `public/images/products`, `news`, `events`, `hero`, `home` klasörleri)
+  veritabanına yazılmadan önce dosya deposuna kopyalanır, kayıtlara depo
+  adresi (`/dosya/gorsel/2026/11/<16 hane>.<uzantı>`) yazılır. Böylece
+  canlıda bütün içerik görselleri panelden yüklenenlerle aynı yerde durur
+  ve tarayıcıda 1 yıl önbellekte tutulur.
+  - Dosya deposu tanımlı değilse (`DOSYA_KLASORU`) komut hiçbir şey
+    yüklemeden durur. Göreli klasör sitenin klasörüne (`apps/zenweld-web`)
+    göredir.
+  - Anahtar dosyanın içeriğinden (SHA-256'nın ilk 16 hanesi) ve hep aynı
+    klasörde: tekrar çalıştırmada depodaki dosya yeniden yazılmaz, aynı
+    görsel aynı adresi alır; içeriği aynı iki dosya tek dosya olur. Tür
+    dosyanın içeriğinden denetlenir (panelden yüklemedeki gibi).
+  - Sitenin parçası olarak kalanlar (tasarım): logo ve marka görselleri,
+    kategori ve grup çizimleri (gerçek fotoğrafı olmayan ürünlerin yer
+    tutucusu da bunlar), Force sayfası görselleri.
+  - Sitede olmayan bir dosya yüklemeyi başlamadan durdurur. Görseller
+    veritabanından önce yazılır: veritabanı yüklemesi yarıda kalırsa
+    depoda fazladan dosya kalabilir, kayıtlar değişmez.
 - **Eşleme:** `db:seed` ile aynı (`seedTables`). Yorumlar üyeye bağlanmaz
   (üyeler yüklenmez). Depo stoğu bir SAP okuması sayılmaz:
   `sap_sync_runs`'a satır yazılmaz, `sync_run_id` boş kalır.
@@ -382,7 +402,9 @@ kurulmamışsa komut bunu söyler. Bağlantı `DATABASE_URL`'dir.
   bugünkü veriyle (satış hareketleri, örnek yorum, kupon, bayi stoğu ve
   depo stoğu hariç) birebir aynı; deneme yüklemesi; tekrar çalıştırınca değişiklik
   olmaması; güncelleme ve ekleme, silmeme; `eksikler`; stoğun üzerine
-  yazılmaması; çakışmada anlaşılır hata.
+  yazılmaması; çakışmada anlaşılır hata; görsellerin depoya kopyalanması
+  (adresler, dosyanın kendisi, tasarım görsellerinin kalması, tekrar
+  yüklemede aynı adres, olmayan dosyada durma).
 
 ---
 

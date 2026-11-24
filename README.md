@@ -204,6 +204,9 @@ kayıtlar eklenir; `guncelle` eklenirse paneldeki değişikliklerin üzerine
 yazılır. Üyeler ve satış hareketleri hiç yüklenmez, hiçbir kayıt silinmez;
 bilgisayar dışındaki veritabanına yüklemeden önce adı yazılarak onay verilir.
 Canlıya depo stoğu da yüklenmez; ilk SAP okumasıyla gelir (K-122).
+Ürün, haber, etkinlik ve anasayfa görselleri önce dosya deposuna kopyalanır,
+kayıtlara depo adresi yazılır; bu yüzden dosya deposu tanımlı olmalıdır
+(`DOSYA_KLASORU`), değilse komut hiçbir şey yüklemeden durur.
 Neyin nereye yüklendiği: KARARLAR K-91, K-122 ve
 [docs/SUNUCU.md](docs/SUNUCU.md) › 5.
 

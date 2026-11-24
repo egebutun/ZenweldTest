@@ -165,8 +165,11 @@ kayıtta doludur.
   yüklenmiş dosya (`data:` adresi) içeren kaydı kabul etmez (K-101, K-104).
 - Demo modunda panelden yüklenen görsel kaydın içine `data:` adresi olarak
   yazılır; belgelerin dosyaları tarayıcının dosya deposunda (IndexedDB)
-  durur. Bu görseller canlı veri yüklemesiyle taşınmaz (örnek görseller
-  `/images/…` adresindedir).
+  durur. Bu görseller canlı veri yüklemesiyle taşınmaz. Örnek verideki
+  görseller sitenin dosyalarındadır (`/images/…`); canlı ve deneme
+  yüklemesinde ürün, haber, etkinlik ve anasayfa görselleri dosya deposuna
+  kopyalanır, kolonlara `/dosya/…` adresi girer (K-91;
+  [SUNUCU.md › Veri yükleme](SUNUCU.md#veri-yükleme)).
 - Kurallar: [IS-KURALLARI.md › 23](IS-KURALLARI.md#23-yüklenen-dosyalar).
 
 **Gizli bilgiler:** POS API anahtarı ve şifresi ile e-posta servisinin
