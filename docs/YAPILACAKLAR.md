@@ -38,7 +38,8 @@ için kalan her şey ve kimi beklediği). Ayrıntılar konu konu aşağıdadır.
      [Bülten ve İYS](#bülten-ve-i̇ys) ·
      [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler) ·
      [Satıcı bilgileri sitede](#satıcı-bilgileri-sitede-etbi̇s-unvan-mersi̇s)
-   - **Ürünler ve içerik:** [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) ·
+   - **Ürünler ve içerik:** [Gerçek fotoğraflar — tam liste](#gerçek-fotoğraflar--tam-liste) ·
+     [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) ·
      [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) ·
      [Jasic lazer kaynak](#jasic-lazer-kaynak-ürünleri--sahibi-ayrıntılı-açıklayacak) ·
      [Ürün seçenekleri](#ürün-seçenekleri-3-m--5-m-gibi) ·
@@ -395,7 +396,7 @@ olanlar ilgili bölüme bağlanmıştır.
 | KVKK başvuru formu (2b) | İleride düşünülecek; hesap silme için 2a (Hesabımı Sil) seçildi | [Hesap silme](#hesap-silme--açık-konular-kvkk-ve-yasal-saklama) 10 |
 | Erişilebilirlik | Sahibin sıralaması; zorunlu değil | [Erişilebilirlik](#erişilebilirlik--önerilen-zorunlu-değil) |
 | Görsel optimizasyonu | Sahibin sıralaması; zorunlu değil. Görseller sahibi söyleyince; dosya deposu, gerçek fotoğraflar ve canlıya hazırlıkta hatırlatılır (KARARLAR K-102) | [Görsel optimizasyonu](#görsel-optimizasyonu--önerilen-zorunlu-değil) |
-| Ekipmanların eksik fotoğrafları (15 ürün ve 4 ürünün bir soğutma hali) ve diğer bölümlerin ürün fotoğrafları | Sahibinin bulup göndermesi | [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) |
+| Gerçek fotoğraflar: ürünler (15 ürün ve 4 ürünün bir soğutma hali), blog kapakları, etkinlik fotoğrafları, Hakkımızda, anasayfa tanıtımındaki atölye fotoğrafı, satış temsilcileri, Force sayfası | Sahibinin bulup göndermesi | [Gerçek fotoğraflar — tam liste](#gerçek-fotoğraflar--tam-liste) |
 | Ekipmanların gerçek içeriği (açıklama, teknik özellikler, kutu içeriği, öne çıkanlar, kılavuz) | Sahibinin göndermesi (Force serisi 9 ürün geldi) | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 2 |
 | Geçici ürün kodlarının (`ZW-GECICI-…`) SAP kodlarıyla değiştirilmesi | SAP kodlarının açılması | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 6 |
 | Ekipmanların gerçek fiyatları ve seçenek fiyat farkları | Sahibinin göndermesi | [Ürün içeriği](#ürün-içeriği--gerçek-fotoğraflar-ve-teknik-değerler) 3 |
@@ -1015,6 +1016,32 @@ sözleşmelerdeki MERSİS alanı boş ("[—]"). Kalanlar:
 - Unvan ve MERSİS'in alt bilgide de gösterilip gösterilmeyeceği ve hangi
   bilgilerin zorunlu olduğu hukuk danışmanıyla teyit edilmeli (bkz.
   [Online satış](#online-satış--canlıya-çıkmadan-önce) 3).
+
+## Gerçek fotoğraflar — tam liste
+
+Sitede gerçek fotoğraf bekleyen bütün yerler (2026-11-25, koda bakılarak).
+Sahibi fotoğrafları hangi yere ait olduklarını yazarak gönderir.
+
+**Nasıl yerleşir:** Canlıdan önce gelen fotoğraf sitenin dosyalarına
+konur, web için küçültülür (WebP), dosya adı ve alt metni verilip kayda
+bağlanır; canlıya yüklemede (`db:yukle`) dosya deposuna kopyalanır.
+Canlıdan sonra gelen fotoğraf panelden yüklenir (doğrudan dosya deposuna
+gider); örnek veriye ekleyip `db:yukle guncelle` ile yüklemek paneldeki
+değişikliklerin üzerine yazar. Yüklenen fotoğraflar Google'a da gider.
+
+| Yer | Bugün | Kaç tane | Panelde | Ayrıntı |
+|---|---|---|---|---|
+| Ürün fotoğrafları | 10 üründe kategori çizimi, Force'un 5 ürününde ortak geçici fotoğraf; 4 üründe bir soğutma hali eksik | 15 ürün + 4 soğutma hali | Ürünler › Görseller | [Ürün fotoğrafları](#ürün-fotoğrafları--eksikler) |
+| Anasayfa tanıtımı: atölye fotoğrafı | Zenweld'in değil (sahibi, 2026-11-25); değişecek | 1 | Anasayfa Tanıtım | [Anasayfa](#anasayfa--sahibinden-gelecekler-ve-sonraki-işler) |
+| Blog kapakları | Kapak yok (Unsplash kaldırıldı); markalı yer tutucu | 6 | Blog | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) 4 |
+| Etkinlik fotoğrafları | Galeri boş (Unsplash kaldırıldı): Big 5 Global 2025, International Hardware Riyadh 2025, WIN EURASIA 2025 ve 2024, İmatech 2025 ve 2024, İstanbul Hırdavat 2024, Konya Makine 2024 | 8 etkinlik | Etkinlikler | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) 4 |
+| Hakkımızda üst görseli | Yok (Unsplash kaldırıldı) | 1 | Hakkımızda | [Görseller ve yüklenen dosyalar](#görseller-ve-yüklenen-dosyalar) 4 |
+| Satış temsilcileri | Fotoğraf yok; adın baş harfleri görünüyor | 11 | Satış Temsilcileri | [Sitenin tasarımı](#sitenin-tasarımı--sahibi-yapacak) |
+| Force sayfası | Profesyonel fotoğraf ve videolar bekleniyor | — | Bugün kodda | [Force sayfası](#force-sayfası--panelden-yönetim-fotoğraf-ve-videolar) |
+| Ürün videoları | Kendi çekimlerimiz; konular aranan ifadelere göre | — | Videolar | [SEO — A7](#seo--anahtar-kelime-çalışmasından-kalan-işler) |
+| Hakkımızda bölüm görselleri (isteğe bağlı) | 4 bölüm görselsiz (Hakkımızda, Vizyonumuz, Misyonumuz, Değerlerimiz) | 4 | Hakkımızda | — |
+| Haber galerileri (isteğe bağlı) | Kapaklar eski siteden, gerçek; galeri yalnızca İzmir tesisi haberinde | 3 haber | Haberler | — |
+| Kategori ve grup görselleri (isteğe bağlı) | Tasarım çizimleri | 50 kategori, 12 grup | Kategoriler | — |
 
 ## Ürün içeriği — gerçek fotoğraflar ve teknik değerler
 
@@ -1673,6 +1700,11 @@ Anasayfa](WEBSITE-KULLANIM.md#3-anasayfa)). Kalanlar:
    Makinesi'ne bağlandı (anasayfada ürün kartıyla yan yana, ürün
    sayfasında değil; K-125). Yeni eklenecek videoların ürünlerini sahibi
    gönderecek; panelden (Videolar) her videoya ürün seçilir.
+6. **Tanıtım alanındaki atölye fotoğrafı:** Zenweld'in kendi fotoğrafı
+   değil (sahibi, 2026-11-25); gerçeğiyle değişecek
+   (`apps/zenweld-web/public/images/hero/kaynak-atolyesi.webp`, Zenweld
+   sayfası; panelde Anasayfa Tanıtım). Liste:
+   [Gerçek fotoğraflar — tam liste](#gerçek-fotoğraflar--tam-liste).
 
 ## Erişilebilirlik — önerilen, zorunlu değil
 
