@@ -288,9 +288,12 @@ ZenweldTest/
 
 ## Diğer araçlar
 
-- **Sayfa boyutu ve hız ölçümü:** site açıkken
+- **Sayfa hızı ölçümü:** site açıkken
   `node scripts/sayfa-olcumu.mjs http://localhost:3000` (birden fazla adres
-  yan yana ölçülür). Son sonuçlar: [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md)
+  yan yana ölçülür; `--telefon` ya da `--masaustu` yalnızca birini,
+  `--sayfa /yol` yalnızca o sayfayı ölçer). Google'ın üç ölçüsü (en büyük
+  içerik, sayfa kayması, kilitlenme) ve sayfa ağırlığı, 12 sayfa türünde,
+  telefon ve masaüstünde. Son sonuçlar: [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md)
   › Ölçüm.
 - **Marka varlıkları:** logo `apps/zenweld-web/public/images/brand/`; kare
   marka işareti `assets/brand-mark.svg`; favicon ve uygulama ikonları

@@ -525,9 +525,15 @@ kilitlendiği süre (TBT; gerçek ziyaretçide INP) 0,2 sn altı. Bilgisayardaki
 ölçüm yol gösterir; **kesin sonuç canlı sunucuda yeniden ölçülür**
 (sunucunun yanıt süresi, sıkıştırma ve önbellek ayarları dahil).
 
-**Nasıl ölçülür:** `node scripts/sayfa-olcumu.mjs <adres…>`. Koşullar
-Google'ın mobil ölçümündeki gibi: yavaş 4G (1,6 Mbit/sn, 150 ms gecikme)
-ve 4 kat yavaşlatılmış işlemci; her sayfa boş önbellekle 3 kez, ortanca
+**Nasıl ölçülür:** `node scripts/sayfa-olcumu.mjs <adres…>` (README ›
+Diğer araçlar). Her turda aynı betik: Google'ın üç ölçüsü (en büyük
+içerik, sayfa kayması, kilitlenme), ilk bayt, sayfa ağırlığı (sitenin
+kendi dosyaları ve dış adresler ayrı), istek ve önceden yüklenen sayfa
+sayısı, en büyük içeriğin ne olduğu; 12 sayfa türü (anasayfa, grup,
+kategori, ürün, blog yazısı, haber, etkinlik, Videolar, Force, bayi ağı,
+Hakkımızda, sepet). Koşullar Google'ın ölçümündeki gibi: telefonda yavaş
+4G (1,6 Mbit/sn, 150 ms gecikme) ve 4 kat yavaşlatılmış işlemci;
+masaüstünde 10 Mbit/sn, 40 ms. Her sayfa boş önbellekle 3 kez, ortanca
 değer. Boyutlar sıkıştırılmış (ağdan inen) boyuttur.
 
 ### Ölçüm turları (her turdan sonra bu bölüm güncellenir)
