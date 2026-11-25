@@ -645,7 +645,8 @@ tarayıcıya gitmez.)
     yükleme, kullanılmayan kalınlık var mı). Kalınlık sayısını azaltmak
     tasarım kararıdır, sahibine sorulur. [Kod]
 11. **Bütün sayfa türlerinin Lighthouse denetimi** (performans,
-    erişilebilirlik, en iyi uygulamalar, SEO; telefon ve masaüstü):
+    erişilebilirlik, en iyi uygulamalar, SEO; telefon ve masaüstü;
+    `node scripts/lighthouse-denetimi.mjs <adres>`, her ölçüm turunda):
     anasayfa, kategori, ürün, blog, haber, etkinlik, Videolar, Force, bayi
     ağı, Hakkımızda, sepet, ödeme. Bulgular bu listeye eklenir. [Kod]
 12. **Kullanılmayan JavaScript ve CSS:** sayfa başına ne kadarının

@@ -295,6 +295,13 @@ ZenweldTest/
   içerik, sayfa kayması, kilitlenme) ve sayfa ağırlığı, 12 sayfa türünde,
   telefon ve masaüstünde. Son sonuçlar: [docs/YAPILACAKLAR.md](docs/YAPILACAKLAR.md)
   › Ölçüm.
+- **Lighthouse denetimi:** site açıkken
+  `node scripts/lighthouse-denetimi.mjs http://localhost:3000` (aynı
+  seçenekler). Aynı sayfa türlerini performans, erişilebilirlik, en iyi
+  uygulamalar ve SEO başlıklarında puanlar, geçemeyen denetimleri ve hangi
+  sayfalarda geçemediklerini yazar. Lighthouse'u `npx` ile indirir;
+  tarayıcı `CHROME_PATH` (yoksa Playwright'in Chromium'u). Ölçülen sayfalar
+  iki betikte ortak: `scripts/olcum-sayfalari.mjs`.
 - **Marka varlıkları:** logo `apps/zenweld-web/public/images/brand/`; kare
   marka işareti `assets/brand-mark.svg`; favicon ve uygulama ikonları
   `apps/zenweld-web/src/app/` (`favicon.ico`, `icon.png`, `apple-icon.png`)

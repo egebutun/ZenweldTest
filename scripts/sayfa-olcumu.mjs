@@ -1,4 +1,5 @@
 import { chromium } from "@playwright/test";
+import { PAGES } from "./olcum-sayfalari.mjs";
 
 /**
  * SAYFA HIZI OLCUMU (docs/YAPILACAKLAR.md › Ölçüm (hız))
@@ -25,20 +26,6 @@ import { chromium } from "@playwright/test";
  * Her sayfa bos onbellekle 3 kez acilir, ortanca deger yazilir. Boyutlar
  * sikistirilmis (agdan inen) boyuttur. Siniri asan deger kalin yazilir.
  */
-const PAGES = [
-  ["Anasayfa", "/"],
-  ["Grup (Kaynak Makineleri)", "/ekipmanlar/kaynak-makineleri"],
-  ["Kategori (ürün listesi)", "/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri"],
-  ["Ürün", "/urun/evomig-205-p"],
-  ["Blog yazısı", "/blog/mig-kaynaginda-gaz-secimi"],
-  ["Haber", "/haberler/zenweld-izmir-uretim-tesisi-acildi"],
-  ["Etkinlik", "/etkinlikler/win-eurasia-2026"],
-  ["Videolar", "/videolar"],
-  ["Force", "/force"],
-  ["Bayi ve servis ağı", "/yetkili-bayi-ve-servis-agi"],
-  ["Hakkımızda", "/hakkimizda"],
-  ["Sepet", "/sepet"],
-];
 
 const DEVICES = {
   telefon: {
