@@ -554,18 +554,34 @@ değer. Boyutlar sıkıştırılmış (ağdan inen) boyuttur.
 5. **Canlıya çıktıktan sonra:** Search Console › Önemli Web Verileri
    (gerçek ziyaretçilerin ölçümü) ayda bir izlenir (SEO.md › 16 › 2).
 
-### 2026-11-25 ölçümü (bilgisayarda, demo modu, telefon)
+### 2026-11-25 ölçümü (bilgisayarda, demo modu)
 
-| Sayfa | En büyük içerik (LCP) | Sayfa kayması (CLS) | Kilitlenme (TBT) | JavaScript | Toplam |
-|---|---|---|---|---|---|
-| Anasayfa | **3,2 sn** | **0,30** | **1,1 sn** | 290 KB | 917 KB |
-| Kategori (Kaynak Makineleri) | 1,9 sn | 0,00 | 0,6 sn | 276 KB | 386 KB |
-| Ürün | 0,9 sn | 0 | 0,5 sn | 291 KB | 457 KB |
-| Blog | 0,8 sn | 0 | 0,5 sn | — | — |
-| Videolar | 0,8 sn | 0,07 | 0,5 sn | — | — |
-| Force | **3,8 sn** | 0 | 0,6 sn | — | — |
-| Bayi ve servis ağı | 0,8 sn | 0,07 | 0,6 sn | — | — |
-| Sepet | 2,8 sn | — | — | 272 KB | 397 KB |
+Kalın: Google'ın "iyi" sınırının üstünde. JavaScript, ekrandaki
+bağlantıların önceden yüklenen sayfalarının kodunu da içerir. Dış
+adresler (YouTube kapakları, harita parçaları) bu ortamda engelli
+olduğu için ölçülemedi (0); deneme sunucusunda ölçülecek.
+
+**Telefon:**
+
+| Sayfa | LCP | CLS | TBT | JavaScript | Toplam | Önceden yüklenen | En büyük içerik |
+|---|---|---|---|---|---|---|---|
+| Anasayfa | **3,2 sn** | **0,30** | **0,95 sn** | 336 KB | 989 KB | 16 | Tanıtımın atölye fotoğrafı |
+| Grup (Kaynak Makineleri) | 1,9 sn | 0,00 | **0,47 sn** | 308 KB | 425 KB | 12 | Kategori çizimi |
+| Kategori (ürün listesi) | 2,4 sn | 0,00 | **0,50 sn** | 331 KB | 558 KB | 12 | İlk ürünün fotoğrafı |
+| Ürün | 1,0 sn | 0,00 | **0,60 sn** | 331 KB | 505 KB | 12 | Ürün fotoğrafı |
+| Blog yazısı | 0,8 sn | 0,00 | **0,59 sn** | 324 KB | 444 KB | 18 | Yazının metni |
+| Haber | 0,9 sn | **0,14** | **0,57 sn** | 305 KB | 549 KB | 8 | Başlık |
+| Etkinlik | 0,8 sn | 0,01 | **0,50 sn** | 307 KB | 503 KB | 8 | Metin |
+| Videolar | 0,8 sn | 0,07 | **0,72 sn** | 338 KB | 467 KB | 10 | Kategori başlığı |
+| Force | **3,9 sn** | 0,00 | **0,70 sn** | 330 KB | 1022 KB | 6 | Kaynak ustası fotoğrafı |
+| Bayi ve servis ağı | 0,9 sn | 0,07 | **0,72 sn** | 345 KB | 481 KB | 6 | Başlık |
+| Hakkımızda | 0,9 sn | 0,00 | **0,65 sn** | 303 KB | 396 KB | 6 | Metin |
+| Sepet | **2,9 sn** | 0,00 | **0,61 sn** | 303 KB | 464 KB | 27 | Boş sepet yazısı |
+
+**Masaüstü:** En büyük içerik bütün sayfalarda 0,8 sn altında,
+kilitlenme 0,07 sn altında. Sınırı aşan tek değer anasayfadaki sayfa
+kayması (**0,28**). Önceden yüklenen sayfa sayısı yüksek: blog yazısı ve
+sepette 66, Videolar'da 44 (JavaScript 340–410 KB).
 
 (4 Kasım'da anasayfa 3,0 sn ve 641 KB'tı; aradaki artış videolar ve
 tanıtım görselleri. İki modun farkı: veritabanı modunda sayfa ~22–26 KB
@@ -583,13 +599,16 @@ tarayıcıya gitmez.)
     altında olduğu halde hemen yükleniyor.
   - JavaScript 335 KB: React 71 KB, sitenin metinleri ve örnek veri
     57 KB, Next.js 43 KB, harita 41 KB, diğerleri.
-- **Anasayfada sayfa kayması 0,30** (Google'a göre kötü; iyi 0,1 altı):
-  bölümler sonradan yer değiştiriyor; nedeni bulunacak.
-- **Kilitlenme:** Anasayfada kod 1,1 sn ekranı kilitliyor, diğer
-  sayfalarda 0,5–0,6 sn.
+- **Sayfa kayması:** anasayfada 0,30 (masaüstünde 0,28; Google'a göre
+  kötü, iyi 0,1 altı), haber sayfasında telefonda 0,14. Bölümler
+  sonradan yer değiştiriyor; nedeni bulunacak.
+- **Kilitlenme:** Telefonda bütün sayfalarda sınırın üstünde: anasayfada
+  0,95 sn, diğerlerinde 0,47–0,72 sn (sınır 0,2 sn). Masaüstünde sorun
+  yok; telefonun yavaş işlemcisinde sitenin kodu ağır geliyor.
 - **Force sayfası:** En büyük içerik 3,8 sn'de görünüyor (büyük görsel).
-- **Önceden yüklenen sayfalar:** Her sayfa, ekrandaki bağlantıların 6–12
-  sayfasını önceden indiriyor; telefonda bant genişliğini paylaşıyor.
+- **Önceden yüklenen sayfalar:** Her sayfa, ekrandaki bağlantıların
+  sayfalarını önceden indiriyor: telefonda 6–27, masaüstünde 18–66;
+  telefonda bant genişliğini ve işlemciyi paylaşıyor.
 - **Yazı tipleri:** 98 KB (Inter ve Barlow Condensed'in üç kalınlığı;
   Türkçe harfler için iki alt küme).
 - **Sepet:** Google'a kapalı; içerik tarayıcıdaki sepete göre çiziliyor.
@@ -610,16 +629,18 @@ tarayıcıya gitmez.)
    K-102): her görselin küçük ve büyük sürümü; tarayıcı ekranına uygun
    olanı seçer. Önce tanıtım alanı (yeni tasarımdan sonra), sonra gerçek
    fotoğraflarla diğerleri. [Kod]
-6. **Anasayfadaki sayfa kayması (0,30):** hangi bölümün kaydığı bulunur;
-   görsellerin ve sonradan dolan bölümlerin yeri önceden ayrılır. [Kod]
-7. **Kilitlenme süresi:** anasayfada 1,1 sn; hangi kodun çalıştığı
-   (animasyonlar, sonradan dolan bölümler, demo verisinin hazırlanması)
+6. **Sayfa kayması:** anasayfa (0,30) ve haber sayfası (telefonda 0,14);
+   hangi bölümün kaydığı bulunur; görsellerin ve sonradan dolan
+   bölümlerin yeri önceden ayrılır. [Kod]
+7. **Kilitlenme süresi:** telefonda bütün sayfalarda (anasayfa 0,95 sn,
+   diğerleri 0,47–0,72 sn); hangi kodun çalıştığı (animasyonlar, sonradan
+   dolan bölümler, demo verisinin hazırlanması, önceden yüklenen sayfalar)
    incelenir, gerekmeyen kod sonraya bırakılır. [Kod]
 8. **Force sayfası (3,8 sn):** büyük görselin boyutu ve önceliği (Force
    sayfasının tasarımı ve görselleri de değişebilir). [Kod]
-9. **Önceden yüklenen sayfalar:** sayfa başına 6–12; telefonda ilk
-   açılışı yavaşlatıyor mu bakılır, gerekirse yalnızca üzerine gelince ya
-   da ekranda kalınca yüklenir. [Kod]
+9. **Önceden yüklenen sayfalar:** telefonda 6–27, masaüstünde 18–66;
+   telefonda ilk açılışı yavaşlatıyor mu bakılır, gerekirse yalnızca
+   üzerine gelince ya da ekranda kalınca yüklenir. [Kod]
 10. **Yazı tipleri (98 KB):** tasarım değişmeden yükleme şekli (önceden
     yükleme, kullanılmayan kalınlık var mı). Kalınlık sayısını azaltmak
     tasarım kararıdır, sahibine sorulur. [Kod]
