@@ -35,7 +35,7 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 10. [Arama motorları ve adresler](#10-arama-motorları-ve-adresler) — K-52–K-56, K-120, K-121, K-123, K-124
 11. [Panel](#11-panel) — K-57–K-61, K-99, K-101, K-103, K-105, K-109
 12. [Sunucu ve veritabanı](#12-sunucu-ve-veritabanı) — K-81, K-87, K-88, K-90–K-92, K-108, K-122
-13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110, K-127, K-129
+13. [Çalışma şekli ve belgeler](#13-çalışma-şekli-ve-belgeler) — K-62, K-63, K-66, K-67, K-89, K-106, K-107, K-110, K-127
 
 ---
 
@@ -1485,17 +1485,3 @@ bu kararları "hata" sanıp "düzeltmeye" kalkmasın.
 - **Neden:** Özet müdüre kelime analizini ve alınabilecek aksiyonları
   göstermek için hazırlandı; SEO'nun bütün işleri onu gereksiz uzatır.
 
-### K-129 · Hız çalışması: önce tanıtım alanı ve bayi haritasının tasarımı; ölçüm turlarla
-- Anasayfadaki tanıtım alanının ve bayi haritasının tasarımı ve görselleri
-  değişebilir; sahibi bunların tasarımını hız optimizasyonundan **önce**
-  yapacak. Bu ikisine bağlı hız işleri (görsel önceliği, haritanın sonradan
-  yüklenmesi, görsellerin telefona uygun boyutu) yeni tasarımdan sonra
-  yapılır.
-- 2026-11-25 ölçümünün bütün bulguları ve maddeleri YAPILACAKLAR › Ölçüm
-  (hız)'dadır; hiçbiri atlanmaz.
-- Ölçüm tekrarlanır: yeni tasarımdan sonra, görsel optimizasyonu ve gerçek
-  fotoğraflardan sonra, deneme sunucusu ve veritabanı kurulunca (canlıdan
-  önce) ve canlıda (Search Console, ayda bir). Bilgisayardaki ölçüm yol
-  gösterir; kesin sonuç canlı sunucudadır.
-- **Neden:** Hız, değişecek tasarıma göre yapılırsa iş iki kez yapılır;
-  ayrıca görseller, sunucu ve veritabanı sonucu değiştirir.

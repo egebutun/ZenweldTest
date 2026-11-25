@@ -534,7 +534,8 @@ değer. Boyutlar sıkıştırılmış (ağdan inen) boyuttur.
 
 1. **2026-11-25 — bugünkü durum** (yapıldı; aşağıda).
 2. **Tanıtım alanı ve bayi haritasının yeni tasarımından sonra** (sahibi
-   tasarımı önce yapacak, KARARLAR K-129): aşağıdaki 1, 2 ve 5. maddeler
+   tasarımı hızdan önce yapacak; hız, değişecek tasarıma göre yapılırsa
+   iş iki kez yapılır): aşağıdaki 1, 2 ve 5. maddeler
    yeni tasarıma göre yapılır, yeniden ölçülür.
 3. **Görsel optimizasyonundan ve gerçek fotoğraflar geldikten sonra**
    ([Görsel optimizasyonu](#görsel-optimizasyonu--önerilen-zorunlu-değil),
@@ -1458,7 +1459,7 @@ K-124) yapıldı.
    3,2 sn, sayfa kayması 0,30, kilitlenme 1,1 sn; Force sayfası 3,8 sn.
    Bulgular, 15 madde ve ölçüm turları: [Ölçüm](#ölçüm-hız). Tanıtım
    alanı ve bayi haritasına bağlı maddeler, sahibi bunların tasarımını
-   yaptıktan sonra (K-129); görseller ve sunucu gelince yeniden ölçülür.
+   yaptıktan sonra; görseller ve sunucu gelince yeniden ölçülür.
 2. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4;
    [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler). Search
    Console C4'te.

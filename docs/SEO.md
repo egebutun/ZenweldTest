@@ -975,7 +975,7 @@ sayfasında LCP **3,8 sn**; kategori 1,9 sn, ürün 0,9 sn. Google'ın "iyi"
 sınırları: LCP 2,5 sn, CLS 0,1, TBT 0,2 sn. Bulgular, 15 madde ve ölçüm
 turları: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ölçüm (hız) (B5). Tanıtım
 alanı ve bayi haritasına bağlı işler sahibi onların tasarımını yaptıktan
-sonra (KARARLAR K-129).
+sonra.
 
 - [x] Mobil uyum: ekran genişlikleri tarayıcı testlerinde deneniyor.
 - [x] Ürün fotoğrafları WebP biçiminde (en büyüğü yaklaşık 43 KB). 15
@@ -990,7 +990,7 @@ sonra (KARARLAR K-129).
       (B5; 15 madde YAPILACAKLAR › Ölçüm). **Kod**
 - [ ] Ölçüm turları: yeni tanıtım ve harita tasarımından sonra, görsel
       optimizasyonu ve gerçek fotoğraflardan sonra, deneme sunucusu ve
-      veritabanıyla canlıdan önce, canlıda (K-129). **Kod**, **Sunucu**
+      veritabanıyla canlıdan önce, canlıda (YAPILACAKLAR › Ölçüm). **Kod**, **Sunucu**
 - [ ] Görsel optimizasyonu ([YAPILACAKLAR.md](YAPILACAKLAR.md#görsel-optimizasyonu--önerilen-zorunlu-değil)): sahibinin kararıyla zorunlu değil,
       ertelendi (KARARLAR K-102); hız için önerilir. **Karar sahibinde**
 - [ ] Canlı sunucuda sıkıştırma ve önbellek ayarları; ölçümün canlıda
