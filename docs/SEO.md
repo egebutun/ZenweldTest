@@ -972,7 +972,10 @@ içeriğe rağmen geride kalır.
 anasayfada en büyük içeriğin görünmesi (LCP) **3,2 sn**, sayfa kayması
 (CLS) **0,30**, kodun ekranı kilitlediği süre (TBT) **1,1 sn**; Force
 sayfasında LCP **3,8 sn**; kategori 1,9 sn, ürün 0,9 sn. Google'ın "iyi"
-sınırları: LCP 2,5 sn, CLS 0,1, TBT 0,2 sn. Bulgular, 15 madde ve ölçüm
+sınırları: LCP 2,5 sn, CLS 0,1, TBT 0,2 sn. Lighthouse'ta telefon
+performans puanı 66–93 (anasayfa 66), masaüstü 82–100; SEO puanı 69, tek
+nedeni demo adresinin arama motorlarına bilerek kapalı olması (canlıda
+yeniden denetlenir). Lighthouse denetimi, bulgular, 20 madde ve ölçüm
 turları: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ölçüm (hız) (B5). Tanıtım
 alanı ve bayi haritasına bağlı işler sahibi onların tasarımını yaptıktan
 sonra.
@@ -987,7 +990,7 @@ sonra.
 - [ ] Anasayfa ve Force sayfasında LCP 2,5 sn, anasayfada sayfa
       kayması 0,1 ve kilitlenme 0,2 sn altına; başlıca nedenler görseller,
       sonradan yüklenen bölümler ve her sayfada inen ~300 KB JavaScript
-      (B5; 15 madde YAPILACAKLAR › Ölçüm). **Kod**
+      (B5; 20 madde YAPILACAKLAR › Ölçüm). **Kod**
 - [ ] Ölçüm turları: yeni tanıtım ve harita tasarımından sonra, görsel
       optimizasyonu ve gerçek fotoğraflardan sonra, deneme sunucusu ve
       veritabanıyla canlıdan önce, canlıda (YAPILACAKLAR › Ölçüm). **Kod**, **Sunucu**

@@ -516,8 +516,9 @@ Veritabanı modu bütün kayıtlar için hazır ([VERITABANI.md](VERITABANI.md),
 
 ## Ölçüm (hız)
 
-Hız işi (SEO B5) bu bölümdedir: ölçümler, bulgular, yapılacaklar ve
-ölçüm turları. **Hiçbir madde atlanmaz** (sahibi, 2026-11-25).
+Hız işi (SEO B5) bu bölümdedir: ölçümler, Lighthouse denetimi, bulgular,
+yapılacaklar (20 madde) ve ölçüm turları. **Hiçbir madde atlanmaz**
+(sahibi, 2026-11-25).
 
 **Hedef (Google'ın "iyi" sınırları, telefonda):** en büyük içeriğin
 görünmesi (LCP) 2,5 sn altı, sayfa kayması (CLS) 0,1 altı, ekranın kodla
@@ -587,6 +588,33 @@ sepette 66, Videolar'da 44 (JavaScript 340–410 KB).
 tanıtım görselleri. İki modun farkı: veritabanı modunda sayfa ~22–26 KB
 büyük, JavaScript ~28 KB küçük; demo modundaki örnek veri canlıda
 tarayıcıya gitmez.)
+
+### 2026-11-25 Lighthouse denetimi (bilgisayarda, demo modu)
+
+`node scripts/lighthouse-denetimi.mjs`; Lighthouse ilk kez gelen
+ziyaretçi gibi açar. Kalın: 90 altı.
+
+| Sayfa | Telefon: Performans / Erişilebilirlik / En iyi uyg. / SEO | Masaüstü: Performans / Erişilebilirlik / En iyi uyg. / SEO |
+|---|---|---|
+| Anasayfa | **66** / 91 / 96 / **69** | **82** / 91 / 96 / **69** |
+| Grup (Kaynak Makineleri) | **86** / 96 / 100 / **69** | 100 / 96 / 100 / **69** |
+| Kategori (ürün listesi) | **84** / 95 / 100 / **69** | 100 / 95 / 100 / **69** |
+| Ürün | **81** / 92 / 100 / **69** | 99 / 97 / 100 / **69** |
+| Blog yazısı | **84** / 95 / 100 / **69** | 100 / 95 / 100 / **69** |
+| Haber | **82** / 96 / 100 / **69** | 98 / 96 / 100 / **69** |
+| Etkinlik | **87** / 97 / 100 / **69** | 100 / 97 / 100 / **69** |
+| Videolar | **86** / 97 / 96 / **69** | 100 / 97 / 96 / **69** |
+| Force | **76** / 97 / 100 / **69** | 96 / 97 / 100 / **69** |
+| Bayi ve servis ağı | **72** / 92 / 96 / **69** | 100 / 92 / 96 / **69** |
+| Hakkımızda | 93 / 96 / 100 / **69** | 100 / 96 / 100 / **69** |
+| Sepet | **88** / 96 / 100 / **66** | 100 / 96 / 100 / **66** |
+
+- **SEO 69'un tek nedeni** "sayfanın dizine eklenmesi engellenmiş": demo
+  ve bilgisayardaki adres arama motorlarına bilerek kapalı (canlıda,
+  zenweld.com'da açılır). SEO puanı canlıda yeniden denetlenir (tur 4–5).
+- **En iyi uygulamalar 96'nın nedeni** konsoldaki hatalar: bu ortamda dış
+  adresler (YouTube kapakları, harita parçaları) engelli olduğu için;
+  deneme sunucusunda yeniden bakılır.
 
 ### Bulgular
 
@@ -658,6 +686,30 @@ tarayıcıya gitmez.)
     sayfaların önbelleği (ISR). [BT ve Kod]
 15. **Sepet** (Google'a kapalı, düşük öncelik): boş sepet ve iskelet
     sunucuda çizilebilir mi. [Kod]
+
+Lighthouse denetiminden gelenler:
+
+16. **En büyük içerik olan görselin geç fark edilmesi** (kategori, ürün,
+    grup, haber, Force sayfaları): ilk görünen fotoğraf "sonra yükle"
+    (lazy) ya da öncelik işaretsiz; tarayıcı onu geç istiyor. Sayfanın
+    ilk görselleri öncelikli yüklenir. [Kod]
+17. **Sayfanın çizimini bekleten CSS:** iki CSS dosyası (19 KB + 2 KB)
+    sayfa çizilmeden önce iniyor; telefonda tahmini 0,85 sn gecikme.
+    Gerekli CSS sayfanın içine gömülebilir mi denenir. [Kod]
+18. **Eski tarayıcılar için ek kod:** 14 KB; desteklenen tarayıcı listesi
+    güncellenirse gerekmez. [Kod]
+19. **Sayfanın kodunu çalıştırma süresi:** anasayfada telefonda 1,9 sn;
+    kodun ölçü okuyup sayfayı yeniden düzenlettiği yerler (zorunlu
+    yeniden düzenleme) var (7. maddeyle birlikte). [Kod]
+20. **Erişilebilirlik:**
+    - Renk kontrastı her sayfada yetersiz (ör. küçük kırmızı ve gri
+      yazılar): renkler tasarım kararıdır, sahibine sorulur.
+    - Adı olmayan düğme (ürün sayfasında sağ alttaki yuvarlak düğme);
+      görünen yazıyla adı uyuşmayan düğmeler (arama düğmesi, tanıtım
+      sekmeleri); başlık sırası atlanıyor (kategori, blog, bayi
+      sayfaları); anasayfadaki video noktaları dokunmak için çok küçük.
+      [Kod]
+    - Genel erişilebilirlik işleri: [Erişilebilirlik](#erişilebilirlik--önerilen-zorunlu-değil).
 
 **Dokunulmayanlar:** React ve Next.js çekirdeği (~115 KB) kaçınılmaz.
 Demo modundaki örnek veri (~47 KB) canlıda (veritabanı modu) tarayıcıya
@@ -1485,7 +1537,7 @@ K-124) yapıldı.
 
 1. **B5 · Hız:** 2026-11-25 ölçümü yapıldı: anasayfada en büyük içerik
    3,2 sn, sayfa kayması 0,30, kilitlenme 1,1 sn; Force sayfası 3,8 sn.
-   Bulgular, 15 madde ve ölçüm turları: [Ölçüm](#ölçüm-hız). Tanıtım
+   Bulgular, Lighthouse denetimi, 20 madde ve ölçüm turları: [Ölçüm](#ölçüm-hız). Tanıtım
    alanı ve bayi haritasına bağlı maddeler, sahibi bunların tasarımını
    yaptıktan sonra; görseller ve sunucu gelince yeniden ölçülür.
 2. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4;
