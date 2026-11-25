@@ -212,6 +212,15 @@ sohbet aracı, ödeme sayfası, başka bir harita) adresi `next.config.mjs`
 içindeki politikaya da yazılmalıdır; yazılmazsa tarayıcı servisi engeller ve
 konsolda "Content Security Policy" uyarısı çıkar.
 
+**Tarayıcı önbelleği (`Cache-Control`):**
+
+| Dosyalar | Süre |
+|---|---|
+| Derlenen kod, stil ve yazı tipleri (`/_next/static/…`) | Kalıcı (adı içeriğiyle değişir; Next.js verir) |
+| Dosya deposundakiler (`/dosya/…`) | 1 yıl (her yükleme yeni adres) |
+| Sitenin kendi görselleri ve simgeleri (`/images/…`, `/icons/…`) | 7 gün; süresi dolunca bir gün daha eskisi gösterilip arkada yenilenir (`next.config.mjs`). Aynı adla değiştirilen dosya en geç 7 günde görünür; hemen görünmesi gerekirse dosyanın adı değiştirilir |
+| Sayfalar | Tarayıcıda saklanmaz; sunucu ve CDN önbelleği Next.js'in kuralıyla |
+
 ---
 
 ## 4. Kod, geçiş betikleri ve komutlar

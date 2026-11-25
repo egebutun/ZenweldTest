@@ -101,8 +101,18 @@ const nextConfig = {
    */
   async headers() {
     const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" }];
+    // Sitenin kendi gorselleri ve simgeleri (public/images, public/icons;
+    // docs/YAPILACAKLAR.md › Ölçüm (hız) 3): tarayici 7 gun saklar, suresi
+    // dolunca bir gun daha eskisini gosterip arkada yeniler. Next.js bu
+    // dosyalari varsayilan olarak her acilista sunucuya sordurur. Ayni adla
+    // degistirilen dosya en gec 7 gunde gorunur; hemen gorunmesi gerekirse
+    // dosyanin adi degistirilir. Dosya deposundakiler (/dosya) 1 yil,
+    // derlenen dosyalar (/_next/static) kalici saklanir.
+    const siteFiles = [{ key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" }];
     return [
       { source: "/:path*", headers: securityHeaders },
+      { source: "/images/:path*", headers: siteFiles },
+      { source: "/icons/:path*", headers: siteFiles },
       // Ayni baslik iki kurala uyarsa sonraki gecerlidir.
       { source: "/yonetim/onizleme/:path*", headers: previewHeaders },
       { source: "/yonetim", headers: noindex },

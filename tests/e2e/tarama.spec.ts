@@ -137,6 +137,15 @@ test.describe("ziyaretçi", () => {
     expect(preview["x-frame-options"]).toBe("SAMEORIGIN");
   });
 
+  test("sitenin kendi görselleri tarayıcıda 7 gün saklanır; sayfalar saklanmaz (YAPILACAKLAR › Ölçüm 3)", async ({ request }) => {
+    for (const path of ["/images/brand/zenweld-logo.svg", "/images/products/evomig-205-p.webp", "/icons/icon-192.png"]) {
+      const answer = await request.get(path);
+      expect(answer.status(), path).toBe(200);
+      expect(answer.headers()["cache-control"], path).toBe("public, max-age=604800, stale-while-revalidate=86400");
+    }
+    expect((await request.get("/")).headers()["cache-control"]).not.toContain("max-age=604800");
+  });
+
   test("yenileme ve SAP uçları anahtarsız ya da yanlış anahtarla çalışmaz", async ({ request }) => {
     // Anahtar tanimli degilse uc kapali (404), tanimliysa yetkisiz (401).
     const attempts: Record<string, string>[] = [{}, { authorization: "Bearer yanlis-anahtar" }];

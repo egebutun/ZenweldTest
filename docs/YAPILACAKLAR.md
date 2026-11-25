@@ -648,9 +648,9 @@ ziyaretçi gibi açar. Kalın: 90 altı.
    açıldıktan sonra iner (ilk geçişten önce hazır). [Kod]
 2. **Bayi haritası** (yeni tasarımdan sonra): ekrana yaklaşınca yüklenir
    (anasayfa ve Force sayfası). [Kod]
-3. **Sitenin kendi dosyalarına önbellek:** logo, çizimler gibi dosyalar
-   tarayıcıda uzun süre (ör. 7 gün) tutulsun; bugün her açılışta sunucuya
-   soruluyor. Dosya deposundakiler zaten 1 yıl. [Kod]
+3. **Sitenin kendi dosyalarına önbellek:** yapıldı (2026-11-25):
+   `/images` ve `/icons` tarayıcıda 7 gün ([SUNUCU.md](SUNUCU.md) › 3 ›
+   Tarayıcı önbelleği). Tekrar gelen ziyaretçide ölçülür (tur 4).
 4. **Ölç ve kaydet:** her işten sonra iki modda ölçülür; sonuçlar bu
    bölüme ve SEO.md'ye yazılır.
 5. **Görsellerin telefona uygun boyutta gelmesi** (sahibinin onayıyla,
