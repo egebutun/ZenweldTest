@@ -516,37 +516,124 @@ Veritabanı modu bütün kayıtlar için hazır ([VERITABANI.md](VERITABANI.md),
 
 ## Ölçüm (hız)
 
-2026-11-04. `node scripts/sayfa-olcumu.mjs <adres…>`. Koşullar
-Google'ın mobil ölçümündeki gibi: yavaş 4G (1,6 Mbit/sn) ve 4 kat
-yavaşlatılmış işlemci; her sayfa boş önbellekle 3 kez, ortanca değer.
-Boyutlar sıkıştırılmış (ağdan inen) boyuttur. Ölçüm bilgisayarda yapıldı;
-**canlı sunucuda tekrarlanmalı** (sunucunun yanıt süresi dahil).
+Hız işi (SEO B5) bu bölümdedir: ölçümler, bulgular, yapılacaklar ve
+ölçüm turları. **Hiçbir madde atlanmaz** (sahibi, 2026-11-25).
 
-| Sayfa | Mod | Sayfanın kendisi | JavaScript | Toplam | En büyük içerik (LCP) |
+**Hedef (Google'ın "iyi" sınırları, telefonda):** en büyük içeriğin
+görünmesi (LCP) 2,5 sn altı, sayfa kayması (CLS) 0,1 altı, ekranın kodla
+kilitlendiği süre (TBT; gerçek ziyaretçide INP) 0,2 sn altı. Bilgisayardaki
+ölçüm yol gösterir; **kesin sonuç canlı sunucuda yeniden ölçülür**
+(sunucunun yanıt süresi, sıkıştırma ve önbellek ayarları dahil).
+
+**Nasıl ölçülür:** `node scripts/sayfa-olcumu.mjs <adres…>`. Koşullar
+Google'ın mobil ölçümündeki gibi: yavaş 4G (1,6 Mbit/sn, 150 ms gecikme)
+ve 4 kat yavaşlatılmış işlemci; her sayfa boş önbellekle 3 kez, ortanca
+değer. Boyutlar sıkıştırılmış (ağdan inen) boyuttur.
+
+### Ölçüm turları (her turdan sonra bu bölüm güncellenir)
+
+1. **2026-11-25 — bugünkü durum** (yapıldı; aşağıda).
+2. **Tanıtım alanı ve bayi haritasının yeni tasarımından sonra** (sahibi
+   tasarımı önce yapacak, KARARLAR K-129): aşağıdaki 1, 2 ve 5. maddeler
+   yeni tasarıma göre yapılır, yeniden ölçülür.
+3. **Görsel optimizasyonundan ve gerçek fotoğraflar geldikten sonra**
+   ([Görsel optimizasyonu](#görsel-optimizasyonu--önerilen-zorunlu-değil),
+   [Gerçek fotoğraflar](#gerçek-fotoğraflar--tam-liste)): görseller
+   değişince yeniden ölçülür.
+4. **Deneme sunucusu ve veritabanı kurulunca, canlıdan önce:** veritabanı
+   modunda, sunucunun gerçek ayarlarıyla (sıkıştırma, önbellek, HTTP/2)
+   bütün sayfa türleri yeniden ölçülür; sunucunun yanıt süresi (ilk bayt)
+   de bakılır.
+5. **Canlıya çıktıktan sonra:** Search Console › Önemli Web Verileri
+   (gerçek ziyaretçilerin ölçümü) ayda bir izlenir (SEO.md › 16 › 2).
+
+### 2026-11-25 ölçümü (bilgisayarda, demo modu, telefon)
+
+| Sayfa | En büyük içerik (LCP) | Sayfa kayması (CLS) | Kilitlenme (TBT) | JavaScript | Toplam |
 |---|---|---|---|---|---|
-| Anasayfa | Demo | 20 KB | 298 KB | 641 KB | 3,0 sn |
-| Anasayfa | Veritabanı | 46 KB | 256 KB | 627 KB | 2,9 sn |
-| Kategori (Kaynak Makineleri) | Demo | 9 KB | 275 KB | 385 KB | 1,6 sn |
-| Kategori (Kaynak Makineleri) | Veritabanı | 31 KB | 275 KB | 429 KB | 1,5 sn |
-| Ürün | Demo | 13 KB | 289 KB | 455 KB | 0,8 sn |
-| Ürün | Veritabanı | 38 KB | 289 KB | 501 KB | 0,8 sn |
-| Sepet | Demo | 8 KB | 306 KB | 488 KB | 2,4 sn |
-| Sepet | Veritabanı | 30 KB | 306 KB | 525 KB | 2,4 sn |
+| Anasayfa | **3,2 sn** | **0,30** | **1,1 sn** | 290 KB | 917 KB |
+| Kategori (Kaynak Makineleri) | 1,9 sn | 0,00 | 0,6 sn | 276 KB | 386 KB |
+| Ürün | 0,9 sn | 0 | 0,5 sn | 291 KB | 457 KB |
+| Blog | 0,8 sn | 0 | 0,5 sn | — | — |
+| Videolar | 0,8 sn | 0,07 | 0,5 sn | — | — |
+| Force | **3,8 sn** | 0 | 0,6 sn | — | — |
+| Bayi ve servis ağı | 0,8 sn | 0,07 | 0,6 sn | — | — |
+| Sepet | 2,8 sn | — | — | 272 KB | 397 KB |
 
-- Veritabanı modunda her sayfa ~22–26 KB daha büyük: katalog sayfanın
-  içinde geliyor (sayfa geçişlerinde tekrar inmez). Toplam indirme ve
-  açılış süresi iki modda neredeyse aynı.
-- Her sayfada ~300 KB JavaScript iniyor. Ölçümde bunun ~47 KB'ı tarayıcıya
-  giden örnek veriydi. Bugün veritabanı modunda örnek veri
-  tarayıcı paketine girmez (`npm run test:e2e:db` dener); demo modunda
-  girer. Sayfa tamamen yüklendikten sonra sayılınca veritabanı modunda her
-  sayfa ~28 KB (sıkıştırılmış) daha az JavaScript indirir: anasayfa
-  329 → 301 KB, ürün sayfası 276 → 248 KB (2026-11-05, bilgisayarda).
-  Gerçek üye ve sipariş verisi hiçbir zaman tarayıcı paketine girmemeli.
-  Gerisi sitenin kendisi (Next.js ve React, harita, arama, simgeler).
-- Anasayfa ve sepette en büyük içeriğin geç görünmesinin başlıca nedeni
-  görseller ve JavaScript; görsel küçültme ([Görsel optimizasyonu](#görsel-optimizasyonu--önerilen-zorunlu-değil)) ve canlı sunucuda
-  sıkıştırma/önbellek ayarları canlıdan önce ele alınmalı.
+(4 Kasım'da anasayfa 3,0 sn ve 641 KB'tı; aradaki artış videolar ve
+tanıtım görselleri. İki modun farkı: veritabanı modunda sayfa ~22–26 KB
+büyük, JavaScript ~28 KB küçük; demo modundaki örnek veri canlıda
+tarayıcıya gitmez.)
+
+### Bulgular
+
+- **Anasayfanın en büyük içeriği** tanıtım alanındaki atölye fotoğrafı
+  (122 KB); 3,2 sn'de görünüyor. Yavaş bağlantıda aynı anda inenlerle
+  yarışıyor:
+  - Tanıtımın diğer iki sayfasının görselleri (Jasic 167 KB, Force
+    59 KB) ekranda görünmedikleri halde hemen iniyor.
+  - Bayi haritası (Leaflet, 41 KB kod ve harita parçaları) sayfanın çok
+    altında olduğu halde hemen yükleniyor.
+  - JavaScript 335 KB: React 71 KB, sitenin metinleri ve örnek veri
+    57 KB, Next.js 43 KB, harita 41 KB, diğerleri.
+- **Anasayfada sayfa kayması 0,30** (Google'a göre kötü; iyi 0,1 altı):
+  bölümler sonradan yer değiştiriyor; nedeni bulunacak.
+- **Kilitlenme:** Anasayfada kod 1,1 sn ekranı kilitliyor, diğer
+  sayfalarda 0,5–0,6 sn.
+- **Force sayfası:** En büyük içerik 3,8 sn'de görünüyor (büyük görsel).
+- **Önceden yüklenen sayfalar:** Her sayfa, ekrandaki bağlantıların 6–12
+  sayfasını önceden indiriyor; telefonda bant genişliğini paylaşıyor.
+- **Yazı tipleri:** 98 KB (Inter ve Barlow Condensed'in üç kalınlığı;
+  Türkçe harfler için iki alt küme).
+- **Sepet:** Google'a kapalı; içerik tarayıcıdaki sepete göre çiziliyor.
+
+### Yapılacaklar
+
+1. **Tanıtım alanı** (yeni tasarımdan sonra): ilk sayfanın görseli
+   "önce bunu indir" diye işaretlenir; diğer sayfaların görselleri sayfa
+   açıldıktan sonra iner (ilk geçişten önce hazır). [Kod]
+2. **Bayi haritası** (yeni tasarımdan sonra): ekrana yaklaşınca yüklenir
+   (anasayfa ve Force sayfası). [Kod]
+3. **Sitenin kendi dosyalarına önbellek:** logo, çizimler gibi dosyalar
+   tarayıcıda uzun süre (ör. 7 gün) tutulsun; bugün her açılışta sunucuya
+   soruluyor. Dosya deposundakiler zaten 1 yıl. [Kod]
+4. **Ölç ve kaydet:** her işten sonra iki modda ölçülür; sonuçlar bu
+   bölüme ve SEO.md'ye yazılır.
+5. **Görsellerin telefona uygun boyutta gelmesi** (sahibinin onayıyla,
+   K-102): her görselin küçük ve büyük sürümü; tarayıcı ekranına uygun
+   olanı seçer. Önce tanıtım alanı (yeni tasarımdan sonra), sonra gerçek
+   fotoğraflarla diğerleri. [Kod]
+6. **Anasayfadaki sayfa kayması (0,30):** hangi bölümün kaydığı bulunur;
+   görsellerin ve sonradan dolan bölümlerin yeri önceden ayrılır. [Kod]
+7. **Kilitlenme süresi:** anasayfada 1,1 sn; hangi kodun çalıştığı
+   (animasyonlar, sonradan dolan bölümler, demo verisinin hazırlanması)
+   incelenir, gerekmeyen kod sonraya bırakılır. [Kod]
+8. **Force sayfası (3,8 sn):** büyük görselin boyutu ve önceliği (Force
+   sayfasının tasarımı ve görselleri de değişebilir). [Kod]
+9. **Önceden yüklenen sayfalar:** sayfa başına 6–12; telefonda ilk
+   açılışı yavaşlatıyor mu bakılır, gerekirse yalnızca üzerine gelince ya
+   da ekranda kalınca yüklenir. [Kod]
+10. **Yazı tipleri (98 KB):** tasarım değişmeden yükleme şekli (önceden
+    yükleme, kullanılmayan kalınlık var mı). Kalınlık sayısını azaltmak
+    tasarım kararıdır, sahibine sorulur. [Kod]
+11. **Bütün sayfa türlerinin Lighthouse denetimi** (performans,
+    erişilebilirlik, en iyi uygulamalar, SEO; telefon ve masaüstü):
+    anasayfa, kategori, ürün, blog, haber, etkinlik, Videolar, Force, bayi
+    ağı, Hakkımızda, sepet, ödeme. Bulgular bu listeye eklenir. [Kod]
+12. **Kullanılmayan JavaScript ve CSS:** sayfa başına ne kadarının
+    kullanılmadığı ölçülür; büyük parçalar ihtiyaç anında yüklenir. [Kod]
+13. **Dış kaynaklar:** YouTube kapakları ve harita parçaları ilk açılışta
+    inmesin (yalnızca ekrana yaklaşınca). [Kod]
+14. **Sunucu (BT, tur 4'te):** yanıt süresi (ilk bayt) veritabanı
+    modunda; sıkıştırma (Brotli/gzip), HTTP/2, önbellek başlıkları;
+    sayfaların önbelleği (ISR). [BT ve Kod]
+15. **Sepet** (Google'a kapalı, düşük öncelik): boş sepet ve iskelet
+    sunucuda çizilebilir mi. [Kod]
+
+**Dokunulmayanlar:** React ve Next.js çekirdeği (~115 KB) kaçınılmaz.
+Demo modundaki örnek veri (~47 KB) canlıda (veritabanı modu) tarayıcıya
+gitmez. Gerçek üye ve sipariş verisi hiçbir zaman tarayıcı paketine
+girmemeli.
 
 ## Güvenlik başlıkları — canlıya çıkarken
 
@@ -1367,10 +1454,11 @@ veri: blog yazısı, ürüne kargo, iade, yıldız, seçenekler, açıklama, sit
 adı ve etkinlik düzeltmeleri; K-123) ve B4 (uzun listelerin sayfalanması;
 K-124) yapıldı.
 
-1. **B5 · Anasayfa hızı:** en büyük görselin yüklenmesi 3,0 sn (hedef
-   2,5 sn altı); [Ölçüm](#ölçüm-hız). Ölçüm anasayfa videoları (K-125)
-   eklendikten sonra yapılır; videoların oynatıcısı yalnızca Oynat'a
-   basılınca yüklenir.
+1. **B5 · Hız:** 2026-11-25 ölçümü yapıldı: anasayfada en büyük içerik
+   3,2 sn, sayfa kayması 0,30, kilitlenme 1,1 sn; Force sayfası 3,8 sn.
+   Bulgular, 15 madde ve ölçüm turları: [Ölçüm](#ölçüm-hız). Tanıtım
+   alanı ve bayi haritasına bağlı maddeler, sahibi bunların tasarımını
+   yaptıktan sonra (K-129); görseller ve sunucu gelince yeniden ölçülür.
 2. **B6 · Analiz kodu ve çerez onayı:** Google Analytics 4;
    [Çerezler ve yasal metinler](#çerezler-ve-yasal-metinler). Search
    Console C4'te.

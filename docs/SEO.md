@@ -968,10 +968,14 @@ içeriğe rağmen geride kalır.
 
 ### 2. Hız ve mobil
 
-Ölçüm (4 Kasım 2026, bilgisayarda, Google'ın mobil koşulları: yavaş 4G):
-en büyük içeriğin görünme süresi (LCP) anasayfada **3,0 sn**, kategoride
-1,6 sn, üründe 0,8 sn. Google'ın "iyi" sınırı 2,5 sn; anasayfa sınırın
-üzerinde ([YAPILACAKLAR.md](YAPILACAKLAR.md) › Ölçüm).
+Ölçüm (25 Kasım 2026, bilgisayarda, Google'ın mobil koşulları: yavaş 4G):
+anasayfada en büyük içeriğin görünmesi (LCP) **3,2 sn**, sayfa kayması
+(CLS) **0,30**, kodun ekranı kilitlediği süre (TBT) **1,1 sn**; Force
+sayfasında LCP **3,8 sn**; kategori 1,9 sn, ürün 0,9 sn. Google'ın "iyi"
+sınırları: LCP 2,5 sn, CLS 0,1, TBT 0,2 sn. Bulgular, 15 madde ve ölçüm
+turları: [YAPILACAKLAR.md](YAPILACAKLAR.md) › Ölçüm (hız) (B5). Tanıtım
+alanı ve bayi haritasına bağlı işler sahibi onların tasarımını yaptıktan
+sonra (KARARLAR K-129).
 
 - [x] Mobil uyum: ekran genişlikleri tarayıcı testlerinde deneniyor.
 - [x] Ürün fotoğrafları WebP biçiminde (en büyüğü yaklaşık 43 KB). 15
@@ -980,8 +984,13 @@ en büyük içeriğin görünme süresi (LCP) anasayfada **3,0 sn**, kategoride
       resmi yüklenir, oynatıcı ve video Oynat'a basınca gelir; YouTube
       çerezsiz adresten açılır; kendi videolarımız sunucuda 1080p ve 720p
       hazırlanır ve parça parça sunulur (KARARLAR K-125).
-- [ ] Anasayfanın LCP'sini 2,5 sn'nin altına indirmek; başlıca nedenler
-      görseller ve her sayfada inen ~300 KB JavaScript (B5). **Kod**
+- [ ] Anasayfa ve Force sayfasında LCP 2,5 sn, anasayfada sayfa
+      kayması 0,1 ve kilitlenme 0,2 sn altına; başlıca nedenler görseller,
+      sonradan yüklenen bölümler ve her sayfada inen ~300 KB JavaScript
+      (B5; 15 madde YAPILACAKLAR › Ölçüm). **Kod**
+- [ ] Ölçüm turları: yeni tanıtım ve harita tasarımından sonra, görsel
+      optimizasyonu ve gerçek fotoğraflardan sonra, deneme sunucusu ve
+      veritabanıyla canlıdan önce, canlıda (K-129). **Kod**, **Sunucu**
 - [ ] Görsel optimizasyonu ([YAPILACAKLAR.md](YAPILACAKLAR.md#görsel-optimizasyonu--önerilen-zorunlu-değil)): sahibinin kararıyla zorunlu değil,
       ertelendi (KARARLAR K-102); hız için önerilir. **Karar sahibinde**
 - [ ] Canlı sunucuda sıkıştırma ve önbellek ayarları; ölçümün canlıda
