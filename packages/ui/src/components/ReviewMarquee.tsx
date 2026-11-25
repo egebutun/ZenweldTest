@@ -26,9 +26,15 @@ const SPEED = 22;
  *
  * ONEMLI: Liste IKI KEZ BASILMAZ. Onceki surumde sonsuz kaydirma icin
  * kartlar iki kez yazdiriliyordu; 10 yorum ekranda 20 kart gibi
- * gorunuyordu. Bunun yerine her kart mutlak konumlandirilip her karede
- * kendi x'i modulo ile hesaplaniyor: soldan cikan kart sagdan geri
- * girer. Boylece DOM'da her yorum YALNIZCA BIR KEZ bulunur.
+ * gorunuyordu. Bunun yerine her kartin her karede kendi x'i modulo ile
+ * hesaplaniyor: soldan cikan kart sagdan geri girer. Boylece DOM'da her
+ * yorum YALNIZCA BIR KEZ bulunur.
+ *
+ * Kartlar halkada da yerlerinden cikmaz (ayni satir, ayni yukseklik);
+ * yalnizca kaydirma (transform) ile yer degistirir. Onceden halkaya
+ * gecerken kartlar mutlak konuma aliniyor, serit 270 px'ten 248 px'e
+ * iniyordu: bu, anasayfada 0,30'luk sayfa kaymasiydi (Google'a gore kotu;
+ * docs/YAPILACAKLAR.md › Ölçüm (hız) 6).
  *
  * Yorumlar ekrani doldurmuyorsa (orn. yalnizca 3 yorum varsa) halka
  * donmez — kaydirilacak bir sey yoktur, kartlar sabit satirda durur.
@@ -78,12 +84,13 @@ export function ReviewMarquee({
 
     // Kart konumu [-STEP, total-STEP) araliginda tutulur: bir kart sol
     // kenardan tamamen kayip ciktiktan SONRA halkanin sonuna atlar.
-    // Aksi halde x=0'da aniden kaybolur ve solda bosluk olusurdu.
+    // Aksi halde x=0'da aniden kaybolur ve solda bosluk olusurdu. Kart
+    // satirdaki kendi yerinden (i * STEP) bu konuma kaydirilir.
     const place = () => {
       cards.forEach((el, i) => {
         if (!el) return;
         const x = ((((i * STEP - offset) % total) + total) % total) - STEP;
-        el.style.transform = `translateX(${x}px)`;
+        el.style.transform = `translateX(${x - i * STEP}px)`;
       });
     };
 
@@ -127,11 +134,7 @@ export function ReviewMarquee({
           onTouchEnd={() => {
             pausedRef.current = false;
           }}
-          className={
-            ring
-              ? "relative h-[248px] overflow-hidden"
-              : "zw-no-scrollbar flex gap-4 overflow-x-auto pb-1"
-          }
+          className={`flex gap-4 pb-1 ${ring ? "overflow-hidden" : "zw-no-scrollbar overflow-x-auto"}`}
           style={ring ? undefined : { scrollbarWidth: "none" }}
         >
           {items.map((r, i) => (
@@ -141,7 +144,7 @@ export function ReviewMarquee({
                 cardsRef.current[i] = el;
               }}
               className={`flex w-[300px] shrink-0 flex-col rounded-[6px] border border-zw-grey-200 bg-white p-5 ${
-                ring ? "absolute left-0 top-0 h-full will-change-transform" : ""
+                ring ? "will-change-transform" : ""
               }`}
             >
               <Quote size={20} className="text-zw-red-600" />

@@ -183,3 +183,21 @@ test("videolar: bayi bulucunun altında; açılışta oynatıcı yüklenmez, Oyn
   await expect(videos.locator("iframe")).toHaveCount(0);
   expect(problems).toEqual([]);
 });
+
+test("sayfa kayması 0,1 altında: yorum şeridi kayan halkaya geçerken kartlar yerinden çıkmaz (YAPILACAKLAR › Ölçüm 6)", async ({ page, problems }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { __cls: number }).__cls = 0;
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries() as (PerformanceEntry & { value: number; hadRecentInput: boolean })[]) {
+        if (!e.hadRecentInput) (window as unknown as { __cls: number }).__cls += e.value;
+      }
+    }).observe({ type: "layout-shift", buffered: true });
+  });
+  await page.goto("/");
+  const strip = page.locator("section", { has: page.getByRole("heading", { name: "Müşterilerimiz Ne Diyor?" }) }).locator("figure").first();
+  // Halka donuyor: kartlar kaydirmayla yer degistiriyor.
+  await expect.poll(() => strip.evaluate((el) => (el as HTMLElement).style.transform)).toMatch(/translateX/);
+  await page.waitForTimeout(500);
+  expect(await page.evaluate(() => (window as unknown as { __cls: number }).__cls)).toBeLessThan(0.1);
+  expect(problems).toEqual([]);
+});

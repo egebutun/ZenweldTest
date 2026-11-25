@@ -657,28 +657,61 @@ ziyaretçi gibi açar. Kalın: 90 altı.
    K-102): her görselin küçük ve büyük sürümü; tarayıcı ekranına uygun
    olanı seçer. Önce tanıtım alanı (yeni tasarımdan sonra), sonra gerçek
    fotoğraflarla diğerleri. [Kod]
-6. **Sayfa kayması:** anasayfa (0,30) ve haber sayfası (telefonda 0,14);
-   hangi bölümün kaydığı bulunur; görsellerin ve sonradan dolan
-   bölümlerin yeri önceden ayrılır. [Kod]
+6. **Sayfa kayması:**
+   - **Anasayfa, yapıldı (2026-11-25):** nedeni "Müşterilerimiz Ne
+     Diyor?" şeridiydi; kayan halka düzenine geçerken kartlar yerinden
+     çıkıyor, şerit 270 px'ten 248 px'e iniyordu. Kartlar artık yerinde
+     durup yalnızca kayıyor: telefonda 0,30 → 0,001, masaüstünde 0,28 →
+     0,017 (kalan küçük kayma yazı tipinden).
+   - **Haber sayfası (telefonda 0,14):** başlık yazı tipi (Barlow
+     Condensed) geç gelince başlık önce daha geniş yedek yazı tipiyle
+     çiziliyor, yazı tipi gelince daralıyor ve altındaki metin yukarı
+     kayıyor. 10. maddeyle çözülür. [Kod]
+   - Görsellerin ölçüsü önceden bilinmediği için (Lighthouse: genişlik ve
+     yükseklik yok) görsel geç gelince de kayma olabilir; 5. maddeyle
+     (görsellerin ölçüsü kaydedilir). [Kod]
 7. **Kilitlenme süresi:** telefonda bütün sayfalarda (anasayfa 0,95 sn,
-   diğerleri 0,47–0,72 sn); hangi kodun çalıştığı (animasyonlar, sonradan
-   dolan bölümler, demo verisinin hazırlanması, önceden yüklenen sayfalar)
-   incelenir, gerekmeyen kod sonraya bırakılır. [Kod]
+   diğerleri 0,47–0,72 sn).
+   - **Veritabanı modunda (canlı site) çok daha az** (2026-11-25, telefon):
+     ürün 0,75 → 0,21 sn, Hakkımızda 0,38 → 0,18 sn, anasayfa 0,77 →
+     0,55 sn. Demo modunda sayfa açılırken örnek verinin tarayıcıda
+     hazırlanması işlemciyi yoruyor; canlıda bu yok.
+   - **Anasayfa veritabanı modunda da sınırın üstünde (0,55 sn):**
+     anasayfaya özgü kod (tanıtım animasyonları, video ve yorum şeritleri,
+     harita) incelenir, gerekmeyen kod sonraya bırakılır; önceden yükleme
+     de payını alıyor (9). [Kod]
 8. **Force sayfası (3,8 sn):** büyük görselin boyutu ve önceliği (Force
    sayfasının tasarımı ve görselleri de değişebilir). [Kod]
-9. **Önceden yüklenen sayfalar:** telefonda 6–27, masaüstünde 18–66;
-   telefonda ilk açılışı yavaşlatıyor mu bakılır, gerekirse yalnızca
-   üzerine gelince ya da ekranda kalınca yüklenir. [Kod]
-10. **Yazı tipleri (98 KB):** tasarım değişmeden yükleme şekli (önceden
-    yükleme, kullanılmayan kalınlık var mı). Kalınlık sayısını azaltmak
-    tasarım kararıdır, sahibine sorulur. [Kod]
+9. **Önceden yüklenen sayfalar:** telefonda 6–27, masaüstünde 18–66.
+   Deney (2026-11-25, telefon, önceden yükleme kapalıyken): en büyük
+   içerik değişmiyor (yükleme sayfa açıldıktan sonra başlıyor); sayfa
+   başına ~90–100 KB daha az iniyor; anasayfada kilitlenme 0,96 → 0,69 sn.
+   Karşılığında tıklanan sayfa anında açılmaz. **Karar sahibinde**; öneri:
+   telefonda bağlantıya dokunulunca, masaüstünde üzerine gelince
+   yüklensin. [Kod]
+10. **Yazı tipleri:** (2026-11-25 incelemesi)
+    - **Gövde yazı tipi Inter hiç uygulanmıyor:** kodda adı "Inter",
+      yüklenen yazı tipinin adı "Inter Variable"; ziyaretçi gövde
+      yazılarını cihazının yazı tipiyle görüyor, Inter dosyası hiç inmiyor.
+      Düzeltilirse gövde Inter ile görünür, ~45 KB daha iner. **Karar
+      sahibinde** (Inter mi, cihazın yazı tipi mi).
+    - **Barlow Condensed** (başlıklar): yalnızca kullanılan kalınlıklar
+      iniyor (600, 700; 400 çok az yerde); Türkçe harfler için iki alt
+      küme. Gereksiz inen dosya yok.
+    - **Yazı tipi geç gelince sayfa kayıyor** (haber sayfası 0,14):
+      öneri, yazı tiplerini Next.js'in yazı tipi aracına (`next/font`)
+      taşımak: yedek yazı tipinin ölçüsü otomatik ayarlanır (kayma olmaz),
+      yazı tipi önceden yüklenir. Görünüş değişmez. [Kod]
 11. **Bütün sayfa türlerinin Lighthouse denetimi** (performans,
     erişilebilirlik, en iyi uygulamalar, SEO; telefon ve masaüstü;
     `node scripts/lighthouse-denetimi.mjs <adres>`, her ölçüm turunda):
     anasayfa, kategori, ürün, blog, haber, etkinlik, Videolar, Force, bayi
     ağı, Hakkımızda, sepet, ödeme. Bulgular bu listeye eklenir. [Kod]
-12. **Kullanılmayan JavaScript ve CSS:** sayfa başına ne kadarının
-    kullanılmadığı ölçülür; büyük parçalar ihtiyaç anında yüklenir. [Kod]
+12. **Kullanılmayan JavaScript ve CSS:** (2026-11-25, Lighthouse)
+    anasayfada ~71 KB: önceden yüklenen başka sayfaların kodu (ör. Force
+    sayfasının kodu, 24 KB) → 9; sayfa açılırken yüklenen harita kodu
+    (25 KB) → 2; React çekirdeği (22 KB) kaçınılmaz. Ayrı bir iş
+    gerekmiyor; 2 ve 9 yapılınca yeniden ölçülür.
 13. **Dış kaynaklar:** YouTube kapakları ve harita parçaları ilk açılışta
     inmesin (yalnızca ekrana yaklaşınca). [Kod]
 14. **Sunucu (BT, tur 4'te):** yanıt süresi (ilk bayt) veritabanı
