@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { byProductOrder, normalizeEmail, type Coupon, type CouponDiscountType } from "@zenweld/data";

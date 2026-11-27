@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { Eye, EyeOff, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import type { Coupon, CouponStatus } from "@zenweld/data";
 import { couponStatusOf, couponUsage, listCoupons, useDatabase, useNow } from "@zenweld/store";

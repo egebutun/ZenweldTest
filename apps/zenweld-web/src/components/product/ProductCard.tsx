@@ -11,7 +11,7 @@ import {
 } from "@zenweld/data";
 import { isProductInStock, useDatabase, useNow } from "@zenweld/store";
 import { Badge, FlashFrame, ProductImage } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import dynamic from "next/dynamic";
 import { useT } from "@/lib/i18n-client";
 import { formatPrice, priceWithVat } from "@zenweld/utils";

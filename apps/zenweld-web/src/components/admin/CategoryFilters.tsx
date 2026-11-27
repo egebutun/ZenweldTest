@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import type { CategoryFilter, Product, ProductFilterValues } from "@zenweld/data";
 import { Button, Input } from "@zenweld/ui";

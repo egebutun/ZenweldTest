@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { Wrench } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { SERVICE_REASON_LABELS, SERVICE_STATUS_LABELS, type ServiceRequestStatus } from "@zenweld/data";

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, MapPin, X } from "lucide-react";
 import { Button, ZenweldLogo } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { WelderAnimation } from "@/components/common/WelderAnimation";
 import { useT } from "@/lib/i18n-client";
 

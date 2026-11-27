@@ -26,7 +26,7 @@ import {
 import { useNow } from "@zenweld/store";
 import { Badge, Button, Modal, ProductImage } from "@zenweld/ui";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useT } from "@/lib/i18n-client";
 import { openSupportChat } from "@/lib/support-chat";
 import { VideoCover } from "@/components/home/VideoCover";

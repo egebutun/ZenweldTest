@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ExternalLink, Plus, Trash2 } from "lucide-react";
 import { retailerDraftError, type Retailer } from "@zenweld/data";
 import { onlineProductCount, useDatabase, useNow } from "@zenweld/store";

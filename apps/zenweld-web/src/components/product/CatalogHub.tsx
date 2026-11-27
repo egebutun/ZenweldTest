@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { byProductOrder, type TopLevelSection } from "@zenweld/data";
 import { listProducts, useDatabase } from "@zenweld/store";
 import { ProductImage } from "@zenweld/ui";

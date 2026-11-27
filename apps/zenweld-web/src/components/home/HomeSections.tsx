@@ -7,7 +7,7 @@ import { listBlogPosts, listProducts, useDatabase, useNow } from "@zenweld/store
 import { Accordion, ProductImage } from "@zenweld/ui";
 import { discountPercent, HOME_FAQ_COUNT, isDiscountActive } from "@zenweld/data";
 import { DealerFinder } from "@/components/dealers/DealerFinder";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ProductMarquee } from "@/components/product/ProductMarquee";
 import { SectionTitle } from "@/components/home/CategoryShowcase";
 import { useT } from "@/lib/i18n-client";

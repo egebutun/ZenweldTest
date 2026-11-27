@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ChevronRight, Search } from "lucide-react";
 import { stockSourceStatus, type StockSettings, type StockSourceSummary, type StockSourceType } from "@zenweld/data";
 import { getStockSettings, listStockSources, sourceStatus, useDatabase, useNow } from "@zenweld/store";

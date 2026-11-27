@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useMemo, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ChevronDown, Search } from "lucide-react";
 import { isInStock } from "@zenweld/data";
 import { getStockSettings, listStockSources, retailersInStockFor, stockOfProduct, useDatabase, useNow } from "@zenweld/store";

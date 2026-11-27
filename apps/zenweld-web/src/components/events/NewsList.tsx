@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { POSTS_PER_PAGE, pageCount, pageItems } from "@zenweld/data";
 import { listNews, useDatabase } from "@zenweld/store";
 import { EmptyState, ProductImage } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { PageHero } from "@/components/common/PageShell";
 import { EmptyPage, Pager } from "@/components/common/Pager";
 import { useT } from "@/lib/i18n-client";

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { ZenweldLogo } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useT } from "@/lib/i18n-client";
 import type { TopMenu } from "@/lib/menu";
 

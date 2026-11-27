@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { CreditCard, Landmark } from "lucide-react";
 import type { OrderStatus } from "@zenweld/data";
 import type { OrderListPage } from "@zenweld/db";

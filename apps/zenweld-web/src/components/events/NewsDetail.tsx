@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { findMovedNews, findNewsBySlug, listNews, useDatabase } from "@zenweld/store";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ProductImage, RichText } from "@zenweld/ui";
 import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";

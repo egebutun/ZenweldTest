@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ArrowLeft, Download, Plus, Search, Trash2, Undo2, Upload } from "lucide-react";
 import { stockTemplateRows, type StockImportSummary, type StockRow } from "@zenweld/data";
 import {

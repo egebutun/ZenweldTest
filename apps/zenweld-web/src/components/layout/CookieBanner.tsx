@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Cookie } from "lucide-react";
 import { Button, Modal } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useT } from "@/lib/i18n-client";
 
 /**

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { Plus } from "lucide-react";
 import type { OptionDefinition } from "@zenweld/data";
 import { listOptionDefinitions, useDatabase } from "@zenweld/store";

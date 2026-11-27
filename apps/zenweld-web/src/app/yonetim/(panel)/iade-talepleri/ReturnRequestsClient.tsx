@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ChevronDown } from "lucide-react";
 import type { ReturnReason, ReturnRequest, ReturnRequestStatus } from "@zenweld/data";
 import type { ReturnListPage } from "@zenweld/db";

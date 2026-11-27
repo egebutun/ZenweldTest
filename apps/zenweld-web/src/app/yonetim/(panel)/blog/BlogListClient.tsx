@@ -6,7 +6,7 @@ import { listAllBlogPosts, useDatabase } from "@zenweld/store";
 import { Alert, Badge, Button, Input, ProductImage } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { useContentActions, type PanelAnswer } from "@/lib/admin-content";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { formatDate } from "@zenweld/utils";
 
 /**

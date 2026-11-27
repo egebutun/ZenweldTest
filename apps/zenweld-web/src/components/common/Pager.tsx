@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { pagePath } from "@zenweld/data";
 import { useT } from "@/lib/i18n-client";

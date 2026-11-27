@@ -972,7 +972,8 @@ içeriğe rağmen geride kalır.
 anasayfada en büyük içeriğin görünmesi (LCP) **3,2 sn**, sayfa kayması
 (CLS) **0,30**, kodun ekranı kilitlediği süre (TBT) **1,1 sn**; Force
 sayfasında LCP **3,8 sn**; kategori 1,9 sn, ürün 0,9 sn. Google'ın "iyi"
-sınırları: LCP 2,5 sn, CLS 0,1, TBT 0,2 sn. Lighthouse'ta telefon
+sınırları: LCP 2,5 sn, CLS 0,1, TBT 0,2 sn (anasayfadaki kayma
+giderildi, aşağıda). Lighthouse'ta telefon
 performans puanı 66–93 (anasayfa 66), masaüstü 82–100; SEO puanı 69, tek
 nedeni demo adresinin arama motorlarına bilerek kapalı olması (canlıda
 yeniden denetlenir). Lighthouse denetimi, bulgular, 20 madde ve ölçüm
@@ -987,10 +988,22 @@ sonra.
       resmi yüklenir, oynatıcı ve video Oynat'a basınca gelir; YouTube
       çerezsiz adresten açılır; kendi videolarımız sunucuda 1080p ve 720p
       hazırlanır ve parça parça sunulur (KARARLAR K-125).
-- [ ] Anasayfa ve Force sayfasında LCP 2,5 sn, anasayfada sayfa
-      kayması 0,1 ve kilitlenme 0,2 sn altına; başlıca nedenler görseller,
+- [x] Ölçüm ve denetim betikleri: Google'ın üç ölçüsü 12 sayfa türünde,
+      telefon ve masaüstünde (`scripts/sayfa-olcumu.mjs`); Lighthouse
+      denetimi (`scripts/lighthouse-denetimi.mjs`); her ölçüm turunda
+      aynısı (B5, 25 Kasım 2026).
+- [x] Sitenin kendi görselleri tarayıcıda 7 gün saklanıyor (B5 madde 3,
+      25 Kasım 2026).
+- [x] Anasayfadaki sayfa kayması giderildi: yorum şeridi; telefonda
+      0,30 → 0,001 (B5 madde 6, 25 Kasım 2026).
+- [x] Bağlantıların sayfaları yalnızca üzerine gelince ya da dokununca
+      önceden indiriliyor; telefonda sayfa başına ~70–100 KB daha az (B5
+      madde 9, 27 Kasım 2026).
+- [ ] Anasayfa ve Force sayfasında LCP 2,5 sn, kilitlenme 0,2 sn altına;
+      haber sayfasındaki kayma (yazı tipi); başlıca nedenler görseller,
       sonradan yüklenen bölümler ve her sayfada inen ~300 KB JavaScript
-      (B5; 20 madde YAPILACAKLAR › Ölçüm). **Kod**
+      (B5; YAPILACAKLAR › Ölçüm'deki 20 maddenin her birinin durumu
+      orada). **Kod**
 - [ ] Ölçüm turları: yeni tanıtım ve harita tasarımından sonra, görsel
       optimizasyonu ve gerçek fotoğraflardan sonra, deneme sunucusu ve
       veritabanıyla canlıdan önce, canlıda (YAPILACAKLAR › Ölçüm). **Kod**, **Sunucu**

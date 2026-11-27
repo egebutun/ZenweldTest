@@ -117,6 +117,12 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
   bilgiler yalnızca sayfa açıkken hatırlanır: sayfa yenilenince sepet
   boşalır, karşılama penceresi ve çerez bandı yeniden çıkar. **Demo notu:**
   Demo modunda site verisi de sayfa yenilenince örnek veriye döner.
+- **Bağlantıların önceden yüklenmesi:** Sitedeki bir bağlantının sayfası,
+  ziyaretçi bağlantının üzerine gelince (masaüstü), dokununca (telefon) ya
+  da klavyeyle bağlantıya gelince önceden indirilir; tıklanınca hızlı
+  açılır. Ekranda görünen ama tıklanmayan bağlantıların sayfaları
+  indirilmez (telefonda sayfa başına ~70–100 KB daha az indirme;
+  YAPILACAKLAR › Ölçüm (hız) 9).
 
 ---
 

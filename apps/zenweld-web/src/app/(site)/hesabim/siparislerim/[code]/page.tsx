@@ -8,7 +8,7 @@ import { trackingLink, type Order, type OrderAddress } from "@zenweld/data";
 import { getShopSettings, useDatabase } from "@zenweld/store";
 import { Alert, EmptyState, Modal } from "@zenweld/ui";
 import { formatDate, formatDateTime, formatPrice } from "@zenweld/utils";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { BankAccounts, CopyButton } from "@/components/shop/BankAccounts";
 import {
   useDocumentTitle,

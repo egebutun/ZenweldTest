@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ChevronLeft, ChevronRight, Heart, Play } from "lucide-react";
 import { groupVideosByCategory, homeVideos, productHighlights, videoPoster, videoTitle, type Product, type SiteVideo } from "@zenweld/data";
 import { getHomeVideos, isProductInStock, listVideos, useDatabase } from "@zenweld/store";

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, ExternalLink, MapPin } from "lucide-react";
 import { findEventBySlug, findMovedEvent, useDatabase } from "@zenweld/store";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ProductImage, RichText } from "@zenweld/ui";
 import { EventLogo } from "./EventLogo";
 import { useT } from "@/lib/i18n-client";

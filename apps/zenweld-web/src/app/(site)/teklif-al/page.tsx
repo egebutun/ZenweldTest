@@ -6,7 +6,7 @@ import { useAuth } from "@zenweld/auth";
 import { createQuote, useDatabase } from "@zenweld/store";
 import { productOptionsView, type PaymentPreference, type User } from "@zenweld/data";
 import { Alert, Badge, Button, FormRow, Input, ProductImage, Select, Textarea } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { accountRequest } from "@/lib/account-api";
 import { quoteNotice } from "@/lib/form-text";
 import { useT } from "@/lib/i18n-client";

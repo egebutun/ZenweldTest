@@ -2,7 +2,7 @@
 
 import { FileText, Heart, Package, ShieldCheck, Wrench } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useFavourites } from "@/lib/favourites";
 import { useT } from "@/lib/i18n-client";
 import { useMemberOrders } from "@/lib/member-orders";

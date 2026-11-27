@@ -682,13 +682,13 @@ ziyaretçi gibi açar. Kalın: 90 altı.
      de payını alıyor (9). [Kod]
 8. **Force sayfası (3,8 sn):** büyük görselin boyutu ve önceliği (Force
    sayfasının tasarımı ve görselleri de değişebilir). [Kod]
-9. **Önceden yüklenen sayfalar:** telefonda 6–27, masaüstünde 18–66.
-   Deney (2026-11-25, telefon, önceden yükleme kapalıyken): en büyük
-   içerik değişmiyor (yükleme sayfa açıldıktan sonra başlıyor); sayfa
-   başına ~90–100 KB daha az iniyor; anasayfada kilitlenme 0,96 → 0,69 sn.
-   Karşılığında tıklanan sayfa anında açılmaz. **Karar sahibinde**; öneri:
-   telefonda bağlantıya dokunulunca, masaüstünde üzerine gelince
-   yüklensin. [Kod]
+9. **Önceden yüklenen sayfalar:** yapıldı (2026-11-27, sahibinin
+   kararıyla). Sayfa yalnızca bağlantının üzerine gelince (masaüstü),
+   dokununca (telefon) ya da klavyeyle gelince önceden indiriliyor
+   (`components/common/Link.tsx`; sitede `next/link` yerine bu, kod
+   denetimi zorunlu tutar). Telefonda açılışta önceden yükleme 0; sayfa
+   başına ~70–100 KB daha az (ör. blog yazısı 444 → 347 KB). Test:
+   `tests/e2e/hiz.spec.ts`.
 10. **Yazı tipleri:** (2026-11-25 incelemesi)
     - **Gövde yazı tipi Inter hiç uygulanmıyor:** kodda adı "Inter",
       yüklenen yazı tipinin adı "Inter Variable"; ziyaretçi gövde

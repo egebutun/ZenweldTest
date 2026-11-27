@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { findBlogPostBySlug, findMovedBlogPost, useDatabase } from "@zenweld/store";
 import { PageHero } from "@/components/common/PageShell";
 import { RichText } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useT } from "@/lib/i18n-client";
 import { formatDate } from "@zenweld/utils";
 import { blogPostSeo } from "@/lib/seo";

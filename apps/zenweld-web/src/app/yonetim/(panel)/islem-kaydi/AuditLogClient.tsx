@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { tr } from "@zenweld/i18n";
 import type { AuditLogRow, LogPage } from "@zenweld/db";
 import { Button, Input, Select } from "@zenweld/ui";

@@ -20,7 +20,7 @@ import {
 } from "@zenweld/store";
 import { Alert, Button, EmptyState, FormRow, Input, Modal, Textarea } from "@zenweld/ui";
 import { formatPrice } from "@zenweld/utils";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";
 import { accountRequest } from "@/lib/account-api";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { Play } from "lucide-react";
 import { categoryHref, groupVideosByCategory, siteVideos, videoPoster, videoTitle, type Product, type SiteVideo, type VideoGroup } from "@zenweld/data";
 import { listVideos, useDatabase } from "@zenweld/store";

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { Pencil } from "lucide-react";
 import { legalPath, type LegalPageId } from "@zenweld/data";
 import { listLegalPages, useDatabase } from "@zenweld/store";

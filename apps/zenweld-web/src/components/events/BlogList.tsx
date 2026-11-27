@@ -2,7 +2,7 @@
 
 import { POSTS_PER_PAGE, pageCount, pageItems } from "@zenweld/data";
 import { listBlogPosts, useDatabase } from "@zenweld/store";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ProductImage } from "@zenweld/ui";
 import { PageHero } from "@/components/common/PageShell";
 import { EmptyPage, Pager } from "@/components/common/Pager";

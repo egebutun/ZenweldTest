@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ArrowRight, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { visibleHeroSlides, type HeroSlide } from "@zenweld/data";
 import { getHomeHero, useDatabase, useNow } from "@zenweld/store";

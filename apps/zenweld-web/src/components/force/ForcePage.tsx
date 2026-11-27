@@ -24,7 +24,7 @@ import {
 import type { Product } from "@zenweld/data";
 import { isProductInStock, useDatabase } from "@zenweld/store";
 import { ProductImage } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { CardCartButton, ProductPrice } from "@/components/product/ProductCard";
 import { useFavourites } from "@/lib/favourites";
 import { FORCE_SHOWCASE, useForceProducts, type ForceMachine, type ForceMachineKey } from "@/lib/force";

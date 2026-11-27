@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ArrowUp, Plus, Trash2, X } from "lucide-react";
 import {
   MAX_PRODUCT_OPTIONS,

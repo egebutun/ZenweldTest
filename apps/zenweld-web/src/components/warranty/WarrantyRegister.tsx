@@ -6,7 +6,7 @@ import { useAuth } from "@zenweld/auth";
 import { isValidPostalCode, isValidSellerTaxNumber, type User } from "@zenweld/data";
 import { listProducts, registerWarranty, useDatabase } from "@zenweld/store";
 import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useT } from "@/lib/i18n-client";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";

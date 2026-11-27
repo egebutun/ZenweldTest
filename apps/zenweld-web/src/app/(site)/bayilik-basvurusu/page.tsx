@@ -9,7 +9,7 @@ import { Alert, Button, FormRow, Input, Select, Textarea } from "@zenweld/ui";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { PageHero } from "@/components/common/PageShell";
 import { useBotTrap } from "@/components/common/BotTrap";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useT } from "@/lib/i18n-client";
 import { postForm, reached } from "@/lib/notify";
 import { useMemberPrefill } from "@/lib/member-prefill";

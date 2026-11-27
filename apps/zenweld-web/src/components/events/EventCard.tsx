@@ -3,7 +3,7 @@
 import { MapPin } from "lucide-react";
 import type { ZenweldEvent } from "@zenweld/data";
 import { Badge } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { EventLogo } from "./EventLogo";
 import { useNow } from "@zenweld/store";
 import { useT } from "@/lib/i18n-client";

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Instagram, Linkedin, Youtube } from "lucide-react";
 import { ZenweldLogo } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { TikTokIcon } from "@/components/common/TikTokIcon";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useT } from "@/lib/i18n-client";

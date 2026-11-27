@@ -6,7 +6,7 @@ import { Search } from "lucide-react";
 import { PRODUCTS_PER_PAGE, pageCount, pageItems, parsePageNumber } from "@zenweld/data";
 import { findProductById, useDatabase } from "@zenweld/store";
 import { Button, EmptyState, ProductImage } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { Pager } from "@/components/common/Pager";
 import { useSearch } from "@/lib/search/use-search";

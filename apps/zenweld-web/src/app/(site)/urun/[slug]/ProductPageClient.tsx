@@ -6,7 +6,7 @@ import { FileText } from "lucide-react";
 import { productOptionsView, productVideos } from "@zenweld/data";
 import { findProductBySlug, isProductInStock, listProducts, listVideos, movedProductPath, useDatabase } from "@zenweld/store";
 import { Accordion, Tabs } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { OnlineRetailers } from "@/components/product/OnlineRetailers";
 import {
   AddToCart,

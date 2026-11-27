@@ -8,7 +8,7 @@ import { Alert, Badge, Button, CampaignBadge, Input, ProductImage, Select } from
 import { AdminPageHeader } from "@/components/admin/AdminShell";
 import { useCatalogActions, type PanelAnswer } from "@/lib/admin-catalog";
 import { SECTION_TITLES, groupCategories, sectionGroups } from "@/lib/catalog";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { formatDateTime, formatPrice, priceWithVat } from "@zenweld/utils";
 
 /**

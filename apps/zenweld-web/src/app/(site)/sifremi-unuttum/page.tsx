@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@zenweld/auth";
 import { Alert, Button, FormRow, Input } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useT } from "@/lib/i18n-client";
 
 /**

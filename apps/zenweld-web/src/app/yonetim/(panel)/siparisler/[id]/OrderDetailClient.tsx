@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { CheckCircle2, ExternalLink, PackageCheck, RotateCcw, Truck, XCircle } from "lucide-react";
 import { trackingLink, type Order, type OrderAddress, type OrderSapExport } from "@zenweld/data";
 import { tr } from "@zenweld/i18n";

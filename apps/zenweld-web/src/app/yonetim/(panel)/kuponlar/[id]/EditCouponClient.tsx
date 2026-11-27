@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { couponStatusOf, couponUsage, findCoupon, useDatabase, useNow } from "@zenweld/store";
 import { Alert } from "@zenweld/ui";
 import { AdminPageHeader } from "@/components/admin/AdminShell";

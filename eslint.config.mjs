@@ -31,6 +31,19 @@ const config = [
       "react-hooks/set-state-in-effect": "off",
     },
   },
+  {
+    // Sitede baglanti icin components/common/Link kullanilir: sayfayi
+    // ekranda gorunce degil, uzerine gelince ya da dokununca onceden
+    // indirir (docs/YAPILACAKLAR.md › Ölçüm (hız) 9).
+    files: ["apps/zenweld-web/src/**/*.tsx"],
+    ignores: ["apps/zenweld-web/src/components/common/Link.tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        { paths: [{ name: "next/link", message: "Sitede @/components/common/Link kullanılır (önceden yükleme kuralı)." }] },
+      ],
+    },
+  },
 ];
 
 export default config;

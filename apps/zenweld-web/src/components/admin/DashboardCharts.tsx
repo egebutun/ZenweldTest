@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { AlertCircle } from "lucide-react";
 import { formatPrice } from "@zenweld/utils";
 import { RANGES, type DashboardSummary, type RangeKey } from "@/lib/admin-stats";

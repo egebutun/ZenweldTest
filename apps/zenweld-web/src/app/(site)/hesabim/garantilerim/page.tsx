@@ -4,7 +4,7 @@ import { Plus, ShieldCheck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { findProductById, useDatabase } from "@zenweld/store";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useT } from "@/lib/i18n-client";
 import { useMemberRecords } from "@/lib/member-records";
 import { formatDate } from "@zenweld/utils";

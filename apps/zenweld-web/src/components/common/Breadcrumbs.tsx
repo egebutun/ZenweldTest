@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { ChevronRight } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { tr } from "@zenweld/i18n";
 import type { Crumb } from "@/lib/catalog";
 

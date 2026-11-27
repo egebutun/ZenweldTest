@@ -4,7 +4,7 @@ import { Package, Truck } from "lucide-react";
 import { useAuth } from "@zenweld/auth";
 import { Button, EmptyState } from "@zenweld/ui";
 import { formatDate, formatPrice } from "@zenweld/utils";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { OrderStatusBadge } from "@/components/shop/OrderParts";
 import { useT } from "@/lib/i18n-client";
 import { useMemberOrders } from "@/lib/member-orders";

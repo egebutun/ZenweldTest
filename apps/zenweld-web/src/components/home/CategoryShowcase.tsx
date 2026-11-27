@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { ArrowUpRight } from "lucide-react";
 import type { Product, TopLevelSection } from "@zenweld/data";
 import { listProducts, useDatabase } from "@zenweld/store";

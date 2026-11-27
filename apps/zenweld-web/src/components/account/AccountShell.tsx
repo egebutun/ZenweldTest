@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth, ROLE_LABELS } from "@zenweld/auth";
 import { Badge, Button, EmptyState } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { useT } from "@/lib/i18n-client";
 
 export function AccountShell({ children }: { children: React.ReactNode }) {

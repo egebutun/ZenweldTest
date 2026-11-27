@@ -6,7 +6,7 @@ import type { DocumentSection } from "@zenweld/data";
 import { documentPage, listDocuments, useDatabase } from "@zenweld/store";
 import { Alert, Button, EmptyState, Input } from "@zenweld/ui";
 import { formatDate } from "@zenweld/utils";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { PageHero } from "@/components/common/PageShell";
 import { fileTypeLabel, formatBytes, isPdf, openDocument } from "@/lib/documents";
 

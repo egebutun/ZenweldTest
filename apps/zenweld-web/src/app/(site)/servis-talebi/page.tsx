@@ -15,7 +15,7 @@ import {
 import { tr } from "@zenweld/i18n";
 import { addEmailMessage, createServiceRequest, getEmailSettings, listProducts, useDatabase } from "@zenweld/store";
 import { Alert, Button, Checkbox, FormRow, Input, Select, Textarea } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { PageHero } from "@/components/common/PageShell";
 import { KvkkNotice } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";

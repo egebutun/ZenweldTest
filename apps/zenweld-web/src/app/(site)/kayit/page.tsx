@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Building2, Store, User as UserIcon } from "lucide-react";
 import { PASSWORD_MIN_LENGTH, useAuth, type RegisterInput } from "@zenweld/auth";
 import { Alert, Button, Checkbox, FormRow, Input } from "@zenweld/ui";
-import Link from "next/link";
+import Link from "@/components/common/Link";
 import { KvkkNotice, LegalLink } from "@/components/legal/LegalLink";
 import { useBotTrap } from "@/components/common/BotTrap";
 import { useT } from "@/lib/i18n-client";
