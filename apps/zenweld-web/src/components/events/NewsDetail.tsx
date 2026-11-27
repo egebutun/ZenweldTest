@@ -60,6 +60,7 @@ export function NewsDetail({ slug }: { slug: string }) {
           src={item.coverUrl}
           alt={item.title}
           label={item.title}
+          priority
           className="h-auto w-full"
         />
       </div>

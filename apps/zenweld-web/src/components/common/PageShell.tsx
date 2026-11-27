@@ -18,6 +18,7 @@ export function PageHero({
           src={image}
           alt={title}
           label={title}
+          priority
           className="absolute inset-0 h-full w-full object-cover opacity-40"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-zw-ink via-zw-ink/80 to-transparent" />

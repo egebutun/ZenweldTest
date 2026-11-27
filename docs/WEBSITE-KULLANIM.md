@@ -123,6 +123,10 @@ sunucunun ek olarak ne yaptığını söyler. İki modun farkları:
   açılır. Ekranda görünen ama tıklanmayan bağlantıların sayfaları
   indirilmez (telefonda sayfa başına ~70–100 KB daha az indirme;
   YAPILACAKLAR › Ölçüm (hız) 9).
+- **Görsellerin yüklenme sırası:** Sayfanın ilk ekranındaki görsel (kategori
+  ve grup sayfasında ilk kart, ürün sayfasının ana fotoğrafı, haber kapağı,
+  sayfa başlığındaki görsel) hemen ve öncelikli istenir; diğer görseller
+  ekrana yaklaşınca yüklenir (YAPILACAKLAR › Ölçüm (hız) 16).
 
 ---
 

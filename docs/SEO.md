@@ -999,6 +999,8 @@ sonra.
 - [x] Bağlantıların sayfaları yalnızca üzerine gelince ya da dokununca
       önceden indiriliyor; telefonda sayfa başına ~70–100 KB daha az (B5
       madde 9, 27 Kasım 2026).
+- [x] İlk ekrandaki görsel öncelikli yükleniyor: telefonda grup sayfası
+      1,9 → 0,74 sn, kategori 2,4 → 0,94 sn (B5 madde 16, 27 Kasım 2026).
 - [ ] Anasayfa ve Force sayfasında LCP 2,5 sn, kilitlenme 0,2 sn altına;
       haber sayfasındaki kayma (yazı tipi); başlıca nedenler görseller,
       sonradan yüklenen bölümler ve her sayfada inen ~300 KB JavaScript

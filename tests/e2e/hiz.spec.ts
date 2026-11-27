@@ -41,3 +41,16 @@ test.describe("telefon", () => {
     expect(problems).toEqual([]);
   });
 });
+
+test("ilk ekrandaki görsel öncelikli, diğerleri ekrana yaklaşınca yüklenir (Ölçüm 16)", async ({ page, problems }) => {
+  await page.goto("/ekipmanlar/kaynak-makineleri/mig-gazalti-kaynak-makineleri");
+  const images = page.locator("main a[href^='/urun/'] img");
+  await expect(images.first()).toHaveAttribute("loading", "eager");
+  await expect(images.first()).toHaveAttribute("fetchpriority", "high");
+  await expect(images.nth(1)).toHaveAttribute("loading", "lazy");
+  await page.goto("/ekipmanlar/kaynak-makineleri");
+  await expect(page.locator("main img").first()).toHaveAttribute("fetchpriority", "high");
+  await page.goto("/urun/evomig-205-p");
+  await expect(page.locator("main img").first()).toHaveAttribute("fetchpriority", "high");
+  expect(problems).toEqual([]);
+});

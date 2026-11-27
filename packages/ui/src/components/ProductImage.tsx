@@ -44,6 +44,11 @@ export function ProductImage({
   alt: string;
   className?: string;
   label?: string;
+  /**
+   * Sayfanin en buyuk icerigi olabilecek gorsel (ilk ekranda): hemen ve
+   * "once bunu indir" isaretiyle istenir (fetchpriority=high). Digerleri
+   * ekrana yaklasinca yuklenir (docs/YAPILACAKLAR.md › Ölçüm (hız) 16).
+   */
   priority?: boolean;
   /** src yuklenemezse sirayla denenecek adresler (orn. ayni dosyanin .svg hali). */
   alternates?: string[];
@@ -92,6 +97,7 @@ export function ProductImage({
       src={current}
       alt={alt}
       loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : undefined}
       decoding="async"
       onError={next}
       onLoad={(e) => {

@@ -73,7 +73,7 @@ function HubPage({
 
       <div className="zw-container py-10">
         <div className={`grid grid-cols-1 gap-6 sm:grid-cols-2 ${cards.length > 2 ? "lg:grid-cols-3" : ""}`}>
-          {cards.map((card) => (
+          {cards.map((card, i) => (
             <Link
               key={card.key}
               href={card.href}
@@ -84,6 +84,7 @@ function HubPage({
                   src={card.imageUrl}
                   alt={card.name}
                   label={card.name}
+                  priority={i === 0}
                   className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.03]"
                 />
               </div>

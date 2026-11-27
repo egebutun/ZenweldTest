@@ -722,10 +722,14 @@ ziyaretçi gibi açar. Kalın: 90 altı.
 
 Lighthouse denetiminden gelenler:
 
-16. **En büyük içerik olan görselin geç fark edilmesi** (kategori, ürün,
-    grup, haber, Force sayfaları): ilk görünen fotoğraf "sonra yükle"
-    (lazy) ya da öncelik işaretsiz; tarayıcı onu geç istiyor. Sayfanın
-    ilk görselleri öncelikli yüklenir. [Kod]
+16. **En büyük içerik olan görselin geç fark edilmesi:** yapıldı
+    (2026-11-27). İlk ekrandaki görsel (kategori ve grup sayfasında ilk
+    kart, ürün sayfasının ana fotoğrafı, haber kapağı, sayfa başlığındaki
+    görsel) hemen ve "önce bunu indir" işaretiyle isteniyor; diğerleri
+    ekrana yaklaşınca. Telefonda en büyük içerik: grup sayfası 1,9 → 0,74 sn,
+    kategori 2,4 → 0,94 sn; haber sayfasında kayma 0,14 → 0,085. Tanıtım
+    alanı (1) ve Force sayfası (8) yeni tasarımla. Test:
+    `tests/e2e/hiz.spec.ts`.
 17. **Sayfanın çizimini bekleten CSS:** iki CSS dosyası (19 KB + 2 KB)
     sayfa çizilmeden önce iniyor; telefonda tahmini 0,85 sn gecikme.
     Gerekli CSS sayfanın içine gömülebilir mi denenir. [Kod]

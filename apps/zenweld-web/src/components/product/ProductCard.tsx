@@ -25,9 +25,12 @@ export function ProductCard({
   product,
   /** Anasayfadaki kayan seritte kullanilan daha kucuk hal. */
   compact = false,
+  /** Listenin ilk karti: fotograf oncelikli yuklenir (ilk ekranda). */
+  priority = false,
 }: {
   product: Product;
   compact?: boolean;
+  priority?: boolean;
 }) {
   const t = useT();
   const favourites = useFavourites();
@@ -64,6 +67,7 @@ export function ProductCard({
             src={product.images[0]?.url}
             alt={product.images[0]?.alt || product.name}
             label={product.name}
+            priority={priority}
             className={`h-full w-full object-contain transition-transform duration-300 group-hover:scale-105 ${compact ? "p-2" : "p-3"}`}
           />
           {/* Indirimli bir urun ayni zamanda yeni olabilir; ikisi de gosterilir.
