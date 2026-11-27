@@ -227,6 +227,8 @@ export function DealerFinder({
           <div className="mb-3 text-sm font-semibold text-zw-grey-600">
             {t.dealers.resultCount.replace("{count}", String(dealers.length))}
           </div>
+          {/* Ekranda gorunmez: bayi kartlarinin basliklari (h3) sirali olsun. */}
+          <h2 className="sr-only">{t.dealers.listHeading}</h2>
           <div className="max-h-[560px] space-y-3 overflow-y-auto pr-1">
             {dealers.map((dealer) => (
               <button

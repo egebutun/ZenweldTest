@@ -33,7 +33,8 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-6">
           {columns.map((col) => (
             <div key={col.title}>
-              <h3 className="mb-4 text-sm font-bold text-zw-ink">{col.title}</h3>
+              {/* h2: sayfanin basligindan (h1) sonra siradaki duzey (erisilebilirlik). */}
+              <h2 className="mb-4 text-sm font-bold text-zw-ink">{col.title}</h2>
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.href + link.label}>

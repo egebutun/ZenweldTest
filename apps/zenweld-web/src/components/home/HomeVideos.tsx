@@ -228,7 +228,7 @@ function VideoCarousel({ items }: { items: { video: SiteVideo; product?: Product
 
       {count > 1 && (
         <div className="mt-6 flex flex-col items-center gap-5">
-          <div className="flex gap-2">
+          <div className="flex">
             {items.map(({ video }, i) => (
               <button
                 key={video.id}
@@ -236,10 +236,15 @@ function VideoCarousel({ items }: { items: { video: SiteVideo; product?: Product
                 aria-label={t.home.videos.showVideo(i + 1)}
                 aria-current={i === current}
                 onClick={() => goToVideo(i)}
-                className={`h-2.5 rounded-full transition-all zw-focus ${
-                  i === current ? "w-7 bg-zw-red-600" : "w-2.5 bg-zw-grey-300 hover:bg-zw-grey-500"
-                }`}
-              />
+                // Dokunma alani 24 px (erisilebilirlik); gorunen nokta ayni.
+                className="group -my-[7px] flex h-6 items-center px-[7px] zw-focus"
+              >
+                <span
+                  className={`block h-2.5 rounded-full transition-all ${
+                    i === current ? "w-7 bg-zw-red-600" : "w-2.5 bg-zw-grey-300 group-hover:bg-zw-grey-500"
+                  }`}
+                />
+              </button>
             ))}
           </div>
           <div className="flex gap-3">

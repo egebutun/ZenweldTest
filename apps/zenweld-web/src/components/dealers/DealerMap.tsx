@@ -103,6 +103,8 @@ export function DealerMap({
       const active = d.id === selectedId;
       const marker = L.marker([d.lat, d.lng], {
         icon: pin(active ? "#141619" : "#b82429", active),
+        // Ekran okuyucu ve klavye icin isaretin adi (Lighthouse: komutun adi yok).
+        title: d.name,
         zIndexOffset: active ? 1000 : 0,
       });
       // Panelde girilen metin HTML olarak yorumlanmasin (kod calistirma).

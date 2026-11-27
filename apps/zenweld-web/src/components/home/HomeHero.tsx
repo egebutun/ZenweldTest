@@ -133,7 +133,7 @@ export function HomeHero({
                     )}
                   </span>
                   <span className="hidden min-w-0 items-baseline gap-2 sm:flex">
-                    <span className={`font-display text-sm font-bold ${i === active ? "text-zw-red-500" : "text-white/40"}`}>
+                    <span aria-hidden="true" className={`font-display text-sm font-bold ${i === active ? "text-zw-red-500" : "text-white/40"}`}>
                       0{i + 1}
                     </span>
                     <span

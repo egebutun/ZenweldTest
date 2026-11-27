@@ -169,7 +169,11 @@ export function CategoryListing({ section, categorySlug, page: initialPage = 1 }
             ) : page > 1 && shown.length === 0 ? (
               <EmptyPage basePath={basePath} />
             ) : (
-              <ProductGrid products={shown} />
+              <>
+                {/* Ekranda gorunmez: urun kartlarinin basliklari (h3) sirali olsun. */}
+                <h2 className="sr-only">{t.filters.productsHeading}</h2>
+                <ProductGrid products={shown} />
+              </>
             )}
             <Pager page={page} pageCount={pageCount(filtered.length, PRODUCTS_PER_PAGE)} basePath={basePath} query={query} />
           </div>

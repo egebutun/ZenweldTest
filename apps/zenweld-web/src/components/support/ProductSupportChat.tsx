@@ -143,6 +143,7 @@ export function ProductSupportChat({ product }: { product: Product }) {
       {!open && (
         <button
           onClick={() => setOpen(true)}
+          aria-label={t.support.chatButton}
           className="fixed bottom-5 right-5 z-[200] flex items-center gap-2 rounded-full bg-zw-red-600 px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-xl transition-colors hover:bg-zw-red-700 zw-focus"
         >
           <MessageCircle size={20} />

@@ -147,7 +147,7 @@ export function Header() {
             >
               <Search size={18} />
               <span className="hidden truncate md:inline lg:hidden xl:inline">{t.common.search}</span>
-              <kbd className="ml-auto hidden rounded border border-zw-grey-300 px-1 text-[10px] text-zw-grey-400 xl:inline">
+              <kbd aria-hidden="true" className="ml-auto hidden rounded border border-zw-grey-300 px-1 text-[10px] text-zw-grey-400 xl:inline">
                 ⌘K
               </kbd>
             </button>

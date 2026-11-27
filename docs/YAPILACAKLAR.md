@@ -731,21 +731,34 @@ Lighthouse denetiminden gelenler:
     alanı (1) ve Force sayfası (8) yeni tasarımla. Test:
     `tests/e2e/hiz.spec.ts`.
 17. **Sayfanın çizimini bekleten CSS:** iki CSS dosyası (19 KB + 2 KB)
-    sayfa çizilmeden önce iniyor; telefonda tahmini 0,85 sn gecikme.
-    Gerekli CSS sayfanın içine gömülebilir mi denenir. [Kod]
-18. **Eski tarayıcılar için ek kod:** 14 KB; desteklenen tarayıcı listesi
-    güncellenirse gerekmez. [Kod]
+    sayfa çizilmeden önce iniyor. **Denendi (2026-11-27):** CSS'i
+    sayfanın içine gömmek (Next.js `experimental.inlineCss`) telefonda
+    metin sayfalarında en büyük içeriği 0,81 → 0,32 sn indirdi; fotoğraflı
+    sayfalarda (kategori, ürün) fark yok; anasayfa 3,19 → 3,35 sn yavaşladı.
+    Her sayfa ~55 KB büyüyor, CSS sayfalar arasında önbellekte tutulmuyor;
+    özellik Next.js'te deneysel. **Şimdilik açılmadı**; tanıtım alanının
+    yeni tasarımından sonra (tur 2) ve deneme sunucusunda (tur 4, sıkıştırma
+    ve HTTP/2 ile) yeniden ölçülüp karar verilir. [Kod]
+18. **Eski tarayıcılar için ek kod (14 KB):** incelendi (2026-11-27):
+    Lighthouse'un saydığı kod Next.js'in her siteye kendisi eklediği küçük
+    yamalar (`Array.prototype.at`, `Object.hasOwn` vb.); proje ayarıyla
+    kaldırılamıyor. Next.js güncellemelerinde yeniden bakılır.
 19. **Sayfanın kodunu çalıştırma süresi:** anasayfada telefonda 1,9 sn;
     kodun ölçü okuyup sayfayı yeniden düzenlettiği yerler (zorunlu
     yeniden düzenleme) var (7. maddeyle birlikte). [Kod]
 20. **Erişilebilirlik:**
-    - Renk kontrastı her sayfada yetersiz (ör. küçük kırmızı ve gri
-      yazılar): renkler tasarım kararıdır, sahibine sorulur.
-    - Adı olmayan düğme (ürün sayfasında sağ alttaki yuvarlak düğme);
-      görünen yazıyla adı uyuşmayan düğmeler (arama düğmesi, tanıtım
-      sekmeleri); başlık sırası atlanıyor (kategori, blog, bayi
-      sayfaları); anasayfadaki video noktaları dokunmak için çok küçük.
-      [Kod]
+    - **Kod tarafı yapıldı (2026-11-27):** ürün sayfasındaki sohbet
+      düğmesine ad; harita işaretlerine bayinin adı; arama düğmesi ve
+      tanıtım sekmelerinin okunan adı görünen yazıyla aynı; başlık sırası
+      (alt bilgi başlıkları h2; kategori ve bayi listelerinde ekranda
+      görünmeyen ara başlık); anasayfadaki video noktalarının dokunma alanı
+      24 px. Lighthouse erişilebilirlik puanı 91–96 → 96–97.
+    - **Renk kontrastı (karar sahibinde, tasarım):** yetersiz kalan
+      renkler: küçük gri yazılar (`zw-grey-500` açık gri zeminde 4,4;
+      `zw-grey-400` beyazda 2,8; sınır 4,5), koyu zemindeki küçük kırmızı
+      üst başlıklar (`zw-red-500` 3,6; Force'ta `zw-red-600` 3,0), koyu
+      zemindeki silik büyük süs yazıları (1,3) ve anasayfa video şeridinde
+      soluk gösterilen yan kartlar.
     - Genel erişilebilirlik işleri: [Erişilebilirlik](#erişilebilirlik--önerilen-zorunlu-değil).
 
 **Dokunulmayanlar:** React ve Next.js çekirdeği (~115 KB) kaçınılmaz.

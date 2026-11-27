@@ -335,6 +335,7 @@ export const tr = {
   },
   dealers: {
     title: "Size En Yakın Zenweld Bayi ve Yetkili Servisini Bulun",
+    listHeading: "Bayi ve servis listesi",
     subtitle:
       "Yetkili satış noktalarımızı ve yetkili servislerimizi haritada görün; ürünleri yerinde inceleyin, satın alın veya servis hizmeti alın.",
     useLocation: "Konumumu Kullan",
@@ -1037,6 +1038,7 @@ export const tr = {
   },
   filters: {
     title: "Filtreler",
+    productsHeading: "Ürünler",
     sort: "Sırala",
     sortFeatured: "Önerilen",
     sortPriceAsc: "Fiyat (artan)",
