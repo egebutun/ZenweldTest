@@ -103,8 +103,22 @@ export function ReviewMarquee({
     };
 
     place();
-    frame = requestAnimationFrame(tick);
+    // Serit yalnizca ekrandayken (ya da ekrana yaklasinca) doner; gorunmezken
+    // islemciyi yormaz (docs/YAPILACAKLAR.md › Ölçüm (hız) 7).
+    const visibility = new IntersectionObserver(
+      ([entry]) => {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        if (entry.isIntersecting) {
+          last = performance.now();
+          frame = requestAnimationFrame(tick);
+        }
+      },
+      { rootMargin: "200px 0px" },
+    );
+    if (wrapRef.current) visibility.observe(wrapRef.current);
     return () => {
+      visibility.disconnect();
       cancelAnimationFrame(frame);
       // Serit duz siraya donerse kartlarda kaydirma kalmasin (ust uste binerdi).
       cards.forEach((el) => {

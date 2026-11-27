@@ -671,15 +671,22 @@ ziyaretçi gibi açar. Kalın: 90 altı.
      yükseklik yok) görsel geç gelince de kayma olabilir; 5. maddeyle
      (görsellerin ölçüsü kaydedilir). [Kod]
 7. **Kilitlenme süresi:** telefonda bütün sayfalarda (anasayfa 0,95 sn,
-   diğerleri 0,47–0,72 sn).
-   - **Veritabanı modunda (canlı site) çok daha az** (2026-11-25, telefon):
-     ürün 0,75 → 0,21 sn, Hakkımızda 0,38 → 0,18 sn, anasayfa 0,77 →
-     0,55 sn. Demo modunda sayfa açılırken örnek verinin tarayıcıda
-     hazırlanması işlemciyi yoruyor; canlıda bu yok.
-   - **Anasayfa veritabanı modunda da sınırın üstünde (0,55 sn):**
-     anasayfaya özgü kod (tanıtım animasyonları, video ve yorum şeritleri,
-     harita) incelenir, gerekmeyen kod sonraya bırakılır; önceden yükleme
-     de payını alıyor (9). [Kod]
+   diğerleri 0,47–0,72 sn; demo modu, 2026-11-25).
+   - **Veritabanı modunda (canlı site) çok daha az:** demo modunda sayfa
+     açılırken örnek verinin tarayıcıda hazırlanması işlemciyi yoruyor;
+     canlıda bu yok. 2026-11-27 (veritabanı modu, telefon, 9 ve 16'dan
+     sonra): ürün 0,18 sn (sınırın altında), Hakkımızda 0,18 sn, anasayfa
+     0,47 sn.
+   - **Yapıldı (2026-11-27):** ürün ve yorum şeritleri ekranda değilken
+     durur; ürün şeridi genişliğini her karede değil yalnızca boyut
+     değişince ölçer.
+   - **Anasayfada kalan (0,47 sn):** sayfanın ilk canlanması (React'in iki
+     ~280 ms'lik işi, HTML'in işlenmesi ~280 ms) ve tanıtım alanındaki
+     sürekli animasyonlar (kıvılcımlar, yakınlaşan fotoğraf, ilerleme
+     çizgisi; sayfa dururken bile ana iş parçacığını meşgul ediyor).
+     Tanıtım alanının yeni tasarımında (1) az ve hafif animasyon önerilir;
+     ardından ekranın altındaki bölümlerin (video şeridi, yorumlar, bayi
+     haritası) kodunun ekrana yaklaşınca çalışması denenir. [Kod]
 8. **Force sayfası (3,8 sn):** büyük görselin boyutu ve önceliği (Force
    sayfasının tasarımı ve görselleri de değişebilir). [Kod]
 9. **Önceden yüklenen sayfalar:** yapıldı (2026-11-27, sahibinin
@@ -743,9 +750,9 @@ Lighthouse denetiminden gelenler:
     Lighthouse'un saydığı kod Next.js'in her siteye kendisi eklediği küçük
     yamalar (`Array.prototype.at`, `Object.hasOwn` vb.); proje ayarıyla
     kaldırılamıyor. Next.js güncellemelerinde yeniden bakılır.
-19. **Sayfanın kodunu çalıştırma süresi:** anasayfada telefonda 1,9 sn;
-    kodun ölçü okuyup sayfayı yeniden düzenlettiği yerler (zorunlu
-    yeniden düzenleme) var (7. maddeyle birlikte). [Kod]
+19. **Sayfanın kodunu çalıştırma süresi:** anasayfada telefonda 1,9 sn
+    (demo); "zorunlu yeniden düzenleme" küçük (~0,1 sn) ve belli bir koda
+    bağlanamıyor. 7. maddeyle birlikte izlenir. [Kod]
 20. **Erişilebilirlik:**
     - **Kod tarafı yapıldı (2026-11-27):** ürün sayfasındaki sohbet
       düğmesine ad; harita işaretlerine bayinin adı; arama düğmesi ve

@@ -1004,6 +1004,9 @@ sonra.
 - [x] Erişilebilirlikte kod hataları giderildi (düğme ve harita işareti
       adları, başlık sırası, dokunma alanları); Lighthouse erişilebilirlik
       96–97. Renk kontrastı tasarım kararı (B5 madde 20, 27 Kasım 2026).
+- [x] Ekranda olmayan kayan şeritler durur; veritabanı modunda ürün
+      sayfasının kilitlenmesi 0,18 sn (sınırın altında; B5 madde 7, 27
+      Kasım 2026). Anasayfada kalan kısım tanıtım alanının yeni tasarımıyla.
 - [ ] Anasayfa ve Force sayfasında LCP 2,5 sn, kilitlenme 0,2 sn altına;
       haber sayfasındaki kayma (yazı tipi); başlıca nedenler görseller,
       sonradan yüklenen bölümler ve her sayfada inen ~300 KB JavaScript

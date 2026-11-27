@@ -46,6 +46,14 @@ export function ProductMarquee({
     // yuvarladigi icin karedeki 0.4 pikseli dogrudan yazarsak kayboluyor
     // ve serit hic ilerlemiyor.
     let offset = track.scrollLeft;
+    // Seridin yarisi (ikinci kopyanin basi) yalnizca boyut degisince olculur;
+    // her karede olcmek tarayiciyi sayfayi yeniden duzenlemeye zorluyordu
+    // (docs/YAPILACAKLAR.md › Ölçüm (hız) 7).
+    let half = track.scrollWidth / 2;
+    const resize = new ResizeObserver(() => {
+      half = track.scrollWidth / 2;
+    });
+    resize.observe(track);
 
     const step = (now: number) => {
       const delta = Math.min((now - last) / 1000, 0.05); // sekme arka plandaysa sicrama olmasin
@@ -54,7 +62,6 @@ export function ProductMarquee({
       if (!paused) {
         offset += speed * delta;
         // Ikinci kopyanin basina gelindiyse basa sar; goz gecisi fark etmez.
-        const half = track.scrollWidth / 2;
         if (half > 0 && offset >= half) offset -= half;
         track.scrollLeft = offset;
       } else {
@@ -65,8 +72,26 @@ export function ProductMarquee({
       frame = requestAnimationFrame(step);
     };
 
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
+    // Serit yalnizca ekrandayken (ya da ekrana yaklasinca) doner; gorunmezken
+    // islemciyi yormaz.
+    const visibility = new IntersectionObserver(
+      ([entry]) => {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        if (entry.isIntersecting) {
+          last = performance.now();
+          offset = track.scrollLeft;
+          frame = requestAnimationFrame(step);
+        }
+      },
+      { rootMargin: "200px 0px" },
+    );
+    visibility.observe(track);
+    return () => {
+      cancelAnimationFrame(frame);
+      visibility.disconnect();
+      resize.disconnect();
+    };
   }, [paused, speed, products.length]);
 
   if (products.length === 0) return null;
